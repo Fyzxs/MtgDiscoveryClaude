@@ -1,0 +1,210 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>warnings</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
+    <IncludeSymbols>true</IncludeSymbols>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <ReportAnalyzer>true</ReportAnalyzer>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <Features>strict</Features>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <!-- Enable .editorconfig support -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnableEditorConfigSupport>true</EnableEditorConfigSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorconfig" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- IDE0290 - use primary constructor -->
+    <!-- IDE2001 complains about single line if -->
+    <!-- IDE0005 gen docs to complain about unused usings - removed by code analysis -->
+    <!-- IDE0046 if return into ?: return -->
+    <!-- CA1716  Lib is reserved in namespace-->
+    <NoWarn>$(NoWarn);IDE0290;IDE2001;IDE0005;IDE0046;CA1716</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Hack for security issue -->
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Private.Uri" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Set useful custom variables here -->
+    <IsExampleProject>false</IsExampleProject>
+    <IsExampleProject Condition="$(MSBuildProjectName.StartsWith('Example.'))">true</IsExampleProject>
+    <IsExampleProject Condition="$(MSBuildProjectName.StartsWith('Examples.'))">true</IsExampleProject>
+
+    <IsCliProject>false</IsCliProject>
+    <IsCliProject Condition="$(MSBuildProjectName.StartsWith('Cli.'))">true</IsCliProject>
+
+    <IsNotExampleProject>true</IsNotExampleProject>
+    <IsNotExampleProject Condition="$(IsExampleProject)">false</IsNotExampleProject>
+
+    <IsExampleCore>false</IsExampleCore>
+    <IsExampleCore Condition="$(MSBuildProjectName.Equals('Example.Core'))">true</IsExampleCore>
+
+    <IsExampleCli>false</IsExampleCli>
+    <IsExampleCli Condition="$(IsExampleProject) and !$(IsExampleCore)">true</IsExampleCli>
+
+    <IsTestConvenienceBuild>false</IsTestConvenienceBuild>
+    <IsTestConvenienceBuild Condition="$(MSBuildProjectName.StartsWith('TestConvenience.'))">true</IsTestConvenienceBuild>
+
+    <IsTestProjectBuild>false</IsTestProjectBuild>
+    <IsTestProjectBuild Condition="$(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProjectBuild>
+
+    <IsAcceptanceTestProjectBuild>false</IsAcceptanceTestProjectBuild>
+    <IsAcceptanceTestProjectBuild Condition="$(MSBuildProjectName.EndsWith('.AcceptanceTests'))">true</IsAcceptanceTestProjectBuild>
+
+    <IsUnitTestBuild>false</IsUnitTestBuild>
+    <IsUnitTestBuild Condition="$(IsTestProjectBuild) or $(IsAcceptanceTestProjectBuild)">true</IsUnitTestBuild>
+
+    <IsTestBuild>false</IsTestBuild>
+    <IsTestBuild Condition="$(IsTestProjectBuild) or $(IsTestConvenienceBuild) or $(IsAcceptanceTestProjectBuild)">true</IsTestBuild>
+
+    <IsNotTestBuild>true</IsNotTestBuild>
+    <IsNotTestBuild Condition="$(IsTestBuild)">false</IsNotTestBuild>
+
+    <IsSdkBuild>false</IsSdkBuild>
+    <IsSdkBuild Condition="$(MSBuildProjectName.StartsWith('Sdk.')) and !$(IsTestBuild)">true</IsSdkBuild>
+
+    <TestSourceProjectName Condition="!$(IsTestBuild)">NotATestProject</TestSourceProjectName>
+    <TestSourceProjectName Condition="$(IsTestBuild)">$(MSBuildProjectName.Substring(0,$(MSBuildProjectName.LastIndexOf('.'))))</TestSourceProjectName>
+
+    <IsCssArchProject>false</IsCssArchProject>
+    <IsCssArchProject Condition="$(MSBuildProjectName.StartsWith('lib.'))">true</IsCssArchProject>
+    <IsCssArchProject Condition="$(MSBuildProjectName.Contains('.Shared.'))">false</IsCssArchProject>
+    <IsCssArchProject Condition="$(IsTestBuild)">false</IsCssArchProject>
+    <IsCssArchProject Condition="$(IsExampleProject)">false</IsCssArchProject>
+    <IsCssArchProject Condition="$(MSBuildProjectName.Equals('Lib.UniversalLocal'))">false</IsCssArchProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsExampleProject)">
+    <!-- CA1848 - use logger delegates -->
+    <!-- CA1515 - make it internal -->
+    <!-- IDE0058 - Return type not used -->
+    <NoWarn>$(NoWarn);CA1848;CA1515;IDE0058</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsExampleCli)">
+    <OutputType>Exe</OutputType>
+    <!-- Exclude the project from analysis -->
+    <SonarQubeExclude>true</SonarQubeExclude>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="$(IsAcceptanceTestProjectBuild)">
+    <!-- CA1515 - complaining when class is public -->
+    <!-- CA1707 - underscores -->
+    <!-- CA1812 - instantiated -->
+    <NoWarn>$(NoWarn);CA1515;CA1707;CA1812</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsCliProject)">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(IsCliProject)">
+    <!-- CA2254 - logger extensions -->
+    <!-- CA1848 - other logger extensions -->
+    <NoWarn>$(NoWarn);CA2254;CA1848</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsTestBuild)">
+    <!-- IDE0060 - complaining about unused args -->
+    <!-- CA2000 - disposal in tests (HttpClient handles disposal) -->
+    <NoWarn>$(NoWarn);IDE0060;CA2000</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsTestConvenienceBuild)">
+    <!-- CA1515 - make classes internal -->
+    <!-- CA2225 - operator overloads -->
+    <!-- CA1062 - validate parameters -->
+    <!-- CA1859 - use concrete types -->
+    <!-- CA1822 - mark members as static -->
+    <NoWarn>$(NoWarn);CA1515;CA2225;CA1062;CA1859;CA1822</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsUnitTestBuild)">
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <!-- CA1707 - underscores in test names -->
+    <!-- CA1515 - test classes must be public for MSTest -->
+    <NoWarn>$(NoWarn);CA1707;CA1515</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsCssArchProject)">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsSdkBuild)">
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(IsNotTestBuild)">
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsNotExampleProject) and $(IsNotTestBuild)">
+    <InternalsVisibleTo Include="Example$(MSBuildProjectName.Substring($(MSBuildProjectName.IndexOf('.'))))" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestProjectBuild)">
+    <ProjectReference Include="..\$(TestSourceProjectName)\$(TestSourceProjectName).csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestBuild)">
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="AwesomeAssertions.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest.TestAdapter"/>
+    <PackageReference Include="MSTest.TestFramework"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestBuild)">
+    <PackageReference Include="AwesomeAssertions"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsUnitTestBuild)">
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestBuild)">
+    <Using Include="AwesomeAssertions" />
+  </ItemGroup>
+</Project>

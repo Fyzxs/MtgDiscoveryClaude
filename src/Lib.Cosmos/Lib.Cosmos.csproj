@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Azure.ResourceManager.CosmosDb" />
+    <PackageReference Include="Azure.ResourceManager.Authorization" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
+    <ProjectReference Include="..\TestConvenience.Core\TestConvenience.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Fakes\" />
+  </ItemGroup>
+
+</Project>
