@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
+  </ItemGroup>
+
+</Project>

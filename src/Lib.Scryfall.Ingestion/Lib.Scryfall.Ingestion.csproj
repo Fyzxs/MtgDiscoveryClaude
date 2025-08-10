@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.RateLimiting" />
     <PackageReference Include="Newtonsoft.Json" />

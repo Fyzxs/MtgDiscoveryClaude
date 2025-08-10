@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Example.Core;
+﻿using Example.Core;
 using Lib.Scryfall.Ingestion.Apis.Configurations;
 using Lib.Scryfall.Ingestion.Configurations;
 using Lib.Universal.Configurations;
@@ -96,7 +93,7 @@ public sealed class ScryfallConfigDemoApplication : ExampleApplication
                 .Build();
 
             // Create a test config wrapper
-            TestConfig testConfig = new TestConfig(incompleteConfig);
+            TestConfig testConfig = new(incompleteConfig);
             IScryfallConfiguration incompleteScryfallConfig = new ConfigScryfallConfiguration(testConfig);
 
             try
@@ -127,7 +124,7 @@ public sealed class ScryfallConfigDemoApplication : ExampleApplication
                 })
                 .Build();
 
-            TestConfig testConfig = new TestConfig(invalidConfig);
+            TestConfig testConfig = new(invalidConfig);
             IScryfallConfiguration invalidScryfallConfig = new ConfigScryfallConfiguration(testConfig);
 
             try

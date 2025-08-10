@@ -42,6 +42,7 @@ dotnet clean src/MtgDiscoveryVibe.sln
 ## Dependency Management
 
 - Use dotnet commands to add nuget packages, not editing of files
+- Do not use System.Text.Json; use only Newtonsoft.
 
 ## Architecture Overview
 

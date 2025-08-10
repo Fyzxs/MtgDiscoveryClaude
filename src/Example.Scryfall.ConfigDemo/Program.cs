@@ -1,12 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿namespace Example.Scryfall.ConfigDemo;
 
-namespace Example.Scryfall.ConfigDemo;
-
-class Program
+internal class Program
 {
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        ScryfallConfigDemoApplication app = new ScryfallConfigDemoApplication();
+        ScryfallConfigDemoApplication app = new();
         await app.StartUp(args).ConfigureAwait(false);
     }
 }

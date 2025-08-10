@@ -1,5 +1,4 @@
 ﻿using Lib.Cosmos.Configurations;
-using Lib.Cosmos.Tests.Fakes;
 using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
 

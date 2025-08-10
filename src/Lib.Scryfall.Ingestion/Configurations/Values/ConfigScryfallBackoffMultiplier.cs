@@ -1,6 +1,5 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Configurations.Values;
 using Lib.Universal.Configurations;
-using Lib.Universal.Extensions;
 
 namespace Lib.Scryfall.Ingestion.Configurations.Values;
 
