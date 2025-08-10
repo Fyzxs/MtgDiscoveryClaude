@@ -6,28 +6,28 @@ using Lib.Scryfall.Ingestion.Apis.Paging;
 namespace Lib.Scryfall.Ingestion.Apis.Collections;
 
 /// <summary>
-/// Base collection for Scryfall API data.
+/// Collection for Scryfall API data.
 /// </summary>
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
-public abstract class HttpScryfallCollection<TDto, TDomain>
+public sealed class HttpScryfallCollection<TDto, TDomain>
     where TDto : IScryfallDto
 {
     private readonly IScryfallListPaging<TDto> _paging;
+    private readonly IScryfallDtoTransformer<TDto, TDomain> _transformer;
 
-    protected HttpScryfallCollection(IScryfallListPaging<TDto> paging)
+    public HttpScryfallCollection(IScryfallListPaging<TDto> paging, IScryfallDtoTransformer<TDto, TDomain> transformer)
     {
         _paging = paging;
+        _transformer = transformer;
     }
 
-    protected async IAsyncEnumerable<TDomain> Items()
+    public async IAsyncEnumerable<TDomain> Items()
     {
 #pragma warning disable CA2007 // IAsyncEnumerable doesn't support ConfigureAwait
         await foreach (TDto dto in _paging.Items())
         {
-            yield return Transform(dto);
+            yield return _transformer.Transform(dto);
         }
 #pragma warning restore CA2007
     }
-
-    protected abstract TDomain Transform(TDto item);
 }

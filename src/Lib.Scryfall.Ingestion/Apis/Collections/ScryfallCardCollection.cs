@@ -11,27 +11,30 @@ namespace Lib.Scryfall.Ingestion.Apis.Collections;
 /// Collection of cards for a specific set.
 /// </summary>
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
-public sealed class ScryfallCardCollection : HttpScryfallCollection<ExtScryfallCardDto, IScryfallCard>, IAsyncEnumerable<IScryfallCard>
+public sealed class ScryfallCardCollection : IAsyncEnumerable<IScryfallCard>
 {
+    private readonly HttpScryfallCollection<ExtScryfallCardDto, IScryfallCard> _collection;
     private readonly IScryfallSet _set;
 
 #pragma warning disable CA2000 // Dispose objects before losing scope - Managed resources will be garbage collected
-    public ScryfallCardCollection(IScryfallSet set, Url url) : base(new HttpScryfallCardListPaging(url))
+    public ScryfallCardCollection(IScryfallSet set, Url url) : this(set, new HttpScryfallCardListPaging(url))
 #pragma warning restore CA2000
     {
-        _set = set;
     }
 
-    protected override IScryfallCard Transform(ExtScryfallCardDto item)
+    internal ScryfallCardCollection(IScryfallSet set, IScryfallListPaging<ExtScryfallCardDto> paging)
     {
-        return new ScryfallCard(item);
+        _set = set;
+#pragma warning disable CA2000 // Dispose objects before losing scope - Managed resources will be garbage collected
+        _collection = new HttpScryfallCollection<ExtScryfallCardDto, IScryfallCard>(paging, new ScryfallCardDtoTransformer());
+#pragma warning restore CA2000
     }
 
     public IAsyncEnumerator<IScryfallCard> GetAsyncEnumerator(System.Threading.CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
 #pragma warning disable CA2016 // Not forwarding cancellation token
-        return Items().GetAsyncEnumerator();
+        return _collection.Items().GetAsyncEnumerator();
 #pragma warning restore CA2016
     }
 }
