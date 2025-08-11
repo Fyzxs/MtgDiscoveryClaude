@@ -8,3 +8,4 @@ P:System.StringComparer.InvariantCulture;InvariantCulture performs a linguistic 
 P:System.StringComparer.InvariantCultureIgnoreCase;InvariantCultureIgnoreCase performs a linguistic comparison. Most of the time OrdinalIgnoreCase is the correct one.
 
 N:System.Text.Json;Use Netwonsoft.Json instead.
+N:System.ComponentModel.Container; You probably meant Cosmos.
