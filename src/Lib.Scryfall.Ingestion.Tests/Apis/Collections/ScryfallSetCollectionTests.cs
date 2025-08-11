@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Collections;
@@ -30,15 +30,15 @@ public sealed class ScryfallSetCollectionTests
             'search_uri': 'https://api.scryfall.com/cards/search?q=set:tst2'
         }");
 
-        List<ExtScryfallSetDto> sets = new()
-        {
+        List<ExtScryfallSetDto> sets =
+        [
             new ExtScryfallSetDto(rawData1),
             new ExtScryfallSetDto(rawData2)
-        };
+        ];
 
         ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = sets };
         ScryfallSetCollection subject = new(pagingFake);
-        List<IScryfallSet> actual = new();
+        List<IScryfallSet> actual = [];
 
         // Act
         await foreach (IScryfallSet set in subject.ConfigureAwait(false))
@@ -58,9 +58,9 @@ public sealed class ScryfallSetCollectionTests
     public async Task GetAsyncEnumerator_EmptyPaging_ReturnsNoItems()
     {
         // Arrange
-        ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = new() };
+        ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = [] };
         ScryfallSetCollection subject = new(pagingFake);
-        List<IScryfallSet> actual = new();
+        List<IScryfallSet> actual = [];
 
         // Act
         await foreach (IScryfallSet set in subject.ConfigureAwait(false))
@@ -91,16 +91,16 @@ public sealed class ScryfallSetCollectionTests
             'search_uri': 'https://api.scryfall.com/cards/search?q=set:tst2'
         }");
 
-        List<ExtScryfallSetDto> sets = new()
-        {
+        List<ExtScryfallSetDto> sets =
+        [
             new ExtScryfallSetDto(rawData1),
             new ExtScryfallSetDto(rawData2)
-        };
+        ];
 
         ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = sets };
         ScryfallSetCollection subject = new(pagingFake);
         using CancellationTokenSource cts = new();
-        List<IScryfallSet> actual = new();
+        List<IScryfallSet> actual = [];
 
         // Act
         await foreach (IScryfallSet set in subject.WithCancellation(cts.Token).ConfigureAwait(false))
@@ -129,9 +129,9 @@ public sealed class ScryfallSetCollectionTests
             'set_type': 'expansion'
         }");
         ExtScryfallSetDto dto = new(rawData);
-        ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = new() { dto } };
+        ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = [dto] };
         ScryfallSetCollection subject = new(pagingFake);
-        List<IScryfallSet> actual = new();
+        List<IScryfallSet> actual = [];
 
         // Act
         await foreach (IScryfallSet set in subject.ConfigureAwait(false))
@@ -144,8 +144,8 @@ public sealed class ScryfallSetCollectionTests
         IScryfallSet actualSet = actual[0];
         _ = actualSet.Should().NotBeNull();
         _ = actualSet.Name().Should().Be("Test Set");
-        _ = actualSet.Data().id.ToString().Should().Be("test-id");
-        _ = actualSet.Data().code.ToString().Should().Be("TST");
+        _ = ((string)actualSet.Data().id).Should().Be("test-id");
+        _ = ((string)actualSet.Data().code).Should().Be("TST");
     }
 
     [TestMethod]
@@ -160,7 +160,7 @@ public sealed class ScryfallSetCollectionTests
             'search_uri': 'https://api.scryfall.com/cards/search?q=set:tst1'
         }");
 
-        List<ExtScryfallSetDto> sets = new() { new ExtScryfallSetDto(rawData) };
+        List<ExtScryfallSetDto> sets = [new ExtScryfallSetDto(rawData)];
         ScryfallListPagingFake<ExtScryfallSetDto> pagingFake = new() { ItemsResult = sets };
         ScryfallSetCollection subject = new(pagingFake);
 

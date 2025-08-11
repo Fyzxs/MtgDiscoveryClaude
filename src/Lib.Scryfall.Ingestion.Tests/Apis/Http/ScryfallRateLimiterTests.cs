@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Http;
@@ -48,8 +48,10 @@ public sealed class ScryfallRateLimiterTests
     {
         // Arrange
         using ScryfallRateLimiter rateLimiter = new();
-        using IRateLimitToken firstToken = await rateLimiter.AcquireTokenAsync().ConfigureAwait(false);
-        firstToken.Dispose();
+        using (_ = await rateLimiter.AcquireTokenAsync().ConfigureAwait(false))
+        {
+            // Simulate waiting for the rate limit to reset
+        }
         await Task.Delay(110).ConfigureAwait(false); // Wait more than 100ms
         Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -76,10 +78,6 @@ public sealed class ScryfallRateLimiterTests
 
         // Assert
         _ = acquireTask.IsCompleted.Should().BeFalse();
-
-        // Cleanup
-        firstToken.Dispose();
-        using IRateLimitToken secondToken = await acquireTask.ConfigureAwait(false);
     }
 
     [TestMethod]

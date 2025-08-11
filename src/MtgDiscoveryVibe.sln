@@ -27,6 +27,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.ConfigDemo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.ApiDemo", "Example.Scryfall.ApiDemo\Example.Scryfall.ApiDemo.csproj", "{8F41964F-BEFB-4980-9A80-71746A11E9F5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".toolFiles", ".toolFiles", "{96DD3C0B-3D59-72D0-DD74-F8C80B6C5F51}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		BannedSymbols.txt = BannedSymbols.txt
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

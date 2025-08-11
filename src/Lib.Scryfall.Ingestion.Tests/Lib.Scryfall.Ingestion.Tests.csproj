@@ -5,9 +5,4 @@
     <ProjectReference Include="..\TestConvenience.Core\TestConvenience.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Apis\Collections\" />
-    <Folder Include="Fakes\" />
-  </ItemGroup>
-
 </Project>

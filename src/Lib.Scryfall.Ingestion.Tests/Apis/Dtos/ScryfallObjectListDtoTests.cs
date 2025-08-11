@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Lib.Scryfall.Ingestion.Apis.Dtos;
+﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Apis.Dtos;
@@ -27,7 +26,7 @@ public sealed class ScryfallObjectListDtoTests
         dynamic actual = subject.Data;
 
         // Assert
-        _ = actual.Should().NotBeNull();
+        _ = ((object)actual).Should().NotBeNull();
         _ = ((object)actual[0].id.ToString()).Should().Be("1");
         _ = ((object)actual[0].name.ToString()).Should().Be("Item 1");
         _ = ((object)actual[1].id.ToString()).Should().Be("2");
@@ -190,6 +189,6 @@ public sealed class ScryfallObjectListDtoTests
         dynamic actual = subject.Data;
 
         // Assert
-        _ = actual.Should().BeNull();
+        _ = ((object)actual).Should().BeNull();
     }
 }

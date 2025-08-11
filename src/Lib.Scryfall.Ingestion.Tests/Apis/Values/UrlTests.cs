@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Lib.Scryfall.Ingestion.Apis.Values;
 
 namespace Lib.Scryfall.Ingestion.Tests.Apis.Values;

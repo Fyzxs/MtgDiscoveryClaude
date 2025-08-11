@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 
 namespace Lib.Scryfall.Ingestion.Apis.Http;
@@ -9,6 +9,7 @@ namespace Lib.Scryfall.Ingestion.Apis.Http;
 internal sealed class RateLimitToken : IRateLimitToken
 {
     private readonly SemaphoreSlim _semaphore;
+    private bool _disposed;
 
     /// <summary>
     /// Gets the time when this token was acquired.
@@ -23,6 +24,12 @@ internal sealed class RateLimitToken : IRateLimitToken
 
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+
         _semaphore.Release();
+        _disposed = true;
     }
 }

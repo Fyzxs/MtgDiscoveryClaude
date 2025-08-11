@@ -17,7 +17,11 @@
       "Bash(cat:*)",
       "Bash(python3:*)",
       "Bash(dotnet sln:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet nuget locals:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet vstest:*)"
     ],
     "deny": []
   }
