@@ -1,19 +1,15 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
-using Lib.Scryfall.Ingestion.Apis.Values;
+using Lib.Scryfall.Ingestion.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Apis.Paging;
 
 /// <summary>
-/// Paging implementation for Scryfall cards.
+/// Knowledge class for Scryfall card paging - knows how to configure paging for cards.
 /// </summary>
 public sealed class HttpScryfallCardListPaging : HttpScryfallListPaging<ExtScryfallCardDto>
 {
-    public HttpScryfallCardListPaging(Url url) : base(url)
+    public HttpScryfallCardListPaging(IScryfallSet set)
+        : base(set, new ScryfallCardDtoFactory())
     {
-    }
-
-    protected override ExtScryfallCardDto CreateDto(dynamic item)
-    {
-        return new ExtScryfallCardDto(item);
     }
 }

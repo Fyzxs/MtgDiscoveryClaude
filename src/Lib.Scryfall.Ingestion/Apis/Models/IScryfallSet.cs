@@ -1,11 +1,11 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Values;
+﻿using System.Collections.Generic;
 
 namespace Lib.Scryfall.Ingestion.Apis.Models;
 
 /// <summary>
 /// Represents a Scryfall set.
 /// </summary>
-public interface IScryfallSet
+public interface IScryfallSet : IScryfallSearchUri
 {
     /// <summary>
     /// Gets the set code.
@@ -18,12 +18,13 @@ public interface IScryfallSet
     string Name();
 
     /// <summary>
-    /// Gets the URL for fetching this set's cards.
-    /// </summary>
-    Url SearchUri();
-
-    /// <summary>
     /// Gets the raw data.
     /// </summary>
     dynamic Data();
+
+    /// <summary>
+    /// Gets all cards in this set.
+    /// </summary>
+    /// <returns>An asynchronous enumerable of cards in the set.</returns>
+    IAsyncEnumerable<IScryfallCard> Cards();
 }

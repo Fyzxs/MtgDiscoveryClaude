@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Http;
+using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Apis.Values;
 using Lib.Universal.Http;
 using Newtonsoft.Json;
@@ -11,28 +12,47 @@ using Newtonsoft.Json;
 namespace Lib.Scryfall.Ingestion.Apis.Paging;
 
 /// <summary>
-/// Base class for handling Scryfall API pagination.
+/// Base implementation for handling Scryfall API pagination with composition.
 /// </summary>
-public abstract class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
+public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
 {
+    private readonly IScryfallSearchUri _searchUriProvider;
     private readonly Url _url;
     private readonly IHttpClient _httpClient;
+    private readonly IScryfallDtoFactory<T> _dtoFactory;
+
+    protected HttpScryfallListPaging(IScryfallSearchUri searchUriProvider, IScryfallDtoFactory<T> dtoFactory)
+        : this(searchUriProvider, dtoFactory, new RateLimitedHttpClient())
+    {
+    }
+
+    private HttpScryfallListPaging(IScryfallSearchUri searchUriProvider, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient)
+    {
+        _searchUriProvider = searchUriProvider;
+        _url = null;
+        _dtoFactory = dtoFactory;
+        _httpClient = httpClient;
+    }
 
 #pragma warning disable CA2000 // Dispose objects before losing scope - Managed resources will be garbage collected
-    protected HttpScryfallListPaging(Url url) : this(url, new RateLimitedHttpClient())
+    protected HttpScryfallListPaging(Url url, IScryfallDtoFactory<T> dtoFactory)
+        : this(url, dtoFactory, new RateLimitedHttpClient())
     {
     }
 #pragma warning restore CA2000
 
-    private HttpScryfallListPaging(Url url, IHttpClient httpClient)
+    private HttpScryfallListPaging(Url url, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient)
     {
+        _searchUriProvider = null;
         _url = url;
+        _dtoFactory = dtoFactory;
         _httpClient = httpClient;
     }
 
     public IAsyncEnumerable<T> Items()
     {
-        return ItemsInternal(_url);
+        Url urlToUse = _url ?? _searchUriProvider?.SearchUri();
+        return ItemsInternal(urlToUse);
     }
 
     private async IAsyncEnumerable<T> ItemsInternal(Url pageUrl)
@@ -64,7 +84,7 @@ public abstract class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T
 
         foreach (dynamic item in paging.Data)
         {
-            yield return CreateDto(item);
+            yield return _dtoFactory.Create(item);
         }
 
         if (paging.HasMore is false)
@@ -80,7 +100,4 @@ public abstract class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T
             yield return item;
         }
     }
-
-    protected abstract T CreateDto(dynamic item);
-
 }

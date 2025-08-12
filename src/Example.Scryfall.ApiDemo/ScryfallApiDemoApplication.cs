@@ -17,7 +17,7 @@ public sealed class ScryfallApiDemoApplication : ExampleApplication
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         await Console.Out.WriteLineAsync("Fetching all sets from Scryfall...").ConfigureAwait(false);
-        ScryfallSetCollection sets = new();
+        HttpScryfallSetCollection sets = new();
 
         int setCount = 0;
         int totalCards = 0;
@@ -31,7 +31,7 @@ public sealed class ScryfallApiDemoApplication : ExampleApplication
             if (setCount > MaxSetsToProcess) continue;
 
             await Console.Out.WriteLineAsync($"  Fetching cards for {set.Name()}...").ConfigureAwait(false);
-            ScryfallCardCollection cards = new(set, set.SearchUri());
+            HttpScryfallCardCollection cards = new(set);
 
             int cardCount = 0;
             const int MaxCardsToShow = 5;

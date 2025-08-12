@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Http;
 using Lib.Scryfall.Ingestion.Tests.Fakes;

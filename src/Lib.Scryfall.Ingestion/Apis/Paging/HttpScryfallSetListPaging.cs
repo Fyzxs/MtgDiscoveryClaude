@@ -4,16 +4,14 @@ using Lib.Scryfall.Ingestion.Apis.Values;
 namespace Lib.Scryfall.Ingestion.Apis.Paging;
 
 /// <summary>
-/// Paging implementation for Scryfall sets.
+/// Knowledge class for Scryfall set paging - knows how to configure paging for sets.
 /// </summary>
 public sealed class HttpScryfallSetListPaging : HttpScryfallListPaging<ExtScryfallSetDto>
 {
-    public HttpScryfallSetListPaging() : base(new Url("https://api.scryfall.com/sets"))
-    {
-    }
+    private const string HttpsApiScryfallComSets = "https://api.scryfall.com/sets";
 
-    protected override ExtScryfallSetDto CreateDto(dynamic item)
+    public HttpScryfallSetListPaging()
+        : base(new Url(HttpsApiScryfallComSets), new ScryfallSetDtoFactory())
     {
-        return new ExtScryfallSetDto(item);
     }
 }

@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
+using Lib.Scryfall.Ingestion.Apis.Paging;
+using Lib.Scryfall.Ingestion.Apis.Values;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
 using Newtonsoft.Json;
 
@@ -28,7 +30,7 @@ public sealed class HttpScryfallCollectionTests
 
         ScryfallListPagingFake<TestDto> pagingFake = new() { ItemsResult = dtos };
         TestDtoTransformerFake<TestDto, TestDomainModel> transformerFake = new() { TransformResult = null };
-        HttpScryfallCollection<TestDto, TestDomainModel> subject = new(pagingFake, transformerFake);
+        TestHttpScryfallCollection subject = new(pagingFake, transformerFake);
         List<TestDomainModel> actual = [];
 
         // Act
@@ -50,7 +52,7 @@ public sealed class HttpScryfallCollectionTests
         // Arrange
         ScryfallListPagingFake<TestDto> pagingFake = new() { ItemsResult = [] };
         TestDtoTransformerFake<TestDto, TestDomainModel> transformerFake = new() { TransformResult = null };
-        HttpScryfallCollection<TestDto, TestDomainModel> subject = new(pagingFake, transformerFake);
+        TestHttpScryfallCollection subject = new(pagingFake, transformerFake);
         List<TestDomainModel> actual = [];
 
         // Act
@@ -75,7 +77,7 @@ public sealed class HttpScryfallCollectionTests
 
         ScryfallListPagingFake<TestDto> pagingFake = new() { ItemsResult = dtos };
         TestDtoTransformerFake<TestDto, TestDomainModel> transformerFake = new() { TransformResult = null };
-        HttpScryfallCollection<TestDto, TestDomainModel> subject = new(pagingFake, transformerFake);
+        TestHttpScryfallCollection subject = new(pagingFake, transformerFake);
 
         // Act
         int count1 = 0;
@@ -113,5 +115,14 @@ public sealed class HttpScryfallCollectionTests
     private sealed class TestDomainModel
     {
         public string Value { get; init; }
+    }
+
+    // Test implementation of abstract class
+    private sealed class TestHttpScryfallCollection : HttpScryfallCollection<TestDto, TestDomainModel>
+    {
+        public TestHttpScryfallCollection(IScryfallListPaging<TestDto> paging, IScryfallDtoTransformer<TestDto, TestDomainModel> transformer)
+            : base(paging, transformer)
+        {
+        }
     }
 }
