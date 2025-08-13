@@ -21,7 +21,9 @@
       "Bash(dotnet clean:*)",
       "Bash(dotnet nuget locals:*)",
       "Bash(dotnet restore:*)",
-      "Bash(dotnet vstest:*)"
+      "Bash(dotnet vstest:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet new:*)"
     ],
     "deny": []
   }

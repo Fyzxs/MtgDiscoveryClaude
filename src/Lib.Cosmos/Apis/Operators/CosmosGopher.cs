@@ -8,7 +8,7 @@ public interface ICosmosGopher : ICosmosContainerReadOperator;
 /// <summary>
 /// Provides an abstract base class for read operations on a Cosmos container.
 /// </summary>
-public class CosmosGopher : ICosmosGopher
+public abstract class CosmosGopher : ICosmosGopher
 {
     /// <summary>
     /// The underlying read operator that this class delegates to.

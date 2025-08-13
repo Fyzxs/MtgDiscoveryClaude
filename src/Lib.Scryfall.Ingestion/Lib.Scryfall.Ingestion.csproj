@@ -13,4 +13,9 @@
     <ProjectReference Include="..\Lib.BlobStorage\Lib.BlobStorage.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lib.Scryfall.Ingestion.Tests" />
+    <InternalsVisibleTo Include="Example.Scryfall.CosmosIngestion" />
+  </ItemGroup>
+
 </Project>

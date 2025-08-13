@@ -1,4 +1,4 @@
-namespace Lib.Scryfall.Ingestion.Apis.Dtos;
+﻿namespace Lib.Scryfall.Ingestion.Apis.Dtos;
 
 /// <summary>
 /// Factory for creating DTOs from dynamic data.

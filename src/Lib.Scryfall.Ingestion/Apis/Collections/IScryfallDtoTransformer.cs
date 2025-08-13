@@ -1,4 +1,4 @@
-namespace Lib.Scryfall.Ingestion.Apis.Collections;
+﻿namespace Lib.Scryfall.Ingestion.Apis.Collections;
 
 /// <summary>
 /// Transforms DTOs to domain models.

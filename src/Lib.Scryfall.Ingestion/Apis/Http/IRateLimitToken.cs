@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Lib.Scryfall.Ingestion.Apis.Http;
 
