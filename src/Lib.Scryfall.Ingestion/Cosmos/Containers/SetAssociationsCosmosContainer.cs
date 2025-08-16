@@ -1,4 +1,5 @@
 ﻿using Lib.Cosmos.Apis;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Containers;
 

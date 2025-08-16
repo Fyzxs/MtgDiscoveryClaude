@@ -1,4 +1,4 @@
-using Lib.Scryfall.Ingestion.Apis.Values;
+﻿using Lib.Scryfall.Ingestion.Apis.Values;
 
 namespace Lib.Scryfall.Ingestion.Apis.Models;
 
