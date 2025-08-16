@@ -1,10 +1,11 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
-using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Internal.Dtos;
 using Lib.Scryfall.Ingestion.Internal.Models;
 using Lib.Scryfall.Ingestion.Internal.Transformers;
+using Lib.Scryfall.Ingestion.Tests.Fakes;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Tests.Apis.Collections;
+namespace Lib.Scryfall.Ingestion.Tests.Internal.Collections;
 
 [TestClass]
 public sealed class ScryfallCardDtoTransformerTests
@@ -32,7 +33,8 @@ public sealed class ScryfallCardDtoTransformerTests
             'flavor_text': 'The spark that ignites the powder keg.'
         }");
         ExtScryfallCardDto dto = new(rawData);
-        ScryfallCardDtoTransformer transformer = new();
+        IScryfallSet set = new ScryfallSetFake();
+        ScryfallCardDtoTransformer transformer = new(set);
 
         // Act
         IScryfallCard actual = transformer.Transform(dto);
@@ -65,7 +67,8 @@ public sealed class ScryfallCardDtoTransformerTests
             'rarity': 'uncommon'
         }");
         ExtScryfallCardDto dto = new(rawData);
-        ScryfallCardDtoTransformer transformer = new();
+        IScryfallSet set = new ScryfallSetFake();
+        ScryfallCardDtoTransformer transformer = new(set);
 
         // Act
         IScryfallCard actual = transformer.Transform(dto);
@@ -88,7 +91,8 @@ public sealed class ScryfallCardDtoTransformerTests
             'name': 'Minimal Card'
         }");
         ExtScryfallCardDto dto = new(rawData);
-        ScryfallCardDtoTransformer transformer = new();
+        IScryfallSet set = new ScryfallSetFake();
+        ScryfallCardDtoTransformer transformer = new(set);
 
         // Act
         IScryfallCard actual = transformer.Transform(dto);
@@ -129,7 +133,8 @@ public sealed class ScryfallCardDtoTransformerTests
             ]
         }");
         ExtScryfallCardDto dto = new(rawData);
-        ScryfallCardDtoTransformer transformer = new();
+        IScryfallSet set = new ScryfallSetFake();
+        ScryfallCardDtoTransformer transformer = new(set);
 
         // Act
         IScryfallCard actual = transformer.Transform(dto);
@@ -151,7 +156,8 @@ public sealed class ScryfallCardDtoTransformerTests
             'name': 'Test Card'
         }");
         ExtScryfallCardDto dto = new(rawData);
-        ScryfallCardDtoTransformer transformer = new();
+        IScryfallSet set = new ScryfallSetFake();
+        ScryfallCardDtoTransformer transformer = new(set);
 
         // Act
         IScryfallCard result1 = transformer.Transform(dto);

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Collections;
-using Lib.Scryfall.Ingestion.Apis.Dtos;
-using Lib.Scryfall.Ingestion.Apis.Paging;
+using Lib.Scryfall.Ingestion.Internal.Collections;
+using Lib.Scryfall.Ingestion.Internal.Dtos;
+using Lib.Scryfall.Ingestion.Internal.Paging;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Tests.Apis.Collections;
+namespace Lib.Scryfall.Ingestion.Tests.Internal.Collections;
 
 [TestClass]
 public sealed class HttpScryfallCollectionTests

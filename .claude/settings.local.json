@@ -1,29 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)",
-      "Bash(find:*)",
-      "Bash(dotnet build:*)",
-      "Bash(dotnet sln add:*)",
-      "Bash(for:*)",
-      "Bash(do sed -i '14s/^$//' \"$file\")",
-      "Bash(done)",
-      "Bash(dotnet format:*)",
-      "Bash(dotnet run:*)",
-      "Bash(./Example.Scryfall.ConfigDemo)",
-      "Bash(rm:*)",
-      "Bash(dotnet test:*)",
-      "Bash(grep:*)",
-      "Bash(cat:*)",
-      "Bash(python3:*)",
-      "Bash(dotnet sln:*)",
-      "Bash(mv:*)",
-      "Bash(dotnet clean:*)",
-      "Bash(dotnet nuget locals:*)",
-      "Bash(dotnet restore:*)",
-      "Bash(dotnet vstest:*)",
-      "Bash(dotnet add:*)",
-      "Bash(dotnet new:*)"
+      "Bash(true)"
     ],
     "deny": []
   }

@@ -1,11 +1,11 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
-using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Internal.Dtos;
 using Lib.Scryfall.Ingestion.Internal.Models;
 using Lib.Scryfall.Ingestion.Internal.Transformers;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Tests.Apis.Collections;
+namespace Lib.Scryfall.Ingestion.Tests.Internal.Collections;
 
 [TestClass]
 public sealed class ScryfallSetDtoTransformerTests

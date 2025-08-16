@@ -6,8 +6,14 @@ using Lib.Scryfall.Ingestion.Internal.Models;
 namespace Lib.Scryfall.Ingestion.Internal.Transformers;
 internal sealed class ScryfallCardDtoTransformer : IScryfallDtoTransformer<ExtScryfallCardDto, IScryfallCard>
 {
+    private readonly IScryfallSet _set;
+
+    public ScryfallCardDtoTransformer(IScryfallSet set)
+    {
+        _set = set;
+    }
     public IScryfallCard Transform(ExtScryfallCardDto dto)
     {
-        return new ScryfallCard(dto);
+        return new ScryfallCard(dto, _set);
     }
 }

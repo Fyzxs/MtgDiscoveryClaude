@@ -1,4 +1,4 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Collections;
+﻿using Lib.Scryfall.Ingestion.Internal.Collections;
 
 namespace Lib.Scryfall.Ingestion.Tests.Fakes;
 

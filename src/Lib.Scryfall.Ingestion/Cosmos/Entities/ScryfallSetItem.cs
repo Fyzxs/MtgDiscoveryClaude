@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Entities;
 
-public sealed class ScryfallSetItem : CosmosItem, IScryfallPayload
+internal sealed class ScryfallSetItem : CosmosItem, IScryfallPayload
 {
     public override string Id => Data.id;
     public override string Partition => Data.code;

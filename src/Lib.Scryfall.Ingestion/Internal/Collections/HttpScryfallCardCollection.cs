@@ -10,6 +10,6 @@ namespace Lib.Scryfall.Ingestion.Internal.Collections;
 internal sealed class HttpScryfallCardCollection : HttpScryfallCollection<ExtScryfallCardDto, IScryfallCard>
 {
     public HttpScryfallCardCollection(IScryfallSet set, ILogger logger)
-        : base(new HttpScryfallCardListPaging(set, logger), new ScryfallCardDtoTransformer())
+        : base(new HttpScryfallCardListPaging(set, logger), new ScryfallCardDtoTransformer(set))
     { }
 }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Icons;
 
-public interface ISetIconBlobScribe : IBlobWriteScribe
+internal interface ISetIconBlobScribe : IBlobWriteScribe
 {
     Task<BlobOpResponse<BlobContentInfo>> WriteSetIconAsync(string setId, string setCode, byte[] iconData);
 }

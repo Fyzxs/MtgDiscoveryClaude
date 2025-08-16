@@ -1,7 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
+﻿using Lib.Scryfall.Ingestion.Internal.Dtos;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Tests.Apis.Dtos;
+namespace Lib.Scryfall.Ingestion.Tests.Internal.Dtos;
 
 [TestClass]
 public sealed class ScryfallObjectListDtoTests

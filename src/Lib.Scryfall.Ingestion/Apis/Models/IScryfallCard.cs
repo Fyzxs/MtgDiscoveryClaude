@@ -14,4 +14,6 @@ public interface IScryfallCard
     /// Gets the raw data.
     /// </summary>
     dynamic Data();
+
+    IScryfallSet Set();
 }

@@ -8,6 +8,8 @@ using Lib.Scryfall.Ingestion.Apis.Values;
 using Lib.Scryfall.Ingestion.Internal.Dtos;
 using Lib.Scryfall.Ingestion.Internal.Http;
 using Lib.Universal.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Internal.Paging;
 internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto

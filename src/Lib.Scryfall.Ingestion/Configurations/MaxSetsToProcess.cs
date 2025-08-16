@@ -2,7 +2,7 @@
 
 namespace Lib.Scryfall.Ingestion.Configurations;
 
-public abstract class MaxSetsToProcess : ToSystemType<int>
+internal abstract class MaxSetsToProcess : ToSystemType<int>
 {
     public abstract bool IsUnlimited();
 }
