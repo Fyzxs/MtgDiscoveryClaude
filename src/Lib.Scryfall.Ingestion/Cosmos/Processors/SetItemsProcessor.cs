@@ -15,7 +15,15 @@ internal sealed class SetItemsProcessor : ISetItemsProcessor
     private readonly IScryfallSetToCosmosMapper _mapper;
     private readonly ILogger _logger;
 
-    public SetItemsProcessor(
+    public SetItemsProcessor(ILogger logger)
+        : this(
+            new ScryfallSetItemsScribe(logger),
+            new ScryfallSetToCosmosMapper(),
+            logger)
+    {
+    }
+
+    private SetItemsProcessor(
         IScryfallSetItemsScribe scribe,
         IScryfallSetToCosmosMapper mapper,
         ILogger logger)

@@ -15,7 +15,15 @@ internal sealed class SetAssociationsProcessor : ISetAssociationsProcessor
     private readonly IScryfallSetToAssociationMapper _mapper;
     private readonly ILogger _logger;
 
-    public SetAssociationsProcessor(
+    public SetAssociationsProcessor(ILogger logger)
+        : this(
+            new ScryfallSetAssociationsScribe(logger),
+            new ScryfallSetToAssociationMapper(),
+            logger)
+    {
+    }
+
+    private SetAssociationsProcessor(
         IScryfallSetAssociationsScribe scribe,
         IScryfallSetToAssociationMapper mapper,
         ILogger logger)

@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
+using Lib.BlobStorage.Apis;
 using Lib.BlobStorage.Apis.Operations.Responses;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,15 @@ internal sealed class SetIconProcessor : ISetIconProcessor
     private readonly ISetIconBlobScribe _scribe;
     private readonly ILogger _logger;
 
-    public SetIconProcessor(
+    public SetIconProcessor(ILogger logger)
+        : this(
+            new SetIconDownloader(logger),
+            new SetIconBlobScribe(logger),
+            logger)
+    {
+    }
+
+    private SetIconProcessor(
         ISetIconDownloader downloader,
         ISetIconBlobScribe scribe,
         ILogger logger)
