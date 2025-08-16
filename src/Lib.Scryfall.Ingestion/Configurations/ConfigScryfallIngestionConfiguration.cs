@@ -1,8 +1,6 @@
-﻿using Lib.Scryfall.Ingestion.Configurations;
-using Lib.Scryfall.Ingestion.Internal.Configurations;
-using Lib.Universal.Configurations;
+﻿using Lib.Universal.Configurations;
 
-namespace Lib.Scryfall.Ingestion.Apis;
+namespace Lib.Scryfall.Ingestion.Configurations;
 internal sealed class ConfigScryfallIngestionConfiguration : IScryfallIngestionConfiguration
 {
     private readonly IConfig _config;

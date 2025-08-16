@@ -1,5 +1,4 @@
-﻿using Lib.Scryfall.Ingestion.Internal.Configurations;
-using Lib.Universal.Configurations;
+﻿using Lib.Universal.Configurations;
 
 namespace Lib.Scryfall.Ingestion.Configurations;
 

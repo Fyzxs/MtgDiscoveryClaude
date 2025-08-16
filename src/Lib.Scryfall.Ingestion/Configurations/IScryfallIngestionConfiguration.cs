@@ -1,4 +1,4 @@
-﻿namespace Lib.Scryfall.Ingestion.Internal.Configurations;
+﻿namespace Lib.Scryfall.Ingestion.Configurations;
 internal interface IScryfallIngestionConfiguration
 {
     const string ScryfallIngestionConfigurationKey = "ScryfallIngestionConfiguration";

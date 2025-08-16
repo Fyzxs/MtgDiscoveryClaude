@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Configurations;
 using Lib.Scryfall.Ingestion.Internal.Collections;
-using Lib.Scryfall.Ingestion.Internal.Configurations;
 using Lib.Scryfall.Ingestion.Internal.Filters;
 using Microsoft.Extensions.Logging;
 

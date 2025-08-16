@@ -19,4 +19,8 @@
     <InternalsVisibleTo Include="Example.Scryfall.ApiDemo" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BlobStorage\" />
+  </ItemGroup>
+
 </Project>

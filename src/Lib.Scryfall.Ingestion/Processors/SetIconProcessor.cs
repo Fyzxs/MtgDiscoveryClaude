@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using Lib.BlobStorage.Apis.Operations.Responses;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Icons;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Icons.Processors;
+namespace Lib.Scryfall.Ingestion.Processors;
 
-internal sealed class SetIconProcessor : ISetIconProcessor
+internal sealed class SetIconProcessor : ISetProcessor
 {
     private readonly ISetIconDownloader _downloader;
     private readonly ISetIconBlobScribe _scribe;
@@ -46,8 +47,7 @@ internal sealed class SetIconProcessor : ISetIconProcessor
             byte[] iconData = await _downloader.DownloadIconAsync(iconUrl).ConfigureAwait(false);
 
             // Store the icon in blob storage
-            BlobOpResponse<BlobContentInfo> response =
-                await _scribe.WriteSetIconAsync(setId, setCode, iconData).ConfigureAwait(false);
+            BlobOpResponse<BlobContentInfo> response = await _scribe.WriteSetIconAsync(setId, setCode, iconData).ConfigureAwait(false);
 
             LogSuccess(setCode, response);
             LogFailure(setCode, response);
