@@ -1,5 +1,5 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Cosmos.Processors;
+using Lib.Scryfall.Ingestion.Processors;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;

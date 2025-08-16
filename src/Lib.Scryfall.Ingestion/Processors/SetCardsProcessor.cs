@@ -7,7 +7,7 @@ using Lib.Scryfall.Ingestion.Cosmos.Mappers;
 using Lib.Scryfall.Ingestion.Cosmos.Operators;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Cosmos.Processors;
+namespace Lib.Scryfall.Ingestion.Processors;
 
 internal sealed class SetCardsProcessor : ICardsProcessor
 {

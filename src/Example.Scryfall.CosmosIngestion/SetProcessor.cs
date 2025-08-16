@@ -1,5 +1,5 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Cosmos.Processors;
+using Lib.Scryfall.Ingestion.Processors;
 using Lib.Scryfall.Ingestion.Icons.Processors;
 using Lib.Scryfall.Ingestion.Internal.Processors;
 using Microsoft.Extensions.Logging;

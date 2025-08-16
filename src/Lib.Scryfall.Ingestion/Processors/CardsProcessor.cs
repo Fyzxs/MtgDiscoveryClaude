@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Cosmos.Processors;
+namespace Lib.Scryfall.Ingestion.Processors;
 
 internal sealed class CardsProcessor : ICardsProcessor
 {

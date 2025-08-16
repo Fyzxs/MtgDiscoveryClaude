@@ -8,7 +8,7 @@ using Lib.Scryfall.Ingestion.Cosmos.Operators;
 using Lib.Scryfall.Ingestion.Internal.Processors;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Cosmos.Processors;
+namespace Lib.Scryfall.Ingestion.Processors;
 
 internal sealed class SetItemsProcessor : ISetProcessor
 {
