@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Collections;
+﻿using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Cosmos.Processors;
 using Lib.Scryfall.Ingestion.Icons.Processors;

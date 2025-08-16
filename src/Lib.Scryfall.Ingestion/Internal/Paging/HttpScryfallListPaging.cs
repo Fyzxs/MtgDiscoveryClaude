@@ -8,7 +8,6 @@ using Lib.Scryfall.Ingestion.Apis.Http;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Apis.Paging;
 using Lib.Scryfall.Ingestion.Apis.Values;
-using Lib.Scryfall.Ingestion.Internal.Http;
 using Lib.Universal.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Paging;
-using Lib.Scryfall.Ingestion.Apis.Values;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
 using Newtonsoft.Json;
 
