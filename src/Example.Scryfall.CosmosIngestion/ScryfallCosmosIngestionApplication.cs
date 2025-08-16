@@ -2,6 +2,7 @@
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Cosmos.Mappers;
 using Lib.Scryfall.Ingestion.Cosmos.Operators;
+using Lib.Scryfall.Ingestion.Cosmos.Processors;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;
@@ -17,14 +18,23 @@ public sealed class ScryfallCosmosIngestionApplication : ExampleApplication
         try
         {
             NonDigitalScryfallSetCollection scryfallSets = new();
-            IScryfallSetItemsScribe scribe = new ScryfallSetItemsScribe(GetLogger<ScryfallSetItemsScribe>());
-            IScryfallSetToCosmosMapper mapper = new ScryfallSetToCosmosMapper();
+
+            // Create processors with their dependencies
+            ISetItemsProcessor setItemsProcessor = new SetItemsProcessor(
+                new ScryfallSetItemsScribe(GetLogger<ScryfallSetItemsScribe>()),
+                new ScryfallSetToCosmosMapper(),
+                GetLogger<SetItemsProcessor>());
+
+            ISetAssociationsProcessor setAssociationsProcessor = new SetAssociationsProcessor(
+                new ScryfallSetAssociationsScribe(GetLogger<ScryfallSetAssociationsScribe>()),
+                new ScryfallSetToAssociationMapper(),
+                GetLogger<SetAssociationsProcessor>());
 
             IScryfallIngestionService ingestionService = new ScryfallIngestionService(
                 GetLogger<ScryfallIngestionService>(),
                 scryfallSets,
-                scribe,
-                mapper);
+                setItemsProcessor,
+                setAssociationsProcessor);
 
             await ingestionService.IngestAllSetsAsync().ConfigureAwait(false);
 

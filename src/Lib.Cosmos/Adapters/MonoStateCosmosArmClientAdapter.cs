@@ -20,7 +20,7 @@ internal sealed class MonoStateCosmosArmClientAdapter : ICosmosArmClientAdapter
 
     private ICosmosArmClientAdapter MonoState()
     {
-        string key = _containerDefinition.FriendlyAccountName();
+        string key = $"{_containerDefinition.FriendlyAccountName()}_{_containerDefinition.ContainerName()}";
         return s_cache.GetOrAdd(key, _ => new CosmosArmClientAdapter(_containerDefinition, _connectionConvenience));
     }
 

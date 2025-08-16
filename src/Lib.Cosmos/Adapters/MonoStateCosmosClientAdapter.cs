@@ -26,8 +26,7 @@ internal sealed class MonoStateCosmosClientAdapter : ICosmosClientAdapter
 
     private ICosmosGenesisClientAdapter MonoState()
     {
-        string key = _containerDefinition.FriendlyAccountName();
-        return s_cache.GetOrAdd(key, _ => NewAdapter());
+        return s_cache.GetOrAdd(_containerDefinition.CacheKey(), _ => NewAdapter());
     }
 
     private ICosmosGenesisClientAdapter NewAdapter()

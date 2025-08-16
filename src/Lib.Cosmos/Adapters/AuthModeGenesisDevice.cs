@@ -22,7 +22,7 @@ internal sealed class AuthModeGenesisDevice : IGenesisDevice
 
     public async Task LiveLongAndProsper(ICosmosGenesisClientAdapter genesisClientAdapter) => await Cached().LiveLongAndProsper(genesisClientAdapter).ConfigureAwait(false);
 
-    private IGenesisDevice Cached() => s_cache.GetOrAdd(_containerDefinition.FriendlyAccountName(), _ => NewGenesisDevice());
+    private IGenesisDevice Cached() => s_cache.GetOrAdd(_containerDefinition.CacheKey(), _ => NewGenesisDevice());
 
     private IGenesisDevice NewGenesisDevice()
     {

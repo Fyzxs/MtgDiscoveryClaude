@@ -1,4 +1,4 @@
-using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Ingestion.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Apis.Filters;
 

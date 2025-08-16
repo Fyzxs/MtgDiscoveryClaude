@@ -30,4 +30,10 @@ public interface ICosmosContainerDefinition
     /// </summary>
     /// <returns>The partition key path.</returns>
     CosmosPartitionKeyPath PartitionKeyPath();
+
+    /// <summary>
+    /// Gets the cache key for the container.
+    /// </summary>
+    /// <returns></returns>
+    string CacheKey() => $"{FriendlyAccountName().AsSystemType()}_{DatabaseName().AsSystemType()}_{ContainerName().AsSystemType()}";
 }
