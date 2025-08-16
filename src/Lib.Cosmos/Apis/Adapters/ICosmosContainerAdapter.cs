@@ -1,4 +1,4 @@
-using Lib.Cosmos.Apis.Operators;
+﻿using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Cosmos.Apis.Adapters;
 

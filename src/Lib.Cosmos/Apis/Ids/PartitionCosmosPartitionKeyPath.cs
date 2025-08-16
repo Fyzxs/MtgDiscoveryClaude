@@ -1,4 +1,4 @@
-namespace Lib.Cosmos.Apis.Ids;
+﻿namespace Lib.Cosmos.Apis.Ids;
 
 /// <summary>
 /// Implementation of CosmosPartitionKeyPath that returns "/partition".

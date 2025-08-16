@@ -1,4 +1,4 @@
-namespace Lib.Cosmos.Apis.Configurations;
+﻿namespace Lib.Cosmos.Apis.Configurations;
 
 /// <summary>
 /// Defines common connection options for Azure Cosmos DB.

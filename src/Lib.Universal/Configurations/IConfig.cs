@@ -1,4 +1,4 @@
-namespace Lib.Universal.Configurations;
+﻿namespace Lib.Universal.Configurations;
 
 public interface IConfig
 {

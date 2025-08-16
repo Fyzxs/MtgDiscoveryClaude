@@ -1,4 +1,4 @@
-namespace TestConvenience.Core.Reflection;
+﻿namespace TestConvenience.Core.Reflection;
 
 internal sealed class Asserter : IAsserter
 {
