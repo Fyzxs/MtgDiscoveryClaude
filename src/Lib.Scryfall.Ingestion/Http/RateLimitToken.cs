@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
-using Lib.Scryfall.Ingestion.Internal.Http;
 
-namespace Lib.Scryfall.Ingestion.Internal.Http;
+namespace Lib.Scryfall.Ingestion.Http;
 internal sealed class RateLimitToken : IRateLimitToken
 {
     private readonly SemaphoreSlim _semaphore;

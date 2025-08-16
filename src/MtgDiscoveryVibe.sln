@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.CosmosInge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.BlobStorage", "Example.BlobStorage\Example.BlobStorage.csproj", "{343D71E6-0D50-4700-AF2C-E97A41576444}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared", "Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj", "{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -217,6 +219,18 @@ Global
 		{343D71E6-0D50-4700-AF2C-E97A41576444}.Release|x64.Build.0 = Release|Any CPU
 		{343D71E6-0D50-4700-AF2C-E97A41576444}.Release|x86.ActiveCfg = Release|Any CPU
 		{343D71E6-0D50-4700-AF2C-E97A41576444}.Release|x86.Build.0 = Release|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Debug|x64.Build.0 = Debug|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Debug|x86.Build.0 = Debug|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x64.ActiveCfg = Release|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x64.Build.0 = Release|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x86.ActiveCfg = Release|Any CPU
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 ﻿using System;
-using Lib.Scryfall.Ingestion.Apis.Values;
+using Lib.Universal.Primitives;
 
 namespace Lib.Scryfall.Ingestion.Tests.Apis.Values;
 
@@ -11,15 +11,15 @@ public sealed class UrlTests
     public void AsSystemType_ValidUrl_ReturnsUri()
     {
         // Arrange
-        const string urlString = "https://api.scryfall.com/sets";
-        Url url = new(urlString);
+        const string UrlString = "https://api.scryfall.com/sets";
+        Url url = new ProvidedUrl(UrlString);
 
         // Act
         Uri actual = url.AsSystemType();
 
         // Assert
         _ = actual.Should().NotBeNull();
-        _ = actual.AbsoluteUri.Should().Be(urlString);
+        _ = actual.AbsoluteUri.Should().Be(UrlString);
     }
 
     [TestMethod]
@@ -27,10 +27,10 @@ public sealed class UrlTests
     public void Constructor_ValidUrl_CreatesInstance()
     {
         // Arrange
-        const string urlString = "https://api.scryfall.com/cards";
+        const string UrlString = "https://api.scryfall.com/cards";
 
         // Act
-        Url actual = new(urlString);
+        Url actual = new ProvidedUrl(UrlString);
 
         // Assert
         _ = actual.Should().NotBeNull();
@@ -41,15 +41,15 @@ public sealed class UrlTests
     public void ImplicitConversion_ToUri_ReturnsCorrectUri()
     {
         // Arrange
-        const string urlString = "https://api.scryfall.com/sets/test";
-        Url url = new(urlString);
+        const string UrlString = "https://api.scryfall.com/sets/test";
+        Url url = new ProvidedUrl(UrlString);
 
         // Act
         Uri actual = url;
 
         // Assert
         _ = actual.Should().NotBeNull();
-        _ = actual.AbsoluteUri.Should().Be(urlString);
+        _ = actual.AbsoluteUri.Should().Be(UrlString);
     }
 
     [TestMethod]
@@ -57,10 +57,10 @@ public sealed class UrlTests
     public void Constructor_InvalidUrl_ThrowsUriFormatException()
     {
         // Arrange
-        const string invalidUrl = "not a valid url";
+        const string InvalidUrl = "not a valid url";
 
         // Act
-        Action act = () => _ = new Url(invalidUrl);
+        Action act = () => _ = new ProvidedUrl(InvalidUrl);
 
         // Assert
         act.Should().Throw<UriFormatException>();
@@ -74,7 +74,7 @@ public sealed class UrlTests
         string nullUrl = null!;
 
         // Act
-        Action act = () => _ = new Url(nullUrl);
+        Action act = () => _ = new ProvidedUrl(nullUrl);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -85,10 +85,10 @@ public sealed class UrlTests
     public void Constructor_EmptyUrl_ThrowsUriFormatException()
     {
         // Arrange
-        const string emptyUrl = "";
+        const string EmptyUrl = "";
 
         // Act
-        Action act = () => _ = new Url(emptyUrl);
+        Action act = () => _ = new ProvidedUrl(EmptyUrl);
 
         // Assert
         act.Should().Throw<UriFormatException>();
@@ -99,13 +99,13 @@ public sealed class UrlTests
     public void ToString_ValidUrl_ReturnsUrlString()
     {
         // Arrange
-        const string urlString = "https://api.scryfall.com/sets";
-        Url url = new(urlString);
+        const string UrlString = "https://api.scryfall.com/sets";
+        Url url = new ProvidedUrl(UrlString);
 
         // Act
         string actual = url.ToString();
 
         // Assert
-        _ = actual.Should().Be(urlString);
+        _ = actual.Should().Be(UrlString);
     }
 }

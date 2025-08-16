@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Apis.Values;
-using Lib.Scryfall.Ingestion.Internal.Dtos;
-using Lib.Scryfall.Ingestion.Internal.Http;
+using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Ingestion.Http;
+using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Universal.Http;
+using Lib.Universal.Primitives;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Internal.Paging;
+namespace Lib.Scryfall.Ingestion.Paging;
 internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
 {
     private readonly IScryfallSearchUri _searchUri;
@@ -75,7 +75,7 @@ internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScr
         // Get next page from next_page URL if available
         if (string.IsNullOrEmpty(paging.NextPage)) yield break;
 
-        await foreach (T item in ItemsInternal(new Url(paging.NextPage)).ConfigureAwait(false))
+        await foreach (T item in ItemsInternal(new ProvidedUrl(paging.NextPage)).ConfigureAwait(false))
         {
             yield return item;
         }

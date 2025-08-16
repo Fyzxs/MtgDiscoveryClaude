@@ -1,4 +1,4 @@
-﻿namespace Lib.Scryfall.Ingestion.Apis.Models;
+﻿namespace Lib.Scryfall.Shared.Apis.Models;
 
 /// <summary>
 /// Represents a Scryfall card.

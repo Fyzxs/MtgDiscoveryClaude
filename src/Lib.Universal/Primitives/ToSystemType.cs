@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lib.Universal.Primitives;
@@ -15,4 +14,3 @@ public abstract class ToSystemType<TSystemType>
     public override string ToString() => $"{AsSystemType()}";
 }
 
-public abstract class Url : ToSystemType<Uri>;

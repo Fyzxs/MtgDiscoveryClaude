@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Internal.Dtos;
-using Lib.Scryfall.Ingestion.Internal.Paging;
+using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Ingestion.Paging;
 
 namespace Lib.Scryfall.Ingestion.Tests.Fakes;
 

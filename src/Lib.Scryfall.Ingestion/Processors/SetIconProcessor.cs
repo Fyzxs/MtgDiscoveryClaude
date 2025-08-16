@@ -2,9 +2,10 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
+using Lib.BlobStorage.Apis.Operations;
 using Lib.BlobStorage.Apis.Operations.Responses;
-using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Icons;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
@@ -12,7 +13,7 @@ namespace Lib.Scryfall.Ingestion.Processors;
 internal sealed class SetIconProcessor : ISetProcessor
 {
     private readonly ISetIconDownloader _downloader;
-    private readonly ISetIconBlobScribe _scribe;
+    private readonly IBlobWriteScribe _scribe;
     private readonly ILogger _logger;
 
     public SetIconProcessor(ILogger logger)
@@ -25,7 +26,7 @@ internal sealed class SetIconProcessor : ISetProcessor
 
     private SetIconProcessor(
         ISetIconDownloader downloader,
-        ISetIconBlobScribe scribe,
+        IBlobWriteScribe scribe,
         ILogger logger)
     {
         _downloader = downloader;
@@ -37,30 +38,23 @@ internal sealed class SetIconProcessor : ISetProcessor
     {
         try
         {
-            string iconUrl = set.IconSvgPath();
-            string setId = set.Id();
-            string setCode = set.Code();
+            _logger.LogProcessingIcon(set.Code(), set.Id());
 
-            _logger.LogProcessingIcon(setCode, setId);
+            byte[] iconData = await _downloader.DownloadIconAsync(set.IconSvgPath()).ConfigureAwait(false);
 
-            // Download the icon
-            byte[] iconData = await _downloader.DownloadIconAsync(iconUrl).ConfigureAwait(false);
+            SetIconBlobEntity blobEntity = new(set, iconData);
+            BlobOpResponse<BlobContentInfo> response = await _scribe.WriteAsync(blobEntity).ConfigureAwait(false);
 
-            // Store the icon in blob storage
-            BlobOpResponse<BlobContentInfo> response = await _scribe.WriteSetIconAsync(setId, setCode, iconData).ConfigureAwait(false);
-
-            LogSuccess(setCode, response);
-            LogFailure(setCode, response);
+            LogSuccess(set.Code(), response);
+            LogFailure(set.Code(), response);
         }
         catch (HttpRequestException ex)
         {
             _logger.LogIconProcessingError(ex, set.Code());
-            // Don't throw - we don't want icon processing to fail the entire ingestion
         }
         catch (InvalidOperationException ex)
         {
             _logger.LogIconProcessingError(ex, set.Code());
-            // Don't throw - we don't want icon processing to fail the entire ingestion
         }
     }
 

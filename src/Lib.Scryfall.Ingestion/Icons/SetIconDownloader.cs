@@ -4,13 +4,14 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Lib.Universal.Http;
+using Lib.Universal.Primitives;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Icons;
 
 internal interface ISetIconDownloader
 {
-    Task<byte[]> DownloadIconAsync(string iconUrl);
+    Task<byte[]> DownloadIconAsync(Url iconUrl);
 }
 
 internal sealed class SetIconDownloader : ISetIconDownloader
@@ -28,14 +29,13 @@ internal sealed class SetIconDownloader : ISetIconDownloader
         _logger = logger;
     }
 
-    public async Task<byte[]> DownloadIconAsync(string iconUrl)
+    public async Task<byte[]> DownloadIconAsync(Url iconUrl)
     {
         try
         {
-            _logger.LogDownloadingIcon(iconUrl);
+            _logger.LogDownloadingIcon(iconUrl.AsSystemType().AbsolutePath);
 
-            Uri uri = new(iconUrl);
-            Stream stream = await _httpClient.StreamAsync(uri).ConfigureAwait(false);
+            Stream stream = await _httpClient.StreamAsync(iconUrl).ConfigureAwait(false);
             await using ConfiguredAsyncDisposable _ = stream.ConfigureAwait(false);
 
             using MemoryStream memoryStream = new();
@@ -48,7 +48,7 @@ internal sealed class SetIconDownloader : ISetIconDownloader
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogIconDownloadError(ex, iconUrl);
+            _logger.LogIconDownloadError(ex, iconUrl.AsSystemType().AbsolutePath);
             throw;
         }
     }

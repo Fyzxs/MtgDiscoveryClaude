@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Apis.Values;
+using Lib.Scryfall.Shared.Apis.Models;
+using Lib.Universal.Primitives;
 
 namespace Lib.Scryfall.Ingestion.Tests.Fakes;
 
@@ -32,15 +32,16 @@ internal sealed class ScryfallSetFake : IScryfallSet
         _parentSetCode = parentSetCode;
     }
 
-    public Url SearchUri() => new("https://api.scryfall.com/cards/search?q=set:tst");
+    public Url SearchUri() => new ProvidedUrl("https://api.scryfall.com/cards/search?q=set:tst");
     public string Code() => _code;
     public string Name() => _name;
     public dynamic Data() => _data;
     public string Id() => _id;
     public bool IsDigital() => _isDigital;
     public bool IsNotDigital() => IsDigital() is false;
-    public string IconSvgPath() => _iconSvgPath;
+    public Url IconSvgPath() => new ProvidedUrl(_iconSvgPath);
     public string ParentSetCode() => _parentSetCode ?? string.Empty;
     public bool HasParentSet() => _parentSetCode != null;
     public IAsyncEnumerable<IScryfallCard> Cards() => throw new System.NotImplementedException();
+
 }

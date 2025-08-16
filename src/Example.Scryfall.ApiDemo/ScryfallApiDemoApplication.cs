@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Example.Core;
-using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Internal.Collections;
+using Lib.Scryfall.Ingestion.Collections;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Example.Scryfall.ApiDemo;

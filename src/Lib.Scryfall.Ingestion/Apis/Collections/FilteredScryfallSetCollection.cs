@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Collections;
 using Lib.Scryfall.Ingestion.Configurations;
-using Lib.Scryfall.Ingestion.Internal.Collections;
-using Lib.Scryfall.Ingestion.Internal.Filters;
+using Lib.Scryfall.Ingestion.Filters;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Collections;

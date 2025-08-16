@@ -1,10 +1,10 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Internal.Dtos;
-using Lib.Scryfall.Ingestion.Internal.Factories;
-using Lib.Scryfall.Ingestion.Internal.Models;
+﻿using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Ingestion.Factories;
+using Lib.Scryfall.Ingestion.Models;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Internal.Paging;
+namespace Lib.Scryfall.Ingestion.Paging;
 internal sealed class HttpScryfallCardListPaging : HttpScryfallListPaging<ExtScryfallCardDto>
 {
     public HttpScryfallCardListPaging(IScryfallSet set, ILogger logger)

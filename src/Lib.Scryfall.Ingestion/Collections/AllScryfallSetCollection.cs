@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Internal.Collections;
+namespace Lib.Scryfall.Ingestion.Collections;
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
 internal sealed class AllScryfallSetCollection : IAsyncEnumerable<IScryfallSet>
 {

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Internal.Http;
 
-namespace Lib.Scryfall.Ingestion.Internal.Http;
+namespace Lib.Scryfall.Ingestion.Http;
 internal sealed class ScryfallRateLimiter : IScryfallRateLimiter, IDisposable
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);

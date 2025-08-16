@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Internal.Http;
+using Lib.Scryfall.Ingestion.Http;
 
 namespace Lib.Scryfall.Ingestion.Tests.Internal.Http;
 

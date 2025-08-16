@@ -2,10 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Internal.Dtos;
-using Lib.Scryfall.Ingestion.Internal.Paging;
+using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Ingestion.Paging;
 
-namespace Lib.Scryfall.Ingestion.Internal.Collections;
+namespace Lib.Scryfall.Ingestion.Collections;
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
 internal abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallCollection<TDomain>
     where TDto : IScryfallDto

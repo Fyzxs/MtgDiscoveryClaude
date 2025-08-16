@@ -1,4 +1,4 @@
-﻿namespace Lib.Scryfall.Ingestion.Internal.Dtos;
+﻿namespace Lib.Scryfall.Ingestion.Dtos;
 internal sealed class ExtScryfallCardDto : IScryfallDto
 {
     public ExtScryfallCardDto(dynamic payload)

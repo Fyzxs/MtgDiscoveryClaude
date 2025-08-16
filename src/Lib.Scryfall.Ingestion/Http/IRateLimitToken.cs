@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lib.Scryfall.Ingestion.Internal.Http;
+namespace Lib.Scryfall.Ingestion.Http;
 internal interface IRateLimitToken : IDisposable
 {
     DateTime AcquiredAt { get; }

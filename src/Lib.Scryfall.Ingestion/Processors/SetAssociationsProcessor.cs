@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Cosmos.Entities;
 using Lib.Scryfall.Ingestion.Cosmos.Mappers;
 using Lib.Scryfall.Ingestion.Cosmos.Operators;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;

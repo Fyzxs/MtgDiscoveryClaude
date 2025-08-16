@@ -1,10 +1,10 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Internal.Collections;
-using Lib.Scryfall.Ingestion.Internal.Dtos;
-using Lib.Scryfall.Ingestion.Internal.Models;
+﻿using Lib.Scryfall.Ingestion.Collections;
+using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Ingestion.Models;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Internal.Transformers;
+namespace Lib.Scryfall.Ingestion.Transformers;
 internal sealed class ScryfallSetDtoTransformer : IScryfallDtoTransformer<ExtScryfallSetDto, IScryfallSet>
 {
     private readonly ILogger _cardListPagingLogger;

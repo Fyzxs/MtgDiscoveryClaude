@@ -3,7 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Internal.Http;
+using Lib.Scryfall.Ingestion.Http;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
 using Lib.Universal.Http;
 using TestConvenience.Core.Reflection;

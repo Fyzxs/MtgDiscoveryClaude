@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Lib.Universal.Primitives;
 
-namespace Lib.Scryfall.Ingestion.Apis.Models;
+namespace Lib.Scryfall.Shared.Apis.Models;
 
 /// <summary>
 /// Represents a Scryfall set.
@@ -40,7 +41,7 @@ public interface IScryfallSet : IScryfallSearchUri
     /// <summary>
     /// Gets the icon SVG path.
     /// </summary>
-    string IconSvgPath();
+    Url IconSvgPath();
 
     /// <summary>
     /// Gets the parent set code if this is a child set.

@@ -1,7 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Internal.Dtos;
+﻿using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Shared.Apis.Models;
 
-namespace Lib.Scryfall.Ingestion.Internal.Models;
+namespace Lib.Scryfall.Ingestion.Models;
 internal sealed class ScryfallCard : IScryfallCard
 {
     private readonly ExtScryfallCardDto _dto;

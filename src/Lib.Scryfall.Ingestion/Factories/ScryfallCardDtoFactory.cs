@@ -1,6 +1,6 @@
-﻿using Lib.Scryfall.Ingestion.Internal.Dtos;
+﻿using Lib.Scryfall.Ingestion.Dtos;
 
-namespace Lib.Scryfall.Ingestion.Internal.Factories;
+namespace Lib.Scryfall.Ingestion.Factories;
 internal sealed class ScryfallCardDtoFactory : IScryfallDtoFactory<ExtScryfallCardDto>
 {
     public ExtScryfallCardDto Create(dynamic data)

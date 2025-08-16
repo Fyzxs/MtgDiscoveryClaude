@@ -1,6 +1,6 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Values;
+﻿using Lib.Universal.Primitives;
 
-namespace Lib.Scryfall.Ingestion.Apis.Models;
+namespace Lib.Scryfall.Shared.Apis.Models;
 
 /// <summary>
 /// Interface for objects that have a Scryfall search URI.

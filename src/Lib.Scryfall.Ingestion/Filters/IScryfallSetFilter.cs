@@ -1,6 +1,6 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Shared.Apis.Models;
 
-namespace Lib.Scryfall.Ingestion.Internal.Filters;
+namespace Lib.Scryfall.Ingestion.Filters;
 internal interface IScryfallSetFilter
 {
     bool ShouldInclude(IScryfallSet set);

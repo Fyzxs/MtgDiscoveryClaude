@@ -1,4 +1,4 @@
-﻿using Lib.Scryfall.Ingestion.Internal.Dtos;
+﻿using Lib.Scryfall.Ingestion.Dtos;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Internal.Dtos;

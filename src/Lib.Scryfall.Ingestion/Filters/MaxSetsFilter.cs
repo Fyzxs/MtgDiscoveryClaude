@@ -1,8 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Configurations;
-using Lib.Scryfall.Ingestion.Internal.Filters;
+﻿using Lib.Scryfall.Ingestion.Configurations;
+using Lib.Scryfall.Shared.Apis.Models;
 
-namespace Lib.Scryfall.Ingestion.Internal.Filters;
+namespace Lib.Scryfall.Ingestion.Filters;
 
 internal sealed class MaxSetsFilter : IScryfallSetFilter
 {

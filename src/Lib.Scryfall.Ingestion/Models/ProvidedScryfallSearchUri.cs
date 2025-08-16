@@ -1,7 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Apis.Values;
+﻿using Lib.Scryfall.Shared.Apis.Models;
+using Lib.Universal.Primitives;
 
-namespace Lib.Scryfall.Ingestion.Internal.Models;
+namespace Lib.Scryfall.Ingestion.Models;
 
 internal sealed class ProvidedScryfallSearchUri : IScryfallSearchUri
 {
