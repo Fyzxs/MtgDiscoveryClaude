@@ -14,47 +14,47 @@ public sealed class ScryfallCosmosIngestionApplication : ExampleApplication
 {
     protected override async Task Execute()
     {
-        ILogger<ScryfallCosmosIngestionApplication> logger = GetLogger<ScryfallCosmosIngestionApplication>();
+        ILogger logger = GetLogger();
 
         logger.LogInformation("Starting Scryfall to Cosmos DB ingestion (excluding digital sets)");
 
         try
         {
-            NonDigitalScryfallSetCollection scryfallSets = new();
+            NonDigitalScryfallSetCollection scryfallSets = new(GetLogger());
 
             // Create processors with their dependencies
             ISetItemsProcessor setItemsProcessor = new SetItemsProcessor(
-                new ScryfallSetItemsScribe(GetLogger<ScryfallSetItemsScribe>()),
+                new ScryfallSetItemsScribe(GetLogger()),
                 new ScryfallSetToCosmosMapper(),
-                GetLogger<SetItemsProcessor>());
+                GetLogger());
 
             ISetAssociationsProcessor setAssociationsProcessor = new SetAssociationsProcessor(
-                new ScryfallSetAssociationsScribe(GetLogger<ScryfallSetAssociationsScribe>()),
+                new ScryfallSetAssociationsScribe(GetLogger()),
                 new ScryfallSetToAssociationMapper(),
-                GetLogger<SetAssociationsProcessor>());
+                GetLogger());
 
             // Create icon processor with blob storage dependencies
             ServiceLocatorAuthBlobConnectionConfig blobConnectionConfig = new();
             ISetIconContainerDefinition iconContainerDefinition = new SetIconContainerDefinition();
             ISetIconContainerAdapter iconContainerAdapter = new SetIconContainerAdapter(
-                GetLogger<SetIconContainerAdapter>(),
+                GetLogger(),
                 iconContainerDefinition,
                 blobConnectionConfig);
 
             ISetIconBlobScribe iconScribe = new SetIconBlobScribe(
-                GetLogger<SetIconBlobScribe>(),
+                GetLogger(),
                 iconContainerAdapter);
 
             ISetIconDownloader iconDownloader = new SetIconDownloader(
-                GetLogger<SetIconDownloader>());
+                GetLogger());
 
             ISetIconProcessor setIconProcessor = new SetIconProcessor(
                 iconDownloader,
                 iconScribe,
-                GetLogger<SetIconProcessor>());
+                GetLogger());
 
             IScryfallIngestionService ingestionService = new ScryfallIngestionService(
-                GetLogger<ScryfallIngestionService>(),
+                GetLogger(),
                 scryfallSets,
                 setItemsProcessor,
                 setAssociationsProcessor,
@@ -71,7 +71,7 @@ public sealed class ScryfallCosmosIngestionApplication : ExampleApplication
         }
     }
 
-    private ILogger<T> GetLogger<T>()
+    private ILogger GetLogger()
     {
         using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
         {
@@ -79,6 +79,6 @@ public sealed class ScryfallCosmosIngestionApplication : ExampleApplication
             builder.AddConsole();
         });
 
-        return loggerFactory.CreateLogger<T>();
+        return loggerFactory.CreateLogger("Example");
     }
 }

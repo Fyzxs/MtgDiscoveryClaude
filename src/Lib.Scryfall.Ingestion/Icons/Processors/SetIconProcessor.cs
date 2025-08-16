@@ -17,7 +17,7 @@ internal sealed class SetIconProcessor : ISetIconProcessor
     public SetIconProcessor(
         ISetIconDownloader downloader,
         ISetIconBlobScribe scribe,
-        ILogger<SetIconProcessor> logger)
+        ILogger logger)
     {
         _downloader = downloader;
         _scribe = scribe;

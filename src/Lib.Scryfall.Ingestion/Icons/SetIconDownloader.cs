@@ -18,11 +18,11 @@ internal sealed class SetIconDownloader : ISetIconDownloader
     private readonly IHttpClient _httpClient;
     private readonly ILogger _logger;
 
-    public SetIconDownloader(ILogger<SetIconDownloader> logger) : this(new MonoStateHttpClient(), logger)
+    public SetIconDownloader(ILogger logger) : this(new MonoStateHttpClient(), logger)
     {
     }
 
-    private SetIconDownloader(IHttpClient httpClient, ILogger<SetIconDownloader> logger)
+    private SetIconDownloader(IHttpClient httpClient, ILogger logger)
     {
         _httpClient = httpClient;
         _logger = logger;

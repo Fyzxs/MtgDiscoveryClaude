@@ -37,7 +37,7 @@ internal sealed class BlobContainerDeleteOperator : IBlobContainerDeleteOperator
         }
         catch (RequestFailedException ex) when (ex.Status == 404)
         {
-            Console.WriteLine(ex.Message);
+            _logger.BlobNotFound(blobItemPath, ex.Message);
             _logger.DeleteInformation(Stopwatch.GetElapsedTime(swStart));
         }
     }
@@ -49,4 +49,9 @@ internal static partial class BlobContainerDeleteOperatorLoggerExtensions
         Level = LogLevel.Information,
         Message = "DeleteAsync log: [ElapsedTime={elapsedTime}]")]
     public static partial void DeleteInformation(this ILogger logger, TimeSpan elapsedTime);
+
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Blob not found: {Path}. Error: {ErrorMessage}")]
+    public static partial void BlobNotFound(this ILogger logger, string path, string errorMessage);
 }

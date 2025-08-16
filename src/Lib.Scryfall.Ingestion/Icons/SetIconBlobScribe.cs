@@ -16,7 +16,7 @@ internal sealed class SetIconBlobScribe : BlobWriteScribe, ISetIconBlobScribe
 {
     private readonly ILogger _logger;
 
-    public SetIconBlobScribe(ILogger<SetIconBlobScribe> logger, ISetIconContainerAdapter containerAdapter)
+    public SetIconBlobScribe(ILogger logger, ISetIconContainerAdapter containerAdapter)
         : base(containerAdapter)
     {
         _logger = logger;

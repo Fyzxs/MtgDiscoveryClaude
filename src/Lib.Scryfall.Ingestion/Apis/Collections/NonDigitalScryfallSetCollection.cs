@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Filters;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Apis.Paging;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Collections;
 
@@ -16,8 +18,8 @@ public sealed class NonDigitalScryfallSetCollection : IAsyncEnumerable<IScryfall
     private readonly IAsyncEnumerable<IScryfallSet> _source;
     private readonly IScryfallSetFilter _filter;
 
-    public NonDigitalScryfallSetCollection()
-        : this(new HttpScryfallSetCollection(), new NonDigitalSetFilter())
+    public NonDigitalScryfallSetCollection(ILogger logger)
+        : this(new HttpScryfallSetCollection(logger), new NonDigitalSetFilter())
     {
     }
 

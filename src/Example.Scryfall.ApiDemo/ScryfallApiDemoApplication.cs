@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Example.Core;
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Example.Scryfall.ApiDemo;
 
@@ -17,7 +18,7 @@ public sealed class ScryfallApiDemoApplication : ExampleApplication
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         await Console.Out.WriteLineAsync("Fetching all sets from Scryfall...").ConfigureAwait(false);
-        HttpScryfallSetCollection sets = new();
+        HttpScryfallSetCollection sets = new(NullLogger.Instance);
 
         int setCount = 0;
         int totalCards = 0;
@@ -31,7 +32,7 @@ public sealed class ScryfallApiDemoApplication : ExampleApplication
             if (setCount > MaxSetsToProcess) continue;
 
             await Console.Out.WriteLineAsync($"  Fetching cards for {set.Name()}...").ConfigureAwait(false);
-            HttpScryfallCardCollection cards = new(set);
+            HttpScryfallCardCollection cards = new(set, NullLogger.Instance);
 
             int cardCount = 0;
             const int MaxCardsToShow = 5;

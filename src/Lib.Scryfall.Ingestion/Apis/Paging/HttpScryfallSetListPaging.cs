@@ -1,6 +1,7 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Apis.Values;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Paging;
 
@@ -11,8 +12,8 @@ public sealed class HttpScryfallSetListPaging : HttpScryfallListPaging<ExtScryfa
 {
     private const string HttpsApiScryfallComSets = "https://api.scryfall.com/sets";
 
-    public HttpScryfallSetListPaging()
-        : base(new ProvidedScryfallSearchUri(new Url(HttpsApiScryfallComSets)), new ScryfallSetDtoFactory())
+    public HttpScryfallSetListPaging(ILogger logger)
+        : base(new ProvidedScryfallSearchUri(new Url(HttpsApiScryfallComSets)), new ScryfallSetDtoFactory(), logger)
     {
     }
 }

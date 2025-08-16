@@ -8,6 +8,7 @@ using Lib.Scryfall.Ingestion.Apis.Http;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Apis.Values;
 using Lib.Universal.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Apis.Paging;
@@ -20,19 +21,21 @@ public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryf
     private readonly IScryfallSearchUri _searchUri;
     private readonly IHttpClient _httpClient;
     private readonly IScryfallDtoFactory<T> _dtoFactory;
+    private readonly ILogger _logger;
 
 #pragma warning disable CA2000 // Dispose objects before losing scope - Managed resources will be garbage collected
-    protected HttpScryfallListPaging(IScryfallSearchUri searchUri, IScryfallDtoFactory<T> dtoFactory)
-        : this(searchUri, dtoFactory, new RateLimitedHttpClient())
+    protected HttpScryfallListPaging(IScryfallSearchUri searchUri, IScryfallDtoFactory<T> dtoFactory, ILogger logger)
+        : this(searchUri, dtoFactory, new RateLimitedHttpClient(), logger)
     {
     }
 #pragma warning restore CA2000
 
-    private HttpScryfallListPaging(IScryfallSearchUri searchUri, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient)
+    private HttpScryfallListPaging(IScryfallSearchUri searchUri, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient, ILogger logger)
     {
         _searchUri = searchUri;
         _dtoFactory = dtoFactory;
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     public IAsyncEnumerable<T> Items()
@@ -59,7 +62,7 @@ public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryf
         }
         catch (HttpRequestException ex)
         {
-            Console.WriteLine($"Exception retrieving [{pageUrl}]: {ex.Message}");
+            _logger.LogPageRetrievalError(pageUrl.AsSystemType().ToString(), ex);
             yield break;
         }
 
@@ -86,4 +89,12 @@ public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryf
             yield return item;
         }
     }
+}
+
+internal static partial class HttpScryfallListPagingLoggerExtensions
+{
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Failed to retrieve page from {Url}")]
+    public static partial void LogPageRetrievalError(this ILogger logger, string url, Exception ex);
 }

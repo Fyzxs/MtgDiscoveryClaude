@@ -1,5 +1,6 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Paging;
 
@@ -8,8 +9,8 @@ namespace Lib.Scryfall.Ingestion.Apis.Paging;
 /// </summary>
 public sealed class HttpScryfallCardListPaging : HttpScryfallListPaging<ExtScryfallCardDto>
 {
-    public HttpScryfallCardListPaging(IScryfallSet set)
-        : base(set, new ScryfallCardDtoFactory())
+    public HttpScryfallCardListPaging(IScryfallSet set, ILogger logger)
+        : base(set, new ScryfallCardDtoFactory(), logger)
     {
     }
 }

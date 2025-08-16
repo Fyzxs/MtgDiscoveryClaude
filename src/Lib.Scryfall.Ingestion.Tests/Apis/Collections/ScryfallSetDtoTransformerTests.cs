@@ -1,6 +1,7 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Apis.Collections;
@@ -24,7 +25,7 @@ public sealed class ScryfallSetDtoTransformerTests
             'icon_svg_uri': 'https://svgs.scryfall.io/sets/tst.svg'
         }");
         ExtScryfallSetDto dto = new(rawData);
-        ScryfallSetDtoTransformer transformer = new();
+        ScryfallSetDtoTransformer transformer = new(NullLogger.Instance);
 
         // Act
         IScryfallSet actual = transformer.Transform(dto);
@@ -50,7 +51,7 @@ public sealed class ScryfallSetDtoTransformerTests
             'name': 'Minimal Set'
         }");
         ExtScryfallSetDto dto = new(rawData);
-        ScryfallSetDtoTransformer transformer = new();
+        ScryfallSetDtoTransformer transformer = new(NullLogger.Instance);
 
         // Act
         IScryfallSet actual = transformer.Transform(dto);
@@ -76,7 +77,7 @@ public sealed class ScryfallSetDtoTransformerTests
             'card_count': null
         }");
         ExtScryfallSetDto dto = new(rawData);
-        ScryfallSetDtoTransformer transformer = new();
+        ScryfallSetDtoTransformer transformer = new(NullLogger.Instance);
 
         // Act
         IScryfallSet actual = transformer.Transform(dto);
@@ -98,7 +99,7 @@ public sealed class ScryfallSetDtoTransformerTests
             'name': 'Test Set'
         }");
         ExtScryfallSetDto dto = new(rawData);
-        ScryfallSetDtoTransformer transformer = new();
+        ScryfallSetDtoTransformer transformer = new(NullLogger.Instance);
 
         // Act
         IScryfallSet result1 = transformer.Transform(dto);
