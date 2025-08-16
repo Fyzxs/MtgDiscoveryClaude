@@ -1,9 +1,5 @@
-﻿namespace Lib.Scryfall.Ingestion.Apis.Dtos;
-
-/// <summary>
-/// Represents a paginated list response from Scryfall API.
-/// </summary>
-public sealed class ScryfallObjectListDto
+﻿namespace Lib.Scryfall.Ingestion.Internal.Dtos;
+internal sealed class ScryfallObjectListDto
 {
     private readonly dynamic _rawData;
 

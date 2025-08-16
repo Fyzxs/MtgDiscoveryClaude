@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 using Lib.Universal.Http;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Apis.Http;
-
-/// <summary>
-/// HTTP client specifically configured for Scryfall API calls.
-/// </summary>
-public sealed class ScryfallHttpClient : IHttpClient
+namespace Lib.Scryfall.Ingestion.Internal.Http;
+internal sealed class ScryfallHttpClient : IHttpClient
 {
     private readonly IHttpClient _innerClient;
 

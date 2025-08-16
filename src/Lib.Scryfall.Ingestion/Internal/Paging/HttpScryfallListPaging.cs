@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Dtos;
-using Lib.Scryfall.Ingestion.Apis.Http;
 using Lib.Scryfall.Ingestion.Apis.Models;
-using Lib.Scryfall.Ingestion.Apis.Paging;
 using Lib.Scryfall.Ingestion.Apis.Values;
+using Lib.Scryfall.Ingestion.Internal.Dtos;
+using Lib.Scryfall.Ingestion.Internal.Http;
 using Lib.Universal.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Internal.Paging;
-
-/// <summary>
-/// Base implementation for handling Scryfall API pagination with composition.
-/// </summary>
 internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
 {
     private readonly IScryfallSearchUri _searchUri;

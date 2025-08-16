@@ -3,13 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Internal.Http;
 
-namespace Lib.Scryfall.Ingestion.Apis.Http;
-
-/// <summary>
-/// Rate limiter for Scryfall API calls.
-/// Scryfall asks for 50-100ms between requests.
-/// </summary>
-public sealed class ScryfallRateLimiter : IScryfallRateLimiter, IDisposable
+namespace Lib.Scryfall.Ingestion.Internal.Http;
+internal sealed class ScryfallRateLimiter : IScryfallRateLimiter, IDisposable
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private DateTime _lastRequest = DateTime.MinValue;

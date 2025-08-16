@@ -1,4 +1,4 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Configurations;
+﻿using Lib.Scryfall.Ingestion.Internal.Configurations;
 using Lib.Universal.Configurations;
 
 namespace Lib.Scryfall.Ingestion.Configurations;

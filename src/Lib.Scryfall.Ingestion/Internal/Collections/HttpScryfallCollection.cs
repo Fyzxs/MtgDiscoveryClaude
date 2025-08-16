@@ -2,16 +2,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Dtos;
-using Lib.Scryfall.Ingestion.Apis.Paging;
+using Lib.Scryfall.Ingestion.Internal.Dtos;
+using Lib.Scryfall.Ingestion.Internal.Paging;
 
-namespace Lib.Scryfall.Ingestion.Apis.Collections;
-
-/// <summary>
-/// Base implementation for Scryfall API data collections.
-/// </summary>
+namespace Lib.Scryfall.Ingestion.Internal.Collections;
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
-public abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallCollection<TDomain>
+internal abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallCollection<TDomain>
     where TDto : IScryfallDto
 {
     private readonly IScryfallListPaging<TDto> _paging;

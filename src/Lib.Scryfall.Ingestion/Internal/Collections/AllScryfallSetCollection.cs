@@ -4,13 +4,9 @@ using System.Threading;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Apis.Collections;
-
-/// <summary>
-/// Provides access to all Scryfall sets without filtering.
-/// </summary>
+namespace Lib.Scryfall.Ingestion.Internal.Collections;
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
-public sealed class AllScryfallSetCollection : IAsyncEnumerable<IScryfallSet>
+internal sealed class AllScryfallSetCollection : IAsyncEnumerable<IScryfallSet>
 {
     private readonly IAsyncEnumerable<IScryfallSet> _source;
 

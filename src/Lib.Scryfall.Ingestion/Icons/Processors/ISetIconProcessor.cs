@@ -1,7 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Processors;
+﻿using Lib.Scryfall.Ingestion.Internal.Processors;
 
 namespace Lib.Scryfall.Ingestion.Icons.Processors;
 
-public interface ISetIconProcessor : ISetProcessor
+internal interface ISetIconProcessor : ISetProcessor
 {
 }

@@ -2,10 +2,6 @@
 using Lib.Universal.Primitives;
 
 namespace Lib.Scryfall.Ingestion.Apis.Values;
-
-/// <summary>
-/// Value object representing a URL.
-/// </summary>
 public sealed class Url : ToSystemType<Uri>
 {
     private readonly Uri _value;

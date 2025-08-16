@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
-using Lib.Scryfall.Ingestion.Apis.Collections;
-using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Apis.Values;
+using Lib.Scryfall.Ingestion.Internal.Collections;
+using Lib.Scryfall.Ingestion.Internal.Dtos;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Internal.Models;
-
-/// <summary>
-/// Implementation of a Scryfall set.
-/// </summary>
-internal sealed class ScryfallSet : IScryfallSet
+internal sealed class ScryfallSet : IScryfallSet, IScryfallSearchUri
 {
     private readonly ExtScryfallSetDto _dto;
     private readonly ILogger _cardListPagingLogger;

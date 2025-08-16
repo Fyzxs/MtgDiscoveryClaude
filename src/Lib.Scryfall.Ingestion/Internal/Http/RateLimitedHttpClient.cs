@@ -5,12 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Universal.Http;
 
-namespace Lib.Scryfall.Ingestion.Apis.Http;
-
-/// <summary>
-/// HTTP client with rate limiting for Scryfall API.
-/// </summary>
-public sealed class RateLimitedHttpClient : IHttpClient
+namespace Lib.Scryfall.Ingestion.Internal.Http;
+internal sealed class RateLimitedHttpClient : IHttpClient
 {
     private readonly IHttpClient _innerClient;
     private readonly IScryfallRateLimiter _rateLimiter;

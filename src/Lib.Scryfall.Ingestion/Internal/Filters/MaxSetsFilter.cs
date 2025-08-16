@@ -1,7 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Configurations;
-using Lib.Scryfall.Ingestion.Apis.Filters;
-using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Configurations;
+using Lib.Scryfall.Ingestion.Internal.Configurations;
+using Lib.Scryfall.Ingestion.Internal.Filters;
 
 namespace Lib.Scryfall.Ingestion.Internal.Filters;
 
