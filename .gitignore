@@ -398,4 +398,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/src/Example.CosmosConnect/local.settings.json
+
+# Local Development
+**/local.settings.json
+**/serviceDependencies.local.json
+**/Properties/ServiceDependencies/local
