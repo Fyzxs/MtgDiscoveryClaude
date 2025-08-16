@@ -4,6 +4,4 @@ using Lib.Universal.Tests;
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
 [TestClass]
-public class CosmosItemIdTests : BaseToSystemTypeTests<CosmosItemId, string>
-{
-}
+public class CosmosItemIdTests : BaseToSystemTypeTests<CosmosItemId, string>;

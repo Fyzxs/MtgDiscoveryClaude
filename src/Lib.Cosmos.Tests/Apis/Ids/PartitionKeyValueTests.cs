@@ -5,6 +5,4 @@ using Microsoft.Azure.Cosmos;
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
 [TestClass]
-public class PartitionKeyValueTests : BaseToSystemTypeTests<PartitionKeyValue, PartitionKey>
-{
-}
+public class PartitionKeyValueTests : BaseToSystemTypeTests<PartitionKeyValue, PartitionKey>;

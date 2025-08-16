@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Icons;
 
-internal interface ISetIconContainerAdapter : IBlobContainerAdapter { }
+internal interface ISetIconContainerAdapter : IBlobContainerAdapter;
 
 internal sealed class SetIconContainerAdapter : BlobContainerAdapter, ISetIconContainerAdapter
 {

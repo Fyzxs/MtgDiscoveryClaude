@@ -51,5 +51,5 @@ public class PointItemTests
         _ = subject.Partition.Should().Be(expectedPartition);
     }
 
-    private sealed class TestPointItem : PointItem { }
+    private sealed class TestPointItem : PointItem;
 }

@@ -4,7 +4,7 @@ using Lib.BlobStorage.Apis.Ids;
 
 namespace Example.BlobStorage;
 
-public interface IDemoBlobEntity : IBlobBinaryWriteDomain { }
+public interface IDemoBlobEntity : IBlobBinaryWriteDomain;
 
 internal sealed class DemoBlobEntity : IDemoBlobEntity
 {

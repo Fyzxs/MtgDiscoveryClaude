@@ -5,6 +5,4 @@ using Lib.Universal.Tests;
 namespace Lib.Cosmos.Tests.Apis.Configurations;
 
 [TestClass]
-public class CosmosPreferredRegionsTests : BaseToSystemTypeTests<CosmosPreferredRegions, IReadOnlyList<string>>
-{
-}
+public class CosmosPreferredRegionsTests : BaseToSystemTypeTests<CosmosPreferredRegions, IReadOnlyList<string>>;

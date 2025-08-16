@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Example.BlobStorage;
 
-public interface IDemoContainerAdapter : IBlobContainerAdapter { }
+public interface IDemoContainerAdapter : IBlobContainerAdapter;
 
 internal sealed class DemoContainerAdapter : BlobContainerAdapter, IDemoContainerAdapter
 {

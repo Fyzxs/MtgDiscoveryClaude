@@ -5,6 +5,4 @@ using Microsoft.Azure.Cosmos;
 namespace Lib.Cosmos.Tests.Apis.Configurations;
 
 [TestClass]
-public class CosmosConnectionModeTests : BaseToSystemTypeTests<CosmosConnectionMode, ConnectionMode>
-{
-}
+public class CosmosConnectionModeTests : BaseToSystemTypeTests<CosmosConnectionMode, ConnectionMode>;

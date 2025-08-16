@@ -3,7 +3,7 @@ using Lib.BlobStorage.Apis.Configurations.Ids;
 
 namespace Example.BlobStorage;
 
-public interface IDemoContainerDefinition : IBlobContainerDefinition { }
+public interface IDemoContainerDefinition : IBlobContainerDefinition;
 
 internal sealed class DemoContainerDefinition : IDemoContainerDefinition
 {

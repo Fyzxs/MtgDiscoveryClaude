@@ -2,7 +2,7 @@
 
 namespace Example.BlobStorage;
 
-public interface IDemoBlobInquisitor : IBlobInquisitor { }
+public interface IDemoBlobInquisitor : IBlobInquisitor;
 
 internal sealed class DemoBlobInquisitor : BlobInquisitor, IDemoBlobInquisitor
 {

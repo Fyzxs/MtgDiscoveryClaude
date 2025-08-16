@@ -2,7 +2,7 @@
 
 namespace Example.BlobStorage;
 
-public interface IDemoBlobListMaker : IBlobListMaker { }
+public interface IDemoBlobListMaker : IBlobListMaker;
 
 internal sealed class DemoBlobListMaker : BlobListMaker, IDemoBlobListMaker
 {

@@ -4,6 +4,4 @@ using Lib.Universal.Tests;
 namespace Lib.Cosmos.Tests.Apis.Configurations;
 
 [TestClass]
-public class CosmosConnectionStringTests : BaseToSystemTypeTests<CosmosConnectionString, string>
-{
-}
+public class CosmosConnectionStringTests : BaseToSystemTypeTests<CosmosConnectionString, string>;
