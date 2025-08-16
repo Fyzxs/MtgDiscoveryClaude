@@ -35,22 +35,22 @@ internal sealed class CardItemsProcessor : ICardsProcessor
         ScryfallCardItem cardItem = _mapper.Map(card.Data());
         OpResponse<ScryfallCardItem> response = await _scribe.UpsertAsync(cardItem).ConfigureAwait(false);
 
-        LogSuccess(card.Data(), response);
-        LogFailure(card.Data(), response);
+        LogSuccess(card, response);
+        LogFailure(card, response);
     }
 
-    private void LogSuccess(dynamic card, OpResponse<ScryfallCardItem> response)
+    private void LogSuccess(IScryfallCard card, OpResponse<ScryfallCardItem> response)
     {
         if (response.IsNotSuccessful()) return;
 
-        _logger.LogCardItemStored((string)card.id);
+        _logger.LogCardItemStored(card.Id());
     }
 
-    private void LogFailure(dynamic card, OpResponse<ScryfallCardItem> response)
+    private void LogFailure(IScryfallCard card, OpResponse<ScryfallCardItem> response)
     {
         if (response.IsSuccessful()) return;
 
-        _logger.LogCardItemStoreFailed((string)card.id, response.StatusCode);
+        _logger.LogCardItemStoreFailed(card.Id(), response.StatusCode);
     }
 }
 

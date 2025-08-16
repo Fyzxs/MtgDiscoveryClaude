@@ -6,6 +6,11 @@
 public interface IScryfallCard
 {
     /// <summary>
+    /// Gets the card ID.
+    /// </summary>
+    string Id();
+
+    /// <summary>
     /// Gets the card name.
     /// </summary>
     string Name();

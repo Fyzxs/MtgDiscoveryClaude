@@ -13,6 +13,7 @@ internal sealed class ScryfallCard : IScryfallCard
         _set = set;
     }
 
+    public string Id() => _dto.Data.id;
     public string Name() => _dto.Data.name;
     public dynamic Data() => _dto.Data;
 

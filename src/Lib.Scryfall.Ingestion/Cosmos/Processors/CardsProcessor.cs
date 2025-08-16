@@ -28,7 +28,7 @@ internal sealed class CardsProcessor : ICardsProcessor
 
     public async Task ProcessAsync(IScryfallCard card)
     {
-        string cardId = card.Data().id;
+        string cardId = card.Id();
         _logger.LogCardProcessingStarted(card.Name(), cardId);
 
         foreach (ICardsProcessor processor in _processors)
