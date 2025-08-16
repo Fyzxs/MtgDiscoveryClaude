@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Lib.Scryfall.Ingestion.Apis.Configurations;
 using Lib.Scryfall.Ingestion.Apis.Filters;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Internal.Filters;
@@ -20,7 +21,22 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
     private readonly IReadOnlyList<IScryfallSetFilter> _filters;
 
     public FilteredScryfallSetCollection(ILogger logger)
-        : this(new AllScryfallSetCollection(logger), [new NonDigitalSetFilter()])
+        : this(
+            new AllScryfallSetCollection(logger),
+            new ConfigScryfallIngestionConfiguration())
+    {
+    }
+
+    private FilteredScryfallSetCollection(
+        IAsyncEnumerable<IScryfallSet> source,
+        IScryfallIngestionConfiguration ingestionConfiguration)
+        : this(
+            source,
+            [
+                new NonDigitalSetFilter(),
+                new SpecificSetsFilter(ingestionConfiguration),
+                new MaxSetsFilter(ingestionConfiguration)
+            ])
     {
     }
 
@@ -37,7 +53,6 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
             if (ShouldNotInclude(set)) continue;
 
             yield return set;
-
         }
     }
 
