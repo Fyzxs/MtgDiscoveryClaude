@@ -27,16 +27,22 @@ internal sealed class SetIconBlobScribe : BlobWriteScribe, ISetIconBlobScribe
         SetIconBlobEntity entity = new(setId, setCode, iconData);
         BlobOpResponse<BlobContentInfo> response = await WriteAsync(entity).ConfigureAwait(false);
 
-        if (response.HasValue())
-        {
-            _logger.LogIconWriteSuccess(setId);
-        }
-        else
-        {
-            _logger.LogIconWriteError(setId);
-        }
+        LogSuccess(response, setId);
+        LogFailure(response, setId);
 
         return response;
+    }
+
+    private void LogSuccess(BlobOpResponse<BlobContentInfo> response, string setId)
+    {
+        if (response.MissingValue()) return;
+        _logger.LogIconWriteSuccess(setId);
+    }
+
+    private void LogFailure(BlobOpResponse<BlobContentInfo> response, string setId)
+    {
+        if (response.HasValue()) return;
+        _logger.LogIconWriteError(setId);
     }
 }
 

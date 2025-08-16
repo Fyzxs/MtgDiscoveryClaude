@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Http;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Apis.Paging;
 using Lib.Scryfall.Ingestion.Apis.Values;
+using Lib.Scryfall.Ingestion.Internal.Http;
 using Lib.Universal.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Lib.Scryfall.Ingestion.Apis.Paging;
+namespace Lib.Scryfall.Ingestion.Internal.Paging;
 
 /// <summary>
 /// Base implementation for handling Scryfall API pagination with composition.
 /// </summary>
-public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
+internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
 {
     private readonly IScryfallSearchUri _searchUri;
     private readonly IHttpClient _httpClient;
@@ -66,17 +68,12 @@ public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryf
             yield break;
         }
 
-        if (paging.HasMore is false && paging.Data is null)
-        {
-            yield break;
-        }
-
         foreach (dynamic item in paging.Data)
         {
             yield return _dtoFactory.Create(item);
         }
 
-        if (paging.HasMore is false)
+        if (paging.HasNoMore)
         {
             yield break;
         }

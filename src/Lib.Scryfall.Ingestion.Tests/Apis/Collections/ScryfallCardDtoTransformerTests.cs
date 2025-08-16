@@ -1,6 +1,8 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Internal.Models;
+using Lib.Scryfall.Ingestion.Internal.Transformers;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Apis.Collections;

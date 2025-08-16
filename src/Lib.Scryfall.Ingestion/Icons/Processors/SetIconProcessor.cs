@@ -28,17 +28,8 @@ internal sealed class SetIconProcessor : ISetIconProcessor
     {
         try
         {
-            dynamic data = set.Data();
-
-            // Check if icon_svg_uri exists
-            if (data.icon_svg_uri == null)
-            {
-                _logger.LogSetHasNoIcon(set.Code());
-                return;
-            }
-
-            string iconUrl = data.icon_svg_uri;
-            string setId = data.id;
+            string iconUrl = set.IconSvgPath();
+            string setId = set.Id();
             string setCode = set.Code();
 
             _logger.LogProcessingIcon(setCode, setId);
@@ -50,39 +41,38 @@ internal sealed class SetIconProcessor : ISetIconProcessor
             BlobOpResponse<BlobContentInfo> response =
                 await _scribe.WriteSetIconAsync(setId, setCode, iconData).ConfigureAwait(false);
 
-            if (response.HasValue())
-            {
-                _logger.LogIconStored(setCode);
-            }
-            else
-            {
-                _logger.LogIconStoreFailed(setCode);
-            }
+            LogSuccess(setCode, response);
+            LogFailure(setCode, response);
         }
         catch (HttpRequestException ex)
         {
-#pragma warning disable CA1031 // Do not catch general exception types
             _logger.LogIconProcessingError(ex, set.Code());
-#pragma warning restore CA1031
             // Don't throw - we don't want icon processing to fail the entire ingestion
         }
         catch (InvalidOperationException ex)
         {
-#pragma warning disable CA1031 // Do not catch general exception types
             _logger.LogIconProcessingError(ex, set.Code());
-#pragma warning restore CA1031
             // Don't throw - we don't want icon processing to fail the entire ingestion
         }
+    }
+
+    private void LogSuccess(string setCode, BlobOpResponse<BlobContentInfo> response)
+    {
+        if (response.MissingValue()) return;
+
+        _logger.LogIconStored(setCode);
+    }
+
+    private void LogFailure(string setCode, BlobOpResponse<BlobContentInfo> response)
+    {
+        if (response.HasValue()) return;
+
+        _logger.LogIconStoreFailed(setCode);
     }
 }
 
 internal static partial class SetIconProcessorLoggerExtensions
 {
-    [LoggerMessage(
-        Level = LogLevel.Warning,
-        Message = "Set {Code} has no icon_svg_uri")]
-    public static partial void LogSetHasNoIcon(this ILogger logger, string code);
-
     [LoggerMessage(
         Level = LogLevel.Information,
         Message = "Processing icon for set {Code} ({Id})")]

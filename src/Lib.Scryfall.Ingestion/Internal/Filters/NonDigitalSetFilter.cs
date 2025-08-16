@@ -1,6 +1,7 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Ingestion.Apis.Filters;
+using Lib.Scryfall.Ingestion.Apis.Models;
 
-namespace Lib.Scryfall.Ingestion.Apis.Filters;
+namespace Lib.Scryfall.Ingestion.Internal.Filters;
 
 /// <summary>
 /// Filters out digital-only sets.
@@ -9,7 +10,6 @@ internal sealed class NonDigitalSetFilter : IScryfallSetFilter
 {
     public bool ShouldInclude(IScryfallSet set)
     {
-        bool isDigital = set.Data().digital ?? false;
-        return !isDigital;
+        return set.IsNotDigital();
     }
 }

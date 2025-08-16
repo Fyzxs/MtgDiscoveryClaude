@@ -27,24 +27,22 @@ internal sealed class SetAssociationsProcessor : ISetAssociationsProcessor
 
     public async Task ProcessAsync(IScryfallSet set)
     {
-        if (_mapper.HasParentSet(set))
-        {
-            ScryfallSetAssociation association = _mapper.Map(set);
-            OpResponse<ScryfallSetAssociation> response = await _scribe.UpsertAsync(association).ConfigureAwait(false);
-
-            if (response.IsSuccessful())
-            {
-                _logger.LogAssociationStored(set.Code(), association.ParentSetCode);
-            }
-            else
-            {
-                _logger.LogAssociationStoreFailed(set.Code(), response.StatusCode);
-            }
-        }
-        else
+        if (_mapper.HasNoParentSet(set))
         {
             _logger.LogSetHasNoParent(set.Code());
+            return;
         }
+
+        ScryfallSetAssociation association = _mapper.Map(set);
+        OpResponse<ScryfallSetAssociation> response = await _scribe.UpsertAsync(association).ConfigureAwait(false);
+
+        if (response.IsSuccessful())
+        {
+            _logger.LogAssociationStored(set.Code(), association.ParentSetCode);
+            return;
+        }
+
+        _logger.LogAssociationStoreFailed(set.Code(), response.StatusCode);
     }
 }
 

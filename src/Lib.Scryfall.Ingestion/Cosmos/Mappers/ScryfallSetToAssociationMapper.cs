@@ -7,21 +7,22 @@ internal sealed class ScryfallSetToAssociationMapper : IScryfallSetToAssociation
 {
     public bool HasParentSet(IScryfallSet scryfallSet)
     {
-        dynamic data = scryfallSet.Data();
-        string parentSetCode = data.parent_set_code ?? null;
-        return parentSetCode is not null;
+        return scryfallSet.HasParentSet();
+    }
+
+    public bool HasNoParentSet(IScryfallSet scryfallSet)
+    {
+        return HasParentSet(scryfallSet) is false;
     }
 
     public ScryfallSetAssociation Map(IScryfallSet scryfallSet)
     {
-        dynamic data = scryfallSet.Data();
-
         return new ScryfallSetAssociation
         {
-            SetId = data.id,
-            ParentSetCode = data.parent_set_code,
-            SetCode = data.code,
-            SetName = data.name
+            SetId = scryfallSet.Id(),
+            ParentSetCode = scryfallSet.ParentSetCode(),
+            SetCode = scryfallSet.Code(),
+            SetName = scryfallSet.Name()
         };
     }
 }

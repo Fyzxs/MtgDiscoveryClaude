@@ -1,4 +1,6 @@
-﻿namespace Lib.Scryfall.Ingestion.Apis.Dtos;
+﻿using Lib.Scryfall.Ingestion.Apis.Dtos;
+
+namespace Lib.Scryfall.Ingestion.Internal.Factories;
 
 /// <summary>
 /// Factory for creating Scryfall set DTOs.

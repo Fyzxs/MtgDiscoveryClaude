@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Http;
+using Lib.Scryfall.Ingestion.Internal.Http;
 
 namespace Lib.Scryfall.Ingestion.Tests.Apis.Http;
 

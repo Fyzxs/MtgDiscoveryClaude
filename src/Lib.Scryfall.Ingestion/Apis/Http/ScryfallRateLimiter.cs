@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Lib.Scryfall.Ingestion.Internal.Http;
 
 namespace Lib.Scryfall.Ingestion.Apis.Http;
 

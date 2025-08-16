@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Filters;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Apis.Paging;
+using Lib.Scryfall.Ingestion.Internal.Filters;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Collections;

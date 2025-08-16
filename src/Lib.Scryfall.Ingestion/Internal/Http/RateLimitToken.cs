@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading;
+using Lib.Scryfall.Ingestion.Apis.Http;
 
-namespace Lib.Scryfall.Ingestion.Apis.Http;
+namespace Lib.Scryfall.Ingestion.Internal.Http;
 
 /// <summary>
 /// Token representing permission to proceed with a rate-limited operation.

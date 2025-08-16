@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Lib.BlobStorage.Apis;
+using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Cosmos.Mappers;
+using Lib.Scryfall.Ingestion.Cosmos.Operators;
 using Lib.Scryfall.Ingestion.Cosmos.Processors;
+using Lib.Scryfall.Ingestion.Icons;
 using Lib.Scryfall.Ingestion.Icons.Processors;
 using Microsoft.Extensions.Logging;
 
@@ -17,7 +22,31 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
     private readonly ISetIconProcessor _setIconProcessor;
     private readonly ILogger _logger;
 
-    public ScryfallIngestionService(
+    public ScryfallIngestionService(ILogger logger)
+        : this(
+            logger,
+            new NonDigitalScryfallSetCollection(logger),
+            new SetItemsProcessor(
+                new ScryfallSetItemsScribe(logger),
+                new ScryfallSetToCosmosMapper(),
+                logger),
+            new SetAssociationsProcessor(
+                new ScryfallSetAssociationsScribe(logger),
+                new ScryfallSetToAssociationMapper(),
+                logger),
+            new SetIconProcessor(
+                new SetIconDownloader(logger),
+                new SetIconBlobScribe(
+                    logger,
+                    new SetIconContainerAdapter(
+                        logger,
+                        new SetIconContainerDefinition(),
+                        new ServiceLocatorAuthBlobConnectionConfig())),
+                logger))
+    {
+    }
+
+    private ScryfallIngestionService(
         ILogger logger,
         IAsyncEnumerable<IScryfallSet> scryfallSets,
         ISetItemsProcessor setItemsProcessor,

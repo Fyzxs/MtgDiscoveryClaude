@@ -14,6 +14,7 @@ public sealed class ScryfallObjectListDto
 
     public dynamic Data => _rawData.data;
     public bool HasMore => _rawData.has_more ?? false;
+    public bool HasNoMore => HasMore is false;
     public string NextPage => _rawData.next_page;
     public int TotalCards => _rawData.total_cards ?? 0;
 }
