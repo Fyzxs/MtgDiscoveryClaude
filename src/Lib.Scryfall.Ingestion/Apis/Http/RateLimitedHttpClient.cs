@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Universal.Http;
@@ -26,7 +27,7 @@ public sealed class RateLimitedHttpClient : IHttpClient
         _rateLimiter = rateLimiter;
     }
 
-    public async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request)
+    public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
     {
         using (await _rateLimiter.AcquireTokenAsync().ConfigureAwait(false))
         {

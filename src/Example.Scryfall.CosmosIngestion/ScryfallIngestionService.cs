@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Models;
 using Lib.Scryfall.Ingestion.Cosmos.Processors;
+using Lib.Scryfall.Ingestion.Icons.Processors;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;
@@ -13,18 +14,21 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
     private readonly IAsyncEnumerable<IScryfallSet> _scryfallSets;
     private readonly ISetItemsProcessor _setItemsProcessor;
     private readonly ISetAssociationsProcessor _setAssociationsProcessor;
+    private readonly ISetIconProcessor _setIconProcessor;
     private readonly ILogger _logger;
 
     public ScryfallIngestionService(
         ILogger logger,
         IAsyncEnumerable<IScryfallSet> scryfallSets,
         ISetItemsProcessor setItemsProcessor,
-        ISetAssociationsProcessor setAssociationsProcessor)
+        ISetAssociationsProcessor setAssociationsProcessor,
+        ISetIconProcessor setIconProcessor)
     {
         _logger = logger;
         _scryfallSets = scryfallSets;
         _setItemsProcessor = setItemsProcessor;
         _setAssociationsProcessor = setAssociationsProcessor;
+        _setIconProcessor = setIconProcessor;
     }
 
     public async Task IngestAllSetsAsync()
@@ -41,6 +45,7 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
 
                 await _setItemsProcessor.ProcessAsync(set).ConfigureAwait(false);
                 await _setAssociationsProcessor.ProcessAsync(set).ConfigureAwait(false);
+                await _setIconProcessor.ProcessAsync(set).ConfigureAwait(false);
 
                 processedCount++;
             }

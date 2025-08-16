@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Http;
@@ -16,42 +17,27 @@ namespace Lib.Scryfall.Ingestion.Apis.Paging;
 /// </summary>
 public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
 {
-    private readonly IScryfallSearchUri _searchUriProvider;
-    private readonly Url _url;
+    private readonly IScryfallSearchUri _searchUri;
     private readonly IHttpClient _httpClient;
     private readonly IScryfallDtoFactory<T> _dtoFactory;
 
-    protected HttpScryfallListPaging(IScryfallSearchUri searchUriProvider, IScryfallDtoFactory<T> dtoFactory)
-        : this(searchUriProvider, dtoFactory, new RateLimitedHttpClient())
-    {
-    }
-
-    private HttpScryfallListPaging(IScryfallSearchUri searchUriProvider, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient)
-    {
-        _searchUriProvider = searchUriProvider;
-        _url = null;
-        _dtoFactory = dtoFactory;
-        _httpClient = httpClient;
-    }
-
 #pragma warning disable CA2000 // Dispose objects before losing scope - Managed resources will be garbage collected
-    protected HttpScryfallListPaging(Url url, IScryfallDtoFactory<T> dtoFactory)
-        : this(url, dtoFactory, new RateLimitedHttpClient())
+    protected HttpScryfallListPaging(IScryfallSearchUri searchUri, IScryfallDtoFactory<T> dtoFactory)
+        : this(searchUri, dtoFactory, new RateLimitedHttpClient())
     {
     }
 #pragma warning restore CA2000
 
-    private HttpScryfallListPaging(Url url, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient)
+    private HttpScryfallListPaging(IScryfallSearchUri searchUri, IScryfallDtoFactory<T> dtoFactory, IHttpClient httpClient)
     {
-        _searchUriProvider = null;
-        _url = url;
+        _searchUri = searchUri;
         _dtoFactory = dtoFactory;
         _httpClient = httpClient;
     }
 
     public IAsyncEnumerable<T> Items()
     {
-        Url urlToUse = _url ?? _searchUriProvider?.SearchUri();
+        Url urlToUse = _searchUri.SearchUri();
         return ItemsInternal(urlToUse);
     }
 
@@ -71,7 +57,7 @@ public class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryf
             // Create DTO from raw data
             paging = new ScryfallObjectListDto(rawData);
         }
-        catch (System.Net.Http.HttpRequestException ex)
+        catch (HttpRequestException ex)
         {
             Console.WriteLine($"Exception retrieving [{pageUrl}]: {ex.Message}");
             yield break;

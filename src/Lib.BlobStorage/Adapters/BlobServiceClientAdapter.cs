@@ -27,8 +27,9 @@ internal sealed class BlobServiceClientAdapter : IBlobServiceClientAdapter
     public async Task<BlobContainerClient> BlobContainerClient()
     {
         BlobServiceClient blobServiceClient = Adapter();
-        BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(_connectionConvenience.ContainerConfig(_containerDefinition).Name());
-        await Task.Delay(0).ConfigureAwait(false);
+        IBlobContainerConfig containerConfig = _connectionConvenience.ContainerConfig(_containerDefinition);
+        BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(containerConfig.Name());
+        await blobContainerClient.CreateIfNotExistsAsync(containerConfig.AccessType()).ConfigureAwait(false);
         return blobContainerClient;
     }
 }

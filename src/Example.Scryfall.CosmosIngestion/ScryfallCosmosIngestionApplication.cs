@@ -1,8 +1,11 @@
 ﻿using Example.Core;
+using Lib.BlobStorage.Apis;
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Cosmos.Mappers;
 using Lib.Scryfall.Ingestion.Cosmos.Operators;
 using Lib.Scryfall.Ingestion.Cosmos.Processors;
+using Lib.Scryfall.Ingestion.Icons;
+using Lib.Scryfall.Ingestion.Icons.Processors;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;
@@ -30,11 +33,32 @@ public sealed class ScryfallCosmosIngestionApplication : ExampleApplication
                 new ScryfallSetToAssociationMapper(),
                 GetLogger<SetAssociationsProcessor>());
 
+            // Create icon processor with blob storage dependencies
+            ServiceLocatorAuthBlobConnectionConfig blobConnectionConfig = new();
+            ISetIconContainerDefinition iconContainerDefinition = new SetIconContainerDefinition();
+            ISetIconContainerAdapter iconContainerAdapter = new SetIconContainerAdapter(
+                GetLogger<SetIconContainerAdapter>(),
+                iconContainerDefinition,
+                blobConnectionConfig);
+
+            ISetIconBlobScribe iconScribe = new SetIconBlobScribe(
+                GetLogger<SetIconBlobScribe>(),
+                iconContainerAdapter);
+
+            ISetIconDownloader iconDownloader = new SetIconDownloader(
+                GetLogger<SetIconDownloader>());
+
+            ISetIconProcessor setIconProcessor = new SetIconProcessor(
+                iconDownloader,
+                iconScribe,
+                GetLogger<SetIconProcessor>());
+
             IScryfallIngestionService ingestionService = new ScryfallIngestionService(
                 GetLogger<ScryfallIngestionService>(),
                 scryfallSets,
                 setItemsProcessor,
-                setAssociationsProcessor);
+                setAssociationsProcessor,
+                setIconProcessor);
 
             await ingestionService.IngestAllSetsAsync().ConfigureAwait(false);
 

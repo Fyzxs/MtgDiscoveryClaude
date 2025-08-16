@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Universal.Http;
+using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Apis.Http;
 
@@ -39,7 +40,7 @@ public sealed class ScryfallHttpClient : IHttpClient
         using HttpResponseMessage response = await SendAsync(request).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         string content = await response.Content.ReadAsStringAsync(token).ConfigureAwait(false);
-        return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
+        return JsonConvert.DeserializeObject<T>(content);
     }
 
     public async Task SaveAsFileAsync(string url, string fileName)
