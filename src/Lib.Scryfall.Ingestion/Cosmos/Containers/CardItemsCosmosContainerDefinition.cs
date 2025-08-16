@@ -4,13 +4,13 @@ using Lib.Scryfall.Ingestion.Cosmos.Values;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Containers;
 
-internal sealed class SetAssociationsCosmosContainerDefinition : ICosmosContainerDefinition
+internal sealed class CardItemsCosmosContainerDefinition : ICosmosContainerDefinition
 {
     public CosmosFriendlyAccountName FriendlyAccountName() => new MtgDiscoveryCosmosAccountName();
 
     public CosmosDatabaseName DatabaseName() => new MtgDiscoveryCosmosDatabaseName();
 
-    public CosmosContainerName ContainerName() => new SetAssociationsCosmosContainerName();
+    public CosmosContainerName ContainerName() => new CardItemsCosmosContainerName();
 
     public CosmosPartitionKeyPath PartitionKeyPath() => new PartitionCosmosPartitionKeyPath();
 }

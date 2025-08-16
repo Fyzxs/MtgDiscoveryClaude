@@ -3,7 +3,7 @@ using Lib.Scryfall.Ingestion.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Processors;
 
-public interface ISetItemsProcessor
+internal interface ICardsProcessor
 {
-    Task ProcessAsync(IScryfallSet set);
+    Task ProcessAsync(IScryfallCard card);
 }

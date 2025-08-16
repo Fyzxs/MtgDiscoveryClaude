@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Operators;
 
-internal sealed class ScryfallSetItemsScribe : CosmosScribe, IScryfallSetItemsScribe
+internal sealed class ScryfallSetItemsScribe : CosmosScribe
 {
     public ScryfallSetItemsScribe(ILogger logger)
         : base(new SetItemsCosmosContainer(logger))

@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Operators;
 
-internal sealed class ScryfallSetItemsGopher : CosmosGopher
+internal sealed class ScryfallSetCardsScribe : CosmosScribe
 {
-    public ScryfallSetItemsGopher(ILogger logger)
-        : base(new SetItemsCosmosContainer(logger))
+    public ScryfallSetCardsScribe(ILogger logger)
+        : base(new SetCardsCosmosContainer(logger))
     {
     }
 }

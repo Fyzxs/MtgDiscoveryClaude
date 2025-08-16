@@ -1,5 +1,6 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Apis.Processors;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;
@@ -7,7 +8,7 @@ namespace Example.Scryfall.CosmosIngestion;
 internal sealed class ScryfallIngestionService : IScryfallIngestionService
 {
     private readonly IAsyncEnumerable<IScryfallSet> _scryfallSets;
-    private readonly ISetProcessorOrchestrator _setProcessor;
+    private readonly ISetProcessor _setProcessor;
     private readonly ILogger _logger;
 
     public ScryfallIngestionService(ILogger logger)
@@ -21,7 +22,7 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
     private ScryfallIngestionService(
         ILogger logger,
         IAsyncEnumerable<IScryfallSet> scryfallSets,
-        ISetProcessorOrchestrator setProcessor)
+        ISetProcessor setProcessor)
     {
         _logger = logger;
         _scryfallSets = scryfallSets;
@@ -38,7 +39,7 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
         {
             try
             {
-                await _setProcessor.ProcessSetAsync(set).ConfigureAwait(false);
+                await _setProcessor.ProcessAsync(set).ConfigureAwait(false);
                 processedCount++;
             }
             catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)

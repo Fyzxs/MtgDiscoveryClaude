@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-using Lib.Scryfall.Ingestion.Apis.Models;
+﻿using Lib.Scryfall.Ingestion.Apis.Processors;
 
 namespace Lib.Scryfall.Ingestion.Icons.Processors;
 
-public interface ISetIconProcessor
+public interface ISetIconProcessor : ISetProcessor
 {
-    Task ProcessAsync(IScryfallSet set);
 }

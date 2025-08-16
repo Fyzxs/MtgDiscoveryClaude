@@ -3,9 +3,7 @@ using Lib.BlobStorage.Apis.Configurations.Ids;
 
 namespace Lib.Scryfall.Ingestion.Icons;
 
-internal interface ISetIconContainerDefinition : IBlobContainerDefinition { }
-
-internal sealed class SetIconContainerDefinition : ISetIconContainerDefinition
+internal sealed class SetIconContainerDefinition : IBlobContainerDefinition
 {
     public BlobFriendlyAccountName FriendlyAccountName() => new SetIconBlobFriendlyAccountName();
 

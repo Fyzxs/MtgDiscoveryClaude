@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Apis.Processors;
 using Lib.Scryfall.Ingestion.Cosmos.Entities;
 using Lib.Scryfall.Ingestion.Cosmos.Mappers;
 using Lib.Scryfall.Ingestion.Cosmos.Operators;
@@ -9,9 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Cosmos.Processors;
 
-internal sealed class SetAssociationsProcessor : ISetAssociationsProcessor
+internal sealed class SetAssociationsProcessor : ISetProcessor
 {
-    private readonly IScryfallSetAssociationsScribe _scribe;
+    private readonly ICosmosScribe _scribe;
     private readonly IScryfallSetToAssociationMapper _mapper;
     private readonly ILogger _logger;
 
@@ -24,7 +25,7 @@ internal sealed class SetAssociationsProcessor : ISetAssociationsProcessor
     }
 
     private SetAssociationsProcessor(
-        IScryfallSetAssociationsScribe scribe,
+        ICosmosScribe scribe,
         IScryfallSetToAssociationMapper mapper,
         ILogger logger)
     {

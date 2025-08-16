@@ -1,20 +1,17 @@
 ﻿using Lib.Scryfall.Ingestion.Apis.Models;
+using Lib.Scryfall.Ingestion.Apis.Processors;
 using Lib.Scryfall.Ingestion.Cosmos.Processors;
 using Lib.Scryfall.Ingestion.Icons.Processors;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;
 
-internal interface ISetProcessorOrchestrator
+internal sealed class SetProcessor : ISetProcessor
 {
-    Task ProcessSetAsync(IScryfallSet set);
-}
-
-internal sealed class SetProcessor : ISetProcessorOrchestrator
-{
-    private readonly ISetItemsProcessor _setItemsProcessor;
-    private readonly ISetAssociationsProcessor _setAssociationsProcessor;
-    private readonly ISetIconProcessor _setIconProcessor;
+    private readonly ISetProcessor _setItemsProcessor;
+    private readonly ISetProcessor _setAssociationsProcessor;
+    private readonly ISetProcessor _setIconProcessor;
+    private readonly ICardProcessor _cardProcessor;
     private readonly ILogger _logger;
 
     public SetProcessor(ILogger logger)
@@ -22,23 +19,26 @@ internal sealed class SetProcessor : ISetProcessorOrchestrator
             new SetItemsProcessor(logger),
             new SetAssociationsProcessor(logger),
             new SetIconProcessor(logger),
+            new CardProcessor(logger),
             logger)
     {
     }
 
     private SetProcessor(
-        ISetItemsProcessor setItemsProcessor,
-        ISetAssociationsProcessor setAssociationsProcessor,
-        ISetIconProcessor setIconProcessor,
+        ISetProcessor setItemsProcessor,
+        ISetProcessor setAssociationsProcessor,
+        ISetProcessor setIconProcessor,
+        ICardProcessor cardProcessor,
         ILogger logger)
     {
         _setItemsProcessor = setItemsProcessor;
         _setAssociationsProcessor = setAssociationsProcessor;
         _setIconProcessor = setIconProcessor;
+        _cardProcessor = cardProcessor;
         _logger = logger;
     }
 
-    public async Task ProcessSetAsync(IScryfallSet set)
+    public async Task ProcessAsync(IScryfallSet set)
     {
         try
         {
@@ -47,12 +47,35 @@ internal sealed class SetProcessor : ISetProcessorOrchestrator
             await _setItemsProcessor.ProcessAsync(set).ConfigureAwait(false);
             await _setAssociationsProcessor.ProcessAsync(set).ConfigureAwait(false);
             await _setIconProcessor.ProcessAsync(set).ConfigureAwait(false);
+
+            await ProcessSetCardsAsync(set).ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
         {
             _logger.LogSetProcessingError(ex, set.Code());
             throw;
         }
+    }
+
+    private async Task ProcessSetCardsAsync(IScryfallSet set)
+    {
+        int cardCount = 0;
+        _logger.LogProcessingSetCards(set.Code());
+
+        await foreach (IScryfallCard card in set.Cards().ConfigureAwait(false))
+        {
+            try
+            {
+                await _cardProcessor.ProcessCardAsync(card).ConfigureAwait(false);
+                cardCount++;
+            }
+            catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
+            {
+                _logger.LogCardProcessingError(ex, card.Name());
+            }
+        }
+
+        _logger.LogSetCardsProcessed(set.Code(), cardCount);
     }
 }
 
@@ -67,4 +90,14 @@ internal static partial class SetProcessorOrchestratorLoggerExtensions
         Level = LogLevel.Error,
         Message = "Error processing set {Code}")]
     public static partial void LogSetProcessingError(this ILogger logger, Exception ex, string code);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Processing cards for set {Code}")]
+    public static partial void LogProcessingSetCards(this ILogger logger, string code);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Processed {Count} cards for set {Code}")]
+    public static partial void LogSetCardsProcessed(this ILogger logger, string code, int count);
 }
