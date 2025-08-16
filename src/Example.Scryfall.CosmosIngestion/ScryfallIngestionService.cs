@@ -13,7 +13,7 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
     public ScryfallIngestionService(ILogger logger)
         : this(
             logger,
-            new NonDigitalScryfallSetCollection(logger),
+            new FilteredScryfallSetCollection(logger),
             new SetProcessor(logger))
     {
     }

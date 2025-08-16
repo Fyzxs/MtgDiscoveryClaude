@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dtos;
 using Lib.Scryfall.Ingestion.Apis.Paging;
 
@@ -24,12 +25,10 @@ public abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallColle
 
     public async IAsyncEnumerable<TDomain> Items()
     {
-#pragma warning disable CA2007 // IAsyncEnumerable doesn't support ConfigureAwait
-        await foreach (TDto dto in _paging.Items())
+        await foreach (TDto dto in _paging.Items().ConfigureAwait(false))
         {
             yield return _transformer.Transform(dto);
         }
-#pragma warning restore CA2007
     }
 
     public IAsyncEnumerator<TDomain> GetAsyncEnumerator(CancellationToken cancellationToken = default)

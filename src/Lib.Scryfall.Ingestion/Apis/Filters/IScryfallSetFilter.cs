@@ -11,4 +11,9 @@ public interface IScryfallSetFilter
     /// Determines whether a set should be included.
     /// </summary>
     bool ShouldInclude(IScryfallSet set);
+
+    /// <summary>
+    /// Determines whether a set should be included.
+    /// </summary>
+    bool ShouldNotInclude(IScryfallSet set) => ShouldInclude(set) is false;
 }

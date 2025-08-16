@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Lib.Scryfall.Ingestion.Apis.Collections;
 /// <summary>
 /// Filters out digital-only sets from the underlying collection.
 /// </summary>
+[Obsolete("Use FilteredScryfallSetCollection with NonDigitalSetFilter instead")]
 [SuppressMessage("Naming", "CA1711:Identifiers should not end in incorrect suffix", Justification = "Collection is appropriate for these types")]
 public sealed class NonDigitalScryfallSetCollection : IAsyncEnumerable<IScryfallSet>
 {
