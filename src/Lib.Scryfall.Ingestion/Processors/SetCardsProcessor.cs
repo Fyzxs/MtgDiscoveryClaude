@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Scryfall.Ingestion.Cosmos.Entities;
-using Lib.Scryfall.Ingestion.Cosmos.Mappers;
-using Lib.Scryfall.Ingestion.Cosmos.Operators;
+using Lib.Scryfall.Ingestion.Mappers;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 

@@ -2,11 +2,11 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
+using Lib.Adapter.Scryfall.BlobStorage.Apis.Entities;
+using Lib.Adapter.Scryfall.BlobStorage.Apis.Operators;
 using Lib.BlobStorage.Apis.Operations;
 using Lib.BlobStorage.Apis.Operations.Responses;
-using Lib.Scryfall.Ingestion.BlobStorage.Entities;
-using Lib.Scryfall.Ingestion.BlobStorage.Operators;
-using Lib.Scryfall.Ingestion.Icons;
+using Lib.Scryfall.Ingestion.Http;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 

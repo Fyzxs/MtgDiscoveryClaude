@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
@@ -8,10 +8,11 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
     <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
-    <ProjectReference Include="..\Lib.BlobStorage\Lib.BlobStorage.csproj" />
+    <ProjectReference Include="..\Lib.Adapter.Scryfall.BlobStorage\Lib.Adapter.Scryfall.BlobStorage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

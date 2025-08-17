@@ -7,7 +7,7 @@ using Lib.Universal.Http;
 using Lib.Universal.Primitives;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Scryfall.Ingestion.Icons;
+namespace Lib.Scryfall.Ingestion.Http;
 
 internal interface IDownloader
 {
