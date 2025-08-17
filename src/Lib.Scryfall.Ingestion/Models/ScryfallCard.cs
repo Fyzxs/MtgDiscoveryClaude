@@ -88,6 +88,31 @@ internal sealed class ScryfallCard : IScryfallCard
     }
 
     public bool HasSingleFace() => HasMultipleFaces() is false;
+
+    public IEnumerable<string> ArtistIds()
+    {
+        List<string> artistIds = new();
+
+        try
+        {
+            dynamic artistIdsData = _dto.Data.artist_ids;
+            if (artistIdsData == null) return artistIds;
+
+            foreach (string artistId in artistIdsData)
+            {
+                if (string.IsNullOrWhiteSpace(artistId) is false)
+                {
+                    artistIds.Add(artistId);
+                }
+            }
+        }
+        catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+        {
+            // Card has no artist_ids field
+        }
+
+        return artistIds;
+    }
 }
 
 internal sealed class CardImageInfoCollection : ICardImageInfoCollection

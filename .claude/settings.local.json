@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(true)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "WebSearch"
     ],
     "deny": []
   }

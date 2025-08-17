@@ -1,4 +1,6 @@
-﻿namespace Lib.Scryfall.Shared.Apis.Models;
+﻿using System.Collections.Generic;
+
+namespace Lib.Scryfall.Shared.Apis.Models;
 
 /// <summary>
 /// Represents a Scryfall card.
@@ -26,4 +28,9 @@ public interface IScryfallCard
     /// Gets the image URIs for the card faces.
     /// </summary>
     ICardImageInfoCollection ImageUris();
+
+    /// <summary>
+    /// Gets the artist IDs for the card.
+    /// </summary>
+    IEnumerable<string> ArtistIds();
 }
