@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Lib.BlobStorage.Apis.Ids;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Shared.Apis.Models;
+using Lib.Scryfall.Shared.Internal.Models;
 using Lib.Universal.Primitives;
 
 namespace Lib.Scryfall.Ingestion.Models;
@@ -112,6 +114,50 @@ internal sealed class ScryfallCard : IScryfallCard
         }
 
         return artistIds;
+    }
+
+    public IEnumerable<IArtistIdNamePair> ArtistIdNamePairs()
+    {
+        List<IArtistIdNamePair> pairs = new();
+        List<string> artistIds = ArtistIds().ToList();
+        List<string> artistNames = ExtractArtistNames();
+
+        for (int i = 0; i < artistIds.Count; i++)
+        {
+            string artistId = artistIds[i];
+            string artistName = i < artistNames.Count ? artistNames[i] : string.Empty;
+            pairs.Add(new ArtistIdNamePair(artistId, artistName));
+        }
+
+        return pairs;
+    }
+
+    private List<string> ExtractArtistNames()
+    {
+        List<string> names = new();
+
+        try
+        {
+            dynamic artistField = _dto.Data.artist;
+            if (artistField == null) return names;
+
+            string artistString = (string)artistField;
+
+            // Handle multiple artists separated by " & " or " and "
+            string[] separators = { " & ", " and " };
+            string[] artistNames = artistString.Split(separators, System.StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string name in artistNames)
+            {
+                names.Add(name.Trim());
+            }
+        }
+        catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+        {
+            // Card has no artist field
+        }
+
+        return names;
     }
 }
 

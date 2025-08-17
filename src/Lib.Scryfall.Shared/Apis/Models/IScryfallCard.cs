@@ -33,4 +33,9 @@ public interface IScryfallCard
     /// Gets the artist IDs for the card.
     /// </summary>
     IEnumerable<string> ArtistIds();
+
+    /// <summary>
+    /// Gets the artist ID and name pairs for the card.
+    /// </summary>
+    IEnumerable<IArtistIdNamePair> ArtistIdNamePairs();
 }
