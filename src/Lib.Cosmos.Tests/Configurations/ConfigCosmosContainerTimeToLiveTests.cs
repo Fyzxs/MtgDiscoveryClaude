@@ -58,10 +58,7 @@ public class ConfigCosmosContainerTimeToLiveTests
         fakeConfig[sourceKey] = null;
         ConfigCosmosContainerTimeToLive subject = new(sourceKey, fakeConfig);
 
-        // Act
-        int? actual = subject.AsSystemType();
-
-        // Assert
-        _ = actual.Should().BeNull();
+        // Act & assert
+        ((System.Action)(() => subject.AsSystemType())).Should().Throw<CosmosConfigurationException>();
     }
 }
