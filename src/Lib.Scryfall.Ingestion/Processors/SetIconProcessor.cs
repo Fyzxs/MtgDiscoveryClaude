@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 using Lib.BlobStorage.Apis.Operations;
 using Lib.BlobStorage.Apis.Operations.Responses;
+using Lib.Scryfall.Ingestion.BlobStorage.Entities;
+using Lib.Scryfall.Ingestion.BlobStorage.Operators;
 using Lib.Scryfall.Ingestion.Icons;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
@@ -12,20 +14,20 @@ namespace Lib.Scryfall.Ingestion.Processors;
 
 internal sealed class SetIconProcessor : ISetProcessor
 {
-    private readonly ISetIconDownloader _downloader;
+    private readonly IDownloader _downloader;
     private readonly IBlobWriteScribe _scribe;
     private readonly ILogger _logger;
 
     public SetIconProcessor(ILogger logger)
         : this(
-            new SetIconDownloader(logger),
+            new HttpDownloader(logger),
             new SetIconBlobScribe(logger),
             logger)
     {
     }
 
     private SetIconProcessor(
-        ISetIconDownloader downloader,
+        IDownloader downloader,
         IBlobWriteScribe scribe,
         ILogger logger)
     {
@@ -40,7 +42,7 @@ internal sealed class SetIconProcessor : ISetProcessor
         {
             _logger.LogProcessingIcon(set.Code(), set.Id());
 
-            byte[] iconData = await _downloader.DownloadIconAsync(set.IconSvgPath()).ConfigureAwait(false);
+            byte[] iconData = await _downloader.DownloadAsync(set.IconSvgPath()).ConfigureAwait(false);
 
             SetIconBlobEntity blobEntity = new(set, iconData);
             BlobOpResponse<BlobContentInfo> response = await _scribe.WriteAsync(blobEntity).ConfigureAwait(false);

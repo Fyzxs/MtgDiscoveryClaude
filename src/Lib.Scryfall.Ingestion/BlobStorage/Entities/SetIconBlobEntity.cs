@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Lib.BlobStorage.Apis.Ids;
 using Lib.Scryfall.Shared.Apis.Models;
 
-namespace Lib.Scryfall.Ingestion.Icons;
+namespace Lib.Scryfall.Ingestion.BlobStorage.Entities;
 
 internal sealed class SetIconBlobEntity : IBlobBinaryWriteDomain
 {
