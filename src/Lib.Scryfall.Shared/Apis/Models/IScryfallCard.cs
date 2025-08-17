@@ -21,4 +21,9 @@ public interface IScryfallCard
     dynamic Data();
 
     IScryfallSet Set();
+
+    /// <summary>
+    /// Gets the image URIs for the card faces.
+    /// </summary>
+    ICardImageInfoCollection ImageUris();
 }

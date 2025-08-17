@@ -24,17 +24,12 @@ internal sealed class ScryfallSet : IScryfallSet
     public string Id() => _dto.Data.id;
     public bool IsDigital() => _dto.Data.digital ?? false;
     public bool IsNotDigital() => IsDigital() is false;
-    public Url IconSvgPath() => _dto.Data.icon_svg_uri;
-    public string ParentSetCode() => _dto.Data.parent_set_code ?? string.Empty;
+    public Url IconSvgPath() => new ProvidedUrl((string)_dto.Data.icon_svg_uri);
+    public string ParentSetCode() => _dto.Data.parent_set_code;
     public bool HasParentSet() => _dto.Data.parent_set_code != null;
 
     public IAsyncEnumerable<IScryfallCard> Cards()
     {
         return new HttpScryfallCardCollection(this, _cardListPagingLogger);
-    }
-
-    Universal.Primitives.Url IScryfallSet.IconSvgPath()
-    {
-        throw new System.NotImplementedException();
     }
 }

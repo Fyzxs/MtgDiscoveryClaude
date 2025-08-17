@@ -14,7 +14,8 @@ internal sealed class CardsProcessor : ICardsProcessor
         : this(
             [
                 new SetCardsProcessor(logger),
-                new CardItemsProcessor(logger)
+                new CardItemsProcessor(logger),
+                new CardImageProcessor(logger)
             ],
             logger)
     {
