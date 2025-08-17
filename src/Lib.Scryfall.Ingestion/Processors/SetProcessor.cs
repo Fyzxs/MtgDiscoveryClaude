@@ -1,37 +1,34 @@
-﻿using Lib.Scryfall.Ingestion.Processors;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Example.Scryfall.CosmosIngestion;
+namespace Lib.Scryfall.Ingestion.Processors;
 
 internal sealed class SetProcessor : ISetProcessor
 {
-    private readonly ISetProcessor _setItemsProcessor;
-    private readonly ISetProcessor _setAssociationsProcessor;
-    private readonly ISetProcessor _setIconProcessor;
+    private readonly IReadOnlyCollection<ISetProcessor> _setItemsProcessor;
     private readonly ICardProcessor _cardProcessor;
     private readonly ILogger _logger;
 
     public SetProcessor(ILogger logger)
         : this(
-            new SetItemsProcessor(logger),
-            new SetAssociationsProcessor(logger),
-            new SetIconProcessor(logger),
+            [
+                new SetItemsProcessor(logger),
+                new SetAssociationsProcessor(logger),
+                new SetIconProcessor(logger)
+            ],
             new CardProcessor(logger),
             logger)
     {
     }
-
-    private SetProcessor(
-        ISetProcessor setItemsProcessor,
-        ISetProcessor setAssociationsProcessor,
-        ISetProcessor setIconProcessor,
+    private SetProcessor(IReadOnlyCollection<ISetProcessor> setItemsProcessor,
         ICardProcessor cardProcessor,
         ILogger logger)
     {
         _setItemsProcessor = setItemsProcessor;
-        _setAssociationsProcessor = setAssociationsProcessor;
-        _setIconProcessor = setIconProcessor;
         _cardProcessor = cardProcessor;
         _logger = logger;
     }
@@ -42,9 +39,10 @@ internal sealed class SetProcessor : ISetProcessor
         {
             _logger.LogProcessingSet(set.Code(), set.Name());
 
-            await _setItemsProcessor.ProcessAsync(set).ConfigureAwait(false);
-            await _setAssociationsProcessor.ProcessAsync(set).ConfigureAwait(false);
-            await _setIconProcessor.ProcessAsync(set).ConfigureAwait(false);
+            foreach (ISetProcessor setProcessor in _setItemsProcessor)
+            {
+                await setProcessor.ProcessAsync(set).ConfigureAwait(false);
+            }
 
             await ProcessSetCardsAsync(set).ConfigureAwait(false);
         }
@@ -64,7 +62,7 @@ internal sealed class SetProcessor : ISetProcessor
         {
             try
             {
-                await _cardProcessor.ProcessCardAsync(card).ConfigureAwait(false);
+                await _cardProcessor.ProcessAsync(card).ConfigureAwait(false);
                 cardCount++;
             }
             catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
@@ -98,4 +96,9 @@ internal static partial class SetProcessorOrchestratorLoggerExtensions
         Level = LogLevel.Information,
         Message = "Processed {Count} cards for set {Code}")]
     public static partial void LogSetCardsProcessed(this ILogger logger, string code, int count);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Error processing card {name}")]
+    public static partial void LogCardProcessingError(this ILogger logger, Exception ex, string name);
 }

@@ -121,9 +121,9 @@ internal sealed class CardImageInfo : ICardImageInfo
     public string StoragePath()
     {
         string cardId = _card.Id();
-        string first2 = cardId[..2];
-        string next2 = cardId.Substring(2, 2);
-        return new ProvidedBlobPathEntity($"{first2}/{next2}/{cardId}/{_side}/{_imageType}.jpg");
+        string first = cardId[..1];
+        string second = cardId.Substring(1, 1);
+        return new ProvidedBlobPathEntity($"{_imageType}/{_side}/{first}/{second}/{cardId}.jpg");
     }
 
     public IDictionary<string, string> Metadata()

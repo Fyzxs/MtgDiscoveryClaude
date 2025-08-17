@@ -1,4 +1,6 @@
-﻿namespace Example.Scryfall.CosmosIngestion;
+﻿using System.Threading.Tasks;
+
+namespace Lib.Scryfall.Ingestion.Apis;
 
 public interface IScryfallIngestionService
 {

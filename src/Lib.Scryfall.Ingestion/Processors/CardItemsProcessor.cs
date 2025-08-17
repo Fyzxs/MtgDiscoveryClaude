@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
 
-internal sealed class CardItemsProcessor : ICardsProcessor
+internal sealed class CardItemsProcessor : ICardProcessor
 {
     private readonly IScryfallCardToCardItemMapper _mapper;
     private readonly ICosmosScribe _scribe;

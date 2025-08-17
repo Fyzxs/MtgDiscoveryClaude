@@ -1,4 +1,7 @@
-﻿using Example.Core;
+﻿using System;
+using System.Threading.Tasks;
+using Example.Core;
+using Lib.Scryfall.Ingestion.Apis;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.CosmosIngestion;

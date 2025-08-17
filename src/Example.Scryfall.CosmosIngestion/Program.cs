@@ -1,4 +1,6 @@
-﻿namespace Example.Scryfall.CosmosIngestion;
+﻿using System.Threading.Tasks;
+
+namespace Example.Scryfall.CosmosIngestion;
 
 internal class Program
 {

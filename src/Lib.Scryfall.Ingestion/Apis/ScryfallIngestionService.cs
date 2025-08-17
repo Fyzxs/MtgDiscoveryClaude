@@ -1,9 +1,13 @@
-﻿using Lib.Scryfall.Ingestion.Apis.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Processors;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Example.Scryfall.CosmosIngestion;
+namespace Lib.Scryfall.Ingestion.Apis;
 
 internal sealed class ScryfallIngestionService : IScryfallIngestionService
 {
@@ -33,7 +37,7 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
     {
         int processedCount = 0;
 
-        _logger.LogInformation("Starting Scryfall sets ingestion to Cosmos DB (excluding digital sets)");
+        _logger.LogIngestionStarted();
 
         await foreach (IScryfallSet set in _scryfallSets.ConfigureAwait(false))
         {
@@ -44,10 +48,28 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
             }
             catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
             {
-                _logger.LogError(ex, "Error processing set {Code}", set.Code());
+                _logger.LogSetProcessingError(ex, set.Code());
             }
         }
 
-        _logger.LogInformation("Ingestion complete. Processed {Count} sets", processedCount);
+        _logger.LogIngestionCompleted(processedCount);
     }
+}
+
+internal static partial class ScryfallIngestionServiceLoggerExtensions
+{
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Starting Scryfall sets ingestion to Cosmos DB (excluding digital sets)")]
+    public static partial void LogIngestionStarted(this ILogger logger);
+
+    [LoggerMessage(
+        Level = LogLevel.Error,
+        Message = "Error processing set {SetCode}")]
+    public static partial void LogSetProcessingError(this ILogger logger, Exception ex, string setCode);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Ingestion complete. Processed {ProcessedCount} sets")]
+    public static partial void LogIngestionCompleted(this ILogger logger, int processedCount);
 }

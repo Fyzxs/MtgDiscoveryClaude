@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
 
-internal sealed class CardImageProcessor : ICardsProcessor
+internal sealed class CardImageProcessor : ICardProcessor
 {
     private readonly IDownloader _downloader;
     private readonly IBlobWriteScribe _scribe;
