@@ -13,24 +13,27 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
 {
     private readonly IAsyncEnumerable<IScryfallSet> _scryfallSets;
     private readonly ISetProcessor _setProcessor;
+    private readonly IArtistAggregateProcessor _artistProcessor;
     private readonly ILogger _logger;
 
     public ScryfallIngestionService(ILogger logger)
         : this(
             logger,
             new FilteredScryfallSetCollection(logger),
-            new SetProcessor(logger))
+            new SetProcessor(logger),
+            new ArtistAggregationWriterProcessor(logger))
     {
     }
 
-    private ScryfallIngestionService(
-        ILogger logger,
+    private ScryfallIngestionService(ILogger logger,
         IAsyncEnumerable<IScryfallSet> scryfallSets,
-        ISetProcessor setProcessor)
+        ISetProcessor setProcessor,
+        IArtistAggregateProcessor artistProcessor)
     {
         _logger = logger;
         _scryfallSets = scryfallSets;
         _setProcessor = setProcessor;
+        _artistProcessor = artistProcessor;
     }
 
     public async Task IngestAllSetsAsync()
@@ -51,6 +54,8 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
                 _logger.LogSetProcessingError(ex, set.Code());
             }
         }
+
+        await _artistProcessor.ProcessAsync().ConfigureAwait(false);
 
         _logger.LogIngestionCompleted(processedCount);
     }
