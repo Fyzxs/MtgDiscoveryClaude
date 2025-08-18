@@ -20,6 +20,8 @@ internal sealed class SpecificSetsFilter : IScryfallSetFilter
         if (specificSetToProcess.HasNoSpecificSets()) return Include;
 
         ISet<string> asSystemType = specificSetToProcess.AsSystemType();
-        return asSystemType.Contains(set.Code().ToLowerInvariant());
+        bool shouldInclude = asSystemType.Contains(set.Code().ToLowerInvariant());
+        //TODO: add logging to indicate
+        return shouldInclude;
     }
 }

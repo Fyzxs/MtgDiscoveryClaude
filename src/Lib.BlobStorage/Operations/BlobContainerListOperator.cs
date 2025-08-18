@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Web;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -49,7 +50,7 @@ internal sealed class BlobContainerListOperator : IBlobContainerListOperator
                 BlobProperties properties = await blobClient.GetPropertiesAsync().ConfigureAwait(false);
                 BlobListingItem listingItem = new()
                 {
-                    Metadata = properties.Metadata,
+                    Metadata = DecodeMetadata(properties.Metadata),
                     Path = item.Blob.Name
                 };
                 results.Add(listingItem);
@@ -63,6 +64,19 @@ internal sealed class BlobContainerListOperator : IBlobContainerListOperator
             _logger.ListErrorInformation(ex, "Fail", Stopwatch.GetElapsedTime(swStart));
             throw ex.ThrowMe();
         }
+    }
+
+    private static IDictionary<string, string> DecodeMetadata(IDictionary<string, string> metadata)
+    {
+        if (metadata == null) return metadata;
+
+        Dictionary<string, string> decodedMetadata = new();
+        foreach (KeyValuePair<string, string> kvp in metadata)
+        {
+            // URL decode the value to restore the original characters
+            decodedMetadata[kvp.Key] = HttpUtility.UrlDecode(kvp.Value);
+        }
+        return decodedMetadata;
     }
 }
 

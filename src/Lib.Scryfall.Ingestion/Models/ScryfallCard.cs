@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Lib.BlobStorage.Apis.Ids;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Scryfall.Shared.Internal.Models;
-using Lib.Universal.Primitives;
 
 namespace Lib.Scryfall.Ingestion.Models;
 internal sealed class ScryfallCard : IScryfallCard
@@ -93,7 +90,7 @@ internal sealed class ScryfallCard : IScryfallCard
 
     public IEnumerable<string> ArtistIds()
     {
-        List<string> artistIds = new();
+        List<string> artistIds = [];
 
         try
         {
@@ -118,7 +115,7 @@ internal sealed class ScryfallCard : IScryfallCard
 
     public IEnumerable<IArtistIdNamePair> ArtistIdNamePairs()
     {
-        List<IArtistIdNamePair> pairs = new();
+        List<IArtistIdNamePair> pairs = [];
         List<string> artistIds = ArtistIds().ToList();
         List<string> artistNames = ExtractArtistNames();
 
@@ -134,7 +131,7 @@ internal sealed class ScryfallCard : IScryfallCard
 
     private List<string> ExtractArtistNames()
     {
-        List<string> names = new();
+        List<string> names = [];
 
         try
         {
@@ -158,63 +155,5 @@ internal sealed class ScryfallCard : IScryfallCard
         }
 
         return names;
-    }
-}
-
-internal sealed class CardImageInfoCollection : ICardImageInfoCollection
-{
-    private readonly Collection<ICardImageInfo> _imageInfos;
-
-    public CardImageInfoCollection(Collection<ICardImageInfo> imageInfos) => _imageInfos = imageInfos;
-
-    public IEnumerator<ICardImageInfo> GetEnumerator() => _imageInfos.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-}
-
-internal sealed class CardImageInfo : ICardImageInfo
-{
-    private readonly IScryfallCard _card;
-    private readonly string _side;
-    private readonly string _imageType;
-    private readonly string _uri;
-
-    public CardImageInfo(IScryfallCard card, string side, string imageType, string uri)
-    {
-        _card = card;
-        _side = side;
-        _imageType = imageType;
-        _uri = uri;
-    }
-
-    public Url ImageUrl() => new ProvidedUrl(_uri);
-
-    public string StoragePath()
-    {
-        string cardId = _card.Id();
-        string first = cardId[..1];
-        string second = cardId.Substring(1, 1);
-        return new ProvidedBlobPathEntity($"{_imageType}/{_side}/{first}/{second}/{cardId}.jpg");
-    }
-
-    public IDictionary<string, string> Metadata()
-    {
-        return new Dictionary<string, string>
-        {
-            { "card_id", _card.Id() },
-            { "card_name", _card.Name() },
-            { "set_id", _card.Set().Id() },
-            { "set_code", _card.Set().Code() },
-            { "side", _side},
-            { "image_type", _imageType },
-            { "content_type", "image/jpeg" }
-        };
-    }
-
-    public string LogValue() => $"[{_card.Name()}/{_card.Set().Code()} | {_side}/{_imageType}]";
-
-    string ICardImageInfo.StoragePath()
-    {
-        return StoragePath();
     }
 }

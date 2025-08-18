@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Web;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -39,7 +41,7 @@ internal sealed class BlobContainerWriteOperator : IBlobContainerWriteOperator
         {
             BlobUploadOptions uploadOptions = new()
             {
-                Metadata = blobWriteEntity.Metadata
+                Metadata = EncodeMetadata(blobWriteEntity.Metadata)
             };
 
             Response<BlobContentInfo> uploadAsync = await blobClient.UploadAsync(blobWriteEntity.Content, uploadOptions).ConfigureAwait(false);
@@ -52,6 +54,19 @@ internal sealed class BlobContainerWriteOperator : IBlobContainerWriteOperator
             _logger.WriteErrorInformation(ex, "Fail", Stopwatch.GetElapsedTime(swStart));
             return new FailureBlobOpResponse<BlobContentInfo>();
         }
+    }
+
+    private static IDictionary<string, string> EncodeMetadata(IDictionary<string, string> metadata)
+    {
+        if (metadata == null) return metadata;
+
+        Dictionary<string, string> encodedMetadata = new();
+        foreach (KeyValuePair<string, string> kvp in metadata)
+        {
+            // URL encode the value to ensure it contains only ASCII characters
+            encodedMetadata[kvp.Key] = HttpUtility.UrlEncode(kvp.Value);
+        }
+        return encodedMetadata;
     }
 }
 
