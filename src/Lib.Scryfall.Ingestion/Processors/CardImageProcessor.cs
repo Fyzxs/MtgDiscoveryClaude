@@ -35,7 +35,7 @@ internal sealed class CardImageProcessor : ICardProcessor
         IDownloader downloader,
         IBlobWriteScribe scribe,
         IBlobInquisitor inquisitor,
-        ConfigScryfallIngestionConfiguration config,
+        IScryfallIngestionConfiguration config,
         ILogger logger)
     {
         _downloader = downloader;
@@ -89,6 +89,7 @@ internal sealed class CardImageProcessor : ICardProcessor
         BlobOpResponse<bool> existsResponse = await _inquisitor.ExistsAsync(checkEntity.FilePath).ConfigureAwait(false);
 
         if (existsResponse.MissingValue()) return false;
+        if (existsResponse.Value is false) return false;
 
         _logger.LogCardImageAlreadyExists(imageInfo.LogValue());
         return true;

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Configurations;
 using Lib.Scryfall.Shared.Apis.Models;
@@ -7,20 +9,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
 
-internal sealed class BatchSetProcessor
+internal sealed class BatchSetProcessor : IBatchSetProcessor
 {
     private readonly ISetProcessor _setProcessor;
     private readonly ArtistAggregationWriterProcessor _artistWriter;
-    private readonly SetBatchSize _batchSizeConfig;
-    private readonly ProcessSetsInReverse _processSetsInReverseConfig;
+    private readonly IScryfallIngestionConfiguration _config;
     private readonly ILogger _logger;
 
     public BatchSetProcessor(ILogger logger)
         : this(
             new SetProcessor(logger),
             new ArtistAggregationWriterProcessor(logger),
-            new ConfigScryfallIngestionConfiguration().ProcessingConfig().SetBatchSize(),
-            new ConfigScryfallIngestionConfiguration().ProcessingConfig().ProcessSetsInReverse(),
+            new ConfigScryfallIngestionConfiguration(),
             logger)
     {
     }
@@ -28,29 +28,21 @@ internal sealed class BatchSetProcessor
     private BatchSetProcessor(
         ISetProcessor setProcessor,
         ArtistAggregationWriterProcessor artistWriter,
-        SetBatchSize batchSizeConfig,
-        ProcessSetsInReverse processSetsInReverseConfig,
+        IScryfallIngestionConfiguration config,
         ILogger logger)
     {
         _setProcessor = setProcessor;
         _artistWriter = artistWriter;
-        _batchSizeConfig = batchSizeConfig;
-        _processSetsInReverseConfig = processSetsInReverseConfig;
+        _config = config;
         _logger = logger;
     }
 
     public async Task ProcessSetsAsync(IEnumerable<IScryfallSet> sets)
     {
-        int batchSize = _batchSizeConfig.AsSystemType();
-        bool processInReverse = _processSetsInReverseConfig.AsSystemType();
+        IScryfallProcessingConfig processingConfig = _config.ProcessingConfig();
+        int batchSize = processingConfig.SetBatchSize().AsSystemType();
 
         List<IScryfallSet> setList = sets.ToList();
-        if (processInReverse)
-        {
-            setList.Reverse();
-            _logger.LogProcessingInReverse();
-        }
-
         int totalSets = setList.Count;
         int processedSets = 0;
 
@@ -63,7 +55,14 @@ internal sealed class BatchSetProcessor
             // Process the batch of sets
             foreach (IScryfallSet set in batch)
             {
-                await _setProcessor.ProcessAsync(set).ConfigureAwait(false);
+                try
+                {
+                    await _setProcessor.ProcessAsync(set).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
+                {
+                    _logger.LogBatchSetProcessingError(ex, set.Code());
+                }
             }
 
             // Write dirty artists after each batch
@@ -95,7 +94,7 @@ internal static partial class BatchSetProcessorLoggerExtensions
     public static partial void LogAllBatchesComplete(this ILogger logger, int totalSets);
 
     [LoggerMessage(
-        Level = LogLevel.Information,
-        Message = "Processing sets in reverse order (oldest first)")]
-    public static partial void LogProcessingInReverse(this ILogger logger);
+        Level = LogLevel.Error,
+        Message = "Error processing set {SetCode}")]
+    public static partial void LogBatchSetProcessingError(this ILogger logger, Exception ex, string setCode);
 }

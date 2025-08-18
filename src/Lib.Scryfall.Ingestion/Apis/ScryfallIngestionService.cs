@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Collections;
@@ -12,52 +13,49 @@ namespace Lib.Scryfall.Ingestion.Apis;
 internal sealed class ScryfallIngestionService : IScryfallIngestionService
 {
     private readonly IAsyncEnumerable<IScryfallSet> _scryfallSets;
-    private readonly ISetProcessor _setProcessor;
-    private readonly IArtistAggregateProcessor _artistProcessor;
+    private readonly IBatchSetProcessor _batchSetProcessor;
     private readonly ILogger _logger;
 
     public ScryfallIngestionService(ILogger logger)
         : this(
             logger,
             new FilteredScryfallSetCollection(logger),
-            new SetProcessor(logger),
-            new ArtistAggregationWriterProcessor(logger))
+            new BatchSetProcessor(logger))
     {
     }
 
-    private ScryfallIngestionService(ILogger logger,
+    private ScryfallIngestionService(
+        ILogger logger,
         IAsyncEnumerable<IScryfallSet> scryfallSets,
-        ISetProcessor setProcessor,
-        IArtistAggregateProcessor artistProcessor)
+        IBatchSetProcessor batchSetProcessor)
     {
         _logger = logger;
         _scryfallSets = scryfallSets;
-        _setProcessor = setProcessor;
-        _artistProcessor = artistProcessor;
+        _batchSetProcessor = batchSetProcessor;
     }
 
     public async Task IngestAllSetsAsync()
     {
-        int processedCount = 0;
-
         _logger.LogIngestionStarted();
 
+        // Collect all sets into a list for batch processing
+        List<IScryfallSet> allSets = new();
         await foreach (IScryfallSet set in _scryfallSets.ConfigureAwait(false))
         {
-            try
-            {
-                await _setProcessor.ProcessAsync(set).ConfigureAwait(false);
-                processedCount++;
-            }
-            catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
-            {
-                _logger.LogSetProcessingError(ex, set.Code());
-            }
+            allSets.Add(set);
         }
 
-        await _artistProcessor.ProcessAsync().ConfigureAwait(false);
+        _logger.LogSetsCollected(allSets.Count);
 
-        _logger.LogIngestionCompleted(processedCount);
+        // Process all sets in batches
+        // BatchSetProcessor handles:
+        // - Batch size configuration
+        // - Reverse order processing if configured
+        // - Artist aggregation updates after each batch
+        // - Individual set error handling
+        await _batchSetProcessor.ProcessSetsAsync(allSets).ConfigureAwait(false);
+
+        _logger.LogIngestionCompleted(allSets.Count);
     }
 }
 
@@ -69,9 +67,9 @@ internal static partial class ScryfallIngestionServiceLoggerExtensions
     public static partial void LogIngestionStarted(this ILogger logger);
 
     [LoggerMessage(
-        Level = LogLevel.Error,
-        Message = "Error processing set {SetCode}")]
-    public static partial void LogSetProcessingError(this ILogger logger, Exception ex, string setCode);
+        Level = LogLevel.Information,
+        Message = "Collected {SetCount} sets for processing")]
+    public static partial void LogSetsCollected(this ILogger logger, int setCount);
 
     [LoggerMessage(
         Level = LogLevel.Information,

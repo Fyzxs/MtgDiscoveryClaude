@@ -22,7 +22,7 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
 
     public FilteredScryfallSetCollection(ILogger logger)
         : this(
-            new AllScryfallSetCollection(logger),
+            new ReversibleScryfallSetCollection(logger),
             new ConfigScryfallIngestionConfiguration())
     {
     }
