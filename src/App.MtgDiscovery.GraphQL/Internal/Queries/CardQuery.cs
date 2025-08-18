@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Apis.Types;
 using App.MtgDiscovery.GraphQL.Internal.Mappers;
 using HotChocolate.Types;
@@ -46,5 +48,19 @@ public class CardQueryMethods
         ScryfallCardEntity scryfallCardEntity = _scryfallCardMapper.Map(response.Value);
 
         return scryfallCardEntity;
+    }
+
+    public async Task<IEnumerable<ScryfallCardEntity>> CardsById(IEnumerable<string> ids)
+    {
+
+        List<Task<ScryfallCardEntity>> tasks = [];
+
+        tasks.AddRange(ids.Select(CardById));
+
+        if (tasks.Count == 0) return [];
+
+        ScryfallCardEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
+
+        return results.Where(card => card != null);
     }
 }

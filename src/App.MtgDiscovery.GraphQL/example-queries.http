@@ -1,4 +1,3 @@
-### Variables
 @baseUrl = https://localhost:65203
 @endpoint = {{baseUrl}}/graphql/example
 
