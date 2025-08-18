@@ -6,6 +6,7 @@ using Lib.Adapter.Scryfall.BlobStorage.Apis.Entities;
 using Lib.Adapter.Scryfall.BlobStorage.Apis.Operators;
 using Lib.BlobStorage.Apis.Operations;
 using Lib.BlobStorage.Apis.Operations.Responses;
+using Lib.Scryfall.Ingestion.Configurations;
 using Lib.Scryfall.Ingestion.Http;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
@@ -16,12 +17,16 @@ internal sealed class CardImageProcessor : ICardProcessor
 {
     private readonly IDownloader _downloader;
     private readonly IBlobWriteScribe _scribe;
+    private readonly IBlobInquisitor _inquisitor;
+    private readonly IScryfallIngestionConfiguration _config;
     private readonly ILogger _logger;
 
     public CardImageProcessor(ILogger logger)
         : this(
             new HttpDownloader(logger),
             new CardImageBlobScribe(logger),
+            new CardImageBlobInquisitor(logger),
+            new ConfigScryfallIngestionConfiguration(),
             logger)
     {
     }
@@ -29,10 +34,14 @@ internal sealed class CardImageProcessor : ICardProcessor
     private CardImageProcessor(
         IDownloader downloader,
         IBlobWriteScribe scribe,
+        IBlobInquisitor inquisitor,
+        ConfigScryfallIngestionConfiguration config,
         ILogger logger)
     {
         _downloader = downloader;
         _scribe = scribe;
+        _inquisitor = inquisitor;
+        _config = config;
         _logger = logger;
     }
 
@@ -52,6 +61,8 @@ internal sealed class CardImageProcessor : ICardProcessor
         {
             _logger.LogProcessingCardImage(imageInfo.LogValue());
 
+            if (await ShouldSkipDownload(imageInfo).ConfigureAwait(false)) return;
+
             byte[] imageBytes = await _downloader.DownloadAsync(imageInfo.ImageUrl()).ConfigureAwait(false);
 
             CardImageBlobEntity blobEntity = new(imageInfo, imageBytes);
@@ -68,6 +79,19 @@ internal sealed class CardImageProcessor : ICardProcessor
         {
             _logger.LogCardImageProcessingError(ex, imageInfo.LogValue());
         }
+    }
+
+    private async Task<bool> ShouldSkipDownload(ICardImageInfo imageInfo)
+    {
+        if (_config.ProcessingConfig().AlwaysDownloadImages()) return false;
+
+        CardImageBlobEntity checkEntity = new(imageInfo, []);
+        BlobOpResponse<bool> existsResponse = await _inquisitor.ExistsAsync(checkEntity.FilePath).ConfigureAwait(false);
+
+        if (existsResponse.MissingValue()) return false;
+
+        _logger.LogCardImageAlreadyExists(imageInfo.LogValue());
+        return true;
     }
 
     private void LogSuccess(ICardImageInfo imageInfo, BlobOpResponse<BlobContentInfo> response)
@@ -96,6 +120,11 @@ internal static partial class CardImageProcessorLoggerExtensions
         Level = LogLevel.Information,
         Message = "Successfully stored image for card {logInfo}")]
     public static partial void LogCardImageStored(this ILogger logger, string logInfo);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Image already exists for card {logInfo}, skipping download")]
+    public static partial void LogCardImageAlreadyExists(this ILogger logger, string logInfo);
 
     [LoggerMessage(
         Level = LogLevel.Error,

@@ -32,4 +32,9 @@ internal sealed class ConfigScryfallProcessingConfig : IScryfallProcessingConfig
     {
         return new ConfigProcessSetsInReverse($"{_parentKey}:{IScryfallProcessingConfig.ProcessSetsInReverseKey}", _config);
     }
+
+    public AlwaysDownloadImages AlwaysDownloadImages()
+    {
+        return new ConfigAlwaysDownloadImages($"{_parentKey}:{IScryfallProcessingConfig.AlwaysDownloadImagesKey}", _config);
+    }
 }
