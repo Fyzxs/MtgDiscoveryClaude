@@ -4,7 +4,9 @@
       "Bash(true)",
       "Bash(sed:*)",
       "WebSearch",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet clean src/App.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL.csproj)"
     ],
     "deny": []
   }

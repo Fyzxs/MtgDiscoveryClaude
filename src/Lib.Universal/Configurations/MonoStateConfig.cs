@@ -7,9 +7,9 @@ namespace Lib.Universal.Configurations;
 public sealed class MonoStateConfig : IConfig
 {
     private static readonly Semaphore s_setOnce = new(1, 1);
-    private static IConfigurationRoot s_configuration;
+    private static IConfiguration s_configuration;
 
-    public static void SetConfiguration(IConfigurationRoot configuration)
+    public static void SetConfiguration(IConfiguration configuration)
     {
         try
         {

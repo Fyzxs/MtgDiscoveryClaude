@@ -1,13 +1,15 @@
+﻿using App.MtgDiscovery.GraphQL.Internal.Queries;
 using App.MtgDiscovery.GraphQL.Internal.Schema;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace App.MtgDiscovery.GraphQL;
 
-public class Startup
+internal class Startup
 {
     private readonly IConfiguration _configuration;
 
@@ -18,6 +20,9 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // Register IConfiguration for DI
+        services.AddSingleton(_configuration);
+
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
@@ -28,9 +33,23 @@ public class Startup
             });
         });
 
+        services.AddLogging();
+
+        // Register ILogger as a singleton service
+        services.AddSingleton<ILogger>(sp =>
+            sp.GetRequiredService<ILoggerFactory>().CreateLogger("GraphQL"));
+
+        // Register query method classes for DI
+        services.AddScoped<CardQueryMethods>();
+        services.AddScoped<ExampleQueryMethods>();
+
         services
             .AddGraphQLServer("example")
             .AddExampleSchema();
+
+        services
+            .AddGraphQLServer("cards")
+            .AddCardSchema();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,6 +66,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapGraphQL("/graphql/example", "example");
+            endpoints.MapGraphQL("/graphql/cards", "cards");
         });
     }
 }
