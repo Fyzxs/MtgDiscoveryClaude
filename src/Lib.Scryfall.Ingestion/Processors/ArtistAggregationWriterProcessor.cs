@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
@@ -38,17 +37,21 @@ internal sealed class ArtistAggregationWriterProcessor : IArtistAggregateProcess
 
     public async Task ProcessAsync()
     {
-        List<IArtistAggregate> artists = _aggregator.GetArtists().ToList();
+        IEnumerable<IArtistAggregate> dirtyArtists = _aggregator.GetDirtyArtists();
 
-        foreach (IArtistAggregate artist in artists)
+        int processCount = 0;
+
+        foreach (IArtistAggregate artist in dirtyArtists)
         {
+            processCount++;
             foreach (IArtistProcessor processor in _processors)
             {
                 await processor.ProcessAsync(artist).ConfigureAwait(false);
             }
         }
 
-        _logger.LogArtistAggregationWriteCompleted(artists.Count);
+        _aggregator.MarkAllClean();
+        _logger.LogArtistAggregationWriteCompleted(processCount);
     }
 }
 
@@ -56,6 +59,6 @@ internal static partial class ArtistAggregationWriterProcessorLoggerExtensions
 {
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Completed writing artist aggregation data for {ArtistCount} artists")]
+        Message = "Completed writing artist aggregation data for [{artistCount}] artists")]
     public static partial void LogArtistAggregationWriteCompleted(this ILogger logger, int artistCount);
 }

@@ -22,4 +22,14 @@ internal sealed class ConfigScryfallProcessingConfig : IScryfallProcessingConfig
     {
         return new ConfigSpecificSetCodes($"{_parentKey}:{IScryfallProcessingConfig.SpecificSetsKey}", _config);
     }
+
+    public SetBatchSize SetBatchSize()
+    {
+        return new ConfigSetBatchSize($"{_parentKey}:{IScryfallProcessingConfig.SetBatchSizeKey}", _config);
+    }
+
+    public ProcessSetsInReverse ProcessSetsInReverse()
+    {
+        return new ConfigProcessSetsInReverse($"{_parentKey}:{IScryfallProcessingConfig.ProcessSetsInReverseKey}", _config);
+    }
 }

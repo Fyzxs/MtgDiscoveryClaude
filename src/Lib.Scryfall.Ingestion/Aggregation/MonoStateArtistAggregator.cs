@@ -34,6 +34,19 @@ internal sealed class MonoStateArtistAggregator : IArtistAggregator
         return s_artists.Values.ToList();
     }
 
+    public IEnumerable<IArtistAggregate> GetDirtyArtists()
+    {
+        return s_artists.Values.Where(a => a.IsDirty()).ToList();
+    }
+
+    public void MarkAllClean()
+    {
+        foreach (ArtistAggregate artist in s_artists.Values)
+        {
+            artist.MarkClean();
+        }
+    }
+
     public void Clear()
     {
         s_artists.Clear();

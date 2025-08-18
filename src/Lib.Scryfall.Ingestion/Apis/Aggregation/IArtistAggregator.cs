@@ -7,5 +7,7 @@ public interface IArtistAggregator
 {
     void Track(IScryfallCard card);
     IEnumerable<IArtistAggregate> GetArtists();
+    IEnumerable<IArtistAggregate> GetDirtyArtists();
+    void MarkAllClean();
     void Clear();
 }
