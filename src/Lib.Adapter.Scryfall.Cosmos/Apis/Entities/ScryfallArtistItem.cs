@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 

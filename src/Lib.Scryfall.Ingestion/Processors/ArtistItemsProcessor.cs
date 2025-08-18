@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;

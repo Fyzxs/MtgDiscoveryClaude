@@ -1,4 +1,4 @@
-using Lib.Scryfall.Shared.Apis.Models;
+﻿using Lib.Scryfall.Shared.Apis.Models;
 
 namespace Lib.Scryfall.Shared.Internal.Models;
 

@@ -1,4 +1,4 @@
-namespace Lib.Scryfall.Shared.Apis.Models;
+﻿namespace Lib.Scryfall.Shared.Apis.Models;
 
 public interface IArtistIdNamePair
 {

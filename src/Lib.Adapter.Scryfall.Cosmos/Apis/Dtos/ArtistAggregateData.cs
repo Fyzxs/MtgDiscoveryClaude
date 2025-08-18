@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
