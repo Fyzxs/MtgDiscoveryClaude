@@ -3,7 +3,8 @@
     "allow": [
       "Bash(true)",
       "Bash(sed:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cp:*)"
     ],
     "deny": []
   }
