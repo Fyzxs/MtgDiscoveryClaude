@@ -37,7 +37,8 @@
     <!-- IDE0005 gen docs to complain about unused usings - removed by code analysis -->
     <!-- IDE0046 if return into ?: return -->
     <!-- CA1716  Lib is reserved in namespace-->
-    <NoWarn>$(NoWarn);IDE0290;IDE2001;IDE0005;IDE0046;CA1716</NoWarn>
+    <!-- CA1040  Remove empty interface-->
+    <NoWarn>$(NoWarn);IDE0290;IDE2001;IDE0005;IDE0046;CA1716;CA1040</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

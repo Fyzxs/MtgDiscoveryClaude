@@ -13,4 +13,3 @@ public abstract class ToSystemType<TSystemType>
 
     public override string ToString() => $"{AsSystemType()}";
 }
-

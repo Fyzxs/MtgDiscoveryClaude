@@ -53,6 +53,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.MtgDiscovery.GraphQL", "App.MtgDiscovery.GraphQL\App.MtgDiscovery.GraphQL.csproj", "{7C118DAE-2497-4309-8074-2DA69D2612BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Invocation", "Lib.Shared.Invocation\Lib.Shared.Invocation.csproj", "{CBBB4752-DEC1-E30B-28B5-233306229D3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Abstractions", "Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj", "{005B1DAA-1B6B-437C-92B0-7719D7F04637}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -315,6 +319,30 @@ Global
 		{7C118DAE-2497-4309-8074-2DA69D2612BC}.Release|x64.Build.0 = Release|Any CPU
 		{7C118DAE-2497-4309-8074-2DA69D2612BC}.Release|x86.ActiveCfg = Release|Any CPU
 		{7C118DAE-2497-4309-8074-2DA69D2612BC}.Release|x86.Build.0 = Release|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Debug|x64.Build.0 = Debug|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Release|x64.ActiveCfg = Release|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Release|x64.Build.0 = Release|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C}.Release|x86.Build.0 = Release|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Debug|x64.Build.0 = Debug|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Debug|x86.Build.0 = Debug|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Release|x64.ActiveCfg = Release|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Release|x64.Build.0 = Release|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Release|x86.ActiveCfg = Release|Any CPU
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
