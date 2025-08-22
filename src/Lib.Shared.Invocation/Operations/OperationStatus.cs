@@ -16,7 +16,7 @@ public abstract class OperationStatus
         IsSuccess = true;
     }
 
-    public bool IsSuccess { get; }
+    public virtual bool IsSuccess { get; }
     public bool IsFailure => IsSuccess is false;
     public OperationException OuterException { get; }
     public virtual HttpStatusCode Status { get; protected set; }
