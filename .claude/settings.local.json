@@ -1,13 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(true)",
-      "Bash(sed:*)",
-      "WebSearch",
-      "Bash(cp:*)",
-      "Bash(dotnet build:*)",
-      "Bash(dotnet clean src/App.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL.csproj)"
+      "Bash(dotnet nuget locals:*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "UserPromptSubmit": {
+      "handler": "./hooks/user_prompt_submit.py",
+      "args": []
+    }
   }
 }

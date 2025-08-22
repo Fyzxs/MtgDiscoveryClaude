@@ -5,7 +5,7 @@ namespace Lib.Shared.Invocation.Requests;
 
 internal sealed class ValidatorFailedResponseOperationStatus<TResponseType> : RequestOperationStatus<TResponseType>
 {
-    public ValidatorFailedResponseOperationStatus(string message) : base(new ValidatorRequestException(message))
+    public ValidatorFailedResponseOperationStatus(string message) : base(new ValidatorOperationException(message))
     { }
 
     public override HttpStatusCode StatusCode => HttpStatusCode.BadRequest;

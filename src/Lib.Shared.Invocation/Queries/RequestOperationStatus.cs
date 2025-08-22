@@ -1,26 +1,18 @@
 ﻿using System.Net;
 using Lib.Shared.Invocation.Exceptions;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Shared.Invocation.Queries;
 
-public abstract class RequestOperationStatus<TResponse>
+public abstract class RequestOperationStatus<TResponse> : OperationStatus
 {
-    protected RequestOperationStatus(RequestException ex)
-    {
-        IsSuccess = false;
-        OuterException = ex;
-    }
+    protected RequestOperationStatus(OperationException ex) : base(ex)
+    { }
 
     protected RequestOperationStatus(TResponse response)
     {
-        IsSuccess = true;
         ResponseValue = response;
     }
-
-    public bool IsSuccess { get; }
-
-    public bool IsFailure => IsSuccess is false;
-    public RequestException OuterException { get; }
     public TResponse ResponseValue { get; }
     public abstract HttpStatusCode StatusCode { get; }
 }

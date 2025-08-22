@@ -4,9 +4,9 @@ using Lib.Shared.Invocation.Exceptions;
 namespace Lib.Shared.Invocation.Requests;
 
 #pragma warning disable CA1032 // Add all constructors
-internal sealed class ValidatorRequestException : RequestException
+internal sealed class ValidatorOperationException : OperationException
 #pragma warning restore CA1032  
 {
-    public ValidatorRequestException(string message) : base(HttpStatusCode.BadRequest, message)
+    public ValidatorOperationException(string message) : base(HttpStatusCode.BadRequest, message)
     { }
 }
