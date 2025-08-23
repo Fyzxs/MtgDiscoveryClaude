@@ -334,54 +334,45 @@ query GetCompleteCard($cardId: String!) {
 POST {{cardEndpoint}}
 Content-Type: application/json
 
-query GetMultipleCards($cardId1: String!, $cardId2: String!) {
-  card1: cardById(id: $cardId1) {
-    id
-    name
-    manaCost
-    typeLine
-    oracleText
-  }
-  card2: cardById(id: $cardId2) {
-    id
-    name
-    manaCost
-    typeLine
-    oracleText
-  }
-}
-
-{
-  "cardId1": "d5c83259-9b90-47c2-b48e-c7d78519e792",
-  "cardId2": "11600105-56c6-4073-a4a6-8469030b39c9"
-}
 
 ### Get Cards by Multiple IDs (Batch)
 # @ref variables
 POST {{cardEndpoint}}
 Content-Type: application/json
 
-query GetCardsBatch($ids: [String!]!) {
+query GetCardsBatch($ids: CardIdsArgEntityInput!) {
   cardsById(ids: $ids) {
-    id
-    name
-    manaCost
-    typeLine
-    oracleText
-    rarity
-    setName
-    artist
-    imageUris {
-      normal
-      large
+    __typename
+    ... on SuccessCardsResponse {
+      data {
+        id
+        name
+        manaCost
+        typeLine
+        oracleText
+        rarity
+        setName
+        artist
+        imageUris {
+          normal
+          large
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
     }
   }
 }
 
 {
-  "ids": [
-    "d5c83259-9b90-47c2-b48e-c7d78519e792",
-    "11600105-56c6-4073-a4a6-8469030b39c9",
-    "0000579f-7b35-4ed3-b44c-db2a538066fe"
-  ]
+  "ids": {
+    "cardIds": [
+      "d5c83259-9b90-47c2-b48e-c7d78519e792",
+      "11600105-56c6-4073-a4a6-8469030b39c9",
+      "0000579f-7b35-4ed3-b44c-db2a538066fe"
+    ]
+  }
 }

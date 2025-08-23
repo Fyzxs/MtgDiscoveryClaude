@@ -12,6 +12,13 @@ internal static class CardSchemaExtensions
         return builder
             .AddQueryType<CardQuery>()
             .AddTypeExtension<CardQueryMethods>()
+            // Response union and types
+            .AddType<ResponseModelUnionType>()
+            .AddType<FailureResponseModelType>()
+            .AddType<SuccessDataResponseModelType>()
+            .AddType<StatusDataModelType>()
+            .AddType<MetaDataModelType>()
+            // Card entity types
             .AddType<ScryfallCardOutEntityType>()
             .AddType<ScryfallImageUrisOutEntityType>()
             .AddType<ScryfallLegalitiesOutEntityType>()

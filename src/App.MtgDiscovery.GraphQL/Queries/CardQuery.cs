@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args;
 using App.MtgDiscovery.GraphQL.Entities.Outs;
+using App.MtgDiscovery.GraphQL.Entities.Types;
 using App.MtgDiscovery.GraphQL.Mappers;
+using HotChocolate;
 using HotChocolate.Types;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
-using Lib.Cosmos.Apis.Ids;
-using Lib.Cosmos.Apis.Operators;
+using Lib.MtgDiscovery.Entry.Apis;
+using Lib.Shared.DataModels.Entities;
+using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
 #pragma warning disable CA1515
 
@@ -19,52 +20,43 @@ public class CardQuery;
 [ExtendObjectType(typeof(CardQuery))]
 public class CardQueryMethods
 {
-    private readonly ICosmosGopher _cardGopher;
     private readonly IScryfallCardMapper _scryfallCardMapper;
+    private readonly IEntryService _entryService;
 
-    public CardQueryMethods(ILogger logger) : this(new ScryfallCardItemsGopher(logger), new ScryfallCardMapper())
+    public CardQueryMethods(ILogger logger) : this(new ScryfallCardMapper(), new EntryService(logger))
     {
     }
 
-    private CardQueryMethods(ICosmosGopher cardGopher, IScryfallCardMapper scryfallCardMapper)
+    private CardQueryMethods(IScryfallCardMapper scryfallCardMapper, IEntryService entryService)
     {
-        _cardGopher = cardGopher;
         _scryfallCardMapper = scryfallCardMapper;
+        _entryService = entryService;
     }
 
     public string Test() => "Card query endpoint is working!";
 
-    public async Task<ScryfallCardOutEntity> CardById(string id)
+    [GraphQLType(typeof(ResponseModelUnionType))]
+    public async Task<ResponseModel> CardsById(CardIdsArgEntity ids)
     {
-        ReadPointItem pointItem = new()
+        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsByIdsAsync(ids).ConfigureAwait(false);
+
+        if (response.IsFailure) return new FailureResponseModel()
         {
-            Id = new ProvidedCosmosItemId(id),
-            Partition = new ProvidedPartitionKeyValue(id)
+            Status = new StatusDataModel()
+            {
+                Message = response.OuterException.StatusMessage,
+                StatusCode = response.OuterException.StatusCode
+            }
         };
 
-        OpResponse<ScryfallCardItem> response = await _cardGopher
-            .ReadAsync<ScryfallCardItem>(pointItem)
-            .ConfigureAwait(false);
+        List<ScryfallCardOutEntity> results = [];
 
-        ScryfallCardOutEntity scryfallCardOutEntity = _scryfallCardMapper.Map(response.Value);
+        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
+        {
+            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
+            results.Add(outEntity);
+        }
 
-        return scryfallCardOutEntity;
-    }
-
-    public async Task<IEnumerable<ScryfallCardOutEntity>> CardsById(CardIdsArgEntity ids)
-    {
-
-        List<Task<ScryfallCardOutEntity>> tasks = [];
-
-        if (ids == null) return [];
-        if (ids.CardIds.Count == 0) return [];
-
-        tasks.AddRange(ids.CardIds.Select(CardById));
-
-        if (tasks.Count == 0) return [];
-
-        ScryfallCardOutEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
-
-        return results.Where(card => card != null);
+        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
     }
 }

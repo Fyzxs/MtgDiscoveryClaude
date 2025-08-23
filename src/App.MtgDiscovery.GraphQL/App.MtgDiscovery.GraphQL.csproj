@@ -22,6 +22,8 @@
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
     <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj" />
+    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
   </ItemGroup>
 
 </Project>
