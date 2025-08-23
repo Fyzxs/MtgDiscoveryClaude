@@ -51,7 +51,7 @@ public class CardQueryMethods
         return scryfallCardOutEntity;
     }
 
-    public async Task<IEnumerable<ScryfallCardOutEntity>> CardsById(CardIdsArgsEntity ids)
+    public async Task<IEnumerable<ScryfallCardOutEntity>> CardsById(CardIdsArgEntity ids)
     {
 
         List<Task<ScryfallCardOutEntity>> tasks = [];

@@ -2,7 +2,7 @@
 
 namespace Lib.MtgDiscovery.Entry.Apis;
 
-public interface ICardIdsArgsEntity
+public interface ICardIdsArgEntity
 {
     ICollection<string> CardIds { get; }
 }

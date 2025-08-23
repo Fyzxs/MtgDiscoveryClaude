@@ -1,9 +1,9 @@
-﻿using Lib.Shared.Abstractions.Actions;
+﻿//using Lib.Shared.Abstractions.Actions;
 
-namespace Lib.Shared.Invocation.Commands;
+//namespace Lib.Shared.Invocation.Commands;
 
-public abstract class CommandValidatorActionContainer<T> : ValidatorActionContainer<T, CommandOperationStatus>
-{
-    protected CommandValidatorActionContainer(params IValidatorAction<T, CommandOperationStatus>[] actions) : base(actions)
-    { }
-}
+//public abstract class CommandValidatorActionContainer<T> : ValidatorActionContainer<T, CommandOperationResponse>
+//{
+//    protected CommandValidatorActionContainer(params IValidatorAction<T, CommandOperationResponse>[] actions) : base(actions)
+//    { }
+//}

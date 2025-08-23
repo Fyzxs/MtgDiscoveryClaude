@@ -6,7 +6,7 @@ using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
-using Lib.Shared.DataModels.Operations;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Queries;
 
@@ -27,7 +27,7 @@ internal sealed class CardAggregatorOperations : ICardAggregatorService
         _cardMapper = cardMapper;
     }
 
-    public async Task<OperationStatus> CardsByIdsAsync(ICardIdsItrEntity args)
+    public async Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         IEnumerable<ReadPointItem> readPointItems = _mapper.Map(args);
         List<Task<OpResponse<ScryfallCardItem>>> tasks = [];
@@ -45,11 +45,11 @@ internal sealed class CardAggregatorOperations : ICardAggregatorService
             .Where(card => card != null)
             .ToList();
 
-        if (successfulCards.Count == 0)
-        {
-            return new FailureOperationStatus("No cards found");
-        }
-
-        return new SuccessOperationStatus<IEnumerable<ICardItemItrEntity>>(successfulCards);
+        return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = successfulCards });
     }
+}
+
+public sealed class CardItemCollectionItrEntity : ICardItemCollectionItrEntity
+{
+    public ICollection<ICardItemItrEntity> Data { get; init; }
 }

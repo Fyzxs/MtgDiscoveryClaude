@@ -5,11 +5,11 @@ namespace Lib.MtgDiscovery.Entry.Queries.Validators;
 
 internal sealed class CardsExtEntityValidator
 {
-    public bool IsValid(ICardIdsArgsEntity args)
+    public bool IsValid(ICardIdsArgEntity arg)
     {
-        if (args == null) return false;
-        if (args.CardIds == null) return false;
-        if (args.CardIds.Count == 0) return false;
-        return args.CardIds.All(id => !string.IsNullOrWhiteSpace(id));
+        if (arg == null) return false;
+        if (arg.CardIds == null) return false;
+        if (arg.CardIds.Count == 0) return false;
+        return arg.CardIds.All(id => !string.IsNullOrWhiteSpace(id));
     }
 }

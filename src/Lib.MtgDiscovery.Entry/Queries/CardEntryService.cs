@@ -4,8 +4,7 @@ using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators;
 using Lib.Shared.DataModels.Entities;
-using Lib.Shared.DataModels.Operations;
-
+using Lib.Shared.Invocation.Operations;
 namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class CardEntryService : ICardEntryService
@@ -25,12 +24,12 @@ internal sealed class CardEntryService : ICardEntryService
         _mapper = mapper;
     }
 
-    public async Task<OperationStatus> CardsByIdsAsync(ICardIdsArgsEntity args)
+    public async Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
     {
-        if (!_validator.IsValid(args))
-        {
-            return new FailureOperationStatus("Invalid card IDs arguments");
-        }
+        //if (!_validator.IsValid(args))
+        //{
+        //    return new FailureOperationResponse<ICardItemCollectionItrEntity>(new InvalidCardIdsOperationResponseMessage());
+        //}
 
         ICardIdsItrEntity mappedArgs = await _mapper.Map(args).ConfigureAwait(false);
         return await _cardDataService.CardsByIdsAsync(mappedArgs).ConfigureAwait(false);

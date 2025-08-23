@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Operations;
+using Lib.Shared.DataModels.Entities;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Apis;
 
@@ -14,7 +15,7 @@ public sealed class EntryService : IEntryService
         _setEntryService = setEntryService;
     }
 
-    public Task<OperationStatus> CardsByIdsAsync(ICardIdsArgsEntity args)
+    public Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
     {
         return _cardEntryService.CardsByIdsAsync(args);
     }

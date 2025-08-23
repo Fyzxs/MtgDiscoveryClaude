@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities;
-using Lib.Shared.DataModels.Operations;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Cards.Apis;
 
@@ -13,7 +13,7 @@ public sealed class CardDomainService : ICardDomainService
         _cardDomainOperations = cardDomainOperations;
     }
 
-    public Task<OperationStatus> CardsByIdsAsync(ICardIdsItrEntity args)
+    public Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         return _cardDomainOperations.CardsByIdsAsync(args);
     }

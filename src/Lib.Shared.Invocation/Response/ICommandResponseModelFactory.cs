@@ -1,10 +1,10 @@
-﻿using Lib.Shared.Invocation.Commands;
-using Lib.Shared.Invocation.Response.Models;
+﻿//using Lib.Shared.Invocation.Commands;
+//using Lib.Shared.Invocation.Response.Models;
 
-namespace Lib.Shared.Invocation.Response;
+//namespace Lib.Shared.Invocation.Response;
 
-public interface ICommandResponseModelFactory
-{
-    public ResponseModel Success(CommandOperationStatus commandOperationStatus);
-    public ResponseModel Failure(CommandOperationStatus commandOperationStatus);
-}
+//public interface ICommandResponseModelFactory
+//{
+//    ResponseModel Success(CommandOperationResponse commandOperationResponse);
+//    ResponseModel Failure(CommandOperationResponse commandOperationResponse);
+//}

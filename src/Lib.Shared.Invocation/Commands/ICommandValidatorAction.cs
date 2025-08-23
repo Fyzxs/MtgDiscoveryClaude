@@ -1,5 +1,5 @@
-﻿using Lib.Shared.Abstractions.Actions;
+﻿//using Lib.Shared.Abstractions.Actions;
 
-namespace Lib.Shared.Invocation.Commands;
+//namespace Lib.Shared.Invocation.Commands;
 
-public interface ICommandValidatorAction<in TItem> : IValidatorAction<TItem, CommandOperationStatus>;
+//public interface ICommandValidatorAction<in TItem> : IValidatorAction<TItem, CommandOperationResponse>;

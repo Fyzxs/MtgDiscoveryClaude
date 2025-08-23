@@ -1,9 +1,9 @@
-﻿using Lib.Shared.Abstractions.Actions;
+﻿//using Lib.Shared.Abstractions.Actions;
 
-namespace Lib.Shared.Invocation.Commands;
+//namespace Lib.Shared.Invocation.Commands;
 
-public abstract class CommandFilterActionContainer<T> : FilterActionContainer<T, CommandOperationStatus>
-{
-    protected CommandFilterActionContainer(params IFilterAction<T, CommandOperationStatus>[] actions) : base(actions)
-    { }
-}
+//public abstract class CommandFilterActionContainer<T> : FilterActionContainer<T, CommandOperationResponse>
+//{
+//    protected CommandFilterActionContainer(params IFilterAction<T, CommandOperationResponse>[] actions) : base(actions)
+//    { }
+//}

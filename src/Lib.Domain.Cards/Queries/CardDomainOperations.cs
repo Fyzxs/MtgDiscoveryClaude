@@ -2,7 +2,7 @@
 using Lib.Aggregator.Cards.Apis;
 using Lib.Domain.Cards.Apis;
 using Lib.Shared.DataModels.Entities;
-using Lib.Shared.DataModels.Operations;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Cards.Queries;
 
@@ -15,7 +15,7 @@ internal sealed class CardDomainOperations : ICardDomainService
         _cardAggregatorService = cardAggregatorService;
     }
 
-    public async Task<OperationStatus> CardsByIdsAsync(ICardIdsItrEntity args)
+    public async Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         return await _cardAggregatorService.CardsByIdsAsync(args).ConfigureAwait(false);
     }

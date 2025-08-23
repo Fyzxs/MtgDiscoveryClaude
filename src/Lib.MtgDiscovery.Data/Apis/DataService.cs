@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities;
-using Lib.Shared.DataModels.Operations;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Data.Apis;
 
@@ -15,7 +15,7 @@ public sealed class DataService : IDataService
         _setDataService = setDataService;
     }
 
-    public Task<OperationStatus> CardsByIdsAsync(ICardIdsItrEntity args)
+    public Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         return _cardDataService.CardsByIdsAsync(args);
     }
