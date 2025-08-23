@@ -5,7 +5,10 @@ using Lib.Shared.DataModels.Entities;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal sealed class CardsArgsToItrMapper : ICreateMapper<ICardIdsArgEntity, ICardIdsItrEntity>
+internal interface ICardsArgsToItrMapper : ICreateMapper<ICardIdsArgEntity, ICardIdsItrEntity>
+{
+}
+internal sealed class CardsArgsToItrMapper : ICardsArgsToItrMapper
 {
     public Task<ICardIdsItrEntity> Map(ICardIdsArgEntity arg)
     {

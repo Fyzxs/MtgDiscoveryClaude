@@ -15,7 +15,7 @@ public sealed class SuccessOperationResponse<TResponseData> : OperationResponse<
 }
 public sealed class FailureOperationResponse<TResponseData> : OperationResponse<TResponseData>
 {
-    public FailureOperationResponse(TResponseData responseData) : base(responseData)
+    public FailureOperationResponse(OperationException ex) : base(ex)
     {
         IsSuccess = false;
     }

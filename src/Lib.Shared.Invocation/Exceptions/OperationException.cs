@@ -17,3 +17,12 @@ public abstract class OperationException : Exception
 
     public string StatusMessage { get; }
 }
+
+#pragma warning disable CA1032 // Implement standard exception constructors
+public sealed class BadRequestOperationException : OperationException
+#pragma warning restore CA1032 // Implement standard exception constructors
+{
+    public BadRequestOperationException(string message) : base(HttpStatusCode.BadRequest, message)
+    {
+    }
+}

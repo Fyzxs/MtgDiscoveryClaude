@@ -6,5 +6,5 @@ namespace Lib.Domain.Cards.Apis;
 
 public interface ICardDomainService
 {
-    Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args);
+    Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args);
 }

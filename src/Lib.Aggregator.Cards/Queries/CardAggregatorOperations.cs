@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.Cards.Queries;
 
@@ -16,7 +18,7 @@ internal sealed class CardAggregatorOperations : ICardAggregatorService
     private readonly QueryCardsIdsToReadPointItemsMapper _mapper;
     private readonly ScryfallCardItemToCardItemItrEntityMapper _cardMapper;
 
-    public CardAggregatorOperations(ICosmosGopher cardGopher) : this(cardGopher, new QueryCardsIdsToReadPointItemsMapper(), new ScryfallCardItemToCardItemItrEntityMapper())
+    public CardAggregatorOperations(ILogger logger) : this(new ScryfallCardItemsGopher(logger), new QueryCardsIdsToReadPointItemsMapper(), new ScryfallCardItemToCardItemItrEntityMapper())
     {
     }
 
@@ -27,7 +29,7 @@ internal sealed class CardAggregatorOperations : ICardAggregatorService
         _cardMapper = cardMapper;
     }
 
-    public async Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         IEnumerable<ReadPointItem> readPointItems = _mapper.Map(args);
         List<Task<OpResponse<ScryfallCardItem>>> tasks = [];

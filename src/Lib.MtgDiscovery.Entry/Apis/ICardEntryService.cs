@@ -6,5 +6,5 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface ICardEntryService
 {
-    Task<OperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args);
+    Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args);
 }
