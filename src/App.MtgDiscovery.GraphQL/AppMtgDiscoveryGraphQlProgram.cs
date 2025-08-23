@@ -6,15 +6,16 @@ using Microsoft.Extensions.Logging;
 
 namespace App.MtgDiscovery.GraphQL;
 
-internal static class Program
+internal static class AppMtgDiscoveryGraphQlProgram
 {
     public static void Main(string[] args)
     {
         CreateHostBuilder(args).Build().Run();
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
                 config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
@@ -34,4 +35,5 @@ internal static class Program
             {
                 MonoStateConfig.SetConfiguration(builder.Configuration);
             });
+    }
 }

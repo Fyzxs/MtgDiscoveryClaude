@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\Lib.MtgDiscovery.Data\Lib.MtgDiscovery.Data.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,85 @@
+﻿using System.Collections.Generic;
+
+namespace Lib.Shared.DataModels.Entities;
+
+public interface ICardItemItrEntity
+{
+    string Id { get; }
+    string OracleId { get; }
+    ICollection<int> MultiverseIds { get; }
+    int? TcgPlayerId { get; }
+    int? CardMarketId { get; }
+    string Name { get; }
+    string Lang { get; }
+    string ReleasedAt { get; }
+    string Uri { get; }
+    string ScryfallUri { get; }
+    string Layout { get; }
+    bool HighResImage { get; }
+    string ImageStatus { get; }
+    IImageUrisItrEntity ImageUris { get; }
+    string ManaCost { get; }
+    decimal? Cmc { get; }
+    string TypeLine { get; }
+    string OracleText { get; }
+    ICollection<string> Colors { get; }
+    ICollection<string> ColorIdentity { get; }
+    ICollection<string> Keywords { get; }
+    ILegalitiesItrEntity Legalities { get; }
+    ICollection<string> Games { get; }
+    bool Reserved { get; }
+    bool Foil { get; }
+    bool NonFoil { get; }
+    ICollection<string> Finishes { get; }
+    bool Oversized { get; }
+    bool Promo { get; }
+    bool Reprint { get; }
+    bool Variation { get; }
+    string SetId { get; }
+    string SetCode { get; }
+    string SetName { get; }
+    string SetType { get; }
+    string SetUri { get; }
+    string SetSearchUri { get; }
+    string ScryfallSetUri { get; }
+    string RulingsUri { get; }
+    string PrintsSearchUri { get; }
+    string CollectorNumber { get; }
+    bool Digital { get; }
+    string Rarity { get; }
+    string FlavorText { get; }
+    string CardBackId { get; }
+    string Artist { get; }
+    ICollection<string> ArtistIds { get; }
+    string IllustrationId { get; }
+    string BorderColor { get; }
+    string Frame { get; }
+    ICollection<string> FrameEffects { get; }
+    string SecurityStamp { get; }
+    bool FullArt { get; }
+    bool Textless { get; }
+    bool Booster { get; }
+    bool StorySpotlight { get; }
+    int? EdhRecRank { get; }
+    int? PennyRank { get; }
+    IPricesItrEntity Prices { get; }
+    IRelatedUrisItrEntity RelatedUris { get; }
+    IPurchaseUrisItrEntity PurchaseUris { get; }
+    string Power { get; }
+    string Toughness { get; }
+    string Loyalty { get; }
+    string Defense { get; }
+    string LifeModifier { get; }
+    string HandModifier { get; }
+    ICollection<string> ColorIndicator { get; }
+    ICollection<ICardFaceItrEntity> CardFaces { get; }
+    ICollection<IAllPartsItrEntity> AllParts { get; }
+    string PrintedName { get; }
+    string PrintedTypeLine { get; }
+    string PrintedText { get; }
+    string Watermark { get; }
+    int? ContentWarning { get; }
+    IPreviewItrEntity Preview { get; }
+    ICollection<string> ProducedMana { get; }
+    ICollection<string> Attractions { get; }
+}

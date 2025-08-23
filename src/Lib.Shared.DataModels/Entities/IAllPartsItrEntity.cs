@@ -1,0 +1,11 @@
+﻿namespace Lib.Shared.DataModels.Entities;
+
+public interface IAllPartsItrEntity
+{
+    string ObjectString { get; }
+    string Id { get; }
+    string Component { get; }
+    string Name { get; }
+    string TypeLine { get; }
+    string Uri { get; }
+}

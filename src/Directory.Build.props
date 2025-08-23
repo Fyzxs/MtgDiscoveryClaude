@@ -38,7 +38,8 @@
     <!-- IDE0046 if return into ?: return -->
     <!-- CA1716  Lib is reserved in namespace-->
     <!-- CA1040  Remove empty interface-->
-    <NoWarn>$(NoWarn);IDE0290;IDE2001;IDE0005;IDE0046;CA1716;CA1040</NoWarn>
+    <!-- CA1056  Url/i is a fine name-->
+    <NoWarn>$(NoWarn);IDE0290;IDE2001;IDE0005;IDE0046;CA1716;CA1040;CA1056</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

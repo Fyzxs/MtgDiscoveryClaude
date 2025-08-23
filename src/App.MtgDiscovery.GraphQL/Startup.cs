@@ -1,5 +1,6 @@
-﻿using App.MtgDiscovery.GraphQL.Internal.Queries;
-using App.MtgDiscovery.GraphQL.Internal.Schema;
+﻿using App.MtgDiscovery.GraphQL.Queries;
+using App.MtgDiscovery.GraphQL.Schema;
+using App.MtgDiscovery.GraphQL.Schemas;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
