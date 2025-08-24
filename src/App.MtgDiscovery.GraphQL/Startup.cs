@@ -1,4 +1,5 @@
-﻿using App.MtgDiscovery.GraphQL.Queries;
+﻿using App.MtgDiscovery.GraphQL.Entities.Types;
+using App.MtgDiscovery.GraphQL.Queries;
 using App.MtgDiscovery.GraphQL.Schema;
 using App.MtgDiscovery.GraphQL.Schemas;
 using Microsoft.AspNetCore.Builder;

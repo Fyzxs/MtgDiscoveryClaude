@@ -7,7 +7,22 @@
       "Bash(dotnet sln:*)",
       "Bash(for:*)",
       "Bash(do sed -i '1s/^/#pragma warning disable CA1056, CA1819\\n/' \"$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(mkdir:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm ls:*)",
+      "Bash(curl:*)",
+      "Bash(npm run lint)",
+      "Bash(ss:*)",
+      "Bash(dotnet run:*)",
+      "Bash(npm run dev:*)",
+      "mcp__mui-mcp__useMuiDocs",
+      "mcp__mui-mcp__fetchDocs",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
