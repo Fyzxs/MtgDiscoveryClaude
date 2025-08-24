@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj" />
+    <ProjectReference Include="..\Lib.Universal.Tests\Lib.Universal.Tests.csproj" />
+    <ProjectReference Include="..\TestConvenience.Core\TestConvenience.Core.csproj" />
+  </ItemGroup>
+</Project>
