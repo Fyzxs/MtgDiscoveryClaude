@@ -32,6 +32,9 @@ dotnet test src/Lib.Cosmos.Tests/Lib.Cosmos.Tests.csproj --filter "FullyQualifie
 
 # Run tests for a specific class
 dotnet test --filter "ClassName"
+
+# Run tests with detailed output showing individual test results (from src directory)
+dotnet vstest ProjectName.Tests/bin/Debug/net9.0/ProjectName.Tests.dll --logger:"console;verbosity=normal"
 ```
 
 ### Run Applications
