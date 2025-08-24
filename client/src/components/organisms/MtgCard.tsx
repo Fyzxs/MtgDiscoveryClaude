@@ -39,6 +39,7 @@ export const MtgCard: React.FC<MtgCardProps> = ({
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isZoomClicked, setIsZoomClicked] = useState(false);
 
   // Parse multiple artists
   const parseArtists = (artistString?: string): string[] => {
@@ -70,16 +71,23 @@ export const MtgCard: React.FC<MtgCardProps> = ({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't trigger selection if clicking on links or zoom button
+    // Don't trigger selection if zoom was just clicked
+    if (isZoomClicked) {
+      setIsZoomClicked(false);
+      return;
+    }
+    
+    // Don't trigger selection if clicking on links
     const target = e.target as HTMLElement;
     const clickedLink = target.closest('a');
-    const clickedZoom = target.closest('.zoom-indicator');
     
-    if (!clickedLink && !clickedZoom && onSelectionChange) {
+    if (!clickedLink && onSelectionChange) {
       e.preventDefault();
       e.stopPropagation();
-      const newSelectedState = !isSelected;
-      onSelectionChange(card.id || '', newSelectedState);
+      // Only select, never deselect when clicking the card
+      if (!isSelected) {
+        onSelectionChange(card.id || '', true);
+      }
     }
   };
 
@@ -87,7 +95,20 @@ export const MtgCard: React.FC<MtgCardProps> = ({
     <MuiCard 
       elevation={4}
       onClick={handleCardClick}
+      onFocus={() => {
+        // Select card when it gains focus
+        if (onSelectionChange && !isSelected) {
+          onSelectionChange(card.id || '', true);
+        }
+      }}
+      onBlur={() => {
+        // Deselect card when it loses focus
+        if (onSelectionChange && isSelected) {
+          onSelectionChange(card.id || '', false);
+        }
+      }}
       data-mtg-card="true"
+      tabIndex={0}
       sx={{
         position: 'relative',
         width: '280px',
@@ -102,6 +123,12 @@ export const MtgCard: React.FC<MtgCardProps> = ({
         transition: 'all 0.3s ease-in-out',
         transform: isSelected ? 'scale(1.03)' : 'scale(1)',
         cursor: onSelectionChange ? 'pointer' : 'default',
+        outline: 'none',
+        '&:focus': {
+          outline: '2px solid',
+          outlineColor: 'primary.light',
+          outlineOffset: '2px'
+        },
         // Combined hover effect with rarity-based glow and overlay fade
         ...(card.rarity ? {
           '&:hover': {
@@ -185,13 +212,15 @@ export const MtgCard: React.FC<MtgCardProps> = ({
 
       {/* Zoom Modal Indicator - appears on hover */}
       <IconButton
+        tabIndex={-1}
         onClick={(e) => {
+          e.preventDefault();
           e.stopPropagation();
-          // Deselect card when opening modal
-          if (onSelectionChange && isSelected) {
-            onSelectionChange(card.id || '', false);
-          }
+          setIsZoomClicked(true);
           setModalOpen(true);
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
         sx={{
           position: 'absolute',
@@ -313,6 +342,7 @@ export const MtgCard: React.FC<MtgCardProps> = ({
                   {index > 0 && <Typography component="span" sx={{ color: 'grey.500' }}> & </Typography>}
                   <Link
                     href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
+                    tabIndex={-1}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (onArtistClick) {
@@ -348,6 +378,7 @@ export const MtgCard: React.FC<MtgCardProps> = ({
             <Box>
               <Link
                 href={`/cards/${card.id}`}
+                tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onCardClick) {
@@ -390,6 +421,7 @@ export const MtgCard: React.FC<MtgCardProps> = ({
             <Box>
               <Link
                 href={`/sets/${card.setCode?.toLowerCase()}`}
+                tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onSetClick) {

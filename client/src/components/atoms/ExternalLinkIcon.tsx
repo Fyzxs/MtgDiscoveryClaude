@@ -130,6 +130,7 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       target="_blank"
       rel="noopener noreferrer"
       className={className}
+      tabIndex={-1}
       onClick={(e) => {
         e.stopPropagation();
       }}
