@@ -1,0 +1,289 @@
+{
+  "data": {
+    "cardsById": {
+      "__typename": "SuccessCardsResponse",
+      "data": [
+        {
+          "id": "d5c83259-9b90-47c2-b48e-c7d78519e792",
+          "oracleId": "c7a6a165-b709-46e0-ae42-6f69a17c0621",
+          "multiverseIds": [
+            232
+          ],
+          "tcgPlayerId": 1029,
+          "cardMarketId": 5418,
+          "name": "Animate Wall",
+          "lang": "en",
+          "releasedAt": "1993-08-05",
+          "uri": "https://api.scryfall.com/cards/d5c83259-9b90-47c2-b48e-c7d78519e792",
+          "scryfallUri": "https://scryfall.com/card/lea/1/animate-wall?utm_source=api",
+          "layout": "normal",
+          "highResImage": true,
+          "imageStatus": "highres_scan",
+          "imageUris": {
+            "small": "https://cards.scryfall.io/small/front/d/5/d5c83259-9b90-47c2-b48e-c7d78519e792.jpg?1559591365",
+            "normal": "https://cards.scryfall.io/normal/front/d/5/d5c83259-9b90-47c2-b48e-c7d78519e792.jpg?1559591365",
+            "large": "https://cards.scryfall.io/large/front/d/5/d5c83259-9b90-47c2-b48e-c7d78519e792.jpg?1559591365",
+            "png": "https://cards.scryfall.io/png/front/d/5/d5c83259-9b90-47c2-b48e-c7d78519e792.png?1559591365",
+            "artCrop": "https://cards.scryfall.io/art_crop/front/d/5/d5c83259-9b90-47c2-b48e-c7d78519e792.jpg?1559591365",
+            "borderCrop": "https://cards.scryfall.io/border_crop/front/d/5/d5c83259-9b90-47c2-b48e-c7d78519e792.jpg?1559591365"
+          },
+          "manaCost": "{W}",
+          "cmc": 1,
+          "typeLine": "Enchantment — Aura",
+          "oracleText": "Enchant Wall\nEnchanted Wall can attack as though it didn't have defender.",
+          "power": null,
+          "toughness": null,
+          "loyalty": null,
+          "defense": null,
+          "lifeModifier": null,
+          "handModifier": null,
+          "colors": [
+            "W"
+          ],
+          "colorIdentity": [
+            "W"
+          ],
+          "colorIndicator": null,
+          "keywords": [
+            "Enchant"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "not_legal",
+            "timeless": "not_legal",
+            "gladiator": "not_legal",
+            "pioneer": "not_legal",
+            "explorer": null,
+            "modern": "not_legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardBrawl": "not_legal",
+            "brawl": "not_legal",
+            "alchemy": "not_legal",
+            "pauperCommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "legal",
+            "premodern": "legal",
+            "predh": "legal"
+          },
+          "games": [
+            "paper"
+          ],
+          "reserved": false,
+          "foil": false,
+          "nonFoil": true,
+          "finishes": [
+            "nonfoil"
+          ],
+          "oversized": false,
+          "promo": false,
+          "reprint": false,
+          "variation": false,
+          "setId": "288bd996-960e-448b-a187-9504c1930c2c",
+          "setCode": "lea",
+          "setName": "Limited Edition Alpha",
+          "setType": "core",
+          "setUri": "https://api.scryfall.com/sets/288bd996-960e-448b-a187-9504c1930c2c",
+          "setSearchUri": "https://api.scryfall.com/cards/search?order=set&q=e%3Alea&unique=prints",
+          "scryfallSetUri": "https://scryfall.com/sets/lea?utm_source=api",
+          "rulingsUri": "https://api.scryfall.com/cards/d5c83259-9b90-47c2-b48e-c7d78519e792/rulings",
+          "printsSearchUri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Ac7a6a165-b709-46e0-ae42-6f69a17c0621&unique=prints",
+          "collectorNumber": "1",
+          "digital": false,
+          "rarity": "rare",
+          "flavorText": null,
+          "cardBackId": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+          "artist": "Dan Frazier",
+          "artistIds": [
+            "059bba56-5feb-42e4-8c2e-e2f1e6ba11f9"
+          ],
+          "illustrationId": "6757e04d-7bfc-4bdc-9dcb-02059a2d4e60",
+          "borderColor": "black",
+          "frame": "1993",
+          "frameEffects": null,
+          "securityStamp": null,
+          "fullArt": false,
+          "textless": false,
+          "booster": true,
+          "storySpotlight": false,
+          "edhRecRank": 20677,
+          "pennyRank": 12366,
+          "prices": {
+            "usd": null,
+            "usdFoil": null,
+            "usdEtched": null,
+            "eur": null,
+            "eurFoil": null,
+            "tix": null
+          },
+          "relatedUris": {
+            "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=232&printed=false",
+            "tcgplayerInfiniteArticles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DAnimate%2BWall",
+            "tcgplayerInfiniteDecks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DAnimate%2BWall",
+            "edhrec": "https://edhrec.com/route/?cc=Animate+Wall"
+          },
+          "purchaseUris": {
+            "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1029%3Fpage%3D1",
+            "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=5418&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+            "cardhoarder": null
+          },
+          "cardFaces": null,
+          "allParts": null,
+          "printedName": null,
+          "printedTypeLine": null,
+          "printedText": null,
+          "watermark": null,
+          "contentWarning": null,
+          "preview": null,
+          "producedMana": null,
+          "attractions": null
+        },
+        {
+          "id": "11600105-56c6-4073-a4a6-8469030b39c9",
+          "oracleId": "4c81cfb7-8765-4e28-ae33-4287fa9a86cc",
+          "multiverseIds": [
+            235
+          ],
+          "tcgPlayerId": 1038,
+          "cardMarketId": 5421,
+          "name": "Benalish Hero",
+          "lang": "en",
+          "releasedAt": "1993-08-05",
+          "uri": "https://api.scryfall.com/cards/11600105-56c6-4073-a4a6-8469030b39c9",
+          "scryfallUri": "https://scryfall.com/card/lea/4/benalish-hero?utm_source=api",
+          "layout": "normal",
+          "highResImage": true,
+          "imageStatus": "highres_scan",
+          "imageUris": {
+            "small": "https://cards.scryfall.io/small/front/1/1/11600105-56c6-4073-a4a6-8469030b39c9.jpg?1559591360",
+            "normal": "https://cards.scryfall.io/normal/front/1/1/11600105-56c6-4073-a4a6-8469030b39c9.jpg?1559591360",
+            "large": "https://cards.scryfall.io/large/front/1/1/11600105-56c6-4073-a4a6-8469030b39c9.jpg?1559591360",
+            "png": "https://cards.scryfall.io/png/front/1/1/11600105-56c6-4073-a4a6-8469030b39c9.png?1559591360",
+            "artCrop": "https://cards.scryfall.io/art_crop/front/1/1/11600105-56c6-4073-a4a6-8469030b39c9.jpg?1559591360",
+            "borderCrop": "https://cards.scryfall.io/border_crop/front/1/1/11600105-56c6-4073-a4a6-8469030b39c9.jpg?1559591360"
+          },
+          "manaCost": "{W}",
+          "cmc": 1,
+          "typeLine": "Creature — Human Soldier",
+          "oracleText": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+          "power": "1",
+          "toughness": "1",
+          "loyalty": null,
+          "defense": null,
+          "lifeModifier": null,
+          "handModifier": null,
+          "colors": [
+            "W"
+          ],
+          "colorIdentity": [
+            "W"
+          ],
+          "colorIndicator": null,
+          "keywords": [
+            "Banding"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "not_legal",
+            "timeless": "not_legal",
+            "gladiator": "not_legal",
+            "pioneer": "not_legal",
+            "explorer": null,
+            "modern": "not_legal",
+            "legacy": "legal",
+            "pauper": "legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardBrawl": "not_legal",
+            "brawl": "not_legal",
+            "alchemy": "not_legal",
+            "pauperCommander": "legal",
+            "duel": "legal",
+            "oldschool": "legal",
+            "premodern": "legal",
+            "predh": "legal"
+          },
+          "games": [
+            "paper"
+          ],
+          "reserved": false,
+          "foil": false,
+          "nonFoil": true,
+          "finishes": [
+            "nonfoil"
+          ],
+          "oversized": false,
+          "promo": false,
+          "reprint": false,
+          "variation": false,
+          "setId": "288bd996-960e-448b-a187-9504c1930c2c",
+          "setCode": "lea",
+          "setName": "Limited Edition Alpha",
+          "setType": "core",
+          "setUri": "https://api.scryfall.com/sets/288bd996-960e-448b-a187-9504c1930c2c",
+          "setSearchUri": "https://api.scryfall.com/cards/search?order=set&q=e%3Alea&unique=prints",
+          "scryfallSetUri": "https://scryfall.com/sets/lea?utm_source=api",
+          "rulingsUri": "https://api.scryfall.com/cards/11600105-56c6-4073-a4a6-8469030b39c9/rulings",
+          "printsSearchUri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4c81cfb7-8765-4e28-ae33-4287fa9a86cc&unique=prints",
+          "collectorNumber": "4",
+          "digital": false,
+          "rarity": "common",
+          "flavorText": "Benalia has a complex caste system that changes with the lunar year. No matter what the season, the only caste that cannot be attained by either heredity or money is that of the hero.",
+          "cardBackId": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+          "artist": "Douglas Shuler",
+          "artistIds": [
+            "a9ddb513-51c7-455c-ab8f-5b90aae9f75b"
+          ],
+          "illustrationId": "36cd4598-d058-49f8-b39e-0a5997ca5a42",
+          "borderColor": "black",
+          "frame": "1993",
+          "frameEffects": null,
+          "securityStamp": null,
+          "fullArt": false,
+          "textless": false,
+          "booster": true,
+          "storySpotlight": false,
+          "edhRecRank": 20033,
+          "pennyRank": 10250,
+          "prices": {
+            "usd": "99.94",
+            "usdFoil": null,
+            "usdEtched": null,
+            "eur": null,
+            "eurFoil": null,
+            "tix": null
+          },
+          "relatedUris": {
+            "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=235&printed=false",
+            "tcgplayerInfiniteArticles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DBenalish%2BHero",
+            "tcgplayerInfiniteDecks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DBenalish%2BHero",
+            "edhrec": "https://edhrec.com/route/?cc=Benalish+Hero"
+          },
+          "purchaseUris": {
+            "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F1038%3Fpage%3D1",
+            "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=5421&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+            "cardhoarder": null
+          },
+          "cardFaces": null,
+          "allParts": null,
+          "printedName": null,
+          "printedTypeLine": null,
+          "printedText": null,
+          "watermark": null,
+          "contentWarning": null,
+          "preview": null,
+          "producedMana": null,
+          "attractions": null
+        }
+      ]
+    }
+  }
+}
