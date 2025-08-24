@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Aggregator.Cards.Apis;
+using Lib.Aggregator.Cards.Entities;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
@@ -34,14 +35,11 @@ internal sealed class CardAggregatorOperations : ICardAggregatorService
         IEnumerable<ReadPointItem> readPointItems = _mapper.Map(args);
         List<Task<OpResponse<ScryfallCardItem>>> tasks = [];
 
-        foreach (ReadPointItem readPointItem in readPointItems)
-        {
-            tasks.Add(_cardGopher.ReadAsync<ScryfallCardItem>(readPointItem));
-        }
+        tasks.AddRange(readPointItems.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItem>(readPointItem)));
 
         OpResponse<ScryfallCardItem>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        List<ICardItemItrEntity> successfulCards = responses
+        ICollection<ICardItemItrEntity> successfulCards = responses
             .Where(r => r.IsSuccessful())
             .Select(r => _cardMapper.Map(r.Value))
             .Where(card => card != null)
@@ -49,9 +47,4 @@ internal sealed class CardAggregatorOperations : ICardAggregatorService
 
         return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = successfulCards });
     }
-}
-
-public sealed class CardItemCollectionItrEntity : ICardItemCollectionItrEntity
-{
-    public ICollection<ICardItemItrEntity> Data { get; init; }
 }
