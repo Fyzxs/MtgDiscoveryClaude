@@ -1,5 +1,4 @@
 ﻿using App.MtgDiscovery.GraphQL.Queries;
-using App.MtgDiscovery.GraphQL.Schema;
 using App.MtgDiscovery.GraphQL.Schemas;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,14 +41,9 @@ internal class Startup
 
         // Register query method classes for DI
         services.AddScoped<CardQueryMethods>();
-        services.AddScoped<ExampleQueryMethods>();
 
         services
-            .AddGraphQLServer("example")
-            .AddExampleSchema();
-
-        services
-            .AddGraphQLServer("cards")
+            .AddGraphQLServer()
             .AddCardSchema();
     }
 
@@ -66,8 +60,7 @@ internal class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapGraphQL("/graphql/example", "example");
-            endpoints.MapGraphQL("/graphql/cards", "cards");
+            endpoints.MapGraphQL();
         });
     }
 }
