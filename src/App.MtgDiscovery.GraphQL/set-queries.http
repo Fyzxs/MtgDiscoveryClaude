@@ -445,7 +445,7 @@ query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
 
 {
   "codes": {
-    "setCodes": ["dom", "war", "m20", "eld", "thb"]
+    "setCodes": ["lea"]
   }
 }
 

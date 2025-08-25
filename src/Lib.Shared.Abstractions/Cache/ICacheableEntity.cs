@@ -3,7 +3,7 @@
 /// <summary>
 /// Base RequestEntity to enable caching
 /// </summary>
-public interface ICacheableRequestEntity
+public interface ICacheableEntity
 {
     /// <summary>
     /// Internal Use Only.
