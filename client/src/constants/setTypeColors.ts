@@ -1,12 +1,12 @@
 export const setTypeColors: Record<string, string> = {
   // Core & Expansion sets (Green family)
-  'core': '#388E3C',
-  'expansion': '#2E7D32',
+  'core': '#05a833ff',
+  'expansion': '#08620eff',
 
   // Reprint/Masters/Starter sets (Orange family)
   'masters': '#FF6F00',
   'masterpiece': '#FF8F00',
-  'starter': '#FFA726',
+  'starter': '#6e4a13ff',
 
   // Commander sets (Purple family)
   'commander': '#7B1FA2',
@@ -29,7 +29,7 @@ export const setTypeColors: Record<string, string> = {
   'promo': '#E91E63',
   'token': '#EC407A',
   'funny': '#AB47BC',
-  'memorabilia': '#BA68C8',
+  'memorabilia': '#874f91ff',
   'minigame': '#CE93D8',
 
   // Default for unknown types

@@ -12,11 +12,14 @@ export const FoilOnlyBadge: React.FC<FoilOnlyBadgeProps> = ({ show }) => {
 
   return (
     <Chip
-      label="Foil Only"
+      label="Foil"
       size="small"
-      color="warning"
       variant="filled"
-      sx={{ fontWeight: 500 }}
+      sx={{
+        fontWeight: 500,
+        backgroundColor: '#ffe96aff',
+        color: '#000000'
+      }}
     />
   );
 };

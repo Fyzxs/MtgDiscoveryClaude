@@ -8,11 +8,11 @@ interface SetIconProps {
   className?: string;
 }
 
-export const SetIcon: React.FC<SetIconProps> = ({ 
-  setCode, 
+export const SetIcon: React.FC<SetIconProps> = ({
+  setCode,
   rarity = 'common',
   size = 'medium',
-  className = '' 
+  className = ''
 }) => {
   if (!setCode) return null;
 
@@ -35,23 +35,18 @@ export const SetIcon: React.FC<SetIconProps> = ({
 
   // Keyrune uses 'ss' prefix and lowercase set codes
   const keyruneClass = `ss ss-${setCode.toLowerCase()}`;
-  
+
   // Rarity gradient classes - use white/light grey for common
   const rarityClass = rarity && rarity.toLowerCase() !== 'common' ? `ss-${rarity.toLowerCase()}` : '';
 
   return (
-    <Icon 
+    <Icon
       className={`${keyruneClass} ${sizeClasses[size]} ${rarityClass} ${className}`}
-      sx={{ 
+      sx={{
         fontSize: getSizeValue(),
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        // Force light color for common cards
-        ...(rarity && rarity.toLowerCase() === 'common' ? {
-          color: 'rgba(255, 255, 255, 0.8) !important',
-          filter: 'brightness(1.2)'
-        } : {})
       }}
       title={setCode.toUpperCase()}
     />
