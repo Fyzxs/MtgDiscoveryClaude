@@ -3,9 +3,9 @@ import { useLazyQuery } from '@apollo/client/react';
 import { GET_CARDS_BY_IDS } from '../graphql/queries/cards';
 import type { CardContext } from '../types/card';
 import { MtgCard } from '../components/organisms/MtgCard';
-import { MuiCard } from '../components/atoms/MuiCard';
-import { MuiButton } from '../components/atoms/MuiButton';
-import { MuiInput } from '../components/atoms/MuiInput';
+import { MuiCard } from '../components/atoms/shared/MuiCard';
+import { MuiButton } from '../components/atoms/shared/MuiButton';
+import { MuiInput } from '../components/atoms/shared/MuiInput';
 import { Box, Typography, FormControlLabel, Checkbox } from '@mui/material';
 
 export const CardDemoPage: React.FC = () => {

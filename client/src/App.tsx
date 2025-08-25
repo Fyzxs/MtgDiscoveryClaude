@@ -1,14 +1,19 @@
 import './App.css'
 import { useState } from 'react'
 import { CardDemoPage } from './pages/CardDemoPage'
+import { SetDemoPage } from './pages/SetDemoPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 
 function App() {
-  const [showDemo, setShowDemo] = useState(false)
+  const [currentPage, setCurrentPage] = useState<'home' | 'card-demo' | 'set-demo'>('home')
 
-  if (showDemo) {
+  if (currentPage === 'card-demo') {
     return <CardDemoPage />
+  }
+
+  if (currentPage === 'set-demo') {
+    return <SetDemoPage />
   }
 
   return (
@@ -32,13 +37,23 @@ function App() {
             View Magic: The Gathering cards with proper styling, rarity indicators, 
             and responsive layouts.
           </p>
-          <Button 
-            onClick={() => setShowDemo(true)}
-            size="lg"
-            className="w-full sm:w-auto"
-          >
-            View Card Component Demo
-          </Button>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Button 
+              onClick={() => setCurrentPage('card-demo')}
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              View Card Component Demo
+            </Button>
+            <Button 
+              onClick={() => setCurrentPage('set-demo')}
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              View Set Component Demo
+            </Button>
+          </div>
         </Card>
       </div>
     </div>

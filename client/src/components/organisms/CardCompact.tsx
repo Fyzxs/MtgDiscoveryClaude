@@ -1,11 +1,11 @@
 import React from 'react';
 import type { Card, CardContext } from '../../types/card';
-import { CardImage } from '../atoms/CardImage';
-import { PriceDisplay } from '../atoms/PriceDisplay';
-import { CollectorNumber } from '../atoms/CollectorNumber';
-import { RarityBadge } from '../atoms/RarityBadge';
-import { ArtistInfo } from '../molecules/ArtistInfo';
-import { CardLinks } from '../molecules/CardLinks';
+import { CardImage } from '../atoms/Cards/CardImage';
+import { PriceDisplay } from '../atoms/shared/PriceDisplay';
+import { CollectorNumber } from '../atoms/Cards/CollectorNumber';
+import { RarityBadge } from '../atoms/Cards/RarityBadge';
+import { ArtistInfo } from '../molecules/Cards/ArtistInfo';
+import { CardLinks } from '../molecules/Cards/CardLinks';
 
 interface CardCompactProps {
   card: Card;
