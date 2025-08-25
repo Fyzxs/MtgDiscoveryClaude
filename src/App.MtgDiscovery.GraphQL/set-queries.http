@@ -1,0 +1,543 @@
+###
+# Variables
+# @name variables
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+### Test Simple Set Query
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query TestSet {
+  testSet
+}
+
+
+### Get Sets with Basic Properties
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsBasic($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c"
+    ]
+  }
+}
+
+
+### Get Sets with Extended Properties
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsExtended($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        digital
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c",
+    ]
+  }
+}
+
+
+### Get Sets with ALL Fields - Comprehensive Query
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetCompleteSets($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        digital
+        nonFoilOnly
+        foilOnly
+        blockCode
+        block
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        timeStamp
+        invocationId
+        elapsedTime
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c",
+      "36ee04cb-60c5-4011-a4fa-a606fa58db96",
+      "d9b9ba2b-bcc7-4a52-b510-fc4bb00459b9"
+    ]
+  }
+}
+
+
+### Get Single Set by ID
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSingleSet($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+        digital
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": ["288bd996-960e-448b-a187-9504c1930c2c"]
+  }
+}
+
+
+### Get Multiple Sets - Large Batch
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetMultipleSets($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        timeStamp
+        elapsedTime
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c",
+      "36ee04cb-60c5-4011-a4fa-a606fa58db96",
+      "d9b9ba2b-bcc7-4a52-b510-fc4bb00459b9",
+      "16959d12-8c73-4d93-8dde-2681269f7aab",
+      "e5c37099-0af9-4b48-a2d0-0cb3aa242abc"
+    ]
+  }
+}
+
+
+### Get Sets with Minimal Fields
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsMinimal($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c",
+      "36ee04cb-60c5-4011-a4fa-a606fa58db96"
+    ]
+  }
+}
+
+
+### Get Sets for Display (Common UI Fields)
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsForDisplay($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+        iconSvgUri
+        scryfallUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c",
+      "36ee04cb-60c5-4011-a4fa-a606fa58db96"
+    ]
+  }
+}
+
+
+### Test Empty Set IDs
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query TestEmptySets($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": []
+  }
+}
+
+
+### Get Sets by Code - Basic Properties
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsByCode($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["lea", "leb", "2ed"]
+  }
+}
+
+
+### Get Single Set by Code
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSingleSetByCode($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+        digital
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["neo"]
+  }
+}
+
+
+### Get Multiple Sets by Code - Extended
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["dom", "war", "m20", "eld", "thb"]
+  }
+}
+
+
+### Test Invalid Set Code
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query TestInvalidSetCode($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["invalid-code-xyz"]
+  }
+}
+
+
+### Test Empty Set Codes
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query TestEmptySetCodes($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": []
+  }
+}
+
+
+### Test Invalid Set ID
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query TestInvalidSet($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetResponse {
+      data {
+        id
+        code
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": ["invalid-set-id-12345"]
+  }
+}

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using App.MtgDiscovery.GraphQL.Entities.Outs;
+using App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
 using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities;
 

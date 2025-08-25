@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
     <NoWarn>$(NoWarn);CA1515;CA1056;CA1056;CA1819</NoWarn>
   </PropertyGroup>
 

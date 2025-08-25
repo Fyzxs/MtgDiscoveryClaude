@@ -18,7 +18,7 @@ internal sealed class SetProcessor : ISetProcessor
             [
                 new SetItemsProcessor(logger),
                 new SetAssociationsProcessor(logger),
-                new SetIconProcessor(logger)
+                new SetCodeIndexProcessor(logger)
             ],
             new CardProcessor(logger),
             logger)

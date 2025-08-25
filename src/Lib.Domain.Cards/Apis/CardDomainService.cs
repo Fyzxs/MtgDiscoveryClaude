@@ -10,7 +10,7 @@ public sealed class CardDomainService : ICardDomainService
 {
     private readonly ICardDomainService _cardDomainOperations;
 
-    public CardDomainService(ILogger logger) : this(new CardDomainOperations(logger))
+    public CardDomainService(ILogger logger) : this(new QueryCardDomainService(logger))
     {
 
     }

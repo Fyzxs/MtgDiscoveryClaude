@@ -22,7 +22,7 @@ namespace Lib.Aggregator.Cards.Tests.Queries;
 [TestClass]
 public sealed class CardAggregatorOperationsTests
 {
-    private sealed class TestableCardAggregatorOperations : TypeWrapper<CardAggregatorOperations>
+    private sealed class TestableCardAggregatorOperations : TypeWrapper<QueryCardAggregatorService>
     {
         public TestableCardAggregatorOperations(
             ICosmosGopher cardGopher,
@@ -38,7 +38,7 @@ public sealed class CardAggregatorOperationsTests
         ILogger logger = new LoggerFake();
 
         // Act
-        CardAggregatorOperations _ = new(logger);
+        QueryCardAggregatorService _ = new(logger);
 
         // Assert
         // Constructor should create instance without throwing
@@ -53,7 +53,7 @@ public sealed class CardAggregatorOperationsTests
         QueryCardsIdsToReadPointItemsMapper mapper = new();
         ScryfallCardItemToCardItemItrEntityMapper cardMapper = new();
 
-        CardAggregatorOperations subject = new TestableCardAggregatorOperations(
+        QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
 
         // Act
@@ -88,7 +88,7 @@ public sealed class CardAggregatorOperationsTests
         QueryCardsIdsToReadPointItemsMapper mapper = new();
         ScryfallCardItemToCardItemItrEntityMapper cardMapper = new();
 
-        CardAggregatorOperations subject = new TestableCardAggregatorOperations(
+        QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
 
         // Act
@@ -131,7 +131,7 @@ public sealed class CardAggregatorOperationsTests
         QueryCardsIdsToReadPointItemsMapper mapper = new();
         ScryfallCardItemToCardItemItrEntityMapper cardMapper = new();
 
-        CardAggregatorOperations subject = new TestableCardAggregatorOperations(
+        QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
 
         // Act

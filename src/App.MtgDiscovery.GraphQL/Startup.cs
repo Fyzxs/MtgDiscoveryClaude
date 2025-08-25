@@ -1,5 +1,4 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types;
-using App.MtgDiscovery.GraphQL.Queries;
+﻿using App.MtgDiscovery.GraphQL.Queries;
 using App.MtgDiscovery.GraphQL.Schemas;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,10 +41,12 @@ internal class Startup
 
         // Register query method classes for DI
         services.AddScoped<CardQueryMethods>();
+        services.AddScoped<SetQueryMethods>();
 
         services
             .AddGraphQLServer()
-            .AddCardSchema();
+            .AddApiQuery()
+            .AddSetSchemaExtensions();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

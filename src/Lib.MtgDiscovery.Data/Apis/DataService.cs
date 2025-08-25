@@ -11,7 +11,7 @@ public sealed class DataService : IDataService
     private readonly ICardDataService _cardDataService;
     private readonly ISetDataService _setDataService;
 
-    public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService())
+    public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService(logger))
     {
 
     }
@@ -24,5 +24,15 @@ public sealed class DataService : IDataService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         return _cardDataService.CardsByIdsAsync(args);
+    }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds)
+    {
+        return _setDataService.SetsAsync(setIds);
+    }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes)
+    {
+        return _setDataService.SetsByCodeAsync(setCodes);
     }
 }
