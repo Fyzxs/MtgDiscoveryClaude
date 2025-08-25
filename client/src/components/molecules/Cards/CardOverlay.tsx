@@ -29,7 +29,7 @@ interface CardOverlayProps {
   className?: string;
 }
 
-export const CardOverlay: React.FC<CardOverlayProps> = ({ 
+export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   cardId,
   cardName,
   rarity,
@@ -47,7 +47,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = ({
   onCardClick,
   onArtistClick,
   onSetClick,
-  className 
+  className
 }) => {
   // Format date
   const formatDate = (dateString?: string): string => {
@@ -63,25 +63,41 @@ export const CardOverlay: React.FC<CardOverlayProps> = ({
         bottom: 0,
         left: 0,
         right: 0,
-        background: isSelected 
-          ? 'linear-gradient(to top, rgba(1,32,96,1) 0%, rgba(1,32,96,0.95) 60%, rgba(1,32,96,0) 100%)'
-          : 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 60%, rgba(0,0,0,0) 100%)',
         pt: 7,
         zIndex: 10,
         opacity: 1,
-        transition: 'all 0.3s ease-in-out'
+        transition: 'none',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 60%, rgba(0,0,0,0) 100%)',
+          opacity: isSelected ? 0 : 1,
+          transition: 'none',
+          pointerEvents: 'none',
+          zIndex: -1
+        },
+        '.MuiCard-root:not(.selected):hover &::before': {
+          opacity: 0
+        },
+        '.MuiCard-root.selected &::before': {
+          opacity: '0 !important'
+        }
       }}
       className={`card-overlay ${className || ''}`}
     >
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
         {/* Collector Info Row */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <RarityCollectorBadge 
+          <RarityCollectorBadge
             rarity={rarity}
             collectorNumber={collectorNumber}
           />
           {/* Date moved to top row */}
-          {releaseDate && (!context.isOnSetPage || context.currentSetCode !== setCode) && (
+          {releaseDate && !context.hideReleaseDate && (
             <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'grey.400' }}>
               {formatDate(releaseDate)}
             </Typography>
@@ -107,7 +123,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = ({
         )}
 
         {/* Set Name with Icon */}
-        {!context.isOnSetPage && (
+        {!context.hideSetInfo && (
           <SetLink
             setCode={setCode}
             setName={setName}
@@ -118,8 +134,8 @@ export const CardOverlay: React.FC<CardOverlayProps> = ({
 
         {/* Price and Links Row */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.5 }}>
-          <PriceDisplay 
-            price={price} 
+          <PriceDisplay
+            price={price}
             currency="usd"
             className="text-sm"
           />
@@ -132,4 +148,4 @@ export const CardOverlay: React.FC<CardOverlayProps> = ({
       </Box>
     </Box>
   );
-};
+});

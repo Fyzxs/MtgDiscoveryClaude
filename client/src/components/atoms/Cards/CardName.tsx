@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
+import { DarkBadge } from '../shared/DarkBadge';
 
 interface CardNameProps {
   cardId?: string;
@@ -18,7 +19,8 @@ export const CardName: React.FC<CardNameProps> = ({
 
   return (
     <Box className={className}>
-      <Link
+      <DarkBadge
+        component="a"
         href={`/cards/${cardId}`}
         tabIndex={-1}
         onClick={(e) => {
@@ -28,20 +30,11 @@ export const CardName: React.FC<CardNameProps> = ({
             onCardClick(cardId);
           }
         }}
-        sx={{
-          color: 'white',
-          textDecoration: 'none',
-          display: 'inline-block',
-          px: 0.5,
-          py: 0.25,
-          borderRadius: 1,
-          '&:hover': {
-            bgcolor: 'rgba(0, 0, 0, 1)',
-            color: 'primary.main'
-          },
-          transition: 'all 0.2s ease'
-        }}
         aria-label={`View all versions of ${cardName}`}
+        sx={{
+          px: 1,
+          py: 0.5
+        }}
       >
         <Typography 
           variant="subtitle2" 
@@ -54,7 +47,7 @@ export const CardName: React.FC<CardNameProps> = ({
         >
           {cardName}
         </Typography>
-      </Link>
+      </DarkBadge>
     </Box>
   );
 };

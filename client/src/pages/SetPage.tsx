@@ -1,0 +1,631 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  CircularProgress, 
+  Alert,
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Chip,
+  InputAdornment,
+  Stack,
+  Autocomplete,
+  Fab,
+  Zoom,
+  IconButton,
+  Divider
+} from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import SearchIcon from '@mui/icons-material/Search';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ClearIcon from '@mui/icons-material/Clear';
+import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
+import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
+import { MtgCard } from '../components/organisms/MtgCard';
+import { MtgSetCard } from '../components/organisms/MtgSetCard';
+import type { Card } from '../types/card';
+import type { MtgSet } from '../types/set';
+
+interface CardsResponse {
+  cardsBySetCode: {
+    __typename: string;
+    data?: Card[];
+    status?: {
+      message: string;
+    };
+  };
+}
+
+interface SetsResponse {
+  setsByCode: {
+    __typename: string;
+    data?: MtgSet[];
+    status?: {
+      message: string;
+      statusCode: number;
+    };
+  };
+}
+
+const RARITIES = ['common', 'uncommon', 'rare', 'mythic', 'special', 'bonus'];
+
+export const SetPage: React.FC = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const setCode = urlParams.get('set') || '';
+  const initialSearch = urlParams.get('search') || '';
+  const initialRarities = urlParams.get('rarities')?.split(',').filter(Boolean) || [];
+  const initialArtists = urlParams.get('artists')?.split(',').filter(Boolean) || [];
+  const initialSort = urlParams.get('sort') || 'collector-asc';
+  const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_SET_CODE, {
+    variables: { setCode: { setCode } },
+    skip: !setCode
+  });
+
+  const { loading: setLoading, error: setError, data: setData } = useQuery<SetsResponse>(GET_SETS_BY_CODE, {
+    variables: { codes: { setCodes: [setCode] } },
+    skip: !setCode
+  });
+
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
+  const [selectedRarities, setSelectedRarities] = useState<string[]>(initialRarities);
+  const [selectedArtists, setSelectedArtists] = useState<string[]>(initialArtists);
+  const [sortBy, setSortBy] = useState<string>(initialSort);
+  const [filteredCards, setFilteredCards] = useState<Card[]>([]);
+  const [regularCards, setRegularCards] = useState<Card[]>([]);
+  const [variationCards, setVariationCards] = useState<Card[]>([]);
+  const [showDigital, setShowDigital] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [hasSearchText, setHasSearchText] = useState(!!initialSearch);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  
+  // Use ref to store the search input value without causing re-renders
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const debounceTimer = useRef<NodeJS.Timeout>();
+
+  // Get unique artists from cards
+  const getUniqueArtists = (cards: Card[]): string[] => {
+    const artistSet = new Set<string>();
+    cards.forEach(card => {
+      if (card.artist) {
+        // Split multiple artists (e.g., "Artist 1 & Artist 2")
+        const artists = card.artist.split(/\s+(?:&|and)\s+/i);
+        artists.forEach(artist => artistSet.add(artist.trim()));
+      }
+    });
+    return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, []);
+
+  // Handle scroll to show/hide back to top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Get the currently selected card by querying the DOM
+  // This avoids React state updates on every selection change (which cause lag)
+  // Instead, we query the DOM only when we actually need to know which card is selected
+  const getSelectedCardId = useCallback(() => {
+    const selectedCard = document.querySelector('[data-mtg-card="true"].selected');
+    if (selectedCard) {
+      return selectedCard.getAttribute('data-card-id');
+    }
+    return null;
+  }, []);
+  
+  // Example: When adding to collection (to be implemented)
+  // const handleAddToCollection = () => {
+  //   const selectedId = getSelectedCardId();
+  //   if (selectedId) {
+  //     // Add card with selectedId to collection
+  //   }
+  // };
+  
+  // This is no longer used for click handling, but kept for potential future use
+  const handleCardSelection = useCallback((cardId: string, selected: boolean) => {
+    setSelectedCardId(selected ? cardId : null);
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set('page', 'set');
+    params.set('set', setCode);
+    
+    if (searchTerm) {
+      params.set('search', searchTerm);
+    }
+    if (selectedRarities.length > 0) {
+      params.set('rarities', selectedRarities.join(','));
+    }
+    if (selectedArtists.length > 0) {
+      params.set('artists', selectedArtists.join(','));
+    }
+    if (sortBy !== 'collector-asc') {
+      params.set('sort', sortBy);
+    }
+    
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, '', newUrl);
+  }, [setCode, searchTerm, selectedRarities, selectedArtists, sortBy]);
+
+  useEffect(() => {
+    if (cardsData?.cardsBySetCode?.data) {
+      let filtered = [...cardsData.cardsBySetCode.data];
+
+      if (!showDigital) {
+        filtered = filtered.filter(card => !card.digital);
+      }
+
+      if (searchTerm) {
+        filtered = filtered.filter(card => 
+          card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          card.oracleText?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          card.typeLine?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          card.artist?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      if (selectedRarities.length > 0) {
+        filtered = filtered.filter(card => selectedRarities.includes(card.rarity));
+      }
+
+      if (selectedArtists.length > 0) {
+        filtered = filtered.filter(card => {
+          if (!card.artist) return false;
+          // Split multiple artists and check if any match
+          const cardArtists = card.artist.split(/\s+(?:&|and)\s+/i).map(a => a.trim());
+          return cardArtists.some(artist => selectedArtists.includes(artist));
+        });
+      }
+
+      const parseCollectorNumber = (num: string): number => {
+        const match = num.match(/^(\d+)/);
+        return match ? parseInt(match[1], 10) : 999999;
+      };
+
+      switch (sortBy) {
+        case 'collector-asc':
+          filtered.sort((a, b) => parseCollectorNumber(a.collectorNumber) - parseCollectorNumber(b.collectorNumber));
+          break;
+        case 'collector-desc':
+          filtered.sort((a, b) => parseCollectorNumber(b.collectorNumber) - parseCollectorNumber(a.collectorNumber));
+          break;
+        case 'name-asc':
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-desc':
+          filtered.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case 'rarity':
+          const rarityOrder: Record<string, number> = { common: 0, uncommon: 1, rare: 2, mythic: 3, special: 4, bonus: 5 };
+          filtered.sort((a, b) => (rarityOrder[a.rarity] || 99) - (rarityOrder[b.rarity] || 99));
+          break;
+        case 'price-desc':
+          filtered.sort((a, b) => {
+            const priceA = parseFloat(a.prices?.usd || '0');
+            const priceB = parseFloat(b.prices?.usd || '0');
+            return priceB - priceA;
+          });
+          break;
+        case 'price-asc':
+          filtered.sort((a, b) => {
+            const priceA = parseFloat(a.prices?.usd || '0');
+            const priceB = parseFloat(b.prices?.usd || '0');
+            return priceA - priceB;
+          });
+          break;
+        case 'release-desc':
+          filtered.sort((a, b) => {
+            if (!a.releasedAt && !b.releasedAt) return 0;
+            if (!a.releasedAt) return 1;
+            if (!b.releasedAt) return -1;
+            return new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime();
+          });
+          break;
+        case 'release-asc':
+          filtered.sort((a, b) => {
+            if (!a.releasedAt && !b.releasedAt) return 0;
+            if (!a.releasedAt) return 1;
+            if (!b.releasedAt) return -1;
+            return new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime();
+          });
+          break;
+      }
+
+      setFilteredCards(filtered);
+      
+      // Separate regular cards from variations
+      const regular = filtered.filter(card => !card.variation);
+      const variations = filtered.filter(card => card.variation);
+      
+      setRegularCards(regular);
+      setVariationCards(variations);
+    }
+    // Note: selectedCardId is intentionally removed from dependencies as it doesn't affect filtering/sorting
+  }, [cardsData, searchTerm, selectedRarities, selectedArtists, sortBy, showDigital]);
+
+  const handleRarityChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    if (Array.isArray(value) && value.includes('CLEAR_ALL')) {
+      setSelectedRarities([]);
+      return;
+    }
+    setSelectedRarities(typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const handleSortChange = (event: SelectChangeEvent) => {
+    setSortBy(event.target.value);
+  };
+
+  if (!setCode) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          No set code provided. Please provide a set code in the URL (e.g., ?set=lea)
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (cardsLoading || setLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (cardsError) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          Error loading cards: {cardsError.message}
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (setError) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          Error loading set information: {setError.message}
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (cardsData?.cardsBySetCode?.__typename === 'FailureResponse') {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          {cardsData.cardsBySetCode.status?.message || 'Failed to load cards'}
+        </Alert>
+      </Container>
+    );
+  }
+
+  const cards = cardsData?.cardsBySetCode?.data || [];
+  const setInfo = setData?.setsByCode?.data?.[0];
+  const setName = setInfo?.name || cards[0]?.setName || setCode.toUpperCase();
+  const uniqueArtists = getUniqueArtists(cards);
+  
+  // Check if all cards have the same release date
+  const allSameReleaseDate = cards.length > 0 && 
+    cards.every(card => card.releasedAt === cards[0].releasedAt);
+
+  return (
+    <Container maxWidth={false} sx={{ mt: 4, mb: 4, px: 3 }}>
+      {/* Set Information Card */}
+      {setInfo && (
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+          <MtgSetCard set={setInfo} />
+        </Box>
+      )}
+      
+      {/* Fallback title if no set info */}
+      {!setInfo && (
+        <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
+          {setName} ({setCode.toUpperCase()})
+        </Typography>
+      )}
+
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+        <Stack spacing={2}>
+          <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ rowGap: 2 }}>
+            <TextField
+              inputRef={searchInputRef}
+              sx={{ minWidth: 300 }}
+              variant="outlined"
+              placeholder="Search cards..."
+              defaultValue={initialSearch}
+              onChange={(e) => {
+                const value = e.target.value;
+                setHasSearchText(!!value);
+                
+                // Clear any existing timer
+                if (debounceTimer.current) {
+                  clearTimeout(debounceTimer.current);
+                }
+                
+                // Set new timer - only update state after 1 second
+                debounceTimer.current = setTimeout(() => {
+                  setSearchTerm(value);
+                }, 1000);
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: hasSearchText ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        if (searchInputRef.current) {
+                          searchInputRef.current.value = '';
+                          setHasSearchText(false);
+                          setSearchTerm('');
+                          // Clear any pending timer
+                          if (debounceTimer.current) {
+                            clearTimeout(debounceTimer.current);
+                          }
+                        }
+                      }}
+                      edge="end"
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null,
+              }}
+            />
+            
+            <FormControl sx={{ minWidth: 150 }}>
+              <InputLabel>Rarity</InputLabel>
+              <Select
+                multiple
+                value={selectedRarities}
+                onChange={handleRarityChange}
+                label="Rarity"
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <Typography variant="body2" color="text.secondary">All Rarities</Typography>;
+                  }
+                  if (selected.length <= 2) {
+                    return selected.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+                  }
+                  return `${selected.length} selected`;
+                }}
+              >
+                <MenuItem value="CLEAR_ALL" sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}>
+                  <Typography variant="body2" color="text.secondary">Clear All</Typography>
+                </MenuItem>
+                {RARITIES.map(rarity => (
+                  <MenuItem key={rarity} value={rarity}>
+                    <Chip
+                      size="small"
+                      label={rarity.charAt(0).toUpperCase() + rarity.slice(1)}
+                      color={selectedRarities.includes(rarity) ? "primary" : "default"}
+                      sx={{ mr: 1 }}
+                    />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Autocomplete
+              multiple
+              sx={{ minWidth: 250 }}
+              options={uniqueArtists}
+              value={selectedArtists}
+              onChange={(event, newValue) => {
+                setSelectedArtists(newValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Artist"
+                  placeholder={selectedArtists.length === 0 ? "All Artists" : "Add more..."}
+                  size="medium"
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => {
+                  const { key, ...chipProps } = getTagProps({ index });
+                  return (
+                    <Chip
+                      key={key}
+                      size="small"
+                      label={option}
+                      {...chipProps}
+                    />
+                  );
+                })
+              }
+              renderOption={(props, option) => {
+                const { key, ...otherProps } = props;
+                return (
+                  <Box key={key} component="li" {...otherProps}>
+                    <Typography variant="body2">{option}</Typography>
+                  </Box>
+                );
+              }}
+              ListboxProps={{
+                style: {
+                  maxHeight: 300
+                }
+              }}
+              disableCloseOnSelect
+              filterSelectedOptions
+              size="small"
+            />
+
+            <FormControl sx={{ minWidth: 180 }}>
+              <InputLabel>Sort By</InputLabel>
+              <Select
+                value={sortBy}
+                onChange={handleSortChange}
+                label="Sort By"
+              >
+                <MenuItem value="collector-asc">Collector # (Low-High)</MenuItem>
+                <MenuItem value="collector-desc">Collector # (High-Low)</MenuItem>
+                <MenuItem value="name-asc">Name (A-Z)</MenuItem>
+                <MenuItem value="name-desc">Name (Z-A)</MenuItem>
+                <MenuItem value="rarity">Rarity</MenuItem>
+                <MenuItem value="price-desc">Price (High-Low)</MenuItem>
+                <MenuItem value="price-asc">Price (Low-High)</MenuItem>
+                {cards.some(c => c.releasedAt !== cards[0]?.releasedAt) && (
+                  <>
+                    <MenuItem value="release-desc">Release Date (Newest)</MenuItem>
+                    <MenuItem value="release-asc">Release Date (Oldest)</MenuItem>
+                  </>
+                )}
+              </Select>
+            </FormControl>
+          </Stack>
+        </Stack>
+      </Box>
+
+      <Box sx={{ mb: 3, textAlign: 'center' }}>
+        <Typography variant="body1" color="text.secondary">
+          Showing {filteredCards.length} of {cards.length} cards
+        </Typography>
+      </Box>
+
+      {/* Regular Cards Section */}
+      {regularCards.length > 0 && (
+        <>
+          {variationCards.length > 0 && (
+            <Box sx={{ mb: 2, textAlign: 'center' }}>
+              <Typography 
+                variant="overline" 
+                sx={{ 
+                  color: 'text.secondary',
+                  letterSpacing: 2,
+                  fontSize: '0.875rem'
+                }}
+              >
+                IN BOOSTERS • {regularCards.length} CARDS
+              </Typography>
+              <Divider sx={{ mt: 1, mb: 3 }} />
+            </Box>
+          )}
+          
+          <Box sx={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, 280px)',
+            gap: 3,
+            justifyContent: 'center',
+            mb: variationCards.length > 0 ? 6 : 0
+          }}>
+            {regularCards.map((card) => (
+              <MtgCard
+                key={card.id}
+                card={card}
+                isSelected={selectedCardId === card.id}
+                onSelectionChange={handleCardSelection}
+                context={{
+                  isOnSetPage: true,
+                  currentSet: setCode,
+                  hideSetInfo: true,
+                  hideReleaseDate: allSameReleaseDate
+                }}
+              />
+            ))}
+          </Box>
+        </>
+      )}
+
+      {/* Variation Cards Section */}
+      {variationCards.length > 0 && (
+        <>
+          <Box sx={{ mb: 2, textAlign: 'center' }}>
+            <Typography 
+              variant="overline" 
+              sx={{ 
+                color: 'text.secondary',
+                letterSpacing: 2,
+                fontSize: '0.875rem'
+              }}
+            >
+              CARD VARIATIONS • {variationCards.length} CARDS
+            </Typography>
+            <Divider sx={{ mt: 1, mb: 3 }} />
+          </Box>
+          
+          <Box sx={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, 280px)',
+            gap: 3,
+            justifyContent: 'center'
+          }}>
+            {variationCards.map((card) => (
+              <MtgCard
+                key={card.id}
+                card={card}
+                isSelected={selectedCardId === card.id}
+                onSelectionChange={handleCardSelection}
+                context={{
+                  isOnSetPage: true,
+                  currentSet: setCode,
+                  hideSetInfo: true,
+                  hideReleaseDate: allSameReleaseDate
+                }}
+              />
+            ))}
+          </Box>
+        </>
+      )}
+
+      {filteredCards.length === 0 && (
+        <Box sx={{ mt: 4, textAlign: 'center' }}>
+          <Typography variant="h6" color="text.secondary">
+            No cards found matching your criteria
+          </Typography>
+        </Box>
+      )}
+
+      {/* Back to Top Button */}
+      <Zoom in={showBackToTop}>
+        <Fab
+          color="primary"
+          size="medium"
+          onClick={scrollToTop}
+          sx={{
+            position: 'fixed',
+            bottom: 16,
+            right: 16,
+            zIndex: 1000
+          }}
+          aria-label="scroll back to top"
+        >
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </Zoom>
+    </Container>
+  );
+};

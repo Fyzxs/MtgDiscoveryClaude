@@ -133,6 +133,9 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       tabIndex={-1}
       onClick={(e) => {
         e.stopPropagation();
+        // Force immediate navigation to bypass any React delays
+        window.open(url, '_blank', 'noopener,noreferrer');
+        e.preventDefault();
       }}
       sx={{
         display: 'inline-flex',

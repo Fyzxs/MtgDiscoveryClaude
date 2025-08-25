@@ -3,15 +3,16 @@ import { useState } from 'react'
 import { CardDemoPage } from './pages/CardDemoPage'
 import { SetDemoPage } from './pages/SetDemoPage'
 import { AllSetsPage } from './pages/AllSetsPage'
+import { SetPage } from './pages/SetPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 
 function App() {
   // Check URL params for initial page
   const urlParams = new URLSearchParams(window.location.search);
-  const pageParam = urlParams.get('page') as 'home' | 'card-demo' | 'set-demo' | 'all-sets' | null;
+  const pageParam = urlParams.get('page') as 'home' | 'card-demo' | 'set-demo' | 'all-sets' | 'set' | null;
   
-  const [currentPage, setCurrentPage] = useState<'home' | 'card-demo' | 'set-demo' | 'all-sets'>(
+  const [currentPage, setCurrentPage] = useState<'home' | 'card-demo' | 'set-demo' | 'all-sets' | 'set'>(
     pageParam || 'home'  // Default back to home
   )
 
@@ -25,6 +26,10 @@ function App() {
 
   if (currentPage === 'all-sets') {
     return <AllSetsPage />
+  }
+
+  if (currentPage === 'set') {
+    return <SetPage />
   }
 
   return (

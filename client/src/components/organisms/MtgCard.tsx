@@ -4,7 +4,8 @@ import type { Card, CardContext } from '../../types/card';
 import { CardImage } from '../atoms/Cards/CardImage';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
-import { CardModal } from '../atoms/Cards/CardModal';
+import { CardDetailsModal } from './CardDetailsModal';
+import { getRarityGlowStyles, getCardTransform } from '../../utils/rarityStyles';
 
 interface MtgCardProps {
   card: Card;
@@ -17,7 +18,7 @@ interface MtgCardProps {
   className?: string;
 }
 
-export const MtgCard: React.FC<MtgCardProps> = ({ 
+export const MtgCard: React.FC<MtgCardProps> = React.memo(({ 
   card, 
   context = {},
   isSelected = false,
@@ -28,7 +29,6 @@ export const MtgCard: React.FC<MtgCardProps> = ({
   className = ''
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [isZoomClicked, setIsZoomClicked] = useState(false);
 
   // Parse multiple artists
   const parseArtists = (artistString?: string): string[] => {
@@ -54,101 +54,85 @@ export const MtgCard: React.FC<MtgCardProps> = ({
 
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't trigger selection if zoom was just clicked
-    if (isZoomClicked) {
-      setIsZoomClicked(false);
+    // Don't trigger selection if clicking on links or zoom indicator
+    const target = e.target as HTMLElement;
+    const clickedLink = target.closest('a');
+    const clickedZoom = target.closest('.zoom-indicator');
+    
+    // If clicking a link, don't do anything - let the link handle itself
+    if (clickedLink || clickedZoom) {
       return;
     }
     
-    // Don't trigger selection if clicking on links
-    const target = e.target as HTMLElement;
-    const clickedLink = target.closest('a');
+    e.preventDefault();
+    e.stopPropagation();
     
-    if (!clickedLink && onSelectionChange) {
-      e.preventDefault();
-      e.stopPropagation();
-      // Only select, never deselect when clicking the card
-      if (!isSelected) {
-        onSelectionChange(card.id || '', true);
-      }
+    // Simple CSS class manipulation - no React state needed
+    const cardElement = e.currentTarget as HTMLElement;
+    
+    // Only remove selected class from currently selected card (faster)
+    const currentlySelected = document.querySelector('[data-mtg-card="true"].selected');
+    if (currentlySelected && currentlySelected !== cardElement) {
+      currentlySelected.classList.remove('selected');
+      currentlySelected.setAttribute('data-selected', 'false');
     }
+    
+    // Add selected class to this card
+    cardElement.classList.add('selected');
+    cardElement.setAttribute('data-selected', 'true');
+    
+    // Don't update React state - it causes lag even with setTimeout
+    // We'll query the DOM when we need to know which card is selected
   };
 
   return (
     <MuiCard 
       elevation={4}
       onClick={handleCardClick}
-      onFocus={() => {
-        // Select card when it gains focus
-        if (onSelectionChange && !isSelected) {
-          onSelectionChange(card.id || '', true);
-        }
-      }}
-      onBlur={() => {
-        // Deselect card when it loses focus
-        if (onSelectionChange && isSelected) {
-          onSelectionChange(card.id || '', false);
-        }
-      }}
       data-mtg-card="true"
+      data-card-id={card.id}
+      data-selected={isSelected ? "true" : "false"}
       tabIndex={0}
       sx={{
         position: 'relative',
         width: '280px',
         bgcolor: 'grey.800',
         borderRadius: 6,
-        border: isSelected ? '4px solid' : '3px solid',
-        borderColor: isSelected ? '#2196F3' : 'grey.700',
+        border: '3px solid',
+        borderColor: 'grey.700',
         overflow: 'hidden',
-        boxShadow: isSelected 
-          ? '0 0 50px rgba(33, 150, 243, 0.8), 0 0 30px rgba(33, 150, 243, 0.6), 0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        transition: 'all 0.3s ease-in-out',
-        transform: isSelected ? 'scale(1.03)' : 'scale(1)',
-        cursor: onSelectionChange ? 'pointer' : 'default',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        transition: 'transform 0.15s ease-in-out',
+        transform: 'scale(1)',
+        cursor: 'pointer',
         outline: 'none',
+        // Selected state using CSS class
+        '&.selected': {
+          border: '4px solid',
+          borderColor: '#1976d2 !important',
+          boxShadow: '0 0 60px rgba(25, 118, 210, 1), 0 0 40px rgba(33, 150, 243, 0.8), 0 0 20px rgba(33, 150, 243, 0.6), 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important',
+          transform: 'scale(1.05) !important',
+          transition: 'none !important',
+          '& .zoom-indicator': {
+            opacity: 1,
+            transform: 'scale(1)'
+          }
+        },
         '&:focus': {
           outline: '2px solid',
           outlineColor: 'primary.light',
           outlineOffset: '2px'
         },
-        // Combined hover effect with rarity-based glow and overlay fade
-        ...(card.rarity ? {
-          '&:hover': {
-            boxShadow: isSelected 
-              ? '0 0 50px rgba(33, 150, 243, 0.8), 0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-              : card.rarity.toLowerCase() === 'common' ? '0 0 40px rgba(156, 163, 175, 0.5), 0 0 20px rgba(156, 163, 175, 0.3)' :
-                card.rarity.toLowerCase() === 'uncommon' ? '0 0 40px rgba(156, 163, 175, 0.4), 0 0 20px rgba(156, 163, 175, 0.2)' :
-                card.rarity.toLowerCase() === 'rare' ? '0 0 40px rgba(217, 119, 6, 0.5), 0 0 20px rgba(217, 119, 6, 0.3)' :
-                card.rarity.toLowerCase() === 'mythic' ? '0 0 40px rgba(234, 88, 12, 0.6), 0 0 20px rgba(234, 88, 12, 0.4)' :
-                card.rarity.toLowerCase() === 'special' || card.rarity.toLowerCase() === 'bonus' ? '0 0 40px rgba(147, 51, 234, 0.5), 0 0 20px rgba(147, 51, 234, 0.3)' :
-                '0 0 40px rgba(156, 163, 175, 0.4), 0 0 20px rgba(156, 163, 175, 0.2)',
-            transform: isSelected ? 'scale(1.03)' : 'scale(1.01)',
-            '& .card-overlay': {
-              opacity: 0.5
-            },
-            '& .zoom-indicator': {
-              opacity: 1,
-              transform: 'scale(1)'
-            }
+        '&:hover:not(.selected)': {
+          ...getRarityGlowStyles(card.rarity, false, true),
+          transform: 'scale(1.01)',
+          '& .zoom-indicator': {
+            opacity: 1,
+            transform: 'scale(1)'
           }
-        } : {
-          '&:hover': {
-            boxShadow: isSelected 
-              ? '0 0 50px rgba(33, 150, 243, 0.8), 0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-              : '0 0 40px rgba(156, 163, 175, 0.4), 0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            transform: isSelected ? 'scale(1.03)' : 'scale(1.01)',
-            '& .card-overlay': {
-              opacity: 0.5
-            },
-            '& .zoom-indicator': {
-              opacity: 1,
-              transform: 'scale(1)'
-            }
-          }
-        })
+        }
       }}
-      className={className}
+      className={`${className} ${isSelected ? 'selected' : ''}`}
     >
       <CardImage
         imageUrl={card.imageUris?.normal || card.imageUris?.large}
@@ -159,7 +143,6 @@ export const MtgCard: React.FC<MtgCardProps> = ({
         onZoomClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          setIsZoomClicked(true);
           setModalOpen(true);
         }}
       />
@@ -184,12 +167,11 @@ export const MtgCard: React.FC<MtgCardProps> = ({
         onSetClick={onSetClick}
       />
 
-      <CardModal
+      <CardDetailsModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        imageUrl={card.imageUris?.large || card.imageUris?.png || card.imageUris?.normal}
-        cardName={card.name}
+        card={card}
       />
     </MuiCard>
   );
-};
+});

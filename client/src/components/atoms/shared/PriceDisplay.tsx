@@ -1,15 +1,18 @@
 import React from 'react';
 import { Typography } from '@mui/material';
+import { DarkBadge } from './DarkBadge';
 
 interface PriceDisplayProps {
   price: string | number | null | undefined;
-  currency?: 'usd' | 'eur';
+  currency?: 'USD' | 'EUR' | 'usd' | 'eur';
+  label?: string;
   className?: string;
 }
 
 export const PriceDisplay: React.FC<PriceDisplayProps> = ({ 
   price, 
   currency = 'usd',
+  label,
   className = '' 
 }) => {
   const getPriceValue = (): number => {
@@ -28,7 +31,7 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
   };
 
   const formatPrice = (value: number): string => {
-    const symbol = currency === 'eur' ? '€' : '$';
+    const symbol = currency.toLowerCase() === 'eur' ? '€' : '$';
     return `${symbol}${value.toFixed(2)}`;
   };
 
@@ -36,16 +39,30 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
   const colorTheme = getPriceColor(priceValue);
 
   return (
-    <Typography 
+    <DarkBadge
       component="span"
-      variant="body2"
       className={className}
-      sx={{ 
-        fontWeight: 'bold',
-        color: colorTheme
+      sx={{
+        display: 'inline-flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start'
       }}
     >
-      {formatPrice(priceValue)}
-    </Typography>
+      {label && (
+        <Typography component="span" variant="caption" sx={{ color: 'text.secondary' }}>
+          {label}
+        </Typography>
+      )}
+      <Typography 
+        component="span"
+        variant="body2"
+        sx={{ 
+          fontWeight: 'bold',
+          color: colorTheme
+        }}
+      >
+        {formatPrice(priceValue)}
+      </Typography>
+    </DarkBadge>
   );
 };

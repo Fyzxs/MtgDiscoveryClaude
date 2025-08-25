@@ -18,12 +18,12 @@ export const ArtistLinks: React.FC<ArtistLinksProps> = ({
   if (!artists || artists.length === 0) return null;
 
   return (
-    <Typography variant="caption" sx={{ fontSize: '0.75rem' }} className={className}>
+    <Typography variant="caption" sx={{ fontSize: '0.75rem', display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center' }} className={className}>
       {artists.map((artistName, index) => (
         <React.Fragment key={index}>
           {index > 0 && (
-            <Typography component="span" sx={{ color: 'grey.500' }}>
-              {' & '}
+            <Typography component="span" sx={{ color: 'grey.400', fontSize: '0.7rem', mx: 0.25 }}>
+              &
             </Typography>
           )}
           <ArtistLink

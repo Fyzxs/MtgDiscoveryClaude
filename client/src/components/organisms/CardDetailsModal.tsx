@@ -1,0 +1,575 @@
+import React from 'react';
+import {
+  Modal,
+  Box,
+  Typography,
+  IconButton,
+  Divider,
+  Chip,
+  Link,
+  Grid,
+  Stack,
+  Button,
+  Tooltip
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import CircleIcon from '@mui/icons-material/Circle';
+import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import WarningIcon from '@mui/icons-material/Warning';
+import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import type { Card } from '../../types/card';
+import { ManaCost } from '../molecules/Cards/ManaCost';
+import { RarityBadge } from '../atoms/Cards/RarityBadge';
+import { PriceDisplay } from '../atoms/shared/PriceDisplay';
+import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
+
+interface CardDetailsModalProps {
+  open: boolean;
+  onClose: () => void;
+  card?: Card;
+  onPrevious?: () => void;
+  onNext?: () => void;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+}
+
+const LEGALITY_COLORS: Record<string, string> = {
+  legal: '#4CAF50',
+  not_legal: '#424242',
+  restricted: '#2196F3',
+  banned: '#F44336'
+};
+
+const LEGALITY_ICONS: Record<string, React.ReactNode> = {
+  legal: <CircleIcon sx={{ fontSize: 16 }} />,
+  not_legal: <CircleOutlinedIcon sx={{ fontSize: 16 }} />,
+  restricted: <WarningIcon sx={{ fontSize: 16 }} />,
+  banned: <RemoveCircleIcon sx={{ fontSize: 16 }} />
+};
+
+const LEGALITY_DESCRIPTIONS: Record<string, string> = {
+  legal: 'Legal',
+  not_legal: 'Not legal',
+  restricted: 'Restricted (only allowed one copy)',
+  banned: 'Banned'
+};
+
+const FORMAT_DISPLAY_NAMES: Record<string, string> = {
+  standard: 'Standard',
+  future: 'Future',
+  historic: 'Historic',
+  timeless: 'Timeless',
+  gladiator: 'Gladiator',
+  pioneer: 'Pioneer',
+  explorer: 'Explorer',
+  modern: 'Modern',
+  legacy: 'Legacy',
+  pauper: 'Pauper',
+  vintage: 'Vintage',
+  penny: 'Penny',
+  commander: 'Commander',
+  oathbreaker: 'Oathbreaker',
+  standardBrawl: 'Standard Brawl',
+  brawl: 'Brawl',
+  alchemy: 'Alchemy',
+  pauperCommander: 'Pauper EDH',
+  duel: 'Duel',
+  oldschool: 'Oldschool',
+  premodern: 'Premodern',
+  predh: 'PreDH'
+};
+
+export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
+  open,
+  onClose,
+  card,
+  onPrevious,
+  onNext,
+  hasPrevious,
+  hasNext
+}) => {
+  if (!card) return null;
+
+  const formatOracleText = (text?: string) => {
+    if (!text) return null;
+
+    return text.split('\n').map((line, index) => (
+      <Typography key={index} variant="body1" paragraph component="div">
+        {line.split(/(\{[^}]+\})/).map((part, i) => {
+          if (part.match(/^\{.*\}$/)) {
+            return (
+              <Box key={i} component="span" sx={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+                <ManaCost manaCost={part} />
+              </Box>
+            );
+          }
+          return <span key={i}>{part}</span>;
+        })}
+      </Typography>
+    ));
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'rgba(0, 0, 0, 0.9)'
+      }}
+    >
+      <Box
+        sx={{
+          width: '90vw',
+          maxWidth: 1400,
+          height: '90vh',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          outline: 'none'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <Box sx={{
+          p: 2,
+          borderBottom: 1,
+          borderColor: 'divider',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {(onPrevious || onNext) && (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <IconButton
+                  onClick={onPrevious}
+                  disabled={!hasPrevious}
+                  size="small"
+                >
+                  <NavigateBeforeIcon />
+                </IconButton>
+                <IconButton
+                  onClick={onNext}
+                  disabled={!hasNext}
+                  size="small"
+                >
+                  <NavigateNextIcon />
+                </IconButton>
+              </Box>
+            )}
+            <Typography variant="h5" component="h2">
+              {card.name}
+            </Typography>
+            {card.manaCost && <ManaCost manaCost={card.manaCost} />}
+          </Box>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        {/* Content */}
+        <Box sx={{
+          display: 'flex',
+          flex: 1,
+          overflow: 'hidden'
+        }}>
+          {/* Left side - Card Image */}
+          <Box sx={{
+            width: '45%',
+            p: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: 'grey.900',
+            borderRadius: '0 0 0 8px'
+          }}>
+            <Box
+              component="img"
+              src={card.imageUris?.large || card.imageUris?.normal || ''}
+              alt={card.name}
+              sx={{
+                maxWidth: '95%',
+                maxHeight: '95%',
+                width: 'auto',
+                height: 'auto',
+                borderRadius: '6.75%',
+                boxShadow: 3
+              }}
+            />
+            {/* Card ID */}
+            <Box sx={{ 
+              mt: 2, 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              px: 2,
+              py: 1
+            }}>
+              <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
+                {card.id}
+              </Typography>
+              <Tooltip title="Copy ID">
+                <IconButton 
+                  size="small"
+                  onClick={() => {
+                    navigator.clipboard.writeText(card.id);
+                  }}
+                  sx={{ p: 0.5 }}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+
+          {/* Right side - Card Details */}
+          <Box sx={{
+            flex: 1,
+            overflow: 'auto',
+            p: 3
+          }}>
+            <Stack spacing={3}>
+              {/* Basic Info */}
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  {card.typeLine}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <RarityBadge rarity={card.rarity} />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Link 
+                      href={`?page=set&set=${card.setCode}`}
+                      sx={{ 
+                        color: 'text.secondary',
+                        textDecoration: 'none',
+                        '&:hover': {
+                          textDecoration: 'underline'
+                        }
+                      }}
+                    >
+                      {card.setName}
+                    </Link>
+                    <Typography variant="body2" color="text.secondary">
+                      ({card.setCode?.toUpperCase()}) · #{card.collectorNumber}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* Oracle Text */}
+              {card.oracleText && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Oracle Text
+                  </Typography>
+                  <Box sx={{ pl: 2 }}>
+                    {formatOracleText(card.oracleText)}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Flavor Text */}
+              {card.flavorText && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Flavor Text
+                  </Typography>
+                  <Typography variant="body2" fontStyle="italic" sx={{ pl: 2 }}>
+                    {card.flavorText}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* P/T, Loyalty, Defense */}
+              {(card.power || card.loyalty || card.defense) && (
+                <Box sx={{ display: 'flex', gap: 3, justifyContent: card.power ? 'flex-end' : 'flex-start' }}>
+                  {card.power && (
+                    <Typography variant="h6">
+                      {card.power}/{card.toughness}
+                    </Typography>
+                  )}
+                  {card.loyalty && (
+                    <Typography variant="h6">
+                      Loyalty: {card.loyalty}
+                    </Typography>
+                  )}
+                  {card.defense && (
+                    <Typography variant="h6">
+                      Defense: {card.defense}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+
+              <Divider />
+
+              {/* Legalities */}
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Legalities
+                  </Typography>
+                  <Tooltip title={
+                    <Box sx={{ p: 1 }}>
+                      <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+                        Legality Key
+                      </Typography>
+                      {Object.entries(LEGALITY_DESCRIPTIONS).map(([key, desc]) => (
+                        <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                          <Box sx={{ color: LEGALITY_COLORS[key] }}>
+                            {LEGALITY_ICONS[key]}
+                          </Box>
+                          <Typography variant="caption">{desc}</Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  }>
+                    <HelpOutlineIcon sx={{ fontSize: 18, color: 'text.secondary', cursor: 'help' }} />
+                  </Tooltip>
+                </Box>
+
+                <Grid container spacing={1.5}>
+                  {Object.entries(card.legalities || {})
+                    .filter(([format]) => format !== '__typename')
+                    .sort((a, b) => {
+                      const order = ['standard', 'pioneer', 'modern', 'legacy', 'vintage', 'commander'];
+                      const aIndex = order.indexOf(a[0]);
+                      const bIndex = order.indexOf(b[0]);
+                      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+                      if (aIndex !== -1) return -1;
+                      if (bIndex !== -1) return 1;
+                      return a[0].localeCompare(b[0]);
+                    })
+                    .map(([format, legality]) => {
+                      const isLegal = legality === 'legal';
+                      const displayName = FORMAT_DISPLAY_NAMES[format] || format;
+
+                      return (
+                        <Grid item key={format}>
+                          <Tooltip title={`${displayName}: ${LEGALITY_DESCRIPTIONS[legality] || legality}`}>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                cursor: 'help',
+                                opacity: isLegal ? 1 : 0.7,
+                                '&:hover': {
+                                  opacity: 1
+                                }
+                              }}
+                            >
+                              <Box sx={{ color: LEGALITY_COLORS[legality] || LEGALITY_COLORS.not_legal }}>
+                                {LEGALITY_ICONS[legality] || LEGALITY_ICONS.not_legal}
+                              </Box>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: isLegal ? 'text.primary' : 'text.secondary',
+                                  fontWeight: isLegal ? 500 : 400
+                                }}
+                              >
+                                {displayName}
+                              </Typography>
+                            </Box>
+                          </Tooltip>
+                        </Grid>
+                      );
+                    })}
+                </Grid>
+              </Box>
+
+              {/* Prices - only show if we have at least one price */}
+              {card.prices && (card.prices.usd || card.prices.usdFoil || card.prices.eur || card.prices.eurFoil) && (
+                <>
+                  <Divider />
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                      Market Prices
+                    </Typography>
+                    <Grid container spacing={2}>
+                      {card.prices.usd && (
+                        <Grid item xs={6} sm={4}>
+                          <PriceDisplay
+                            price={card.prices.usd}
+                            currency="USD"
+                            label="Normal"
+                          />
+                        </Grid>
+                      )}
+                      {card.prices.usdFoil && (
+                        <Grid item xs={6} sm={4}>
+                          <PriceDisplay
+                            price={card.prices.usdFoil}
+                            currency="USD"
+                            label="Foil"
+                          />
+                        </Grid>
+                      )}
+                      {card.prices.eur && (
+                        <Grid item xs={6} sm={4}>
+                          <PriceDisplay
+                            price={card.prices.eur}
+                            currency="EUR"
+                            label="Normal"
+                          />
+                        </Grid>
+                      )}
+                    </Grid>
+                  </Box>
+                </>
+              )}
+
+              {/* Related Cards */}
+              {card.allParts && card.allParts.length > 1 && (
+                <>
+                  <Divider />
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                      Related Cards
+                    </Typography>
+                    <RelatedCardsDisplay 
+                      relatedCardIds={card.allParts.map(part => part.id)}
+                      currentCardId={card.id}
+                    />
+                  </Box>
+                </>
+              )}
+
+              <Divider />
+
+              {/* All Printings */}
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  All Printings
+                </Typography>
+                <Box sx={{
+                  p: 2,
+                  bgcolor: 'action.hover',
+                  borderRadius: 1,
+                  border: '1px dashed',
+                  borderColor: 'divider'
+                }}>
+                  <Typography variant="body2" color="text.secondary" align="center">
+                    Coming soon
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Divider />
+
+              {/* External Links */}
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  External Links
+                </Typography>
+                <Stack direction="row" spacing={2} flexWrap="wrap">
+                  {card.purchaseUris?.tcgplayer && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={card.purchaseUris.tcgplayer}
+                      target="_blank"
+                    >
+                      TCGPlayer
+                    </Button>
+                  )}
+                  {card.purchaseUris?.cardmarket && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={card.purchaseUris.cardmarket}
+                      target="_blank"
+                    >
+                      Cardmarket
+                    </Button>
+                  )}
+                  {card.purchaseUris?.cardhoarder && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={card.purchaseUris.cardhoarder}
+                      target="_blank"
+                    >
+                      Cardhoarder
+                    </Button>
+                  )}
+                  {card.relatedUris?.gatherer && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={card.relatedUris.gatherer}
+                      target="_blank"
+                    >
+                      Gatherer
+                    </Button>
+                  )}
+                  {card.relatedUris?.edhrec && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={card.relatedUris.edhrec}
+                      target="_blank"
+                    >
+                      EDHREC
+                    </Button>
+                  )}
+                  {card.scryfallUri && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={card.scryfallUri}
+                      target="_blank"
+                    >
+                      Scryfall
+                    </Button>
+                  )}
+                </Stack>
+              </Box>
+
+              {/* Artist */}
+              {card.artist && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Artist
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
+                      <Link
+                        key={index}
+                        href={`?page=artist&name=${encodeURIComponent(artistName)}`}
+                        sx={{
+                          color: 'text.primary',
+                          textDecoration: 'none',
+                          '&:hover': {
+                            textDecoration: 'underline'
+                          }
+                        }}
+                      >
+                        {artistName}
+                      </Link>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </Stack>
+          </Box>
+        </Box>
+      </Box>
+    </Modal>
+  );
+};

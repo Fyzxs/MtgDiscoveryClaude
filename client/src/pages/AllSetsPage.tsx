@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
@@ -14,10 +14,12 @@ import {
   InputLabel,
   Chip,
   Stack,
-  InputAdornment
+  InputAdornment,
+  IconButton
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import type { MtgSet } from '../types/set';
@@ -45,12 +47,26 @@ export const AllSetsPage: React.FC = () => {
   const [selectedSetTypes, setSelectedSetTypes] = useState<string[]>(initialTypes);
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const [filteredSets, setFilteredSets] = useState<MtgSet[]>([]);
+  const [hasSearchText, setHasSearchText] = useState(!!initialSearch);
+  
+  // Use ref to store the search input value without causing re-renders
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const debounceTimer = useRef<NodeJS.Timeout>();
 
   // Get unique set types from data
   const getUniqueSetTypes = (sets: MtgSet[]): string[] => {
     const types = new Set(sets.map(set => set.setType));
     return Array.from(types).sort();
   };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, []);
 
   // Update URL when filters change
   useEffect(() => {
@@ -117,8 +133,7 @@ export const AllSetsPage: React.FC = () => {
 
   const handleSetClick = (setCode?: string) => {
     if (setCode) {
-      console.log(`Navigate to set: ${setCode}`);
-      // TODO: Add navigation when router is set up
+      window.location.href = `?page=set&set=${setCode}`;
     }
   };
 
@@ -178,17 +193,52 @@ export const AllSetsPage: React.FC = () => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <TextField
+              inputRef={searchInputRef}
               fullWidth
               variant="outlined"
               placeholder="Search sets..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              defaultValue={initialSearch}
+              onChange={(e) => {
+                const value = e.target.value;
+                setHasSearchText(!!value);
+                
+                // Clear any existing timer
+                if (debounceTimer.current) {
+                  clearTimeout(debounceTimer.current);
+                }
+                
+                // Set new timer - only update state after 1 second
+                debounceTimer.current = setTimeout(() => {
+                  setSearchTerm(value);
+                }, 1000);
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
                 ),
+                endAdornment: hasSearchText ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        if (searchInputRef.current) {
+                          searchInputRef.current.value = '';
+                          setHasSearchText(false);
+                          setSearchTerm('');
+                          // Clear any pending timer
+                          if (debounceTimer.current) {
+                            clearTimeout(debounceTimer.current);
+                          }
+                        }
+                      }}
+                      edge="end"
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null,
               }}
             />
           </Grid>

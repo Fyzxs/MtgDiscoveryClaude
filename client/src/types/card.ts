@@ -182,6 +182,9 @@ export interface CardContext {
   isOnArtistPage?: boolean;
   isOnCardPage?: boolean;
   currentArtist?: string;
+  currentSet?: string;
   currentSetCode?: string;
   showCollectorInfo?: boolean;
+  hideSetInfo?: boolean;
+  hideReleaseDate?: boolean;
 }
