@@ -35,4 +35,9 @@ public sealed class EntryService : IEntryService
     {
         return _setEntryService.SetsByCodeAsync(setCodes);
     }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return _setEntryService.AllSetsAsync();
+    }
 }

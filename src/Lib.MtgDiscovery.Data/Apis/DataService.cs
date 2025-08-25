@@ -35,4 +35,9 @@ public sealed class DataService : IDataService
     {
         return _setDataService.SetsByCodeAsync(setCodes);
     }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return _setDataService.AllSetsAsync();
+    }
 }

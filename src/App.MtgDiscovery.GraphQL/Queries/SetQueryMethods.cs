@@ -81,4 +81,29 @@ public class SetQueryMethods
 
         return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results };
     }
+
+    [GraphQLType(typeof(SetResponseModelUnionType))]
+    public async Task<ResponseModel> AllSets()
+    {
+        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
+
+        if (response.IsFailure) return new FailureResponseModel()
+        {
+            Status = new StatusDataModel()
+            {
+                Message = response.OuterException.StatusMessage,
+                StatusCode = response.OuterException.StatusCode
+            }
+        };
+
+        List<ScryfallSetOutEntity> results = [];
+
+        foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
+        {
+            ScryfallSetOutEntity outEntity = _scryfallSetMapper.Map(setItem);
+            results.Add(outEntity);
+        }
+
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results };
+    }
 }

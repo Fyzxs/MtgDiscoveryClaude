@@ -8,4 +8,5 @@ public interface ISetEntryService
 {
     Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds);
     Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes);
+    Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync();
 }

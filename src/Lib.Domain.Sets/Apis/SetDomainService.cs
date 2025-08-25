@@ -28,4 +28,9 @@ public sealed class SetDomainService : ISetDomainService
     {
         return await _setDomainService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return await _setDomainService.AllSetsAsync().ConfigureAwait(false);
+    }
 }

@@ -8,4 +8,5 @@ public interface ISetDataService
 {
     Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds);
     Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes);
+    Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync();
 }

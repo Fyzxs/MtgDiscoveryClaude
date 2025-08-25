@@ -28,4 +28,9 @@ public sealed class SetAggregatorService : ISetAggregatorService
     {
         return await _querySetAggregatorService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return await _querySetAggregatorService.AllSetsAsync().ConfigureAwait(false);
+    }
 }

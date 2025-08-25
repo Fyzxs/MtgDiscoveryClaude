@@ -29,4 +29,9 @@ internal sealed class SetDataService : ISetDataService
     {
         return await _setDomainService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return await _setDomainService.AllSetsAsync().ConfigureAwait(false);
+    }
 }

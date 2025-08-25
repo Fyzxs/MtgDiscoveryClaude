@@ -29,4 +29,9 @@ internal sealed class QuerySetDomainService : ISetDomainService
     {
         return await _setAggregatorService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return await _setAggregatorService.AllSetsAsync().ConfigureAwait(false);
+    }
 }

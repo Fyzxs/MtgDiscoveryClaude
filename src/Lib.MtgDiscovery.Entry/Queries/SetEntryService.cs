@@ -60,4 +60,9 @@ internal sealed class SetEntryService : ISetEntryService
         ISetCodesItrEntity mappedArgs = await _codesMapper.Map(args).ConfigureAwait(false);
         return await _setDataService.SetsByCodeAsync(mappedArgs).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return await _setDataService.AllSetsAsync().ConfigureAwait(false);
+    }
 }
