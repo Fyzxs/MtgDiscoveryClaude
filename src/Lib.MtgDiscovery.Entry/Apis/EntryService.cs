@@ -31,6 +31,11 @@ public sealed class EntryService : IEntryService
         return _cardEntryService.CardsBySetCodeAsync(setCode);
     }
 
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
+    {
+        return _cardEntryService.CardsByNameAsync(cardName);
+    }
+
     public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds)
     {
         return _setEntryService.SetsByIdsAsync(setIds);

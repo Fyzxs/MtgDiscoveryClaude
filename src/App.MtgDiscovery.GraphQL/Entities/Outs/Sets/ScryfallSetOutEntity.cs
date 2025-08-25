@@ -18,4 +18,5 @@ public sealed class ScryfallSetOutEntity
     public string BlockCode { get; init; }
     public string Block { get; init; }
     public string IconSvgUri { get; init; }
+    public int PrintedSize { get; init; }
 }

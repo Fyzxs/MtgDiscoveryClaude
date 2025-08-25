@@ -18,4 +18,5 @@ public interface ISetItemItrEntity
     string BlockCode { get; }
     string Block { get; }
     string IconSvgUri { get; }
+    int PrintedSize { get; }
 }

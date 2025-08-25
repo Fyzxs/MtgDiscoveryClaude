@@ -27,7 +27,8 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
             FoilOnly = data.foil_only,
             BlockCode = data.block_code,
             Block = data.block,
-            IconSvgUri = data.icon_svg_uri
+            IconSvgUri = data.icon_svg_uri,
+            PrintedSize = data.printed_size ?? 0
         };
     }
 }

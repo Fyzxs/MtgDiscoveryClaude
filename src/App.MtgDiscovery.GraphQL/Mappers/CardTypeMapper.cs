@@ -21,10 +21,15 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
         {
             Id = source.Id,
             OracleId = source.OracleId,
+            ArenaId = source.ArenaId,
+            MtgoId = source.MtgoId,
+            MtgoFoilId = source.MtgoFoilId,
             MultiverseIds = source.MultiverseIds,
             TcgPlayerId = source.TcgPlayerId,
+            TcgPlayerEtchedId = source.TcgPlayerEtchedId,
             CardMarketId = source.CardMarketId,
             Name = source.Name,
+            FlavorName = source.FlavorName,
             Lang = source.Lang,
             ReleasedAt = source.ReleasedAt,
             Uri = source.Uri,
@@ -43,6 +48,7 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
             Legalities = MapLegalities(source.Legalities),
             Games = source.Games,
             Reserved = source.Reserved,
+            GameChanger = source.GameChanger,
             Foil = source.Foil,
             NonFoil = source.NonFoil,
             Finishes = source.Finishes,
@@ -75,6 +81,7 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
             Textless = source.Textless,
             Booster = source.Booster,
             StorySpotlight = source.StorySpotlight,
+            PromoTypes = source.PromoTypes,
             EdhRecRank = source.EdhRecRank,
             PennyRank = source.PennyRank,
             Prices = MapPrices(source.Prices),
@@ -96,7 +103,7 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
             ContentWarning = source.ContentWarning,
             Preview = MapPreview(source.Preview),
             ProducedMana = source.ProducedMana,
-            Attractions = source.Attractions
+            AttractionLights = source.AttractionLights
         };
 
         return Task.FromResult(result);

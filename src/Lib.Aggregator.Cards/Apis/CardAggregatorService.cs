@@ -28,4 +28,9 @@ public sealed class CardAggregatorService : ICardAggregatorService
     {
         return _cardAggregatorOperations.CardsBySetCodeAsync(setCode);
     }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    {
+        return _cardAggregatorOperations.CardsByNameAsync(cardName);
+    }
 }

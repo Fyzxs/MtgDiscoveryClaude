@@ -29,7 +29,8 @@ internal sealed class ScryfallSetMapper : IScryfallSetMapper
             FoilOnly = setItem.FoilOnly,
             BlockCode = setItem.BlockCode,
             Block = setItem.Block,
-            IconSvgUri = setItem.IconSvgUri
+            IconSvgUri = setItem.IconSvgUri,
+            PrintedSize = setItem.PrintedSize
         };
     }
 }

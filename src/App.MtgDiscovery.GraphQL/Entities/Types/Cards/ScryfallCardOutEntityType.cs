@@ -250,7 +250,8 @@ internal class ScryfallCardOutEntityType : ObjectType<ScryfallCardOutEntity>
         descriptor.Field(f => f.ProducedMana)
             .Description("Mana produced by this card");
 
-        descriptor.Field(f => f.Attractions)
+        descriptor.Field(f => f.AttractionLights)
+            .Name("attractions")
             .Description("Attraction lights");
     }
 }

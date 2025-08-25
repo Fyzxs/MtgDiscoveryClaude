@@ -118,6 +118,7 @@ query GetCompleteSets($ids: SetIdsArgEntityInput!) {
         blockCode
         block
         iconSvgUri
+        printedSize
       }
     }
     ... on FailureResponse {
@@ -427,6 +428,7 @@ query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
         releasedAt
         setType
         cardCount
+        printedSize
         digital
         nonFoilOnly
         foilOnly

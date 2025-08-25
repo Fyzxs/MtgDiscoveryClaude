@@ -28,4 +28,9 @@ public sealed class CardDomainService : ICardDomainService
     {
         return _cardDomainOperations.CardsBySetCodeAsync(setCode);
     }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    {
+        return _cardDomainOperations.CardsByNameAsync(cardName);
+    }
 }

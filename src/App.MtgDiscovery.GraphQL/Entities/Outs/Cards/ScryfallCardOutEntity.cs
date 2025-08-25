@@ -1,29 +1,44 @@
 ﻿#pragma warning disable CA1056, CA1819
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
 
 public class ScryfallCardOutEntity
 {
+
     [JsonProperty("id")]
     public string Id { get; set; }
 
     [JsonProperty("oracle_id")]
     public string OracleId { get; set; }
 
+    [JsonProperty("arena_id")]
+    public int? ArenaId { get; set; }
+
+    [JsonProperty("mtgo_id")]
+    public int? MtgoId { get; set; }
+
+    [JsonProperty("mtgo_foil_id")]
+    public int? MtgoFoilId { get; set; }
+
     [JsonProperty("multiverse_ids")]
     public ICollection<int> MultiverseIds { get; set; }
 
-
     [JsonProperty("tcgplayer_id")]
     public int? TcgPlayerId { get; set; }
+
+    [JsonProperty("tcgplayer_etched_id")]
+    public int? TcgPlayerEtchedId { get; set; }
 
     [JsonProperty("cardmarket_id")]
     public int? CardMarketId { get; set; }
 
     [JsonProperty("name")]
     public string Name { get; set; }
+
+    [JsonProperty("flavor_name")]
+    public string FlavorName { get; set; }
 
     [JsonProperty("lang")]
     public string Lang { get; set; }
@@ -78,6 +93,9 @@ public class ScryfallCardOutEntity
 
     [JsonProperty("reserved")]
     public bool Reserved { get; set; }
+
+    [JsonProperty("game_changer")]
+    public bool GameChanger { get; set; }
 
     [JsonProperty("foil")]
     public bool Foil { get; set; }
@@ -175,6 +193,9 @@ public class ScryfallCardOutEntity
     [JsonProperty("story_spotlight")]
     public bool StorySpotlight { get; set; }
 
+    [JsonProperty("promo_types")]
+    public ICollection<string> PromoTypes { get; set; }
+
     [JsonProperty("edhrec_rank")]
     public int? EdhRecRank { get; set; }
 
@@ -240,5 +261,5 @@ public class ScryfallCardOutEntity
     public ICollection<string> ProducedMana { get; set; }
 
     [JsonProperty("attraction_lights")]
-    public ICollection<string> Attractions { get; set; }
+    public ICollection<int> AttractionLights { get; set; }
 }
