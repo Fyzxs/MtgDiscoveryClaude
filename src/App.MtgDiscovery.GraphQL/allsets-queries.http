@@ -13,20 +13,26 @@ Content-Type: application/json
 query GetAllSets {
   allSets {
     __typename
-    ... on SuccessDataResponseModel {
+    ... on SuccessSetsResponse {
       data {
         id
         code
+        tcgPlayerId
         name
+        uri
+        scryfallUri
+        searchUri
         releasedAt
         setType
         cardCount
-        digitalOnly
+        digital
+        nonFoilOnly
         foilOnly
+        block
         iconSvgUri
       }
     }
-    ... on FailureResponseModel {
+    ... on FailureResponse {
       status {
         message
         statusCode

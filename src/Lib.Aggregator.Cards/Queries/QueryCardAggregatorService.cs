@@ -5,10 +5,13 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Entities;
+using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries.Mappers;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.Cards.Queries;
@@ -16,16 +19,30 @@ namespace Lib.Aggregator.Cards.Queries;
 internal sealed class QueryCardAggregatorService : ICardAggregatorService
 {
     private readonly ICosmosGopher _cardGopher;
+    private readonly ICosmosGopher _setCodeIndexGopher;
+    private readonly ICosmosInquisitor _setCardsInquisitor;
     private readonly QueryCardsIdsToReadPointItemsMapper _mapper;
     private readonly ScryfallCardItemToCardItemItrEntityMapper _cardMapper;
 
-    public QueryCardAggregatorService(ILogger logger) : this(new ScryfallCardItemsGopher(logger), new QueryCardsIdsToReadPointItemsMapper(), new ScryfallCardItemToCardItemItrEntityMapper())
+    public QueryCardAggregatorService(ILogger logger) : this(
+        new ScryfallCardItemsGopher(logger),
+        new ScryfallSetCodeIndexGopher(logger),
+        new ScryfallSetCardsInquisitor(logger),
+        new QueryCardsIdsToReadPointItemsMapper(),
+        new ScryfallCardItemToCardItemItrEntityMapper())
     {
     }
 
-    private QueryCardAggregatorService(ICosmosGopher cardGopher, QueryCardsIdsToReadPointItemsMapper mapper, ScryfallCardItemToCardItemItrEntityMapper cardMapper)
+    private QueryCardAggregatorService(
+        ICosmosGopher cardGopher,
+        ICosmosGopher setCodeIndexGopher,
+        ICosmosInquisitor setCardsInquisitor,
+        QueryCardsIdsToReadPointItemsMapper mapper,
+        ScryfallCardItemToCardItemItrEntityMapper cardMapper)
     {
         _cardGopher = cardGopher;
+        _setCodeIndexGopher = setCodeIndexGopher;
+        _setCardsInquisitor = setCardsInquisitor;
         _mapper = mapper;
         _cardMapper = cardMapper;
     }
@@ -46,5 +63,49 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
             .ToList();
 
         return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = successfulCards });
+    }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    {
+        //TODO: The inquisitor pattern and coupling with the query needs to be established.
+        // First, get the set ID from the set code index
+        ReadPointItem readPoint = new() { Id = new ProvidedCosmosItemId(setCode.SetCode), Partition = new ProvidedPartitionKeyValue(setCode.SetCode) };
+        OpResponse<ScryfallSetCodeIndexItem> indexResponse = await _setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexItem>(readPoint).ConfigureAwait(false);
+
+        if (indexResponse.IsSuccessful() is false || indexResponse.Value == null)
+        {
+            return new FailureOperationResponse<ICardItemCollectionItrEntity>(
+                new CardAggregatorOperationException($"Set code '{setCode.SetCode}' not found"));
+        }
+
+        string setId = indexResponse.Value.SetId;
+
+        // Query all cards for this set ID
+        QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @setId")
+            .WithParameter("@setId", setId);
+
+        OpResponse<IEnumerable<ScryfallSetCard>> cardsResponse = await _setCardsInquisitor.QueryAsync<ScryfallSetCard>(
+            queryDefinition,
+            new PartitionKey(setId)).ConfigureAwait(false);
+
+        if (cardsResponse.IsSuccessful() is false)
+        {
+            return new FailureOperationResponse<ICardItemCollectionItrEntity>(
+                new CardAggregatorOperationException($"Failed to retrieve cards for set '{setCode.SetCode}'", cardsResponse.Exception()));
+        }
+
+        // Convert ScryfallSetCard to ScryfallCardItem for mapping
+        List<ICardItemItrEntity> cards = [];
+        foreach (ScryfallSetCard setCard in cardsResponse.Value)
+        {
+            ScryfallCardItem cardItem = new() { Data = setCard.Data };
+            ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
+            if (mappedCard != null)
+            {
+                cards.Add(mappedCard);
+            }
+        }
+
+        return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
     }
 }

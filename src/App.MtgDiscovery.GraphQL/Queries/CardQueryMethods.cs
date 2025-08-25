@@ -56,4 +56,29 @@ public class CardQueryMethods
 
         return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
     }
+
+    [GraphQLType(typeof(CardResponseModelUnionType))]
+    public async Task<ResponseModel> CardsBySetCode(SetCodeArgEntity setCode)
+    {
+        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
+
+        if (response.IsFailure) return new FailureResponseModel()
+        {
+            Status = new StatusDataModel()
+            {
+                Message = response.OuterException.StatusMessage,
+                StatusCode = response.OuterException.StatusCode
+            }
+        };
+
+        List<ScryfallCardOutEntity> results = [];
+
+        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
+        {
+            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
+            results.Add(outEntity);
+        }
+
+        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
+    }
 }

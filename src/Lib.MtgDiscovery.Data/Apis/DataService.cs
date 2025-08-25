@@ -26,6 +26,11 @@ public sealed class DataService : IDataService
         return _cardDataService.CardsByIdsAsync(args);
     }
 
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    {
+        return _cardDataService.CardsBySetCodeAsync(setCode);
+    }
+
     public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds)
     {
         return _setDataService.SetsAsync(setIds);

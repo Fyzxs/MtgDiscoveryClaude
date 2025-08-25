@@ -25,4 +25,9 @@ internal sealed class QueryCardDomainService : ICardDomainService
     {
         return await _cardAggregatorService.CardsByIdsAsync(args).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    {
+        return await _cardAggregatorService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
+    }
 }

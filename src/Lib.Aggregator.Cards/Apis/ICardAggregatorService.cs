@@ -7,4 +7,5 @@ namespace Lib.Aggregator.Cards.Apis;
 public interface ICardAggregatorService
 {
     Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args);
+    Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode);
 }
