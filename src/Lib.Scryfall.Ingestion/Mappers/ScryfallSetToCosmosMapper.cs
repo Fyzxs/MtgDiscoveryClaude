@@ -9,7 +9,7 @@ internal sealed class ScryfallSetToCosmosMapper : IScryfallSetToCosmosMapper
     {
         return new ScryfallSetItem
         {
-            Data = scryfallSet.Data()
+            Scryfall = scryfallSet.Data()
         };
     }
 }

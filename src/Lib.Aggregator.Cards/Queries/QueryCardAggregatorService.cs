@@ -103,7 +103,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         List<ICardItemItrEntity> cards = [];
         foreach (ScryfallSetCard setCard in cardsResponse.Value)
         {
-            ScryfallCardItem cardItem = new() { Data = setCard.Data };
+            ScryfallCardItem cardItem = new() { Scryfall = setCard.Scryfall ?? setCard.Data };
             ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
             if (mappedCard != null)
             {
@@ -137,7 +137,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         List<ICardItemItrEntity> cards = [];
         foreach (ScryfallCardByName cardByName in cardsResponse.Value)
         {
-            ScryfallCardItem cardItem = new() { Data = cardByName.Data };
+            ScryfallCardItem cardItem = new() { Scryfall = cardByName.Scryfall ?? cardByName.Data };
             ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
             if (mappedCard != null)
             {

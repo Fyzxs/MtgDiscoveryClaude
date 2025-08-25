@@ -8,7 +8,8 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
 {
     public ISetItemItrEntity Map(ScryfallSetItem scryfallSetItem)
     {
-        dynamic data = scryfallSetItem.Data;
+        // Use Scryfall data if available, fallback to Data for backward compatibility
+        dynamic data = scryfallSetItem.Scryfall ?? scryfallSetItem.Data ?? scryfallSetItem.MtgJson ?? scryfallSetItem.MtgDiscovery;
 
         return new SetItemItrEntity
         {

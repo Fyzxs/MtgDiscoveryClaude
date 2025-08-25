@@ -12,7 +12,8 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
 
     public CardItemItrEntity(ScryfallCardItem scryfallCard)
     {
-        _data = scryfallCard?.Data;
+        // Use Scryfall data if available, fallback to Data for backward compatibility
+        _data = scryfallCard?.Scryfall ?? scryfallCard?.Data ?? scryfallCard?.MtgJson ?? scryfallCard?.MtgDiscovery;
     }
 
     public string Object => _data?["object"] ?? "card";
