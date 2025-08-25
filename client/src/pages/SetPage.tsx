@@ -28,6 +28,8 @@ import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
 import { MtgCard } from '../components/organisms/MtgCard';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
+import { CardGroup } from '../components/organisms/CardGroup';
+import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
 
@@ -74,10 +76,11 @@ export const SetPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [selectedRarities, setSelectedRarities] = useState<string[]>(initialRarities);
   const [selectedArtists, setSelectedArtists] = useState<string[]>(initialArtists);
+  const [selectedCardTypes, setSelectedCardTypes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const [filteredCards, setFilteredCards] = useState<Card[]>([]);
-  const [regularCards, setRegularCards] = useState<Card[]>([]);
-  const [variationCards, setVariationCards] = useState<Card[]>([]);
+  const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
+  const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
   const [showDigital, setShowDigital] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [hasSearchText, setHasSearchText] = useState(!!initialSearch);
@@ -98,6 +101,81 @@ export const SetPage: React.FC = () => {
       }
     });
     return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  };
+  
+  // Format card type labels for display
+  const formatCardTypeLabel = (type: string): string => {
+    // Handle null/undefined
+    if (!type) return 'Unknown';
+    
+    // Normalize the type for comparison (remove spaces, underscores, make uppercase)
+    const normalizedType = type.replace(/[\s_-]/g, '').toUpperCase();
+    
+    // Special cases mapping - use normalized keys
+    const specialCases: Record<string, string> = {
+      'SCHINESEALTART': 'Simplified Chinese Alternate Art',
+      'SIMPLIFIEDCHINESEALTERNATEART': 'Simplified Chinese Alternate Art',
+      'INBOOSTERS': 'In Boosters',
+      'CARDVARIATIONS': 'Card Variations', 
+      'FOILONLYBOOSTER': 'Foil Only Booster Cards',
+      'PROMOCARDS': 'Promo Cards',
+      'OTHERCARDS': 'Other Cards'
+    };
+    
+    // Check normalized version
+    if (specialCases[normalizedType]) {
+      return specialCases[normalizedType];
+    }
+    
+    // Log unhandled promo types for debugging
+    if (type.toUpperCase().includes('CHINESE')) {
+      console.log('Unhandled Chinese promo type - original:', type, 'normalized:', normalizedType);
+    }
+    
+    // General formatting: replace underscores with spaces and capitalize words
+    return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  };
+  
+  // Determine which type group a card belongs to (matching the grouping logic)
+  const getCardType = (card: Card): string => {
+    // Check for promo types first
+    if (card.promoTypes && card.promoTypes.length > 0) {
+      return card.promoTypes[0]; // Use first promo type
+    }
+    // Check for foil-only booster cards (7th Edition specific)
+    else if (card.booster && card.foil && !card.nonFoil) {
+      return 'FOIL_ONLY_BOOSTER';
+    }
+    // Check for variations
+    else if (card.variation) {
+      return 'CARD_VARIATIONS';
+    }
+    // Check if it's in boosters (this is the "regular" cards)
+    else if (card.booster) {
+      return 'IN_BOOSTERS';
+    }
+    // Check for promos without specific types
+    else if (card.promo) {
+      return 'PROMO_CARDS';
+    }
+    // Default for cards that don't fit other categories
+    return 'OTHER_CARDS';
+  };
+  
+  // Get unique card types from cards (includes promo types, boosters, variations, etc.)
+  const getUniqueCardTypes = (cards: Card[]): string[] => {
+    const cardTypeSet = new Set<string>();
+    
+    cards.forEach(card => {
+      const cardType = getCardType(card);
+      if (cardType !== 'OTHER_CARDS' || cards.some(c => getCardType(c) === 'OTHER_CARDS')) {
+        // Only add OTHER_CARDS if at least one card actually belongs to it
+        cardTypeSet.add(cardType);
+      }
+    });
+    
+    return Array.from(cardTypeSet)
+      .sort((a, b) => formatCardTypeLabel(a).localeCompare(formatCardTypeLabel(b)));
   };
 
   // Cleanup timer on unmount
@@ -198,6 +276,8 @@ export const SetPage: React.FC = () => {
           return cardArtists.some(artist => selectedArtists.includes(artist));
         });
       }
+      
+      // Note: Card type filtering is now handled by showing/hiding groups, not filtering cards
 
       const parseCollectorNumber = (num: string): number => {
         const match = num.match(/^(\d+)/);
@@ -255,15 +335,60 @@ export const SetPage: React.FC = () => {
 
       setFilteredCards(filtered);
       
-      // Separate regular cards from variations
-      const regular = filtered.filter(card => !card.variation);
-      const variations = filtered.filter(card => card.variation);
+      // Group cards by their characteristics
+      const groupsMap = new Map<string, CardGroupConfig>();
       
-      setRegularCards(regular);
-      setVariationCards(variations);
+      filtered.forEach(card => {
+        const cardType = getCardType(card);
+        const groupId = cardType;
+        const displayName = formatCardTypeLabel(cardType);
+        
+        if (!groupsMap.has(groupId)) {
+          groupsMap.set(groupId, {
+            id: groupId,
+            name: cardType,
+            displayName: displayName,
+            cards: [],
+            isVisible: true,
+            isPromoType: card.promoTypes && card.promoTypes.length > 0,
+            isFoilOnly: cardType === 'FOIL_ONLY_BOOSTER',
+            isVariation: cardType === 'CARD_VARIATIONS',
+            isBooster: cardType === 'IN_BOOSTERS',
+            isPromo: cardType === 'PROMO_CARDS'
+          });
+        }
+        
+        groupsMap.get(groupId)!.cards.push(card);
+      });
+      
+      // Convert to array and sort by display name
+      const groupsArray = Array.from(groupsMap.values())
+        .sort((a, b) => {
+          // Put "In Boosters" first as it's the regular cards
+          if (a.id === 'IN_BOOSTERS') return -1;
+          if (b.id === 'IN_BOOSTERS') return 1;
+          return a.displayName.localeCompare(b.displayName);
+        });
+      
+      setCardGroups(groupsArray);
+      
+      // Initially all groups are visible
+      const allGroupIds = new Set(groupsArray.map(g => g.id));
+      setVisibleGroupIds(allGroupIds);
     }
     // Note: selectedCardId is intentionally removed from dependencies as it doesn't affect filtering/sorting
   }, [cardsData, searchTerm, selectedRarities, selectedArtists, sortBy, showDigital]);
+  
+  // Handle card type filtering by showing/hiding groups
+  useEffect(() => {
+    if (selectedCardTypes.length === 0) {
+      // Show all groups if no filter selected
+      setVisibleGroupIds(new Set(cardGroups.map(g => g.id)));
+    } else {
+      // Only show selected groups
+      setVisibleGroupIds(new Set(selectedCardTypes));
+    }
+  }, [selectedCardTypes, cardGroups]);
 
   const handleRarityChange = (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value;
@@ -330,6 +455,7 @@ export const SetPage: React.FC = () => {
   const setInfo = setData?.setsByCode?.data?.[0];
   const setName = setInfo?.name || cards[0]?.setName || setCode.toUpperCase();
   const uniqueArtists = getUniqueArtists(cards);
+  const uniqueCardTypes = getUniqueCardTypes(cards);
   
   // Check if all cards have the same release date
   const allSameReleaseDate = cards.length > 0 && 
@@ -483,6 +609,59 @@ export const SetPage: React.FC = () => {
               filterSelectedOptions
               size="small"
             />
+            
+            {/* Card Type Filter - only show if there are more than 1 card type */}
+            {uniqueCardTypes.length > 1 && (
+              <Autocomplete
+                multiple
+                sx={{ minWidth: 250 }}
+                options={uniqueCardTypes}
+                value={selectedCardTypes}
+                onChange={(event, newValue) => {
+                  setSelectedCardTypes(newValue);
+                }}
+                getOptionLabel={(option) => formatCardTypeLabel(option)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Card Type"
+                    placeholder={selectedCardTypes.length === 0 ? "All Types" : "Add more..."}
+                    size="medium"
+                  />
+                )}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => {
+                    const { key, ...chipProps } = getTagProps({ index });
+                    return (
+                      <Chip
+                        key={key}
+                        size="small"
+                        label={formatCardTypeLabel(option)}
+                        {...chipProps}
+                      />
+                    );
+                  })
+                }
+                renderOption={(props, option) => {
+                  const { key, ...otherProps } = props;
+                  return (
+                    <Box key={key} component="li" {...otherProps}>
+                      <Typography variant="body2">
+                        {formatCardTypeLabel(option)}
+                      </Typography>
+                    </Box>
+                  );
+                }}
+                ListboxProps={{
+                  style: {
+                    maxHeight: 300
+                  }
+                }}
+                disableCloseOnSelect
+                filterSelectedOptions
+                size="small"
+              />
+            )}
 
             <FormControl sx={{ minWidth: 180 }}>
               <InputLabel>Sort By</InputLabel>
@@ -512,94 +691,34 @@ export const SetPage: React.FC = () => {
 
       <Box sx={{ mb: 3, textAlign: 'center' }}>
         <Typography variant="body1" color="text.secondary">
-          Showing {filteredCards.length} of {cards.length} cards
+          {(() => {
+            const visibleCards = cardGroups
+              .filter(g => visibleGroupIds.has(g.id))
+              .reduce((sum, g) => sum + g.cards.length, 0);
+            return `Showing ${visibleCards} of ${filteredCards.length} cards`;
+          })()}
         </Typography>
       </Box>
 
-      {/* Regular Cards Section */}
-      {regularCards.length > 0 && (
-        <>
-          {variationCards.length > 0 && (
-            <Box sx={{ mb: 2, textAlign: 'center' }}>
-              <Typography 
-                variant="overline" 
-                sx={{ 
-                  color: 'text.secondary',
-                  letterSpacing: 2,
-                  fontSize: '0.875rem'
-                }}
-              >
-                IN BOOSTERS • {regularCards.length} CARDS
-              </Typography>
-              <Divider sx={{ mt: 1, mb: 3 }} />
-            </Box>
-          )}
-          
-          <Box sx={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, 280px)',
-            gap: 3,
-            justifyContent: 'center',
-            mb: variationCards.length > 0 ? 6 : 0
-          }}>
-            {regularCards.map((card) => (
-              <MtgCard
-                key={card.id}
-                card={card}
-                isSelected={selectedCardId === card.id}
-                onSelectionChange={handleCardSelection}
-                context={{
-                  isOnSetPage: true,
-                  currentSet: setCode,
-                  hideSetInfo: true,
-                  hideReleaseDate: allSameReleaseDate
-                }}
-              />
-            ))}
-          </Box>
-        </>
-      )}
-
-      {/* Variation Cards Section */}
-      {variationCards.length > 0 && (
-        <>
-          <Box sx={{ mb: 2, textAlign: 'center' }}>
-            <Typography 
-              variant="overline" 
-              sx={{ 
-                color: 'text.secondary',
-                letterSpacing: 2,
-                fontSize: '0.875rem'
-              }}
-            >
-              CARD VARIATIONS • {variationCards.length} CARDS
-            </Typography>
-            <Divider sx={{ mt: 1, mb: 3 }} />
-          </Box>
-          
-          <Box sx={{ 
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, 280px)',
-            gap: 3,
-            justifyContent: 'center'
-          }}>
-            {variationCards.map((card) => (
-              <MtgCard
-                key={card.id}
-                card={card}
-                isSelected={selectedCardId === card.id}
-                onSelectionChange={handleCardSelection}
-                context={{
-                  isOnSetPage: true,
-                  currentSet: setCode,
-                  hideSetInfo: true,
-                  hideReleaseDate: allSameReleaseDate
-                }}
-              />
-            ))}
-          </Box>
-        </>
-      )}
+      {/* Card Groups */}
+      {cardGroups.map((group) => (
+        <CardGroup
+          key={group.id}
+          groupId={group.id}
+          groupName={group.displayName.toUpperCase()}
+          cards={group.cards}
+          isVisible={visibleGroupIds.has(group.id)}
+          showHeader={cardGroups.length > 1}
+          context={{
+            isOnSetPage: true,
+            currentSet: setCode,
+            hideSetInfo: true,
+            hideReleaseDate: allSameReleaseDate
+          }}
+          onCardSelection={handleCardSelection}
+          selectedCardId={selectedCardId}
+        />
+      ))}
 
       {filteredCards.length === 0 && (
         <Box sx={{ mt: 4, textAlign: 'center' }}>

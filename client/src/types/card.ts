@@ -131,6 +131,7 @@ export interface Card {
   finishes?: string[];
   oversized?: boolean;
   promo?: boolean;
+  promoTypes?: string[] | null;
   reprint?: boolean;
   variation?: boolean;
   setId?: string;
