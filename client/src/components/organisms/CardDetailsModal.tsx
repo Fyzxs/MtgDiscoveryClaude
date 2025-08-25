@@ -28,6 +28,7 @@ import { ManaCost } from '../molecules/Cards/ManaCost';
 import { RarityBadge } from '../atoms/Cards/RarityBadge';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
+import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -452,26 +453,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
               <Divider />
 
-              {/* All Printings */}
-              <Box>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  All Printings
-                </Typography>
-                <Box sx={{
-                  p: 2,
-                  bgcolor: 'action.hover',
-                  borderRadius: 1,
-                  border: '1px dashed',
-                  borderColor: 'divider'
-                }}>
-                  <Typography variant="body2" color="text.secondary" align="center">
-                    Coming soon
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Divider />
-
               {/* External Links */}
               <Box>
                 <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
@@ -566,6 +547,9 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   </Box>
                 </Box>
               )}
+
+              {/* Other Printings */}
+              <AllPrintingsDisplay cardName={card.name} currentCardId={card.id} />
             </Stack>
           </Box>
         </Box>
