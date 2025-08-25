@@ -87,7 +87,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
             foilOnly={set.foilOnly}
           />
 
-          <CardCountDisplay count={set.cardCount} />
+          <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
         </Box>
       </CardContent>
     </Card>

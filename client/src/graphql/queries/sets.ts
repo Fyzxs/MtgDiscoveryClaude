@@ -16,6 +16,7 @@ export const GET_ALL_SETS = gql`
           releasedAt
           setType
           cardCount
+          printedSize
           digital
           nonFoilOnly
           foilOnly
@@ -49,6 +50,7 @@ export const GET_SETS_BY_CODE = gql`
           releasedAt
           setType
           cardCount
+          printedSize
           digital
           nonFoilOnly
           foilOnly

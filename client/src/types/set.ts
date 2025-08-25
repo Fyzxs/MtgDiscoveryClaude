@@ -9,6 +9,7 @@ export interface MtgSet {
   releasedAt: string;
   setType: string;
   cardCount: number;
+  printedSize?: number;
   digital: boolean;
   nonFoilOnly: boolean;
   foilOnly: boolean;
