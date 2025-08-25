@@ -16,7 +16,6 @@ export const TopBadges: React.FC<TopBadgesProps> = ({ setCode, releaseDate }) =>
         justifyContent: 'space-between', 
         alignItems: 'center', 
         width: '100%', 
-        maxWidth: '200px', 
         mb: 1 
       }}
     >

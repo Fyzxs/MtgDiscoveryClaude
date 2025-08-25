@@ -2,11 +2,18 @@ import './App.css'
 import { useState } from 'react'
 import { CardDemoPage } from './pages/CardDemoPage'
 import { SetDemoPage } from './pages/SetDemoPage'
+import { AllSetsPage } from './pages/AllSetsPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'card-demo' | 'set-demo'>('home')
+  // Check URL params for initial page
+  const urlParams = new URLSearchParams(window.location.search);
+  const pageParam = urlParams.get('page') as 'home' | 'card-demo' | 'set-demo' | 'all-sets' | null;
+  
+  const [currentPage, setCurrentPage] = useState<'home' | 'card-demo' | 'set-demo' | 'all-sets'>(
+    pageParam || 'home'  // Default back to home
+  )
 
   if (currentPage === 'card-demo') {
     return <CardDemoPage />
@@ -14,6 +21,10 @@ function App() {
 
   if (currentPage === 'set-demo') {
     return <SetDemoPage />
+  }
+
+  if (currentPage === 'all-sets') {
+    return <AllSetsPage />
   }
 
   return (
@@ -39,11 +50,19 @@ function App() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button 
-              onClick={() => setCurrentPage('card-demo')}
+              onClick={() => setCurrentPage('all-sets')}
               size="lg"
               className="w-full sm:w-auto"
             >
-              View Card Component Demo
+              Browse All Sets
+            </Button>
+            <Button 
+              onClick={() => setCurrentPage('card-demo')}
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              Card Demo
             </Button>
             <Button 
               onClick={() => setCurrentPage('set-demo')}
@@ -51,7 +70,7 @@ function App() {
               variant="outline"
               className="w-full sm:w-auto"
             >
-              View Set Component Demo
+              Set Demo
             </Button>
           </div>
         </Card>

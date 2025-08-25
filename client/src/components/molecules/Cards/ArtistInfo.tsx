@@ -1,5 +1,6 @@
 import React from 'react';
-import type { CardContext } from '../../types/card';
+import { Box, Typography, Link } from '@mui/material';
+import type { CardContext } from '../../../types/card';
 
 interface ArtistInfoProps {
   artist?: string;
@@ -46,25 +47,56 @@ export const ArtistInfo: React.FC<ArtistInfoProps> = ({
   };
 
   return (
-    <div className={`text-xs sm:text-sm text-gray-400 ${className}`}>
-      <span className="text-gray-500">Illus.</span>{' '}
+    <Box className={className} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+      <Typography 
+        variant="caption" 
+        sx={{ 
+          color: 'text.secondary',
+          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+          mr: 0.5
+        }}
+      >
+        Illus.
+      </Typography>
       {displayArtists.map((artistName, index) => (
         <React.Fragment key={index}>
-          {index > 0 && <span className="text-gray-500"> & </span>}
-          <a
+          {index > 0 && (
+            <Typography 
+              variant="caption" 
+              component="span"
+              sx={{ 
+                color: 'text.secondary',
+                mx: 0.5,
+                fontSize: { xs: '0.75rem', sm: '0.875rem' }
+              }}
+            >
+              &
+            </Typography>
+          )}
+          <Link
             href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               if (onArtistClick) {
                 e.preventDefault();
                 handleArtistClick(artistName, index);
               }
             }}
-            className="text-gray-300 hover:text-white cursor-pointer transition-colors underline-offset-2 hover:underline"
+            sx={{
+              color: 'grey.300',
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              textDecorationOffset: '2px',
+              cursor: 'pointer',
+              transition: 'color 0.2s',
+              '&:hover': {
+                color: 'white',
+                textDecoration: 'underline'
+              }
+            }}
           >
             {artistName}
-          </a>
+          </Link>
         </React.Fragment>
       ))}
-    </div>
+    </Box>
   );
 };

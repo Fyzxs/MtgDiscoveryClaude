@@ -19,16 +19,16 @@ export const SetIconDisplay: React.FC<SetIconDisplayProps> = ({
   return (
     <Box
       sx={{
-        width: '200px',
-        height: '200px',
+        width: '140px',
+        height: '140px',
         border: `3px solid ${borderColor}`,
         borderRadius: '8px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.02)',
-        mb: 1,
         transition: 'border-color 0.3s ease',
+        flexShrink: 0,
       }}
     >
       <Box
@@ -36,8 +36,8 @@ export const SetIconDisplay: React.FC<SetIconDisplayProps> = ({
         src={iconSvgUri}
         alt={`${setName} icon`}
         sx={{
-          maxWidth: '180px',
-          maxHeight: '180px',
+          maxWidth: '120px',
+          maxHeight: '120px',
           width: 'auto',
           height: 'auto',
           objectFit: 'contain',

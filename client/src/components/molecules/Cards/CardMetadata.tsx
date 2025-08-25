@@ -1,6 +1,7 @@
 import React from 'react';
+import { Box, Typography, Link, Stack } from '@mui/material';
 import { SetIcon } from '../../atoms/Sets/SetIcon';
-import type { CardContext } from '../../types/card';
+import type { CardContext } from '../../../types/card';
 
 interface CardMetadataProps {
   name?: string;
@@ -65,30 +66,69 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   };
 
   return (
-    <div className={`space-y-1 ${className}`}>
+    <Stack spacing={1} className={className}>
       {showName && (
-        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-white">
-          <a
+        <Typography 
+          variant="subtitle2" 
+          component="h3"
+          sx={{ 
+            fontWeight: 'bold',
+            color: 'white',
+            fontSize: { xs: '0.875rem', sm: '1rem', lg: '1.125rem' }
+          }}
+        >
+          <Link
             href={`/cards/${cardId || encodeURIComponent(name.toLowerCase().replace(/\s+/g, '-'))}`}
             onClick={handleCardClick}
-            className="hover:text-gray-300 transition-colors"
+            sx={{
+              color: 'inherit',
+              textDecoration: 'none',
+              transition: 'color 0.2s',
+              '&:hover': {
+                color: 'grey.300'
+              }
+            }}
           >
             {name}
-          </a>
-        </h3>
+          </Link>
+        </Typography>
       )}
       {typeLine && (
-        <p className="text-xs sm:text-sm text-gray-400 line-clamp-1">
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            color: 'text.secondary',
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}
+        >
           {typeLine}
-        </p>
+        </Typography>
       )}
-      <div className="flex items-center gap-1 sm:gap-2 text-xs text-gray-500 flex-wrap">
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: { xs: 1, sm: 2 },
+        flexWrap: 'wrap'
+      }}>
         {showSetName && (
           <>
-            <a
+            <Link
               href={`/sets/${setCode?.toLowerCase()}`}
               onClick={handleSetClick}
-              className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: 'text.secondary',
+                textDecoration: 'none',
+                transition: 'color 0.2s',
+                '&:hover': {
+                  color: 'white'
+                }
+              }}
             >
               {setCode && (
                 <SetIcon 
@@ -98,15 +138,44 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
                   className="inline-block"
                 />
               )}
-              <span className="truncate max-w-[150px] sm:max-w-none">{setName}</span>
-            </a>
-            {(showDate && formattedDate) && <span className="hidden sm:inline">•</span>}
+              <Typography 
+                variant="caption"
+                component="span"
+                sx={{ 
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: { xs: '150px', sm: 'none' }
+                }}
+              >
+                {setName}
+              </Typography>
+            </Link>
+            {(showDate && formattedDate) && (
+              <Typography 
+                variant="caption" 
+                component="span"
+                sx={{ 
+                  color: 'text.disabled',
+                  display: { xs: 'none', sm: 'inline' }
+                }}
+              >
+                •
+              </Typography>
+            )}
           </>
         )}
         {showDate && formattedDate && (
-          <span className="text-[10px] sm:text-xs">{formattedDate}</span>
+          <Typography 
+            variant="caption"
+            sx={{ 
+              color: 'text.disabled',
+              fontSize: { xs: '0.625rem', sm: '0.75rem' }
+            }}
+          >
+            {formattedDate}
+          </Typography>
         )}
-      </div>
-    </div>
+      </Box>
+    </Stack>
   );
 };

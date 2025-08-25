@@ -13,7 +13,17 @@ export const SetTitle: React.FC<SetTitleProps> = ({ name }) => {
       sx={{
         fontWeight: 600,
         color: 'text.primary',
-        mb: 2,
+        mb: 1,
+        minHeight: '48px',
+        display: '-webkit-box',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: 'vertical',
+        lineHeight: 1.2,
+        fontSize: '1.1rem',
       }}
     >
       {name}

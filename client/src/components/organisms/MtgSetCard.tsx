@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@mui/material';
+import { Card, CardContent, Box } from '@mui/material';
 import type { MtgSet, SetContext } from '../../types/set';
 import { getSetTypeColor } from '../../constants/setTypeColors';
 import { SetTitle } from '../atoms/Sets/SetTitle';
@@ -47,19 +47,32 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           backgroundColor: 'rgba(25, 118, 210, 0.05)',
           borderColor: 'rgba(25, 118, 210, 0.3)',
         },
-        minHeight: '280px',
-        width: '280px',
+        height: '360px',
+        width: '240px',
         position: 'relative',
-        overflow: 'visible',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <SetTitle name={set.name} />
-        
-        <TopBadges 
-          setCode={set.code} 
-          releaseDate={set.releasedAt} 
-        />
+      <CardContent sx={{ 
+        p: 2, 
+        height: '100%',
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        textAlign: 'center',
+        justifyContent: 'space-between',
+        gap: 1
+      }}>
+        <Box sx={{ width: '100%' }}>
+          <SetTitle name={set.name} />
+          
+          <TopBadges 
+            setCode={set.code} 
+            releaseDate={set.releasedAt} 
+          />
+        </Box>
 
         <SetIconDisplay
           iconSvgUri={set.iconSvgUri}
@@ -67,13 +80,15 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           borderColor={isHovered ? '#1976d2' : setTypeColor}
         />
 
-        <BottomBadges
-          setType={set.setType}
-          digital={set.digital}
-          foilOnly={set.foilOnly}
-        />
+        <Box sx={{ width: '100%' }}>
+          <BottomBadges
+            setType={set.setType}
+            digital={set.digital}
+            foilOnly={set.foilOnly}
+          />
 
-        <CardCountDisplay count={set.cardCount} />
+          <CardCountDisplay count={set.cardCount} />
+        </Box>
       </CardContent>
     </Card>
   );

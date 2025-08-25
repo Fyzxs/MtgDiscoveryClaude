@@ -24,7 +24,7 @@ export const BottomBadges: React.FC<BottomBadgesProps> = ({
         flexWrap: 'wrap', 
         justifyContent: 'flex-start', 
         width: '100%', 
-        maxWidth: '200px', 
+        maxWidth: '180px', 
         mb: 1 
       }}
     >
