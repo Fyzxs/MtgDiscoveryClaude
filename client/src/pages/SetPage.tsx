@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
@@ -12,23 +12,20 @@ import {
   FormControl,
   InputLabel,
   Chip,
-  InputAdornment,
   Stack,
   Autocomplete,
   Fab,
   Zoom,
-  IconButton,
   Divider
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import SearchIcon from '@mui/icons-material/Search';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import ClearIcon from '@mui/icons-material/Clear';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
 import { MtgCard } from '../components/organisms/MtgCard';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
+import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -83,12 +80,7 @@ export const SetPage: React.FC = () => {
   const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
   const [showDigital, setShowDigital] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [hasSearchText, setHasSearchText] = useState(!!initialSearch);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  
-  // Use ref to store the search input value without causing re-renders
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const debounceTimer = useRef<NodeJS.Timeout>();
 
   // Get unique artists from cards
   const getUniqueArtists = (cards: Card[]): string[] => {
@@ -167,14 +159,6 @@ export const SetPage: React.FC = () => {
       .sort((a, b) => formatCardTypeLabel(a).localeCompare(formatCardTypeLabel(b)));
   };
 
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-    };
-  }, []);
 
   // Handle scroll to show/hide back to top button
   useEffect(() => {
@@ -468,54 +452,12 @@ export const SetPage: React.FC = () => {
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ rowGap: 2 }}>
-            <TextField
-              inputRef={searchInputRef}
-              sx={{ minWidth: 300 }}
-              variant="outlined"
+            <DebouncedSearchInput
+              value={initialSearch}
+              onChange={setSearchTerm}
               placeholder="Search cards..."
-              defaultValue={initialSearch}
-              onChange={(e) => {
-                const value = e.target.value;
-                setHasSearchText(!!value);
-                
-                // Clear any existing timer
-                if (debounceTimer.current) {
-                  clearTimeout(debounceTimer.current);
-                }
-                
-                // Set new timer - only update state after 1 second
-                debounceTimer.current = setTimeout(() => {
-                  setSearchTerm(value);
-                }, 1000);
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-                endAdornment: hasSearchText ? (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        if (searchInputRef.current) {
-                          searchInputRef.current.value = '';
-                          setHasSearchText(false);
-                          setSearchTerm('');
-                          // Clear any pending timer
-                          if (debounceTimer.current) {
-                            clearTimeout(debounceTimer.current);
-                          }
-                        }
-                      }}
-                      edge="end"
-                    >
-                      <ClearIcon fontSize="small" />
-                    </IconButton>
-                  </InputAdornment>
-                ) : null,
-              }}
+              debounceMs={1000}
+              minWidth={300}
             />
             
             <FormControl sx={{ minWidth: 150 }}>

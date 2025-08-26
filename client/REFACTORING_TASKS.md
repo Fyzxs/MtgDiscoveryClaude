@@ -32,7 +32,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 2: Create ResultsSummary Atom [COMPLETED]
+### Task 2: Create ResultsSummary Atom []
 **Files to modify:**
 - Created: `src/components/atoms/shared/ResultsSummary.tsx`
 - Updated: `src/pages/AllSetsPage.tsx`
@@ -49,7 +49,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 3: Create EmptyState Atom [COMPLETED]
+### Task 3: Create EmptyState Atom []
 **Files to modify:**
 - Created: `src/components/atoms/shared/EmptyState.tsx`
 - Updated: `src/pages/AllSetsPage.tsx`
@@ -69,7 +69,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 4: Create SortDropdown Atom [COMPLETED]
+### Task 4: Create SortDropdown Atom []
 **Files to modify:**
 - Created: `src/components/atoms/shared/SortDropdown.tsx`
 - Updated: `src/pages/AllSetsPage.tsx`
@@ -86,7 +86,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 5: Create MultiSelectDropdown Atom [COMPLETED]
+### Task 5: Create MultiSelectDropdown Atom []
 **Files to modify:**
 - Created: `src/components/atoms/shared/MultiSelectDropdown.tsx`
 - Updated: `src/pages/AllSetsPage.tsx` (set types dropdown)
@@ -106,7 +106,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ## Phase 2: State Management & Hooks (Medium Priority)
 
-### Task 6: Create useUrlState Hook [COMPLETED]
+### Task 6: Create useUrlState Hook []
 **Files to modify:**
 - Created: `src/hooks/useUrlState.ts`
 - Updated: `src/pages/AllSetsPage.tsx`
@@ -124,7 +124,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 7: Create useFilterState Hook [COMPLETED]
+### Task 7: Create useFilterState Hook []
 **Files to modify:**
 - Created: `src/hooks/useFilterState.ts`
 - Updated: `src/pages/AllSetsPage.tsx`
