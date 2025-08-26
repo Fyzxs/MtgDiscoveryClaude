@@ -26,6 +26,7 @@ import { MtgCard } from '../components/organisms/MtgCard';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
+import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -619,16 +620,14 @@ export const SetPage: React.FC = () => {
         </Stack>
       </Box>
 
-      <Box sx={{ mb: 3, textAlign: 'center' }}>
-        <Typography variant="body1" color="text.secondary">
-          {(() => {
-            const visibleCards = cardGroups
-              .filter(g => visibleGroupIds.has(g.id))
-              .reduce((sum, g) => sum + g.cards.length, 0);
-            return `Showing ${visibleCards} of ${filteredCards.length} cards`;
-          })()}
-        </Typography>
-      </Box>
+      <ResultsSummary 
+        showing={cardGroups
+          .filter(g => visibleGroupIds.has(g.id))
+          .reduce((sum, g) => sum + g.cards.length, 0)} 
+        total={filteredCards.length} 
+        itemType="cards"
+        textAlign="center"
+      />
 
       {/* Card Groups */}
       {cardGroups.map((group) => (

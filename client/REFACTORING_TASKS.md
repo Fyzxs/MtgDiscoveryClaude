@@ -32,7 +32,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 2: Create ResultsSummary Atom []
+### Task 2: Create ResultsSummary Atom [COMPLETED]
 **Files to modify:**
 - Created: `src/components/atoms/shared/ResultsSummary.tsx`
 - Updated: `src/pages/AllSetsPage.tsx`
