@@ -1,50 +1,14 @@
 import React from 'react';
 import { Chip } from '@mui/material';
-import type { Rarity } from '../../types/card';
+import type { Rarity } from '../../../types/card';
+import { getRarityColors, getRaritySymbol } from '../shared/RarityStyles';
 
 interface RarityBadgeProps {
   rarity: Rarity | string;
   className?: string;
 }
 
-export const RarityBadge: React.FC<RarityBadgeProps> = ({ rarity, className = '' }) => {
-  const getRarityColors = (r: string): { background: string; color: string } => {
-    switch (r.toLowerCase()) {
-      case 'common':
-        return { background: '#4B5563', color: '#F3F4F6' };
-      case 'uncommon':
-        return { background: '#9CA3AF', color: '#111827' };
-      case 'rare':
-        return { background: '#D97706', color: '#FEF3C7' };
-      case 'mythic':
-        return { background: '#EA580C', color: '#FFEDD5' };
-      case 'special':
-      case 'bonus':
-        return { background: '#9333EA', color: '#F3E8FF' };
-      default:
-        return { background: '#374151', color: '#D1D5DB' };
-    }
-  };
-
-  const getRaritySymbol = (r: string): string => {
-    switch (r.toLowerCase()) {
-      case 'common':
-        return 'C';
-      case 'uncommon':
-        return 'U';
-      case 'rare':
-        return 'R';
-      case 'mythic':
-        return 'M';
-      case 'special':
-        return 'S';
-      case 'bonus':
-        return 'B';
-      default:
-        return '?';
-    }
-  };
-
+export const RarityBadge: React.FC<RarityBadgeProps> = React.memo(({ rarity, className = '' }) => {
   const colors = getRarityColors(rarity);
 
   return (
@@ -67,4 +31,6 @@ export const RarityBadge: React.FC<RarityBadgeProps> = ({ rarity, className = ''
       title={rarity}
     />
   );
-};
+});
+
+RarityBadge.displayName = 'RarityBadge';

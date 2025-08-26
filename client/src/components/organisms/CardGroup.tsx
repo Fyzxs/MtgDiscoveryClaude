@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Typography, Divider } from '@mui/material';
 import { MtgCard } from './MtgCard';
 import type { Card, CardContext } from '../../types/card';
+import { CardGridSection } from '../molecules/shared/CardGrid';
 
 interface CardGroupProps {
   groupId: string;
@@ -14,7 +14,7 @@ interface CardGroupProps {
   selectedCardId: string | null;
 }
 
-export const CardGroup: React.FC<CardGroupProps> = ({
+export const CardGroup: React.FC<CardGroupProps> = React.memo(({
   groupId,
   groupName,
   cards,
@@ -24,48 +24,27 @@ export const CardGroup: React.FC<CardGroupProps> = ({
   onCardSelection,
   selectedCardId
 }) => {
-  if (!isVisible || cards.length === 0) {
-    return null;
-  }
-
   return (
-    <Box 
-      data-card-group={groupId}
-      sx={{ mb: showHeader ? 6 : 0 }}
-    >
-      {showHeader && (
-        <Box sx={{ mb: 2, textAlign: 'center' }}>
-          <Typography 
-            variant="overline" 
-            sx={{ 
-              color: 'text.secondary',
-              letterSpacing: 2,
-              fontSize: '0.875rem'
-            }}
-          >
-            {groupName} • {cards.length} CARDS
-          </Typography>
-          <Divider sx={{ mt: 1, mb: 3 }} />
-        </Box>
+    <CardGridSection
+      title={groupName}
+      items={cards}
+      renderItem={(card) => (
+        <MtgCard
+          key={card.id}
+          card={card}
+          isSelected={selectedCardId === card.id}
+          onSelectionChange={onCardSelection}
+          context={context}
+        />
       )}
-      
-      <Box sx={{ 
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, 280px)',
-        gap: 3,
-        justifyContent: 'center',
-        margin: '0 auto'
-      }}>
-        {cards.map((card) => (
-          <MtgCard
-            key={card.id}
-            card={card}
-            isSelected={selectedCardId === card.id}
-            onSelectionChange={onCardSelection}
-            context={context}
-          />
-        ))}
-      </Box>
-    </Box>
+      showHeader={showHeader}
+      showCount={true}
+      isVisible={isVisible}
+      sx={{
+        '[data-card-group]': groupId
+      }}
+    />
   );
-};
+});
+
+CardGroup.displayName = 'CardGroup';

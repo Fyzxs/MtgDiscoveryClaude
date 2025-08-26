@@ -5,7 +5,7 @@ import { CardImage } from '../atoms/Cards/CardImage';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
-import { getRarityGlowStyles, getCardTransform } from '../../utils/rarityStyles';
+import { getRarityGlowStyles, getCardTransform } from '../atoms/shared/RarityStyles';
 
 interface MtgCardProps {
   card: Card;
@@ -93,6 +93,9 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       data-card-id={card.id}
       data-selected={isSelected ? "true" : "false"}
       tabIndex={0}
+      role="button"
+      aria-label={`${card.name} card${isSelected ? ' (selected)' : ''}`}
+      aria-describedby={`card-details-${card.id}`}
       sx={{
         position: 'relative',
         width: '280px',

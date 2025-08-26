@@ -15,7 +15,7 @@ interface MtgSetCardProps {
   className?: string;
 }
 
-export const MtgSetCard: React.FC<MtgSetCardProps> = ({
+export const MtgSetCard: React.FC<MtgSetCardProps> = React.memo(({
   set,
   onSetClick,
   className = ''
@@ -92,4 +92,6 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+MtgSetCard.displayName = 'MtgSetCard';
