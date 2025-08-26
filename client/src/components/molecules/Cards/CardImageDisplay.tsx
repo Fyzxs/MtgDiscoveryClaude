@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Skeleton } from '@mui/material';
 import FlipIcon from '@mui/icons-material/Flip';
 import type { Card } from '../../../types/card';
 
@@ -15,6 +15,9 @@ interface CardImageDisplayProps {
   sx?: any;
 }
 
+// Default Magic card back image URL - using local image
+const CARD_BACK_URL = '/cardback.jpeg';
+
 export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
   card,
   size = 'normal',
@@ -28,6 +31,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
 }) => {
   const [currentFaceIndex, setCurrentFaceIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
   // Check if this is a double-faced card
   const isDoubleFaced = card.cardFaces && card.cardFaces.length > 1;
@@ -49,6 +53,17 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
     return card.imageUris.normal || card.imageUris.large || card.imageUris.small || '';
   };
   
+  const imageUrl = getImageUrl();
+  
+  // Reset imageLoaded when the card or size changes
+  React.useEffect(() => {
+    setImageLoaded(false);
+    // If there's no image URL, consider it "loaded" to avoid infinite loading state
+    if (!imageUrl) {
+      setImageLoaded(true);
+    }
+  }, [card.id, size, imageUrl]);
+  
   const handleFlip = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering parent onClick
     if (!isDoubleFaced || isFlipping) return;
@@ -65,7 +80,9 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
       className={className}
       sx={{
         position: 'relative',
-        display: 'inline-block',
+        display: 'block',
+        width: '100%',
+        height: '100%',
         maxWidth,
         maxHeight,
         perspective: '1000px',
@@ -80,24 +97,42 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
           transition: 'transform 0.6s',
           transform: isFlipping ? 'rotateY(180deg)' : 'rotateY(0deg)',
           width: '100%',
-          height: '100%'
+          height: '100%',
+          // Card back as background - ensure it shows
+          backgroundImage: `url(${CARD_BACK_URL})`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          borderRadius,
+          minHeight: '200px' // Ensure minimum height
         }}
       >
-        <Box
-          component="img"
-          src={getImageUrl()}
-          alt={card.name}
-          loading="lazy"
-          sx={{
-            maxWidth: '100%',
-            maxHeight: '100%',
-            width: 'auto',
-            height: 'auto',
+        
+        {/* Actual image */}
+        {imageUrl && (
+          <Box
+            component="img"
+            src={imageUrl}
+            alt={card.name}
+            loading="lazy"
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(true)} // Show card back if image fails
+            sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
             borderRadius,
             display: 'block',
-            backfaceVisibility: 'hidden'
-          }}
-        />
+            backfaceVisibility: 'hidden',
+            opacity: imageLoaded ? 1 : 0,
+            transition: 'opacity 0.3s ease-in-out',
+            backgroundColor: 'transparent'
+            }}
+          />
+        )}
       </Box>
       
       {/* Flip button for double-faced cards */}

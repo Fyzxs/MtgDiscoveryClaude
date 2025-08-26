@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Card as MuiCard } from '@mui/material';
+import { Card as MuiCard, Box } from '@mui/material';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
+import { CardBadges } from '../atoms/Cards/CardBadges';
 import { getRarityGlowStyles, getCardTransform } from '../../utils/rarityStyles';
 
 interface MtgCardProps {
@@ -134,10 +135,30 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       }}
       className={`${className} ${isSelected ? 'selected' : ''}`}
     >
-      <CardImageDisplay
-        card={card}
-        size="normal"
-        showFlipButton={true}
+      <Box sx={{ 
+        width: '100%',
+        aspectRatio: '745 / 1040',
+        position: 'relative'
+      }}>
+        <CardImageDisplay
+          card={card}
+          size="normal"
+          showFlipButton={true}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%'
+          }}
+        />
+      </Box>
+
+      <CardBadges 
+        finishes={card.finishes}
+        promoTypes={card.promoTypes}
+        frameEffects={card.frameEffects}
+        isPromo={card.promo}
       />
 
       <ZoomIndicator

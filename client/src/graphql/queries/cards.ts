@@ -72,6 +72,7 @@ export const GET_CARDS_BY_NAME = gql`
           finishes
           oversized
           promo
+          promoTypes
           reprint
           variation
           setId
@@ -254,6 +255,7 @@ export const GET_CARDS_BY_SET_CODE = gql`
           finishes
           oversized
           promo
+          promoTypes
           reprint
           variation
           setId

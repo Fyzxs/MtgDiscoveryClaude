@@ -29,6 +29,7 @@ import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
 import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
 import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
+import { CardBadges } from '../atoms/Cards/CardBadges';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -180,16 +181,29 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             bgcolor: 'grey.900',
             borderRadius: '0 0 0 8px'
           }}>
-            <CardImageDisplay
-              card={card}
-              size="large"
-              borderRadius="6.75%"
-              maxWidth="95%"
-              maxHeight="95%"
-              sx={{
-                boxShadow: 3
-              }}
-            />
+            <Box sx={{ 
+              position: 'relative',
+              width: '100%',
+              maxWidth: '600px',
+              aspectRatio: '745 / 1040'
+            }}>
+              <CardImageDisplay
+                card={card}
+                size="large"
+                borderRadius="6.75%"
+                sx={{
+                  boxShadow: 3,
+                  width: '100%',
+                  height: '100%'
+                }}
+              />
+              <CardBadges 
+                finishes={card.finishes}
+                promoTypes={card.promoTypes}
+                frameEffects={card.frameEffects}
+                isPromo={card.promo}
+              />
+            </Box>
             {/* Card ID */}
             <Box sx={{ 
               mt: 2, 
