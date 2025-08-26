@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Http;
@@ -34,13 +36,13 @@ internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScr
         _logger = logger;
     }
 
-    public IAsyncEnumerable<T> Items()
+    public IAsyncEnumerable<T> Items(CancellationToken cancellationToken = default)
     {
         Url urlToUse = _searchUri.SearchUri();
-        return ItemsInternal(urlToUse);
+        return ItemsInternal(urlToUse, cancellationToken);
     }
 
-    private async IAsyncEnumerable<T> ItemsInternal(Url pageUrl)
+    private async IAsyncEnumerable<T> ItemsInternal(Url pageUrl, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ScryfallObjectListDto paging;
         try
@@ -75,7 +77,7 @@ internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScr
         // Get next page from next_page URL if available
         if (string.IsNullOrEmpty(paging.NextPage)) yield break;
 
-        await foreach (T item in ItemsInternal(new ProvidedUrl(paging.NextPage)).ConfigureAwait(false))
+        await foreach (T item in ItemsInternal(new ProvidedUrl(paging.NextPage), cancellationToken).ConfigureAwait(false))
         {
             yield return item;
         }

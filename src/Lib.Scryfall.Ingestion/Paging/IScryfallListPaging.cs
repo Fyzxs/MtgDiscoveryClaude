@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using Lib.Scryfall.Ingestion.Dtos;
 
 namespace Lib.Scryfall.Ingestion.Paging;
 internal interface IScryfallListPaging<out T> where T : IScryfallDto
 {
-    IAsyncEnumerable<T> Items();
+    IAsyncEnumerable<T> Items(CancellationToken cancellationToken = default);
 }
