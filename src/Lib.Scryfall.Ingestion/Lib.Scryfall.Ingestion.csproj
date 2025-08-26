@@ -21,6 +21,7 @@
     <InternalsVisibleTo Include="Lib.Scryfall.Ingestion.Tests" />
     <InternalsVisibleTo Include="Example.Scryfall.CosmosIngestion" />
     <InternalsVisibleTo Include="Example.Scryfall.ApiDemo" />
+    <InternalsVisibleTo Include="Example.Scryfall.FilterTest" />
   </ItemGroup>
 
 </Project>
