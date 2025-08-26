@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Card, CardContext } from '../../types/card';
-import { CardImage } from '../atoms/Cards/CardImage';
+import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { CollectorInfo } from '../molecules/Cards/CollectorInfo';
 import { CardMetadata } from '../molecules/Cards/CardMetadata';
@@ -63,10 +63,10 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
       <div className="p-4 space-y-4">
         {/* Card Image */}
         <div className="flex justify-center">
-          <CardImage 
-            imageUris={card.imageUris} 
-            cardName={card.name}
+          <CardImageDisplay 
+            card={card}
             size="normal"
+            showFlipButton={true}
           />
         </div>
 

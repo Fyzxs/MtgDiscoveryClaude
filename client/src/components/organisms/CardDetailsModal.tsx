@@ -28,6 +28,7 @@ import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
 import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
 import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
+import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -179,16 +180,13 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             bgcolor: 'grey.900',
             borderRadius: '0 0 0 8px'
           }}>
-            <Box
-              component="img"
-              src={card.imageUris?.large || card.imageUris?.normal || ''}
-              alt={card.name}
+            <CardImageDisplay
+              card={card}
+              size="large"
+              borderRadius="6.75%"
+              maxWidth="95%"
+              maxHeight="95%"
               sx={{
-                maxWidth: '95%',
-                maxHeight: '95%',
-                width: 'auto',
-                height: 'auto',
-                borderRadius: '6.75%',
                 boxShadow: 3
               }}
             />
@@ -446,22 +444,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 </>
               )}
 
-              {/* Related Cards */}
-              {card.allParts && card.allParts.length > 1 && (
-                <>
-                  <Divider />
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                      Related Cards
-                    </Typography>
-                    <RelatedCardsDisplay 
-                      relatedCardIds={card.allParts.map(part => part.id)}
-                      currentCardId={card.id}
-                    />
-                  </Box>
-                </>
-              )}
-
               <Divider />
 
               {/* External Links */}
@@ -537,6 +519,22 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               {card.rulingsUri && (
                 <>
                   <RulingsDisplay rulingsUri={card.rulingsUri} />
+                  <Divider sx={{ mt: 2 }} />
+                </>
+              )}
+
+              {/* Related Cards */}
+              {card.allParts && card.allParts.length > 1 && (
+                <>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                      Related Cards
+                    </Typography>
+                    <RelatedCardsDisplay 
+                      relatedCardIds={card.allParts.map(part => part.id)}
+                      currentCardId={card.id}
+                    />
+                  </Box>
                   <Divider sx={{ mt: 2 }} />
                 </>
               )}

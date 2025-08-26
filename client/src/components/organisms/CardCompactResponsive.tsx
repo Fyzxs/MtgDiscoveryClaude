@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Card, CardContext } from '../../types/card';
-import { CardImage } from '../atoms/Cards/CardImage';
+import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { CollectorNumber } from '../atoms/Cards/CollectorNumber';
 import { RarityBadge } from '../atoms/Cards/RarityBadge';
@@ -80,10 +80,10 @@ export const CardCompact: React.FC<CardCompactProps> = ({
     >
       {/* Card Image */}
       <div className="relative aspect-[745/1040]">
-        <CardImage 
-          imageUris={card.imageUris} 
-          cardName={card.name}
+        <CardImageDisplay 
+          card={card}
           size="normal"
+          showFlipButton={false}
           className="w-full h-full object-cover"
         />
         

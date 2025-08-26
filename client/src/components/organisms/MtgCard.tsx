@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card as MuiCard } from '@mui/material';
 import type { Card, CardContext } from '../../types/card';
-import { CardImage } from '../atoms/Cards/CardImage';
+import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
@@ -134,9 +134,10 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       }}
       className={`${className} ${isSelected ? 'selected' : ''}`}
     >
-      <CardImage
-        imageUrl={card.imageUris?.normal || card.imageUris?.large}
-        cardName={card.name}
+      <CardImageDisplay
+        card={card}
+        size="normal"
+        showFlipButton={true}
       />
 
       <ZoomIndicator

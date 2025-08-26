@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Card, CardContext } from '../../types/card';
-import { CardImage } from '../atoms/Cards/CardImage';
+import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { CollectorInfo } from '../molecules/Cards/CollectorInfo';
 import { CardMetadata } from '../molecules/Cards/CardMetadata';
@@ -71,10 +71,10 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
         <div className="flex gap-3 p-3">
           {/* Card Image - Smaller on mobile */}
           <div className="flex-shrink-0">
-            <CardImage 
-              imageUris={card.imageUris} 
-              cardName={card.name}
+            <CardImageDisplay 
+              card={card}
               size="small"
+              showFlipButton={false}
               className="w-20"
             />
           </div>
@@ -130,10 +130,10 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
       <div className="hidden sm:block p-4 space-y-4">
         {/* Card Image */}
         <div className="flex justify-center">
-          <CardImage 
-            imageUris={card.imageUris} 
-            cardName={card.name}
+          <CardImageDisplay 
+            card={card}
             size="normal"
+            showFlipButton={true}
             className="w-full max-w-[250px] lg:max-w-[300px]"
           />
         </div>
