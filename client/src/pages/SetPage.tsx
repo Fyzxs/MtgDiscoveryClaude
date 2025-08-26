@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
@@ -91,7 +91,7 @@ export const SetPage: React.FC = () => {
   const debounceTimer = useRef<NodeJS.Timeout>();
 
   // Get unique artists from cards
-  const getUniqueArtists = useMemo(() => (cards: Card[]): string[] => {
+  const getUniqueArtists = (cards: Card[]): string[] => {
     const artistSet = new Set<string>();
     cards.forEach(card => {
       if (card.artist) {
@@ -101,10 +101,17 @@ export const SetPage: React.FC = () => {
       }
     });
     return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-  }, []);
+  };
   
   // Format card type labels for display
-  const formatCardTypeLabel = useMemo(() => {
+  const formatCardTypeLabel = (type: string): string => {
+    // Handle null/undefined
+    if (!type) return 'Unknown';
+    
+    // Normalize the type for comparison (remove spaces, underscores, make uppercase)
+    const normalizedType = type.replace(/[\s_-]/g, '').toUpperCase();
+    
+    // Special cases mapping - use normalized keys
     const specialCases: Record<string, string> = {
       'INBOOSTERS': 'In Boosters',
       'CARDVARIATIONS': 'Card Variations', 
@@ -113,25 +120,17 @@ export const SetPage: React.FC = () => {
       'OTHERCARDS': 'Other Cards'
     };
     
-    return (type: string): string => {
-      // Handle null/undefined
-      if (!type) return 'Unknown';
-      
-      // Normalize the type for comparison (remove spaces, underscores, make uppercase)
-      const normalizedType = type.replace(/[\s_-]/g, '').toUpperCase();
-      
-      // Check normalized version
-      if (specialCases[normalizedType]) {
-        return specialCases[normalizedType];
-      }
-      
-      // General formatting: replace underscores with spaces and capitalize words
-      return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    };
-  }, []);
+    // Check normalized version
+    if (specialCases[normalizedType]) {
+      return specialCases[normalizedType];
+    }
+    
+    // General formatting: replace underscores with spaces and capitalize words
+    return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  };
   
   // Determine which type group a card belongs to (matching the grouping logic)
-  const getCardType = useCallback((card: Card): string => {
+  const getCardType = (card: Card): string => {
     // Check for foil-only booster cards (7th Edition specific)
     if (card.booster && card.foil && !card.nonFoil) {
       return 'FOIL_ONLY_BOOSTER';
@@ -150,7 +149,7 @@ export const SetPage: React.FC = () => {
     }
     // Default for cards that don't fit other categories
     return 'OTHER_CARDS';
-  }, []);
+  };
   
   // Get unique card types from cards (includes promo types, boosters, variations, etc.)
   const getUniqueCardTypes = (cards: Card[]): string[] => {

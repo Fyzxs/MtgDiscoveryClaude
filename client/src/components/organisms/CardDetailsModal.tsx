@@ -28,7 +28,6 @@ import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
 import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
 import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
-import { StatsRow, PowerToughnessRow, StatsGroup } from '../atoms/shared/StatsRow';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -86,7 +85,7 @@ const FORMAT_DISPLAY_NAMES: Record<string, string> = {
   predh: 'PreDH'
 };
 
-export const CardDetailsModal: React.FC<CardDetailsModalProps> = React.memo(({
+export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   open,
   onClose,
   card,
@@ -256,40 +255,60 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = React.memo(({
               </Box>
 
               {/* Oracle Text */}
-              <StatsGroup 
-                title="Oracle Text"
-                showWhen={!!card.oracleText}
-              >
-                {formatOracleText(card.oracleText)}
-              </StatsGroup>
+              {card.oracleText && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Oracle Text
+                  </Typography>
+                  <Box sx={{ pl: 2 }}>
+                    {formatOracleText(card.oracleText)}
+                  </Box>
+                </Box>
+              )}
 
               {/* Flavor Text */}
-              <StatsRow 
-                label="Flavor Text"
-                value={
-                  <Typography variant="body2" fontStyle="italic">
+              {card.flavorText && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Flavor Text
+                  </Typography>
+                  <Typography variant="body2" fontStyle="italic" sx={{ pl: 2 }}>
                     {card.flavorText}
                   </Typography>
-                }
-                showWhen={!!card.flavorText}
-              />
+                </Box>
+              )}
 
               {/* P/T, Loyalty, Defense */}
-              <PowerToughnessRow
-                power={card.power}
-                toughness={card.toughness}
-                loyalty={card.loyalty}
-                defense={card.defense}
-              />
+              {(card.power || card.loyalty || card.defense) && (
+                <Box sx={{ display: 'flex', gap: 3, justifyContent: card.power ? 'flex-end' : 'flex-start' }}>
+                  {card.power && (
+                    <Typography variant="h6">
+                      {card.power}/{card.toughness}
+                    </Typography>
+                  )}
+                  {card.loyalty && (
+                    <Typography variant="h6">
+                      Loyalty: {card.loyalty}
+                    </Typography>
+                  )}
+                  {card.defense && (
+                    <Typography variant="h6">
+                      Defense: {card.defense}
+                    </Typography>
+                  )}
+                </Box>
+              )}
 
               <Divider />
 
               {/* Artist */}
-              <StatsRow 
-                label="Artist"
-                value={
+              {card.artist && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Artist
+                  </Typography>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {card.artist?.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
+                    {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
                       <Link
                         key={index}
                         href={`?page=artist&name=${encodeURIComponent(artistName)}`}
@@ -305,9 +324,8 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = React.memo(({
                       </Link>
                     ))}
                   </Box>
-                }
-                showWhen={!!card.artist}
-              />
+                </Box>
+              )}
 
               <Divider />
 
@@ -530,6 +548,4 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = React.memo(({
         </Box>
     </ModalContainer>
   );
-});
-
-CardDetailsModal.displayName = 'CardDetailsModal';
+};

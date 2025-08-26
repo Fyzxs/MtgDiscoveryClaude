@@ -1,20 +1,26 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
 import { ReleaseDateBadge } from '../../atoms/shared/ReleaseDateBadge';
-import { TopBadgeGroup } from '../shared/BadgeGroup';
 
 interface TopBadgesProps {
   setCode: string;
   releaseDate: string;
 }
 
-export const TopBadges: React.FC<TopBadgesProps> = React.memo(({ setCode, releaseDate }) => {
+export const TopBadges: React.FC<TopBadgesProps> = ({ setCode, releaseDate }) => {
   return (
-    <TopBadgeGroup>
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        width: '100%', 
+        mb: 1 
+      }}
+    >
       <SetCodeBadge code={setCode} />
       <ReleaseDateBadge date={releaseDate} />
-    </TopBadgeGroup>
+    </Box>
   );
-});
-
-TopBadges.displayName = 'TopBadges';
+};
