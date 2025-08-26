@@ -24,4 +24,14 @@ internal sealed class CardDataService : ICardDataService
     {
         return await _cardDomainService.CardsByIdsAsync(args).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    {
+        return await _cardDomainService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    {
+        return await _cardDomainService.CardsByNameAsync(cardName).ConfigureAwait(false);
+    }
 }

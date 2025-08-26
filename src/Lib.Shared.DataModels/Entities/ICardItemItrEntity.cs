@@ -6,10 +6,15 @@ public interface ICardItemItrEntity
 {
     string Id { get; }
     string OracleId { get; }
+    int? ArenaId { get; }
+    int? MtgoId { get; }
+    int? MtgoFoilId { get; }
     ICollection<int> MultiverseIds { get; }
     int? TcgPlayerId { get; }
+    int? TcgPlayerEtchedId { get; }
     int? CardMarketId { get; }
     string Name { get; }
+    string FlavorName { get; }
     string Lang { get; }
     string ReleasedAt { get; }
     string Uri { get; }
@@ -28,6 +33,7 @@ public interface ICardItemItrEntity
     ILegalitiesItrEntity Legalities { get; }
     ICollection<string> Games { get; }
     bool Reserved { get; }
+    bool GameChanger { get; }
     bool Foil { get; }
     bool NonFoil { get; }
     ICollection<string> Finishes { get; }
@@ -60,6 +66,7 @@ public interface ICardItemItrEntity
     bool Textless { get; }
     bool Booster { get; }
     bool StorySpotlight { get; }
+    ICollection<string> PromoTypes { get; }
     int? EdhRecRank { get; }
     int? PennyRank { get; }
     IPricesItrEntity Prices { get; }
@@ -81,5 +88,5 @@ public interface ICardItemItrEntity
     int? ContentWarning { get; }
     IPreviewItrEntity Preview { get; }
     ICollection<string> ProducedMana { get; }
-    ICollection<string> Attractions { get; }
+    ICollection<int> AttractionLights { get; }
 }

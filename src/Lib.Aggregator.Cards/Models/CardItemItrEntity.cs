@@ -15,12 +15,18 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
         _data = scryfallCard?.Data;
     }
 
+    public string Object => _data?["object"] ?? "card";
     public string Id => _data?.id;
     public string OracleId => _data?.oracle_id;
+    public int? ArenaId => _data?.arena_id;
+    public int? MtgoId => _data?.mtgo_id;
+    public int? MtgoFoilId => _data?.mtgo_foil_id;
     public ICollection<int> MultiverseIds => ConvertToIntArray(_data?.multiverse_ids);
     public int? TcgPlayerId => _data?.tcgplayer_id;
+    public int? TcgPlayerEtchedId => _data?.tcgplayer_etched_id;
     public int? CardMarketId => _data?.cardmarket_id;
     public string Name => _data?.name;
+    public string FlavorName => _data?.flavor_name;
     public string Lang => _data?.lang;
     public string ReleasedAt => _data?.released_at;
     public string Uri => _data?.uri;
@@ -39,6 +45,7 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public ILegalitiesItrEntity Legalities => _data?.legalities != null ? new LegalitiesItrEntity(_data.legalities) : null;
     public ICollection<string> Games => ConvertToStringArray(_data?.games);
     public bool Reserved => _data?.reserved ?? false;
+    public bool GameChanger => _data?.game_changer ?? false;
     public bool Foil => _data?.foil ?? false;
     public bool NonFoil => _data?.nonfoil ?? false;
     public ICollection<string> Finishes => ConvertToStringArray(_data?.finishes);
@@ -71,6 +78,7 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public bool Textless => _data?.textless ?? false;
     public bool Booster => _data?.booster ?? false;
     public bool StorySpotlight => _data?.story_spotlight ?? false;
+    public ICollection<string> PromoTypes => ConvertToStringArray(_data?.promo_types);
     public int? EdhRecRank => _data?.edhrec_rank;
     public int? PennyRank => _data?.penny_rank;
     public IPricesItrEntity Prices => _data?.prices != null ? new PricesItrEntity(_data.prices) : null;
@@ -92,7 +100,7 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public int? ContentWarning => _data?.content_warning;
     public IPreviewItrEntity Preview => _data?.preview != null ? new PreviewItrEntity(_data.preview) : null;
     public ICollection<string> ProducedMana => ConvertToStringArray(_data?.produced_mana);
-    public ICollection<string> Attractions => ConvertToStringArray(_data?.attraction_lights);
+    public ICollection<int> AttractionLights => ConvertToIntArray(_data?.attraction_lights);
 
     private static ICollection<int> ConvertToIntArray(dynamic value)
     {

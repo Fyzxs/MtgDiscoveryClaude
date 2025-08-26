@@ -11,7 +11,7 @@ public sealed class EntryService : IEntryService
     private readonly ICardEntryService _cardEntryService;
     private readonly ISetEntryService _setEntryService;
 
-    public EntryService(ILogger logger) : this(new CardEntryService(logger), new SetEntryService())
+    public EntryService(ILogger logger) : this(new CardEntryService(logger), new SetEntryService(logger))
     {
 
     }
@@ -24,5 +24,30 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
     {
         return _cardEntryService.CardsByIdsAsync(args);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
+    {
+        return _cardEntryService.CardsBySetCodeAsync(setCode);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
+    {
+        return _cardEntryService.CardsByNameAsync(cardName);
+    }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds)
+    {
+        return _setEntryService.SetsByIdsAsync(setIds);
+    }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes)
+    {
+        return _setEntryService.SetsByCodeAsync(setCodes);
+    }
+
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    {
+        return _setEntryService.AllSetsAsync();
     }
 }

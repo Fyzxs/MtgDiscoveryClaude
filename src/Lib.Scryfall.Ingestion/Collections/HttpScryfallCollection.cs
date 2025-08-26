@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Dtos;
@@ -19,9 +20,9 @@ internal abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallCol
         _transformer = transformer;
     }
 
-    public async IAsyncEnumerable<TDomain> Items()
+    public async IAsyncEnumerable<TDomain> Items([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        await foreach (TDto dto in _paging.Items().ConfigureAwait(false))
+        await foreach (TDto dto in _paging.Items(cancellationToken).ConfigureAwait(false))
         {
             yield return _transformer.Transform(dto);
         }
@@ -29,6 +30,6 @@ internal abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallCol
 
     public IAsyncEnumerator<TDomain> GetAsyncEnumerator(CancellationToken cancellationToken = default)
     {
-        return Items().GetAsyncEnumerator(cancellationToken);
+        return Items(cancellationToken).GetAsyncEnumerator(cancellationToken);
     }
 }

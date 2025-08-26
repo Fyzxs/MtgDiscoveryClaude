@@ -23,17 +23,21 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
     public FilteredScryfallSetCollection(ILogger logger)
         : this(
             new ReversibleScryfallSetCollection(logger),
-            new ConfigScryfallIngestionConfiguration())
+            new ConfigScryfallIngestionConfiguration(),
+            logger)
     {
     }
 
     private FilteredScryfallSetCollection(
         IAsyncEnumerable<IScryfallSet> source,
-        IScryfallIngestionConfiguration ingestionConfiguration)
+        IScryfallIngestionConfiguration ingestionConfiguration,
+        ILogger logger)
         : this(
             source,
             [
                 new NonDigitalSetFilter(),
+                new PreviewSetFilter(logger),
+                new ForeignSetFilter(logger),
                 new SpecificSetsFilter(ingestionConfiguration),
                 new MaxSetsFilter(ingestionConfiguration)
             ])
