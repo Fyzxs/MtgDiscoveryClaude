@@ -51,9 +51,10 @@ export const CardGroup: React.FC<CardGroupProps> = ({
       
       <Box sx={{ 
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, 280px)',
+        gridTemplateColumns: 'repeat(auto-fit, 280px)',
         gap: 3,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        margin: '0 auto'
       }}>
         {cards.map((card) => (
           <MtgCard

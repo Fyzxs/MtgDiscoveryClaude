@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { Box, Typography, IconButton, CircularProgress, Grid } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { Typography, Grid } from '@mui/material';
+import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
+import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
+import { ErrorText } from '../../atoms/shared/ErrorAlert';
 import { MtgCard } from '../../organisms/MtgCard';
 import { GET_CARDS_BY_NAME } from '../../../graphql/queries/cards';
 import type { Card } from '../../../types/card';
@@ -39,83 +40,48 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   const otherCards = allCards.filter(card => card.id !== currentCardId);
   const hasError = error || data?.cardsByName?.__typename === 'FailureResponse';
 
-  const getBadgeText = () => {
-    if (loading) return '[Loading...]';
-    if (hasError) return '[Error]';
-    return `[${otherCards.length}]`;
-  };
-
   // Don't render if there are no other printings
   if (!loading && !hasError && otherCards.length === 0) {
     return null;
   }
 
   return (
-    <Box>
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: 1,
-        cursor: 'pointer',
-        '&:hover': {
-          '& .expand-icon': {
-            color: 'primary.main'
-          }
-        }
-      }}
-      onClick={() => setExpanded(!expanded)}
-      >
-        <Typography variant="subtitle1" fontWeight="bold">
-          Other Printings
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {getBadgeText()}
-        </Typography>
-        <IconButton
-          size="small"
-          className="expand-icon"
-          sx={{ ml: 'auto' }}
-        >
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
-      </Box>
-
-      {expanded && (
-        <Box sx={{ mt: 2 }}>
-          {loading && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
-          )}
-          
-          {hasError && (
-            <Typography variant="body2" color="error" sx={{ textAlign: 'center', py: 2 }}>
-              Failed to load printings
-            </Typography>
-          )}
-          
-          {!loading && !hasError && otherCards.length > 0 && (
-            <Grid container spacing={2}>
-              {otherCards.map((card) => (
-                <Grid item key={card.id} xs={12} sm={6} md={4}>
-                  <MtgCard 
-                    card={card}
-                    context={{
-                      isOnCardPage: true
-                    }}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-
-          {!loading && !hasError && otherCards.length === 0 && (
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
-              No other printings found
-            </Typography>
-          )}
-        </Box>
+    <ExpandableSection
+      title="Other Printings"
+      count={otherCards.length}
+      isLoading={loading}
+      isError={Boolean(hasError)}
+      expanded={expanded}
+      onExpandedChange={setExpanded}
+    >
+      {loading && (
+        <LoadingContainer py={4} />
       )}
-    </Box>
+      
+      {hasError && (
+        <ErrorText message="Failed to load printings" />
+      )}
+      
+      {!loading && !hasError && otherCards.length > 0 && (
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          {otherCards.map((card) => (
+            <Grid item key={card.id} xs={12} sm={6} md={4}>
+              <MtgCard 
+                card={card}
+                context={{
+                  isOnCardPage: true
+                }}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      {!loading && !hasError && otherCards.length === 0 && (
+        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+          No other printings found
+        </Typography>
+      )}
+    </ExpandableSection>
   );
 };

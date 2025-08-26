@@ -183,7 +183,7 @@ export const AllSetsPage: React.FC = () => {
   const setTypes = getUniqueSetTypes(sets);
 
   return (
-    <Container maxWidth={false} sx={{ mt: 4, mb: 4, px: 3 }}>
+    <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4 }}>
         All Magic Sets
       </Typography>

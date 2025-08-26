@@ -113,8 +113,6 @@ export const SetPage: React.FC = () => {
     
     // Special cases mapping - use normalized keys
     const specialCases: Record<string, string> = {
-      'SCHINESEALTART': 'Simplified Chinese Alternate Art',
-      'SIMPLIFIEDCHINESEALTERNATEART': 'Simplified Chinese Alternate Art',
       'INBOOSTERS': 'In Boosters',
       'CARDVARIATIONS': 'Card Variations', 
       'FOILONLYBOOSTER': 'Foil Only Booster Cards',
@@ -127,23 +125,14 @@ export const SetPage: React.FC = () => {
       return specialCases[normalizedType];
     }
     
-    // Log unhandled promo types for debugging
-    if (type.toUpperCase().includes('CHINESE')) {
-      console.log('Unhandled Chinese promo type - original:', type, 'normalized:', normalizedType);
-    }
-    
     // General formatting: replace underscores with spaces and capitalize words
     return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   };
   
   // Determine which type group a card belongs to (matching the grouping logic)
   const getCardType = (card: Card): string => {
-    // Check for promo types first
-    if (card.promoTypes && card.promoTypes.length > 0) {
-      return card.promoTypes[0]; // Use first promo type
-    }
     // Check for foil-only booster cards (7th Edition specific)
-    else if (card.booster && card.foil && !card.nonFoil) {
+    if (card.booster && card.foil && !card.nonFoil) {
       return 'FOIL_ONLY_BOOSTER';
     }
     // Check for variations
@@ -154,7 +143,7 @@ export const SetPage: React.FC = () => {
     else if (card.booster) {
       return 'IN_BOOSTERS';
     }
-    // Check for promos without specific types
+    // Check for promos
     else if (card.promo) {
       return 'PROMO_CARDS';
     }
@@ -350,7 +339,6 @@ export const SetPage: React.FC = () => {
             displayName: displayName,
             cards: [],
             isVisible: true,
-            isPromoType: card.promoTypes && card.promoTypes.length > 0,
             isFoilOnly: cardType === 'FOIL_ONLY_BOOSTER',
             isVariation: cardType === 'CARD_VARIATIONS',
             isBooster: cardType === 'IN_BOOSTERS',
@@ -462,7 +450,7 @@ export const SetPage: React.FC = () => {
     cards.every(card => card.releasedAt === cards[0].releasedAt);
 
   return (
-    <Container maxWidth={false} sx={{ mt: 4, mb: 4, px: 3 }}>
+    <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       {/* Set Information Card */}
       {setInfo && (
         <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>

@@ -8,7 +8,6 @@ export interface CardGroupConfig {
   isVisible: boolean;
   
   // Special handling flags
-  isPromoType?: boolean;
   isFoilOnly?: boolean;
   isVariation?: boolean;
   isBooster?: boolean;

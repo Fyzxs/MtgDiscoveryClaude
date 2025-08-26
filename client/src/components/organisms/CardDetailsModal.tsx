@@ -1,18 +1,15 @@
 import React from 'react';
 import {
-  Modal,
   Box,
   Typography,
   IconButton,
   Divider,
-  Chip,
   Link,
   Grid,
   Stack,
   Button,
   Tooltip
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -20,15 +17,17 @@ import CircleIcon from '@mui/icons-material/Circle';
 import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import WarningIcon from '@mui/icons-material/Warning';
-import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
+import { ModalContainer } from '../molecules/shared/ModalContainer';
 import { ManaCost } from '../molecules/Cards/ManaCost';
 import { RarityBadge } from '../atoms/Cards/RarityBadge';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
 import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
+import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -117,30 +116,14 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   };
 
   return (
-    <Modal
+    <ModalContainer
       open={open}
       onClose={onClose}
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'rgba(0, 0, 0, 0.9)'
-      }}
+      width="90vw"
+      maxWidth={1400}
+      height="90vh"
+      showCloseButton={false}
     >
-      <Box
-        sx={{
-          width: '90vw',
-          maxWidth: 1400,
-          height: '90vh',
-          bgcolor: 'background.paper',
-          borderRadius: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          outline: 'none'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
         {/* Header */}
         <Box sx={{
           p: 2,
@@ -313,6 +296,34 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       Defense: {card.defense}
                     </Typography>
                   )}
+                </Box>
+              )}
+
+              <Divider />
+
+              {/* Artist */}
+              {card.artist && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Artist
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
+                      <Link
+                        key={index}
+                        href={`?page=artist&name=${encodeURIComponent(artistName)}`}
+                        sx={{
+                          color: 'text.primary',
+                          textDecoration: 'none',
+                          '&:hover': {
+                            textDecoration: 'underline'
+                          }
+                        }}
+                      >
+                        {artistName}
+                      </Link>
+                    ))}
+                  </Box>
                 </Box>
               )}
 
@@ -522,30 +533,12 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 </Stack>
               </Box>
 
-              {/* Artist */}
-              {card.artist && (
-                <Box>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Artist
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
-                      <Link
-                        key={index}
-                        href={`?page=artist&name=${encodeURIComponent(artistName)}`}
-                        sx={{
-                          color: 'text.primary',
-                          textDecoration: 'none',
-                          '&:hover': {
-                            textDecoration: 'underline'
-                          }
-                        }}
-                      >
-                        {artistName}
-                      </Link>
-                    ))}
-                  </Box>
-                </Box>
+              {/* Rulings */}
+              {card.rulingsUri && (
+                <>
+                  <RulingsDisplay rulingsUri={card.rulingsUri} />
+                  <Divider sx={{ mt: 2 }} />
+                </>
               )}
 
               {/* Other Printings */}
@@ -553,7 +546,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             </Stack>
           </Box>
         </Box>
-      </Box>
-    </Modal>
+    </ModalContainer>
   );
 };

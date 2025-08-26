@@ -6,6 +6,7 @@ import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
+import { Layout } from './components/templates/Layout'
 
 function App() {
   // Check URL params for initial page
@@ -17,33 +18,24 @@ function App() {
   )
 
   if (currentPage === 'card-demo') {
-    return <CardDemoPage />
+    return <Layout><CardDemoPage /></Layout>
   }
 
   if (currentPage === 'set-demo') {
-    return <SetDemoPage />
+    return <Layout><SetDemoPage /></Layout>
   }
 
   if (currentPage === 'all-sets') {
-    return <AllSetsPage />
+    return <Layout><AllSetsPage /></Layout>
   }
 
   if (currentPage === 'set') {
-    return <SetPage />
+    return <Layout><SetPage /></Layout>
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">
-            MTG Discovery
-          </h1>
-          <p className="text-xl text-gray-400 mb-8">
-            Magic: The Gathering Collection Management Platform
-          </p>
-        </div>
-        
+    <Layout>
+      <div className="container mx-auto px-4 py-12 max-w-4xl">        
         <Card variant="elevated" className="text-center max-w-2xl mx-auto">
           <h2 className="text-2xl font-semibold text-white mb-4">
             Welcome to MTG Discovery
@@ -80,7 +72,7 @@ function App() {
           </div>
         </Card>
       </div>
-    </div>
+    </Layout>
   )
 }
 
