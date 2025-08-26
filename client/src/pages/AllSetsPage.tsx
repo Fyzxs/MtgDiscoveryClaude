@@ -24,6 +24,8 @@ import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { EmptyState } from '../components/atoms/shared/EmptyState';
+import { SortDropdown } from '../components/atoms/shared/SortDropdown';
+import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -149,9 +151,18 @@ export const AllSetsPage: React.FC = () => {
     setSelectedSetTypes(typeof value === 'string' ? value.split(',') : value);
   };
 
-  const handleSortChange = (event: SelectChangeEvent) => {
-    setSortBy(event.target.value);
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
   };
+
+  const sortOptions: SortOption[] = [
+    { value: 'release-desc', label: 'Release Date (Newest)' },
+    { value: 'release-asc', label: 'Release Date (Oldest)' },
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'cards-desc', label: 'Card Count (High-Low)' },
+    { value: 'cards-asc', label: 'Card Count (Low-High)' }
+  ];
 
   if (loading) {
     return (
@@ -287,21 +298,12 @@ export const AllSetsPage: React.FC = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Sort By</InputLabel>
-              <Select
-                value={sortBy}
-                onChange={handleSortChange}
-                label="Sort By"
-              >
-                <MenuItem value="release-desc">Release Date (Newest)</MenuItem>
-                <MenuItem value="release-asc">Release Date (Oldest)</MenuItem>
-                <MenuItem value="name-asc">Name (A-Z)</MenuItem>
-                <MenuItem value="name-desc">Name (Z-A)</MenuItem>
-                <MenuItem value="cards-desc">Card Count (High-Low)</MenuItem>
-                <MenuItem value="cards-asc">Card Count (Low-High)</MenuItem>
-              </Select>
-            </FormControl>
+            <SortDropdown
+              value={sortBy}
+              onChange={handleSortChange}
+              options={sortOptions}
+              fullWidth
+            />
           </Grid>
 
         </Grid>

@@ -69,7 +69,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 4: Create SortDropdown Atom []
+### Task 4: Create SortDropdown Atom [COMPLETED]
 **Files to modify:**
 - Created: `src/components/atoms/shared/SortDropdown.tsx`
 - Updated: `src/pages/AllSetsPage.tsx`

@@ -28,6 +28,8 @@ import { CardGroup } from '../components/organisms/CardGroup';
 import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
+import { SortDropdown } from '../components/atoms/shared/SortDropdown';
+import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -373,8 +375,8 @@ export const SetPage: React.FC = () => {
     setSelectedRarities(typeof value === 'string' ? value.split(',') : value);
   };
 
-  const handleSortChange = (event: SelectChangeEvent) => {
-    setSortBy(event.target.value);
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
   };
 
   if (!setCode) {
@@ -595,28 +597,30 @@ export const SetPage: React.FC = () => {
               />
             )}
 
-            <FormControl sx={{ minWidth: 180 }}>
-              <InputLabel>Sort By</InputLabel>
-              <Select
-                value={sortBy}
-                onChange={handleSortChange}
-                label="Sort By"
-              >
-                <MenuItem value="collector-asc">Collector # (Low-High)</MenuItem>
-                <MenuItem value="collector-desc">Collector # (High-Low)</MenuItem>
-                <MenuItem value="name-asc">Name (A-Z)</MenuItem>
-                <MenuItem value="name-desc">Name (Z-A)</MenuItem>
-                <MenuItem value="rarity">Rarity</MenuItem>
-                <MenuItem value="price-desc">Price (High-Low)</MenuItem>
-                <MenuItem value="price-asc">Price (Low-High)</MenuItem>
-                {cards.some(c => c.releasedAt !== cards[0]?.releasedAt) && (
-                  <>
-                    <MenuItem value="release-desc">Release Date (Newest)</MenuItem>
-                    <MenuItem value="release-asc">Release Date (Oldest)</MenuItem>
-                  </>
-                )}
-              </Select>
-            </FormControl>
+            <SortDropdown
+              value={sortBy}
+              onChange={handleSortChange}
+              options={[
+                { value: 'collector-asc', label: 'Collector # (Low-High)' },
+                { value: 'collector-desc', label: 'Collector # (High-Low)' },
+                { value: 'name-asc', label: 'Name (A-Z)' },
+                { value: 'name-desc', label: 'Name (Z-A)' },
+                { value: 'rarity', label: 'Rarity' },
+                { value: 'price-desc', label: 'Price (High-Low)' },
+                { value: 'price-asc', label: 'Price (Low-High)' },
+                { 
+                  value: 'release-desc', 
+                  label: 'Release Date (Newest)',
+                  condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
+                },
+                { 
+                  value: 'release-asc', 
+                  label: 'Release Date (Oldest)',
+                  condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
+                }
+              ]}
+              minWidth={180}
+            />
           </Stack>
         </Stack>
       </Box>
