@@ -35,7 +35,7 @@ internal sealed class CardsByNameProcessor : ICardProcessor
         ScryfallCardByName cardByName = new()
         {
             NameGuid = nameGuid.AsSystemType().ToString(),
-            Scryfall = card.Data()
+            Data = card.Data()
         };
 
         OpResponse<ScryfallCardByName> response = await _scribe.UpsertAsync(cardByName).ConfigureAwait(false);

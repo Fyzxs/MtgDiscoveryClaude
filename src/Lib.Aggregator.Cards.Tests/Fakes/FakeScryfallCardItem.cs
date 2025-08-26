@@ -6,6 +6,6 @@ internal static class FakeScryfallCardItemFactory
 {
     public static ScryfallCardItem Create(dynamic data)
     {
-        return new ScryfallCardItem { Scryfall = data };
+        return new ScryfallCardItem { Data = data };
     }
 }
