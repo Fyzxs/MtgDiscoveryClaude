@@ -86,7 +86,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 5: Create MultiSelectDropdown Atom []
+### Task 5: Create MultiSelectDropdown Atom [COMPLETED]
 **Files to modify:**
 - Created: `src/components/atoms/shared/MultiSelectDropdown.tsx`
 - Updated: `src/pages/AllSetsPage.tsx` (set types dropdown)

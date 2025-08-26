@@ -30,6 +30,7 @@ import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { SortDropdown } from '../components/atoms/shared/SortDropdown';
 import type { SortOption } from '../components/atoms/shared/SortDropdown';
+import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -366,13 +367,8 @@ export const SetPage: React.FC = () => {
     }
   }, [selectedCardTypes, cardGroups]);
 
-  const handleRarityChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value;
-    if (Array.isArray(value) && value.includes('CLEAR_ALL')) {
-      setSelectedRarities([]);
-      return;
-    }
-    setSelectedRarities(typeof value === 'string' ? value.split(',') : value);
+  const handleRarityChange = (value: string[]) => {
+    setSelectedRarities(value);
   };
 
   const handleSortChange = (value: string) => {
@@ -464,38 +460,14 @@ export const SetPage: React.FC = () => {
               minWidth={300}
             />
             
-            <FormControl sx={{ minWidth: 150 }}>
-              <InputLabel>Rarity</InputLabel>
-              <Select
-                multiple
-                value={selectedRarities}
-                onChange={handleRarityChange}
-                label="Rarity"
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <Typography variant="body2" color="text.secondary">All Rarities</Typography>;
-                  }
-                  if (selected.length <= 2) {
-                    return selected.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
-                  }
-                  return `${selected.length} selected`;
-                }}
-              >
-                <MenuItem value="CLEAR_ALL" sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}>
-                  <Typography variant="body2" color="text.secondary">Clear All</Typography>
-                </MenuItem>
-                {RARITIES.map(rarity => (
-                  <MenuItem key={rarity} value={rarity}>
-                    <Chip
-                      size="small"
-                      label={rarity.charAt(0).toUpperCase() + rarity.slice(1)}
-                      color={selectedRarities.includes(rarity) ? "primary" : "default"}
-                      sx={{ mr: 1 }}
-                    />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <MultiSelectDropdown
+              value={selectedRarities}
+              onChange={handleRarityChange}
+              options={RARITIES}
+              label="Rarity"
+              placeholder="All Rarities"
+              minWidth={150}
+            />
 
             <Autocomplete
               multiple

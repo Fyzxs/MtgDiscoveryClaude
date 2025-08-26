@@ -26,6 +26,7 @@ import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { EmptyState } from '../components/atoms/shared/EmptyState';
 import { SortDropdown } from '../components/atoms/shared/SortDropdown';
 import type { SortOption } from '../components/atoms/shared/SortDropdown';
+import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -141,14 +142,8 @@ export const AllSetsPage: React.FC = () => {
     }
   };
 
-  const handleSetTypeChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value;
-    // Check if the last selected item is our special "CLEAR_ALL" value
-    if (Array.isArray(value) && value.includes('CLEAR_ALL')) {
-      setSelectedSetTypes([]);
-      return;
-    }
-    setSelectedSetTypes(typeof value === 'string' ? value.split(',') : value);
+  const handleSetTypeChange = (value: string[]) => {
+    setSelectedSetTypes(value);
   };
 
   const handleSortChange = (value: string) => {
@@ -257,44 +252,14 @@ export const AllSetsPage: React.FC = () => {
           </Grid>
           
           <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Set Types</InputLabel>
-              <Select
-                multiple
-                value={selectedSetTypes}
-                onChange={handleSetTypeChange}
-                label="Set Types"
-                sx={{ minWidth: '150px' }}
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <Typography variant="body2" color="text.secondary">All Types</Typography>;
-                  }
-                  if (selected.length <= 2) {
-                    return selected.map(s => s.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())).join(', ');
-                  }
-                  return `${selected.length} types selected`;
-                }}
-              >
-                <MenuItem 
-                  value="CLEAR_ALL"
-                  sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    Clear All
-                  </Typography>
-                </MenuItem>
-                {setTypes.map(type => (
-                  <MenuItem key={type} value={type}>
-                    <Chip
-                      size="small"
-                      label={type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                      color={selectedSetTypes.includes(type) ? "primary" : "default"}
-                      sx={{ mr: 1 }}
-                    />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <MultiSelectDropdown
+              value={selectedSetTypes}
+              onChange={handleSetTypeChange}
+              options={setTypes}
+              label="Set Types"
+              placeholder="All Types"
+              fullWidth
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
