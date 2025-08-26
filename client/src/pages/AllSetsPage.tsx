@@ -23,6 +23,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
+import { EmptyState } from '../components/atoms/shared/EmptyState';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -330,11 +331,10 @@ export const AllSetsPage: React.FC = () => {
       </Box>
 
       {filteredSets.length === 0 && (
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary">
-            No sets found matching your criteria
-          </Typography>
-        </Box>
+        <EmptyState
+          message="No sets found matching your criteria"
+          description="Try adjusting your filters or search terms"
+        />
       )}
     </Container>
   );

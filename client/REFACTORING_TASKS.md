@@ -49,7 +49,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 3: Create EmptyState Atom []
+### Task 3: Create EmptyState Atom [COMPLETED]
 **Files to modify:**
 - Created: `src/components/atoms/shared/EmptyState.tsx`
 - Updated: `src/pages/AllSetsPage.tsx`

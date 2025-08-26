@@ -27,6 +27,7 @@ import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
+import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -650,11 +651,15 @@ export const SetPage: React.FC = () => {
       ))}
 
       {filteredCards.length === 0 && (
-        <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary">
-            No cards found matching your criteria
-          </Typography>
-        </Box>
+        <SearchEmptyState
+          itemType="cards"
+          onClear={() => {
+            setSearchTerm('');
+            setSelectedRarities([]);
+            setSelectedArtists([]);
+            setSelectedCardTypes([]);
+          }}
+        />
       )}
 
       {/* Back to Top Button */}
