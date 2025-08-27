@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, IconButton, Tooltip, Skeleton } from '@mui/material';
 import FlipIcon from '@mui/icons-material/Flip';
 import type { Card } from '../../../types/card';
+import { imageCache } from '../../../utils/imageCache';
 
 interface CardImageDisplayProps {
   card: Card;
@@ -31,7 +32,6 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
 }) => {
   const [currentFaceIndex, setCurrentFaceIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
   
   // Check if this is a double-faced card
   const isDoubleFaced = card.cardFaces && card.cardFaces.length > 1;
@@ -54,15 +54,31 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
   };
   
   const imageUrl = getImageUrl();
+  const [imageLoaded, setImageLoaded] = useState(() => {
+    // Check global cache if this image was already loaded
+    return imageUrl ? imageCache.isLoaded(imageUrl) : true;
+  });
   
-  // Reset imageLoaded when the card or size changes
-  React.useEffect(() => {
-    setImageLoaded(false);
-    // If there's no image URL, consider it "loaded" to avoid infinite loading state
+  // Preload image when URL changes
+  useEffect(() => {
     if (!imageUrl) {
       setImageLoaded(true);
+      return;
     }
-  }, [card.id, size, imageUrl]);
+
+    // Check if already loaded in global cache
+    if (imageCache.isLoaded(imageUrl)) {
+      setImageLoaded(true);
+      return;
+    }
+
+    // Preload the image
+    imageCache.preload(imageUrl).then((success) => {
+      if (success) {
+        setImageLoaded(true);
+      }
+    });
+  }, [imageUrl]);
   
   const handleFlip = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering parent onClick
@@ -114,9 +130,15 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
             component="img"
             src={imageUrl}
             alt={card.name}
-            loading="lazy"
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(true)} // Show card back if image fails
+            loading="eager" // Changed from lazy to eager to prevent reload issues
+            onLoad={() => {
+              imageCache.markLoaded(imageUrl);
+              setImageLoaded(true);
+            }}
+            onError={() => {
+              // Don't mark as loaded in cache on error
+              setImageLoaded(true); // But still show card back
+            }}
             sx={{
             position: 'absolute',
             top: 0,

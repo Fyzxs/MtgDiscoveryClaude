@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
@@ -24,6 +24,7 @@ import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { SortDropdown } from '../components/atoms/shared/SortDropdown';
 import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
 import { useUrlState } from '../hooks/useUrlState';
+import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -77,15 +78,86 @@ export const SetPage: React.FC = () => {
     skip: !setCode
   });
 
-  const [searchTerm, setSearchTerm] = useState(initialValues.search || '');
-  const [selectedRarities, setSelectedRarities] = useState<string[]>(initialValues.rarities || []);
-  const [selectedArtists, setSelectedArtists] = useState<string[]>(initialValues.artists || []);
+  // Configure filter state (memoized to prevent recreating on every render)
+  const parseCollectorNumber = useCallback((num: string): number => {
+    const match = num.match(/^(\d+)/);
+    return match ? parseInt(match[1], 10) : 999999;
+  }, []);
+
+  const filterConfig = useMemo(() => ({
+    searchFields: ['name', 'oracleText', 'typeLine', 'artist'] as (keyof Card)[],
+    sortOptions: {
+      'collector-asc': (a: Card, b: Card) => parseCollectorNumber(a.collectorNumber) - parseCollectorNumber(b.collectorNumber),
+      'collector-desc': (a: Card, b: Card) => parseCollectorNumber(b.collectorNumber) - parseCollectorNumber(a.collectorNumber),
+      'name-asc': (a: Card, b: Card) => a.name.localeCompare(b.name),
+      'name-desc': (a: Card, b: Card) => b.name.localeCompare(a.name),
+      'rarity': (a: Card, b: Card) => {
+        const rarityOrder: Record<string, number> = { common: 0, uncommon: 1, rare: 2, mythic: 3, special: 4, bonus: 5 };
+        return (rarityOrder[a.rarity] || 99) - (rarityOrder[b.rarity] || 99);
+      },
+      'price-desc': (a: Card, b: Card) => {
+        const priceA = parseFloat(a.prices?.usd || '0');
+        const priceB = parseFloat(b.prices?.usd || '0');
+        return priceB - priceA;
+      },
+      'price-asc': (a: Card, b: Card) => {
+        const priceA = parseFloat(a.prices?.usd || '0');
+        const priceB = parseFloat(b.prices?.usd || '0');
+        return priceA - priceB;
+      },
+      'release-desc': (a: Card, b: Card) => {
+        if (!a.releasedAt && !b.releasedAt) return 0;
+        if (!a.releasedAt) return 1;
+        if (!b.releasedAt) return -1;
+        return new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime();
+      },
+      'release-asc': (a: Card, b: Card) => {
+        if (!a.releasedAt && !b.releasedAt) return 0;
+        if (!a.releasedAt) return 1;
+        if (!b.releasedAt) return -1;
+        return new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime();
+      }
+    },
+    filterFunctions: {
+      rarities: commonFilters.multiSelect<Card>('rarity'),
+      artists: (card: Card, selectedArtists: string[]) => {
+        if (!selectedArtists || selectedArtists.length === 0) return true;
+        if (!card.artist) return false;
+        const cardArtists = card.artist.split(/\s+(?:&|and)\s+/i).map(a => a.trim());
+        return cardArtists.some(artist => selectedArtists.includes(artist));
+      },
+      showDigital: (card: Card, show: boolean) => show || !card.digital
+    },
+    defaultSort: 'collector-asc'
+  }), [parseCollectorNumber]);
+
+  const {
+    searchTerm,
+    sortBy,
+    filters,
+    filteredData: filteredCards,
+    setSearchTerm,
+    setSortBy,
+    updateFilter
+  } = useFilterState(
+    cardsData?.cardsBySetCode?.data,
+    filterConfig,
+    {
+      search: initialValues.search || '',
+      sort: initialValues.sort || 'collector-asc',
+      filters: {
+        rarities: initialValues.rarities || [],
+        artists: initialValues.artists || [],
+        showDigital: false
+      }
+    }
+  );
+
+  const selectedRarities = filters.rarities || [];
+  const selectedArtists = filters.artists || [];
   const [selectedCardTypes, setSelectedCardTypes] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<string>(initialValues.sort || 'collector-asc');
-  const [filteredCards, setFilteredCards] = useState<Card[]>([]);
   const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
   const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
-  const [showDigital, setShowDigital] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
@@ -222,97 +294,12 @@ export const SetPage: React.FC = () => {
   );
 
   useEffect(() => {
-    if (cardsData?.cardsBySetCode?.data) {
-      let filtered = [...cardsData.cardsBySetCode.data];
-
-      if (!showDigital) {
-        filtered = filtered.filter(card => !card.digital);
-      }
-
-      if (searchTerm) {
-        filtered = filtered.filter(card => 
-          card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          card.oracleText?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          card.typeLine?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          card.artist?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      if (selectedRarities.length > 0) {
-        filtered = filtered.filter(card => selectedRarities.includes(card.rarity));
-      }
-
-      if (selectedArtists.length > 0) {
-        filtered = filtered.filter(card => {
-          if (!card.artist) return false;
-          // Split multiple artists and check if any match
-          const cardArtists = card.artist.split(/\s+(?:&|and)\s+/i).map(a => a.trim());
-          return cardArtists.some(artist => selectedArtists.includes(artist));
-        });
-      }
-      
-      // Note: Card type filtering is now handled by showing/hiding groups, not filtering cards
-
-      const parseCollectorNumber = (num: string): number => {
-        const match = num.match(/^(\d+)/);
-        return match ? parseInt(match[1], 10) : 999999;
-      };
-
-      switch (sortBy) {
-        case 'collector-asc':
-          filtered.sort((a, b) => parseCollectorNumber(a.collectorNumber) - parseCollectorNumber(b.collectorNumber));
-          break;
-        case 'collector-desc':
-          filtered.sort((a, b) => parseCollectorNumber(b.collectorNumber) - parseCollectorNumber(a.collectorNumber));
-          break;
-        case 'name-asc':
-          filtered.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case 'name-desc':
-          filtered.sort((a, b) => b.name.localeCompare(a.name));
-          break;
-        case 'rarity':
-          const rarityOrder: Record<string, number> = { common: 0, uncommon: 1, rare: 2, mythic: 3, special: 4, bonus: 5 };
-          filtered.sort((a, b) => (rarityOrder[a.rarity] || 99) - (rarityOrder[b.rarity] || 99));
-          break;
-        case 'price-desc':
-          filtered.sort((a, b) => {
-            const priceA = parseFloat(a.prices?.usd || '0');
-            const priceB = parseFloat(b.prices?.usd || '0');
-            return priceB - priceA;
-          });
-          break;
-        case 'price-asc':
-          filtered.sort((a, b) => {
-            const priceA = parseFloat(a.prices?.usd || '0');
-            const priceB = parseFloat(b.prices?.usd || '0');
-            return priceA - priceB;
-          });
-          break;
-        case 'release-desc':
-          filtered.sort((a, b) => {
-            if (!a.releasedAt && !b.releasedAt) return 0;
-            if (!a.releasedAt) return 1;
-            if (!b.releasedAt) return -1;
-            return new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime();
-          });
-          break;
-        case 'release-asc':
-          filtered.sort((a, b) => {
-            if (!a.releasedAt && !b.releasedAt) return 0;
-            if (!a.releasedAt) return 1;
-            if (!b.releasedAt) return -1;
-            return new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime();
-          });
-          break;
-      }
-
-      setFilteredCards(filtered);
+    if (filteredCards) {
       
       // Group cards by their characteristics
       const groupsMap = new Map<string, CardGroupConfig>();
       
-      filtered.forEach(card => {
+      filteredCards.forEach(card => {
         const cardType = getCardType(card);
         const groupId = cardType;
         const displayName = formatCardTypeLabel(cardType);
@@ -349,8 +336,7 @@ export const SetPage: React.FC = () => {
       const allGroupIds = new Set(groupsArray.map(g => g.id));
       setVisibleGroupIds(allGroupIds);
     }
-    // Note: selectedCardId is intentionally removed from dependencies as it doesn't affect filtering/sorting
-  }, [cardsData, searchTerm, selectedRarities, selectedArtists, sortBy, showDigital]);
+  }, [filteredCards]);
   
   // Handle card type filtering by showing/hiding groups
   useEffect(() => {
@@ -364,7 +350,7 @@ export const SetPage: React.FC = () => {
   }, [selectedCardTypes, cardGroups]);
 
   const handleRarityChange = (value: string[]) => {
-    setSelectedRarities(value);
+    updateFilter('rarities', value);
   };
 
   const handleSortChange = (value: string) => {
@@ -471,7 +457,7 @@ export const SetPage: React.FC = () => {
               options={uniqueArtists}
               value={selectedArtists}
               onChange={(event, newValue) => {
-                setSelectedArtists(newValue);
+                updateFilter('artists', newValue);
               }}
               renderInput={(params) => (
                 <TextField
@@ -627,8 +613,8 @@ export const SetPage: React.FC = () => {
           itemType="cards"
           onClear={() => {
             setSearchTerm('');
-            setSelectedRarities([]);
-            setSelectedArtists([]);
+            updateFilter('rarities', []);
+            updateFilter('artists', []);
             setSelectedCardTypes([]);
           }}
         />

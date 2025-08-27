@@ -124,7 +124,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 7: Create useFilterState Hook []
+### Task 7: Create useFilterState Hook [COMPLETED]
 **Files to modify:**
 - Created: `src/hooks/useFilterState.ts`
 - Updated: `src/pages/AllSetsPage.tsx`

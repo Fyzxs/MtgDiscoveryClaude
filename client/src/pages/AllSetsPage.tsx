@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
@@ -17,6 +17,7 @@ import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
 import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { useUrlState } from '../hooks/useUrlState';
+import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterState';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -43,10 +44,45 @@ export const AllSetsPage: React.FC = () => {
   const initialValues = getInitialValues();
 
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
-  const [searchTerm, setSearchTerm] = useState(initialValues.search || '');
-  const [selectedSetTypes, setSelectedSetTypes] = useState<string[]>(initialValues.types || []);
-  const [sortBy, setSortBy] = useState<string>(initialValues.sort || 'release-desc');
-  const [filteredSets, setFilteredSets] = useState<MtgSet[]>([]);
+  
+  // Configure filter state (memoized to prevent recreating on every render)
+  const filterConfig = useMemo(() => ({
+    searchFields: ['name', 'code'] as (keyof MtgSet)[],
+    sortOptions: {
+      'release-desc': (a: MtgSet, b: MtgSet) => new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime(),
+      'release-asc': (a: MtgSet, b: MtgSet) => new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime(),
+      'name-asc': commonSorts.alphabetical<MtgSet>('name', true),
+      'name-desc': commonSorts.alphabetical<MtgSet>('name', false),
+      'cards-desc': commonSorts.numeric<MtgSet>('cardCount', false),
+      'cards-asc': commonSorts.numeric<MtgSet>('cardCount', true)
+    },
+    filterFunctions: {
+      setTypes: commonFilters.multiSelect<MtgSet>('setType')
+    },
+    defaultSort: 'release-desc'
+  }), []);
+
+  const {
+    searchTerm,
+    sortBy,
+    filters,
+    filteredData: filteredSets,
+    setSearchTerm,
+    setSortBy,
+    updateFilter
+  } = useFilterState(
+    data?.allSets?.data,
+    filterConfig,
+    {
+      search: initialValues.search || '',
+      sort: initialValues.sort || 'release-desc',
+      filters: {
+        setTypes: initialValues.types || []
+      }
+    }
+  );
+  
+  const selectedSetTypes = filters.setTypes || [];
 
   // Get unique set types from data
   const getUniqueSetTypes = (sets: MtgSet[]): string[] => {
@@ -68,50 +104,6 @@ export const AllSetsPage: React.FC = () => {
     }
   );
 
-  // Filter and sort sets
-  useEffect(() => {
-    if (data?.allSets?.data) {
-      let filtered = [...data.allSets.data];
-
-      // Filter by search term
-      if (searchTerm) {
-        filtered = filtered.filter(set => 
-          set.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          set.code.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      // Filter by set types (multi-select)
-      if (selectedSetTypes.length > 0) {
-        filtered = filtered.filter(set => selectedSetTypes.includes(set.setType));
-      }
-
-      // Sort sets
-      switch (sortBy) {
-        case 'release-desc':
-          filtered.sort((a, b) => new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime());
-          break;
-        case 'release-asc':
-          filtered.sort((a, b) => new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime());
-          break;
-        case 'name-asc':
-          filtered.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case 'name-desc':
-          filtered.sort((a, b) => b.name.localeCompare(a.name));
-          break;
-        case 'cards-desc':
-          filtered.sort((a, b) => b.cardCount - a.cardCount);
-          break;
-        case 'cards-asc':
-          filtered.sort((a, b) => a.cardCount - b.cardCount);
-          break;
-      }
-
-      setFilteredSets(filtered);
-    }
-  }, [data, searchTerm, selectedSetTypes, sortBy]);
-
   const handleSetClick = (setCode?: string) => {
     if (setCode) {
       window.location.href = `?page=set&set=${setCode}`;
@@ -119,7 +111,7 @@ export const AllSetsPage: React.FC = () => {
   };
 
   const handleSetTypeChange = (value: string[]) => {
-    setSelectedSetTypes(value);
+    updateFilter('setTypes', value);
   };
 
   const handleSortChange = (value: string) => {
