@@ -5,6 +5,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { GET_CARDS_BY_IDS } from '../../../graphql/queries/cards';
 import { MtgCard } from '../../organisms/MtgCard';
+import { ResponsiveGridAutoFit } from '../../atoms/layouts/ResponsiveGrid';
 import type { Card } from '../../../types/card';
 
 interface RelatedCardsDisplayProps {
@@ -110,18 +111,20 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
           )}
 
           {!loading && cards.length > 0 && (
-            <Box sx={{ 
-              display: 'flex',
-              gap: 2,
-              flexWrap: 'wrap',
-              justifyContent: 'flex-start'
-            }}>
+            <ResponsiveGridAutoFit 
+              minItemWidth={280} 
+              spacing={1.5}
+            >
               {cards.map((card) => (
-                <Box key={card.id} sx={{ width: '280px' }}>
-                  <MtgCard card={card} />
-                </Box>
+                <MtgCard 
+                  key={card.id}
+                  card={card}
+                  context={{
+                    isOnCardPage: true
+                  }}
+                />
               ))}
-            </Box>
+            </ResponsiveGridAutoFit>
           )}
         </Box>
       </Collapse>

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { Typography, Grid } from '@mui/material';
+import { Typography } from '@mui/material';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
 import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
 import { ErrorText } from '../../atoms/shared/ErrorAlert';
 import { MtgCard } from '../../organisms/MtgCard';
+import { ResponsiveGridAutoFit } from '../../atoms/layouts/ResponsiveGrid';
 import { GET_CARDS_BY_NAME } from '../../../graphql/queries/cards';
 import type { Card } from '../../../types/card';
 
@@ -69,18 +70,21 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
       )}
       
       {!loading && !hasError && otherCards.length > 0 && (
-        <Grid container spacing={2} sx={{ mt: 1 }}>
+        <ResponsiveGridAutoFit 
+          minItemWidth={280} 
+          spacing={1.5}
+          sx={{ mt: 1 }}
+        >
           {otherCards.map((card) => (
-            <Grid key={card.id} size={{ xs: 12, sm: 6, md: 4 }}>
-              <MtgCard 
-                card={card}
-                context={{
-                  isOnCardPage: true
-                }}
-              />
-            </Grid>
+            <MtgCard 
+              key={card.id}
+              card={card}
+              context={{
+                isOnCardPage: true
+              }}
+            />
           ))}
-        </Grid>
+        </ResponsiveGridAutoFit>
       )}
 
       {!loading && !hasError && otherCards.length === 0 && (
