@@ -11,10 +11,10 @@ interface CardBadgesProps {
   excludeFrameEffects?: string[];
 }
 
-// Default exclusions
-const DEFAULT_EXCLUDE_FINISHES: string[] = [];  // Include all finishes now
-const DEFAULT_EXCLUDE_PROMO_TYPES: string[] = [];  // Include all promo types now
-const DEFAULT_EXCLUDE_FRAME_EFFECTS: string[] = [];
+// Default exclusions - ignore these badge types
+const DEFAULT_EXCLUDE_FINISHES: string[] = [];
+const DEFAULT_EXCLUDE_PROMO_TYPES: string[] = ['boosterfun'];  // Ignore boosterfun
+const DEFAULT_EXCLUDE_FRAME_EFFECTS: string[] = ['inverted', 'legendary', 'enchantment', 'etched'];  // Ignore these frame effects
 
 export const CardBadges: React.FC<CardBadgesProps> = ({
   finishes,
@@ -30,20 +30,51 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   const safePromoTypes = promoTypes || [];
   const safeFrameEffects = frameEffects || [];
   
-  // Filter out excluded finishes
-  const displayFinishes = safeFinishes.filter(
-    finish => !excludeFinishes.includes(finish.toLowerCase())
+  // Special foil logic: if card has special foil promo types and no nonfoil, hide regular foil
+  const hasSpecialFoilPromo = safePromoTypes.some(promo => 
+    ['surgefoil', 'raisedfoil', 'etched'].includes(promo.toLowerCase())
   );
+  const hasNonFoil = safeFinishes.some(finish => finish.toLowerCase() === 'nonfoil');
   
-  // Filter out excluded promo types
-  const displayPromoTypes = safePromoTypes.filter(
-    promoType => !excludePromoTypes.includes(promoType.toLowerCase())
-  );
+  // Check if card is serialized - if so, only show that badge
+  const isSerialized = safePromoTypes.some(promo => promo.toLowerCase() === 'serialized');
+  
+  // Check if ONLY nonfoil
+  const isOnlyNonFoil = safeFinishes.length === 1 && safeFinishes[0]?.toLowerCase() === 'nonfoil';
+  
+  // Filter out excluded finishes and apply special foil logic
+  const displayFinishes = isSerialized ? [] : safeFinishes.filter(finish => {
+    const lowerFinish = finish.toLowerCase();
+    
+    // Check exclusion list
+    if (excludeFinishes.includes(lowerFinish)) return false;
+    
+    // Special logic: hide 'foil' if has special foil promo and no nonfoil
+    if (lowerFinish === 'foil' && hasSpecialFoilPromo && !hasNonFoil) {
+      return false;
+    }
+    
+    // Hide nonfoil if it's the only finish
+    if (lowerFinish === 'nonfoil' && isOnlyNonFoil) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  // Filter out excluded promo types - if serialized, only show that
+  const displayPromoTypes = isSerialized 
+    ? ['serialized'] 
+    : safePromoTypes.filter(
+        promoType => !excludePromoTypes.includes(promoType.toLowerCase())
+      );
 
-  // Filter out excluded frame effects
-  const displayFrameEffects = safeFrameEffects.filter(
-    effect => !excludeFrameEffects.includes(effect.toLowerCase())
-  );
+  // Filter out excluded frame effects - hide all if serialized
+  const displayFrameEffects = isSerialized 
+    ? [] 
+    : safeFrameEffects.filter(
+        effect => !excludeFrameEffects.includes(effect.toLowerCase())
+      );
 
   // Format finish text for display
   const formatFinishText = (finish: string): string => {
@@ -79,6 +110,9 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       'convention': 'Convention',
       'treasure_chest': 'Treasure Chest',
       'boosterfun': 'Booster Fun',
+      'serialized': 'Serialized',
+      'surgefoil': 'Surge Foil',
+      'raisedfoil': 'Raised Foil',
     };
     return formatMap[promoType.toLowerCase()] || promoType.replace(/_/g, ' ')
       .split(' ')
@@ -144,10 +178,10 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
     <Box 
       sx={{ 
         display: 'flex', 
-        flexDirection: 'column',
+        flexDirection: 'column-reverse',  // Stack upward from bottom
         gap: 0.5,
         position: 'absolute',
-        top: 40,
+        bottom: 65,  // Position above the links (which are at bottom)
         right: 8,
         zIndex: 15,
         alignItems: 'flex-end'
@@ -191,21 +225,27 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
           sx={{
             height: 20,
             fontSize: '0.625rem',
-            fontWeight: 600,
+            fontWeight: promoType.toLowerCase() === 'serialized' ? 700 : 600,
             '& .MuiChip-label': {
               px: 1
             },
             backdropFilter: 'blur(4px)',
-            backgroundColor: 'rgba(255, 152, 0, 0.9)',
-            color: 'white',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            backgroundColor: promoType.toLowerCase() === 'serialized' 
+              ? 'rgba(255, 215, 0, 0.95)'  // Gold color for serialized
+              : 'rgba(255, 152, 0, 0.9)',
+            color: promoType.toLowerCase() === 'serialized' ? '#000' : 'white',
+            border: promoType.toLowerCase() === 'serialized' 
+              ? '1px solid rgba(255, 215, 0, 0.5)'
+              : '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: promoType.toLowerCase() === 'serialized'
+              ? '0 2px 8px rgba(255, 215, 0, 0.5)'
+              : '0 2px 4px rgba(0,0,0,0.2)'
           }}
         />
       ))}
       
-      {/* Generic promo badge if isPromo is true but no specific types */}
-      {isPromo && displayPromoTypes.length === 0 && (
+      {/* Generic promo badge if isPromo is true but no specific types (unless serialized) */}
+      {isPromo && displayPromoTypes.length === 0 && !isSerialized && (
         <Chip
           label="Promo"
           size="small"
