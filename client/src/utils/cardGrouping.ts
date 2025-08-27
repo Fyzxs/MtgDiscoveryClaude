@@ -7,24 +7,51 @@ import type { SetGrouping } from '../types/set';
 export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean {
   const { filters } = grouping;
   
+  
   // Check collector number range if specified
   if (filters.collectorNumberRange) {
-    const { min, max } = filters.collectorNumberRange;
+    const { min, max, orConditions } = filters.collectorNumberRange;
     const cardNumber = card.collectorNumber;
     
     if (!cardNumber) return false;
     
-    // Extract numeric part for comparison
-    const getNumericValue = (cn: string): number => {
-      const match = cn.match(/^(\d+)/);
-      return match ? parseInt(match[1], 10) : 0;
-    };
+    let matchesRange = false;
     
-    const cardNum = getNumericValue(cardNumber);
-    const minNum = getNumericValue(min);
-    const maxNum = getNumericValue(max);
+    // Check if card matches the min-max range
+    if (min !== null && max !== null) {
+      // For range matching, we ALWAYS extract just the numeric part
+      // This allows cards like "30s", "118†s" to match against numeric ranges
+      const getNumericValue = (cn: string): number => {
+        // Extract leading digits from the string
+        const match = cn.match(/^(\d+)/);
+        return match ? parseInt(match[1], 10) : 0;
+      };
+      
+      const cardNum = getNumericValue(cardNumber);
+      const minNum = getNumericValue(min);
+      const maxNum = getNumericValue(max);
+      
+      matchesRange = cardNum >= minNum && cardNum <= maxNum;
+    }
     
-    if (cardNum < minNum || cardNum > maxNum) {
+    // Check if card matches any of the OR conditions (specific collector numbers)
+    let matchesOrCondition = false;
+    if (orConditions && orConditions.length > 0) {
+      // Normalize the card's collector number for comparison
+      const normalizedCardNumber = cardNumber.toLowerCase().trim();
+      
+      // Check if the card's collector number matches any of the OR conditions
+      matchesOrCondition = orConditions.some(cn => {
+        const normalizedCondition = cn.toLowerCase().trim();
+        const matches = normalizedCardNumber === normalizedCondition;
+        return matches;
+      });
+    }
+    
+    // Card must match either the range OR one of the specific collector numbers
+    const passesCollectorCheck = matchesRange || matchesOrCondition;
+    
+    if (!passesCollectorCheck) {
       return false;
     }
   }
@@ -32,15 +59,6 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
   // Check properties if specified
   if (filters.properties && Object.keys(filters.properties).length > 0) {
     for (const [key, value] of Object.entries(filters.properties)) {
-      // Handle exclusion rules - if there's an excludes, ignore the contains
-      const excludesKey = key.replace('_contains', '_excludes');
-      const containsKey = key.replace('_excludes', '_contains');
-      
-      // Skip if this is a contains and there's an excludes for the same property
-      if (key.endsWith('_contains') && filters.properties[excludesKey] !== undefined) {
-        continue;
-      }
-      
       // Handle different types of property checks
       if (key.endsWith('_excludes')) {
         // Check that the property does NOT contain the value
@@ -84,19 +102,40 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         else {
           let found = false;
           
-          // Check in finishes array
-          if (card.finishes && Array.isArray(card.finishes)) {
-            found = card.finishes.some(f => f.toLowerCase() === String(value).toLowerCase());
-          }
-          
-          // Check in frameEffects array
-          if (!found && card.frameEffects && Array.isArray(card.frameEffects)) {
-            found = card.frameEffects.some(f => f.toLowerCase() === String(value).toLowerCase());
-          }
-          
-          // Check in promoTypes array
-          if (!found && card.promoTypes && Array.isArray(card.promoTypes)) {
-            found = card.promoTypes.some(p => p.toLowerCase() === String(value).toLowerCase());
+          // When value is boolean true, check if the key exists in arrays
+          // When value is string, check if the value exists in arrays
+          if (typeof value === 'boolean' && value === true) {
+            // For boolean true, check if the property name exists in the arrays
+            // Check in finishes array
+            if (card.finishes && Array.isArray(card.finishes)) {
+              found = card.finishes.some(f => f.toLowerCase() === key.toLowerCase());
+            }
+            
+            // Check in frameEffects array
+            if (!found && card.frameEffects && Array.isArray(card.frameEffects)) {
+              found = card.frameEffects.some(f => f.toLowerCase() === key.toLowerCase());
+            }
+            
+            // Check in promoTypes array
+            if (!found && card.promoTypes && Array.isArray(card.promoTypes)) {
+              found = card.promoTypes.some(p => p.toLowerCase() === key.toLowerCase());
+            }
+          } else {
+            // For string values, check if the value exists in arrays
+            // Check in finishes array
+            if (card.finishes && Array.isArray(card.finishes)) {
+              found = card.finishes.some(f => f.toLowerCase() === String(value).toLowerCase());
+            }
+            
+            // Check in frameEffects array
+            if (!found && card.frameEffects && Array.isArray(card.frameEffects)) {
+              found = card.frameEffects.some(f => f.toLowerCase() === String(value).toLowerCase());
+            }
+            
+            // Check in promoTypes array
+            if (!found && card.promoTypes && Array.isArray(card.promoTypes)) {
+              found = card.promoTypes.some(p => p.toLowerCase() === String(value).toLowerCase());
+            }
           }
           
           // Check special properties that map to arrays
@@ -120,6 +159,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
     }
   }
   
+  // If we reach here, the card passed all filters (or there were no filters)
   return true;
 }
 
@@ -134,10 +174,10 @@ export function groupCardsBySetGroupings(
   const assignedCards = new Set<string>();
   
   if (groupings && groupings.length > 0) {
-    // Sort groupings by order
-    const sortedGroupings = [...groupings].sort((a, b) => a.order - b.order);
+    // Sort groupings by order (reverse - process from highest to lowest)
+    const sortedGroupings = [...groupings].sort((a, b) => b.order - a.order);
     
-    // Assign cards to groups
+    // Assign cards to groups (processing backwards through the groups)
     for (const grouping of sortedGroupings) {
       const groupCards: Card[] = [];
       

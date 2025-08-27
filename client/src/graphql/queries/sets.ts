@@ -91,6 +91,7 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
               collectorNumberRange {
                 min
                 max
+                orConditions
               }
               properties
             }

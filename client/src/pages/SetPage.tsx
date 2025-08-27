@@ -263,7 +263,6 @@ export const SetPage: React.FC = () => {
       return normalized || artist;
     }).filter((artist: string) => allArtists.includes(artist)); // Only keep valid artists
   }, [filters.artists, artistMap, allArtists]);
-  const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]); // Empty = show all
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
@@ -318,51 +317,54 @@ export const SetPage: React.FC = () => {
   const setInfo = setData?.setsByCode?.data?.[0];
   const cards = cardsData?.cardsBySetCode?.data || [];
 
-  useEffect(() => {
-    if (filteredCards && setInfo && cards) {
-      // Calculate total cards per group from ALL cards (unfiltered)
-      const totalCardsPerGroup = groupCardsBySetGroupings(cards, setInfo.groupings);
-      
-      // Use the new grouping system from the set data for filtered cards
-      const groupedCards = groupCardsBySetGroupings(filteredCards, setInfo.groupings);
-      
-      // Convert to CardGroupConfig format for compatibility
-      const groupsArray: CardGroupConfig[] = [];
-      
-      // Get groupings for proper ordering
-      const groupings = setInfo.groupings || [];
-      
-      // Process each group
-      for (const [groupId, filteredGroupCards] of groupedCards.entries()) {
-        const displayName = getGroupDisplayName(groupId, groupings);
-        const order = getGroupOrder(groupId, groupings);
-        const totalGroupCards = totalCardsPerGroup.get(groupId) || [];
-        
-        groupsArray.push({
-          id: groupId,
-          name: groupId,
-          displayName: displayName,
-          cards: filteredGroupCards,
-          totalCards: totalGroupCards.length,
-          isVisible: true,
-          // These flags are no longer needed with the new system
-          isFoilOnly: false,
-          isVariation: false,
-          isBooster: false,
-          isPromo: false
-        });
-      }
-      
-      // Sort groups by their defined order
-      groupsArray.sort((a, b) => {
-        const orderA = getGroupOrder(a.id, groupings);
-        const orderB = getGroupOrder(b.id, groupings);
-        return orderA - orderB;
-      });
-      
-      setCardGroups(groupsArray);
+  // Compute card groups directly without state - using useMemo to avoid recalculation
+  const cardGroups = useMemo(() => {
+    if (!filteredCards || !setInfo || !cards) {
+      return [];
     }
-  }, [filteredCards, setInfo, cards]);
+
+    // Calculate total cards per group from ALL cards (unfiltered)
+    const totalCardsPerGroup = groupCardsBySetGroupings(cards, setInfo.groupings);
+    
+    // Use the new grouping system from the set data for filtered cards
+    const groupedCards = groupCardsBySetGroupings(filteredCards, setInfo.groupings);
+    
+    // Convert to CardGroupConfig format for compatibility
+    const groupsArray: CardGroupConfig[] = [];
+    
+    // Get groupings for proper ordering
+    const groupings = setInfo.groupings || [];
+    
+    // Process each group
+    for (const [groupId, filteredGroupCards] of groupedCards.entries()) {
+      const displayName = getGroupDisplayName(groupId, groupings);
+      const order = getGroupOrder(groupId, groupings);
+      const totalGroupCards = totalCardsPerGroup.get(groupId) || [];
+      
+      groupsArray.push({
+        id: groupId,
+        name: groupId,
+        displayName: displayName,
+        cards: filteredGroupCards,
+        totalCards: totalGroupCards.length,
+        isVisible: true,
+        // These flags are no longer needed with the new system
+        isFoilOnly: false,
+        isVariation: false,
+        isBooster: false,
+        isPromo: false
+      });
+    }
+    
+    // Sort groups by their defined order
+    groupsArray.sort((a, b) => {
+      const orderA = getGroupOrder(a.id, groupings);
+      const orderB = getGroupOrder(b.id, groupings);
+      return orderA - orderB;
+    });
+    
+    return groupsArray;
+  }, [filteredCards, setInfo?.groupings, cards]);
 
   // Compute visible groups: if no groups selected, show all; otherwise show only selected
   const visibleGroupIds = useMemo(() => {

@@ -1,7 +1,8 @@
 export interface SetGroupingFilter {
   collectorNumberRange?: {
-    min: string;
-    max: string;
+    min: string | null;
+    max: string | null;
+    orConditions?: string[];
   };
   properties?: Record<string, any>;
 }

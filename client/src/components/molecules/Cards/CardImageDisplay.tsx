@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Skeleton } from '@mui/material';
 import FlipIcon from '@mui/icons-material/Flip';
 import type { Card } from '../../../types/card';
 import { imageCache } from '../../../utils/imageCache';
+import { useLazyLoad } from '../../../hooks/useLazyLoad';
 
 interface CardImageDisplayProps {
   card: Card;
@@ -32,6 +33,12 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
 }) => {
   const [currentFaceIndex, setCurrentFaceIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
+  
+  // Use lazy loading hook
+  const { ref: lazyRef, hasBeenInView } = useLazyLoad({
+    rootMargin: '100px', // Start loading 100px before card enters viewport
+    threshold: 0.01
+  });
   
   // Check if this is a double-faced card that we can flip
   // We can flip if there's no main imageUris field (meaning we need to use cardFaces for images)
@@ -72,10 +79,9 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
     return imageUrl ? imageCache.isLoaded(imageUrl) : true;
   });
   
-  // Preload image when URL changes
+  // Only load image when it comes into view
   useEffect(() => {
-    if (!imageUrl) {
-      setImageLoaded(true);
+    if (!imageUrl || !hasBeenInView) {
       return;
     }
 
@@ -91,7 +97,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
         setImageLoaded(true);
       }
     });
-  }, [imageUrl]);
+  }, [imageUrl, hasBeenInView]);
   
   const handleFlip = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering parent onClick
@@ -106,6 +112,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
 
   return (
     <Box
+      ref={lazyRef}
       className={className}
       sx={{
         position: 'relative',
@@ -137,13 +144,29 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
         }}
       >
         
-        {/* Actual image */}
-        {imageUrl && (
+        {/* Placeholder skeleton while not in view */}
+        {!hasBeenInView && (
+          <Skeleton
+            variant="rectangular"
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              borderRadius,
+              bgcolor: 'grey.800'
+            }}
+          />
+        )}
+        
+        {/* Actual image - only render when it has been in view */}
+        {imageUrl && hasBeenInView && (
           <Box
             component="img"
             src={imageUrl}
             alt={card.name}
-            loading="eager" // Changed from lazy to eager to prevent reload issues
+            loading="lazy"
             onLoad={() => {
               imageCache.markLoaded(imageUrl);
               setImageLoaded(true);
