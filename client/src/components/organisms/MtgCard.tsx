@@ -8,6 +8,7 @@ import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
 import { CardBadges } from '../atoms/Cards/CardBadges';
 import { getRarityGlowStyles } from '../../utils/rarityStyles';
+import { srOnly } from '../../styles/cardStyles';
 
 interface MtgCardProps {
   card: Card;
@@ -228,7 +229,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       {/* Hidden element for screen reader description */}
       <Box
         id={`card-details-${card.id}`}
-        sx={{ position: 'absolute', left: '-9999px' }}
+        sx={srOnly}
         aria-hidden="true"
       >
         {card.oracleText && `Card text: ${card.oracleText}`}

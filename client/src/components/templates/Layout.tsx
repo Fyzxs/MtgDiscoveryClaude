@@ -2,6 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { Header } from '../organisms/Header';
 import { Footer } from '../organisms/Footer';
+import { pageContainer, mainContent } from '../../styles/layoutStyles';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,20 +12,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <Box 
       sx={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        minHeight: '100vh',
+        ...pageContainer,
         backgroundColor: 'background.default'
       }}
     >
       <Header />
       <Box 
         component="main" 
-        sx={{ 
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column'
-        }}
+        sx={mainContent}
       >
         {children}
       </Box>
