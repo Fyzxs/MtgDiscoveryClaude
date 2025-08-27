@@ -1,4 +1,7 @@
-﻿namespace App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
 
 public sealed class ScryfallSetOutEntity
 {
@@ -19,4 +22,5 @@ public sealed class ScryfallSetOutEntity
     public string Block { get; init; }
     public string IconSvgUri { get; init; }
     public int PrintedSize { get; init; }
+    public ICollection<SetGroupingOutEntity> Groupings { get; init; }
 }

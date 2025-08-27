@@ -543,3 +543,130 @@ query TestInvalidSet($ids: SetIdsArgEntityInput!) {
     "setIds": ["invalid-set-id-12345"]
   }
 }
+
+
+### Get Sets with Groupings - Complete Grouping Data
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsWithGroupings($ids: SetIdsArgEntityInput!) {
+  setsById(ids: $ids) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        releasedAt
+        iconSvgUri
+        groupings {
+          id
+          displayName
+          order
+          cardCount
+          rawQuery
+          filters {
+            collectorNumberRange {
+              min
+              max
+            }
+            properties
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "ids": {
+    "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c"
+    ]
+  }
+}
+
+
+### Get Set by Code with Groupings
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        groupings {
+          id
+          displayName
+          order
+          cardCount
+          rawQuery
+          filters {
+            collectorNumberRange {
+              min
+              max
+            }
+            properties
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["neo", "dmu", "one"]
+  }
+}
+
+
+### Get All Sets with Groupings (Limited Fields)
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetAllSetsWithGroupings {
+  allSets {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        code
+        name
+        groupings {
+          displayName
+          cardCount
+          rawQuery
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}

@@ -1,4 +1,6 @@
-﻿namespace Lib.Shared.DataModels.Entities;
+﻿using System.Collections.Generic;
+
+namespace Lib.Shared.DataModels.Entities;
 
 public interface ISetItemItrEntity
 {
@@ -19,4 +21,5 @@ public interface ISetItemItrEntity
     string Block { get; }
     string IconSvgUri { get; }
     int PrintedSize { get; }
+    ICollection<ISetGroupingItrEntity> Groupings { get; }
 }

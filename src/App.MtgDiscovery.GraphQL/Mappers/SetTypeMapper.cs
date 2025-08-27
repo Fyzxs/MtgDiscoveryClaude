@@ -1,4 +1,6 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
+﻿using System.Collections.Generic;
+using System.Linq;
+using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
 using Lib.Shared.DataModels.Entities;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
@@ -12,6 +14,31 @@ internal sealed class ScryfallSetMapper : IScryfallSetMapper
 {
     public ScryfallSetOutEntity Map(ISetItemItrEntity setItem)
     {
+        ICollection<SetGroupingOutEntity> groupings = null;
+
+        if (setItem.Groupings != null)
+        {
+            groupings = setItem.Groupings.Select(g => new SetGroupingOutEntity
+            {
+                Id = g.Id,
+                DisplayName = g.DisplayName,
+                Order = g.Order,
+                CardCount = g.CardCount,
+                RawQuery = g.RawQuery,
+                Filters = g.Filters != null ? new GroupingFiltersOutEntity
+                {
+                    CollectorNumberRange = g.Filters.CollectorNumberRange != null
+                        ? new CollectorNumberRangeOutEntity
+                        {
+                            Min = g.Filters.CollectorNumberRange.Min,
+                            Max = g.Filters.CollectorNumberRange.Max
+                        }
+                        : null,
+                    Properties = g.Filters.Properties
+                } : null
+            }).ToList();
+        }
+
         return new ScryfallSetOutEntity
         {
             Id = setItem.Id,
@@ -30,7 +57,8 @@ internal sealed class ScryfallSetMapper : IScryfallSetMapper
             BlockCode = setItem.BlockCode,
             Block = setItem.Block,
             IconSvgUri = setItem.IconSvgUri,
-            PrintedSize = setItem.PrintedSize
+            PrintedSize = setItem.PrintedSize,
+            Groupings = groupings
         };
     }
 }
