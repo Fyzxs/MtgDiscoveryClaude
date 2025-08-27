@@ -15,6 +15,7 @@ import { GraphQLQueryStateContainer } from '../components/molecules/shared/Query
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { ResponsiveGrid } from '../components/atoms/layouts/ResponsiveGrid';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
+import { CardGridErrorBoundary } from '../components/ErrorBoundaries';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
