@@ -8,7 +8,7 @@ interface DebouncedSearchInputProps extends SearchInputProps {
   // SearchInputProps already has all needed properties
 }
 
-export const DebouncedSearchInput: React.FC<DebouncedSearchInputProps> = ({
+const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
   value = '',
   onChange,
   placeholder = 'Search...',
@@ -91,3 +91,9 @@ export const DebouncedSearchInput: React.FC<DebouncedSearchInputProps> = ({
     />
   );
 };
+
+/**
+ * Memoized DebouncedSearchInput component
+ * Uses custom comparison to prevent re-renders when only internal state changes
+ */
+export const DebouncedSearchInput = React.memo(DebouncedSearchInputComponent);

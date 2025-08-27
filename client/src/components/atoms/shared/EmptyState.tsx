@@ -13,7 +13,7 @@ interface EmptyStateProps {
   sx?: any;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
+const EmptyStateComponent: React.FC<EmptyStateProps> = ({
   message = 'No results found',
   description,
   icon,
@@ -59,8 +59,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   );
 };
 
+/**
+ * Memoized EmptyState component
+ * Static component that rarely changes
+ */
+export const EmptyState = React.memo(EmptyStateComponent);
+
 // Pre-configured empty state for search results
-export const SearchEmptyState: React.FC<{ 
+const SearchEmptyStateComponent: React.FC<{ 
   itemType?: string;
   onClear?: () => void;
 }> = ({ itemType = 'results', onClear }) => {
@@ -76,3 +82,8 @@ export const SearchEmptyState: React.FC<{
     />
   );
 };
+
+/**
+ * Memoized SearchEmptyState component
+ */
+export const SearchEmptyState = React.memo(SearchEmptyStateComponent);

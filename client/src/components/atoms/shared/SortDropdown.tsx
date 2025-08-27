@@ -16,7 +16,7 @@ interface SortDropdownProps extends StyledComponentProps {
   fullWidth?: boolean;
 }
 
-export const SortDropdown: React.FC<SortDropdownProps> = ({
+const SortDropdownComponent: React.FC<SortDropdownProps> = ({
   value,
   onChange,
   options,
@@ -56,3 +56,9 @@ export const SortDropdown: React.FC<SortDropdownProps> = ({
     </FormControl>
   );
 };
+
+/**
+ * Memoized SortDropdown component
+ * Re-renders only when props actually change
+ */
+export const SortDropdown = React.memo(SortDropdownComponent);

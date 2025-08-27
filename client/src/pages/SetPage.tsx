@@ -413,7 +413,8 @@ export const SetPage: React.FC = () => {
             debounceMs: 1000,
             minWidth: 300
           },
-          multiSelects: [
+          multiSelects: [],
+          autocompletes: [
             {
               key: 'rarities',
               value: selectedRarities,
@@ -421,10 +422,8 @@ export const SetPage: React.FC = () => {
               options: RARITIES,
               label: 'Rarity',
               placeholder: 'All Rarities',
-              minWidth: 150
-            }
-          ],
-          autocompletes: [
+              minWidth: 180
+            },
             {
               key: 'artists',
               value: selectedArtists,
@@ -432,7 +431,8 @@ export const SetPage: React.FC = () => {
               options: uniqueArtists,
               label: 'Artist',
               placeholder: 'All Artists',
-              minWidth: 250
+              minWidth: 250,
+              maxTagsToShow: 1
             },
             ...(uniqueCardTypes.length > 1 ? [{
               key: 'cardTypes',

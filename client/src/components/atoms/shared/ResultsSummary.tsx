@@ -9,7 +9,7 @@ interface ResultsSummaryProps {
   textAlign?: 'left' | 'center' | 'right';
 }
 
-export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
+const ResultsSummaryComponent: React.FC<ResultsSummaryProps> = ({
   showing,
   total,
   itemType = 'items',
@@ -32,3 +32,9 @@ export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
     </Box>
   );
 };
+
+/**
+ * Memoized ResultsSummary component
+ * Only re-renders when counts change
+ */
+export const ResultsSummary = React.memo(ResultsSummaryComponent);

@@ -25,7 +25,7 @@ interface FilterPanelProps extends StyledComponentProps {
   spacing?: number;
 }
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({
+const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   config,
   layout = 'horizontal',
   spacing = 2,
@@ -97,6 +97,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   auto.onChange(newValue);
                 }}
                 getOptionLabel={auto.getOptionLabel || ((option) => option)}
+                limitTags={auto.maxTagsToShow || 2}
+                getLimitTagsText={(more) => `+${more} more`}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -202,6 +204,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                 auto.onChange(newValue);
               }}
               getOptionLabel={auto.getOptionLabel || ((option) => option)}
+              limitTags={auto.maxTagsToShow || 2}
+              getLimitTagsText={(more) => `+${more} more`}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -247,3 +251,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     </Box>
   );
 };
+
+/**
+ * Memoized FilterPanel component
+ * Complex component that benefits from memoization to prevent unnecessary re-renders
+ * of child filter components
+ */
+export const FilterPanel = React.memo(FilterPanelComponent);

@@ -65,6 +65,7 @@ export interface AutocompleteConfig {
   minWidth?: number | string;
   renderTags?: boolean;
   getOptionLabel?: (option: string) => string;
+  maxTagsToShow?: number; // Maximum number of chips to show before "+X more"
 }
 
 /**

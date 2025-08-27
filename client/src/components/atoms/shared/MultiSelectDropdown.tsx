@@ -29,7 +29,7 @@ interface MultiSelectDropdownProps extends StyledComponentProps {
   fullWidth?: boolean;
 }
 
-export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
+const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
   value,
   onChange,
   options,
@@ -137,3 +137,9 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     </FormControl>
   );
 };
+
+/**
+ * Memoized MultiSelectDropdown component
+ * Re-renders only when props actually change
+ */
+export const MultiSelectDropdown = React.memo(MultiSelectDropdownComponent);
