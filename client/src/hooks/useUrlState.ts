@@ -24,7 +24,7 @@ export function useUrlState(
   } = {}
 ) {
   const { replace = true, debounceMs = 0 } = options;
-  const debounceTimerRef = useRef<NodeJS.Timeout | undefined>();
+  const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const isInitialMount = useRef(true);
 
   // Get initial values from URL

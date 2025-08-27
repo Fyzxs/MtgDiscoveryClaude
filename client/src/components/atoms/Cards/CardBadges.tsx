@@ -12,9 +12,9 @@ interface CardBadgesProps {
 }
 
 // Default exclusions
-const DEFAULT_EXCLUDE_FINISHES = [];  // Include all finishes now
-const DEFAULT_EXCLUDE_PROMO_TYPES = [];  // Include all promo types now
-const DEFAULT_EXCLUDE_FRAME_EFFECTS = [];
+const DEFAULT_EXCLUDE_FINISHES: string[] = [];  // Include all finishes now
+const DEFAULT_EXCLUDE_PROMO_TYPES: string[] = [];  // Include all promo types now
+const DEFAULT_EXCLUDE_FRAME_EFFECTS: string[] = [];
 
 export const CardBadges: React.FC<CardBadgesProps> = ({
   finishes,

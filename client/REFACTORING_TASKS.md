@@ -360,17 +360,27 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 20: Add Loading States to Filter Components
+### Task 20: Add Loading States to Filter Components [COMPLETED]
 **Priority: MEDIUM**
-**Files to modify:**
-- Update filter components to show loading states
-- Add skeleton loaders for dynamic options
+**Files modified:**
+- Updated: `src/components/atoms/shared/MultiSelectDropdown.tsx`
+- Updated: `src/components/atoms/shared/SortDropdown.tsx`
+- Updated: `src/components/atoms/shared/DebouncedSearchInput.tsx`
+- Updated: `src/components/molecules/shared/FilterPanel.tsx`
+- Updated: `src/types/filters.ts`
 
-**Steps:**
-1. Add loading prop to filter components
-2. Create skeleton states for dropdowns
-3. Show loading during data fetching
-4. Test loading state transitions
+**Steps completed:**
+1. ✓ Added loading and disabled props to all filter components
+2. ✓ Created skeleton states using MUI Skeleton component
+3. ✓ Updated FilterPanel to pass through loading states
+4. ✓ Updated type definitions to include loading/disabled properties
+5. ✓ Tested build and fixed compilation issues
+
+**What was added:**
+- Skeleton loaders appear when loading=true
+- Components are disabled when disabled=true
+- Search input shows CircularProgress when disabled
+- All loading states maintain proper dimensions to prevent layout shift
 
 **Testing focus:** Smooth loading transitions, no layout shift
 

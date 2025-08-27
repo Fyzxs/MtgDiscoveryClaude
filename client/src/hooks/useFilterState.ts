@@ -1,9 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type {
-  UseFilterStateConfig,
-  FilterState as FilterStateType,
-  FilterFunction,
-  SortFunction
+  UseFilterStateConfig
 } from '../types/filters';
 
 // Re-export for backward compatibility

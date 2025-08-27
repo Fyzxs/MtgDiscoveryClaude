@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, Skeleton, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import type { SearchInputProps } from '../../../types/components';
 
 interface DebouncedSearchInputProps extends SearchInputProps {
-  // SearchInputProps already has all needed properties
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
@@ -15,11 +16,13 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
   debounceMs = 1000,
   sx = {},
   fullWidth = false,
-  minWidth = 300
+  minWidth = 300,
+  loading = false,
+  disabled = false
 }) => {
   const [hasText, setHasText] = useState(!!value);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const debounceTimer = useRef<NodeJS.Timeout>();
+  const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (searchInputRef.current && value !== undefined) {
@@ -61,6 +64,22 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
     }
   };
 
+  // Show skeleton when loading
+  if (loading) {
+    return (
+      <Skeleton 
+        variant="rectangular" 
+        height={56} 
+        sx={{ 
+          minWidth: fullWidth ? undefined : minWidth, 
+          width: fullWidth ? '100%' : minWidth,
+          borderRadius: 1,
+          ...sx 
+        }} 
+      />
+    );
+  }
+
   return (
     <TextField
       inputRef={searchInputRef}
@@ -70,13 +89,14 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
       placeholder={placeholder}
       defaultValue={value}
       onChange={handleChange}
+      disabled={disabled}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <SearchIcon />
+            {disabled ? <CircularProgress size={20} /> : <SearchIcon />}
           </InputAdornment>
         ),
-        endAdornment: hasText ? (
+        endAdornment: hasText && !disabled ? (
           <InputAdornment position="end">
             <IconButton
               size="small"

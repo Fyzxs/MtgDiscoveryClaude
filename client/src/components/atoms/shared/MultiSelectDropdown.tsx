@@ -7,7 +7,8 @@ import {
   Chip, 
   Typography,
   IconButton,
-  InputAdornment
+  InputAdornment,
+  Skeleton
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -27,6 +28,8 @@ interface MultiSelectDropdownProps extends StyledComponentProps {
   maxDisplay?: number; // Max items to show before showing "X selected"
   showClearAll?: boolean;
   fullWidth?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
@@ -39,6 +42,8 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
   maxDisplay = 2,
   showClearAll = true,
   fullWidth = false,
+  loading = false,
+  disabled = false,
   sx = {}
 }) => {
   // Normalize options to always be MultiSelectOption[]
@@ -83,10 +88,23 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
     return `${selected.length} selected`;
   };
 
+  // Show skeleton when loading
+  if (loading) {
+    return (
+      <FormControl 
+        fullWidth={fullWidth} 
+        sx={{ minWidth, ...sx }}
+      >
+        <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
+      </FormControl>
+    );
+  }
+
   return (
     <FormControl 
       fullWidth={fullWidth} 
       sx={{ minWidth, ...sx }}
+      disabled={disabled}
     >
       <InputLabel>{label}</InputLabel>
       <Select
@@ -95,6 +113,7 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
         onChange={handleChange}
         label={label}
         renderValue={renderValue}
+        disabled={disabled}
         endAdornment={
           value.length > 0 ? (
             <InputAdornment position="end">

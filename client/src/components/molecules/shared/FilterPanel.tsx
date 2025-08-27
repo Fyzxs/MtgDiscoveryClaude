@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   Box,
-  Grid,
   Stack,
   TextField,
   Chip,
-  Autocomplete
+  Autocomplete,
+  Grid
 } from '@mui/material';
 import { DebouncedSearchInput } from '../../atoms/shared/DebouncedSearchInput';
 import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
@@ -46,7 +46,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
         <Grid container spacing={spacing} alignItems="center">
           {/* Search Input */}
           {search && (
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <DebouncedSearchInput
                 value={search.value}
                 onChange={search.onChange}
@@ -54,6 +54,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 debounceMs={search.debounceMs}
                 minWidth={search.minWidth}
                 fullWidth={search.fullWidth !== false}
+                loading={search.loading}
+                disabled={search.disabled}
               />
             </Grid>
           )}
@@ -62,10 +64,11 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
           {multiSelects.map((select) => (
             <Grid 
               key={select.key} 
-              item 
-              xs={12} 
-              sm={6} 
-              md={select.fullWidth ? 12 : 3}
+              size={{ 
+                xs: 12, 
+                sm: 6, 
+                md: select.fullWidth ? 12 : 3 
+              }}
             >
               <MultiSelectDropdown
                 value={select.value}
@@ -75,6 +78,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 placeholder={select.placeholder}
                 minWidth={select.minWidth}
                 fullWidth={select.fullWidth !== false}
+                loading={select.loading}
+                disabled={select.disabled}
               />
             </Grid>
           ))}
@@ -83,10 +88,11 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
           {autocompletes.map((auto) => (
             <Grid 
               key={auto.key} 
-              item 
-              xs={12} 
-              sm={6} 
-              md={3}
+              size={{ 
+                xs: 12, 
+                sm: 6, 
+                md: 3 
+              }}
             >
               <Autocomplete
                 multiple
@@ -129,10 +135,11 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
           {/* Sort Dropdown */}
           {sort && (
             <Grid 
-              item 
-              xs={12} 
-              sm={6} 
-              md={sort.fullWidth ? 12 : 3}
+              size={{ 
+                xs: 12, 
+                sm: 6, 
+                md: sort.fullWidth ? 12 : 3 
+              }}
             >
               <SortDropdown
                 value={sort.value}
@@ -141,13 +148,15 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 label={sort.label}
                 minWidth={sort.minWidth}
                 fullWidth={sort.fullWidth !== false}
+                loading={sort.loading}
+                disabled={sort.disabled}
               />
             </Grid>
           )}
 
           {/* Custom Filter Components */}
           {customFilters.map((filter, index) => (
-            <Grid key={`custom-${index}`} item xs={12} sm={6} md={3}>
+            <Grid key={`custom-${index}`} size={{ xs: 12, sm: 6, md: 3 }}>
               {filter}
             </Grid>
           ))}
@@ -175,6 +184,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               debounceMs={search.debounceMs}
               minWidth={search.minWidth || 300}
               fullWidth={layout === 'vertical' && search.fullWidth !== false}
+              loading={search.loading}
+              disabled={search.disabled}
             />
           )}
 
@@ -189,6 +200,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               placeholder={select.placeholder}
               minWidth={select.minWidth || 150}
               fullWidth={layout === 'vertical' && select.fullWidth !== false}
+              loading={select.loading}
+              disabled={select.disabled}
             />
           ))}
 
@@ -241,6 +254,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               label={sort.label}
               minWidth={sort.minWidth || 180}
               fullWidth={layout === 'vertical' && sort.fullWidth !== false}
+              loading={sort.loading}
+              disabled={sort.disabled}
             />
           )}
 

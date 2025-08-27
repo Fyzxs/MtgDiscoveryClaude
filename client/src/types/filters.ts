@@ -36,6 +36,8 @@ export interface SearchConfig {
   debounceMs?: number;
   minWidth?: number | string;
   fullWidth?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -50,6 +52,8 @@ export interface MultiSelectConfig {
   placeholder?: string;
   minWidth?: number | string;
   fullWidth?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -78,6 +82,8 @@ export interface SortConfig {
   label?: string;
   minWidth?: number | string;
   fullWidth?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 /**

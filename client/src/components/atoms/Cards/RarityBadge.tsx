@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chip } from '@mui/material';
-import type { Rarity } from '../../types/card';
+import type { Rarity } from '../../../types/card';
 
 interface RarityBadgeProps {
   rarity: Rarity | string;

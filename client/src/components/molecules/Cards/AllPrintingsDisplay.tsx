@@ -65,7 +65,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
       {!loading && !hasError && otherCards.length > 0 && (
         <Grid container spacing={2} sx={{ mt: 1 }}>
           {otherCards.map((card) => (
-            <Grid item key={card.id} xs={12} sm={6} md={4}>
+            <Grid key={card.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <MtgCard 
                 card={card}
                 context={{

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tooltip, Skeleton } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import FlipIcon from '@mui/icons-material/Flip';
 import type { Card } from '../../../types/card';
 import { imageCache } from '../../../utils/imageCache';
@@ -35,7 +35,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
   
   // Check if this is a double-faced card
   const isDoubleFaced = card.cardFaces && card.cardFaces.length > 1;
-  const currentFace = isDoubleFaced ? card.cardFaces[currentFaceIndex] : null;
+  const currentFace = isDoubleFaced && card.cardFaces ? card.cardFaces[currentFaceIndex] : null;
   
   // Determine which image to show
   const getImageUrl = () => {

@@ -69,5 +69,5 @@ export const imageContainer: SxProps<Theme> = {
  * Utility to combine multiple style objects
  */
 export const combineStyles = (...styles: (SxProps<Theme> | undefined)[]): SxProps<Theme> => {
-  return styles.filter(Boolean).reduce((acc, style) => ({ ...acc, ...(style as SxProps<Theme>) }), {} as SxProps<Theme>);
+  return styles.filter(Boolean).reduce((acc, style) => ({ ...acc, ...(style as SxProps<Theme>) }), {} as SxProps<Theme>) || {};
 };

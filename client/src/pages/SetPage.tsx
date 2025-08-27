@@ -44,6 +44,83 @@ interface SetsResponse {
 
 const RARITIES = ['common', 'uncommon', 'rare', 'mythic', 'special', 'bonus'];
 
+// Get unique artists from cards
+const getUniqueArtists = (cards: Card[]): string[] => {
+  const artistSet = new Set<string>();
+  cards.forEach(card => {
+    if (card.artist) {
+      // Split multiple artists (e.g., "Artist 1 & Artist 2")
+      const artists = card.artist.split(/\s+(?:&|and)\s+/i);
+      artists.forEach(artist => artistSet.add(artist.trim()));
+    }
+  });
+  return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+};
+
+// Format card type labels for display
+const formatCardTypeLabel = (type: string): string => {
+  // Handle null/undefined
+  if (!type) return 'Unknown';
+  
+  // Normalize the type for comparison (remove spaces, underscores, make uppercase)
+  const normalizedType = type.replace(/[\s_-]/g, '').toUpperCase();
+  
+  // Special cases mapping - use normalized keys
+  const specialCases: Record<string, string> = {
+    'INBOOSTERS': 'In Boosters',
+    'CARDVARIATIONS': 'Card Variations', 
+    'FOILONLYBOOSTER': 'Foil Only Booster Cards',
+    'PROMOCARDS': 'Promo Cards',
+    'OTHERCARDS': 'Other Cards'
+  };
+  
+  // Check normalized version
+  if (specialCases[normalizedType]) {
+    return specialCases[normalizedType];
+  }
+  
+  // General formatting: replace underscores with spaces and capitalize words
+  return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+};
+
+// Determine which type group a card belongs to (matching the grouping logic)
+const getCardType = (card: Card): string => {
+  // Check for foil-only booster cards (7th Edition specific)
+  if (card.booster && card.foil && !card.nonFoil) {
+    return 'FOIL_ONLY_BOOSTER';
+  }
+  // Check for variations
+  else if (card.variation) {
+    return 'CARD_VARIATIONS';
+  }
+  // Check if it's in boosters (this is the "regular" cards)
+  else if (card.booster) {
+    return 'IN_BOOSTERS';
+  }
+  // Check for promos
+  else if (card.promo) {
+    return 'PROMO_CARDS';
+  }
+  // Default for cards that don't fit other categories
+  return 'OTHER_CARDS';
+};
+
+// Get unique card types from cards (includes promo types, boosters, variations, etc.)
+const getUniqueCardTypes = (cards: Card[]): string[] => {
+  const cardTypeSet = new Set<string>();
+  
+  cards.forEach(card => {
+    const cardType = getCardType(card);
+    if (cardType !== 'OTHER_CARDS' || cards.some(c => getCardType(c) === 'OTHER_CARDS')) {
+      // Only add OTHER_CARDS if at least one card actually belongs to it
+      cardTypeSet.add(cardType);
+    }
+  });
+  
+  return Array.from(cardTypeSet)
+    .sort((a, b) => formatCardTypeLabel(a).localeCompare(formatCardTypeLabel(b)));
+};
+
 export const SetPage: React.FC = () => {
   // Get set code from URL first
   const urlParams = new URLSearchParams(window.location.search);
@@ -64,6 +141,31 @@ export const SetPage: React.FC = () => {
     variables: { setCode: { setCode } },
     skip: !setCode
   });
+  
+  // Get all artists from the data for normalization (moved up to be available for initial state)
+  const allArtists = useMemo(() => {
+    const allCards = cardsData?.cardsBySetCode?.data || [];
+    return getUniqueArtists(allCards);
+  }, [cardsData]);
+  
+  // Create artist map early for initial value normalization
+  const artistMap = useMemo(() => {
+    const map = new Map<string, string>();
+    allArtists.forEach(artist => {
+      map.set(artist.toLowerCase(), artist);
+    });
+    return map;
+  }, [allArtists]);
+  
+  // Get initial artists from URL as array
+  const initialArtists = useMemo(() => {
+    let raw = initialValues.artists || [];
+    // Ensure raw is always an array (URL parsing might return a string for single values)
+    if (!Array.isArray(raw)) {
+      raw = raw ? [raw] : [];
+    }
+    return raw;
+  }, [initialValues.artists]);
 
   const { loading: setLoading, error: setError, data: setData } = useQuery<SetsResponse>(GET_SETS_BY_CODE, {
     variables: { codes: { setCodes: [setCode] } },
@@ -79,13 +181,13 @@ export const SetPage: React.FC = () => {
   const filterConfig = useMemo(() => ({
     searchFields: ['name', 'oracleText', 'typeLine', 'artist'] as (keyof Card)[],
     sortOptions: {
-      'collector-asc': (a: Card, b: Card) => parseCollectorNumber(a.collectorNumber) - parseCollectorNumber(b.collectorNumber),
-      'collector-desc': (a: Card, b: Card) => parseCollectorNumber(b.collectorNumber) - parseCollectorNumber(a.collectorNumber),
+      'collector-asc': (a: Card, b: Card) => parseCollectorNumber(a.collectorNumber || '') - parseCollectorNumber(b.collectorNumber || ''),
+      'collector-desc': (a: Card, b: Card) => parseCollectorNumber(b.collectorNumber || '') - parseCollectorNumber(a.collectorNumber || ''),
       'name-asc': (a: Card, b: Card) => a.name.localeCompare(b.name),
       'name-desc': (a: Card, b: Card) => b.name.localeCompare(a.name),
       'rarity': (a: Card, b: Card) => {
         const rarityOrder: Record<string, number> = { common: 0, uncommon: 1, rare: 2, mythic: 3, special: 4, bonus: 5 };
-        return (rarityOrder[a.rarity] || 99) - (rarityOrder[b.rarity] || 99);
+        return (rarityOrder[a.rarity || ''] || 99) - (rarityOrder[b.rarity || ''] || 99);
       },
       'price-desc': (a: Card, b: Card) => {
         const priceA = parseFloat(a.prices?.usd || '0');
@@ -116,7 +218,9 @@ export const SetPage: React.FC = () => {
         if (!selectedArtists || selectedArtists.length === 0) return true;
         if (!card.artist) return false;
         const cardArtists = card.artist.split(/\s+(?:&|and)\s+/i).map(a => a.trim());
-        return cardArtists.some(artist => selectedArtists.includes(artist));
+        // Case-insensitive comparison to handle URL parameters that might have different casing
+        const normalizedSelected = selectedArtists.map(a => a.toLowerCase());
+        return cardArtists.some(artist => normalizedSelected.includes(artist.toLowerCase()));
       },
       showDigital: (card: Card, show: boolean) => show || !card.digital
     },
@@ -138,109 +242,51 @@ export const SetPage: React.FC = () => {
       search: initialValues.search || '',
       sort: initialValues.sort || 'collector-asc',
       filters: {
-        rarities: initialValues.rarities || [],
-        artists: initialValues.artists || [],
+        rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
+        artists: initialArtists,  // Use raw initial values, normalize later
         showDigital: false
       }
     }
   );
 
   const selectedRarities = filters.rarities || [];
-  const selectedArtists = filters.artists || [];
+  
+  // Update artist filter to normalize casing when data loads
+  useEffect(() => {
+    if (artistMap && artistMap.size > 0 && filters.artists && filters.artists.length > 0) {
+      const normalized = filters.artists.map((artist: string) => {
+        const normalizedArtist = artistMap.get(artist.toLowerCase());
+        return normalizedArtist || artist;
+      });
+      
+      // Only update if the normalized version is different
+      const needsUpdate = normalized.some((norm, i) => norm !== filters.artists[i]);
+      if (needsUpdate) {
+        updateFilter('artists', normalized);
+      }
+    }
+  }, [artistMap]); // Only run when artistMap changes (when data loads)
+  
+  // Normalize selected artists to match the case in our data
+  const selectedArtists = useMemo(() => {
+    const raw = filters.artists || [];
+    // If data hasn't loaded yet, use the raw values
+    if (!artistMap || artistMap.size === 0) return raw;
+    // Once we have data, normalize and validate
+    return raw.map((artist: string) => {
+      // Try to find the correctly cased version
+      const normalized = artistMap.get(artist.toLowerCase());
+      return normalized || artist;
+    }).filter((artist: string) => allArtists.includes(artist)); // Only keep valid artists
+  }, [filters.artists, artistMap, allArtists]);
   const [selectedCardTypes, setSelectedCardTypes] = useState<string[]>([]);
   const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
   const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
-  // Get unique artists from cards
-  const getUniqueArtists = (cards: Card[]): string[] => {
-    const artistSet = new Set<string>();
-    cards.forEach(card => {
-      if (card.artist) {
-        // Split multiple artists (e.g., "Artist 1 & Artist 2")
-        const artists = card.artist.split(/\s+(?:&|and)\s+/i);
-        artists.forEach(artist => artistSet.add(artist.trim()));
-      }
-    });
-    return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-  };
-  
-  // Format card type labels for display
-  const formatCardTypeLabel = (type: string): string => {
-    // Handle null/undefined
-    if (!type) return 'Unknown';
-    
-    // Normalize the type for comparison (remove spaces, underscores, make uppercase)
-    const normalizedType = type.replace(/[\s_-]/g, '').toUpperCase();
-    
-    // Special cases mapping - use normalized keys
-    const specialCases: Record<string, string> = {
-      'INBOOSTERS': 'In Boosters',
-      'CARDVARIATIONS': 'Card Variations', 
-      'FOILONLYBOOSTER': 'Foil Only Booster Cards',
-      'PROMOCARDS': 'Promo Cards',
-      'OTHERCARDS': 'Other Cards'
-    };
-    
-    // Check normalized version
-    if (specialCases[normalizedType]) {
-      return specialCases[normalizedType];
-    }
-    
-    // General formatting: replace underscores with spaces and capitalize words
-    return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  };
-  
-  // Determine which type group a card belongs to (matching the grouping logic)
-  const getCardType = (card: Card): string => {
-    // Check for foil-only booster cards (7th Edition specific)
-    if (card.booster && card.foil && !card.nonFoil) {
-      return 'FOIL_ONLY_BOOSTER';
-    }
-    // Check for variations
-    else if (card.variation) {
-      return 'CARD_VARIATIONS';
-    }
-    // Check if it's in boosters (this is the "regular" cards)
-    else if (card.booster) {
-      return 'IN_BOOSTERS';
-    }
-    // Check for promos
-    else if (card.promo) {
-      return 'PROMO_CARDS';
-    }
-    // Default for cards that don't fit other categories
-    return 'OTHER_CARDS';
-  };
-  
-  // Get unique card types from cards (includes promo types, boosters, variations, etc.)
-  const getUniqueCardTypes = (cards: Card[]): string[] => {
-    const cardTypeSet = new Set<string>();
-    
-    cards.forEach(card => {
-      const cardType = getCardType(card);
-      if (cardType !== 'OTHER_CARDS' || cards.some(c => getCardType(c) === 'OTHER_CARDS')) {
-        // Only add OTHER_CARDS if at least one card actually belongs to it
-        cardTypeSet.add(cardType);
-      }
-    });
-    
-    return Array.from(cardTypeSet)
-      .sort((a, b) => formatCardTypeLabel(a).localeCompare(formatCardTypeLabel(b)));
-  };
 
 
 
-  // Get the currently selected card by querying the DOM
-  // This avoids React state updates on every selection change (which cause lag)
-  // Instead, we query the DOM only when we actually need to know which card is selected
-  const getSelectedCardId = useCallback(() => {
-    const selectedCard = document.querySelector('[data-mtg-card="true"].selected');
-    if (selectedCard) {
-      return selectedCard.getAttribute('data-card-id');
-    }
-    return null;
-  }, []);
   
   // Example: When adding to collection (to be implemented)
   // const handleAddToCollection = () => {
@@ -260,7 +306,7 @@ export const SetPage: React.FC = () => {
     {
       search: searchTerm,
       rarities: selectedRarities,
-      artists: selectedArtists,
+      artists: filters.artists || [],  // Use raw filter values to preserve URL state
       sort: sortBy
     },
     {
@@ -364,7 +410,7 @@ export const SetPage: React.FC = () => {
   const cards = cardsData?.cardsBySetCode?.data || [];
   const setInfo = setData?.setsByCode?.data?.[0];
   const setName = setInfo?.name || cards[0]?.setName || setCode.toUpperCase();
-  const uniqueArtists = getUniqueArtists(cards);
+  // Note: allArtists and artistMap are now created earlier for initial value normalization
   const uniqueCardTypes = getUniqueCardTypes(cards);
   
   // Check if all cards have the same release date
@@ -426,9 +472,10 @@ export const SetPage: React.FC = () => {
             },
             {
               key: 'artists',
+              // Use selectedArtists which are already validated
               value: selectedArtists,
               onChange: (value) => updateFilter('artists', value),
-              options: uniqueArtists,
+              options: allArtists,
               label: 'Artist',
               placeholder: 'All Artists',
               minWidth: 250,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, FormControl, InputLabel, MenuItem } from '@mui/material';
+import { Select, FormControl, InputLabel, MenuItem, Skeleton } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { SortOption } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';
@@ -14,6 +14,8 @@ interface SortDropdownProps extends StyledComponentProps {
   label?: string;
   minWidth?: number | string;
   fullWidth?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 const SortDropdownComponent: React.FC<SortDropdownProps> = ({
@@ -23,22 +25,38 @@ const SortDropdownComponent: React.FC<SortDropdownProps> = ({
   label = 'Sort By',
   minWidth = 180,
   fullWidth = false,
+  loading = false,
+  disabled = false,
   sx = {}
 }) => {
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);
   };
 
+  // Show skeleton when loading
+  if (loading) {
+    return (
+      <FormControl 
+        fullWidth={fullWidth} 
+        sx={{ minWidth, ...sx }}
+      >
+        <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
+      </FormControl>
+    );
+  }
+
   return (
     <FormControl 
       fullWidth={fullWidth} 
       sx={{ minWidth, ...sx }}
+      disabled={disabled}
     >
       <InputLabel>{label}</InputLabel>
       <Select
         value={value}
         onChange={handleChange}
         label={label}
+        disabled={disabled}
       >
         {options.map((option) => {
           // Skip options with false condition
