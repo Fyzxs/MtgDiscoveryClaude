@@ -5,9 +5,12 @@ import {
   InputLabel, 
   MenuItem, 
   Chip, 
-  Typography
+  Typography,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
+import ClearIcon from '@mui/icons-material/Clear';
 
 export interface MultiSelectOption {
   value: string;
@@ -94,6 +97,23 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         onChange={handleChange}
         label={label}
         renderValue={renderValue}
+        endAdornment={
+          value.length > 0 ? (
+            <InputAdornment position="end">
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange([]);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                sx={{ mr: 2 }}
+              >
+                <ClearIcon fontSize="small" />
+              </IconButton>
+            </InputAdornment>
+          ) : null
+        }
       >
         {showClearAll && (
           <MenuItem 

@@ -161,11 +161,11 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ## Phase 3: Filter Panel Extraction (Complex)
 
-### Task 9: Create FilterPanel Molecule
+### Task 9: Create FilterPanel Molecule [COMPLETED]
 **Files to modify:**
-- Create: `src/components/molecules/shared/FilterPanel.tsx`
-- Update: `src/pages/AllSetsPage.tsx`
-- Update: `src/pages/SetPage.tsx`
+- Created: `src/components/molecules/shared/FilterPanel.tsx`
+- Updated: `src/pages/AllSetsPage.tsx`
+- Updated: `src/pages/SetPage.tsx`
 
 **Steps:**
 1. Create FilterPanel using previously created atoms

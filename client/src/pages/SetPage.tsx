@@ -5,10 +5,6 @@ import {
   Typography, 
   Box, 
   Alert,
-  TextField,
-  Chip,
-  Stack,
-  Autocomplete,
   Fab,
   Zoom
 } from '@mui/material';
@@ -17,14 +13,12 @@ import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
-import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
-import { SortDropdown } from '../components/atoms/shared/SortDropdown';
-import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
 import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
+import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -425,153 +419,76 @@ export const SetPage: React.FC = () => {
         </Typography>
       )}
 
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
-        <Stack spacing={2}>
-          <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ rowGap: 2 }}>
-            <DebouncedSearchInput
-              value={initialValues.search || ''}
-              onChange={setSearchTerm}
-              placeholder="Search cards..."
-              debounceMs={1000}
-              minWidth={300}
-            />
-            
-            <MultiSelectDropdown
-              value={selectedRarities}
-              onChange={handleRarityChange}
-              options={RARITIES}
-              label="Rarity"
-              placeholder="All Rarities"
-              minWidth={150}
-            />
-
-            <Autocomplete
-              multiple
-              sx={{ minWidth: 250 }}
-              options={uniqueArtists}
-              value={selectedArtists}
-              onChange={(event, newValue) => {
-                updateFilter('artists', newValue);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Artist"
-                  placeholder={selectedArtists.length === 0 ? "All Artists" : "Add more..."}
-                  size="medium"
-                />
-              )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => {
-                  const { key, ...chipProps } = getTagProps({ index });
-                  return (
-                    <Chip
-                      key={key}
-                      size="small"
-                      label={option}
-                      {...chipProps}
-                    />
-                  );
-                })
+      {/* Filters and Search */}
+      <FilterPanel
+        config={{
+          search: {
+            value: initialValues.search || '',
+            onChange: setSearchTerm,
+            placeholder: 'Search cards...',
+            debounceMs: 1000,
+            minWidth: 300
+          },
+          multiSelects: [
+            {
+              key: 'rarities',
+              value: selectedRarities,
+              onChange: handleRarityChange,
+              options: RARITIES,
+              label: 'Rarity',
+              placeholder: 'All Rarities',
+              minWidth: 150
+            }
+          ],
+          autocompletes: [
+            {
+              key: 'artists',
+              value: selectedArtists,
+              onChange: (value) => updateFilter('artists', value),
+              options: uniqueArtists,
+              label: 'Artist',
+              placeholder: 'All Artists',
+              minWidth: 250
+            },
+            ...(uniqueCardTypes.length > 1 ? [{
+              key: 'cardTypes',
+              value: selectedCardTypes,
+              onChange: setSelectedCardTypes,
+              options: uniqueCardTypes,
+              label: 'Card Type',
+              placeholder: 'All Types',
+              minWidth: 250,
+              getOptionLabel: formatCardTypeLabel
+            }] : [])
+          ],
+          sort: {
+            value: sortBy,
+            onChange: handleSortChange,
+            options: [
+              { value: 'collector-asc', label: 'Collector # (Low-High)' },
+              { value: 'collector-desc', label: 'Collector # (High-Low)' },
+              { value: 'name-asc', label: 'Name (A-Z)' },
+              { value: 'name-desc', label: 'Name (Z-A)' },
+              { value: 'rarity', label: 'Rarity' },
+              { value: 'price-desc', label: 'Price (High-Low)' },
+              { value: 'price-asc', label: 'Price (Low-High)' },
+              { 
+                value: 'release-desc', 
+                label: 'Release Date (Newest)',
+                condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
+              },
+              { 
+                value: 'release-asc', 
+                label: 'Release Date (Oldest)',
+                condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
               }
-              renderOption={(props, option) => {
-                const { key, ...otherProps } = props;
-                return (
-                  <Box key={key} component="li" {...otherProps}>
-                    <Typography variant="body2">{option}</Typography>
-                  </Box>
-                );
-              }}
-              ListboxProps={{
-                style: {
-                  maxHeight: 300
-                }
-              }}
-              disableCloseOnSelect
-              filterSelectedOptions
-              size="small"
-            />
-            
-            {/* Card Type Filter - only show if there are more than 1 card type */}
-            {uniqueCardTypes.length > 1 && (
-              <Autocomplete
-                multiple
-                sx={{ minWidth: 250 }}
-                options={uniqueCardTypes}
-                value={selectedCardTypes}
-                onChange={(event, newValue) => {
-                  setSelectedCardTypes(newValue);
-                }}
-                getOptionLabel={(option) => formatCardTypeLabel(option)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Card Type"
-                    placeholder={selectedCardTypes.length === 0 ? "All Types" : "Add more..."}
-                    size="medium"
-                  />
-                )}
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => {
-                    const { key, ...chipProps } = getTagProps({ index });
-                    return (
-                      <Chip
-                        key={key}
-                        size="small"
-                        label={formatCardTypeLabel(option)}
-                        {...chipProps}
-                      />
-                    );
-                  })
-                }
-                renderOption={(props, option) => {
-                  const { key, ...otherProps } = props;
-                  return (
-                    <Box key={key} component="li" {...otherProps}>
-                      <Typography variant="body2">
-                        {formatCardTypeLabel(option)}
-                      </Typography>
-                    </Box>
-                  );
-                }}
-                ListboxProps={{
-                  style: {
-                    maxHeight: 300
-                  }
-                }}
-                disableCloseOnSelect
-                filterSelectedOptions
-                size="small"
-              />
-            )}
-
-            <SortDropdown
-              value={sortBy}
-              onChange={handleSortChange}
-              options={[
-                { value: 'collector-asc', label: 'Collector # (Low-High)' },
-                { value: 'collector-desc', label: 'Collector # (High-Low)' },
-                { value: 'name-asc', label: 'Name (A-Z)' },
-                { value: 'name-desc', label: 'Name (Z-A)' },
-                { value: 'rarity', label: 'Rarity' },
-                { value: 'price-desc', label: 'Price (High-Low)' },
-                { value: 'price-asc', label: 'Price (Low-High)' },
-                { 
-                  value: 'release-desc', 
-                  label: 'Release Date (Newest)',
-                  condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
-                },
-                { 
-                  value: 'release-asc', 
-                  label: 'Release Date (Oldest)',
-                  condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
-                }
-              ]}
-              minWidth={180}
-            />
-          </Stack>
-        </Stack>
-      </Box>
+            ],
+            minWidth: 180
+          }
+        }}
+        layout="compact"
+        sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}
+      />
 
       <ResultsSummary 
         showing={cardGroups

@@ -3,20 +3,17 @@ import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
   Typography, 
-  Grid,
   Box
 } from '@mui/material';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { EmptyState } from '../components/atoms/shared/EmptyState';
-import { SortDropdown } from '../components/atoms/shared/SortDropdown';
 import type { SortOption } from '../components/atoms/shared/SortDropdown';
-import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
-import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterState';
 import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
+import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -142,40 +139,32 @@ export const AllSetsPage: React.FC = () => {
       </Typography>
 
       {/* Filters and Search */}
-      <Box sx={{ mb: 4 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={4}>
-            <DebouncedSearchInput
-              value={initialValues.search || ''}
-              onChange={setSearchTerm}
-              placeholder="Search sets..."
-              debounceMs={1000}
-              fullWidth
-            />
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <MultiSelectDropdown
-              value={selectedSetTypes}
-              onChange={handleSetTypeChange}
-              options={setTypes}
-              label="Set Types"
-              placeholder="All Types"
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <SortDropdown
-              value={sortBy}
-              onChange={handleSortChange}
-              options={sortOptions}
-              fullWidth
-            />
-          </Grid>
-
-        </Grid>
-      </Box>
+      <FilterPanel
+        config={{
+          search: {
+            value: initialValues.search || '',
+            onChange: setSearchTerm,
+            placeholder: 'Search sets...',
+            debounceMs: 1000
+          },
+          multiSelects: [
+            {
+              key: 'setTypes',
+              value: selectedSetTypes,
+              onChange: handleSetTypeChange,
+              options: setTypes,
+              label: 'Set Types',
+              placeholder: 'All Types'
+            }
+          ],
+          sort: {
+            value: sortBy,
+            onChange: handleSortChange,
+            options: sortOptions
+          }
+        }}
+        layout="horizontal"
+      />
 
       {/* Results Summary */}
       <ResultsSummary 
