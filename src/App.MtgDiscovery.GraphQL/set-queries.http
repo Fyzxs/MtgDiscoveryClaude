@@ -572,6 +572,7 @@ query GetSetsWithGroupings($ids: SetIdsArgEntityInput!) {
             collectorNumberRange {
               min
               max
+              orConditions
             }
             properties
           }
@@ -621,6 +622,7 @@ query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
             collectorNumberRange {
               min
               max
+              orConditions
             }
             properties
           }
@@ -638,7 +640,7 @@ query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
 
 {
   "codes": {
-    "setCodes": ["neo", "dmu", "one"]
+    "setCodes": ["sld"]
   }
 }
 
@@ -668,5 +670,55 @@ query GetAllSetsWithGroupings {
         statusCode
       }
     }
+  }
+}
+
+
+### Get Sets with Complex Collector Number Conditions (Portal, Secret Lair)
+# @ref variables
+# This query demonstrates the new orConditions field that handles OR conditions
+# Example sets that have complex conditions: por (Portal), sld (Secret Lair Drop)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetsWithComplexCollectorNumbers($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        name
+        setType
+        cardCount
+        groupings {
+          id
+          displayName
+          order
+          cardCount
+          rawQuery
+          filters {
+            collectorNumberRange {
+              min
+              max
+              orConditions   # New field for OR conditions (e.g., ["30s", "57s", "66s"])
+            }
+            properties
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["por", "sld"]
   }
 }

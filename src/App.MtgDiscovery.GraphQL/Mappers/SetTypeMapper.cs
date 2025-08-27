@@ -31,7 +31,8 @@ internal sealed class ScryfallSetMapper : IScryfallSetMapper
                         ? new CollectorNumberRangeOutEntity
                         {
                             Min = g.Filters.CollectorNumberRange.Min,
-                            Max = g.Filters.CollectorNumberRange.Max
+                            Max = g.Filters.CollectorNumberRange.Max,
+                            OrConditions = g.Filters.CollectorNumberRange.OrConditions
                         }
                         : null,
                     Properties = g.Filters.Properties
