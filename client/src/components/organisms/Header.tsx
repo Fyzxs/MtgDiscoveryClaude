@@ -6,10 +6,12 @@ import {
   Box, 
   Button
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { SearchInput } from '../atoms/shared/SearchInput';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
+  const theme = useTheme();
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
@@ -36,13 +38,13 @@ export const Header: React.FC = () => {
           component="div"
           sx={{ 
             fontWeight: 'bold',
-            background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+            background: theme.mtg.gradients.header,
             backgroundClip: 'text',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             cursor: 'pointer',
             '&:hover': {
-              background: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
+              background: theme.mtg.gradients.hover,
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

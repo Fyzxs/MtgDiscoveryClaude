@@ -10,6 +10,8 @@ import {
   Button,
   Tooltip
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { getLegalityColor } from '../../theme';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -41,12 +43,6 @@ interface CardDetailsModalProps {
   hasNext?: boolean;
 }
 
-const LEGALITY_COLORS: Record<string, string> = {
-  legal: '#4CAF50',
-  not_legal: '#424242',
-  restricted: '#2196F3',
-  banned: '#F44336'
-};
 
 const LEGALITY_ICONS: Record<string, React.ReactNode> = {
   legal: <CircleIcon sx={{ fontSize: 16 }} />,
@@ -354,7 +350,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       </Typography>
                       {Object.entries(LEGALITY_DESCRIPTIONS).map(([key, desc]) => (
                         <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <Box sx={{ color: LEGALITY_COLORS[key] }}>
+                          <Box sx={{ color: getLegalityColor(key) }}>
                             {LEGALITY_ICONS[key]}
                           </Box>
                           <Typography variant="caption">{desc}</Typography>
@@ -397,7 +393,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                                 }
                               }}
                             >
-                              <Box sx={{ color: LEGALITY_COLORS[legality] || LEGALITY_COLORS.not_legal }}>
+                              <Box sx={{ color: getLegalityColor(legality) }}>
                                 {LEGALITY_ICONS[legality] || LEGALITY_ICONS.not_legal}
                               </Box>
                               <Typography

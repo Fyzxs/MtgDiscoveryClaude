@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
 import { CardName } from '../../atoms/Cards/CardName';
@@ -50,6 +51,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   onSetClick,
   className
 }) => {
+  const theme = useTheme();
 
   return (
     <Box
@@ -69,7 +71,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 60%, rgba(0,0,0,0) 100%)',
+          background: theme.mtg.gradients.cardOverlay,
           opacity: isSelected ? 0 : 1,
           transition: 'none',
           pointerEvents: 'none',

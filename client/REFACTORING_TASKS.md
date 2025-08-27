@@ -288,19 +288,24 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 17: Create Theme Extensions
+### Task 17: Create Theme Extensions [COMPLETED]
 **Priority: HIGH**
-**Files to modify:**
-- Create: `src/theme/index.ts`
-- Update: `src/main.tsx`
-- Update: Components with hardcoded colors/spacing
+**Files modified:**
+- Created: `src/theme/index.ts`
+- Updated: `src/main.tsx`
+- Updated: `src/components/organisms/CardDetailsModal.tsx`
+- Updated: `src/components/organisms/Header.tsx`
+- Updated: `src/components/organisms/Footer.tsx`
+- Updated: `src/components/molecules/Cards/CardOverlay.tsx`
+- Updated: `src/components/organisms/MtgCard.tsx`
+- Updated: `src/components/organisms/MtgSetCard.tsx`
 
-**Steps:**
-1. Create comprehensive theme with MTG-specific colors
-2. Add custom spacing scale and component variants
-3. Define tokens for card dimensions, gradients
-4. Update components to use theme tokens
-5. Remove hardcoded values
+**Steps completed:**
+1. ✓ Created comprehensive theme with MTG-specific colors (rarity, legality)
+2. ✓ Added custom spacing, dimensions, transitions, gradients, and shadows
+3. ✓ Defined tokens for card dimensions, gradients, and effects
+4. ✓ Updated components to use theme tokens
+5. ✓ Removed hardcoded colors and replaced with theme references
 
 **Testing focus:** Design consistency, theme application
 

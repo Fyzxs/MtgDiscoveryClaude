@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box, Container, Typography, Divider } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const theme = useTheme();
   
   return (
     <Box 
@@ -22,7 +24,7 @@ export const Footer: React.FC = () => {
             gutterBottom 
             sx={{ 
               fontWeight: 'bold',
-              background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+              background: theme.mtg.gradients.footer,
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',

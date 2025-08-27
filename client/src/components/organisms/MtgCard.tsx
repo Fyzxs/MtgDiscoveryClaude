@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card as MuiCard, Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
@@ -30,6 +31,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
   className = ''
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const theme = useTheme();
 
   // Parse multiple artists
   const parseArtists = (artistString?: string): string[] => {
@@ -98,11 +100,11 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
         position: 'relative',
         width: '280px',
         bgcolor: 'grey.800',
-        borderRadius: 6,
+        borderRadius: '12px',
         border: '3px solid',
         borderColor: 'grey.700',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        boxShadow: theme.mtg.shadows.card.normal,
         transition: 'transform 0.15s ease-in-out',
         transform: 'scale(1)',
         cursor: 'pointer',
@@ -111,7 +113,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
         '&.selected': {
           border: '4px solid',
           borderColor: '#1976d2 !important',
-          boxShadow: '0 0 60px rgba(25, 118, 210, 1), 0 0 40px rgba(33, 150, 243, 0.8), 0 0 20px rgba(33, 150, 243, 0.6), 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important',
+          boxShadow: `${theme.mtg.shadows.card.selected}, ${theme.mtg.shadows.card.normal} !important`,
           transform: 'scale(1.05) !important',
           transition: 'none !important',
           '& .zoom-indicator': {

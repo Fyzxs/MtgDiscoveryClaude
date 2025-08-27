@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Box } from '@mui/material';
+import { useTheme, alpha } from '@mui/material/styles';
 import type { MtgSet, SetContext } from '../../types/set';
 import { getSetTypeColor } from '../../constants/setTypeColors';
 import { SetTitle } from '../atoms/Sets/SetTitle';
@@ -22,6 +23,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
 }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const setTypeColor = getSetTypeColor(set.setType);
+  const theme = useTheme();
 
   const handleCardClick = () => {
     if (onSetClick) {
@@ -40,12 +42,12 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
         cursor: 'pointer',
         transition: 'all 0.3s ease',
         backgroundColor: 'background.paper',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
+        border: `1px solid ${theme.palette.mtg.cardBorder}`,
         '&:hover': {
           transform: 'translateY(-6px)',
-          boxShadow: '0 12px 40px rgba(25, 118, 210, 0.4), 0 0 20px rgba(25, 118, 210, 0.2)',
-          backgroundColor: 'rgba(25, 118, 210, 0.05)',
-          borderColor: 'rgba(25, 118, 210, 0.3)',
+          boxShadow: theme.mtg.shadows.card.hover,
+          backgroundColor: alpha(theme.palette.primary.main, 0.05),
+          borderColor: alpha(theme.palette.primary.main, 0.3),
         },
         height: '360px',
         width: '240px',
