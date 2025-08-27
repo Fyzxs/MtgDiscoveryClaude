@@ -1,16 +1,15 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import type {
+  UseFilterStateConfig,
+  FilterState as FilterStateType,
+  FilterFunction,
+  SortFunction
+} from '../types/filters';
 
-export interface FilterConfig<T> {
-  searchFields?: (keyof T)[];
-  sortOptions?: {
-    [key: string]: (a: T, b: T) => number;
-  };
-  filterFunctions?: {
-    [key: string]: (item: T, value: any) => boolean;
-  };
-  defaultSort?: string;
-}
+// Re-export for backward compatibility
+export type FilterConfig<T> = UseFilterStateConfig<T>;
 
+// Keep internal FilterState interface for this hook
 export interface FilterState {
   search: string;
   sort: string;

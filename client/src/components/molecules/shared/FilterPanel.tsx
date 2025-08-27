@@ -10,54 +10,19 @@ import {
 import { DebouncedSearchInput } from '../../atoms/shared/DebouncedSearchInput';
 import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
 import { SortDropdown } from '../../atoms/shared/SortDropdown';
-import type { SortOption } from '../../atoms/shared/SortDropdown';
+import type { 
+  FilterPanelConfig, 
+  FilterLayout 
+} from '../../../types/filters';
+import type { StyledComponentProps } from '../../../types/components';
 
-export interface FilterConfig {
-  search?: {
-    value: string;
-    onChange: (value: string) => void;
-    placeholder?: string;
-    debounceMs?: number;
-    minWidth?: number | string;
-    fullWidth?: boolean;
-  };
-  multiSelects?: Array<{
-    key: string;
-    value: string[];
-    onChange: (value: string[]) => void;
-    options: string[] | { value: string; label: string }[];
-    label: string;
-    placeholder?: string;
-    minWidth?: number | string;
-    fullWidth?: boolean;
-  }>;
-  autocompletes?: Array<{
-    key: string;
-    value: string[];
-    onChange: (value: string[]) => void;
-    options: string[];
-    label: string;
-    placeholder?: string;
-    minWidth?: number | string;
-    renderTags?: boolean;
-    getOptionLabel?: (option: string) => string;
-  }>;
-  sort?: {
-    value: string;
-    onChange: (value: string) => void;
-    options: SortOption[];
-    label?: string;
-    minWidth?: number | string;
-    fullWidth?: boolean;
-  };
-  customFilters?: React.ReactNode[];
-}
+// Re-export for backward compatibility
+export type { FilterPanelConfig as FilterConfig } from '../../../types/filters';
 
-interface FilterPanelProps {
-  config: FilterConfig;
-  layout?: 'horizontal' | 'vertical' | 'compact';
+interface FilterPanelProps extends StyledComponentProps {
+  config: FilterPanelConfig;
+  layout?: FilterLayout;
   spacing?: number;
-  sx?: any;
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({

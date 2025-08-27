@@ -1,21 +1,19 @@
 import React from 'react';
 import { Select, FormControl, InputLabel, MenuItem } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
+import type { SortOption } from '../../../types/filters';
+import type { StyledComponentProps } from '../../../types/components';
 
-export interface SortOption {
-  value: string;
-  label: string;
-  condition?: boolean; // Optional condition to show this option
-}
+// Re-export for backward compatibility
+export type { SortOption } from '../../../types/filters';
 
-interface SortDropdownProps {
+interface SortDropdownProps extends StyledComponentProps {
   value: string;
   onChange: (value: string) => void;
   options: SortOption[];
   label?: string;
   minWidth?: number | string;
   fullWidth?: boolean;
-  sx?: any;
 }
 
 export const SortDropdown: React.FC<SortDropdownProps> = ({

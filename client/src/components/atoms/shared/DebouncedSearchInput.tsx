@@ -2,15 +2,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
+import type { SearchInputProps } from '../../../types/components';
 
-interface DebouncedSearchInputProps {
-  value?: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  debounceMs?: number;
-  sx?: any;
-  fullWidth?: boolean;
-  minWidth?: number | string;
+interface DebouncedSearchInputProps extends SearchInputProps {
+  // SearchInputProps already has all needed properties
 }
 
 export const DebouncedSearchInput: React.FC<DebouncedSearchInputProps> = ({

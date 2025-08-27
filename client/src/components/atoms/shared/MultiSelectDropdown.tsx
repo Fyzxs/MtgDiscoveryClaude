@@ -11,14 +11,13 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import ClearIcon from '@mui/icons-material/Clear';
+import type { MultiSelectOption } from '../../../types/filters';
+import type { StyledComponentProps } from '../../../types/components';
 
-export interface MultiSelectOption {
-  value: string;
-  label: string;
-  chipColor?: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
-}
+// Re-export for backward compatibility
+export type { MultiSelectOption } from '../../../types/filters';
 
-interface MultiSelectDropdownProps {
+interface MultiSelectDropdownProps extends StyledComponentProps {
   value: string[];
   onChange: (value: string[]) => void;
   options: MultiSelectOption[] | string[]; // Can accept simple string array or objects
@@ -28,7 +27,6 @@ interface MultiSelectDropdownProps {
   maxDisplay?: number; // Max items to show before showing "X selected"
   showClearAll?: boolean;
   fullWidth?: boolean;
-  sx?: any;
 }
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
