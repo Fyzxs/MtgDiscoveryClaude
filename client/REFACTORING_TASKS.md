@@ -313,17 +313,24 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ## Phase 7: Medium Priority Enhancements
 
-### Task 18: Enhance Card Selection Accessibility
+### Task 18: Enhance Card Selection Accessibility [COMPLETED]
 **Priority: MEDIUM**
-**Files to modify:**
+**Files modified:**
 - `src/components/organisms/MtgCard.tsx`
-- Parent components handling selection
 
-**Steps:**
-1. Add keyboard navigation support (arrow keys, Enter/Space)
-2. Add ARIA attributes for screen readers
-3. Use useCallback for event handlers
-4. Test with keyboard and screen readers
+**Steps completed:**
+1. ✓ Added keyboard navigation support:
+   - Enter/Space: Select card
+   - Arrow keys: Navigate between cards in grid
+   - Escape: Deselect card
+2. ✓ Added comprehensive ARIA attributes:
+   - role="button" for card interaction
+   - aria-label with card details
+   - aria-selected for selection state
+   - aria-describedby for additional details
+3. ✓ Used useCallback for all event handlers
+4. ✓ Added focus styles for keyboard navigation visibility
+5. ✓ Added hidden screen reader description element
 
 **Testing focus:** Keyboard navigation, accessibility compliance
 

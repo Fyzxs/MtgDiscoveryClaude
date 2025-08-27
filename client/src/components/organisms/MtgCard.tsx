@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Card as MuiCard, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import type { Card, CardContext } from '../../types/card';
@@ -7,13 +7,12 @@ import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
 import { CardBadges } from '../atoms/Cards/CardBadges';
-import { getRarityGlowStyles, getCardTransform } from '../../utils/rarityStyles';
+import { getRarityGlowStyles } from '../../utils/rarityStyles';
 
 interface MtgCardProps {
   card: Card;
   context?: CardContext;
   isSelected?: boolean;
-  onSelectionChange?: (cardId: string, selected: boolean) => void;
   onCardClick?: (cardId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
@@ -24,7 +23,6 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
   card, 
   context = {},
   isSelected = false,
-  onSelectionChange,
   onCardClick,
   onSetClick,
   onArtistClick,
@@ -32,6 +30,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const theme = useTheme();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   // Parse multiple artists
   const parseArtists = (artistString?: string): string[] => {
@@ -56,7 +55,22 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
 
 
 
-  const handleCardClick = (e: React.MouseEvent) => {
+  const selectCard = useCallback((cardElement: HTMLElement) => {
+    // Only remove selected class from currently selected card (faster)
+    const currentlySelected = document.querySelector('[data-mtg-card="true"].selected');
+    if (currentlySelected && currentlySelected !== cardElement) {
+      currentlySelected.classList.remove('selected');
+      currentlySelected.setAttribute('data-selected', 'false');
+      currentlySelected.setAttribute('aria-selected', 'false');
+    }
+    
+    // Add selected class to this card
+    cardElement.classList.add('selected');
+    cardElement.setAttribute('data-selected', 'true');
+    cardElement.setAttribute('aria-selected', 'true');
+  }, []);
+
+  const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Don't trigger selection if clicking on links or zoom indicator
     const target = e.target as HTMLElement;
     const clickedLink = target.closest('a');
@@ -72,30 +86,54 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
     
     // Simple CSS class manipulation - no React state needed
     const cardElement = e.currentTarget as HTMLElement;
+    selectCard(cardElement);
+  }, [selectCard]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    const cardElement = e.currentTarget as HTMLElement;
     
-    // Only remove selected class from currently selected card (faster)
-    const currentlySelected = document.querySelector('[data-mtg-card="true"].selected');
-    if (currentlySelected && currentlySelected !== cardElement) {
-      currentlySelected.classList.remove('selected');
-      currentlySelected.setAttribute('data-selected', 'false');
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        e.stopPropagation();
+        selectCard(cardElement);
+        break;
+        
+      case 'Escape':
+        e.preventDefault();
+        // Deselect card
+        cardElement.classList.remove('selected');
+        cardElement.setAttribute('data-selected', 'false');
+        cardElement.setAttribute('aria-selected', 'false');
+        break;
     }
-    
-    // Add selected class to this card
-    cardElement.classList.add('selected');
-    cardElement.setAttribute('data-selected', 'true');
-    
-    // Don't update React state - it causes lag even with setTimeout
-    // We'll query the DOM when we need to know which card is selected
-  };
+  }, [selectCard]);
+
+  const handleZoomClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setModalOpen(true);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setModalOpen(false);
+  }, []);
 
   return (
     <MuiCard 
+      ref={cardRef}
       elevation={4}
       onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
       data-mtg-card="true"
       data-card-id={card.id}
       data-selected={isSelected ? "true" : "false"}
       tabIndex={0}
+      role="button"
+      aria-label={`${card.name} - ${card.rarity} ${card.typeLine || 'card'} from ${card.setName}. Artist: ${card.artist}. ${isSelected ? 'Selected' : 'Not selected'}`}
+      aria-selected={isSelected}
+      aria-describedby={`card-details-${card.id}`}
       sx={{
         position: 'relative',
         width: '280px',
@@ -164,11 +202,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       />
 
       <ZoomIndicator
-        onZoomClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setModalOpen(true);
-        }}
+        onZoomClick={handleZoomClick}
       />
       
       <CardOverlay
@@ -191,9 +225,21 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
         onSetClick={onSetClick}
       />
 
+      {/* Hidden element for screen reader description */}
+      <Box
+        id={`card-details-${card.id}`}
+        sx={{ position: 'absolute', left: '-9999px' }}
+        aria-hidden="true"
+      >
+        {card.oracleText && `Card text: ${card.oracleText}`}
+        {card.manaCost && `Mana cost: ${card.manaCost}`}
+        {card.power && card.toughness && `Power/Toughness: ${card.power}/${card.toughness}`}
+        {card.prices?.usd && `Price: $${card.prices.usd}`}
+      </Box>
+
       <CardDetailsModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
         card={card}
       />
     </MuiCard>
