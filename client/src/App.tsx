@@ -1,7 +1,5 @@
 import './App.css'
 import { useState } from 'react'
-import { CardDemoPage } from './pages/CardDemoPage'
-import { SetDemoPage } from './pages/SetDemoPage'
 import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
 import { Card } from './components/ui/Card'
@@ -11,19 +9,11 @@ import { Layout } from './components/templates/Layout'
 function App() {
   // Check URL params for initial page
   const urlParams = new URLSearchParams(window.location.search);
-  const pageParam = urlParams.get('page') as 'home' | 'card-demo' | 'set-demo' | 'all-sets' | 'set' | null;
+  const pageParam = urlParams.get('page') as 'home' | 'all-sets' | 'set' | null;
   
-  const [currentPage, setCurrentPage] = useState<'home' | 'card-demo' | 'set-demo' | 'all-sets' | 'set'>(
+  const [currentPage, setCurrentPage] = useState<'home' | 'all-sets' | 'set'>(
     pageParam || 'home'  // Default back to home
   )
-
-  if (currentPage === 'card-demo') {
-    return <Layout><CardDemoPage /></Layout>
-  }
-
-  if (currentPage === 'set-demo') {
-    return <Layout><SetDemoPage /></Layout>
-  }
 
   if (currentPage === 'all-sets') {
     return <Layout><AllSetsPage /></Layout>
@@ -52,22 +42,6 @@ function App() {
               className="w-full sm:w-auto"
             >
               Browse All Sets
-            </Button>
-            <Button 
-              onClick={() => setCurrentPage('card-demo')}
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
-              Card Demo
-            </Button>
-            <Button 
-              onClick={() => setCurrentPage('set-demo')}
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
-              Set Demo
             </Button>
           </div>
         </Card>
