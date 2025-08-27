@@ -17,17 +17,32 @@ internal class ScryfallCardOutEntityType : ObjectType<ScryfallCardOutEntity>
         descriptor.Field(f => f.OracleId)
             .Description("The Oracle ID for this card");
 
+        descriptor.Field(f => f.ArenaId)
+            .Description("The MTG Arena ID");
+
+        descriptor.Field(f => f.MtgoId)
+            .Description("The Magic Online ID");
+
+        descriptor.Field(f => f.MtgoFoilId)
+            .Description("The Magic Online foil ID");
+
         descriptor.Field(f => f.MultiverseIds)
             .Description("The multiverse IDs on Gatherer");
 
         descriptor.Field(f => f.TcgPlayerId)
             .Description("The TCGPlayer ID");
 
+        descriptor.Field(f => f.TcgPlayerEtchedId)
+            .Description("The TCGPlayer etched foil ID");
+
         descriptor.Field(f => f.CardMarketId)
             .Description("The Cardmarket ID");
 
         descriptor.Field(f => f.Name)
             .Description("The name of the card");
+
+        descriptor.Field(f => f.FlavorName)
+            .Description("The flavor name of the card");
 
         descriptor.Field(f => f.Lang)
             .Description("The language code for this printing");
@@ -105,6 +120,9 @@ internal class ScryfallCardOutEntityType : ObjectType<ScryfallCardOutEntity>
 
         descriptor.Field(f => f.Reserved)
             .Description("Whether this card is on the reserved list");
+
+        descriptor.Field(f => f.GameChanger)
+            .Description("Whether this card is a game changer");
 
         descriptor.Field(f => f.Foil)
             .Description("Whether this card is available in foil");
@@ -201,6 +219,9 @@ internal class ScryfallCardOutEntityType : ObjectType<ScryfallCardOutEntity>
 
         descriptor.Field(f => f.StorySpotlight)
             .Description("Whether this card has a story spotlight");
+
+        descriptor.Field(f => f.PromoTypes)
+            .Description("The types of promotional printing");
 
         descriptor.Field(f => f.EdhRecRank)
             .Description("The EDHREC rank");
