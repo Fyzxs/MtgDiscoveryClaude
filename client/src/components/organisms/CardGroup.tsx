@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Divider } from '@mui/material';
 import { MtgCard } from './MtgCard';
+import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
 import type { Card, CardContext } from '../../types/card';
 
 interface CardGroupProps {
@@ -49,13 +50,11 @@ export const CardGroup: React.FC<CardGroupProps> = ({
         </Box>
       )}
       
-      <Box sx={{ 
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, 280px)',
-        gap: 3,
-        justifyContent: 'center',
-        margin: '0 auto'
-      }}>
+      <ResponsiveGridAutoFit 
+        minItemWidth={280} 
+        spacing={1.5}
+        sx={{ margin: '0 auto' }}
+      >
         {cards.map((card) => (
           <MtgCard
             key={card.id}
@@ -65,7 +64,7 @@ export const CardGroup: React.FC<CardGroupProps> = ({
             context={context}
           />
         ))}
-      </Box>
+      </ResponsiveGridAutoFit>
     </Box>
   );
 };

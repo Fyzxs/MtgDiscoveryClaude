@@ -2,8 +2,7 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
-  Typography, 
-  Box
+  Typography
 } from '@mui/material';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
@@ -14,6 +13,7 @@ import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterState';
 import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
+import { ResponsiveGrid } from '../components/atoms/layouts/ResponsiveGrid';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -174,12 +174,7 @@ export const AllSetsPage: React.FC = () => {
       />
 
       {/* Sets Grid */}
-      <Box sx={{ 
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, 240px)',
-        gap: 3,
-        justifyContent: 'center'
-      }}>
+      <ResponsiveGrid minItemWidth={240} spacing={1.5}>
         {filteredSets.map((set) => (
           <MtgSetCard
             key={set.id}
@@ -187,7 +182,7 @@ export const AllSetsPage: React.FC = () => {
             onSetClick={handleSetClick}
           />
         ))}
-      </Box>
+      </ResponsiveGrid>
 
       {filteredSets.length === 0 && (
         <EmptyState

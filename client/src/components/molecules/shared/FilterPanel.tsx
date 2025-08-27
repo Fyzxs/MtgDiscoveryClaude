@@ -127,7 +127,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                 multiple
                 sx={{ minWidth: auto.minWidth || 250 }}
                 options={auto.options}
-                value={auto.value}
+                value={auto.value || []}
                 onChange={(_, newValue) => {
                   auto.onChange(newValue);
                 }}
@@ -141,7 +141,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                   />
                 )}
                 renderTags={auto.renderTags !== false ? (value, getTagProps) =>
-                  value.map((option, index) => {
+                  value && Array.isArray(value) ? value.map((option, index) => {
                     const { key, ...chipProps } = getTagProps({ index });
                     const displayLabel = auto.getOptionLabel ? auto.getOptionLabel(option) : option;
                     return (
@@ -153,7 +153,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                         {...chipProps}
                       />
                     );
-                  })
+                  }) : []
                 : undefined}
               />
             </Grid>
@@ -232,8 +232,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               multiple
               sx={{ minWidth: auto.minWidth || 250 }}
               options={auto.options}
-              value={auto.value}
-              onChange={(event, newValue) => {
+              value={auto.value || []}
+              onChange={(_, newValue) => {
                 auto.onChange(newValue);
               }}
               getOptionLabel={auto.getOptionLabel || ((option) => option)}
@@ -246,7 +246,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                 />
               )}
               renderTags={auto.renderTags !== false ? (value, getTagProps) =>
-                value.map((option, index) => {
+                value && Array.isArray(value) ? value.map((option, index) => {
                   const { key, ...chipProps } = getTagProps({ index });
                   const displayLabel = auto.getOptionLabel ? auto.getOptionLabel(option) : option;
                   return (
@@ -258,7 +258,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                       {...chipProps}
                     />
                   );
-                })
+                }) : []
               : undefined}
             />
           ))}
