@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Link, Stack } from '@mui/material';
 import { SetIcon } from '../../atoms/Sets/SetIcon';
+import { formatReleaseDate } from '../../../utils/dateFormatters';
 import type { CardContext } from '../../../types/card';
 
 interface CardMetadataProps {
@@ -36,17 +37,7 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   // Don't show set name on set page
   const showSetName = !context.isOnSetPage && setName;
 
-  // Format date
-  const formatDate = (dateString?: string): string => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  };
-
-  const formattedDate = formatDate(releasedAt);
+  const formattedDate = formatReleaseDate(releasedAt);
 
   // Only show date on set page if it differs from set release date
   const showDate = !context.isOnSetPage || context.currentSetCode !== releasedAt;

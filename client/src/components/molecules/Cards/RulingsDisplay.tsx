@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
 import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
 import { ErrorAlert } from '../../atoms/shared/ErrorAlert';
+import { formatRulingDate } from '../../../utils/dateFormatters';
 
 interface Ruling {
   object: string;
@@ -76,14 +77,6 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
     return null;
   }
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit' 
-    });
-  };
 
   return (
     <ExpandableSection
@@ -115,7 +108,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
                   mb: 0.5
                 }}
               >
-                {formatDate(ruling.published_at)}
+                {formatRulingDate(ruling.published_at)}
               </Typography>
               <Typography 
                 variant="body2" 

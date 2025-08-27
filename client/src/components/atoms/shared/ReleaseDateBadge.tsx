@@ -1,21 +1,12 @@
 import React from 'react';
 import { Chip } from '@mui/material';
-import { format } from 'date-fns';
+import { formatReleaseDate } from '../../../utils/dateFormatters';
 
 interface ReleaseDateBadgeProps {
   date: string;
 }
 
 export const ReleaseDateBadge: React.FC<ReleaseDateBadgeProps> = ({ date }) => {
-  const formatReleaseDate = (dateString: string) => {
-    try {
-      const dateObj = new Date(dateString);
-      return format(dateObj, 'MMM yyyy');
-    } catch {
-      return dateString;
-    }
-  };
-
   return (
     <Chip
       label={formatReleaseDate(date)}

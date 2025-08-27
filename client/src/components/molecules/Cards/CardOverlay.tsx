@@ -6,6 +6,7 @@ import { CardName } from '../../atoms/Cards/CardName';
 import { SetLink } from '../../atoms/Cards/SetLink';
 import { PriceDisplay } from '../../atoms/shared/PriceDisplay';
 import { CardLinks } from './CardLinks';
+import { formatReleaseDate } from '../../../utils/dateFormatters';
 import type { CardContext } from '../../../types/card';
 
 interface CardOverlayProps {
@@ -49,12 +50,6 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   onSetClick,
   className
 }) => {
-  // Format date
-  const formatDate = (dateString?: string): string => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
 
   return (
     <Box
@@ -99,7 +94,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           {/* Date moved to top row */}
           {releaseDate && !context.hideReleaseDate && (
             <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'grey.400' }}>
-              {formatDate(releaseDate)}
+              {formatReleaseDate(releaseDate)}
             </Typography>
           )}
         </Box>

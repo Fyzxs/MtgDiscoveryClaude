@@ -268,21 +268,21 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 16: Create Date Formatting Utilities
+### Task 16: Create Date Formatting Utilities [COMPLETED]
 **Priority: HIGH**
-**Files to modify:**
-- Create: `src/utils/dateFormatters.ts`
-- Update: `src/components/molecules/Cards/CardOverlay.tsx`
-- Update: `src/components/molecules/Cards/RulingsDisplay.tsx`
-- Update: `src/components/molecules/Cards/CardMetadata.tsx`
-- Update: `src/components/atoms/shared/ReleaseDateBadge.tsx`
+**Files modified:**
+- Created: `src/utils/dateFormatters.ts`
+- Updated: `src/components/molecules/Cards/CardOverlay.tsx`
+- Updated: `src/components/molecules/Cards/RulingsDisplay.tsx`
+- Updated: `src/components/molecules/Cards/CardMetadata.tsx`
+- Updated: `src/components/atoms/shared/ReleaseDateBadge.tsx`
 
-**Steps:**
-1. Create formatReleaseDate and formatRulingDate functions
-2. Replace duplicate date formatting in CardOverlay (lines 53-57)
-3. Replace in RulingsDisplay (lines 79-81)
-4. Replace in CardMetadata (lines 40-43)
-5. Update ReleaseDateBadge date parsing
+**Steps completed:**
+1. ✓ Created formatReleaseDate and formatRulingDate functions
+2. ✓ Replaced duplicate date formatting in CardOverlay
+3. ✓ Replaced in RulingsDisplay
+4. ✓ Replaced in CardMetadata  
+5. ✓ Updated ReleaseDateBadge to use utility
 
 **Testing focus:** Consistent date formatting across all components
 
