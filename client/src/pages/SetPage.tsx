@@ -60,7 +60,32 @@ interface CardGroupConfig {
   isPromo: boolean;
 }
 
-const RARITIES = ['common', 'uncommon', 'rare', 'mythic', 'special', 'bonus'];
+// Rarity order for sorting
+const RARITY_ORDER: Record<string, number> = {
+  common: 0,
+  uncommon: 1,
+  rare: 2,
+  mythic: 3,
+  special: 4,
+  bonus: 5
+};
+
+// Get unique rarities from cards
+const getUniqueRarities = (cards: Card[]): string[] => {
+  const raritySet = new Set<string>();
+  cards.forEach(card => {
+    if (card.rarity) {
+      raritySet.add(card.rarity.toLowerCase());
+    }
+  });
+  // Sort by predefined order, then alphabetically for unknown rarities
+  return Array.from(raritySet).sort((a, b) => {
+    const orderA = RARITY_ORDER[a] ?? 999;
+    const orderB = RARITY_ORDER[b] ?? 999;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.localeCompare(b);
+  });
+};
 
 // Get unique artists from cards
 const getUniqueArtists = (cards: Card[]): string[] => {
@@ -95,6 +120,12 @@ export const SetPage: React.FC = () => {
     variables: { setCode: { setCode } },
     skip: !setCode
   });
+  
+  // Get all rarities from the data
+  const allRarities = useMemo(() => {
+    const allCards = cardsData?.cardsBySetCode?.data || [];
+    return getUniqueRarities(allCards);
+  }, [cardsData]);
   
   // Get all artists from the data for normalization (moved up to be available for initial state)
   const allArtists = useMemo(() => {
@@ -140,8 +171,7 @@ export const SetPage: React.FC = () => {
       'name-asc': (a: Card, b: Card) => a.name.localeCompare(b.name),
       'name-desc': (a: Card, b: Card) => b.name.localeCompare(a.name),
       'rarity': (a: Card, b: Card) => {
-        const rarityOrder: Record<string, number> = { common: 0, uncommon: 1, rare: 2, mythic: 3, special: 4, bonus: 5 };
-        return (rarityOrder[a.rarity || ''] || 99) - (rarityOrder[b.rarity || ''] || 99);
+        return (RARITY_ORDER[a.rarity?.toLowerCase() || ''] ?? 99) - (RARITY_ORDER[b.rarity?.toLowerCase() || ''] ?? 99);
       },
       'price-desc': (a: Card, b: Card) => {
         const priceA = parseFloat(a.prices?.usd || '0');
@@ -234,7 +264,7 @@ export const SetPage: React.FC = () => {
     }).filter((artist: string) => allArtists.includes(artist)); // Only keep valid artists
   }, [filters.artists, artistMap, allArtists]);
   const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
-  const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
+  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]); // Empty = show all
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
 
@@ -331,17 +361,18 @@ export const SetPage: React.FC = () => {
       });
       
       setCardGroups(groupsArray);
-      
-      // Initially all groups are visible
-      const allGroupIds = new Set(groupsArray.map(g => g.id));
-      setVisibleGroupIds(allGroupIds);
     }
   }, [filteredCards, setInfo, cards]);
-  
-  // Show all groups by default
-  useEffect(() => {
-    setVisibleGroupIds(new Set(cardGroups.map(g => g.id)));
-  }, [cardGroups]);
+
+  // Compute visible groups: if no groups selected, show all; otherwise show only selected
+  const visibleGroupIds = useMemo(() => {
+    if (selectedGroupIds.length === 0) {
+      // No selection = show all groups
+      return new Set(cardGroups.map(g => g.id));
+    }
+    // Show only selected groups
+    return new Set(selectedGroupIds);
+  }, [selectedGroupIds, cardGroups]);
 
   const handleRarityChange = (value: string[]) => {
     updateFilter('rarities', value);
@@ -418,7 +449,8 @@ export const SetPage: React.FC = () => {
         </Typography>
       )}
 
-      {/* Filters and Search */}
+      {/* Filters and Search - Hide completely if only 1 card */}
+      {cards.length > 1 && (
       <FilterErrorBoundary name="SetPageFilters">
         <FilterPanel
         config={{
@@ -429,18 +461,28 @@ export const SetPage: React.FC = () => {
             debounceMs: 300,
             minWidth: 300
           },
-          multiSelects: [],
-          autocompletes: [
+          multiSelects: cardGroups.length > 1 ? [
             {
+              key: 'cardGroups',
+              value: selectedGroupIds,
+              onChange: (groupIds: string[]) => setSelectedGroupIds(groupIds),
+              options: cardGroups.map(g => ({ value: g.id, label: g.displayName })),
+              label: 'Card Group',
+              placeholder: 'All Groups',
+              minWidth: 200
+            }
+          ] : [],
+          autocompletes: [
+            ...(allRarities.length > 1 ? [{
               key: 'rarities',
               value: selectedRarities,
               onChange: handleRarityChange,
-              options: RARITIES,
+              options: allRarities,
               label: 'Rarity',
               placeholder: 'All Rarities',
               minWidth: 180
-            },
-            {
+            }] : []),
+            ...(allArtists.length > 1 ? [{
               key: 'artists',
               // Use selectedArtists which are already validated
               value: selectedArtists,
@@ -450,7 +492,7 @@ export const SetPage: React.FC = () => {
               placeholder: 'All Artists',
               minWidth: 250,
               maxTagsToShow: 1
-            }
+            }] : [])
           ],
           sort: {
             value: sortBy,
@@ -481,6 +523,7 @@ export const SetPage: React.FC = () => {
           sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}
         />
       </FilterErrorBoundary>
+      )}
 
       <ResultsSummary 
         showing={cardGroups
@@ -494,23 +537,49 @@ export const SetPage: React.FC = () => {
       {/* Card Groups */}
       <CardGridErrorBoundary name="SetPageCardGroups">
         {cardsLoading && (
-          <CardGroup
-            key="loading"
-            groupId="loading"
-            groupName="Loading"
-            cards={[]}
-            isVisible={true}
-            showHeader={false}
-            isLoading={true}
-            context={{
-              isOnSetPage: true,
-              currentSet: setCode,
-              hideSetInfo: true,
-              hideReleaseDate: false
-            }}
-            onCardSelection={() => {}}
-            selectedCardId={null}
-          />
+          <>
+            {/* If we have setInfo with groupings, show loading skeleton for each group */}
+            {setInfo?.groupings && setInfo.groupings.length > 0 ? (
+              setInfo.groupings.map((grouping) => (
+                <CardGroup
+                  key={`loading-${grouping.id}`}
+                  groupId={grouping.id}
+                  groupName={grouping.displayName.toUpperCase()}
+                  cards={[]}
+                  isVisible={true}
+                  showHeader={true}
+                  isLoading={true}
+                  context={{
+                    isOnSetPage: true,
+                    currentSet: setCode,
+                    hideSetInfo: true,
+                    hideReleaseDate: false
+                  }}
+                  onCardSelection={() => {}}
+                  selectedCardId={null}
+                />
+              ))
+            ) : (
+              /* Otherwise show a single loading group */
+              <CardGroup
+                key="loading-default"
+                groupId="default-cards"
+                groupName="LOADING CARDS"
+                cards={[]}
+                isVisible={true}
+                showHeader={false}
+                isLoading={true}
+                context={{
+                  isOnSetPage: true,
+                  currentSet: setCode,
+                  hideSetInfo: true,
+                  hideReleaseDate: false
+                }}
+                onCardSelection={() => {}}
+                selectedCardId={null}
+              />
+            )}
+          </>
         )}
         {!cardsLoading && cardGroups.map((group) => (
         <CardGroup
@@ -540,7 +609,7 @@ export const SetPage: React.FC = () => {
             setSearchTerm('');
             updateFilter('rarities', []);
             updateFilter('artists', []);
-            setSelectedCardTypes([]);
+            setSelectedGroupIds([]);
           }}
         />
       )}
