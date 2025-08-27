@@ -135,8 +135,8 @@ export const AllSetsPage: React.FC = () => {
       data={data?.allSets}
       failureTypeName="FailureResponse"
     >
-    <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-      <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4 }}>
+    <Container maxWidth="xl" sx={{ mt: 2, mb: 4, px: 3, mx: 'auto' }}>
+      <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
         All Magic Sets
       </Typography>
 

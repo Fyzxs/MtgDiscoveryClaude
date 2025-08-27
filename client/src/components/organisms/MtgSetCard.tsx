@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, Box } from '@mui/material';
+import { Card, CardContent, Box, CardActionArea } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import type { MtgSet, SetContext } from '../../types/set';
 import { getSetTypeColor } from '../../constants/setTypeColors';
@@ -25,22 +25,26 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   const setTypeColor = getSetTypeColor(set.setType);
   const theme = useTheme();
 
-  const handleCardClick = () => {
-    if (onSetClick) {
-      onSetClick(set.code);
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent default navigation if left-clicking
+    if (e.button === 0) {
+      e.preventDefault();
+      if (onSetClick) {
+        onSetClick(set.code);
+      }
     }
+    // Allow right-click and middle-click to work normally
   };
+
+  const setUrl = `?page=set&set=${set.code}`;
 
   return (
     <Card
       data-mtg-set="true"
-      onClick={handleCardClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={className}
       sx={{
         cursor: 'pointer',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.1s ease',
         backgroundColor: 'background.paper',
         border: `1px solid ${theme.palette.mtg.cardBorder}`,
         '&:hover': {
@@ -57,6 +61,21 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
         flexDirection: 'column',
       }}
     >
+      <CardActionArea
+        component="a"
+        href={setUrl}
+        onClick={handleCardClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        sx={{
+          height: '100%',
+          textDecoration: 'none',
+          color: 'inherit',
+          '&:hover': {
+            textDecoration: 'none'
+          }
+        }}
+      >
       <CardContent sx={{ 
         p: 2, 
         height: '100%',
@@ -64,8 +83,8 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
         flexDirection: 'column', 
         alignItems: 'center', 
         textAlign: 'center',
-        justifyContent: 'space-between',
-        gap: 1
+        justifyContent: 'center',
+        gap: 0.25
       }}>
         <Box sx={{ width: '100%' }}>
           <SetTitle name={set.name} />
@@ -92,6 +111,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
         </Box>
       </CardContent>
+      </CardActionArea>
     </Card>
   );
 };

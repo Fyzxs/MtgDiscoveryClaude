@@ -144,7 +144,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
         borderColor: 'grey.700',
         overflow: 'hidden',
         boxShadow: theme.mtg.shadows.card.normal,
-        transition: 'transform 0.15s ease-in-out',
+        transition: 'transform 0.05s ease-in-out',
         transform: 'scale(1)',
         cursor: 'pointer',
         outline: 'none',

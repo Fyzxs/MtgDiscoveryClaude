@@ -54,7 +54,13 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
         }
         
         const data: RulingsResponse = await response.json();
-        setRulings(data.data || []);
+        // Sort rulings by date (oldest first)
+        const sortedRulings = (data.data || []).sort((a, b) => {
+          const dateA = new Date(a.published_at).getTime();
+          const dateB = new Date(b.published_at).getTime();
+          return dateA - dateB; // Oldest first
+        });
+        setRulings(sortedRulings);
       } catch (err) {
         console.error('Error fetching rulings:', err);
         // Check if it's a CORS error

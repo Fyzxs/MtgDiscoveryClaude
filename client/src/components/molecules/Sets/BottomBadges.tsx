@@ -25,7 +25,8 @@ export const BottomBadges: React.FC<BottomBadgesProps> = ({
         justifyContent: 'flex-start', 
         width: '100%', 
         maxWidth: '180px', 
-        mb: 1 
+        mt: 0,
+        mb: 0 
       }}
     >
       <SetTypeBadge setType={setType} />

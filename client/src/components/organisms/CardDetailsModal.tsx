@@ -382,7 +382,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       const displayName = FORMAT_DISPLAY_NAMES[format] || format;
 
                       return (
-                        <Grid item key={format}>
+                        <Grid key={format}>
                           <Tooltip title={`${displayName}: ${LEGALITY_DESCRIPTIONS[legality] || legality}`}>
                             <Box
                               sx={{
@@ -426,7 +426,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                     </Typography>
                     <Grid container spacing={2}>
                       {card.prices.usd && (
-                        <Grid item xs={6} sm={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                           <PriceDisplay
                             price={card.prices.usd}
                             currency="USD"
@@ -435,7 +435,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                         </Grid>
                       )}
                       {card.prices.usdFoil && (
-                        <Grid item xs={6} sm={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                           <PriceDisplay
                             price={card.prices.usdFoil}
                             currency="USD"
@@ -444,7 +444,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                         </Grid>
                       )}
                       {card.prices.eur && (
-                        <Grid item xs={6} sm={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                           <PriceDisplay
                             price={card.prices.eur}
                             currency="EUR"

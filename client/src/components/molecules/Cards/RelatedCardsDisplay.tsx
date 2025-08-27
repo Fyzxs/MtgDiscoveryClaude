@@ -36,7 +36,11 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
 
   if (filteredIds.length === 0) return null;
 
-  const cards = data?.cardsById?.data || [];
+  // Sort cards alphabetically by name (A-Z)
+  // Create a new array to avoid mutating the original
+  const cards = [...(data?.cardsById?.data || [])].sort((a, b) => 
+    (a.name || '').localeCompare(b.name || '')
+  );
   const loadedCount = cards.length;
   const totalCount = filteredIds.length;
 

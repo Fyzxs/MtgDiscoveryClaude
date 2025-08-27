@@ -33,14 +33,27 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
   const [currentFaceIndex, setCurrentFaceIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
   
-  // Check if this is a double-faced card
-  const isDoubleFaced = card.cardFaces && card.cardFaces.length > 1;
+  // Check if this is a double-faced card that we can flip
+  // We can flip if there's no main imageUris field (meaning we need to use cardFaces for images)
+  // OR if there are multiple card faces
+  const hasNoMainImage = !card.imageUris;
+  const hasMultipleFaces = card.cardFaces && card.cardFaces.length > 1;
+  const isFlippable = hasNoMainImage && card.cardFaces && card.cardFaces.length > 0;
+  const isDoubleFaced = isFlippable || hasMultipleFaces;
   const currentFace = isDoubleFaced && card.cardFaces ? card.cardFaces[currentFaceIndex] : null;
   
   // Determine which image to show
   const getImageUrl = () => {
-    if (isDoubleFaced && currentFace?.imageUris) {
+    // If card has no main imageUris, we must use cardFaces
+    if (hasNoMainImage && currentFace?.imageUris) {
       // Use the current face's image
+      if (size === 'large') return currentFace.imageUris.large || currentFace.imageUris.normal || currentFace.imageUris.small || '';
+      if (size === 'small') return currentFace.imageUris.small || currentFace.imageUris.normal || '';
+      return currentFace.imageUris.normal || currentFace.imageUris.large || currentFace.imageUris.small || '';
+    }
+    
+    // If it's a double-faced card with faces but also has main imageUris, prefer faces when flipped
+    if (isDoubleFaced && currentFaceIndex > 0 && currentFace?.imageUris) {
       if (size === 'large') return currentFace.imageUris.large || currentFace.imageUris.normal || currentFace.imageUris.small || '';
       if (size === 'small') return currentFace.imageUris.small || currentFace.imageUris.normal || '';
       return currentFace.imageUris.normal || currentFace.imageUris.large || currentFace.imageUris.small || '';

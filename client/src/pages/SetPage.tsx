@@ -494,7 +494,7 @@ export const SetPage: React.FC = () => {
               value: selectedCardTypes,
               onChange: setSelectedCardTypes,
               options: uniqueCardTypes,
-              label: 'Card Type',
+              label: 'Card Group',
               placeholder: 'All Types',
               minWidth: 250,
               getOptionLabel: formatCardTypeLabel
@@ -541,7 +541,26 @@ export const SetPage: React.FC = () => {
 
       {/* Card Groups */}
       <CardGridErrorBoundary name="SetPageCardGroups">
-        {cardGroups.map((group) => (
+        {cardsLoading && (
+          <CardGroup
+            key="loading"
+            groupId="loading"
+            groupName="Loading"
+            cards={[]}
+            isVisible={true}
+            showHeader={false}
+            isLoading={true}
+            context={{
+              isOnSetPage: true,
+              currentSet: setCode,
+              hideSetInfo: true,
+              hideReleaseDate: false
+            }}
+            onCardSelection={() => {}}
+            selectedCardId={null}
+          />
+        )}
+        {!cardsLoading && cardGroups.map((group) => (
         <CardGroup
           key={group.id}
           groupId={group.id}

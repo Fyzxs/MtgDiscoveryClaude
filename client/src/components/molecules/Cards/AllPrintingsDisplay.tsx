@@ -36,8 +36,14 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   });
 
   const allCards = data?.cardsByName?.data || [];
-  // Filter out the current card
-  const otherCards = allCards.filter(card => card.id !== currentCardId);
+  // Filter out the current card and sort by release date (oldest first)
+  const otherCards = allCards
+    .filter(card => card.id !== currentCardId)
+    .sort((a, b) => {
+      const dateA = a.releasedAt ? new Date(a.releasedAt).getTime() : 0;
+      const dateB = b.releasedAt ? new Date(b.releasedAt).getTime() : 0;
+      return dateA - dateB; // Oldest first
+    });
   const hasError = error || data?.cardsByName?.__typename === 'FailureResponse';
 
   // Don't render if there are no other printings
