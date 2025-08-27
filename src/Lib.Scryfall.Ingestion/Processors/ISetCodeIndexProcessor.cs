@@ -1,4 +1,4 @@
-namespace Lib.Scryfall.Ingestion.Processors;
+﻿namespace Lib.Scryfall.Ingestion.Processors;
 
 internal interface ISetCodeIndexProcessor : ISetProcessor
 {

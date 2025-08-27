@@ -18,11 +18,26 @@ internal sealed class BatchSetProcessor : IBatchSetProcessor
 
     public BatchSetProcessor(ILogger logger)
         : this(
-            new SetProcessor(logger),
+            CreateSetProcessor(logger),
             new ArtistAggregationWriterProcessor(logger),
             new ConfigScryfallIngestionConfiguration(),
             logger)
     {
+    }
+
+    private static ISetProcessor CreateSetProcessor(ILogger logger)
+    {
+        IScryfallIngestionConfiguration config = new ConfigScryfallIngestionConfiguration();
+        bool processOnlySetItems = config.ProcessingConfig().ProcessOnlySetItems().AsSystemType();
+
+        if (processOnlySetItems)
+        {
+            logger.LogSetItemsOnlyModeEnabled();
+            return new SetItemsOnlyProcessor(logger);
+        }
+
+        logger.LogFullProcessingModeEnabled();
+        return new SetProcessor(logger);
     }
 
     private BatchSetProcessor(
@@ -78,6 +93,15 @@ internal sealed class BatchSetProcessor : IBatchSetProcessor
 
 internal static partial class BatchSetProcessorLoggerExtensions
 {
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Configuration: Processing ONLY set items (skipping cards)")]
+    public static partial void LogSetItemsOnlyModeEnabled(this ILogger logger);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Configuration: Processing full sets including cards")]
+    public static partial void LogFullProcessingModeEnabled(this ILogger logger);
     [LoggerMessage(
         Level = LogLevel.Information,
         Message = "Starting batch: {ProcessedSets}/{TotalSets} sets, batch size: {BatchSize}")]

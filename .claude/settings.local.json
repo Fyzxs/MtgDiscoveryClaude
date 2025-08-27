@@ -31,7 +31,8 @@
       "Bash(dotnet run:*)",
       "Bash(dotnet exec:*)",
       "Bash(dotnet:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:scryfall.com)"
     ],
     "deny": [],
     "ask": []

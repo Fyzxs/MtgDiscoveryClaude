@@ -1,4 +1,5 @@
-﻿using Lib.Shared.DataModels.Entities;
+﻿using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Aggregator.Sets.Models;
 
@@ -21,4 +22,5 @@ internal sealed class SetItemItrEntity : ISetItemItrEntity
     public string Block { get; init; }
     public string IconSvgUri { get; init; }
     public int PrintedSize { get; init; }
+    public ICollection<ISetGroupingItrEntity> Groupings { get; init; }
 }

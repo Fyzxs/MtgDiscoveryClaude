@@ -65,5 +65,9 @@ internal sealed class ScryfallSetOutEntityType : ObjectType<ScryfallSetOutEntity
         descriptor.Field(f => f.IconSvgUri)
             .Type<NonNullType<StringType>>()
             .Description("A URI to an SVG file for this set's icon");
+
+        descriptor.Field(f => f.Groupings)
+            .Type<ListType<SetGroupingOutEntityType>>()
+            .Description("Card groupings as displayed on the Scryfall set page");
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 

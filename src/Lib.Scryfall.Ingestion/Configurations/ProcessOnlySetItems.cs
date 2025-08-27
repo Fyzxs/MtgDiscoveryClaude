@@ -2,4 +2,4 @@
 
 namespace Lib.Scryfall.Ingestion.Configurations;
 
-internal abstract class AlwaysDownloadImages : ToSystemType<bool>;
+internal abstract class ProcessOnlySetItems : ToSystemType<bool>;

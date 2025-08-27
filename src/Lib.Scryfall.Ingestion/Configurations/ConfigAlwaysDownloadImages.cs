@@ -1,4 +1,4 @@
-using Lib.Cosmos.Configurations;
+﻿using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using Lib.Universal.Extensions;
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 

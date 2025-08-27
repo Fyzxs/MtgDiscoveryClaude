@@ -1,6 +1,10 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Aggregator.Sets.Models;
 using Lib.Shared.DataModels.Entities;
+using Microsoft.CSharp.RuntimeBinder;
+using Newtonsoft.Json;
 
 namespace Lib.Aggregator.Sets.Queries.Mappers;
 
@@ -9,6 +13,30 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
     public ISetItemItrEntity Map(ScryfallSetItem scryfallSetItem)
     {
         dynamic data = scryfallSetItem.Data;
+        ICollection<ISetGroupingItrEntity> groupings = null;
+
+        try
+        {
+            dynamic groupingsData = data.groupings;
+            if (groupingsData != null)
+            {
+                string groupingsJson = JsonConvert.SerializeObject(groupingsData);
+                List<SetGroupingItrEntity> groupingsList = JsonConvert.DeserializeObject<List<SetGroupingItrEntity>>(groupingsJson);
+
+                if (groupingsList is not null)
+                {
+                    groupings = groupingsList.Cast<ISetGroupingItrEntity>().ToList();
+                }
+            }
+        }
+        catch (RuntimeBinderException)
+        {
+            // If groupings property doesn't exist, leave as null
+        }
+        catch (JsonException)
+        {
+            // If parsing fails, leave as null
+        }
 
         return new SetItemItrEntity
         {
@@ -28,7 +56,8 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
             BlockCode = data.block_code,
             Block = data.block,
             IconSvgUri = data.icon_svg_uri,
-            PrintedSize = data.printed_size ?? 0
+            PrintedSize = data.printed_size ?? 0,
+            Groupings = groupings ?? []
         };
     }
 }
