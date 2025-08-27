@@ -37,5 +37,11 @@ internal sealed class SetGroupingItrEntity : ISetGroupingItrEntity
     {
         public string Min { get; set; }
         public string Max { get; set; }
+
+        [JsonProperty("OrConditions")]
+        public List<string> InternalOrConditions { get; set; }
+
+        [JsonIgnore]
+        public IList<string> OrConditions => InternalOrConditions;
     }
 }
