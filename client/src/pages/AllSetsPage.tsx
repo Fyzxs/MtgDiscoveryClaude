@@ -4,9 +4,7 @@ import {
   Container, 
   Typography, 
   Grid,
-  Box, 
-  CircularProgress, 
-  Alert
+  Box
 } from '@mui/material';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
@@ -18,6 +16,7 @@ import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropd
 import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterState';
+import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -127,38 +126,16 @@ export const AllSetsPage: React.FC = () => {
     { value: 'cards-asc', label: 'Card Count (Low-High)' }
   ];
 
-  if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          Error loading sets: {error.message}
-        </Alert>
-      </Container>
-    );
-  }
-
-  if (data?.allSets?.__typename === 'FailureResponse') {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          {data.allSets.status?.message || 'Failed to load sets'}
-        </Alert>
-      </Container>
-    );
-  }
-
   const sets = data?.allSets?.data || [];
   const setTypes = getUniqueSetTypes(sets);
 
   return (
+    <GraphQLQueryStateContainer
+      loading={loading}
+      error={error}
+      data={data?.allSets}
+      failureTypeName="FailureResponse"
+    >
     <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4 }}>
         All Magic Sets
@@ -230,5 +207,6 @@ export const AllSetsPage: React.FC = () => {
         />
       )}
     </Container>
+    </GraphQLQueryStateContainer>
   );
 };

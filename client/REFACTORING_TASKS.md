@@ -141,7 +141,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ---
 
-### Task 8: Create QueryStateContainer Molecule
+### Task 8: Create QueryStateContainer Molecule [COMPLETED]
 **Files to modify:**
 - Create: `src/components/molecules/shared/QueryStateContainer.tsx`
 - Update: All page components with loading/error states

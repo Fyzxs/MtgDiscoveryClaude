@@ -4,7 +4,6 @@ import {
   Container, 
   Typography, 
   Box, 
-  CircularProgress, 
   Alert,
   TextField,
   Chip,
@@ -25,6 +24,7 @@ import { SortDropdown } from '../components/atoms/shared/SortDropdown';
 import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
 import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
+import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -357,39 +357,17 @@ export const SetPage: React.FC = () => {
     setSortBy(value);
   };
 
+  // Combine query states
+  const { isLoading, firstError } = useQueryStates([
+    { loading: cardsLoading, error: cardsError },
+    { loading: setLoading, error: setError }
+  ]);
+
   if (!setCode) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Alert severity="error">
           No set code provided. Please provide a set code in the URL (e.g., ?set=lea)
-        </Alert>
-      </Container>
-    );
-  }
-
-  if (cardsLoading || setLoading) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
-
-  if (cardsError) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          Error loading cards: {cardsError.message}
-        </Alert>
-      </Container>
-    );
-  }
-
-  if (setError) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          Error loading set information: {setError.message}
         </Alert>
       </Container>
     );
@@ -415,7 +393,23 @@ export const SetPage: React.FC = () => {
   const allSameReleaseDate = cards.length > 0 && 
     cards.every(card => card.releasedAt === cards[0].releasedAt);
 
+  // Check for GraphQL failure
+  if (cardsData?.cardsBySetCode?.__typename === 'FailureResponse') {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          {cardsData.cardsBySetCode.status?.message || 'Failed to load cards'}
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
+    <QueryStateContainer
+      loading={isLoading}
+      error={firstError}
+      containerProps={{ maxWidth: false }}
+    >
     <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       {/* Set Information Card */}
       {setInfo && (
@@ -638,5 +632,6 @@ export const SetPage: React.FC = () => {
         </Fab>
       </Zoom>
     </Container>
+    </QueryStateContainer>
   );
 };
