@@ -175,15 +175,17 @@ export const AllSetsPage: React.FC = () => {
       />
 
       {/* Sets Grid */}
-      <ResponsiveGrid minItemWidth={240} spacing={1.5}>
-        {filteredSets.map((set) => (
+      <CardGridErrorBoundary name="AllSetsGrid">
+        <ResponsiveGrid minItemWidth={240} spacing={1.5}>
+          {filteredSets.map((set) => (
           <MtgSetCard
             key={set.id}
             set={set}
             onSetClick={handleSetClick}
           />
-        ))}
-      </ResponsiveGrid>
+          ))}
+        </ResponsiveGrid>
+      </CardGridErrorBoundary>
 
       {filteredSets.length === 0 && (
         <EmptyState

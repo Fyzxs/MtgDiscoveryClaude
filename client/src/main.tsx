@@ -7,14 +7,17 @@ import './index.css'
 import App from './App.tsx'
 import { apolloClient } from './graphql/apollo-client'
 import { theme } from './theme'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <ApolloProvider client={apolloClient}>
-        <App />
-      </ApolloProvider>
-    </ThemeProvider>
+    <ErrorBoundary level="page" name="Root">
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <ApolloProvider client={apolloClient}>
+          <App />
+        </ApolloProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   </StrictMode>,
 )

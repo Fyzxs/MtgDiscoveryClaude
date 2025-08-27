@@ -17,6 +17,11 @@ import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
+import { 
+  SectionErrorBoundary, 
+  FilterErrorBoundary, 
+  CardGridErrorBoundary 
+} from '../components/ErrorBoundaries';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -260,7 +265,7 @@ export const SetPage: React.FC = () => {
       });
       
       // Only update if the normalized version is different
-      const needsUpdate = normalized.some((norm, i) => norm !== filters.artists[i]);
+      const needsUpdate = normalized.some((norm: string, i: number) => norm !== filters.artists[i]);
       if (needsUpdate) {
         updateFilter('artists', normalized);
       }
@@ -437,9 +442,11 @@ export const SetPage: React.FC = () => {
     <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       {/* Set Information Card */}
       {setInfo && (
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
-          <MtgSetCard set={setInfo} />
-        </Box>
+        <SectionErrorBoundary name="SetInfoCard">
+          <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+            <MtgSetCard set={setInfo} />
+          </Box>
+        </SectionErrorBoundary>
       )}
       
       {/* Fallback title if no set info */}
@@ -450,7 +457,8 @@ export const SetPage: React.FC = () => {
       )}
 
       {/* Filters and Search */}
-      <FilterPanel
+      <FilterErrorBoundary name="SetPageFilters">
+        <FilterPanel
         config={{
           search: {
             value: initialValues.search || '',
@@ -517,9 +525,10 @@ export const SetPage: React.FC = () => {
             minWidth: 180
           }
         }}
-        layout="compact"
-        sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}
-      />
+          layout="compact"
+          sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}
+        />
+      </FilterErrorBoundary>
 
       <ResultsSummary 
         showing={cardGroups
@@ -531,7 +540,8 @@ export const SetPage: React.FC = () => {
       />
 
       {/* Card Groups */}
-      {cardGroups.map((group) => (
+      <CardGridErrorBoundary name="SetPageCardGroups">
+        {cardGroups.map((group) => (
         <CardGroup
           key={group.id}
           groupId={group.id}
@@ -548,7 +558,8 @@ export const SetPage: React.FC = () => {
           onCardSelection={handleCardSelection}
           selectedCardId={selectedCardId}
         />
-      ))}
+        ))}
+      </CardGridErrorBoundary>
 
       {filteredCards.length === 0 && (
         <SearchEmptyState

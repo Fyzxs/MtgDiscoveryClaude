@@ -13,6 +13,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getLegalityColor } from '../../theme';
 import { flexBetween, flexCenter, flexCol, gap2, gap3 } from '../../styles/layoutStyles';
+import { ModalErrorBoundary } from '../ErrorBoundaries';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -123,6 +124,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
       height="90vh"
       showCloseButton={false}
     >
+      <ModalErrorBoundary name="CardDetails" onClose={onClose}>
         {/* Header */}
         <Box sx={{
           p: 2,
@@ -555,6 +557,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             </Stack>
           </Box>
         </Box>
+      </ModalErrorBoundary>
     </ModalContainer>
   );
 };

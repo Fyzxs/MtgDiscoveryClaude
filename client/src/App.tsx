@@ -5,6 +5,7 @@ import { SetPage } from './pages/SetPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 import { Layout } from './components/templates/Layout'
+import { PageErrorBoundary } from './components/ErrorBoundaries'
 
 function App() {
   // Check URL params for initial page
@@ -16,15 +17,24 @@ function App() {
   )
 
   if (currentPage === 'all-sets') {
-    return <Layout><AllSetsPage /></Layout>
+    return (
+      <PageErrorBoundary name="AllSetsPage">
+        <Layout><AllSetsPage /></Layout>
+      </PageErrorBoundary>
+    )
   }
 
   if (currentPage === 'set') {
-    return <Layout><SetPage /></Layout>
+    return (
+      <PageErrorBoundary name="SetPage">
+        <Layout><SetPage /></Layout>
+      </PageErrorBoundary>
+    )
   }
 
   return (
-    <Layout>
+    <PageErrorBoundary name="HomePage">
+      <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">        
         <Card variant="elevated" className="text-center max-w-2xl mx-auto">
           <h2 className="text-2xl font-semibold text-white mb-4">
@@ -46,7 +56,8 @@ function App() {
           </div>
         </Card>
       </div>
-    </Layout>
+      </Layout>
+    </PageErrorBoundary>
   )
 }
 
