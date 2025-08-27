@@ -88,9 +88,9 @@ export const SetPage: React.FC = () => {
     sort: { default: 'collector-asc' }
   };
 
-  // Get initial values from URL
+  // Get initial values from URL only once on mount
   const { getInitialValues } = useUrlState({}, urlStateConfig);
-  const initialValues = getInitialValues();
+  const [initialValues] = useState(() => getInitialValues());
   const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_SET_CODE, {
     variables: { setCode: { setCode } },
     skip: !setCode
@@ -133,7 +133,7 @@ export const SetPage: React.FC = () => {
   }, []);
 
   const filterConfig = useMemo(() => ({
-    searchFields: ['name', 'oracleText', 'typeLine', 'artist'] as (keyof Card)[],
+    searchFields: ['name'] as (keyof Card)[],
     sortOptions: {
       'collector-asc': (a: Card, b: Card) => parseCollectorNumber(a.collectorNumber || '') - parseCollectorNumber(b.collectorNumber || ''),
       'collector-desc': (a: Card, b: Card) => parseCollectorNumber(b.collectorNumber || '') - parseCollectorNumber(a.collectorNumber || ''),
