@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Paging;
@@ -10,7 +12,7 @@ internal sealed class ScryfallListPagingFake<T> : IScryfallListPaging<T> where T
     public List<T> ItemsResult { get; init; } = [];
     public int ItemsInvokeCount { get; private set; }
 
-    public async IAsyncEnumerable<T> Items()
+    public async IAsyncEnumerable<T> Items([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ItemsInvokeCount++;
         foreach (T item in ItemsResult)

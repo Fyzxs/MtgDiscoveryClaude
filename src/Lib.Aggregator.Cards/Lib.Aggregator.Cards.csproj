@@ -5,6 +5,7 @@
     <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
   </ItemGroup>
 
 </Project>

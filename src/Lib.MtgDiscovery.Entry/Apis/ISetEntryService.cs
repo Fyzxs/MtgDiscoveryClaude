@@ -1,8 +1,12 @@
-﻿namespace Lib.MtgDiscovery.Entry.Apis;
+﻿using System.Threading.Tasks;
+using Lib.Shared.DataModels.Entities;
+using Lib.Shared.Invocation.Operations;
 
-#pragma warning disable CA1040 // Avoid empty interfaces
+namespace Lib.MtgDiscovery.Entry.Apis;
+
 public interface ISetEntryService
 {
-    // Set operations will be added later
+    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds);
+    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes);
+    Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync();
 }
-#pragma warning restore CA1040

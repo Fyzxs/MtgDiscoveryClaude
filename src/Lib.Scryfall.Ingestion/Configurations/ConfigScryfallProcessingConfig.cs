@@ -37,4 +37,9 @@ internal sealed class ConfigScryfallProcessingConfig : IScryfallProcessingConfig
     {
         return new ConfigAlwaysDownloadImages($"{_parentKey}:{IScryfallProcessingConfig.AlwaysDownloadImagesKey}", _config);
     }
+
+    public ProcessOnlySetItems ProcessOnlySetItems()
+    {
+        return new ConfigProcessOnlySetItems($"{_parentKey}:{IScryfallProcessingConfig.ProcessOnlySetItemsKey}", _config);
+    }
 }

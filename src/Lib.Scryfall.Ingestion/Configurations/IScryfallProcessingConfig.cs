@@ -6,9 +6,11 @@ internal interface IScryfallProcessingConfig
     const string SetBatchSizeKey = "batch_size";
     const string ProcessSetsInReverseKey = "reverse";
     const string AlwaysDownloadImagesKey = "always_download_images";
+    const string ProcessOnlySetItemsKey = "process_only_set_items";
     MaxSetsToProcess MaxSets();
     SpecificSetCodes SpecificSets();
     SetBatchSize SetBatchSize();
     ProcessSetsInReverse ProcessSetsInReverse();
     AlwaysDownloadImages AlwaysDownloadImages();
+    ProcessOnlySetItems ProcessOnlySetItems();
 }

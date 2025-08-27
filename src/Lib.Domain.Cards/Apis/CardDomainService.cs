@@ -10,7 +10,7 @@ public sealed class CardDomainService : ICardDomainService
 {
     private readonly ICardDomainService _cardDomainOperations;
 
-    public CardDomainService(ILogger logger) : this(new CardDomainOperations(logger))
+    public CardDomainService(ILogger logger) : this(new QueryCardDomainService(logger))
     {
 
     }
@@ -22,5 +22,15 @@ public sealed class CardDomainService : ICardDomainService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         return _cardDomainOperations.CardsByIdsAsync(args);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    {
+        return _cardDomainOperations.CardsBySetCodeAsync(setCode);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    {
+        return _cardDomainOperations.CardsByNameAsync(cardName);
     }
 }

@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
     <NoWarn>$(NoWarn);CA1515;CA1056;CA1056;CA1819</NoWarn>
   </PropertyGroup>
 
@@ -18,9 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
-    <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj" />
     <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
     <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />

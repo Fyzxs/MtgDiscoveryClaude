@@ -11,6 +11,9 @@ public sealed class ArtistAggregateData
     [JsonProperty("artist_names")]
     public IEnumerable<string> ArtistNames { get; init; } = [];
 
+    [JsonProperty("artist_names_search")]
+    public string ArtistNamesSearch { get; init; } = string.Empty;
+
     [JsonProperty("card_ids")]
     public IEnumerable<string> CardIds { get; init; } = [];
 

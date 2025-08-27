@@ -1,0 +1,44 @@
+###
+# Variables
+# @name variables
+@baseUrl = https://localhost:65203
+@graphqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get All Sets
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetAllSets {
+  allSets {
+    __typename
+    ... on SuccessSetsResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{}

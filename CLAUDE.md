@@ -158,6 +158,19 @@ Configuration classes follow a specific structure:
 - Use `replace_all: true` when using Edit tool
 - If statement bodies MUST be block bodies, or on a single line with braces
 
+### Pragma Directives
+- **Avoid #pragma directives** - they accumulate as technical debt
+- When reviewing code, check if existing #pragma directives are still necessary
+- Remove any #pragma that suppresses warnings that no longer occur
+- If you must add a #pragma:
+  - Include a comment explaining why it's necessary
+  - Scope it as narrowly as possible (line-specific, not file-wide)
+  - Plan to remove it in the future
+- Common unnecessary pragmas to remove:
+  - Formatting suppressions (IDE0055) - fix the formatting instead
+  - Warnings for code that's been refactored
+  - Overly broad suppressions that hide real issues
+
 ## Testing Requirements
 
 When writing tests:

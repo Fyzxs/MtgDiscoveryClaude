@@ -1,0 +1,15 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lib.MtgDiscovery.Entry.Apis;
+using Lib.Shared.DataModels.Entities;
+
+namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
+
+internal sealed class SetCodesArgsToItrMapper : ISetCodesArgsToItrMapper
+{
+    public Task<ISetCodesItrEntity> Map(ISetCodesArgEntity arg)
+    {
+        List<string> setCodes = [.. arg.SetCodes];
+        return Task.FromResult<ISetCodesItrEntity>(new EntrySetCodesItrEntity(setCodes));
+    }
+}

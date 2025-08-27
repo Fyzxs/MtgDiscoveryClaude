@@ -50,3 +50,15 @@ See [TESTING_GUIDELINES.md](TESTING_GUIDELINES.md) for specific unit testing pat
 
 ### Error Handling
 - Use `inheritdoc` tag for override methods
+
+### Pragma Directives
+- #pragma directives should be temporary and removed as soon as possible
+- Every #pragma warning disable must have a specific justification comment
+- Review and remove unnecessary #pragma directives during code reviews
+- Prefer fixing the underlying issue over suppressing warnings
+- If a #pragma is absolutely necessary, scope it as narrowly as possible (specific line vs entire file)
+- Common unnecessary pragmas to watch for:
+  - CA1515 (partial classes) - often left after refactoring
+  - IDE0055 (formatting) - fix the formatting instead
+  - Pragmas suppressing warnings that no longer occur in the code
+- During code reviews, verify each #pragma is still needed and justified

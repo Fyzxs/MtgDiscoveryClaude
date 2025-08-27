@@ -10,7 +10,7 @@ public sealed class CardAggregatorService : ICardAggregatorService
 {
     private readonly ICardAggregatorService _cardAggregatorOperations;
 
-    public CardAggregatorService(ILogger logger) : this(new CardAggregatorOperations(logger))
+    public CardAggregatorService(ILogger logger) : this(new QueryCardAggregatorService(logger))
     {
 
     }
@@ -22,5 +22,15 @@ public sealed class CardAggregatorService : ICardAggregatorService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         return _cardAggregatorOperations.CardsByIdsAsync(args);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    {
+        return _cardAggregatorOperations.CardsBySetCodeAsync(setCode);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    {
+        return _cardAggregatorOperations.CardsByNameAsync(cardName);
     }
 }

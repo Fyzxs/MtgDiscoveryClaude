@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
+using Lib.Scryfall.Ingestion.Internal.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
@@ -10,27 +13,31 @@ namespace Lib.Scryfall.Ingestion.Processors;
 internal sealed class ArtistItemsProcessor : IArtistProcessor
 {
     private readonly ScryfallArtistItemsScribe _scribe;
+    private readonly IArtistNameSearchNormalizer _normalizer;
     private readonly ILogger _logger;
 
     public ArtistItemsProcessor(ILogger logger)
-        : this(new ScryfallArtistItemsScribe(logger), logger)
+        : this(new ScryfallArtistItemsScribe(logger), new ArtistNameSearchNormalizer(), logger)
     {
     }
 
-    private ArtistItemsProcessor(ScryfallArtistItemsScribe scribe, ILogger logger)
+    private ArtistItemsProcessor(ScryfallArtistItemsScribe scribe, IArtistNameSearchNormalizer normalizer, ILogger logger)
     {
         _scribe = scribe;
+        _normalizer = normalizer;
         _logger = logger;
     }
 
     public async Task ProcessAsync(IArtistAggregate artist)
     {
         string artistId = artist.ArtistId();
+        IEnumerable<string> artistNames = artist.ArtistNames().ToList();
 
         ArtistAggregateData data = new()
         {
             ArtistId = artistId,
-            ArtistNames = artist.ArtistNames(),
+            ArtistNames = artistNames,
+            ArtistNamesSearch = _normalizer.Normalize(artistNames),
             CardIds = artist.CardIds(),
             SetIds = artist.SetIds()
         };
