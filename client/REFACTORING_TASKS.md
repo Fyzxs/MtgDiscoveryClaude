@@ -223,7 +223,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 **Testing focus:** Scroll threshold, smooth scrolling
 
-### Task 13: Removed
+### Task 13: [REMOVED]
 ---
 
 ## Phase 6: Type Definitions & Interfaces
