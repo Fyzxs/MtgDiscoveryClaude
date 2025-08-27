@@ -181,7 +181,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
         flexDirection: 'column-reverse',  // Stack upward from bottom
         gap: 0.5,
         position: 'absolute',
-        bottom: 65,  // Position above the links (which are at bottom)
+        bottom: 155,  // Move higher up, above the overlay content
         right: 8,
         zIndex: 15,
         alignItems: 'flex-end'

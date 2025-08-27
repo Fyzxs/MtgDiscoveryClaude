@@ -87,18 +87,21 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
       className={`card-overlay ${className || ''}`}
     >
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        {/* Release Date Row - now at the top */}
+        {releaseDate && !context.hideReleaseDate && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'grey.400' }}>
+              {formatReleaseDate(releaseDate)}
+            </Typography>
+          </Box>
+        )}
+
         {/* Collector Info Row */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
           <RarityCollectorBadge
             rarity={rarity}
             collectorNumber={collectorNumber}
           />
-          {/* Date moved to top row */}
-          {releaseDate && !context.hideReleaseDate && (
-            <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'grey.400' }}>
-              {formatReleaseDate(releaseDate)}
-            </Typography>
-          )}
         </Box>
 
         {/* Artist(s) */}
