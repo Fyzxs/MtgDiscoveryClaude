@@ -67,3 +67,42 @@ export const GET_SETS_BY_CODE = gql`
     }
   }
 `;
+
+export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
+  query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
+    setsByCode(codes: $codes) {
+      __typename
+      ... on SuccessSetsResponse {
+        data {
+          id
+          code
+          name
+          setType
+          cardCount
+          releasedAt
+          iconSvgUri
+          groupings {
+            id
+            displayName
+            order
+            cardCount
+            rawQuery
+            filters {
+              collectorNumberRange {
+                min
+                max
+              }
+              properties
+            }
+          }
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;

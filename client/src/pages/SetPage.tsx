@@ -7,7 +7,7 @@ import {
   Alert
 } from '@mui/material';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
-import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
+import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
@@ -22,9 +22,9 @@ import {
   FilterErrorBoundary, 
   CardGridErrorBoundary 
 } from '../components/ErrorBoundaries';
-import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
+import { groupCardsBySetGroupings, getGroupDisplayName, getGroupOrder } from '../utils/cardGrouping';
 
 interface CardsResponse {
   cardsBySetCode: {
@@ -47,6 +47,19 @@ interface SetsResponse {
   };
 }
 
+interface CardGroupConfig {
+  id: string;
+  name: string;
+  displayName: string;
+  cards: Card[];
+  totalCards: number; // Total cards in this group before filtering
+  isVisible: boolean;
+  isFoilOnly: boolean;
+  isVariation: boolean;
+  isBooster: boolean;
+  isPromo: boolean;
+}
+
 const RARITIES = ['common', 'uncommon', 'rare', 'mythic', 'special', 'bonus'];
 
 // Get unique artists from cards
@@ -60,70 +73,6 @@ const getUniqueArtists = (cards: Card[]): string[] => {
     }
   });
   return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-};
-
-// Format card type labels for display
-const formatCardTypeLabel = (type: string): string => {
-  // Handle null/undefined
-  if (!type) return 'Unknown';
-  
-  // Normalize the type for comparison (remove spaces, underscores, make uppercase)
-  const normalizedType = type.replace(/[\s_-]/g, '').toUpperCase();
-  
-  // Special cases mapping - use normalized keys
-  const specialCases: Record<string, string> = {
-    'INBOOSTERS': 'In Boosters',
-    'CARDVARIATIONS': 'Card Variations', 
-    'FOILONLYBOOSTER': 'Foil Only Booster Cards',
-    'PROMOCARDS': 'Promo Cards',
-    'OTHERCARDS': 'Other Cards'
-  };
-  
-  // Check normalized version
-  if (specialCases[normalizedType]) {
-    return specialCases[normalizedType];
-  }
-  
-  // General formatting: replace underscores with spaces and capitalize words
-  return type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-};
-
-// Determine which type group a card belongs to (matching the grouping logic)
-const getCardType = (card: Card): string => {
-  // Check for foil-only booster cards (7th Edition specific)
-  if (card.booster && card.foil && !card.nonFoil) {
-    return 'FOIL_ONLY_BOOSTER';
-  }
-  // Check for variations
-  else if (card.variation) {
-    return 'CARD_VARIATIONS';
-  }
-  // Check if it's in boosters (this is the "regular" cards)
-  else if (card.booster) {
-    return 'IN_BOOSTERS';
-  }
-  // Check for promos
-  else if (card.promo) {
-    return 'PROMO_CARDS';
-  }
-  // Default for cards that don't fit other categories
-  return 'OTHER_CARDS';
-};
-
-// Get unique card types from cards (includes promo types, boosters, variations, etc.)
-const getUniqueCardTypes = (cards: Card[]): string[] => {
-  const cardTypeSet = new Set<string>();
-  
-  cards.forEach(card => {
-    const cardType = getCardType(card);
-    if (cardType !== 'OTHER_CARDS' || cards.some(c => getCardType(c) === 'OTHER_CARDS')) {
-      // Only add OTHER_CARDS if at least one card actually belongs to it
-      cardTypeSet.add(cardType);
-    }
-  });
-  
-  return Array.from(cardTypeSet)
-    .sort((a, b) => formatCardTypeLabel(a).localeCompare(formatCardTypeLabel(b)));
 };
 
 export const SetPage: React.FC = () => {
@@ -172,7 +121,7 @@ export const SetPage: React.FC = () => {
     return raw;
   }, [initialValues.artists]);
 
-  const { loading: setLoading, error: setError, data: setData } = useQuery<SetsResponse>(GET_SETS_BY_CODE, {
+  const { loading: setLoading, error: setError, data: setData } = useQuery<SetsResponse>(GET_SET_BY_CODE_WITH_GROUPINGS, {
     variables: { codes: { setCodes: [setCode] } },
     skip: !setCode
   });
@@ -284,7 +233,6 @@ export const SetPage: React.FC = () => {
       return normalized || artist;
     }).filter((artist: string) => allArtists.includes(artist)); // Only keep valid artists
   }, [filters.artists, artistMap, allArtists]);
-  const [selectedCardTypes, setSelectedCardTypes] = useState<string[]>([]);
   const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
   const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -336,42 +284,51 @@ export const SetPage: React.FC = () => {
     }
   );
 
+  // Define setInfo before using it in useEffect
+  const setInfo = setData?.setsByCode?.data?.[0];
+  const cards = cardsData?.cardsBySetCode?.data || [];
+
   useEffect(() => {
-    if (filteredCards) {
+    if (filteredCards && setInfo && cards) {
+      // Calculate total cards per group from ALL cards (unfiltered)
+      const totalCardsPerGroup = groupCardsBySetGroupings(cards, setInfo.groupings);
       
-      // Group cards by their characteristics
-      const groupsMap = new Map<string, CardGroupConfig>();
+      // Use the new grouping system from the set data for filtered cards
+      const groupedCards = groupCardsBySetGroupings(filteredCards, setInfo.groupings);
       
-      filteredCards.forEach(card => {
-        const cardType = getCardType(card);
-        const groupId = cardType;
-        const displayName = formatCardTypeLabel(cardType);
+      // Convert to CardGroupConfig format for compatibility
+      const groupsArray: CardGroupConfig[] = [];
+      
+      // Get groupings for proper ordering
+      const groupings = setInfo.groupings || [];
+      
+      // Process each group
+      for (const [groupId, filteredGroupCards] of groupedCards.entries()) {
+        const displayName = getGroupDisplayName(groupId, groupings);
+        const order = getGroupOrder(groupId, groupings);
+        const totalGroupCards = totalCardsPerGroup.get(groupId) || [];
         
-        if (!groupsMap.has(groupId)) {
-          groupsMap.set(groupId, {
-            id: groupId,
-            name: cardType,
-            displayName: displayName,
-            cards: [],
-            isVisible: true,
-            isFoilOnly: cardType === 'FOIL_ONLY_BOOSTER',
-            isVariation: cardType === 'CARD_VARIATIONS',
-            isBooster: cardType === 'IN_BOOSTERS',
-            isPromo: cardType === 'PROMO_CARDS'
-          });
-        }
-        
-        groupsMap.get(groupId)!.cards.push(card);
-      });
-      
-      // Convert to array and sort by display name
-      const groupsArray = Array.from(groupsMap.values())
-        .sort((a, b) => {
-          // Put "In Boosters" first as it's the regular cards
-          if (a.id === 'IN_BOOSTERS') return -1;
-          if (b.id === 'IN_BOOSTERS') return 1;
-          return a.displayName.localeCompare(b.displayName);
+        groupsArray.push({
+          id: groupId,
+          name: groupId,
+          displayName: displayName,
+          cards: filteredGroupCards,
+          totalCards: totalGroupCards.length,
+          isVisible: true,
+          // These flags are no longer needed with the new system
+          isFoilOnly: false,
+          isVariation: false,
+          isBooster: false,
+          isPromo: false
         });
+      }
+      
+      // Sort groups by their defined order
+      groupsArray.sort((a, b) => {
+        const orderA = getGroupOrder(a.id, groupings);
+        const orderB = getGroupOrder(b.id, groupings);
+        return orderA - orderB;
+      });
       
       setCardGroups(groupsArray);
       
@@ -379,18 +336,12 @@ export const SetPage: React.FC = () => {
       const allGroupIds = new Set(groupsArray.map(g => g.id));
       setVisibleGroupIds(allGroupIds);
     }
-  }, [filteredCards]);
+  }, [filteredCards, setInfo, cards]);
   
-  // Handle card type filtering by showing/hiding groups
+  // Show all groups by default
   useEffect(() => {
-    if (selectedCardTypes.length === 0) {
-      // Show all groups if no filter selected
-      setVisibleGroupIds(new Set(cardGroups.map(g => g.id)));
-    } else {
-      // Only show selected groups
-      setVisibleGroupIds(new Set(selectedCardTypes));
-    }
-  }, [selectedCardTypes, cardGroups]);
+    setVisibleGroupIds(new Set(cardGroups.map(g => g.id)));
+  }, [cardGroups]);
 
   const handleRarityChange = (value: string[]) => {
     updateFilter('rarities', value);
@@ -426,11 +377,8 @@ export const SetPage: React.FC = () => {
     );
   }
 
-  const cards = cardsData?.cardsBySetCode?.data || [];
-  const setInfo = setData?.setsByCode?.data?.[0];
   const setName = setInfo?.name || cards[0]?.setName || setCode.toUpperCase();
   // Note: allArtists and artistMap are now created earlier for initial value normalization
-  const uniqueCardTypes = getUniqueCardTypes(cards);
   
   // Check if all cards have the same release date
   const allSameReleaseDate = cards.length > 0 && 
@@ -502,17 +450,7 @@ export const SetPage: React.FC = () => {
               placeholder: 'All Artists',
               minWidth: 250,
               maxTagsToShow: 1
-            },
-            ...(uniqueCardTypes.length > 1 ? [{
-              key: 'cardTypes',
-              value: selectedCardTypes,
-              onChange: setSelectedCardTypes,
-              options: uniqueCardTypes,
-              label: 'Card Group',
-              placeholder: 'All Types',
-              minWidth: 250,
-              getOptionLabel: formatCardTypeLabel
-            }] : [])
+            }
           ],
           sort: {
             value: sortBy,
@@ -548,7 +486,7 @@ export const SetPage: React.FC = () => {
         showing={cardGroups
           .filter(g => visibleGroupIds.has(g.id))
           .reduce((sum, g) => sum + g.cards.length, 0)} 
-        total={filteredCards.length} 
+        total={cards.length} 
         itemType="cards"
         textAlign="center"
       />
@@ -580,6 +518,7 @@ export const SetPage: React.FC = () => {
           groupId={group.id}
           groupName={group.displayName.toUpperCase()}
           cards={group.cards}
+          totalCards={group.totalCards}
           isVisible={visibleGroupIds.has(group.id)}
           showHeader={cardGroups.length > 1}
           context={{

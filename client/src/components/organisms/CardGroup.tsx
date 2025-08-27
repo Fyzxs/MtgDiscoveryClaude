@@ -8,6 +8,7 @@ interface CardGroupProps {
   groupId: string;
   groupName: string;
   cards: Card[];
+  totalCards?: number; // Total cards in this group before filtering
   isVisible: boolean;
   showHeader: boolean;
   context: CardContext;
@@ -20,6 +21,7 @@ export const CardGroup: React.FC<CardGroupProps> = ({
   groupId,
   groupName,
   cards,
+  totalCards,
   isVisible,
   showHeader,
   context,
@@ -68,9 +70,10 @@ export const CardGroup: React.FC<CardGroupProps> = ({
     );
   }
 
-  if (cards.length === 0) {
-    return null;
-  }
+  // Don't hide empty groups - show them for debugging
+  // if (cards.length === 0) {
+  //   return null;
+  // }
 
   return (
     <Box 
@@ -87,27 +90,38 @@ export const CardGroup: React.FC<CardGroupProps> = ({
               fontSize: '0.875rem'
             }}
           >
-            {groupName} • {cards.length} CARDS
+            {groupName} • {totalCards ? `${cards.length} OF ${totalCards}` : cards.length} CARDS
           </Typography>
           <Divider sx={{ mt: 1, mb: 3 }} />
         </Box>
       )}
       
-      <ResponsiveGridAutoFit 
-        minItemWidth={280} 
-        spacing={1.5}
-        sx={{ margin: '0 auto' }}
-      >
-        {cards.map((card) => (
-          <MtgCard
-            key={card.id}
-            card={card}
-            isSelected={selectedCardId === card.id}
-            onSelectionChange={onCardSelection}
-            context={context}
-          />
-        ))}
-      </ResponsiveGridAutoFit>
+      {cards.length > 0 ? (
+        <ResponsiveGridAutoFit 
+          minItemWidth={280} 
+          spacing={1.5}
+          sx={{ margin: '0 auto' }}
+        >
+          {cards.map((card) => (
+            <MtgCard
+              key={card.id}
+              card={card}
+              isSelected={selectedCardId === card.id}
+              onSelectionChange={onCardSelection}
+              context={context}
+            />
+          ))}
+        </ResponsiveGridAutoFit>
+      ) : (
+        <Box sx={{ 
+          textAlign: 'center', 
+          py: 4,
+          color: 'text.secondary',
+          fontStyle: 'italic'
+        }}>
+          No cards match the current filters
+        </Box>
+      )}
     </Box>
   );
 };

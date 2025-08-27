@@ -1,3 +1,20 @@
+export interface SetGroupingFilter {
+  collectorNumberRange?: {
+    min: string;
+    max: string;
+  };
+  properties?: Record<string, any>;
+}
+
+export interface SetGrouping {
+  id: string;
+  displayName: string;
+  order: number;
+  cardCount: number;
+  rawQuery: string;
+  filters: SetGroupingFilter;
+}
+
 export interface MtgSet {
   id: string;
   code: string;
@@ -15,6 +32,7 @@ export interface MtgSet {
   foilOnly: boolean;
   block?: string;
   iconSvgUri: string;
+  groupings?: SetGrouping[];
 }
 
 export interface SetContext {
