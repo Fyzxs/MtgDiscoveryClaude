@@ -209,10 +209,11 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ## Phase 5: Additional UI Components (Lower Priority)
 
-### Task 12: Create BackToTopFab Molecule
+### Task 12: Create BackToTopFab Molecule [COMPLETED]
 **Files to modify:**
-- Create: `src/components/molecules/shared/BackToTopFab.tsx`
-- Update: `src/pages/SetPage.tsx`
+- Created: `src/components/molecules/shared/BackToTopFab.tsx`
+- Updated: `src/pages/SetPage.tsx`
+- Updated: `src/pages/AllSetsPage.tsx`
 
 **Steps:**
 1. Extract BackToTopFab from SetPage

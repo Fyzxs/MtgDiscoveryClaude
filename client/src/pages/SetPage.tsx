@@ -4,11 +4,8 @@ import {
   Container, 
   Typography, 
   Box, 
-  Alert,
-  Fab,
-  Zoom
+  Alert
 } from '@mui/material';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
@@ -19,6 +16,7 @@ import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
+import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -152,7 +150,6 @@ export const SetPage: React.FC = () => {
   const [selectedCardTypes, setSelectedCardTypes] = useState<string[]>([]);
   const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
   const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
   // Get unique artists from cards
@@ -233,19 +230,6 @@ export const SetPage: React.FC = () => {
   };
 
 
-  // Handle scroll to show/hide back to top button
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   // Get the currently selected card by querying the DOM
   // This avoids React state updates on every selection change (which cause lag)
@@ -532,22 +516,7 @@ export const SetPage: React.FC = () => {
       )}
 
       {/* Back to Top Button */}
-      <Zoom in={showBackToTop}>
-        <Fab
-          color="primary"
-          size="medium"
-          onClick={scrollToTop}
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 1000
-          }}
-          aria-label="scroll back to top"
-        >
-          <KeyboardArrowUpIcon />
-        </Fab>
-      </Zoom>
+      <BackToTopFab />
     </Container>
     </QueryStateContainer>
   );

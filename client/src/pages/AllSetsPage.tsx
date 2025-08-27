@@ -14,6 +14,7 @@ import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterSt
 import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { ResponsiveGrid } from '../components/atoms/layouts/ResponsiveGrid';
+import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -190,6 +191,9 @@ export const AllSetsPage: React.FC = () => {
           description="Try adjusting your filters or search terms"
         />
       )}
+
+      {/* Back to Top Button */}
+      <BackToTopFab />
     </Container>
     </GraphQLQueryStateContainer>
   );
