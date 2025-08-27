@@ -7,30 +7,23 @@ import {
   CircularProgress, 
   Alert,
   TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
   Chip,
   Stack,
   Autocomplete,
   Fab,
-  Zoom,
-  Divider
+  Zoom
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SETS_BY_CODE } from '../graphql/queries/sets';
-import { MtgCard } from '../components/organisms/MtgCard';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { SortDropdown } from '../components/atoms/shared/SortDropdown';
-import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
+import { useUrlState } from '../hooks/useUrlState';
 import type { CardGroupConfig } from '../types/cardGroup';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
@@ -59,12 +52,21 @@ interface SetsResponse {
 const RARITIES = ['common', 'uncommon', 'rare', 'mythic', 'special', 'bonus'];
 
 export const SetPage: React.FC = () => {
+  // Get set code from URL first
   const urlParams = new URLSearchParams(window.location.search);
   const setCode = urlParams.get('set') || '';
-  const initialSearch = urlParams.get('search') || '';
-  const initialRarities = urlParams.get('rarities')?.split(',').filter(Boolean) || [];
-  const initialArtists = urlParams.get('artists')?.split(',').filter(Boolean) || [];
-  const initialSort = urlParams.get('sort') || 'collector-asc';
+
+  // URL state configuration (don't manage 'page' or 'set' as they're routing params)
+  const urlStateConfig = {
+    search: { default: '' },
+    rarities: { default: [] },
+    artists: { default: [] },
+    sort: { default: 'collector-asc' }
+  };
+
+  // Get initial values from URL
+  const { getInitialValues } = useUrlState({}, urlStateConfig);
+  const initialValues = getInitialValues();
   const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_SET_CODE, {
     variables: { setCode: { setCode } },
     skip: !setCode
@@ -75,11 +77,11 @@ export const SetPage: React.FC = () => {
     skip: !setCode
   });
 
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
-  const [selectedRarities, setSelectedRarities] = useState<string[]>(initialRarities);
-  const [selectedArtists, setSelectedArtists] = useState<string[]>(initialArtists);
+  const [searchTerm, setSearchTerm] = useState(initialValues.search || '');
+  const [selectedRarities, setSelectedRarities] = useState<string[]>(initialValues.rarities || []);
+  const [selectedArtists, setSelectedArtists] = useState<string[]>(initialValues.artists || []);
   const [selectedCardTypes, setSelectedCardTypes] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<string>(initialSort);
+  const [sortBy, setSortBy] = useState<string>(initialValues.sort || 'collector-asc');
   const [filteredCards, setFilteredCards] = useState<Card[]>([]);
   const [cardGroups, setCardGroups] = useState<CardGroupConfig[]>([]);
   const [visibleGroupIds, setVisibleGroupIds] = useState<Set<string>>(new Set());
@@ -203,27 +205,21 @@ export const SetPage: React.FC = () => {
     setSelectedCardId(selected ? cardId : null);
   }, []);
 
-  useEffect(() => {
-    const params = new URLSearchParams();
-    params.set('page', 'set');
-    params.set('set', setCode);
-    
-    if (searchTerm) {
-      params.set('search', searchTerm);
+  // Sync state with URL (don't manage 'page' or 'set' here)
+  useUrlState(
+    {
+      search: searchTerm,
+      rarities: selectedRarities,
+      artists: selectedArtists,
+      sort: sortBy
+    },
+    {
+      search: { default: '' },
+      rarities: { default: [] },
+      artists: { default: [] },
+      sort: { default: 'collector-asc' }
     }
-    if (selectedRarities.length > 0) {
-      params.set('rarities', selectedRarities.join(','));
-    }
-    if (selectedArtists.length > 0) {
-      params.set('artists', selectedArtists.join(','));
-    }
-    if (sortBy !== 'collector-asc') {
-      params.set('sort', sortBy);
-    }
-    
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState(null, '', newUrl);
-  }, [setCode, searchTerm, selectedRarities, selectedArtists, sortBy]);
+  );
 
   useEffect(() => {
     if (cardsData?.cardsBySetCode?.data) {
@@ -453,7 +449,7 @@ export const SetPage: React.FC = () => {
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ rowGap: 2 }}>
             <DebouncedSearchInput
-              value={initialSearch}
+              value={initialValues.search || ''}
               onChange={setSearchTerm}
               placeholder="Search cards..."
               debounceMs={1000}

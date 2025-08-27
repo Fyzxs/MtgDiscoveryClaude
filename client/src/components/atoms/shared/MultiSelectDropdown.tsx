@@ -96,16 +96,14 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         renderValue={renderValue}
       >
         {showClearAll && (
-          <>
-            <MenuItem 
-              value="CLEAR_ALL"
-              sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
-            >
-              <Typography variant="body2" color="text.secondary">
-                Clear All
-              </Typography>
-            </MenuItem>
-          </>
+          <MenuItem 
+            value="CLEAR_ALL"
+            sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              Clear All
+            </Typography>
+          </MenuItem>
         )}
         {normalizedOptions.map((option) => (
           <MenuItem key={option.value} value={option.value}>

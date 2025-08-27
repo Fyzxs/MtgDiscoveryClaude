@@ -106,7 +106,7 @@ This document contains a detailed task list for refactoring the React frontend. 
 
 ## Phase 2: State Management & Hooks (Medium Priority)
 
-### Task 6: Create useUrlState Hook []
+### Task 6: Create useUrlState Hook [COMPLETED]
 **Files to modify:**
 - Created: `src/hooks/useUrlState.ts`
 - Updated: `src/pages/AllSetsPage.tsx`

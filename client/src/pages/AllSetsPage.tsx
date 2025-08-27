@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { 
   Container, 
@@ -6,20 +6,8 @@ import {
   Grid,
   Box, 
   CircularProgress, 
-  Alert,
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Chip,
-  Stack,
-  InputAdornment,
-  IconButton
+  Alert
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
@@ -27,6 +15,8 @@ import { EmptyState } from '../components/atoms/shared/EmptyState';
 import { SortDropdown } from '../components/atoms/shared/SortDropdown';
 import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import { MultiSelectDropdown } from '../components/atoms/shared/MultiSelectDropdown';
+import { DebouncedSearchInput } from '../components/atoms/shared/DebouncedSearchInput';
+import { useUrlState } from '../hooks/useUrlState';
 import type { MtgSet } from '../types/set';
 
 interface SetsResponse {
@@ -41,22 +31,22 @@ interface SetsResponse {
 }
 
 export const AllSetsPage: React.FC = () => {
-  // Get initial state from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialSearch = urlParams.get('search') || '';
-  const initialTypes = urlParams.get('types')?.split(',').filter(Boolean) || [];
-  const initialSort = urlParams.get('sort') || 'release-desc';
+  // URL state configuration (don't manage 'page' here as it's handled by routing)
+  const urlStateConfig = {
+    search: { default: '' },
+    types: { default: [] },
+    sort: { default: 'release-desc' }
+  };
+
+  // Get initial values from URL
+  const { getInitialValues } = useUrlState({}, urlStateConfig);
+  const initialValues = getInitialValues();
 
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
-  const [selectedSetTypes, setSelectedSetTypes] = useState<string[]>(initialTypes);
-  const [sortBy, setSortBy] = useState<string>(initialSort);
+  const [searchTerm, setSearchTerm] = useState(initialValues.search || '');
+  const [selectedSetTypes, setSelectedSetTypes] = useState<string[]>(initialValues.types || []);
+  const [sortBy, setSortBy] = useState<string>(initialValues.sort || 'release-desc');
   const [filteredSets, setFilteredSets] = useState<MtgSet[]>([]);
-  const [hasSearchText, setHasSearchText] = useState(!!initialSearch);
-  
-  // Use ref to store the search input value without causing re-renders
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const debounceTimer = useRef<NodeJS.Timeout>();
 
   // Get unique set types from data
   const getUniqueSetTypes = (sets: MtgSet[]): string[] => {
@@ -64,33 +54,19 @@ export const AllSetsPage: React.FC = () => {
     return Array.from(types).sort();
   };
 
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-    };
-  }, []);
-
-  // Update URL when filters change
-  useEffect(() => {
-    const params = new URLSearchParams();
-    params.set('page', 'all-sets');
-    
-    if (searchTerm) {
-      params.set('search', searchTerm);
+  // Sync state with URL (don't manage 'page' here)
+  useUrlState(
+    {
+      search: searchTerm,
+      types: selectedSetTypes,
+      sort: sortBy
+    },
+    {
+      search: { default: '' },
+      types: { default: [] },
+      sort: { default: 'release-desc' }
     }
-    if (selectedSetTypes.length > 0) {
-      params.set('types', selectedSetTypes.join(','));
-    }
-    if (sortBy !== 'release-desc') {
-      params.set('sort', sortBy);
-    }
-    
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState(null, '', newUrl);
-  }, [searchTerm, selectedSetTypes, sortBy]);
+  );
 
   // Filter and sort sets
   useEffect(() => {
@@ -200,54 +176,12 @@ export const AllSetsPage: React.FC = () => {
       <Box sx={{ mb: 4 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
-            <TextField
-              inputRef={searchInputRef}
-              fullWidth
-              variant="outlined"
+            <DebouncedSearchInput
+              value={initialValues.search || ''}
+              onChange={setSearchTerm}
               placeholder="Search sets..."
-              defaultValue={initialSearch}
-              onChange={(e) => {
-                const value = e.target.value;
-                setHasSearchText(!!value);
-                
-                // Clear any existing timer
-                if (debounceTimer.current) {
-                  clearTimeout(debounceTimer.current);
-                }
-                
-                // Set new timer - only update state after 1 second
-                debounceTimer.current = setTimeout(() => {
-                  setSearchTerm(value);
-                }, 1000);
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-                endAdornment: hasSearchText ? (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        if (searchInputRef.current) {
-                          searchInputRef.current.value = '';
-                          setHasSearchText(false);
-                          setSearchTerm('');
-                          // Clear any pending timer
-                          if (debounceTimer.current) {
-                            clearTimeout(debounceTimer.current);
-                          }
-                        }
-                      }}
-                      edge="end"
-                    >
-                      <ClearIcon fontSize="small" />
-                    </IconButton>
-                  </InputAdornment>
-                ) : null,
-              }}
+              debounceMs={1000}
+              fullWidth
             />
           </Grid>
           
