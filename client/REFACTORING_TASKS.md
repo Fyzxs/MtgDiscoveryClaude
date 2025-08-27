@@ -226,119 +226,163 @@ This document contains a detailed task list for refactoring the React frontend. 
 ### Task 13: [REMOVED]
 ---
 
-## Phase 6: Type Definitions & Interfaces
+## Phase 6: High Priority Improvements
 
-### Task 14: Create Shared Type Definitions
+### Task 14: Create Shared Type Definitions [IN PROGRESS]
+**Priority: HIGH**
 **Files to modify:**
-- Create/Update: `src/types/filters.ts`
-- Create/Update: `src/types/components.ts`
-- Update: All components using these types
+- Create: `src/types/filters.ts` [CREATED]
+- Create: `src/types/components.ts` [CREATED]  
+- Create: `src/types/ui.ts`
+- Update: Components to use shared types
 
 **Steps:**
-1. Extract common filter interfaces
-2. Extract common component prop interfaces
-3. Update components to use shared types
-4. Ensure TypeScript compilation passes
+1. ~~Extract common filter interfaces~~ [COMPLETED]
+2. ~~Extract common component prop interfaces~~ [COMPLETED]
+3. Extend existing type files rather than replace
+4. Update components to use shared types
+5. Ensure TypeScript compilation passes
 
-**Testing focus:** Type safety, no runtime errors
+**Testing focus:** Type safety, IntelliSense improvements, no runtime errors
 
 ---
-
-## Phase 7: Performance Optimizations
 
 ### Task 15: Add React.memo to Filter Components
+**Priority: HIGH**
 **Files to modify:**
-- All newly created filter components
-- Existing filter-related components
+- `src/components/atoms/shared/MultiSelectDropdown.tsx`
+- `src/components/atoms/shared/SortDropdown.tsx`
+- `src/components/atoms/shared/DebouncedSearchInput.tsx`
+- `src/components/atoms/shared/EmptyState.tsx`
+- `src/components/atoms/shared/ResultsSummary.tsx`
+- `src/components/molecules/shared/FilterPanel.tsx`
 
 **Steps:**
-1. Identify components that re-render unnecessarily
-2. Add React.memo with proper comparison functions
-3. Test performance with React DevTools Profiler
+1. Add React.memo to components listed above
+2. Create proper comparison functions where needed
+3. Test with React DevTools Profiler
 4. Verify no functionality breaks
 
-**Testing focus:** Re-render count, performance metrics
+**Testing focus:** Re-render count reduction, filter interaction performance
 
 ---
 
-### Task 16: Optimize Card Selection Logic
-**Files to modify:**
-- `src/components/organisms/MtgCard.tsx`
-- Related card components
-
-**Steps:**
-1. Review current DOM-based selection logic
-2. Optimize if possible while maintaining performance
-3. Test selection behavior
-
-**Testing focus:** Selection performance, keyboard navigation
-
----
-
-## Phase 8: Utilities & Helpers
-
-### Task 17: Create Date Formatting Utilities
+### Task 16: Create Date Formatting Utilities
+**Priority: HIGH**
 **Files to modify:**
 - Create: `src/utils/dateFormatters.ts`
 - Update: `src/components/molecules/Cards/CardOverlay.tsx`
-- Update: Any other components formatting dates
+- Update: `src/components/molecules/Cards/RulingsDisplay.tsx`
+- Update: `src/components/molecules/Cards/CardMetadata.tsx`
+- Update: `src/components/atoms/shared/ReleaseDateBadge.tsx`
 
 **Steps:**
-1. Extract date formatting from CardOverlay (lines 53-57)
-2. Create reusable date utilities
-3. Replace inline date formatting
-4. Test date displays
+1. Create formatReleaseDate and formatRulingDate functions
+2. Replace duplicate date formatting in CardOverlay (lines 53-57)
+3. Replace in RulingsDisplay (lines 79-81)
+4. Replace in CardMetadata (lines 40-43)
+5. Update ReleaseDateBadge date parsing
 
-**Testing focus:** Date format consistency
+**Testing focus:** Consistent date formatting across all components
 
 ---
 
-### Task 18: Create Navigation Hook
+### Task 17: Create Theme Extensions
+**Priority: HIGH**
 **Files to modify:**
-- Create: `src/hooks/useNavigation.ts`
-- Update: Components with navigation handlers
-
-**Steps:**
-1. Extract common navigation patterns
-2. Create useNavigation hook
-3. Update components to use the hook
-4. Test navigation functionality
-
-**Testing focus:** Navigation to sets, cards, artists
-
----
-
-## Phase 9: Style Refactoring
-
-### Task 19: Extract Common Styles
-**Files to modify:**
-- Create: `src/styles/filterStyles.ts`
-- Create: `src/styles/cardStyles.ts`
-- Update: Components with inline styles
-
-**Steps:**
-1. Identify repeated style patterns
-2. Create style utilities or constants
-3. Replace inline styles
-4. Verify visual consistency
-
-**Testing focus:** Visual regression testing
-
----
-
-### Task 20: Create Theme Extensions
-**Files to modify:**
-- Update: `src/main.tsx` (theme configuration)
 - Create: `src/theme/index.ts`
-- Update: Components using custom styles
+- Update: `src/main.tsx`
+- Update: Components with hardcoded colors/spacing
 
 **Steps:**
-1. Extend MUI theme with custom tokens
-2. Create consistent spacing, colors, etc.
-3. Update components to use theme
-4. Test theming consistency
+1. Create comprehensive theme with MTG-specific colors
+2. Add custom spacing scale and component variants
+3. Define tokens for card dimensions, gradients
+4. Update components to use theme tokens
+5. Remove hardcoded values
 
-**Testing focus:** Theme application, dark mode if applicable
+**Testing focus:** Design consistency, theme application
+
+---
+
+## Phase 7: Medium Priority Enhancements
+
+### Task 18: Enhance Card Selection Accessibility
+**Priority: MEDIUM**
+**Files to modify:**
+- `src/components/organisms/MtgCard.tsx`
+- Parent components handling selection
+
+**Steps:**
+1. Add keyboard navigation support (arrow keys, Enter/Space)
+2. Add ARIA attributes for screen readers
+3. Use useCallback for event handlers
+4. Test with keyboard and screen readers
+
+**Testing focus:** Keyboard navigation, accessibility compliance
+
+---
+
+### Task 19: Extract Common Styles (Focused)
+**Priority: MEDIUM**
+**Files to modify:**
+- Create: `src/styles/cardStyles.ts`
+- Create: `src/styles/filterStyles.ts`
+- Create: `src/styles/layoutStyles.ts`
+- Update: Components with repeated style patterns
+
+**Steps:**
+1. Extract card overlay gradients and positioning
+2. Standardize filter panel and dropdown layouts
+3. Create consistent badge styling patterns
+4. Extract common spacing and flexbox patterns
+
+**Testing focus:** Visual consistency, reduced style duplication
+
+---
+
+### Task 20: Add Loading States to Filter Components
+**Priority: MEDIUM**
+**Files to modify:**
+- Update filter components to show loading states
+- Add skeleton loaders for dynamic options
+
+**Steps:**
+1. Add loading prop to filter components
+2. Create skeleton states for dropdowns
+3. Show loading during data fetching
+4. Test loading state transitions
+
+**Testing focus:** Smooth loading transitions, no layout shift
+
+---
+
+## Phase 8: Lower Priority Additions
+
+### Task 21: Implement Error Boundaries
+**Priority: LOW**
+**Files to modify:**
+- Update: `src/components/ErrorBoundary.tsx`
+- Add error boundaries to key component trees
+
+**Steps:**
+1. Enhance existing ErrorBoundary component
+2. Wrap major sections (filters, card grids, etc.)
+3. Add error recovery mechanisms
+4. Test error handling scenarios
+
+**Testing focus:** Graceful error handling, error recovery
+
+---
+
+## Tasks to Skip
+
+### Task 18: Create Navigation Hook [SKIPPED]
+**Reason for skipping:**
+- App uses simple navigation patterns (direct URL changes)
+- No React Router or complex routing state
+- Would add unnecessary abstraction
+- Current approach is intentionally simple
 
 ---
 
