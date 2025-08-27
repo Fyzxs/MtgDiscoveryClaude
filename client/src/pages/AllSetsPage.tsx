@@ -88,17 +88,31 @@ export const AllSetsPage: React.FC = () => {
     return Array.from(types).sort();
   };
 
-  // Sync state with URL (don't manage 'page' here)
+  // Sync non-search filters with URL immediately
   useUrlState(
     {
-      search: searchTerm,
       types: selectedSetTypes,
       sort: sortBy
     },
     {
-      search: { default: '' },
       types: { default: [] },
       sort: { default: 'release-desc' }
+    },
+    {
+      debounceMs: 0 // No debounce for dropdown/sort changes
+    }
+  );
+
+  // Sync search term separately with debounce
+  useUrlState(
+    {
+      search: searchTerm
+    },
+    {
+      search: { default: '' }
+    },
+    {
+      debounceMs: 300 // Match the search input debounce
     }
   );
 
@@ -147,7 +161,7 @@ export const AllSetsPage: React.FC = () => {
             value: initialValues.search || '',
             onChange: setSearchTerm,
             placeholder: 'Search sets...',
-            debounceMs: 1000
+            debounceMs: 300
           },
           multiSelects: [
             {

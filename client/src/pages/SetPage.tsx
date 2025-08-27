@@ -306,19 +306,33 @@ export const SetPage: React.FC = () => {
     setSelectedCardId(selected ? cardId : null);
   }, []);
 
-  // Sync state with URL (don't manage 'page' or 'set' here)
+  // Sync non-search filters with URL immediately
   useUrlState(
     {
-      search: searchTerm,
       rarities: selectedRarities,
       artists: filters.artists || [],  // Use raw filter values to preserve URL state
       sort: sortBy
     },
     {
-      search: { default: '' },
       rarities: { default: [] },
       artists: { default: [] },
       sort: { default: 'collector-asc' }
+    },
+    {
+      debounceMs: 0 // No debounce for dropdown/sort changes
+    }
+  );
+
+  // Sync search term separately with debounce
+  useUrlState(
+    {
+      search: searchTerm
+    },
+    {
+      search: { default: '' }
+    },
+    {
+      debounceMs: 300 // Match the search input debounce
     }
   );
 
@@ -464,7 +478,7 @@ export const SetPage: React.FC = () => {
             value: initialValues.search || '',
             onChange: setSearchTerm,
             placeholder: 'Search cards...',
-            debounceMs: 1000,
+            debounceMs: 300,
             minWidth: 300
           },
           multiSelects: [],

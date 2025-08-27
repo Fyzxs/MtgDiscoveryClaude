@@ -23,7 +23,7 @@ export function useUrlState(
     debounceMs?: number; // Debounce URL updates
   } = {}
 ) {
-  const { replace = true, debounceMs = 0 } = options;
+  const { replace = true, debounceMs = 0 } = options; // Default to no debounce
   const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const isInitialMount = useRef(true);
 
