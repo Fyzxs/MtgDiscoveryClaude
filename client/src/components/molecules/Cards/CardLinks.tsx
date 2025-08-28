@@ -19,6 +19,19 @@ export const CardLinks: React.FC<CardLinksProps> = ({
     ? `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(cardName)}`
     : undefined;
 
+  // Generate Card Kingdom search URL
+  const generateCardKingdomUrl = (name: string): string => {
+    const params = new URLSearchParams({
+      'search': 'mtg_advanced',
+      'filter[search]': 'mtg_advanced',
+      'filter[tab]': 'mtg_card',
+      'filter[name]': name
+    });
+    return `https://www.cardkingdom.com/catalog/search?${params.toString()}`;
+  };
+
+  const cardKingdomUrl = cardName ? generateCardKingdomUrl(cardName) : undefined;
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} className={className}>
       <ExternalLinkIcon 
@@ -29,6 +42,11 @@ export const CardLinks: React.FC<CardLinksProps> = ({
       <ExternalLinkIcon 
         type="tcgplayer" 
         url={tcgplayerUrl || fallbackTcgplayerUrl}
+        size="small"
+      />
+      <ExternalLinkIcon 
+        type="cardkingdom" 
+        url={cardKingdomUrl}
         size="small"
       />
     </Box>

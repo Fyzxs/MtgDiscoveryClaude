@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Link } from '@mui/material';
 
-type LinkType = 'scryfall' | 'tcgplayer' | 'cardmarket' | 'cardhoarder' | 'edhrec' | 'gatherer';
+type LinkType = 'scryfall' | 'tcgplayer' | 'cardmarket' | 'cardhoarder' | 'edhrec' | 'gatherer' | 'cardkingdom';
 
 interface ExternalLinkIconProps {
   type: LinkType;
@@ -47,6 +47,8 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
         return 'https://edhrec.com/favicon.ico';
       case 'gatherer':
         return 'https://gatherer.wizards.com/favicon.ico';
+      case 'cardkingdom':
+        return 'https://www.cardkingdom.com/favicon.ico';
       default:
         return '';
     }
@@ -96,7 +98,8 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       cardmarket: { bg: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)', text: 'MKM' },
       cardhoarder: { bg: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)', text: 'CH' },
       edhrec: { bg: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)', text: 'EDH' },
-      gatherer: { bg: 'linear-gradient(135deg, #4B5563 0%, #374151 100%)', text: 'WTC' }
+      gatherer: { bg: 'linear-gradient(135deg, #4B5563 0%, #374151 100%)', text: 'WTC' },
+      cardkingdom: { bg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', text: 'CK' }
     };
 
     const config = configs[type as keyof typeof configs] || 
