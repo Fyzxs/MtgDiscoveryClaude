@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import type { Card, CardContext } from '../../types/card';
-import { CardImage } from '../atoms/CardImage';
-import { PriceDisplay } from '../atoms/PriceDisplay';
-import { CollectorInfo } from '../molecules/CollectorInfo';
-import { CardMetadata } from '../molecules/CardMetadata';
-import { ArtistInfo } from '../molecules/ArtistInfo';
-import { CardLinks } from '../molecules/CardLinks';
-import { ManaCost } from '../molecules/ManaCost';
+import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
+import { PriceDisplay } from '../atoms/shared/PriceDisplay';
+import { CollectorInfo } from '../molecules/Cards/CollectorInfo';
+import { CardMetadata } from '../molecules/Cards/CardMetadata';
+import { ArtistInfo } from '../molecules/Cards/ArtistInfo';
+import { CardLinks } from '../molecules/Cards/CardLinks';
+import { ManaCost } from '../molecules/Cards/ManaCost';
 
 interface CardDisplayProps {
   card: Card;
@@ -63,10 +63,10 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
       <div className="p-4 space-y-4">
         {/* Card Image */}
         <div className="flex justify-center">
-          <CardImage 
-            imageUris={card.imageUris} 
-            cardName={card.name}
+          <CardImageDisplay 
+            card={card}
             size="normal"
+            showFlipButton={true}
           />
         </div>
 

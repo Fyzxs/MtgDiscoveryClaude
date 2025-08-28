@@ -4,19 +4,19 @@ import { GET_CARDS_BY_IDS } from '../../graphql/queries/cards';
 import type { Card, CardContext } from '../../types/card';
 
 // Import all components
-import { RarityBadge } from '../atoms/RarityBadge';
-import { ManaSymbol } from '../atoms/ManaSymbol';
-import { CardImage } from '../atoms/CardImage';
-import { PriceDisplay } from '../atoms/PriceDisplay';
-import { ExternalLinkIcon } from '../atoms/ExternalLinkIcon';
-import { CollectorNumber } from '../atoms/CollectorNumber';
-import { SetIcon } from '../atoms/SetIcon';
+import { RarityBadge } from '../atoms/Cards/RarityBadge';
+import { ManaSymbol } from '../atoms/Cards/ManaSymbol';
+import { CardImage } from '../atoms/Cards/CardImage';
+import { PriceDisplay } from '../atoms/shared/PriceDisplay';
+import { ExternalLinkIcon } from '../atoms/shared/ExternalLinkIcon';
+import { CollectorNumber } from '../atoms/Cards/CollectorNumber';
+import { SetIcon } from '../atoms/Sets/SetIcon';
 
-import { ManaCost } from '../molecules/ManaCost';
-import { ArtistInfo } from '../molecules/ArtistInfo';
-import { CardLinks } from '../molecules/CardLinks';
-import { CollectorInfo } from '../molecules/CollectorInfo';
-import { CardMetadata } from '../molecules/CardMetadata';
+import { ManaCost } from '../molecules/Cards/ManaCost';
+import { ArtistInfo } from '../molecules/Cards/ArtistInfo';
+import { CardLinks } from '../molecules/Cards/CardLinks';
+import { CollectorInfo } from '../molecules/Cards/CollectorInfo';
+import { CardMetadata } from '../molecules/Cards/CardMetadata';
 
 import { CardDisplay } from '../organisms/CardDisplayResponsive';
 import { CardCompact } from '../organisms/CardCompactResponsive';

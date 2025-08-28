@@ -1,0 +1,217 @@
+import React, { useMemo } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { 
+  Container, 
+  Typography
+} from '@mui/material';
+import { GET_ALL_SETS } from '../graphql/queries/sets';
+import { MtgSetCard } from '../components/organisms/MtgSetCard';
+import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
+import { EmptyState } from '../components/atoms/shared/EmptyState';
+import type { SortOption } from '../components/atoms/shared/SortDropdown';
+import { useUrlState } from '../hooks/useUrlState';
+import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterState';
+import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
+import { FilterPanel } from '../components/molecules/shared/FilterPanel';
+import { ResponsiveGrid } from '../components/atoms/layouts/ResponsiveGrid';
+import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
+import { CardGridErrorBoundary } from '../components/ErrorBoundaries';
+import type { MtgSet } from '../types/set';
+
+interface SetsResponse {
+  allSets: {
+    __typename: string;
+    data?: MtgSet[];
+    status?: {
+      message: string;
+      statusCode: number;
+    };
+  };
+}
+
+export const AllSetsPage: React.FC = () => {
+  // URL state configuration (don't manage 'page' here as it's handled by routing)
+  const urlStateConfig = {
+    search: { default: '' },
+    types: { default: [] },
+    sort: { default: 'release-desc' }
+  };
+
+  // Get initial values from URL
+  const { getInitialValues } = useUrlState({}, urlStateConfig);
+  const initialValues = getInitialValues();
+
+  const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
+  
+  // Configure filter state (memoized to prevent recreating on every render)
+  const filterConfig = useMemo(() => ({
+    searchFields: ['name', 'code'] as (keyof MtgSet)[],
+    sortOptions: {
+      'release-desc': (a: MtgSet, b: MtgSet) => new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime(),
+      'release-asc': (a: MtgSet, b: MtgSet) => new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime(),
+      'name-asc': commonSorts.alphabetical<MtgSet>('name', true),
+      'name-desc': commonSorts.alphabetical<MtgSet>('name', false),
+      'cards-desc': commonSorts.numeric<MtgSet>('cardCount', false),
+      'cards-asc': commonSorts.numeric<MtgSet>('cardCount', true)
+    },
+    filterFunctions: {
+      setTypes: commonFilters.multiSelect<MtgSet>('setType')
+    },
+    defaultSort: 'release-desc'
+  }), []);
+
+  const {
+    searchTerm,
+    sortBy,
+    filters,
+    filteredData: filteredSets,
+    setSearchTerm,
+    setSortBy,
+    updateFilter
+  } = useFilterState(
+    data?.allSets?.data,
+    filterConfig,
+    {
+      search: initialValues.search || '',
+      sort: initialValues.sort || 'release-desc',
+      filters: {
+        setTypes: initialValues.types || []
+      }
+    }
+  );
+  
+  const selectedSetTypes = filters.setTypes || [];
+
+  // Get unique set types from data
+  const getUniqueSetTypes = (sets: MtgSet[]): string[] => {
+    const types = new Set(sets.map(set => set.setType));
+    return Array.from(types).sort();
+  };
+
+  // Sync non-search filters with URL immediately
+  useUrlState(
+    {
+      types: selectedSetTypes,
+      sort: sortBy
+    },
+    {
+      types: { default: [] },
+      sort: { default: 'release-desc' }
+    },
+    {
+      debounceMs: 0 // No debounce for dropdown/sort changes
+    }
+  );
+
+  // Sync search term separately with debounce
+  useUrlState(
+    {
+      search: searchTerm
+    },
+    {
+      search: { default: '' }
+    },
+    {
+      debounceMs: 300 // Match the search input debounce
+    }
+  );
+
+  const handleSetClick = (setCode?: string) => {
+    if (setCode) {
+      window.location.href = `?page=set&set=${setCode}`;
+    }
+  };
+
+  const handleSetTypeChange = (value: string[]) => {
+    updateFilter('setTypes', value);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
+  };
+
+  const sortOptions: SortOption[] = [
+    { value: 'release-desc', label: 'Release Date (Newest)' },
+    { value: 'release-asc', label: 'Release Date (Oldest)' },
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'cards-desc', label: 'Card Count (High-Low)' },
+    { value: 'cards-asc', label: 'Card Count (Low-High)' }
+  ];
+
+  const sets = data?.allSets?.data || [];
+  const setTypes = getUniqueSetTypes(sets);
+
+  return (
+    <GraphQLQueryStateContainer
+      loading={loading}
+      error={error}
+      data={data?.allSets}
+      failureTypeName="FailureResponse"
+    >
+    <Container maxWidth="xl" sx={{ mt: 2, mb: 4, px: 3, mx: 'auto' }}>
+      <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
+        All Magic Sets
+      </Typography>
+
+      {/* Filters and Search */}
+      <FilterPanel
+        config={{
+          search: {
+            value: initialValues.search || '',
+            onChange: setSearchTerm,
+            placeholder: 'Search sets...',
+            debounceMs: 300
+          },
+          multiSelects: [
+            {
+              key: 'setTypes',
+              value: selectedSetTypes,
+              onChange: handleSetTypeChange,
+              options: setTypes,
+              label: 'Set Types',
+              placeholder: 'All Types'
+            }
+          ],
+          sort: {
+            value: sortBy,
+            onChange: handleSortChange,
+            options: sortOptions
+          }
+        }}
+        layout="horizontal"
+      />
+
+      {/* Results Summary */}
+      <ResultsSummary 
+        showing={filteredSets.length} 
+        total={sets.length} 
+        itemType="sets" 
+      />
+
+      {/* Sets Grid */}
+      <CardGridErrorBoundary name="AllSetsGrid">
+        <ResponsiveGrid minItemWidth={240} spacing={1.5}>
+          {filteredSets.map((set) => (
+          <MtgSetCard
+            key={set.id}
+            set={set}
+            onSetClick={handleSetClick}
+          />
+          ))}
+        </ResponsiveGrid>
+      </CardGridErrorBoundary>
+
+      {filteredSets.length === 0 && (
+        <EmptyState
+          message="No sets found matching your criteria"
+          description="Try adjusting your filters or search terms"
+        />
+      )}
+
+      {/* Back to Top Button */}
+      <BackToTopFab />
+    </Container>
+    </GraphQLQueryStateContainer>
+  );
+};

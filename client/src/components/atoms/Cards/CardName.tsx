@@ -1,0 +1,53 @@
+import React from 'react';
+import { Typography, Box } from '@mui/material';
+import { DarkBadge } from '../shared/DarkBadge';
+
+interface CardNameProps {
+  cardId?: string;
+  cardName?: string;
+  onCardClick?: (cardId?: string) => void;
+  className?: string;
+}
+
+export const CardName: React.FC<CardNameProps> = ({ 
+  cardId,
+  cardName,
+  onCardClick,
+  className 
+}) => {
+  if (!cardName) return null;
+
+  return (
+    <Box className={className}>
+      <DarkBadge
+        component="a"
+        href={`/cards/${cardId}`}
+        tabIndex={-1}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onCardClick) {
+            e.preventDefault();
+            onCardClick(cardId);
+          }
+        }}
+        aria-label={`View all versions of ${cardName}`}
+        sx={{
+          px: 1,
+          py: 0.5
+        }}
+      >
+        <Typography 
+          variant="subtitle2" 
+          component="span" 
+          sx={{ 
+            fontWeight: 'bold', 
+            lineHeight: 1.2,
+            fontSize: '0.875rem'
+          }}
+        >
+          {cardName}
+        </Typography>
+      </DarkBadge>
+    </Box>
+  );
+};

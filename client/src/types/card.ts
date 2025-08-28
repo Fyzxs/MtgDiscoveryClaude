@@ -131,6 +131,7 @@ export interface Card {
   finishes?: string[];
   oversized?: boolean;
   promo?: boolean;
+  promoTypes?: string[];
   reprint?: boolean;
   variation?: boolean;
   setId?: string;
@@ -182,6 +183,9 @@ export interface CardContext {
   isOnArtistPage?: boolean;
   isOnCardPage?: boolean;
   currentArtist?: string;
+  currentSet?: string;
   currentSetCode?: string;
   showCollectorInfo?: boolean;
+  hideSetInfo?: boolean;
+  hideReleaseDate?: boolean;
 }

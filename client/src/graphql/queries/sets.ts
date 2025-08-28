@@ -1,0 +1,109 @@
+import { gql } from '@apollo/client';
+
+export const GET_ALL_SETS = gql`
+  query GetAllSets {
+    allSets {
+      __typename
+      ... on SuccessSetsResponse {
+        data {
+          id
+          code
+          tcgPlayerId
+          name
+          uri
+          scryfallUri
+          searchUri
+          releasedAt
+          setType
+          cardCount
+          printedSize
+          digital
+          nonFoilOnly
+          foilOnly
+          block
+          iconSvgUri
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SETS_BY_CODE = gql`
+  query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
+    setsByCode(codes: $codes) {
+      __typename
+      ... on SuccessSetsResponse {
+        data {
+          id
+          code
+          tcgPlayerId
+          name
+          uri
+          scryfallUri
+          searchUri
+          releasedAt
+          setType
+          cardCount
+          printedSize
+          digital
+          nonFoilOnly
+          foilOnly
+          block
+          iconSvgUri
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
+  query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
+    setsByCode(codes: $codes) {
+      __typename
+      ... on SuccessSetsResponse {
+        data {
+          id
+          code
+          name
+          setType
+          cardCount
+          releasedAt
+          iconSvgUri
+          groupings {
+            id
+            displayName
+            order
+            cardCount
+            rawQuery
+            filters {
+              collectorNumberRange {
+                min
+                max
+                orConditions
+              }
+              properties
+            }
+          }
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;

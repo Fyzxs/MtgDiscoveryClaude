@@ -1,28 +1,41 @@
 import './App.css'
 import { useState } from 'react'
-import { CardDemoPage } from './pages/CardDemoPage'
+import { AllSetsPage } from './pages/AllSetsPage'
+import { SetPage } from './pages/SetPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
+import { Layout } from './components/templates/Layout'
+import { PageErrorBoundary } from './components/ErrorBoundaries'
 
 function App() {
-  const [showDemo, setShowDemo] = useState(false)
+  // Check URL params for initial page
+  const urlParams = new URLSearchParams(window.location.search);
+  const pageParam = urlParams.get('page') as 'home' | 'all-sets' | 'set' | null;
+  
+  const [currentPage, setCurrentPage] = useState<'home' | 'all-sets' | 'set'>(
+    pageParam || 'home'  // Default back to home
+  )
 
-  if (showDemo) {
-    return <CardDemoPage />
+  if (currentPage === 'all-sets') {
+    return (
+      <PageErrorBoundary name="AllSetsPage">
+        <Layout><AllSetsPage /></Layout>
+      </PageErrorBoundary>
+    )
+  }
+
+  if (currentPage === 'set') {
+    return (
+      <PageErrorBoundary name="SetPage">
+        <Layout><SetPage /></Layout>
+      </PageErrorBoundary>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">
-            MTG Discovery
-          </h1>
-          <p className="text-xl text-gray-400 mb-8">
-            Magic: The Gathering Collection Management Platform
-          </p>
-        </div>
-        
+    <PageErrorBoundary name="HomePage">
+      <Layout>
+      <div className="container mx-auto px-4 py-12 max-w-4xl">        
         <Card variant="elevated" className="text-center max-w-2xl mx-auto">
           <h2 className="text-2xl font-semibold text-white mb-4">
             Welcome to MTG Discovery
@@ -32,16 +45,19 @@ function App() {
             View Magic: The Gathering cards with proper styling, rarity indicators, 
             and responsive layouts.
           </p>
-          <Button 
-            onClick={() => setShowDemo(true)}
-            size="lg"
-            className="w-full sm:w-auto"
-          >
-            View Card Component Demo
-          </Button>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Button 
+              onClick={() => setCurrentPage('all-sets')}
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Browse All Sets
+            </Button>
+          </div>
         </Card>
       </div>
-    </div>
+      </Layout>
+    </PageErrorBoundary>
   )
 }
 

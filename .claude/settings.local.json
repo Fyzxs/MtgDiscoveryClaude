@@ -32,6 +32,10 @@
       "Bash(dotnet exec:*)",
       "Bash(dotnet:*)",
       "Bash(cat:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(find:*)",
+      "Bash(npm test:*)",
       "WebFetch(domain:scryfall.com)"
     ],
     "deny": [],
