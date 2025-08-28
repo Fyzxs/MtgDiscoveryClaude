@@ -7,16 +7,18 @@ import {
   Button
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { SearchInput } from '../atoms/shared/SearchInput';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
       // Navigate to set page
-      window.location.href = `?page=set&set=${setCode.trim().toLowerCase()}`;
+      navigate(`/set/${setCode.trim().toLowerCase()}`);
       setSetCode('');
     }
   };
@@ -59,7 +61,7 @@ export const Header: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <Button 
             color="primary" 
-            onClick={() => window.location.href = '?page=all-sets'}
+            onClick={() => navigate('/sets')}
             sx={{ 
               textTransform: 'none',
               fontWeight: 500

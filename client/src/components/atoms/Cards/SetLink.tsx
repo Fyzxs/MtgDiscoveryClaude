@@ -22,7 +22,7 @@ export const SetLink: React.FC<SetLinkProps> = ({
   return (
     <Box className={className}>
       <Link
-        href={`/sets/${setCode?.toLowerCase()}`}
+        href={`/set/${setCode?.toLowerCase()}`}
         tabIndex={-1}
         onClick={(e) => {
           e.stopPropagation();
@@ -38,11 +38,12 @@ export const SetLink: React.FC<SetLinkProps> = ({
           color: 'white',
           textDecoration: 'none',
           fontSize: '0.75rem',
-          px: 0.5,
+          px: 0.75,
           py: 0.25,
           borderRadius: 1,
+          bgcolor: 'rgba(0, 0, 0, 0.6)',
           '&:hover': {
-            bgcolor: 'rgba(0, 0, 0, 1)',
+            bgcolor: 'rgba(0, 0, 0, 0.8)',
             color: 'primary.main'
           },
           transition: 'all 0.2s ease'

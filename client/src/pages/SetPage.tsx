@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useParams } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
@@ -101,11 +102,10 @@ const getUniqueArtists = (cards: Card[]): string[] => {
 };
 
 export const SetPage: React.FC = () => {
-  // Get set code from URL first
-  const urlParams = new URLSearchParams(window.location.search);
-  const setCode = urlParams.get('set') || '';
+  // Get set code from route params
+  const { setCode } = useParams<{ setCode: string }>();
 
-  // URL state configuration (don't manage 'page' or 'set' as they're routing params)
+  // URL state configuration for query parameters
   const urlStateConfig = {
     search: { default: '' },
     rarities: { default: [] },

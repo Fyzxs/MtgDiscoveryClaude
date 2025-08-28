@@ -127,7 +127,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
           {!context.isOnSetPage && card.setName && (
             <div className="flex items-center gap-1 mb-1 sm:mb-2">
               <a
-                href={`/sets/${card.setCode?.toLowerCase()}`}
+                href={`/set/${card.setCode?.toLowerCase()}`}
                 onClick={handleSetNameClick}
                 className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-400 hover:text-white transition-colors line-clamp-1"
               >

@@ -259,7 +259,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   <RarityBadge rarity={card.rarity} />
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Link 
-                      href={`?page=set&set=${card.setCode}`}
+                      href={`/set/${card.setCode}`}
                       sx={{ 
                         color: 'text.secondary',
                         textDecoration: 'none',

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Container, 
   Typography
@@ -116,9 +117,11 @@ export const AllSetsPage: React.FC = () => {
     }
   );
 
+  const navigate = useNavigate();
+  
   const handleSetClick = (setCode?: string) => {
     if (setCode) {
-      window.location.href = `?page=set&set=${setCode}`;
+      navigate(`/set/${setCode}`);
     }
   };
 

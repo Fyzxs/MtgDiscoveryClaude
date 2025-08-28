@@ -1,5 +1,5 @@
 import React, { type ReactNode } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, Chip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
@@ -27,16 +27,18 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
   onExpandedChange,
 }) => {
   
-  const getBadgeText = () => {
-    if (isLoading) return '[Loading...]';
-    if (isError) return '[Error]';
-    if (count !== undefined) return `[${count}]`;
-    return '';
+  const getBadgeContent = () => {
+    if (isLoading) return 'Loading...';
+    if (isError) return 'Error';
+    if (count !== undefined) return count.toString();
+    return null;
   };
 
   const handleToggleExpanded = () => {
     onExpandedChange(!expanded);
   };
+
+  const badgeContent = getBadgeContent();
 
   return (
     <Box>
@@ -56,10 +58,22 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
         <Typography variant="subtitle1" fontWeight="bold">
           {title}
         </Typography>
-        {getBadgeText() && (
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-            {getBadgeText()}
-          </Typography>
+        {badgeContent && (
+          <Chip 
+            label={badgeContent}
+            size="small"
+            sx={{ 
+              ml: 1,
+              height: 22,
+              fontSize: '0.8rem',
+              fontWeight: 'bold',
+              bgcolor: isError ? 'error.main' : isLoading ? 'action.disabled' : 'primary.main',
+              color: isError ? 'error.contrastText' : isLoading ? 'text.disabled' : 'primary.contrastText',
+              '& .MuiChip-label': {
+                px: 1.5
+              }
+            }}
+          />
         )}
         <IconButton
           size="small"

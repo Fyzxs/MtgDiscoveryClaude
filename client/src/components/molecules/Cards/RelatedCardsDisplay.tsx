@@ -47,10 +47,11 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
 
   // Determine the badge text
   const getBadgeText = () => {
-    if (!expanded) return `[${totalCount}]`;
-    if (loading) return `[Loading ${totalCount}...]`;
-    if (error || data?.cardsById?.__typename === 'FailureResponse') return `[Error]`;
-    return `[${loadedCount}/${totalCount}]`;
+    if (!expanded) return totalCount.toString();
+    if (loading) return `Loading ${totalCount}...`;
+    if (error || data?.cardsById?.__typename === 'FailureResponse') return 'Error';
+    // Only show loaded/total if they're different
+    return loadedCount === totalCount ? loadedCount.toString() : `${loadedCount}/${totalCount}`;
   };
 
   return (
@@ -78,8 +79,17 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
         </Typography>
         <Chip 
           label={getBadgeText()} 
-          size="small" 
-          color={error || data?.cardsById?.__typename === 'FailureResponse' ? 'error' : 'default'}
+          size="small"
+          sx={{ 
+            height: 22,
+            fontSize: '0.8rem',
+            fontWeight: 'bold',
+            bgcolor: error || data?.cardsById?.__typename === 'FailureResponse' ? 'error.main' : loading ? 'action.disabled' : 'primary.main',
+            color: error || data?.cardsById?.__typename === 'FailureResponse' ? 'error.contrastText' : loading ? 'text.disabled' : 'primary.contrastText',
+            '& .MuiChip-label': {
+              px: 1.5
+            }
+          }}
         />
       </Box>
 
