@@ -108,27 +108,14 @@ public class ScryfallGroupingsScraper
 
     static async Task<Dictionary<string, SetGroupingData>> ScrapeAllSetGroupings(HttpClient httpClient, int maxSetsToProcess)
     {
-        // Load existing data if file exists
+        // Start fresh - don't load existing data
         var setGroupings = new Dictionary<string, SetGroupingData>();
         const string fileName = "scryfall_set_groupings.json";
 
-        if (File.Exists(fileName))
-        {
-            Console.WriteLine("Loading existing groupings file...");
-            var existingJson = await File.ReadAllTextAsync(fileName);
-            setGroupings = JsonConvert.DeserializeObject<Dictionary<string, SetGroupingData>>(existingJson)
-                          ?? new Dictionary<string, SetGroupingData>();
-            Console.WriteLine($"Loaded {setGroupings.Count} existing sets");
-        }
-
         var allSetCodes = await GetAllSetCodes(httpClient);
-
-        // Filter out already processed sets
-        var setsToProcess = allSetCodes.Where(code => !setGroupings.ContainsKey(code)).ToList();
+        var setsToProcess = allSetCodes;
 
         Console.WriteLine($"Total sets available: {allSetCodes.Count}");
-        Console.WriteLine($"Already processed: {setGroupings.Count}");
-        Console.WriteLine($"Sets to process: {setsToProcess.Count}");
 
         // Limit number of sets to process if specified
         if (maxSetsToProcess < setsToProcess.Count)
@@ -138,17 +125,9 @@ public class ScryfallGroupingsScraper
         }
 
         int processed = 0;
-        int newSetsAdded = 0;
+        int setsAdded = 0;
 
-        if (setsToProcess.Count > 0)
-        {
-            Console.WriteLine($"\nStarting to process {setsToProcess.Count} sets...\n");
-        }
-        else
-        {
-            Console.WriteLine("\nNo new sets to process. All sets are already in the file.");
-            return setGroupings;
-        }
+        Console.WriteLine($"\nStarting to process {setsToProcess.Count} sets...\n");
 
         foreach (var setCode in setsToProcess)
         {
@@ -158,7 +137,7 @@ public class ScryfallGroupingsScraper
                 if (groupings.Count > 0)
                 {
                     setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
-                    newSetsAdded++;
+                    setsAdded++;
                 }
 
                 processed++;
@@ -182,7 +161,7 @@ public class ScryfallGroupingsScraper
             }
         }
 
-        Console.WriteLine($"Added {newSetsAdded} new sets in this run");
+        Console.WriteLine($"Processed {setsAdded} sets total");
 
         return setGroupings;
     }
@@ -218,16 +197,29 @@ public class ScryfallGroupingsScraper
         {
             var section = headerSplits[i];
 
-            // Extract anchor ID if present
+            // Extract anchor ID if present (can be in h2 tag or in an inner <a> tag)
             string anchorId = "";
-            var idIndex = section.IndexOf("id=\"");
-            if (idIndex >= 0 && idIndex < 100) // Must be near the start
+            
+            // First check for id in the h2 tag (within first 100 chars)
+            var h2IdIndex = section.IndexOf("id=\"");
+            if (h2IdIndex >= 0 && h2IdIndex < 100)
             {
-                var idStart = idIndex + 4;
+                var idStart = h2IdIndex + 4;
                 var idEnd = section.IndexOf("\"", idStart);
                 if (idEnd > idStart)
                 {
                     anchorId = section.Substring(idStart, idEnd - idStart);
+                }
+            }
+            
+            // If not found in h2, look for <a id="..."> within the content
+            if (string.IsNullOrEmpty(anchorId))
+            {
+                var anchorPattern = @"<a\s+id=""([^""]+)""";
+                var anchorMatch = Regex.Match(section.Substring(0, Math.Min(section.Length, 500)), anchorPattern);
+                if (anchorMatch.Success)
+                {
+                    anchorId = anchorMatch.Groups[1].Value;
                 }
             }
 

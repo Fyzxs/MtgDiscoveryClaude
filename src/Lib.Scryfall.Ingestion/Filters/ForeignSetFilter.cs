@@ -8,11 +8,7 @@ internal sealed class ForeignSetFilter : IScryfallSetFilter
 {
     private static readonly HashSet<string> ForeignSetCodes = new(System.StringComparer.OrdinalIgnoreCase)
     {
-        "4BB",   // Fourth Edition Black Bordered (Foreign)
-        "BCHR",  // Chronicles Foreign Black Border
-        "REN",   // Renaissance
-        "RIN",   // Rinascimento (Italian Renaissance)
-        "FBB"    // Foreign Black Bordered
+
     };
 
     private readonly ILogger _logger;
