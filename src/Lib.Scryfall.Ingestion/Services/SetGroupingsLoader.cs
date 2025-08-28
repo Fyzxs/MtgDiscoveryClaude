@@ -70,4 +70,5 @@ internal sealed class CollectorNumberRange
 {
     public string Min { get; set; }
     public string Max { get; set; }
+    public List<string> OrConditions { get; set; }
 }

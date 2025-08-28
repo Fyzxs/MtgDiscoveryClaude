@@ -15,12 +15,39 @@ public class ScryfallGroupingsScraper
         Console.WriteLine("Starting Scryfall Set Groupings Scraper...");
 
         // Parse command line arguments
-        int maxSetsToProcess = args.Length > 0 && int.TryParse(args[0], out var max) ? max : int.MaxValue;
+        string specificSet = null;
+        int maxSetsToProcess = int.MaxValue;
+        
+        if (args.Length > 0)
+        {
+            // Check if first arg is a set code (letters) or a number
+            if (!int.TryParse(args[0], out maxSetsToProcess))
+            {
+                specificSet = args[0].ToLower();
+                Console.WriteLine($"Processing specific set: {specificSet}");
+            }
+            
+            // Check for second argument if first was a set code
+            if (specificSet != null && args.Length > 1 && int.TryParse(args[1], out var max))
+            {
+                maxSetsToProcess = max;
+            }
+        }
 
         using var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("User-Agent", "MtgDiscoveryGroupingScraper/1.0");
 
-        var allGroupings = await ScrapeAllSetGroupings(httpClient, maxSetsToProcess);
+        Dictionary<string, SetGroupingData> allGroupings;
+        
+        if (specificSet != null)
+        {
+            // Process only the specific set
+            allGroupings = await ScrapeSpecificSet(httpClient, specificSet);
+        }
+        else
+        {
+            allGroupings = await ScrapeAllSetGroupings(httpClient, maxSetsToProcess);
+        }
 
         var json = JsonConvert.SerializeObject(allGroupings, Formatting.Indented);
         await File.WriteAllTextAsync("scryfall_set_groupings.json", json);
@@ -32,29 +59,63 @@ public class ScryfallGroupingsScraper
         Console.WriteLine($"Total groupings found: {totalGroupings}");
     }
 
+    static async Task<Dictionary<string, SetGroupingData>> ScrapeSpecificSet(HttpClient httpClient, string setCode)
+    {
+        var setGroupings = new Dictionary<string, SetGroupingData>();
+        
+        try
+        {
+            Console.WriteLine($"\nScraping set: {setCode}");
+            var groupings = await ScrapeSetGroupings(httpClient, setCode);
+            
+            if (groupings.Count > 0)
+            {
+                setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
+                Console.WriteLine($"Found {groupings.Count} groupings for {setCode}");
+                
+                // Print detailed info for debugging
+                foreach (var grouping in groupings)
+                {
+                    Console.WriteLine($"\n  Grouping: {grouping.DisplayName}");
+                    Console.WriteLine($"    Cards: {grouping.CardCount}");
+                    Console.WriteLine($"    Query: {grouping.RawQuery}");
+                    if (grouping.ParsedFilters?.CollectorNumberRange != null)
+                    {
+                        var cnr = grouping.ParsedFilters.CollectorNumberRange;
+                        if (cnr.Min != null || cnr.Max != null)
+                        {
+                            Console.WriteLine($"    CN Range: {cnr.Min ?? "?"} - {cnr.Max ?? "?"}");
+                        }
+                        if (cnr.OrConditions != null && cnr.OrConditions.Count > 0)
+                        {
+                            Console.WriteLine($"    OR Conditions: {string.Join(", ", cnr.OrConditions)}");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No groupings found for {setCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error scraping set {setCode}: {ex.Message}");
+        }
+        
+        return setGroupings;
+    }
+
     static async Task<Dictionary<string, SetGroupingData>> ScrapeAllSetGroupings(HttpClient httpClient, int maxSetsToProcess)
     {
-        // Load existing data if file exists
+        // Start fresh - don't load existing data
         var setGroupings = new Dictionary<string, SetGroupingData>();
         const string fileName = "scryfall_set_groupings.json";
 
-        if (File.Exists(fileName))
-        {
-            Console.WriteLine("Loading existing groupings file...");
-            var existingJson = await File.ReadAllTextAsync(fileName);
-            setGroupings = JsonConvert.DeserializeObject<Dictionary<string, SetGroupingData>>(existingJson)
-                          ?? new Dictionary<string, SetGroupingData>();
-            Console.WriteLine($"Loaded {setGroupings.Count} existing sets");
-        }
-
         var allSetCodes = await GetAllSetCodes(httpClient);
-
-        // Filter out already processed sets
-        var setsToProcess = allSetCodes.Where(code => !setGroupings.ContainsKey(code)).ToList();
+        var setsToProcess = allSetCodes;
 
         Console.WriteLine($"Total sets available: {allSetCodes.Count}");
-        Console.WriteLine($"Already processed: {setGroupings.Count}");
-        Console.WriteLine($"Sets to process: {setsToProcess.Count}");
 
         // Limit number of sets to process if specified
         if (maxSetsToProcess < setsToProcess.Count)
@@ -64,17 +125,9 @@ public class ScryfallGroupingsScraper
         }
 
         int processed = 0;
-        int newSetsAdded = 0;
+        int setsAdded = 0;
 
-        if (setsToProcess.Count > 0)
-        {
-            Console.WriteLine($"\nStarting to process {setsToProcess.Count} sets...\n");
-        }
-        else
-        {
-            Console.WriteLine("\nNo new sets to process. All sets are already in the file.");
-            return setGroupings;
-        }
+        Console.WriteLine($"\nStarting to process {setsToProcess.Count} sets...\n");
 
         foreach (var setCode in setsToProcess)
         {
@@ -84,7 +137,7 @@ public class ScryfallGroupingsScraper
                 if (groupings.Count > 0)
                 {
                     setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
-                    newSetsAdded++;
+                    setsAdded++;
                 }
 
                 processed++;
@@ -108,7 +161,7 @@ public class ScryfallGroupingsScraper
             }
         }
 
-        Console.WriteLine($"Added {newSetsAdded} new sets in this run");
+        Console.WriteLine($"Processed {setsAdded} sets total");
 
         return setGroupings;
     }
@@ -144,16 +197,29 @@ public class ScryfallGroupingsScraper
         {
             var section = headerSplits[i];
 
-            // Extract anchor ID if present
+            // Extract anchor ID if present (can be in h2 tag or in an inner <a> tag)
             string anchorId = "";
-            var idIndex = section.IndexOf("id=\"");
-            if (idIndex >= 0 && idIndex < 100) // Must be near the start
+            
+            // First check for id in the h2 tag (within first 100 chars)
+            var h2IdIndex = section.IndexOf("id=\"");
+            if (h2IdIndex >= 0 && h2IdIndex < 100)
             {
-                var idStart = idIndex + 4;
+                var idStart = h2IdIndex + 4;
                 var idEnd = section.IndexOf("\"", idStart);
                 if (idEnd > idStart)
                 {
                     anchorId = section.Substring(idStart, idEnd - idStart);
+                }
+            }
+            
+            // If not found in h2, look for <a id="..."> within the content
+            if (string.IsNullOrEmpty(anchorId))
+            {
+                var anchorPattern = @"<a\s+id=""([^""]+)""";
+                var anchorMatch = Regex.Match(section.Substring(0, Math.Min(section.Length, 500)), anchorPattern);
+                if (anchorMatch.Success)
+                {
+                    anchorId = anchorMatch.Groups[1].Value;
                 }
             }
 
@@ -236,17 +302,56 @@ public class ScryfallGroupingsScraper
     {
         var filters = new GroupingFilters();
 
-        // Parse collector number ranges
+        // Parse all collector number patterns
         var cnMinMatch = Regex.Match(query, @"cn[≥>=](\d+)");
         var cnMaxMatch = Regex.Match(query, @"cn[≤<=](\d+)");
-
-        if (cnMinMatch.Success || cnMaxMatch.Success)
+        
+        // Extract individual collector numbers (e.g., cn:"796" or cn:"796★")
+        var cnExactPattern = @"cn:""?([^""\s\)]+)""?";
+        var cnExactMatches = Regex.Matches(query, cnExactPattern);
+        
+        // Check if we have a complex condition (ranges AND/OR individual numbers)
+        bool hasRange = cnMinMatch.Success || cnMaxMatch.Success;
+        bool hasExactNumbers = cnExactMatches.Count > 0;
+        bool hasOrCondition = query.Contains(" OR ");
+        
+        if (hasRange || hasExactNumbers)
         {
-            filters.CollectorNumberRange = new CollectorNumberRange
+            var collectorNumberRange = new CollectorNumberRange();
+            
+            // Set range if present
+            if (hasRange)
             {
-                Min = cnMinMatch.Success ? cnMinMatch.Groups[1].Value : null,
-                Max = cnMaxMatch.Success ? cnMaxMatch.Groups[1].Value : null
-            };
+                collectorNumberRange.Min = cnMinMatch.Success ? cnMinMatch.Groups[1].Value : null;
+                collectorNumberRange.Max = cnMaxMatch.Success ? cnMaxMatch.Groups[1].Value : null;
+            }
+            
+            // Handle OR conditions or exact matches
+            if (hasOrCondition && hasExactNumbers)
+            {
+                // Complex case: might have ranges AND OR conditions
+                var orConditions = new List<string>();
+                foreach (Match match in cnExactMatches)
+                {
+                    orConditions.Add(match.Groups[1].Value);
+                }
+                
+                // If we have both range and OR conditions, keep both
+                // If we only have OR conditions (no range), just set OrConditions
+                if (orConditions.Count > 0)
+                {
+                    collectorNumberRange.OrConditions = orConditions;
+                }
+            }
+            else if (hasExactNumbers && cnExactMatches.Count == 1 && !hasRange)
+            {
+                // Single exact number with no range
+                var cnValue = cnExactMatches[0].Groups[1].Value;
+                collectorNumberRange.Min = cnValue;
+                collectorNumberRange.Max = cnValue;
+            }
+            
+            filters.CollectorNumberRange = collectorNumberRange;
         }
 
         filters.Properties = new Dictionary<string, object>();
@@ -279,18 +384,18 @@ public class ScryfallGroupingsScraper
             filters.Properties["frame"] = frameMatch.Groups[1].Value;
         }
 
-        // type:X patterns
-        var typeMatch = Regex.Match(query, @"type:(\w+)");
-        if (typeMatch.Success)
-        {
-            filters.Properties["type_line_contains"] = typeMatch.Groups[1].Value;
-        }
-
-        // -type:X patterns
+        // -type:X patterns (must check before type:X to avoid false matches)
         var notTypeMatch = Regex.Match(query, @"-type:(\w+)");
         if (notTypeMatch.Success)
         {
             filters.Properties["type_line_excludes"] = notTypeMatch.Groups[1].Value;
+        }
+
+        // type:X patterns (use negative lookbehind to exclude -type:)
+        var typeMatch = Regex.Match(query, @"(?<!-)type:(\w+)");
+        if (typeMatch.Success)
+        {
+            filters.Properties["type_line_contains"] = typeMatch.Groups[1].Value;
         }
 
         return filters;
@@ -323,4 +428,5 @@ public class CollectorNumberRange
 {
     public string Min { get; set; }
     public string Max { get; set; }
+    public List<string> OrConditions { get; set; }
 }

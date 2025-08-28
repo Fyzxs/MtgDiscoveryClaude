@@ -35,5 +35,6 @@ public sealed class CollectorNumberRangeOutEntityType : ObjectType<CollectorNumb
         ArgumentNullException.ThrowIfNull(descriptor);
         descriptor.Field(f => f.Min).Type<StringType>();
         descriptor.Field(f => f.Max).Type<StringType>();
+        descriptor.Field(f => f.OrConditions).Type<ListType<StringType>>();
     }
 }
