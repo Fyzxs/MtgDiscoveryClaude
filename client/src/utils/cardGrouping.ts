@@ -56,13 +56,20 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
     }
   }
   
+  // Helper function to convert snake_case to camelCase
+  const snakeToCamel = (str: string): string => {
+    return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+  };
+
   // Check properties if specified
   if (filters.properties && Object.keys(filters.properties).length > 0) {
     for (const [key, value] of Object.entries(filters.properties)) {
       // Handle different types of property checks
       if (key.endsWith('_excludes')) {
         // Check that the property does NOT contain the value
-        const propName = key.replace('_excludes', '');
+        let propName = key.replace('_excludes', '');
+        // Convert snake_case to camelCase for property lookup
+        propName = snakeToCamel(propName);
         const cardValue = (card as any)[propName];
         if (cardValue && typeof cardValue === 'string') {
           if (cardValue.toLowerCase().includes(String(value).toLowerCase())) {
@@ -71,7 +78,9 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         }
       } else if (key.endsWith('_contains')) {
         // Check that the property contains the value
-        const propName = key.replace('_contains', '');
+        let propName = key.replace('_contains', '');
+        // Convert snake_case to camelCase for property lookup
+        propName = snakeToCamel(propName);
         const cardValue = (card as any)[propName];
         if (!cardValue || typeof cardValue !== 'string') {
           return false;
@@ -81,7 +90,13 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         }
       } else {
         // Direct property match or array contains
-        const cardValue = (card as any)[key];
+        // Try both the original key and the camelCase version
+        let cardValue = (card as any)[key];
+        if (cardValue === undefined) {
+          // Try converting snake_case to camelCase
+          const camelKey = snakeToCamel(key);
+          cardValue = (card as any)[camelKey];
+        }
         
         // Check direct property
         if (cardValue !== undefined) {

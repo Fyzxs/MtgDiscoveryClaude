@@ -60,6 +60,18 @@ const LEGALITY_DESCRIPTIONS: Record<string, string> = {
   banned: 'Banned'
 };
 
+// Function to generate Card Kingdom search URL
+const generateCardKingdomSearchUrl = (cardName: string): string => {
+  const params = new URLSearchParams({
+    'search': 'mtg_advanced',
+    'filter[search]': 'mtg_advanced',
+    'filter[tab]': 'mtg_card',
+    'filter[name]': cardName
+  });
+  
+  return `https://www.cardkingdom.com/catalog/search?${params.toString()}`;
+};
+
 const FORMAT_DISPLAY_NAMES: Record<string, string> = {
   standard: 'Standard',
   future: 'Future',
@@ -523,6 +535,16 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       target="_blank"
                     >
                       Scryfall
+                    </Button>
+                  )}
+                  {card.name && (
+                    <Button
+                      size="small"
+                      startIcon={<OpenInNewIcon />}
+                      href={generateCardKingdomSearchUrl(card.name)}
+                      target="_blank"
+                    >
+                      Card Kingdom
                     </Button>
                   )}
                 </Stack>

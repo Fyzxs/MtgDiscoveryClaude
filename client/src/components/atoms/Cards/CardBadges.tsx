@@ -83,6 +83,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       'etched': 'Etched',
       'glossy': 'Glossy',
       'nonfoil': 'Non-Foil',
+      'galaxyfoil': 'Galaxy Foil',
     };
     return formatMap[finish.toLowerCase()] || finish;
   };
@@ -113,6 +114,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       'serialized': 'Serialized',
       'surgefoil': 'Surge Foil',
       'raisedfoil': 'Raised Foil',
+      'sldbonus': 'SLD Bonus',
     };
     return formatMap[promoType.toLowerCase()] || promoType.replace(/_/g, ' ')
       .split(' ')
