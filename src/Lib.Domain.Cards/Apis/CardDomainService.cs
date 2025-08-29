@@ -33,4 +33,9 @@ public sealed class CardDomainService : ICardDomainService
     {
         return _cardDomainOperations.CardsByNameAsync(cardName);
     }
+
+    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    {
+        return _cardDomainOperations.CardNameSearchAsync(searchTerm);
+    }
 }

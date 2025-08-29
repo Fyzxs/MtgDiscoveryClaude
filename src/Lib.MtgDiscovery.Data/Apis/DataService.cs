@@ -36,6 +36,11 @@ public sealed class DataService : IDataService
         return _cardDataService.CardsByNameAsync(cardName);
     }
 
+    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    {
+        return _cardDataService.CardNameSearchAsync(searchTerm);
+    }
+
     public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds)
     {
         return _setDataService.SetsAsync(setIds);

@@ -106,4 +106,28 @@ public class CardQueryMethods
 
         return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
     }
+
+    [GraphQLType(typeof(CardNameSearchResponseModelUnionType))]
+    public async Task<ResponseModel> CardNameSearch(CardSearchTermArgEntity searchTerm)
+    {
+        IOperationResponse<ICardNameSearchResultCollectionItrEntity> response = await _entryService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
+
+        if (response.IsFailure) return new FailureResponseModel()
+        {
+            Status = new StatusDataModel()
+            {
+                Message = response.OuterException.StatusMessage,
+                StatusCode = response.OuterException.StatusCode
+            }
+        };
+
+        List<CardNameSearchResultOutEntity> results = [];
+
+        foreach (ICardNameSearchResultItrEntity nameResult in response.ResponseData.Names)
+        {
+            results.Add(new CardNameSearchResultOutEntity { Name = nameResult.Name });
+        }
+
+        return new SuccessDataResponseModel<List<CardNameSearchResultOutEntity>>() { Data = results };
+    }
 }

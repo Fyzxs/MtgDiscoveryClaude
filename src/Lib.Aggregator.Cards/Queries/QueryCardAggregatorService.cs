@@ -23,6 +23,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
     private readonly ICosmosGopher _setCodeIndexGopher;
     private readonly ICosmosInquisitor _setCardsInquisitor;
     private readonly ICosmosInquisitor _cardsByNameInquisitor;
+    private readonly ICosmosInquisitor _cardNameTrigramsInquisitor;
     private readonly QueryCardsIdsToReadPointItemsMapper _mapper;
     private readonly ScryfallCardItemToCardItemItrEntityMapper _cardMapper;
 
@@ -31,6 +32,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         new ScryfallSetCodeIndexGopher(logger),
         new ScryfallSetCardsInquisitor(logger),
         new ScryfallCardsByNameInquisitor(logger),
+        new CardNameTrigramsInquisitor(logger),
         new QueryCardsIdsToReadPointItemsMapper(),
         new ScryfallCardItemToCardItemItrEntityMapper())
     {
@@ -41,6 +43,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         ICosmosGopher setCodeIndexGopher,
         ICosmosInquisitor setCardsInquisitor,
         ICosmosInquisitor cardsByNameInquisitor,
+        ICosmosInquisitor cardNameTrigramsInquisitor,
         QueryCardsIdsToReadPointItemsMapper mapper,
         ScryfallCardItemToCardItemItrEntityMapper cardMapper)
     {
@@ -48,6 +51,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         _setCodeIndexGopher = setCodeIndexGopher;
         _setCardsInquisitor = setCardsInquisitor;
         _cardsByNameInquisitor = cardsByNameInquisitor;
+        _cardNameTrigramsInquisitor = cardNameTrigramsInquisitor;
         _mapper = mapper;
         _cardMapper = cardMapper;
     }
@@ -146,5 +150,78 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         }
 
         return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
+    }
+
+    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    {
+        // Normalize the search term: lowercase and remove non-alphabetic characters
+        string normalized = new string(searchTerm.SearchTerm
+            .ToLowerInvariant()
+            .Where(char.IsLetter)
+            .ToArray());
+
+        if (normalized.Length < 3)
+        {
+            return new FailureOperationResponse<ICardNameSearchResultCollectionItrEntity>(
+                new CardAggregatorOperationException("Search term must contain at least 3 letters"));
+        }
+
+        // Generate trigrams from the normalized search term
+        List<string> trigrams = [];
+        for (int i = 0; i <= normalized.Length - 3; i++)
+        {
+            trigrams.Add(normalized.Substring(i, 3));
+        }
+
+        // Query each trigram and collect all matching card names
+        HashSet<string> matchingCardNames = [];
+        Dictionary<string, int> cardNameMatchCounts = new();
+
+        foreach (string trigram in trigrams)
+        {
+            // Query for this trigram with server-side filtering
+            string firstChar = trigram.Substring(0, 1);
+            QueryDefinition queryDefinition = new QueryDefinition(
+                "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE card FROM card IN c.cards WHERE CONTAINS(card.norm, @normalized))")
+                .WithParameter("@trigram", trigram)
+                .WithParameter("@partition", firstChar)
+                .WithParameter("@normalized", normalized);
+
+            OpResponse<IEnumerable<CardNameTrigram>> trigramResponse = await _cardNameTrigramsInquisitor.QueryAsync<CardNameTrigram>(
+                queryDefinition,
+                new PartitionKey(firstChar)).ConfigureAwait(false);
+
+            if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
+            {
+                foreach (CardNameTrigram trigramDoc in trigramResponse.Value)
+                {
+                    foreach (CardNameTrigramEntry entry in trigramDoc.Cards)
+                    {
+                        // Server-side filtering should have already filtered, but double-check
+                        if (entry.Normalized.Contains(normalized))
+                        {
+                            matchingCardNames.Add(entry.Name);
+
+                            // Track how many trigrams matched for ranking
+                            if (cardNameMatchCounts.ContainsKey(entry.Name) is false)
+                            {
+                                cardNameMatchCounts[entry.Name] = 0;
+                            }
+                            cardNameMatchCounts[entry.Name]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Sort by match count (cards matching more trigrams appear first) and convert to result entities
+        List<ICardNameSearchResultItrEntity> sortedResults = matchingCardNames
+            .OrderByDescending(name => cardNameMatchCounts[name])
+            .ThenBy(name => name)
+            .Select(name => new CardNameSearchResultItrEntity { Name = name } as ICardNameSearchResultItrEntity)
+            .ToList();
+
+        return new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(
+            new CardNameSearchResultCollectionItrEntity { Names = sortedResults });
     }
 }

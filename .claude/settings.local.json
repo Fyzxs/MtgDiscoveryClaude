@@ -36,7 +36,8 @@
       "Bash(npm run dev:*)",
       "Bash(find:*)",
       "Bash(npm test:*)",
-      "WebFetch(domain:scryfall.com)"
+      "WebFetch(domain:scryfall.com)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []
