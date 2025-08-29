@@ -4,14 +4,19 @@ import {
   Toolbar, 
   Typography, 
   Box, 
-  Button
+  Button,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { SearchInput } from '../atoms/shared/SearchInput';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
+  const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -21,6 +26,19 @@ export const Header: React.FC = () => {
       navigate(`/set/${setCode.trim().toLowerCase()}`);
       setSetCode('');
     }
+  };
+
+  const handleSearchMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setSearchAnchorEl(event.currentTarget);
+  };
+
+  const handleSearchMenuClose = () => {
+    setSearchAnchorEl(null);
+  };
+
+  const handleSearchMenuClick = (path: string) => {
+    navigate(path);
+    handleSearchMenuClose();
   };
 
   return (
@@ -69,6 +87,40 @@ export const Header: React.FC = () => {
           >
             All Sets
           </Button>
+          
+          {/* Search Dropdown */}
+          <Button
+            color="primary"
+            onClick={handleSearchMenuOpen}
+            startIcon={<SearchIcon />}
+            endIcon={<ArrowDropDownIcon />}
+            sx={{ 
+              textTransform: 'none',
+              fontWeight: 500
+            }}
+          >
+            Search
+          </Button>
+          <Menu
+            anchorEl={searchAnchorEl}
+            open={Boolean(searchAnchorEl)}
+            onClose={handleSearchMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+          >
+            <MenuItem onClick={() => handleSearchMenuClick('/search/cards')}>
+              Cards
+            </MenuItem>
+            <MenuItem disabled sx={{ color: 'text.disabled' }}>
+              Artists (Coming Soon)
+            </MenuItem>
+          </Menu>
         </Box>
 
         {/* Spacer */}

@@ -2,6 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
+import { CardSearchPage } from './pages/CardSearchPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 import { Layout } from './components/templates/Layout'
@@ -53,6 +54,16 @@ function App() {
           <Route path="/set/:setCode" element={
             <PageErrorBoundary name="SetPage">
               <SetPage />
+            </PageErrorBoundary>
+          } />
+          <Route path="/search/cards" element={
+            <PageErrorBoundary name="CardSearchPage">
+              <CardSearchPage />
+            </PageErrorBoundary>
+          } />
+          <Route path="/card/:cardName" element={
+            <PageErrorBoundary name="CardDetailPage">
+              <div>Card Detail Page - Coming Soon</div>
             </PageErrorBoundary>
           } />
           {/* Handle old query param URLs for backwards compatibility */}
