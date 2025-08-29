@@ -27,9 +27,13 @@ internal sealed class ArtistCardsWriterProcessor : IArtistProcessor
     {
         string artistId = artist.ArtistId();
 
-        foreach (string cardId in artist.CardIds())
+        foreach (dynamic cardData in artist.Cards())
         {
-            ScryfallArtistCard item = new(cardId, artistId);
+            ScryfallArtistCard item = new()
+            {
+                ArtistId = artistId,
+                Data = cardData
+            };
             await _scribe.UpsertAsync(item).ConfigureAwait(false);
         }
 

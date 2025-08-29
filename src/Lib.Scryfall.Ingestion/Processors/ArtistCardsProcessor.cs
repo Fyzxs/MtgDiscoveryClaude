@@ -36,7 +36,11 @@ internal sealed class ArtistCardsProcessor : ICardProcessor
 
     private async Task ProcessArtistCard(string artistId, IScryfallCard card)
     {
-        ScryfallArtistCard artistCard = new(artistId, card.Data());
+        ScryfallArtistCard artistCard = new()
+        {
+            ArtistId = artistId,
+            Data = card.Data()
+        };
         OpResponse<ScryfallArtistCard> response = await _scribe.UpsertAsync(artistCard).ConfigureAwait(false);
 
         LogSuccess(artistId, card, response);

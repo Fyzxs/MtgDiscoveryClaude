@@ -9,6 +9,7 @@ internal sealed class ArtistAggregate : IArtistAggregate
     private readonly HashSet<string> _cardIds;
     private readonly HashSet<string> _setIds;
     private readonly HashSet<string> _artistNames;
+    private readonly Dictionary<string, dynamic> _cards;
     private bool _isDirty;
 
     public ArtistAggregate(string artistId)
@@ -17,6 +18,7 @@ internal sealed class ArtistAggregate : IArtistAggregate
         _cardIds = [];
         _setIds = [];
         _artistNames = [];
+        _cards = new Dictionary<string, dynamic>();
         _isDirty = false;
     }
 
@@ -24,6 +26,7 @@ internal sealed class ArtistAggregate : IArtistAggregate
     public IEnumerable<string> ArtistNames() => _artistNames;
     public IEnumerable<string> CardIds() => _cardIds;
     public IEnumerable<string> SetIds() => _setIds;
+    public IEnumerable<dynamic> Cards() => _cards.Values;
     public bool IsDirty() => _isDirty;
     public void MarkClean() => _isDirty = false;
 
@@ -41,6 +44,16 @@ internal sealed class ArtistAggregate : IArtistAggregate
         if (string.IsNullOrWhiteSpace(cardId)) return;
         if (_cardIds.Add(cardId))
         {
+            _isDirty = true;
+        }
+    }
+
+    public void AddCard(string cardId, dynamic cardData)
+    {
+        if (string.IsNullOrWhiteSpace(cardId)) return;
+        if (_cardIds.Add(cardId))
+        {
+            _cards[cardId] = cardData;
             _isDirty = true;
         }
     }
