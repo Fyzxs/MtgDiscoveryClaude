@@ -43,10 +43,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   if (layout === 'horizontal') {
     return (
       <Box sx={{ mb: 4, ...sx }}>
-        <Grid container spacing={spacing} alignItems="center">
+        <Grid container spacing={spacing} sx={{ alignItems: 'center', justifyContent: 'center' }}>
           {/* Search Input */}
           {search && (
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, sm: 'auto' }}>
               <DebouncedSearchInput
                 value={search.value}
                 onChange={search.onChange}
@@ -66,8 +66,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               key={select.key} 
               size={{ 
                 xs: 12, 
-                sm: 6, 
-                md: select.fullWidth ? 12 : 3 
+                sm: 'auto' 
               }}
             >
               <MultiSelectDropdown
@@ -137,8 +136,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
             <Grid 
               size={{ 
                 xs: 12, 
-                sm: 6, 
-                md: sort.fullWidth ? 12 : 3 
+                sm: 'auto' 
               }}
             >
               <SortDropdown

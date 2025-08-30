@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-route
 import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
 import { CardSearchPage } from './pages/CardSearchPage'
+import { CardDetailPage } from './pages/CardDetailPage'
 import { Card } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 import { Layout } from './components/templates/Layout'
@@ -63,7 +64,7 @@ function App() {
           } />
           <Route path="/card/:cardName" element={
             <PageErrorBoundary name="CardDetailPage">
-              <div>Card Detail Page - Coming Soon</div>
+              <CardDetailPage />
             </PageErrorBoundary>
           } />
           {/* Handle old query param URLs for backwards compatibility */}

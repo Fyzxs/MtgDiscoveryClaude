@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { GET_ALL_SETS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
-import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
+import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { EmptyState } from '../components/atoms/shared/EmptyState';
 import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import { useUrlState } from '../hooks/useUrlState';
@@ -187,9 +187,10 @@ export const AllSetsPage: React.FC = () => {
 
       {/* Results Summary */}
       <ResultsSummary 
-        showing={filteredSets.length} 
+        current={filteredSets.length} 
         total={sets.length} 
-        itemType="sets" 
+        label="sets"
+        textAlign="center"
       />
 
       {/* Sets Grid */}
