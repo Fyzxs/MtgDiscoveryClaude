@@ -206,3 +206,6 @@ When writing tests:
 6. **Follow the 3-build-failure limit before stopping**
 7. **Service dependencies flow downward through layers (Entry → Domain → Data → Aggregator → Adapter)**
 8. **Use `IEntryService` for GraphQL to service layer communication**
+## Sessions System Behaviors
+
+@CLAUDE.sessions.md
