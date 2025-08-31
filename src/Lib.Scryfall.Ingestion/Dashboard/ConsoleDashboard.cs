@@ -19,8 +19,10 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private int _cardCurrent;
     private int _cardTotal;
     private string _cardName = string.Empty;
+    private int _rulingCurrent;
+    private int _rulingTotal;
+    private string _rulingName = string.Empty;
     private int _artistCount;
-    private int _rulingCount;
     private long _memoryUsage;
     private int _lastHeight;
     private int _lastWidth;
@@ -51,19 +53,21 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         }
     }
 
+    public void UpdateRulingProgress(int current, int total, string name)
+    {
+        lock (_lock)
+        {
+            _rulingCurrent = current;
+            _rulingTotal = total;
+            _rulingName = name ?? string.Empty;
+        }
+    }
+
     public void UpdateArtistCount(int count)
     {
         lock (_lock)
         {
             _artistCount = count;
-        }
-    }
-
-    public void UpdateRulingCount(int count)
-    {
-        lock (_lock)
-        {
-            _rulingCount = count;
         }
     }
 
@@ -165,6 +169,20 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             lines.Add("  Cards:    Not started");
         }
 
+        lines.Add("");
+
+        if (_rulingTotal > 0)
+        {
+            string rulingProgress = CreateProgressBar(_rulingCurrent, _rulingTotal, width);
+            int rulingPercent = (_rulingCurrent * 100) / _rulingTotal;
+            lines.Add($"  Rulings:  {rulingProgress} {_rulingCurrent:N0}/{_rulingTotal:N0} ({rulingPercent}%)");
+            lines.Add($"  Current:  {TruncateString(_rulingName, width - 12)}");
+        }
+        else
+        {
+            lines.Add("  Rulings:  Not started");
+        }
+
         if (_recentSets.Count > 0)
         {
             lines.Add("");
@@ -187,7 +205,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
         lines.Add(new string('═', width));
 
-        string stats = $"  Artists: {_artistCount:N0} | Rulings: {_rulingCount:N0}";
+        string stats = $"  Artists: {_artistCount:N0}";
         string system = $"  Memory: {_memoryUsage} MB | Elapsed: {FormatElapsed()}";
         lines.Add(stats);
         lines.Add(system);

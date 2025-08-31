@@ -49,12 +49,12 @@ internal sealed class SilentDashboard : IIngestionDashboard
         }
     }
 
-    public void UpdateRulingCount(int count)
+    public void UpdateRulingProgress(int current, int total, string name)
     {
         // Only log at specific milestones
-        if (count % 1000 == 0)
+        if (current % 1000 == 0 || current == total)
         {
-            _logger.LogRulingsProcessed(count);
+            _logger.LogRulingsProcessed(current, total);
         }
     }
 
@@ -113,8 +113,8 @@ internal static partial class SilentDashboardLoggerExtensions
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Processed {Count} ruling groups")]
-    public static partial void LogRulingsProcessed(this ILogger logger, int count);
+        Message = "Processed {Current}/{Total} ruling groups")]
+    public static partial void LogRulingsProcessed(this ILogger logger, int current, int total);
 
     [LoggerMessage(
         Level = LogLevel.Debug,
