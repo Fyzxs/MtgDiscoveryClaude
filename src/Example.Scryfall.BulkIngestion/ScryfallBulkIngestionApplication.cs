@@ -1,14 +1,13 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Example.Core;
-using Lib.Scryfall.Ingestion.Apis;
 using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.BulkIngestion;
 
 public sealed class ScryfallBulkIngestionApplication : ExampleApplication
 {
-    protected override async Task Execute()
+    protected override Task Execute()
     {
         ILogger logger = GetLogger();
 
@@ -16,7 +15,7 @@ public sealed class ScryfallBulkIngestionApplication : ExampleApplication
 
         try
         {
-            IBulkIngestionService bulkIngestionService = new BulkIngestionService(logger);
+            //IBulkIngestionService bulkIngestionService = new BulkIngestionService(logger);
 
             logger.LogInformation("This will:");
             logger.LogInformation("1. Load filtered sets");
@@ -25,7 +24,7 @@ public sealed class ScryfallBulkIngestionApplication : ExampleApplication
             logger.LogInformation("4. Extract artists from cards");
             logger.LogInformation("5. Write data to Cosmos DB");
 
-            await bulkIngestionService.IngestBulkDataAsync().ConfigureAwait(false);
+            //await bulkIngestionService.IngestBulkDataAsync().ConfigureAwait(false);
 
             logger.LogInformation("Bulk ingestion completed successfully");
         }
