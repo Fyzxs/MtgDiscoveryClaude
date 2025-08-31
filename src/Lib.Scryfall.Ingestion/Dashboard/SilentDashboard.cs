@@ -1,3 +1,4 @@
+using System;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Microsoft.Extensions.Logging;
 
@@ -75,6 +76,16 @@ internal sealed class SilentDashboard : IIngestionDashboard
     public void Complete(string message)
     {
         _logger.LogIngestionComplete(message);
+    }
+
+    // ILogger implementation - delegate to underlying logger
+    public IDisposable BeginScope<TState>(TState state) => _logger.BeginScope(state);
+
+    public bool IsEnabled(LogLevel logLevel) => _logger.IsEnabled(logLevel);
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+    {
+        _logger.Log(logLevel, eventId, state, exception, formatter);
     }
 }
 

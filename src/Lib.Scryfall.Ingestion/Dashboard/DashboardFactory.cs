@@ -8,19 +8,9 @@ public sealed class DashboardFactory : IDashboardFactory
 {
     public IIngestionDashboard Create(ILogger logger)
     {
-        bool isInteractive = Environment.UserInteractive &&
-                           !Console.IsOutputRedirected &&
-                           Environment.GetEnvironmentVariable("CI") == null &&
-                           Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == null;
-
-        if (isInteractive)
-        {
-            logger.LogInteractiveModeEnabled();
-            return new ConsoleDashboard();
-        }
-
-        logger.LogPipelineModeEnabled();
-        return new SilentDashboard(logger);
+        // For now, always use ConsoleDashboard
+        logger.LogInteractiveModeEnabled();
+        return new ConsoleDashboard();
     }
 }
 
