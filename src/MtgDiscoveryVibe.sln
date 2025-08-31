@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Sets", "Lib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Sets", "Lib.Domain.Sets\Lib.Domain.Sets.csproj", "{5020963C-2806-4D46-9430-B59240110604}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.BulkIngestion", "Example.Scryfall.BulkIngestion\Example.Scryfall.BulkIngestion.csproj", "{F82FABF3-7721-4A43-8AFD-22389865DA32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -469,6 +471,18 @@ Global
 		{5020963C-2806-4D46-9430-B59240110604}.Release|x64.Build.0 = Release|Any CPU
 		{5020963C-2806-4D46-9430-B59240110604}.Release|x86.ActiveCfg = Release|Any CPU
 		{5020963C-2806-4D46-9430-B59240110604}.Release|x86.Build.0 = Release|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Debug|x64.Build.0 = Debug|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Debug|x86.Build.0 = Debug|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Release|x64.ActiveCfg = Release|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Release|x64.Build.0 = Release|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Release|x86.ActiveCfg = Release|Any CPU
+		{F82FABF3-7721-4A43-8AFD-22389865DA32}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
