@@ -6,6 +6,7 @@ using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Apis.Pipeline;
 using Lib.Scryfall.Ingestion.BulkIngestion;
+using Lib.Scryfall.Ingestion.Mappers;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Pipeline;
@@ -14,6 +15,8 @@ internal sealed class CardsPipelineService : ICardsPipelineService
 {
     private readonly CardsBulkDataFetcher _cardsFetcher;
     private readonly ScryfallCardItemsScribe _cardScribe;
+    private readonly ScryfallSetCardsScribe _setCardsScribe;
+    private readonly IScryfallCardToSetCardMapper _setCardMapper;
     private readonly IIngestionDashboard _dashboard;
     private readonly IBulkProcessingConfiguration _config;
 
@@ -21,10 +24,13 @@ internal sealed class CardsPipelineService : ICardsPipelineService
         CardsBulkDataFetcher cardsFetcher,
         ScryfallCardItemsScribe cardScribe,
         IIngestionDashboard dashboard,
-        IBulkProcessingConfiguration config)
+        IBulkProcessingConfiguration config,
+        ILogger logger)
     {
         _cardsFetcher = cardsFetcher;
         _cardScribe = cardScribe;
+        _setCardsScribe = new ScryfallSetCardsScribe(logger);
+        _setCardMapper = new ScryfallCardToSetCardMapper();
         _dashboard = dashboard;
         _config = config;
     }
@@ -45,16 +51,6 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             string cardName = card.name;
             string setCode = card.set;
             _dashboard.UpdateCardProgress(totalCards, 0, $"Fetching: {cardName} [{setCode}]");
-
-            if (_config.EnableMemoryThrottling)
-            {
-                _dashboard.UpdateMemoryUsage();
-            }
-
-            if (totalCards % _config.DashboardRefreshFrequency == 0)
-            {
-                _dashboard.Refresh();
-            }
         }
 
         _dashboard.LogCardsFetched(totalCards);
@@ -67,7 +63,6 @@ internal sealed class CardsPipelineService : ICardsPipelineService
 
         // Processing logic will be added here
         // - Extract artists
-        // - Build set-card relationships
         // - Other processing
     }
 
@@ -85,17 +80,16 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             string setCode = card.set;
             _dashboard.UpdateCardProgress(current, total, $"Writing: [{setCode}] {cardName}");
 
-            if (current % _config.DashboardRefreshFrequency == 0)
-            {
-                _dashboard.Refresh();
-            }
-
-            ScryfallCardItem entity = new()
+            // Write the card item
+            ScryfallCardItem cardItem = new()
             {
                 Data = card
             };
+            await _cardScribe.UpsertAsync(cardItem).ConfigureAwait(false);
 
-            await _cardScribe.UpsertAsync(entity).ConfigureAwait(false);
+            // Write the set-card relationship
+            ScryfallSetCard setCard = _setCardMapper.Map(card);
+            await _setCardsScribe.UpsertAsync(setCard).ConfigureAwait(false);
         }
 
         _dashboard.LogCardsWritten(cards.Count);
@@ -121,11 +115,11 @@ internal static partial class CardsPipelineServiceLoggerExtensions
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Writing {Count} cards to Cosmos DB")]
+        Message = "Writing {Count} cards and set-card relationships to Cosmos DB")]
     public static partial void LogWritingCards(this ILogger logger, int count);
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Successfully wrote {Count} cards to Cosmos DB")]
+        Message = "Successfully wrote {Count} cards and set-card relationships to Cosmos DB")]
     public static partial void LogCardsWritten(this ILogger logger, int count);
 }

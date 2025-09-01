@@ -1,5 +1,7 @@
 using System;
+using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
+using Lib.Scryfall.Ingestion.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Dashboard;
@@ -10,7 +12,8 @@ public sealed class DashboardFactory : IDashboardFactory
     {
         // For now, always use ConsoleDashboard
         logger.LogInteractiveModeEnabled();
-        return new ConsoleDashboard();
+        IBulkProcessingConfiguration config = new DefaultBulkProcessingConfiguration();
+        return new ConsoleDashboard(config.DashboardRefreshFrequency, config.EnableMemoryThrottling);
     }
 }
 

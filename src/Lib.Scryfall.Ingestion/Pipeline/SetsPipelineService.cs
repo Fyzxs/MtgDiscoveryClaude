@@ -39,15 +39,6 @@ internal sealed class SetsPipelineService : ISetsPipelineService
         {
             sets[set.Id()] = set;
             _dashboard.UpdateSetProgress(sets.Count, 0, set.Name());
-
-            if (_config.EnableMemoryThrottling)
-            {
-                _dashboard.UpdateMemoryUsage();
-            }
-            if (sets.Count % _config.DashboardRefreshFrequency == 0)
-            {
-                _dashboard.Refresh();
-            }
         }
 
         _dashboard.LogSetsFetched(sets.Count);
@@ -67,11 +58,6 @@ internal sealed class SetsPipelineService : ISetsPipelineService
             IScryfallSet set = kvp.Value;
 
             _dashboard.UpdateSetProgress(current, total, $"Writing: {set.Name()}");
-
-            if (current % _config.DashboardRefreshFrequency == 0)
-            {
-                _dashboard.Refresh();
-            }
 
             ScryfallSetItem entity = new()
             {

@@ -50,16 +50,6 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
 
             string oracleId = ruling.oracle_id ?? string.Empty;
             _dashboard.UpdateRulingProgress(totalRulings, 0, $"Fetching ruling: {oracleId}");
-
-            if (_config.EnableMemoryThrottling)
-            {
-                _dashboard.UpdateMemoryUsage();
-            }
-
-            if (totalRulings % _config.DashboardRefreshFrequency == 0)
-            {
-                _dashboard.Refresh();
-            }
         }
 
         Dictionary<string, IScryfallRuling> aggregatedRulings = _rulingsAggregator.AggregateByOracleId(allRulings);
@@ -80,11 +70,6 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
             IScryfallRuling ruling = kvp.Value;
 
             _dashboard.UpdateRulingProgress(current, total, $"Writing ruling: {ruling.OracleId()}");
-
-            if (current % _config.DashboardRefreshFrequency == 0)
-            {
-                _dashboard.Refresh();
-            }
 
             ScryfallRulingItem entity = new()
             {

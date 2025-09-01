@@ -13,6 +13,9 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private readonly Queue<string> _recentLogs = new(3);
     private readonly Stopwatch _stopwatch = new();
     private readonly char[] _spinnerChars = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
+    private readonly int _refreshFrequency;
+    private readonly bool _enableMemoryThrottling;
+    private int _updateCounter;
     private int _spinnerIndex;
     private int _setCurrent;
     private int _setTotal;
@@ -29,6 +32,12 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private int _lastWidth;
     private bool _isComplete;
 
+    public ConsoleDashboard(int refreshFrequency = 100, bool enableMemoryThrottling = true)
+    {
+        _refreshFrequency = refreshFrequency;
+        _enableMemoryThrottling = enableMemoryThrottling;
+    }
+
     public void SetStartTime()
     {
         _stopwatch.Start();
@@ -41,6 +50,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             _setCurrent = current;
             _setTotal = total;
             _setName = name ?? string.Empty;
+            CheckAndRefresh();
         }
     }
 
@@ -51,6 +61,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             _cardCurrent = current;
             _cardTotal = total;
             _cardName = name ?? string.Empty;
+            CheckAndRefresh();
         }
     }
 
@@ -61,6 +72,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             _rulingCurrent = current;
             _rulingTotal = total;
             _rulingName = name ?? string.Empty;
+            CheckAndRefresh();
         }
     }
 
@@ -79,7 +91,26 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
     public void UpdateMemoryUsage()
     {
-        _memoryUsage = GC.GetTotalMemory(false) / (1024 * 1024); // MB
+        if (_enableMemoryThrottling)
+        {
+            _memoryUsage = GC.GetTotalMemory(false) / (1024 * 1024); // MB
+        }
+    }
+
+    private void CheckAndRefresh()
+    {
+        _updateCounter++;
+
+        if (_enableMemoryThrottling)
+        {
+            UpdateMemoryUsage();
+        }
+
+        if (_updateCounter >= _refreshFrequency)
+        {
+            _updateCounter = 0;
+            RefreshInternal();
+        }
     }
 
     public void Complete(string message)
@@ -100,13 +131,17 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
     public void Refresh()
     {
-        if (_isComplete) return;
-
         lock (_lock)
         {
-            ClearDashboard();
-            DrawDashboard();
+            RefreshInternal();
         }
+    }
+
+    private void RefreshInternal()
+    {
+        if (_isComplete) return;
+        ClearDashboard();
+        DrawDashboard();
     }
 
     private void ClearDashboard()

@@ -37,7 +37,8 @@ public sealed class BulkIngestionService : IBulkIngestionService
             new CardsBulkDataFetcher(logger),
             new ScryfallCardItemsScribe(logger),
             dashboard,
-            config);
+            config,
+            logger);
 
         _orchestrator = new BulkIngestionOrchestrator(dashboard, setsPipeline, rulingsPipeline, cardsPipeline, config);
     }
