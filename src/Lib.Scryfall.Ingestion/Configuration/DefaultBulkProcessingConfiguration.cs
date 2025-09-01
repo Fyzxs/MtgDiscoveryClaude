@@ -6,4 +6,5 @@ internal sealed class DefaultBulkProcessingConfiguration : IBulkProcessingConfig
 {
     public bool EnableMemoryThrottling => true;
     public int DashboardRefreshFrequency => 100;
+    public bool ProcessRulings => false;
 }

@@ -10,9 +10,10 @@ namespace Lib.Scryfall.Ingestion.Dashboard;
 internal sealed class ConsoleDashboard : IIngestionDashboard
 {
     private readonly object _lock = new();
-    private readonly Queue<string> _recentSets = new(5);
     private readonly Queue<string> _recentLogs = new(3);
     private readonly Stopwatch _stopwatch = new();
+    private readonly char[] _spinnerChars = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
+    private int _spinnerIndex;
     private int _setCurrent;
     private int _setTotal;
     private string _setName = string.Empty;
@@ -73,11 +74,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
     public void AddCompletedSet(string name)
     {
-        lock (_lock)
-        {
-            if (_recentSets.Count >= 5) { _recentSets.Dequeue(); }
-            _recentSets.Enqueue(name);
-        }
+        // No longer tracking completed sets
     }
 
     public void UpdateMemoryUsage()
@@ -164,6 +161,13 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             lines.Add($"  Cards:    {cardProgress} {_cardCurrent:N0}/{_cardTotal:N0} ({cardPercent}%)");
             lines.Add($"  Current:  {TruncateString(_cardName, width - 12)}");
         }
+        else if (_cardCurrent > 0)
+        {
+            // When streaming cards, we don't know the total upfront
+            string spinner = GetSpinner();
+            lines.Add($"  Cards:    Processing... {spinner} {_cardCurrent:N0} cards");
+            lines.Add($"  Current:  {TruncateString(_cardName, width - 12)}");
+        }
         else
         {
             lines.Add("  Cards:    Not started");
@@ -178,19 +182,16 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             lines.Add($"  Rulings:  {rulingProgress} {_rulingCurrent:N0}/{_rulingTotal:N0} ({rulingPercent}%)");
             lines.Add($"  Current:  {TruncateString(_rulingName, width - 12)}");
         }
+        else if (_rulingCurrent > 0)
+        {
+            // When streaming rulings, we don't know the total upfront
+            string spinner = GetSpinner();
+            lines.Add($"  Rulings:  Processing... {spinner} {_rulingCurrent:N0} rulings");
+            lines.Add($"  Current:  {TruncateString(_rulingName, width - 12)}");
+        }
         else
         {
             lines.Add("  Rulings:  Not started");
-        }
-
-        if (_recentSets.Count > 0)
-        {
-            lines.Add("");
-            lines.Add("  Recently Completed Sets:");
-            foreach (string set in _recentSets)
-            {
-                lines.Add($"  ✓ {TruncateString(set, width - 6)}");
-            }
         }
 
         if (_recentLogs.Count > 0)
@@ -217,6 +218,12 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         }
 
         _lastHeight = lines.Count;
+    }
+
+    private string GetSpinner()
+    {
+        _spinnerIndex = (_spinnerIndex + 1) % _spinnerChars.Length;
+        return _spinnerChars[_spinnerIndex].ToString();
     }
 
     private static string CreateProgressBar(int current, int total, int consoleWidth)

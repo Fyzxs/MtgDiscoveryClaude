@@ -6,7 +6,6 @@ using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Apis.Pipeline;
-using Lib.Scryfall.Ingestion.BulkIngestion;
 using Lib.Scryfall.Ingestion.Configuration;
 using Lib.Scryfall.Ingestion.Pipeline;
 using Microsoft.Extensions.Logging;
@@ -34,7 +33,13 @@ public sealed class BulkIngestionService : IBulkIngestionService
             dashboard,
             config);
 
-        _orchestrator = new BulkIngestionOrchestrator(dashboard, setsPipeline, rulingsPipeline);
+        ICardsPipelineService cardsPipeline = new CardsPipelineService(
+            new CardsBulkDataFetcher(logger),
+            new ScryfallCardItemsScribe(logger),
+            dashboard,
+            config);
+
+        _orchestrator = new BulkIngestionOrchestrator(dashboard, setsPipeline, rulingsPipeline, cardsPipeline, config);
     }
 
     public async Task IngestBulkDataAsync()
