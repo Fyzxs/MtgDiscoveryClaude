@@ -6,5 +6,6 @@ namespace Lib.Scryfall.Ingestion.Apis.Pipeline;
 
 public interface ISetsPipelineService
 {
-    Task<Dictionary<string, IScryfallSet>> ProcessSetsAsync();
+    Task<Dictionary<string, IScryfallSet>> FetchSetsAsync();
+    Task WriteSetsAsync(Dictionary<string, IScryfallSet> sets);
 }

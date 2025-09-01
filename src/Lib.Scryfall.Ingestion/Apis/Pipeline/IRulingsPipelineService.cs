@@ -6,5 +6,6 @@ namespace Lib.Scryfall.Ingestion.Apis.Pipeline;
 
 public interface IRulingsPipelineService
 {
-    Task<Dictionary<string, IScryfallRuling>> ProcessRulingsAsync();
+    Task<Dictionary<string, IScryfallRuling>> FetchAndAggregateRulingsAsync();
+    Task WriteRulingsAsync(Dictionary<string, IScryfallRuling> rulings);
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
@@ -39,19 +40,45 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
 
         try
         {
-            Dictionary<string, IScryfallSet> sets = await _setsPipeline.ProcessSetsAsync().ConfigureAwait(false);
+            // Phase 1: Fetch all data
+            _dashboard.LogFetchingPhase();
+
+            Dictionary<string, IScryfallSet> sets = await _setsPipeline.FetchSetsAsync().ConfigureAwait(false);
 
             Dictionary<string, IScryfallRuling> rulings = new();
             if (_config.ProcessRulings)
             {
-                rulings = await _rulingsPipeline.ProcessRulingsAsync().ConfigureAwait(false);
+                rulings = await _rulingsPipeline.FetchAndAggregateRulingsAsync().ConfigureAwait(false);
             }
 
-            int cardsCount = await _cardsPipeline.ProcessCardsAsync().ConfigureAwait(false);
+            IReadOnlyList<dynamic> cards = await _cardsPipeline.FetchCardsAsync().ConfigureAwait(false);
+
+            // Phase 2: Process cards (relationships, artists, etc.)
+            _dashboard.LogProcessingPhase();
+
+            // Convert sets to a lookup by set code
+            Dictionary<string, dynamic> setsByCode = sets.ToDictionary(
+                kvp => kvp.Value.Code(),
+                kvp => kvp.Value.Data()
+            );
+
+            _cardsPipeline.ProcessCards(cards, setsByCode);
+
+            // Phase 3: Write all data
+            _dashboard.LogWritingPhase();
+
+            await _setsPipeline.WriteSetsAsync(sets).ConfigureAwait(false);
+
+            if (_config.ProcessRulings)
+            {
+                await _rulingsPipeline.WriteRulingsAsync(rulings).ConfigureAwait(false);
+            }
+
+            await _cardsPipeline.WriteCardsAsync(cards).ConfigureAwait(false);
 
             string completionMessage = _config.ProcessRulings
-                ? $"Ingestion completed: {sets.Count} sets, {rulings.Count} rulings, {cardsCount} cards processed"
-                : $"Ingestion completed: {sets.Count} sets, {cardsCount} cards processed (rulings skipped)";
+                ? $"Ingestion completed: {sets.Count} sets, {rulings.Count} rulings, {cards.Count} cards processed"
+                : $"Ingestion completed: {sets.Count} sets, {cards.Count} cards processed (rulings skipped)";
 
             _dashboard.Complete(completionMessage);
         }
@@ -70,4 +97,19 @@ internal static partial class BulkIngestionOrchestratorLoggerExtensions
         Level = LogLevel.Error,
         Message = "Bulk ingestion failed")]
     public static partial void LogBulkIngestionFailed(this ILogger logger, Exception ex);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Starting FETCH phase - downloading all data from Scryfall")]
+    public static partial void LogFetchingPhase(this ILogger logger);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Starting PROCESS phase - building relationships and extracting data")]
+    public static partial void LogProcessingPhase(this ILogger logger);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Starting WRITE phase - persisting all data to storage")]
+    public static partial void LogWritingPhase(this ILogger logger);
 }

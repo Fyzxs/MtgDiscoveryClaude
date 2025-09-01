@@ -29,14 +29,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
         _config = config;
     }
 
-    public async Task<Dictionary<string, IScryfallSet>> ProcessSetsAsync()
-    {
-        Dictionary<string, IScryfallSet> sets = await FetchSetsAsync().ConfigureAwait(false);
-        await WriteSetsAsync(sets).ConfigureAwait(false);
-        return sets;
-    }
-
-    private async Task<Dictionary<string, IScryfallSet>> FetchSetsAsync()
+    public async Task<Dictionary<string, IScryfallSet>> FetchSetsAsync()
     {
         _dashboard.LogFetchingSets();
 
@@ -61,7 +54,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
         return sets;
     }
 
-    private async Task WriteSetsAsync(Dictionary<string, IScryfallSet> sets)
+    public async Task WriteSetsAsync(Dictionary<string, IScryfallSet> sets)
     {
         _dashboard.LogWritingSets(sets.Count);
 

@@ -35,14 +35,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
         _config = config;
     }
 
-    public async Task<Dictionary<string, IScryfallRuling>> ProcessRulingsAsync()
-    {
-        Dictionary<string, IScryfallRuling> rulings = await FetchAndAggregateRulingsAsync().ConfigureAwait(false);
-        await WriteRulingsAsync(rulings).ConfigureAwait(false);
-        return rulings;
-    }
-
-    private async Task<Dictionary<string, IScryfallRuling>> FetchAndAggregateRulingsAsync()
+    public async Task<Dictionary<string, IScryfallRuling>> FetchAndAggregateRulingsAsync()
     {
         _dashboard.LogFetchingRulings();
 
@@ -74,7 +67,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
         return aggregatedRulings;
     }
 
-    private async Task WriteRulingsAsync(Dictionary<string, IScryfallRuling> rulings)
+    public async Task WriteRulingsAsync(Dictionary<string, IScryfallRuling> rulings)
     {
         _dashboard.LogWritingRulings(rulings.Count);
 
