@@ -17,6 +17,15 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private readonly bool _enableMemoryThrottling;
     private int _updateCounter;
     private int _spinnerIndex;
+
+    // Unified progress tracking
+    private string _progressType = string.Empty;
+    private int _progressCurrent;
+    private int _progressTotal;
+    private string _progressAction = string.Empty;
+    private string _progressItem = string.Empty;
+
+    // Legacy tracking (to be removed)
     private int _setCurrent;
     private int _setTotal;
     private string _setName = string.Empty;
@@ -26,7 +35,9 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private int _rulingCurrent;
     private int _rulingTotal;
     private string _rulingName = string.Empty;
-    private int _artistCount;
+    private int _trigramCurrent;
+    private int _trigramTotal;
+    private string _trigramName = string.Empty;
     private long _memoryUsage;
     private int _lastHeight;
     private int _lastWidth;
@@ -41,6 +52,19 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     public void SetStartTime()
     {
         _stopwatch.Start();
+    }
+
+    public void UpdateProgress(string type, int current, int total, string action, string item)
+    {
+        lock (_lock)
+        {
+            _progressType = type ?? string.Empty;
+            _progressCurrent = current;
+            _progressTotal = total;
+            _progressAction = action ?? string.Empty;
+            _progressItem = item ?? string.Empty;
+            CheckAndRefresh();
+        }
     }
 
     public void UpdateSetProgress(int current, int total, string name)
@@ -76,11 +100,14 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         }
     }
 
-    public void UpdateArtistCount(int count)
+    public void UpdateTrigramProgress(int current, int total, string name)
     {
         lock (_lock)
         {
-            _artistCount = count;
+            _trigramCurrent = current;
+            _trigramTotal = total;
+            _trigramName = name ?? string.Empty;
+            CheckAndRefresh();
         }
     }
 
@@ -175,58 +202,96 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         lines.Add("  Scryfall Bulk Ingestion Progress");
         lines.Add(new string('═', width));
 
-        if (_setTotal > 0)
+        // Unified progress display
+        if (!string.IsNullOrEmpty(_progressType))
         {
-            string setProgress = CreateProgressBar(_setCurrent, _setTotal, width);
-            int setPercent = (_setCurrent * 100) / _setTotal;
-            lines.Add($"  Sets:     {setProgress} {_setCurrent}/{_setTotal} ({setPercent}%)");
-            lines.Add($"  Current:  {TruncateString(_setName, width - 12)}");
+            if (_progressTotal > 0)
+            {
+                string progressBar = CreateProgressBar(_progressCurrent, _progressTotal, width);
+                int percent = (_progressCurrent * 100) / _progressTotal;
+                string typePadded = _progressType.PadRight(10);
+                lines.Add($"  {typePadded} {progressBar} {_progressCurrent:N0}/{_progressTotal:N0} ({percent}%)");
+            }
+            else if (_progressCurrent > 0)
+            {
+                // When streaming, we don't know the total upfront
+                string spinner = GetSpinner();
+                string typePadded = _progressType.PadRight(10);
+                lines.Add($"  {typePadded} Processing... {spinner} {_progressCurrent:N0} items");
+            }
+            else
+            {
+                string typePadded = _progressType.PadRight(10);
+                lines.Add($"  {typePadded} Waiting to start...");
+            }
+
+            if (!string.IsNullOrEmpty(_progressAction) || !string.IsNullOrEmpty(_progressItem))
+            {
+                string currentItem = string.IsNullOrEmpty(_progressItem)
+                    ? _progressAction
+                    : $"{_progressAction} - {_progressItem}";
+                lines.Add($"  Current Item:   {TruncateString(currentItem, width - 18)}");
+            }
         }
         else
         {
-            lines.Add("  Sets:     Waiting to start...");
-        }
-
-        lines.Add("");
-
-        if (_cardTotal > 0)
-        {
-            string cardProgress = CreateProgressBar(_cardCurrent, _cardTotal, width);
-            int cardPercent = (_cardCurrent * 100) / _cardTotal;
-            lines.Add($"  Cards:    {cardProgress} {_cardCurrent:N0}/{_cardTotal:N0} ({cardPercent}%)");
-            lines.Add($"  Current:  {TruncateString(_cardName, width - 12)}");
-        }
-        else if (_cardCurrent > 0)
-        {
-            // When streaming cards, we don't know the total upfront
-            string spinner = GetSpinner();
-            lines.Add($"  Cards:    Processing... {spinner} {_cardCurrent:N0} cards");
-            lines.Add($"  Current:  {TruncateString(_cardName, width - 12)}");
-        }
-        else
-        {
-            lines.Add("  Cards:    Not started");
-        }
-
-        lines.Add("");
-
-        if (_rulingTotal > 0)
-        {
-            string rulingProgress = CreateProgressBar(_rulingCurrent, _rulingTotal, width);
-            int rulingPercent = (_rulingCurrent * 100) / _rulingTotal;
-            lines.Add($"  Rulings:  {rulingProgress} {_rulingCurrent:N0}/{_rulingTotal:N0} ({rulingPercent}%)");
-            lines.Add($"  Current:  {TruncateString(_rulingName, width - 12)}");
-        }
-        else if (_rulingCurrent > 0)
-        {
-            // When streaming rulings, we don't know the total upfront
-            string spinner = GetSpinner();
-            lines.Add($"  Rulings:  Processing... {spinner} {_rulingCurrent:N0} rulings");
-            lines.Add($"  Current:  {TruncateString(_rulingName, width - 12)}");
-        }
-        else
-        {
-            lines.Add("  Rulings:  Not started");
+            // Fall back to legacy display if no unified progress is set
+            if (_setTotal > 0)
+            {
+                string setProgress = CreateProgressBar(_setCurrent, _setTotal, width);
+                int setPercent = (_setCurrent * 100) / _setTotal;
+                lines.Add($"  Sets:           {setProgress} {_setCurrent}/{_setTotal} ({setPercent}%)");
+                lines.Add($"  Current Item:   {TruncateString(_setName, width - 18)}");
+            }
+            else if (_cardTotal > 0 || _cardCurrent > 0)
+            {
+                if (_cardTotal > 0)
+                {
+                    string cardProgress = CreateProgressBar(_cardCurrent, _cardTotal, width);
+                    int cardPercent = (_cardCurrent * 100) / _cardTotal;
+                    lines.Add($"  Cards:          {cardProgress} {_cardCurrent:N0}/{_cardTotal:N0} ({cardPercent}%)");
+                }
+                else
+                {
+                    string spinner = GetSpinner();
+                    lines.Add($"  Cards:          Processing... {spinner} {_cardCurrent:N0} cards");
+                }
+                lines.Add($"  Current Item:   {TruncateString(_cardName, width - 18)}");
+            }
+            else if (_trigramTotal > 0 || _trigramCurrent > 0)
+            {
+                if (_trigramTotal > 0)
+                {
+                    string trigramProgress = CreateProgressBar(_trigramCurrent, _trigramTotal, width);
+                    int trigramPercent = (_trigramCurrent * 100) / _trigramTotal;
+                    lines.Add($"  Trigrams:       {trigramProgress} {_trigramCurrent:N0}/{_trigramTotal:N0} ({trigramPercent}%)");
+                }
+                else
+                {
+                    string spinner = GetSpinner();
+                    lines.Add($"  Trigrams:       Processing... {spinner} {_trigramCurrent:N0} trigrams");
+                }
+                lines.Add($"  Current Item:   {TruncateString(_trigramName, width - 18)}");
+            }
+            else if (_rulingTotal > 0 || _rulingCurrent > 0)
+            {
+                if (_rulingTotal > 0)
+                {
+                    string rulingProgress = CreateProgressBar(_rulingCurrent, _rulingTotal, width);
+                    int rulingPercent = (_rulingCurrent * 100) / _rulingTotal;
+                    lines.Add($"  Rulings:        {rulingProgress} {_rulingCurrent:N0}/{_rulingTotal:N0} ({rulingPercent}%)");
+                }
+                else
+                {
+                    string spinner = GetSpinner();
+                    lines.Add($"  Rulings:        Processing... {spinner} {_rulingCurrent:N0} rulings");
+                }
+                lines.Add($"  Current Item:   {TruncateString(_rulingName, width - 18)}");
+            }
+            else
+            {
+                lines.Add("  Status:         Waiting to start...");
+            }
         }
 
         if (_recentLogs.Count > 0)
@@ -240,10 +305,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         }
 
         lines.Add(new string('═', width));
-
-        string stats = $"  Artists: {_artistCount:N0}";
         string system = $"  Memory: {_memoryUsage} MB | Elapsed: {FormatElapsed()}";
-        lines.Add(stats);
         lines.Add(system);
         lines.Add(new string('═', width));
 

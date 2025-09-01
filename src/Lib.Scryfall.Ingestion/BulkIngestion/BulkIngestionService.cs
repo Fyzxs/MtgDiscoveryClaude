@@ -18,7 +18,7 @@ public sealed class BulkIngestionService : IBulkIngestionService
 
     public BulkIngestionService(IIngestionDashboard dashboard, ILogger logger)
     {
-        IBulkProcessingConfiguration config = new DefaultBulkProcessingConfiguration();
+        IBulkProcessingConfiguration config = new ConfigBulkProcessingConfiguration();
 
         ISetsPipelineService setsPipeline = new SetsPipelineService(
             new FilteredScryfallSetCollection(logger),
@@ -40,7 +40,16 @@ public sealed class BulkIngestionService : IBulkIngestionService
             config,
             logger);
 
-        _orchestrator = new BulkIngestionOrchestrator(dashboard, setsPipeline, rulingsPipeline, cardsPipeline, config);
+        IArtistsPipelineService artistsPipeline = new ArtistsPipelineService(
+            dashboard,
+            logger);
+
+        ITrigramsPipelineService trigramsPipeline = new TrigramsPipelineService(
+            new MonoStateCardNameTrigramAggregator(),
+            dashboard,
+            logger);
+
+        _orchestrator = new BulkIngestionOrchestrator(dashboard, setsPipeline, rulingsPipeline, cardsPipeline, artistsPipeline, trigramsPipeline, config);
     }
 
     public async Task IngestBulkDataAsync()

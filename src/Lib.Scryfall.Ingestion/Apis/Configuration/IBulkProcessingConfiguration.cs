@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Lib.Scryfall.Ingestion.Apis.Configuration;
 
 public interface IBulkProcessingConfiguration
@@ -5,4 +7,5 @@ public interface IBulkProcessingConfiguration
     bool EnableMemoryThrottling { get; }
     int DashboardRefreshFrequency { get; }
     bool ProcessRulings { get; }
+    IReadOnlyCollection<string> SetCodesToProcess { get; }
 }

@@ -17,6 +17,8 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
     private readonly ISetsPipelineService _setsPipeline;
     private readonly IRulingsPipelineService _rulingsPipeline;
     private readonly ICardsPipelineService _cardsPipeline;
+    private readonly IArtistsPipelineService _artistsPipeline;
+    private readonly ITrigramsPipelineService _trigramsPipeline;
     private readonly IBulkProcessingConfiguration _config;
 
     public BulkIngestionOrchestrator(
@@ -24,12 +26,16 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
         ISetsPipelineService setsPipeline,
         IRulingsPipelineService rulingsPipeline,
         ICardsPipelineService cardsPipeline,
+        IArtistsPipelineService artistsPipeline,
+        ITrigramsPipelineService trigramsPipeline,
         IBulkProcessingConfiguration config)
     {
         _dashboard = dashboard;
         _setsPipeline = setsPipeline;
         _rulingsPipeline = rulingsPipeline;
         _cardsPipeline = cardsPipeline;
+        _artistsPipeline = artistsPipeline;
+        _trigramsPipeline = trigramsPipeline;
         _config = config;
     }
 
@@ -51,7 +57,7 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
                 rulings = await _rulingsPipeline.FetchAndAggregateRulingsAsync().ConfigureAwait(false);
             }
 
-            IReadOnlyList<dynamic> cards = await _cardsPipeline.FetchCardsAsync().ConfigureAwait(false);
+            IReadOnlyList<IScryfallCard> cards = await _cardsPipeline.FetchCardsAsync().ConfigureAwait(false);
 
             // Phase 2: Process cards (relationships, artists, etc.)
             _dashboard.LogProcessingPhase();
@@ -64,6 +70,13 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
 
             _cardsPipeline.ProcessCards(cards, setsByCode);
 
+            // Track artists and trigrams from cards
+            foreach (IScryfallCard card in cards)
+            {
+                _artistsPipeline.TrackArtist(card);
+                _trigramsPipeline.TrackCard(card);
+            }
+
             // Phase 3: Write all data
             _dashboard.LogWritingPhase();
 
@@ -75,6 +88,10 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
             }
 
             await _cardsPipeline.WriteCardsAsync(cards).ConfigureAwait(false);
+
+            await _artistsPipeline.WriteArtistsAsync().ConfigureAwait(false);
+
+            await _trigramsPipeline.WriteTrigramsAsync().ConfigureAwait(false);
 
             string completionMessage = _config.ProcessRulings
                 ? $"Ingestion completed: {sets.Count} sets, {rulings.Count} rulings, {cards.Count} cards processed"

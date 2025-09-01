@@ -9,6 +9,7 @@ internal sealed class SilentDashboard : IIngestionDashboard
     private readonly ILogger _logger;
     private int _lastSetMilestone;
     private int _lastCardMilestone;
+    private int _lastTrigramMilestone;
 
     public SilentDashboard(ILogger logger)
     {
@@ -18,6 +19,27 @@ internal sealed class SilentDashboard : IIngestionDashboard
     public void SetStartTime()
     {
         _logger.LogBulkIngestionStarted();
+    }
+
+    public void UpdateProgress(string type, int current, int total, string action, string item)
+    {
+        // Log at specific milestones based on type
+        if (type == "Sets" && (current == total || current % 50 == 0))
+        {
+            _logger.LogProgressUpdate(type, current, total, action);
+        }
+        else if (type == "Cards" && (current == total || current % 5000 == 0))
+        {
+            _logger.LogProgressUpdate(type, current, total, action);
+        }
+        else if (type == "Rulings" && (current == total || current % 1000 == 0))
+        {
+            _logger.LogProgressUpdate(type, current, total, action);
+        }
+        else if (type == "Trigrams" && (current == total || current % 500 == 0))
+        {
+            _logger.LogProgressUpdate(type, current, total, action);
+        }
     }
 
     public void UpdateSetProgress(int current, int total, string name)
@@ -40,12 +62,13 @@ internal sealed class SilentDashboard : IIngestionDashboard
         }
     }
 
-    public void UpdateArtistCount(int count)
+    public void UpdateTrigramProgress(int current, int total, string name)
     {
-        // Only log at specific milestones
-        if (count % 500 == 0)
+        // Log every 500 trigrams or at completion
+        if (current == total || current - _lastTrigramMilestone >= 500)
         {
-            _logger.LogArtistDiscovered(count);
+            _logger.LogTrigramProgress(current, total);
+            _lastTrigramMilestone = current;
         }
     }
 
@@ -98,6 +121,11 @@ internal static partial class SilentDashboardLoggerExtensions
 
     [LoggerMessage(
         Level = LogLevel.Information,
+        Message = "{Action} {Type}: {Current}/{Total}")]
+    public static partial void LogProgressUpdate(this ILogger logger, string type, int current, int total, string action);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
         Message = "Processed {Current}/{Total} sets")]
     public static partial void LogSetProgress(this ILogger logger, int current, int total);
 
@@ -108,8 +136,8 @@ internal static partial class SilentDashboardLoggerExtensions
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Discovered {Count} unique artists")]
-    public static partial void LogArtistDiscovered(this ILogger logger, int count);
+        Message = "Processed {Current}/{Total} trigrams")]
+    public static partial void LogTrigramProgress(this ILogger logger, int current, int total);
 
     [LoggerMessage(
         Level = LogLevel.Information,

@@ -4,10 +4,11 @@ namespace Lib.Scryfall.Ingestion.Apis.Dashboard;
 
 public interface IIngestionDashboard : ILogger
 {
+    void UpdateProgress(string type, int current, int total, string action, string item);
     void UpdateSetProgress(int current, int total, string name);
     void UpdateCardProgress(int current, int total, string name);
     void UpdateRulingProgress(int current, int total, string name);
-    void UpdateArtistCount(int count);
+    void UpdateTrigramProgress(int current, int total, string name);
     void AddCompletedSet(string name);
     void UpdateMemoryUsage();
     void SetStartTime();

@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
@@ -14,8 +15,11 @@ internal sealed class SetsPipelineService : ISetsPipelineService
 {
     private readonly IAsyncEnumerable<IScryfallSet> _sets;
     private readonly ScryfallSetItemsScribe _setScribe;
+    private readonly ScryfallSetAssociationsScribe _setParentAssociationsScribe;
+    private readonly ScryfallSetCodeIndexScribe _setCodeIndexScribe;
     private readonly IIngestionDashboard _dashboard;
     private readonly IBulkProcessingConfiguration _config;
+    private readonly ILogger _logger;
 
     public SetsPipelineService(
         IAsyncEnumerable<IScryfallSet> sets,
@@ -25,20 +29,38 @@ internal sealed class SetsPipelineService : ISetsPipelineService
     {
         _sets = sets;
         _setScribe = setScribe;
+        _setParentAssociationsScribe = new ScryfallSetAssociationsScribe(dashboard);
+        _setCodeIndexScribe = new ScryfallSetCodeIndexScribe(dashboard);
         _dashboard = dashboard;
         _config = config;
+        _logger = dashboard;
     }
 
     public async Task<Dictionary<string, IScryfallSet>> FetchSetsAsync()
     {
         _dashboard.LogFetchingSets();
 
-        Dictionary<string, IScryfallSet> sets = new();
+        Dictionary<string, IScryfallSet> sets = [];
+        bool hasSetFilter = _config.SetCodesToProcess.Count > 0;
+        int skippedCount = 0;
 
         await foreach (IScryfallSet set in _sets.ConfigureAwait(false))
         {
+            // Skip sets not in the filter list if filtering is enabled
+            if (hasSetFilter && !_config.SetCodesToProcess.Contains(set.Code()))
+            {
+                skippedCount++;
+                _dashboard.LogSetSkipped(set.Code(), set.Name());
+                continue;
+            }
+
             sets[set.Id()] = set;
-            _dashboard.UpdateSetProgress(sets.Count, 0, set.Name());
+            _dashboard.UpdateProgress("Sets:", sets.Count, 0, "Fetching", set.Name());
+        }
+
+        if (skippedCount > 0)
+        {
+            _dashboard.LogSetsSkipped(skippedCount);
         }
 
         _dashboard.LogSetsFetched(sets.Count);
@@ -57,7 +79,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
             current++;
             IScryfallSet set = kvp.Value;
 
-            _dashboard.UpdateSetProgress(current, total, $"Writing: {set.Name()}");
+            _dashboard.UpdateProgress("Sets:", current, total, "Writing", set.Name());
 
             ScryfallSetItem entity = new()
             {
@@ -65,6 +87,28 @@ internal sealed class SetsPipelineService : ISetsPipelineService
             };
 
             await _setScribe.UpsertAsync(entity).ConfigureAwait(false);
+
+            // Write SetCodeIndex (mapping set code to set ID)
+            ScryfallSetCodeIndexItem codeIndex = new()
+            {
+                SetCode = set.Code(),
+                SetId = set.Id()
+            };
+            await _setCodeIndexScribe.UpsertAsync(codeIndex).ConfigureAwait(false);
+
+            // Write SetAssociation if this set has a parent
+            if (set.HasParentSet())
+            {
+                ScryfallSetParentAssociationItem parentAssociationItem = new()
+                {
+                    SetId = set.Id(),
+                    ParentSetCode = set.ParentSetCode(),
+                    SetCode = set.Code(),
+                    SetName = set.Name()
+                };
+                await _setParentAssociationsScribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
+            }
+
             _dashboard.AddCompletedSet(set.Name());
         }
 
@@ -93,4 +137,14 @@ internal static partial class SetsPipelineServiceLoggerExtensions
         Level = LogLevel.Information,
         Message = "Successfully wrote {Count} sets to Cosmos DB")]
     public static partial void LogSetsWritten(this ILogger logger, int count);
+
+    [LoggerMessage(
+        Level = LogLevel.Debug,
+        Message = "Skipping set {Code} ({Name}) - not in filter list")]
+    public static partial void LogSetSkipped(this ILogger logger, string code, string name);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Skipped {Count} sets due to filter configuration")]
+    public static partial void LogSetsSkipped(this ILogger logger, int count);
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 
-public sealed class ScryfallSetAssociation : CosmosItem
+public sealed class ScryfallSetParentAssociationItem : CosmosItem
 {
     public override string Id => SetId;
     public override string Partition => ParentSetCode;

@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Lib.Scryfall.Ingestion.Collections;
+using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Http;
+using Lib.Scryfall.Ingestion.Models;
+using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -12,15 +16,17 @@ internal sealed class CardsBulkDataFetcher
 {
     private readonly ILogger _logger;
     private readonly RateLimitedHttpClient _httpClient;
+    private readonly IMonoStateSetsCollection _setsCollection;
     private const string BulkDataEndpoint = "https://api.scryfall.com/bulk-data";
 
     public CardsBulkDataFetcher(ILogger logger)
     {
         _logger = logger;
         _httpClient = new RateLimitedHttpClient();
+        _setsCollection = new MonoStateSetsCollection(logger);
     }
 
-    public async Task<IAsyncEnumerable<dynamic>> FetchCardsAsync()
+    public async Task<IAsyncEnumerable<IScryfallCard>> FetchCardsAsync()
     {
         _logger.LogFetchingCardsBulkDataInfo();
 
@@ -38,19 +44,13 @@ internal sealed class CardsBulkDataFetcher
             }
         }
 
-        if (cardsUrl is null)
-        {
-            _logger.LogCardsBulkDataNotFound();
-            return EmptyCards();
-        }
-
         _logger.LogDownloadingCardsData(cardsUrl);
 
         // Download and parse the cards file
         return ParseCardsFile(cardsUrl);
     }
 
-    private async IAsyncEnumerable<dynamic> ParseCardsFile(string url)
+    private async IAsyncEnumerable<IScryfallCard> ParseCardsFile(string url)
     {
         using Stream stream = await _httpClient.StreamAsync(new Uri(url)).ConfigureAwait(false);
         using StreamReader reader = new(stream);
@@ -74,15 +74,13 @@ internal sealed class CardsBulkDataFetcher
             dynamic card = serializer.Deserialize<dynamic>(jsonReader);
             if (card is not null)
             {
-                yield return card;
+                // Get the actual set from the collection
+                string setCode = card.set;
+                IScryfallSet set = await _setsCollection.GetSetAsync(setCode).ConfigureAwait(false);
+                ExtScryfallCardDto dto = new(card);
+                yield return new ScryfallCard(dto, set);
             }
         }
-    }
-
-    private static async IAsyncEnumerable<dynamic> EmptyCards()
-    {
-        await Task.CompletedTask.ConfigureAwait(false);
-        yield break;
     }
 }
 
@@ -108,3 +106,4 @@ internal static partial class CardsBulkDataFetcherLoggerExtensions
         Message = "Invalid cards file format - expected JSON array")]
     public static partial void LogInvalidCardsFormat(this ILogger logger);
 }
+

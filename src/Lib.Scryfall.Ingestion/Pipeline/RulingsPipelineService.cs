@@ -49,7 +49,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
             totalRulings++;
 
             string oracleId = ruling.oracle_id ?? string.Empty;
-            _dashboard.UpdateRulingProgress(totalRulings, 0, $"Fetching ruling: {oracleId}");
+            _dashboard.UpdateProgress("Rulings:", totalRulings, 0, "Fetching", oracleId);
         }
 
         Dictionary<string, IScryfallRuling> aggregatedRulings = _rulingsAggregator.AggregateByOracleId(allRulings);
@@ -69,7 +69,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
             current++;
             IScryfallRuling ruling = kvp.Value;
 
-            _dashboard.UpdateRulingProgress(current, total, $"Writing ruling: {ruling.OracleId()}");
+            _dashboard.UpdateProgress("Rulings:", current, total, "Writing", ruling.OracleId());
 
             ScryfallRulingItem entity = new()
             {
