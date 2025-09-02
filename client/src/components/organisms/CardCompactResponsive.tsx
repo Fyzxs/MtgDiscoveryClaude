@@ -152,11 +152,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
               className="text-xs sm:text-sm font-bold"
             />
             <CardLinks
-              scryfallUri={card.scryfallUri}
-              purchaseUris={card.purchaseUris}
-              relatedUris={card.relatedUris}
-              setCode={card.setCode}
-              collectorNumber={card.collectorNumber}
+              scryfallUrl={card.scryfallUri}
               cardName={card.name}
               className="scale-[0.6] sm:scale-75 origin-right"
             />

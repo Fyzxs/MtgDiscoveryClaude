@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
@@ -119,11 +119,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
               className="text-sm"
             />
             <CardLinks
-              scryfallUri={card.scryfallUri}
-              purchaseUris={card.purchaseUris}
-              relatedUris={card.relatedUris}
-              setCode={card.setCode}
-              collectorNumber={card.collectorNumber}
+              scryfallUrl={card.scryfallUri}
               cardName={card.name}
               className="scale-75 origin-right"
             />

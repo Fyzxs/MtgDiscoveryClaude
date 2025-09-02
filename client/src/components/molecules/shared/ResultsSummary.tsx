@@ -7,7 +7,7 @@ interface ResultsSummaryProps {
   label: string;
   sx?: any;
   textAlign?: 'left' | 'center' | 'right';
-  variant?: 'body1' | 'body2' | 'subtitle1' | 'subtitle2';
+  variant?: 'body1' | 'body2' | 'subtitle1' | 'subtitle2' | 'caption';
   color?: string;
   showWhenEqual?: boolean;
   customFormat?: (current: number, total: number, label: string) => string;

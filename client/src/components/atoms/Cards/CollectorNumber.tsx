@@ -4,12 +4,14 @@ interface CollectorNumberProps {
   number?: string;
   setCode?: string;
   className?: string;
+  sx?: any;
 }
 
 export const CollectorNumber = ({ 
   number, 
   setCode,
-  className = '' 
+  className = '',
+  sx = {}
 }: CollectorNumberProps) => {
   if (!number) return null;
 
@@ -21,7 +23,8 @@ export const CollectorNumber = ({
         alignItems: 'center', 
         gap: 0.5, 
         color: 'grey.400',
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        ...sx
       }}
     >
       <Typography 

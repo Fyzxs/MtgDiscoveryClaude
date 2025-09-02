@@ -8,12 +8,9 @@ import {
   Grid,
   Stack,
   Button,
-  Tooltip,
-  Chip
+  Tooltip
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import { getLegalityColor } from '../../theme';
-import { flexBetween, flexCenter, flexCol, gap2, gap3 } from '../../styles/layoutStyles';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -262,7 +259,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   {card.typeLine}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <RarityBadge rarity={card.rarity} />
+                  {card.rarity && <RarityBadge rarity={card.rarity} />}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Link 
                       href={`/set/${card.setCode}`}
@@ -331,7 +328,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               <Divider />
 
               {/* Treatments */}
-              {(card.finishes?.length > 0 || card.promoTypes?.length > 0 || card.frameEffects?.length > 0 || card.promo) && (
+              {((card.finishes?.length ?? 0) > 0 || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo) && (
                 <Box>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     Treatments
@@ -590,7 +587,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       Related Cards
                     </Typography>
                     <RelatedCardsDisplay 
-                      relatedCardIds={card.allParts.map(part => part.id)}
+                      relatedCardIds={card.allParts.map(part => part.id).filter((id): id is string => !!id)}
                       currentCardId={card.id}
                     />
                   </Box>

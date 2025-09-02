@@ -1,9 +1,8 @@
 import React from 'react';
-import { Box, Stack } from '@mui/material';
+import { Box } from '@mui/material';
 import { FilterPanel } from './FilterPanel';
 import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
 import { SortDropdown } from '../../atoms/shared/SortDropdown';
-import { DebouncedSearchInput } from '../../atoms/shared/DebouncedSearchInput';
 
 interface SortOption {
   value: string;
@@ -61,7 +60,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   hasMultipleArtists,
   hasMultipleRarities,
   hasMultipleSets,
-  filteredCount,
+  filteredCount: _filteredCount,
   totalCount,
   showSearch = false,
   searchPlaceholder = 'Search cards...',
@@ -80,6 +79,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   // Add sets filter (only for card detail page)
   if (uniqueSets && hasMultipleSets) {
     multiSelects.push({
+      key: 'sets',
       label: 'Sets',
       options: uniqueSets,
       value: filters.sets || [],
@@ -91,6 +91,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   // Add rarity filter
   if (hasMultipleRarities) {
     multiSelects.push({
+      key: 'rarities',
       label: 'Rarity',
       options: uniqueRarities.map(r => ({ 
         value: r, 
@@ -105,6 +106,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   // Add artist filter
   if (hasMultipleArtists) {
     multiSelects.push({
+      key: 'artists',
       label: 'Artists',
       options: uniqueArtists.map(a => ({ value: a, label: a })),
       value: filters.artists || [],
@@ -182,10 +184,6 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
     <Box sx={{ mb: 3 }}>
       <FilterPanel
         config={filterConfig}
-        resultCount={{
-          filtered: filteredCount,
-          total: totalCount
-        }}
       />
     </Box>
   );
