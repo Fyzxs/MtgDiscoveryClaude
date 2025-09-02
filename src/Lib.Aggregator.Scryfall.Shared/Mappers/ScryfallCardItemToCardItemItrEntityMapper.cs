@@ -1,10 +1,10 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
-using Lib.Aggregator.Cards.Models;
+using Lib.Aggregator.Scryfall.Shared.Models;
 using Lib.Shared.DataModels.Entities;
 
-namespace Lib.Aggregator.Cards.Queries.Mappers;
+namespace Lib.Aggregator.Scryfall.Shared.Mappers;
 
-internal sealed class ScryfallCardItemToCardItemItrEntityMapper
+public sealed class ScryfallCardItemToCardItemItrEntityMapper
 {
     public ICardItemItrEntity Map(ScryfallCardItem scryfallCard)
     {

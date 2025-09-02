@@ -28,4 +28,9 @@ public sealed class ArtistDomainService : IArtistDomainService
     {
         return _artistDomainOperations.CardsByArtistAsync(artistId);
     }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
+    {
+        return _artistDomainOperations.CardsByArtistNameAsync(artistName);
+    }
 }

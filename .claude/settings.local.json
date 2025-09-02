@@ -20,7 +20,8 @@
       "Bash(npm run build:*)",
       "Bash(find:*)",
       "Bash(cat:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

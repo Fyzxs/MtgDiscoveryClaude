@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities;
 
-namespace Lib.Aggregator.Cards.Entities;
+namespace Lib.Aggregator.Scryfall.Shared.Models;
 
-internal sealed class CardItemCollectionItrEntity : ICardItemCollectionItrEntity
+public sealed class CardItemCollectionItrEntity : ICardItemCollectionItrEntity
 {
     public ICollection<ICardItemItrEntity> Data { get; init; }
 }
