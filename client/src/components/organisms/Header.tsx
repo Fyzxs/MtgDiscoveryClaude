@@ -4,26 +4,48 @@ import {
   Toolbar, 
   Typography, 
   Box, 
-  Button
+  Button,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { SearchInput } from '../atoms/shared/SearchInput';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
+  const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
       // Navigate to set page
-      window.location.href = `?page=set&set=${setCode.trim().toLowerCase()}`;
+      navigate(`/set/${setCode.trim().toLowerCase()}`);
       setSetCode('');
     }
   };
 
+  const handleSearchMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setSearchAnchorEl(event.currentTarget);
+  };
+
+  const handleSearchMenuClose = () => {
+    setSearchAnchorEl(null);
+  };
+
+  const handleSearchMenuClick = (path: string) => {
+    navigate(path);
+    handleSearchMenuClose();
+  };
+
   return (
     <AppBar 
+      component="header"
       position="sticky" 
+      role="banner"
       sx={{ 
         backgroundColor: 'background.paper',
         backgroundImage: 'none',
@@ -31,11 +53,20 @@ export const Header: React.FC = () => {
         borderColor: 'divider'
       }}
     >
-      <Toolbar sx={{ gap: 3 }}>
+      <Toolbar component="nav" role="navigation" aria-label="Main navigation" sx={{ gap: 3 }}>
         {/* Site Logo/Name */}
         <Typography 
           variant="h5" 
-          component="div"
+          component="button"
+          role="button"
+          tabIndex={0}
+          aria-label="Go to homepage"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              window.location.href = '/';
+            }
+          }}
           sx={{ 
             fontWeight: 'bold',
             background: theme.mtg.gradients.header,
@@ -43,11 +74,20 @@ export const Header: React.FC = () => {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             cursor: 'pointer',
+            border: 'none',
+            backgroundColor: 'transparent',
+            padding: 0,
             '&:hover': {
               background: theme.mtg.gradients.hover,
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+            },
+            '&:focus': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+              borderRadius: 1
             }
           }}
           onClick={() => window.location.href = '/'}
@@ -56,10 +96,12 @@ export const Header: React.FC = () => {
         </Typography>
 
         {/* Navigation Links */}
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} role="menubar" aria-label="Primary navigation">
           <Button 
             color="primary" 
-            onClick={() => window.location.href = '?page=all-sets'}
+            onClick={() => navigate('/sets')}
+            role="menuitem"
+            aria-label="Browse all Magic sets"
             sx={{ 
               textTransform: 'none',
               fontWeight: 500
@@ -67,23 +109,74 @@ export const Header: React.FC = () => {
           >
             All Sets
           </Button>
+          
+          {/* Search Dropdown */}
+          <Button
+            color="primary"
+            onClick={handleSearchMenuOpen}
+            startIcon={<SearchIcon />}
+            endIcon={<ArrowDropDownIcon />}
+            role="menuitem"
+            aria-label="Search options"
+            aria-haspopup="true"
+            aria-expanded={Boolean(searchAnchorEl)}
+            sx={{ 
+              textTransform: 'none',
+              fontWeight: 500
+            }}
+          >
+            Search
+          </Button>
+          <Menu
+            anchorEl={searchAnchorEl}
+            open={Boolean(searchAnchorEl)}
+            onClose={handleSearchMenuClose}
+            role="menu"
+            aria-label="Search menu"
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+          >
+            <MenuItem 
+              onClick={() => handleSearchMenuClick('/search/cards')}
+              role="menuitem"
+              aria-label="Search for Magic cards"
+            >
+              Cards
+            </MenuItem>
+            <MenuItem 
+              disabled 
+              role="menuitem"
+              aria-label="Artist search coming soon"
+              sx={{ color: 'text.disabled' }}
+            >
+              Artists (Coming Soon)
+            </MenuItem>
+          </Menu>
         </Box>
 
         {/* Spacer */}
         <Box sx={{ flexGrow: 1 }} />
 
         {/* Set Code Search */}
-        <SearchInput
-          value={setCode}
-          onChange={setSetCode}
-          onSubmit={handleSetCodeSubmit}
-          placeholder="Jump to Set"
-          label="Set Code"
-          expandable={true}
-          expandedWidth={200}
-          collapsedWidth={150}
-          size="small"
-        />
+        <Box role="search" aria-label="Quick set search">
+          <SearchInput
+            value={setCode}
+            onChange={setSetCode}
+            onSubmit={handleSetCodeSubmit}
+            placeholder="Jump to Set"
+            label="Set Code"
+            expandable={true}
+            expandedWidth={200}
+            collapsedWidth={150}
+            size="small"
+          />
+        </Box>
       </Toolbar>
     </AppBar>
   );

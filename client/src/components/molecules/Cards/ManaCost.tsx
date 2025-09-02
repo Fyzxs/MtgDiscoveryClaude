@@ -1,16 +1,16 @@
 import React from 'react';
 import { ManaSymbol } from '../../atoms/Cards/ManaSymbol';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface ManaCostProps {
+interface ManaCostProps extends StyledComponentProps {
   manaCost?: string;
   size?: 'small' | 'medium' | 'large';
-  className?: string;
 }
 
 export const ManaCost: React.FC<ManaCostProps> = ({ 
   manaCost, 
   size = 'medium',
-  className = '' 
+  className
 }) => {
   if (!manaCost) return null;
 

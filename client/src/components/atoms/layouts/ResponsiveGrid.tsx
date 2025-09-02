@@ -1,16 +1,9 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import type { GridLayoutProps } from '../../../types/components';
 
-export interface ResponsiveGridProps {
-  children: React.ReactNode;
+export interface ResponsiveGridProps extends GridLayoutProps {
   minItemWidth?: number | string;
-  spacing?: number | string;
-  justifyContent?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly';
-  alignItems?: 'start' | 'center' | 'end' | 'stretch';
-  sx?: SxProps<Theme>;
-  className?: string;
-  component?: React.ElementType;
 }
 
 /**

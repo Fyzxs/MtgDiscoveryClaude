@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useParams } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
@@ -10,12 +11,14 @@ import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
-import { ResultsSummary } from '../components/atoms/shared/ResultsSummary';
+import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
+import { RARITY_ORDER, parseCollectorNumber } from '../config/cardSortOptions';
+import { getUniqueArtists, getUniqueRarities } from '../utils/cardUtils';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import { 
   SectionErrorBoundary, 
@@ -60,52 +63,12 @@ interface CardGroupConfig {
   isPromo: boolean;
 }
 
-// Rarity order for sorting
-const RARITY_ORDER: Record<string, number> = {
-  common: 0,
-  uncommon: 1,
-  rare: 2,
-  mythic: 3,
-  special: 4,
-  bonus: 5
-};
-
-// Get unique rarities from cards
-const getUniqueRarities = (cards: Card[]): string[] => {
-  const raritySet = new Set<string>();
-  cards.forEach(card => {
-    if (card.rarity) {
-      raritySet.add(card.rarity.toLowerCase());
-    }
-  });
-  // Sort by predefined order, then alphabetically for unknown rarities
-  return Array.from(raritySet).sort((a, b) => {
-    const orderA = RARITY_ORDER[a] ?? 999;
-    const orderB = RARITY_ORDER[b] ?? 999;
-    if (orderA !== orderB) return orderA - orderB;
-    return a.localeCompare(b);
-  });
-};
-
-// Get unique artists from cards
-const getUniqueArtists = (cards: Card[]): string[] => {
-  const artistSet = new Set<string>();
-  cards.forEach(card => {
-    if (card.artist) {
-      // Split multiple artists (e.g., "Artist 1 & Artist 2")
-      const artists = card.artist.split(/\s+(?:&|and)\s+/i);
-      artists.forEach(artist => artistSet.add(artist.trim()));
-    }
-  });
-  return Array.from(artistSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-};
 
 export const SetPage: React.FC = () => {
-  // Get set code from URL first
-  const urlParams = new URLSearchParams(window.location.search);
-  const setCode = urlParams.get('set') || '';
+  // Get set code from route params
+  const { setCode } = useParams<{ setCode: string }>();
 
-  // URL state configuration (don't manage 'page' or 'set' as they're routing params)
+  // URL state configuration for query parameters
   const urlStateConfig = {
     search: { default: '' },
     rarities: { default: [] },
@@ -121,19 +84,11 @@ export const SetPage: React.FC = () => {
     skip: !setCode
   });
   
-  // Get all rarities from the data
-  const allRarities = useMemo(() => {
-    const allCards = cardsData?.cardsBySetCode?.data || [];
-    return getUniqueRarities(allCards);
-  }, [cardsData]);
-  
-  // Get all artists from the data for normalization (moved up to be available for initial state)
-  const allArtists = useMemo(() => {
-    const allCards = cardsData?.cardsBySetCode?.data || [];
-    return getUniqueArtists(allCards);
-  }, [cardsData]);
-  
-  // Create artist map early for initial value normalization
+  // Get unique artists and rarities from data
+  const allArtists = useMemo(() => getUniqueArtists(cardsData?.cardsBySetCode?.data || []), [cardsData]);
+  const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsBySetCode?.data || []), [cardsData]);
+
+  // Create artist map for normalization
   const artistMap = useMemo(() => {
     const map = new Map<string, string>();
     allArtists.forEach(artist => {
@@ -141,7 +96,7 @@ export const SetPage: React.FC = () => {
     });
     return map;
   }, [allArtists]);
-  
+
   // Get initial artists from URL as array
   const initialArtists = useMemo(() => {
     let raw = initialValues.artists || [];
@@ -158,11 +113,6 @@ export const SetPage: React.FC = () => {
   });
 
   // Configure filter state (memoized to prevent recreating on every render)
-  const parseCollectorNumber = useCallback((num: string): number => {
-    const match = num.match(/^(\d+)/);
-    return match ? parseInt(match[1], 10) : 999999;
-  }, []);
-
   const filterConfig = useMemo(() => ({
     searchFields: ['name'] as (keyof Card)[],
     sortOptions: {
@@ -209,7 +159,7 @@ export const SetPage: React.FC = () => {
       showDigital: (card: Card, show: boolean) => show || !card.digital
     },
     defaultSort: 'collector-asc'
-  }), [parseCollectorNumber]);
+  }), []);
 
   const {
     searchTerm,
@@ -338,7 +288,6 @@ export const SetPage: React.FC = () => {
     // Process each group
     for (const [groupId, filteredGroupCards] of groupedCards.entries()) {
       const displayName = getGroupDisplayName(groupId, groupings);
-      const order = getGroupOrder(groupId, groupings);
       const totalGroupCards = totalCardsPerGroup.get(groupId) || [];
       
       groupsArray.push({
@@ -528,11 +477,11 @@ export const SetPage: React.FC = () => {
       )}
 
       <ResultsSummary 
-        showing={cardGroups
+        current={cardGroups
           .filter(g => visibleGroupIds.has(g.id))
           .reduce((sum, g) => sum + g.cards.length, 0)} 
         total={cards.length} 
-        itemType="cards"
+        label="cards"
         textAlign="center"
       />
 

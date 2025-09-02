@@ -42,9 +42,36 @@ dotnet vstest ProjectName.Tests/bin/Debug/net9.0/ProjectName.Tests.dll --logger:
 # Run GraphQL API
 dotnet run --project src/App.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL.csproj
 
+# Run React client (from client directory)
+cd client && npm run dev
+
 # Run example applications
 dotnet run --project src/Example.Core/Example.Core.csproj
 dotnet run --project src/Example.Scryfall.CosmosIngestion/Example.Scryfall.CosmosIngestion.csproj
+```
+
+### Frontend Development Commands
+
+From the `client/` directory:
+
+```bash
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
+
+# Generate GraphQL types
+npm run codegen
+
+# Watch GraphQL schema changes
+npm run codegen:watch
+
+# Preview production build
+npm run preview
 ```
 
 ### Clean
@@ -60,17 +87,31 @@ dotnet clean src/MtgDiscoveryVibe.sln
 
 ## Dependency Management
 
+### Backend (.NET)
 - Use dotnet commands to add nuget packages, not editing of files
 - Do not use System.Text.Json; use only Newtonsoft.Json
 - When adding project references: `dotnet add reference ../ProjectName/ProjectName.csproj`
+
+### Frontend (React)
+- Use npm for package management: `npm install package-name`
+- Material-UI (@mui/material) is the primary UI component library
+- Tailwind CSS is being phased out in favor of MUI sx props
+- Apollo Client for GraphQL integration
+- React Router DOM for client-side routing
 
 ## Architecture Overview
 
 This is a Magic: The Gathering collection management platform built on .NET 9.0 following the **MicroObjects** architectural pattern - an extreme OOP approach where every concept is explicitly represented as an object.
 
-### Layered Architecture
+### Full-Stack Architecture
 
-The solution implements a layered architecture with clear separation of concerns:
+The platform consists of:
+- **Backend**: .NET 9.0 GraphQL API with layered MicroObjects architecture
+- **Frontend**: React 19 client application with Material-UI components
+
+### Backend Layered Architecture
+
+The .NET solution implements a layered architecture with clear separation of concerns:
 
 1. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Service entry point, request validation, response formatting
 2. **Domain Layer** (`Lib.Domain.Cards`): Business logic and domain operations  
@@ -80,8 +121,19 @@ The solution implements a layered architecture with clear separation of concerns
 6. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.BlobStorage`): Core infrastructure components
 7. **API Layer** (`App.MtgDiscovery.GraphQL`): GraphQL API endpoints
 
+### Frontend Architecture
+
+The React client (`client/` directory) follows atomic design principles:
+
+1. **Atoms** (`client/src/components/atoms/`): Basic UI elements (AppButton, AppCard, AppInput)
+2. **Molecules** (`client/src/components/molecules/`): Component combinations (ManaCost, CardLinks)
+3. **Organisms** (`client/src/components/organisms/`): Complex components (CardDisplayResponsive, CardCompact)
+4. **Templates** (`client/src/components/templates/`): Page layout structures
+5. **Pages** (`client/src/pages/`): Complete page implementations
+
 ### Project Structure
 
+#### Backend (.NET Projects)
 - **App.MtgDiscovery.GraphQL**: GraphQL API using HotChocolate
 - **Lib.Universal**: Core utilities including configuration, service locator, and base primitives
 - **Lib.Cosmos**: Azure Cosmos DB integration library with full MicroObjects patterns
@@ -97,6 +149,15 @@ The solution implements a layered architecture with clear separation of concerns
 - **TestConvenience.Core**: Testing utilities including fakes, type wrappers, and reflection helpers
 - **Example.***: Example applications demonstrating specific functionality
 
+#### Frontend (React Application)
+- **client/**: React 19 application with TypeScript
+  - **src/components/atoms/shared/**: Core UI components (AppButton, AppCard, AppInput)
+  - **src/components/molecules/**: Composed components (ManaCost, CardLinks, ArtistInfo)
+  - **src/components/organisms/**: Complex components (CardDisplayResponsive, CardCompact)
+  - **src/pages/**: Page components (AllSetsPage, SetPage, CardSearchPage)
+  - **src/theme/**: Material-UI theme configuration with MTG-specific colors
+  - **src/generated/**: GraphQL generated types and hooks
+
 ### Key Architectural Patterns
 
 #### MicroObjects Philosophy
@@ -110,6 +171,16 @@ The codebase follows strict MicroObjects principles:
 - No public statics, no enums, no reflection
 - Composition over inheritance
 - Methods expose behavior, not data (no getters/setters except DTOs)
+
+#### Frontend Patterns
+The React application follows these architectural patterns:
+- **Atomic Design**: Components organized by complexity (atoms → molecules → organisms)
+- **Material-UI System**: Single UI framework using sx props for styling
+- **Component Composition**: Reusable components with clear prop interfaces
+- **Context-Aware Display**: Components adapt based on CardContext (isOnSetPage, showCollectorInfo)
+- **GraphQL Integration**: Apollo Client with generated types and hooks
+- **Theme-Based Styling**: Custom MTG theme extending Material-UI with rarity colors
+- **Responsive Design**: Mobile-first approach with adaptive layouts
 
 #### Configuration Pattern
 Configuration classes follow a specific structure:
@@ -149,6 +220,7 @@ Configuration classes follow a specific structure:
 
 ## Code Style Requirements
 
+### Backend (.NET)
 - File-scoped namespaces
 - No greater than operators (use `<` only)
 - No boolean negation (`!`) - use `is false` or explicit inverse methods
@@ -157,6 +229,16 @@ Configuration classes follow a specific structure:
 - No comments unless explicitly requested
 - Use `replace_all: true` when using Edit tool
 - If statement bodies MUST be block bodies, or on a single line with braces
+
+### Frontend (React/TypeScript)
+- **UI Framework**: Material-UI only (no Tailwind CSS)
+- **Styling**: Use MUI sx props instead of className for custom styles
+- **Component Naming**: App* prefix for custom wrapped components (AppButton, AppCard)
+- **Import Style**: Named imports preferred, avoid default imports where possible
+- **Props Interface**: Each component has dedicated Props interface
+- **File Organization**: Follow atomic design folder structure
+- **Theme Usage**: Reference theme.palette and theme.mtg for colors and spacing
+- **GraphQL**: Use generated types from codegen, no manual type definitions
 
 ### Pragma Directives
 - **Avoid #pragma directives** - they accumulate as technical debt
@@ -206,6 +288,38 @@ When writing tests:
 6. **Follow the 3-build-failure limit before stopping**
 7. **Service dependencies flow downward through layers (Entry → Domain → Data → Aggregator → Adapter)**
 8. **Use `IEntryService` for GraphQL to service layer communication**
+
+## Frontend Development
+
+### Component Architecture
+Components follow atomic design principles with clear separation:
+
+#### Key Files
+- `client/src/App.tsx:8-11` - Component imports using App* naming convention
+- `client/src/theme/index.ts:137-305` - Custom MTG theme with rarity colors
+- `client/src/components/atoms/shared/AppButton.tsx` - Wrapped MUI Button with loading state
+- `client/src/components/organisms/CardDisplayResponsive.tsx` - Main card display component
+- `client/src/components/organisms/CardCompact.tsx:24-41` - MUI sx styling example
+
+#### Styling Guidelines
+- Use `sx` props for component-specific styling: `sx={{ bgcolor: 'grey.900', borderRadius: 2 }}`
+- Reference theme colors: `theme.palette.rarity.mythic`, `theme.mtg.shadows.card.hover`
+- Avoid Tailwind classes - convert to MUI equivalents
+- Use responsive breakpoints: `sx={{ width: { xs: '100%', sm: 'auto' } }}`
+
+#### Component Integration
+- **CardContext**: Pass context object to components for conditional display
+- **Event Handlers**: Use onCardClick, onSetClick, onArtistClick patterns
+- **Apollo Integration**: Generated hooks in `src/generated/` directory
+- **Routing**: React Router with error boundaries per route
+
+### Development Workflow
+1. Generate GraphQL types: `npm run codegen`
+2. Start development server: `npm run dev`  
+3. Backend API should run on different port
+4. Check Material-UI documentation for component APIs
+5. Use theme helpers for consistent colors and spacing
+
 ## Sessions System Behaviors
 
 @CLAUDE.sessions.md

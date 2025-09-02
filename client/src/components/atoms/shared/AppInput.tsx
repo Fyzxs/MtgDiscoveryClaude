@@ -2,11 +2,11 @@ import React from 'react';
 import { TextField } from '@mui/material';
 import type { TextFieldProps } from '@mui/material';
 
-interface MuiInputProps extends Omit<TextFieldProps, 'variant'> {
+interface AppInputProps extends Omit<TextFieldProps, 'variant'> {
   variant?: 'outlined' | 'filled' | 'standard';
 }
 
-export const MuiInput: React.FC<MuiInputProps> = ({
+export const AppInput: React.FC<AppInputProps> = ({
   variant = 'outlined',
   size = 'medium',
   fullWidth = true,

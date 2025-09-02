@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, CircularProgress, Alert, Box } from '@mui/material';
+import { handleGraphQLError } from '../../../utils/networkErrorHandler';
 
 interface QueryStateContainerProps {
   loading?: boolean;
@@ -51,7 +52,17 @@ export const QueryStateContainer: React.FC<QueryStateContainerProps> = ({
       return <>{errorComponent}</>;
     }
 
-    const displayMessage = errorMessage || error?.message || 'An error occurred';
+    let displayMessage = errorMessage;
+    if (!displayMessage && error) {
+      try {
+        const networkError = handleGraphQLError(error);
+        displayMessage = networkError.userMessage;
+      } catch {
+        displayMessage = error.message || 'An error occurred';
+      }
+    }
+    displayMessage = displayMessage || 'An error occurred';
+
     const errorContent = (
       <Box sx={{ mt: 4 }}>
         <Alert severity="error">

@@ -1,11 +1,10 @@
-import React from 'react';
 import { Chip } from '@mui/material';
 
 interface FoilOnlyBadgeProps {
   show: boolean;
 }
 
-export const FoilOnlyBadge: React.FC<FoilOnlyBadgeProps> = ({ show }) => {
+export const FoilOnlyBadge = ({ show }: FoilOnlyBadgeProps) => {
   if (!show) {
     return null;
   }

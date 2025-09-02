@@ -1,17 +1,17 @@
-import React from 'react';
 import { Box, Typography } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface CollectorNumberProps {
+interface CollectorNumberProps extends StyledComponentProps {
   number?: string;
   setCode?: string;
-  className?: string;
 }
 
-export const CollectorNumber: React.FC<CollectorNumberProps> = ({ 
+export const CollectorNumber = ({ 
   number, 
   setCode,
-  className = '' 
-}) => {
+  className,
+  sx
+}: CollectorNumberProps) => {
   if (!number) return null;
 
   return (
@@ -22,7 +22,8 @@ export const CollectorNumber: React.FC<CollectorNumberProps> = ({
         alignItems: 'center', 
         gap: 0.5, 
         color: 'grey.400',
-        fontSize: '0.875rem'
+        fontSize: '0.875rem',
+        ...sx
       }}
     >
       <Typography 

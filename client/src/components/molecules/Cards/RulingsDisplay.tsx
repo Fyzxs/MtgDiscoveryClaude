@@ -4,6 +4,7 @@ import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
 import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
 import { ErrorAlert } from '../../atoms/shared/ErrorAlert';
 import { formatRulingDate } from '../../../utils/dateFormatters';
+import { fetchWithRetry, handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 
 interface Ruling {
   object: string;
@@ -36,24 +37,25 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
     }
 
     const fetchRulings = async () => {
+      const loadingKey = `rulings-${rulingsUri}`;
       setLoading(true);
       setError(null);
+      globalLoadingManager.setLoading(loadingKey, true);
       
       try {
-        // Use CORS proxy if needed or fetch directly
-        // Note: Scryfall API supports CORS, so direct fetch should work
-        const response = await fetch(rulingsUri, {
+        const data: RulingsResponse = await fetchWithRetry<RulingsResponse>(rulingsUri, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
+          },
+          retries: 2,
+          retryDelay: 1000,
+          timeout: 8000,
+          onRetry: (attemptNumber, error) => {
+            console.log(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.userMessage);
           }
         });
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch rulings: ${response.statusText}`);
-        }
-        
-        const data: RulingsResponse = await response.json();
         // Sort rulings by date (oldest first)
         const sortedRulings = (data.data || []).sort((a, b) => {
           const dateA = new Date(a.published_at).getTime();
@@ -63,15 +65,16 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
         setRulings(sortedRulings);
       } catch (err) {
         console.error('Error fetching rulings:', err);
-        // Check if it's a CORS error
-        if (err instanceof TypeError && err.message.includes('fetch')) {
-          setError('Unable to load rulings due to network restrictions');
+        const networkError = err as any;
+        if (networkError.userMessage) {
+          setError(networkError.userMessage);
         } else {
-          setError('Failed to load rulings');
+          setError('Failed to load rulings. Please try again later.');
         }
         setRulings([]);
       } finally {
         setLoading(false);
+        globalLoadingManager.setLoading(loadingKey, false);
       }
     };
 
