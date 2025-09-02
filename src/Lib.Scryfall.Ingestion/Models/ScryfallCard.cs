@@ -19,6 +19,19 @@ internal sealed class ScryfallCard : IScryfallCard
 
     public string Id() => _dto.Data.id;
     public string Name() => _dto.Data.name;
+
+    public string FlavorName()
+    {
+        try
+        {
+            return _dto.Data.flavor_name ?? string.Empty;
+        }
+        catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+        {
+            return string.Empty;
+        }
+    }
+
     public dynamic Data() => _dto.Data;
 
     public IScryfallSet Set() => _set;

@@ -1,0 +1,209 @@
+###
+# Variables
+# @name variables
+@baseUrl = https://localhost:65203
+@artistEndpoint = {{baseUrl}}/graphql
+
+
+### Search Artists - Popular artist
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "rebecca"
+  }
+}
+
+### Search Artists - Partial name
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "john"
+  }
+}
+
+### Search Artists - Full name with spaces
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "john avon"
+  }
+}
+
+### Search Artists - Minimum length (3 characters)
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "art"
+  }
+}
+
+### Search Artists - Partial letters
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "mar"
+  }
+}
+
+### Search Artists - Too short (should fail)
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "ab"
+  }
+}
+
+### Search Artists - Empty string (should fail)
+# @ref variables
+POST {{artistEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on SuccessArtistSearchResultsResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": ""
+  }
+}

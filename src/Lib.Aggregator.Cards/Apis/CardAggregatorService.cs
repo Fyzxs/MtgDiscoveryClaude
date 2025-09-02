@@ -33,4 +33,9 @@ public sealed class CardAggregatorService : ICardAggregatorService
     {
         return _cardAggregatorOperations.CardsByNameAsync(cardName);
     }
+
+    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    {
+        return _cardAggregatorOperations.CardNameSearchAsync(searchTerm);
+    }
 }

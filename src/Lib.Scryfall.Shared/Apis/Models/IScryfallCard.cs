@@ -18,6 +18,11 @@ public interface IScryfallCard
     string Name();
 
     /// <summary>
+    /// Gets the flavor name (alternate/promotional name) if available.
+    /// </summary>
+    string FlavorName();
+
+    /// <summary>
     /// Gets the raw data.
     /// </summary>
     dynamic Data();

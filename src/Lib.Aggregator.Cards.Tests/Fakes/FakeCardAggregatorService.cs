@@ -39,4 +39,15 @@ internal sealed class FakeCardAggregatorService : ICardAggregatorService
         CardsByNameAsyncArgsInput = cardName;
         return Task.FromResult(CardsByNameAsyncResult);
     }
+
+    public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new FakeOperationResponse<ICardNameSearchResultCollectionItrEntity>();
+    public int CardNameSearchAsyncInvokeCount { get; private set; }
+    public ICardSearchTermItrEntity CardNameSearchAsyncArgsInput { get; private set; } = default!;
+
+    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    {
+        CardNameSearchAsyncInvokeCount++;
+        CardNameSearchAsyncArgsInput = searchTerm;
+        return Task.FromResult(CardNameSearchAsyncResult);
+    }
 }

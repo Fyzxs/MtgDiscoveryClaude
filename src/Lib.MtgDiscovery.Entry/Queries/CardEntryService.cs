@@ -15,18 +15,22 @@ internal sealed class CardEntryService : ICardEntryService
     private readonly ICardIdsArgEntityValidator _validator;
     private readonly ISetCodeArgEntityValidator _setCodeValidator;
     private readonly ICardNameArgEntityValidator _cardNameValidator;
+    private readonly ICardSearchTermArgEntityValidator _searchTermValidator;
     private readonly ICardsArgsToItrMapper _mapper;
     private readonly ISetCodeArgsToItrMapper _setCodeMapper;
     private readonly ICardNameArgsToItrMapper _cardNameMapper;
+    private readonly ICardSearchTermArgsToItrMapper _searchTermMapper;
 
     public CardEntryService(ILogger logger) : this(
         new DataService(logger),
         new CardIdsArgEntityValidatorContainer(),
         new SetCodeArgEntityValidatorContainer(),
         new CardNameArgEntityValidatorContainer(),
+        new CardSearchTermArgEntityValidatorContainer(),
         new CardsArgsToItrMapper(),
         new SetCodeArgsToItrMapper(),
-        new CardNameArgsToItrMapper())
+        new CardNameArgsToItrMapper(),
+        new CardSearchTermArgsToItrMapper())
     {
     }
 
@@ -35,17 +39,21 @@ internal sealed class CardEntryService : ICardEntryService
         ICardIdsArgEntityValidator validator,
         ISetCodeArgEntityValidator setCodeValidator,
         ICardNameArgEntityValidator cardNameValidator,
+        ICardSearchTermArgEntityValidator searchTermValidator,
         ICardsArgsToItrMapper mapper,
         ISetCodeArgsToItrMapper setCodeMapper,
-        ICardNameArgsToItrMapper cardNameMapper)
+        ICardNameArgsToItrMapper cardNameMapper,
+        ICardSearchTermArgsToItrMapper searchTermMapper)
     {
         _cardDataService = cardDataService;
         _validator = validator;
         _setCodeValidator = setCodeValidator;
         _cardNameValidator = cardNameValidator;
+        _searchTermValidator = searchTermValidator;
         _mapper = mapper;
         _setCodeMapper = setCodeMapper;
         _cardNameMapper = cardNameMapper;
+        _searchTermMapper = searchTermMapper;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
@@ -76,5 +84,15 @@ internal sealed class CardEntryService : ICardEntryService
 
         ICardNameItrEntity mappedArgs = await _cardNameMapper.Map(cardName).ConfigureAwait(false);
         return await _cardDataService.CardsByNameAsync(mappedArgs).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
+    {
+        IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
+
+        if (result.IsNotValid()) return result.FailureStatus();
+
+        ICardSearchTermItrEntity mappedArgs = await _searchTermMapper.Map(searchTerm).ConfigureAwait(false);
+        return await _cardDataService.CardNameSearchAsync(mappedArgs).ConfigureAwait(false);
     }
 }
