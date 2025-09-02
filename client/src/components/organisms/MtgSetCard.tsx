@@ -36,7 +36,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     // Allow right-click and middle-click to work normally
   };
 
-  const setUrl = `?page=set&set=${set.code}`;
+  const setUrl = `/set/${set.code}`;
 
   return (
     <Card

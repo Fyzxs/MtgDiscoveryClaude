@@ -7,12 +7,11 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
+import type { SearchInputProps as StandardSearchProps } from '../../../types/components';
 
-interface SearchInputProps {
-  value: string;
+interface SearchInputProps extends Omit<StandardSearchProps, 'onChange'> {
   onChange: (value: string) => void;
   onSubmit: () => void;
-  placeholder?: string;
   label?: string;
   expandable?: boolean;
   expandedWidth?: number;
@@ -40,7 +39,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (value.trim()) {
+    if (value?.trim()) {
       onSubmit();
     }
   };

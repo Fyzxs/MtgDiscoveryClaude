@@ -2,6 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { Header } from '../organisms/Header';
 import { Footer } from '../organisms/Footer';
+import { SkipNavigation } from '../atoms/shared/SkipNavigation';
 import { pageContainer, mainContent } from '../../styles/layoutStyles';
 
 interface LayoutProps {
@@ -16,10 +17,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         backgroundColor: 'background.default'
       }}
     >
+      <SkipNavigation />
       <Header />
       <Box 
         component="main" 
-        sx={mainContent}
+        id="main-content"
+        role="main"
+        tabIndex={-1}
+        sx={{
+          ...mainContent,
+          '&:focus': {
+            outline: 'none'
+          }
+        }}
       >
         {children}
       </Box>

@@ -1,24 +1,32 @@
-import React from 'react';
 import { DarkBadge } from '../shared/DarkBadge';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface ArtistLinkProps {
+interface ArtistLinkProps extends StyledComponentProps {
   artistName: string;
   artistId?: string;
   onArtistClick?: (artistName: string, artistId?: string) => void;
-  className?: string;
 }
 
-export const ArtistLink: React.FC<ArtistLinkProps> = ({ 
+export const ArtistLink = ({ 
   artistName,
   artistId,
   onArtistClick,
   className 
-}) => {
+}: ArtistLinkProps) => {
   return (
     <DarkBadge
       component="a"
       href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
-      tabIndex={-1}
+      tabIndex={0}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.stopPropagation();
+          if (onArtistClick) {
+            e.preventDefault();
+            onArtistClick(artistName, artistId);
+          }
+        }
+      }}
       onClick={(e) => {
         e.stopPropagation();
         if (onArtistClick) {

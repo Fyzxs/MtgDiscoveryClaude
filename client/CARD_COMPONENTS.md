@@ -1,35 +1,32 @@
 # MTG Card Display Components
 
 ## Overview
-Clean, properly-sized Magic: The Gathering card display components that match the visual style of the existing application.
+Clean, properly-sized Magic: The Gathering card display components built with Material-UI following atomic design principles.
 
-## Main Component: `MtgCard`
+## Primary Components
 
-The primary card display component located at `src/components/organisms/MtgCard.tsx`.
+### CardDisplayResponsive
+The main responsive card display component at `src/components/organisms/CardDisplayResponsive.tsx`.
+- **Responsive layouts**: Horizontal on mobile, vertical on desktop
+- **Context-aware display**: Adapts based on CardContext
+- **Hover interactions**: Desktop-only overlay with additional card details
+
+### CardCompact  
+Grid-optimized component at `src/components/organisms/CardCompact.tsx`.
+- **MUI sx styling**: Converted from Tailwind to Material-UI sx props
+- **Rarity-based glows**: Using theme.mtg.shadows.rarity colors
+- **Fixed proportions**: Maintains MTG card aspect ratio
 
 ### Features
-- **Fixed card width**: 280px (proper MTG card proportions)
-- **Rarity-based shadow glow**: Common (gray), Uncommon (silver), Rare (gold), Mythic (orange)
-- **Clean overlay design**: Information displayed at bottom with gradient background
+- **Theme-based colors**: Rarity colors defined in `src/theme/index.ts:160-168`
+- **Responsive design**: Uses MUI breakpoint system
+- **Clean overlay design**: Information displayed with theme gradients
 - **Context-aware display**: Hides/shows elements based on page context
-- **Interactive links**: Artist names, card names, and set names are all clickable
+- **Interactive links**: Artist names, card names, and set names are clickable
 
 ### Usage
-```tsx
-import { MtgCard } from './components/organisms/MtgCard';
-
-<MtgCard 
-  card={cardData}
-  context={{
-    isOnSetPage: false,
-    isOnArtistPage: false,
-    isOnCardPage: false
-  }}
-  onCardClick={(id) => navigateToCard(id)}
-  onSetClick={(code) => navigateToSet(code)}
-  onArtistClick={(name) => navigateToArtist(name)}
-/>
-```
+Reference `organisms/CardDisplayResponsive.tsx:11-19` for props interface.
+Reference `App.tsx:8-11` for App* component import pattern.
 
 ## Display Information
 
@@ -43,79 +40,39 @@ The card shows the following information in the overlay:
 7. **Price** (color-coded: green <$5, yellow $5-25, red >$25)
 8. **External Links** (Scryfall, TCGPlayer, CardMarket)
 
-## Responsive Grid Layouts
+## Grid Layouts with MUI
 
-### Desktop (5 columns)
-```tsx
-<div className="grid grid-cols-5 gap-6">
-  {cards.map(card => <MtgCard key={card.id} card={card} />)}
-</div>
-```
+Reference existing page implementations:
+- `pages/AllSetsPage.tsx` for set grid layouts
+- `pages/CardSearchPage.tsx` for card search results
+- `organisms/CardCompact.tsx:44-58` for MUI sx grid styling patterns
 
-### Tablet (3 columns)
-```tsx
-<div className="grid grid-cols-3 gap-6">
-  {cards.map(card => <MtgCard key={card.id} card={card} />)}
-</div>
-```
-
-### Mobile (1-2 columns)
-```tsx
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-  {cards.map(card => <MtgCard key={card.id} card={card} />)}
-</div>
-```
+Use MUI Grid2 component or Box with sx props for responsive layouts.
 
 ## Context Settings
 
-Control what information is displayed based on the current page:
+Reference `types/card.ts` for CardContext interface definition.
+Reference existing page components for context usage patterns.
 
-```tsx
-const context: CardContext = {
-  isOnSetPage: true,      // Hides set name
-  isOnArtistPage: true,   // Shows only other artists if multiple
-  isOnCardPage: true,     // Hides card name
-  currentArtist: "Dan Frazier",  // For filtering on artist pages
-  currentSetCode: "LEA"   // For date comparison
-}
-```
+## GraphQL Integration
 
-## GraphQL Configuration
+- **Generated Types**: `src/generated/` directory contains all GraphQL types
+- **Apollo Client**: Configured in `src/config/apollo.ts` 
+- **Schema**: Located in GraphQL API backend project
 
-- **Endpoint**: `https://localhost:65203/graphql`
-- **Queries**: Located in `src/graphql/queries/cards.ts`
-- **Types**: Located in `src/types/card.ts`
+## Material-UI Theme Integration
 
-## Demo Page
+- **Custom MTG Theme**: `src/theme/index.ts` extends MUI with MTG-specific colors
+- **Rarity Colors**: `theme.palette.rarity` for common/uncommon/rare/mythic
+- **Card Shadows**: `theme.mtg.shadows.rarity` for glow effects  
+- **Responsive Dimensions**: `theme.mtg.dimensions.cardWidth` for breakpoint sizes
 
-Access the demo at `/card-demo` (or click "View Card Component Demo" from home).
+## Component Architecture
 
-The demo page includes:
-- Single card display
-- Grid layout (set page style)
-- Context controls to test conditional rendering
-- Card ID input for testing with real data
-- Mobile view examples
+Reference `src/components/README.md` for complete atomic design structure.
 
-## External Dependencies
-
-- **Keyrune**: MTG set icons loaded from CDN
-  ```html
-  <link href="https://cdn.jsdelivr.net/npm/keyrune@latest/css/keyrune.min.css" rel="stylesheet" />
-  ```
-
-## Component Structure
-
-```
-src/components/
-├── atoms/
-│   ├── RarityBadge.tsx      # Rarity indicators
-│   ├── PriceDisplay.tsx     # Color-coded prices
-│   ├── CollectorNumber.tsx  # Collector info
-│   ├── SetIcon.tsx          # Keyrune set icons
-│   └── ExternalLinkIcon.tsx # External link icons
-├── organisms/
-│   └── MtgCard.tsx          # Main card component
-└── pages/
-    └── CardDemoPage.tsx     # Demo page
-```
+Key file locations:
+- **Atoms**: `atoms/shared/App*.tsx` for base UI components
+- **Molecules**: `molecules/Cards/*` for card-specific composed components  
+- **Organisms**: `organisms/Card*.tsx` for complete card displays
+- **Theme**: `theme/index.ts:137-368` for complete styling system

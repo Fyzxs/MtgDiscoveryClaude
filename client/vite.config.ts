@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    watch: {
+      usePolling: true, // Enable polling for WSL2
+    },
     proxy: {
       '/graphql': {
         target: 'https://localhost:65203',

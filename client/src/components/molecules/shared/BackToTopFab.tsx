@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Fab, Zoom } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import type { FabProps } from '@mui/material';
+import type { FabComponentProps } from '../../../types/components';
 
-interface BackToTopFabProps {
+interface BackToTopFabProps extends FabComponentProps {
   /**
    * The scroll threshold (in pixels) before showing the button
    * @default 300
    */
   threshold?: number;
-  /**
-   * Size of the FAB button
-   * @default 'medium'
-   */
-  size?: FabProps['size'];
-  /**
-   * Color of the FAB button
-   * @default 'primary'
-   */
-  color?: FabProps['color'];
   /**
    * Position offset from bottom of viewport (in pixels)
    * @default 16
@@ -34,16 +24,6 @@ interface BackToTopFabProps {
    * @default 1000
    */
   zIndex?: number;
-  /**
-   * Custom icon component
-   * @default KeyboardArrowUpIcon
-   */
-  icon?: React.ReactNode;
-  /**
-   * Aria label for accessibility
-   * @default 'scroll back to top'
-   */
-  ariaLabel?: string;
   /**
    * Scroll behavior
    * @default 'smooth'

@@ -1,28 +1,36 @@
-import React from 'react';
 import { Typography, Box } from '@mui/material';
 import { DarkBadge } from '../shared/DarkBadge';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface CardNameProps {
+interface CardNameProps extends StyledComponentProps {
   cardId?: string;
   cardName?: string;
   onCardClick?: (cardId?: string) => void;
-  className?: string;
 }
 
-export const CardName: React.FC<CardNameProps> = ({ 
+export const CardName = ({ 
   cardId,
   cardName,
   onCardClick,
   className 
-}) => {
+}: CardNameProps) => {
   if (!cardName) return null;
 
   return (
     <Box className={className}>
       <DarkBadge
         component="a"
-        href={`/cards/${cardId}`}
-        tabIndex={-1}
+        href={`/card/${encodeURIComponent(cardName)}`}
+        tabIndex={0}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+            if (onCardClick) {
+              e.preventDefault();
+              onCardClick(cardId);
+            }
+          }
+        }}
         onClick={(e) => {
           e.stopPropagation();
           if (onCardClick) {

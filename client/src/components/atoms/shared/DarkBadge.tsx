@@ -1,16 +1,16 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface DarkBadgeProps {
+interface DarkBadgeProps extends StyledComponentProps {
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
   href?: string;
   tabIndex?: number;
-  className?: string;
   component?: 'div' | 'a' | 'span';
   'aria-label'?: string;
-  sx?: SxProps<Theme>;
 }
 
 /**
@@ -20,6 +20,7 @@ interface DarkBadgeProps {
 export const DarkBadge: React.FC<DarkBadgeProps> = ({
   children,
   onClick,
+  onKeyDown,
   href,
   tabIndex,
   className,
@@ -60,6 +61,7 @@ export const DarkBadge: React.FC<DarkBadgeProps> = ({
         component="a"
         href={href}
         onClick={onClick}
+        onKeyDown={onKeyDown}
         tabIndex={tabIndex}
         className={className}
         aria-label={ariaLabel}
@@ -74,6 +76,7 @@ export const DarkBadge: React.FC<DarkBadgeProps> = ({
     <Box
       component={component}
       onClick={onClick}
+      onKeyDown={onKeyDown}
       tabIndex={tabIndex}
       className={className}
       aria-label={ariaLabel}

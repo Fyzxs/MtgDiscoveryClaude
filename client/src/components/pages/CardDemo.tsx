@@ -88,17 +88,16 @@ export const CardDemo: React.FC = () => {
   const card = (data as any)?.cardsById?.data?.[0] || mockCard;
 
   // Navigation handlers
-  const handleCardClick = (clickedCardId?: string) => {
-    console.log('Navigate to card:', clickedCardId);
+  const handleCardClick = () => {
     // In a real app, this would use React Router or Next.js routing
   };
 
-  const handleSetClick = (setCode?: string) => {
-    console.log('Navigate to set:', setCode);
+  const handleSetClick = () => {
+    // In a real app, this would use React Router or Next.js routing
   };
 
-  const handleArtistClick = (artistName: string, artistId?: string) => {
-    console.log('Navigate to artist:', artistName, artistId);
+  const handleArtistClick = () => {
+    // In a real app, this would use React Router or Next.js routing
   };
 
   return (

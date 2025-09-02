@@ -1,11 +1,10 @@
-import React from 'react';
 import { Chip } from '@mui/material';
 
 interface SetCodeBadgeProps {
   code: string;
 }
 
-export const SetCodeBadge: React.FC<SetCodeBadgeProps> = ({ code }) => {
+export const SetCodeBadge = ({ code }: SetCodeBadgeProps) => {
   return (
     <Chip
       label={code.toUpperCase()}

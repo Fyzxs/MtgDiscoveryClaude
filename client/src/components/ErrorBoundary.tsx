@@ -35,8 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
   public static getDerivedStateFromError(error: Error): Partial<State> {
     return { 
       hasError: true, 
-      error,
-      errorCount: (prev: State) => prev.errorCount + 1
+      error
     };
   }
 
@@ -46,8 +45,11 @@ export class ErrorBoundary extends Component<Props, State> {
     // Enhanced logging with context
     console.error(`[ErrorBoundary${name ? ` - ${name}` : ''}]:`, error, errorInfo);
     
-    // Store error info for display
-    this.setState({ errorInfo });
+    // Store error info and increment count
+    this.setState((prevState) => ({ 
+      errorInfo,
+      errorCount: prevState.errorCount + 1 
+    }));
     
     // Call custom error handler if provided
     if (onError) {

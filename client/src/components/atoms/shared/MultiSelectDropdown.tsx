@@ -8,7 +8,8 @@ import {
   Typography,
   IconButton,
   InputAdornment,
-  Skeleton
+  Skeleton,
+  Box
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -106,14 +107,21 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
       sx={{ minWidth, ...sx }}
       disabled={disabled}
     >
-      <InputLabel>{label}</InputLabel>
+      <InputLabel id={`${label}-label`}>{label}</InputLabel>
       <Select
         multiple
         value={value}
         onChange={handleChange}
         label={label}
+        labelId={`${label}-label`}
         renderValue={renderValue}
         disabled={disabled}
+        aria-label={`Select ${label.toLowerCase()}`}
+        aria-describedby={`${label}-helper`}
+        inputProps={{
+          'aria-label': `${label} multi-select dropdown`,
+          'aria-multiselectable': true
+        }}
         endAdornment={
           value.length > 0 ? (
             <InputAdornment position="end">
@@ -124,6 +132,8 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
                   onChange([]);
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
+                aria-label={`Clear all selected ${label.toLowerCase()}`}
+                tabIndex={0}
                 sx={{ mr: 2 }}
               >
                 <ClearIcon fontSize="small" />
@@ -132,9 +142,14 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
           ) : null
         }
       >
+        <Box id={`${label}-helper`} sx={{ display: 'none' }} aria-live="polite">
+          {value.length === 0 ? `No ${label.toLowerCase()} selected` : `${value.length} ${label.toLowerCase()} selected`}
+        </Box>
         {showClearAll && (
           <MenuItem 
             value="CLEAR_ALL"
+            role="option"
+            aria-label="Clear all selections"
             sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
           >
             <Typography variant="body2" color="text.secondary">
@@ -143,12 +158,19 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
           </MenuItem>
         )}
         {normalizedOptions.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+          <MenuItem 
+            key={option.value} 
+            value={option.value}
+            role="option"
+            aria-selected={value.includes(option.value)}
+            aria-label={`${option.label}${value.includes(option.value) ? ' (selected)' : ''}`}
+          >
             <Chip
               size="small"
               label={option.label}
               color={value.includes(option.value) ? (option.chipColor || 'primary') : 'default'}
               sx={{ mr: 1 }}
+              aria-hidden="true"
             />
           </MenuItem>
         ))}

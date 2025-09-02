@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { Typography } from '@mui/material';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
@@ -7,6 +7,7 @@ import { ErrorText } from '../../atoms/shared/ErrorAlert';
 import { MtgCard } from '../../organisms/MtgCard';
 import { ResponsiveGridAutoFit } from '../../atoms/layouts/ResponsiveGrid';
 import { GET_CARDS_BY_NAME } from '../../../graphql/queries/cards';
+import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import type { Card } from '../../../types/card';
 
 interface AllPrintingsDisplayProps {
@@ -26,6 +27,7 @@ interface CardsResponse {
 
 export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardName, currentCardId }) => {
   const [expanded, setExpanded] = useState(false);
+  const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
 
   const { loading, error, data } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
     variables: { 
@@ -33,8 +35,27 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
         cardName: cardName 
       } 
     },
-    skip: !cardName
+    skip: !cardName,
+    errorPolicy: 'all'
   });
+
+  useEffect(() => {
+    const loadingKey = `all-printings-${currentCardId}`;
+    globalLoadingManager.setLoading(loadingKey, loading);
+    
+    return () => {
+      globalLoadingManager.setLoading(loadingKey, false);
+    };
+  }, [loading, currentCardId]);
+
+  useEffect(() => {
+    if (error) {
+      const networkError = handleGraphQLError(error);
+      setUserFriendlyError(networkError.userMessage);
+    } else {
+      setUserFriendlyError(null);
+    }
+  }, [error]);
 
   const allCards = data?.cardsByName?.data || [];
   // Filter out the current card and sort by release date (oldest first)
@@ -45,7 +66,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
       const dateB = b.releasedAt ? new Date(b.releasedAt).getTime() : 0;
       return dateA - dateB; // Oldest first
     });
-  const hasError = error || data?.cardsByName?.__typename === 'FailureResponse';
+  const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
 
   // Don't render if there are no other printings
   if (!loading && !hasError && otherCards.length === 0) {
@@ -65,8 +86,12 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
         <LoadingContainer py={4} />
       )}
       
-      {hasError && (
-        <ErrorText message="Failed to load printings" />
+      {userFriendlyError && (
+        <ErrorText message={userFriendlyError} />
+      )}
+
+      {data?.cardsByName?.__typename === 'FailureResponse' && (
+        <ErrorText message={data.cardsByName.status?.message || 'Failed to load printings'} />
       )}
       
       {!loading && !hasError && otherCards.length > 0 && (

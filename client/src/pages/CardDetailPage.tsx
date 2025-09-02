@@ -1,0 +1,266 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client/react';
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  CircularProgress,
+  Alert
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
+import { GET_CARDS_BY_NAME } from '../graphql/queries/cards';
+import { MtgCard } from '../components/organisms/MtgCard';
+import { ResponsiveGridAutoFit } from '../components/atoms/layouts/ResponsiveGrid';
+import { useCardFiltering } from '../hooks/useCardFiltering';
+import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel';
+import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
+import { handleGraphQLError, globalLoadingManager } from '../utils/networkErrorHandler';
+import { AppErrorBoundary } from '../components/ErrorBoundaries';
+
+
+interface CardData {
+  id: string;
+  name: string;
+  setCode: string;
+  setName: string;
+  releasedAt: string;
+  collectorNumber: string;
+  rarity: string;
+  artist: string;
+  digital?: boolean;
+  prices: {
+    usd: string | null;
+    usdFoil: string | null;
+  };
+  imageUris?: {
+    normal: string;
+    large: string;
+    small: string;
+  };
+  cardFaces?: Array<{
+    imageUris?: {
+      normal: string;
+      large: string;
+      small: string;
+    };
+  }>;
+}
+
+interface CardsResponse {
+  cardsByName: {
+    __typename: string;
+    data?: CardData[];
+    status?: {
+      message: string;
+    };
+  };
+}
+
+export const CardDetailPage: React.FC = () => {
+  const { cardName } = useParams<{ cardName: string }>();
+  const navigate = useNavigate();
+  const decodedCardName = decodeURIComponent(cardName || '');
+  const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const { loading, error, data, refetch } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
+    variables: {
+      cardName: {
+        cardName: decodedCardName
+      }
+    },
+    skip: !cardName,
+    errorPolicy: 'all'
+  });
+
+  useEffect(() => {
+    const loadingKey = `card-detail-${decodedCardName}`;
+    globalLoadingManager.setLoading(loadingKey, loading);
+    
+    return () => {
+      globalLoadingManager.setLoading(loadingKey, false);
+    };
+  }, [loading, decodedCardName]);
+
+  useEffect(() => {
+    if (error) {
+      try {
+        const networkError = handleGraphQLError(error);
+        setUserFriendlyError(networkError.userMessage);
+      } catch {
+        setUserFriendlyError('Failed to load card details. Please try again.');
+      }
+    } else {
+      setUserFriendlyError(null);
+    }
+  }, [error]);
+
+  const cards = data?.cardsByName?.data || [];
+  const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
+  const graphQLError = data?.cardsByName?.status?.message;
+
+  const handleBackClick = () => {
+    navigate('/search/cards');
+  };
+
+  const handleRetry = async () => {
+    setRetryCount(prev => prev + 1);
+    setUserFriendlyError(null);
+    try {
+      await refetch();
+    } catch (retryError) {
+      console.error('Retry failed:', retryError);
+    }
+  };
+
+  // Use the shared card filtering hook (no search or sets filter for card detail page)
+  const {
+    filteredCards,
+    totalCards,
+    sortBy,
+    filters,
+    setSortBy,
+    updateFilter,
+    uniqueArtists,
+    uniqueRarities,
+    hasMultipleArtists,
+    hasMultipleRarities
+  } = useCardFiltering(cards, {
+    defaultSort: 'release-desc',
+    includeSets: false
+  });
+
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBackClick}
+          sx={{ mb: 2 }}
+        >
+          Back to Search
+        </Button>
+        
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          action={
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button 
+                color="inherit" 
+                size="small" 
+                startIcon={<RefreshIcon />}
+                onClick={handleRetry}
+                disabled={loading}
+              >
+                {loading ? 'Retrying...' : 'Retry'}
+              </Button>
+            </Box>
+          }
+        >
+          <Typography variant="body1">
+            {userFriendlyError || graphQLError || 'Failed to load card details'}
+          </Typography>
+          {retryCount > 0 && (
+            <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+              Retry attempts: {retryCount}
+            </Typography>
+          )}
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (cards.length === 0) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBackClick}
+          sx={{ mb: 2 }}
+        >
+          Back to Search
+        </Button>
+        <Typography>No cards found with name "{decodedCardName}"</Typography>
+      </Container>
+    );
+  }
+
+  return (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={handleBackClick}
+        sx={{ mb: 3 }}
+      >
+        Back to Search
+      </Button>
+
+      {/* Centered card name */}
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Typography variant="h2" fontWeight="bold">
+          {decodedCardName}
+        </Typography>
+      </Box>
+
+      {/* Card Filter Panel - Centered controls */}
+      <CardFilterPanel
+        sortBy={sortBy}
+        filters={filters}
+        onSortChange={setSortBy}
+        onFilterChange={updateFilter}
+        uniqueArtists={uniqueArtists}
+        uniqueRarities={uniqueRarities}
+        hasMultipleArtists={hasMultipleArtists}
+        hasMultipleRarities={hasMultipleRarities}
+        filteredCount={filteredCards.length}
+        totalCount={totalCards}
+        showSearch={false}
+        sortOptions={CARD_DETAIL_SORT_OPTIONS}
+        centerControls={true}
+      />
+
+      {/* Results Summary */}
+      <ResultsSummary 
+        current={filteredCards.length}
+        total={totalCards}
+        label="printings"
+        textAlign="center"
+      />
+
+      {/* Cards Grid */}
+      <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
+        <ResponsiveGridAutoFit 
+          minWidth={250}
+          maxColumns={6}
+          gap={2}
+        >
+          {filteredCards.map((card) => (
+            <AppErrorBoundary key={card.id} level="component" name={`Card-${card.id}`}>
+              <MtgCard 
+                card={card}
+                context={{ isOnCardPage: true }}
+                onSelection={() => {}}
+                isSelected={false}
+              />
+            </AppErrorBoundary>
+          ))}
+        </ResponsiveGridAutoFit>
+      </AppErrorBoundary>
+    </Container>
+  );
+};

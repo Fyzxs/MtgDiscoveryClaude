@@ -10,9 +10,7 @@ import {
   Button,
   Tooltip
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import { getLegalityColor } from '../../theme';
-import { flexBetween, flexCenter, flexCol, gap2, gap3 } from '../../styles/layoutStyles';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -165,9 +163,20 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 </IconButton>
               </Box>
             )}
-            <Typography variant="h5" component="h2">
+            <Link 
+              href={`/card/${encodeURIComponent(card.name)}`}
+              variant="h5"
+              component="a"
+              sx={{ 
+                color: 'text.primary',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline'
+                }
+              }}
+            >
               {card.name}
-            </Typography>
+            </Link>
             {card.manaCost && <ManaCost manaCost={card.manaCost} />}
           </Box>
           <IconButton onClick={onClose}>
@@ -207,12 +216,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   width: '100%',
                   height: '100%'
                 }}
-              />
-              <CardBadges 
-                finishes={card.finishes}
-                promoTypes={card.promoTypes}
-                frameEffects={card.frameEffects}
-                isPromo={card.promo}
               />
             </Box>
             {/* Card ID */}
@@ -256,10 +259,10 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   {card.typeLine}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <RarityBadge rarity={card.rarity} />
+                  {card.rarity && <RarityBadge rarity={card.rarity} />}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Link 
-                      href={`?page=set&set=${card.setCode}`}
+                      href={`/set/${card.setCode}`}
                       sx={{ 
                         color: 'text.secondary',
                         textDecoration: 'none',
@@ -323,6 +326,24 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               )}
 
               <Divider />
+
+              {/* Treatments */}
+              {((card.finishes?.length ?? 0) > 0 || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo) && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Treatments
+                  </Typography>
+                  <Box sx={{ pl: 2 }}>
+                    <CardBadges 
+                      finishes={card.finishes}
+                      promoTypes={card.promoTypes}
+                      frameEffects={card.frameEffects}
+                      isPromo={card.promo}
+                      inline={true}
+                    />
+                  </Box>
+                </Box>
+              )}
 
               {/* Artist */}
               {card.artist && (
@@ -566,7 +587,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       Related Cards
                     </Typography>
                     <RelatedCardsDisplay 
-                      relatedCardIds={card.allParts.map(part => part.id)}
+                      relatedCardIds={card.allParts.map(part => part.id).filter((id): id is string => !!id)}
                       currentCardId={card.id}
                     />
                   </Box>

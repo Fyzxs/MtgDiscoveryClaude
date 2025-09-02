@@ -9,6 +9,7 @@ interface CardBadgesProps {
   excludeFinishes?: string[];
   excludePromoTypes?: string[];
   excludeFrameEffects?: string[];
+  inline?: boolean;  // When true, display inline rather than absolute positioned
 }
 
 // Default exclusions - ignore these badge types
@@ -23,7 +24,8 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   isPromo = false,
   excludeFinishes = DEFAULT_EXCLUDE_FINISHES,
   excludePromoTypes = DEFAULT_EXCLUDE_PROMO_TYPES,
-  excludeFrameEffects = DEFAULT_EXCLUDE_FRAME_EFFECTS
+  excludeFrameEffects = DEFAULT_EXCLUDE_FRAME_EFFECTS,
+  inline = false
 }) => {
   // Ensure arrays are not null
   const safeFinishes = finishes || [];
@@ -91,7 +93,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   // Format promo type text for display
   const formatPromoText = (promoType: string): string => {
     const formatMap: Record<string, string> = {
-      'prerelease': 'Prerelease',
+      'prerelease': 'Pre-Release',
       'promobundle': 'Promo Bundle',
       'buyabox': 'Buy-a-Box',
       'intro_pack': 'Intro Pack',
@@ -115,6 +117,9 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       'surgefoil': 'Surge Foil',
       'raisedfoil': 'Raised Foil',
       'sldbonus': 'SLD Bonus',
+      'datestamped': 'Date Stamped',
+      'promopack': 'Promo Pack',
+      'starterdeck': 'Starter Deck',
     };
     return formatMap[promoType.toLowerCase()] || promoType.replace(/_/g, ' ')
       .split(' ')
@@ -180,13 +185,20 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
     <Box 
       sx={{ 
         display: 'flex', 
-        flexDirection: 'column-reverse',  // Stack upward from bottom
+        flexDirection: inline ? 'row' : 'column-reverse',  // Row for inline, column-reverse for overlay
+        flexWrap: inline ? 'wrap' : 'nowrap',
         gap: 0.5,
-        position: 'absolute',
-        bottom: 185,  // Move higher up to avoid overlapping release date
-        right: 8,
-        zIndex: 15,
-        alignItems: 'flex-end'
+        ...(inline ? {
+          // Inline mode - normal document flow
+          alignItems: 'center'
+        } : {
+          // Overlay mode - absolute positioning on card
+          position: 'absolute',
+          bottom: 185,  // Move higher up to avoid overlapping release date
+          right: 8,
+          zIndex: 15,
+          alignItems: 'flex-end'
+        })
       }}
     >
       {/* Finish badges */}

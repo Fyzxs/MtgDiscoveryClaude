@@ -1,11 +1,10 @@
-import React from 'react';
 import { Chip } from '@mui/material';
 
 interface DigitalBadgeProps {
   show: boolean;
 }
 
-export const DigitalBadge: React.FC<DigitalBadgeProps> = ({ show }) => {
+export const DigitalBadge = ({ show }: DigitalBadgeProps) => {
   if (!show) {
     return null;
   }

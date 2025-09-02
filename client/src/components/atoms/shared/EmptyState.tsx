@@ -1,17 +1,9 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
+import type { EmptyStateProps as StandardEmptyStateProps } from '../../../types/components';
 
-interface EmptyStateProps {
-  message?: string;
-  description?: string;
-  icon?: React.ReactNode;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-  sx?: any;
-}
+type EmptyStateProps = StandardEmptyStateProps;
 
 const EmptyStateComponent: React.FC<EmptyStateProps> = ({
   message = 'No results found',

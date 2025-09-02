@@ -1,8 +1,9 @@
 import React from 'react';
 import { Chip } from '@mui/material';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
+import type { BadgeProps } from '../../../types/components';
 
-interface SetTypeBadgeProps {
+interface SetTypeBadgeProps extends Pick<BadgeProps, 'size'> {
   setType: string;
 }
 
