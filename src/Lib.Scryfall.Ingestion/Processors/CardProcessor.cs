@@ -16,7 +16,8 @@ internal sealed class CardProcessor : ICardProcessor
                 new SetCardsProcessor(logger),
                 new CardItemsProcessor(logger),
                 new ArtistAggregatorProcessor(logger),
-                new CardsByNameProcessor(logger)
+                new CardsByNameProcessor(logger),
+                new CardNameTrigramAggregatorProcessor(logger)
             ],
             logger)
     {

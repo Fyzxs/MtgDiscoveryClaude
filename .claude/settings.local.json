@@ -1,6 +1,19 @@
 {
   "permissions": {
     "allow": [
+      "Read(/dev/pts/**)",
+      "Bash(cat:*)",
+      "Bash(daic)",
+      "Bash(dotnet build:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $dir ===\")",
+      "Bash(ls:*)",
+      "Bash(done)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet remove:*)",
       "Bash(npm run type-check:*)",
       "Bash(grep:*)",
       "Bash(npx tsc:*)",

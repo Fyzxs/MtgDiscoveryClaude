@@ -5,7 +5,7 @@ namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal interface IScryfallSetToAssociationMapper
 {
-    ScryfallSetAssociation Map(IScryfallSet scryfallSet);
+    ScryfallSetParentAssociationItem Map(IScryfallSet scryfallSet);
     bool HasParentSet(IScryfallSet scryfallSet);
     bool HasNoParentSet(IScryfallSet scryfallSet);
 }

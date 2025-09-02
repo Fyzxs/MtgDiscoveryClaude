@@ -488,5 +488,4 @@ Desktop.ini
 # Storybook
 storybook-static
 *.storybook.log
-
 .claude/state/*

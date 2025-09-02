@@ -5,5 +5,6 @@
     <ProjectReference Include="..\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
     <ProjectReference Include="..\Lib.Aggregator.Sets\Lib.Aggregator.Sets.csproj" />
     <ProjectReference Include="..\Lib.Domain.Sets\Lib.Domain.Sets.csproj" />
+    <ProjectReference Include="..\Lib.Domain.Artists\Lib.Domain.Artists.csproj" />
   </ItemGroup>
 </Project>

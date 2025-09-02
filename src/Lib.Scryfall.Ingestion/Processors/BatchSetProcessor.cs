@@ -13,6 +13,7 @@ internal sealed class BatchSetProcessor : IBatchSetProcessor
 {
     private readonly ISetProcessor _setProcessor;
     private readonly ArtistAggregationWriterProcessor _artistWriter;
+    private readonly CardNameTrigramWriterProcessor _trigramWriter;
     private readonly IScryfallIngestionConfiguration _config;
     private readonly ILogger _logger;
 
@@ -20,6 +21,7 @@ internal sealed class BatchSetProcessor : IBatchSetProcessor
         : this(
             CreateSetProcessor(logger),
             new ArtistAggregationWriterProcessor(logger),
+            new CardNameTrigramWriterProcessor(logger),
             new ConfigScryfallIngestionConfiguration(),
             logger)
     {
@@ -43,51 +45,50 @@ internal sealed class BatchSetProcessor : IBatchSetProcessor
     private BatchSetProcessor(
         ISetProcessor setProcessor,
         ArtistAggregationWriterProcessor artistWriter,
+        CardNameTrigramWriterProcessor trigramWriter,
         IScryfallIngestionConfiguration config,
         ILogger logger)
     {
         _setProcessor = setProcessor;
         _artistWriter = artistWriter;
+        _trigramWriter = trigramWriter;
         _config = config;
         _logger = logger;
     }
 
     public async Task ProcessSetsAsync(IEnumerable<IScryfallSet> sets)
     {
-        IScryfallProcessingConfig processingConfig = _config.ProcessingConfig();
-        int batchSize = processingConfig.SetBatchSize().AsSystemType();
-
         List<IScryfallSet> setList = sets.ToList();
         int totalSets = setList.Count;
         int processedSets = 0;
 
-        while (processedSets < totalSets)
+        _logger.LogProcessingStart(totalSets);
+
+        // Process all sets
+        foreach (IScryfallSet set in setList)
         {
-            List<IScryfallSet> batch = setList.Skip(processedSets).Take(batchSize).ToList();
-
-            _logger.LogBatchStart(processedSets, batch.Count, totalSets);
-
-            // Process the batch of sets
-            foreach (IScryfallSet set in batch)
+            try
             {
-                try
-                {
-                    await _setProcessor.ProcessAsync(set).ConfigureAwait(false);
-                }
-                catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
-                {
-                    _logger.LogBatchSetProcessingError(ex, set.Code());
-                }
+                await _setProcessor.ProcessAsync(set).ConfigureAwait(false);
+                processedSets++;
+                _logger.LogSetProcessed(processedSets, totalSets);
             }
-
-            // Write dirty artists after each batch
-            await _artistWriter.ProcessAsync().ConfigureAwait(false);
-
-            processedSets += batch.Count;
-            _logger.LogBatchComplete(processedSets, totalSets);
+            catch (Exception ex) when (ex is TaskCanceledException or HttpRequestException or InvalidOperationException)
+            {
+                _logger.LogBatchSetProcessingError(ex, set.Code());
+            }
         }
 
-        _logger.LogAllBatchesComplete(totalSets);
+        // Write all aggregated data at the end
+        _logger.LogWritingAggregatedData();
+
+        // Write dirty artists after all sets are processed
+        await _artistWriter.ProcessAsync().ConfigureAwait(false);
+
+        // Write card name trigrams after all sets are processed
+        await _trigramWriter.WriteTrigramsAsync().ConfigureAwait(false);
+
+        _logger.LogAllSetsComplete(totalSets);
     }
 }
 
@@ -104,21 +105,26 @@ internal static partial class BatchSetProcessorLoggerExtensions
     public static partial void LogFullProcessingModeEnabled(this ILogger logger);
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Starting batch: {ProcessedSets}/{TotalSets} sets, batch size: {BatchSize}")]
-    public static partial void LogBatchStart(this ILogger logger, int processedSets, int batchSize, int totalSets);
+        Message = "Starting to process {TotalSets} sets")]
+    public static partial void LogProcessingStart(this ILogger logger, int totalSets);
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Batch complete: {ProcessedSets}/{TotalSets} sets processed")]
-    public static partial void LogBatchComplete(this ILogger logger, int processedSets, int totalSets);
+        Message = "Processed {ProcessedSets}/{TotalSets} sets")]
+    public static partial void LogSetProcessed(this ILogger logger, int processedSets, int totalSets);
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "All batches complete: {TotalSets} sets processed")]
-    public static partial void LogAllBatchesComplete(this ILogger logger, int totalSets);
+        Message = "Writing aggregated data to Cosmos DB")]
+    public static partial void LogWritingAggregatedData(this ILogger logger);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "All sets complete. Total sets processed: {TotalSets}")]
+    public static partial void LogAllSetsComplete(this ILogger logger, int totalSets);
 
     [LoggerMessage(
         Level = LogLevel.Error,
-        Message = "Error processing set {SetCode}")]
-    public static partial void LogBatchSetProcessingError(this ILogger logger, Exception ex, string setCode);
+        Message = "Error processing set {Code}")]
+    public static partial void LogBatchSetProcessingError(this ILogger logger, Exception ex, string code);
 }

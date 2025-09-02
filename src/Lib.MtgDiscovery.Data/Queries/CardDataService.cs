@@ -34,4 +34,9 @@ internal sealed class CardDataService : ICardDataService
     {
         return await _cardDomainService.CardsByNameAsync(cardName).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    {
+        return await _cardDomainService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
+    }
 }

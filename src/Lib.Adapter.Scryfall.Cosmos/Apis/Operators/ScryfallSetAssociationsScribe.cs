@@ -7,7 +7,7 @@ namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 public sealed class ScryfallSetAssociationsScribe : CosmosScribe
 {
     public ScryfallSetAssociationsScribe(ILogger logger)
-        : base(new SetAssociationsCosmosContainer(logger))
+        : base(new SetParentAssociationsCosmosContainer(logger))
     {
     }
 }

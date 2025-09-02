@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Values;
+﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Values;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Apis.Ids;
 
@@ -10,7 +10,7 @@ internal sealed class SetCodeIndexCosmosContainerDefinition : ICosmosContainerDe
 
     public CosmosDatabaseName DatabaseName() => new MtgDiscoveryCosmosDatabaseName();
 
-    public CosmosContainerName ContainerName() => new SetCodeIndexCosmosContainerName();
+    public CosmosContainerName ContainerName() => new SetCodeToIdAssociationsCosmosContainerName();
 
     public CosmosPartitionKeyPath PartitionKeyPath() => new PartitionCosmosPartitionKeyPath();
 }

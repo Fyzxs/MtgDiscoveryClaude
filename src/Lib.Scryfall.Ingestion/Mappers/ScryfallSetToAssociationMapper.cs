@@ -15,9 +15,9 @@ internal sealed class ScryfallSetToAssociationMapper : IScryfallSetToAssociation
         return HasParentSet(scryfallSet) is false;
     }
 
-    public ScryfallSetAssociation Map(IScryfallSet scryfallSet)
+    public ScryfallSetParentAssociationItem Map(IScryfallSet scryfallSet)
     {
-        return new ScryfallSetAssociation
+        return new ScryfallSetParentAssociationItem
         {
             SetId = scryfallSet.Id(),
             ParentSetCode = scryfallSet.ParentSetCode(),

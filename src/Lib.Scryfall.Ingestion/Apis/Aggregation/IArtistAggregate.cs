@@ -8,6 +8,7 @@ public interface IArtistAggregate
     IEnumerable<string> ArtistNames();
     IEnumerable<string> CardIds();
     IEnumerable<string> SetIds();
+    IEnumerable<dynamic> Cards();
     bool IsDirty();
     void MarkClean();
 }

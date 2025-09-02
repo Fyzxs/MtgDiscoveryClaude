@@ -42,11 +42,13 @@ internal class Startup
         // Register query method classes for DI
         services.AddScoped<CardQueryMethods>();
         services.AddScoped<SetQueryMethods>();
+        services.AddScoped<ArtistQueryMethods>();
 
         services
             .AddGraphQLServer()
             .AddApiQuery()
-            .AddSetSchemaExtensions();
+            .AddSetSchemaExtensions()
+            .AddArtistSchemaExtensions();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

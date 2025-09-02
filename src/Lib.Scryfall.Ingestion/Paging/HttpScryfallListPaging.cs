@@ -12,6 +12,7 @@ using Lib.Universal.Http;
 using Lib.Universal.Primitives;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Lib.Scryfall.Ingestion.Paging;
 internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto

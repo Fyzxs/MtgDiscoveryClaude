@@ -1,18 +1,16 @@
 ﻿using Lib.Cosmos.Apis;
+using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 
-public sealed class ScryfallArtistCard : CosmosItem
+public sealed class ScryfallArtistCard : CosmosItem, IScryfallPayload
 {
-    private readonly string _cardId;
-    private readonly string _artistId;
+    public override string Id => Data.id;
+    public override string Partition => ArtistId;
 
-    public ScryfallArtistCard(string cardId, string artistId)
-    {
-        _cardId = cardId;
-        _artistId = artistId;
-    }
+    [JsonProperty("artistId")]
+    public string ArtistId { get; init; }
 
-    public override string Id => _cardId;
-    public override string Partition => _artistId;
+    [JsonProperty("data")]
+    public dynamic Data { get; init; }
 }
