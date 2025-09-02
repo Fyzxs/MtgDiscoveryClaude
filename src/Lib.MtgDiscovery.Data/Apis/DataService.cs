@@ -10,15 +10,17 @@ public sealed class DataService : IDataService
 {
     private readonly ICardDataService _cardDataService;
     private readonly ISetDataService _setDataService;
+    private readonly IArtistDataService _artistDataService;
 
-    public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService(logger))
+    public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService(logger), new ArtistDataService(logger))
     {
 
     }
-    private DataService(ICardDataService cardDataService, ISetDataService setDataService)
+    private DataService(ICardDataService cardDataService, ISetDataService setDataService, IArtistDataService artistDataService)
     {
         _cardDataService = cardDataService;
         _setDataService = setDataService;
+        _artistDataService = artistDataService;
     }
 
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
@@ -54,5 +56,15 @@ public sealed class DataService : IDataService
     public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
     {
         return _setDataService.AllSetsAsync();
+    }
+
+    public Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
+    {
+        return _artistDataService.ArtistSearchAsync(searchTerm);
+    }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId)
+    {
+        return _artistDataService.CardsByArtistAsync(artistId);
     }
 }
