@@ -1,17 +1,16 @@
 import { Box, Typography } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface CollectorNumberProps {
+interface CollectorNumberProps extends StyledComponentProps {
   number?: string;
   setCode?: string;
-  className?: string;
-  sx?: any;
 }
 
 export const CollectorNumber = ({ 
   number, 
   setCode,
-  className = '',
-  sx = {}
+  className,
+  sx
 }: CollectorNumberProps) => {
   if (!number) return null;
 

@@ -1,10 +1,10 @@
 import { DarkBadge } from '../shared/DarkBadge';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface ArtistLinkProps {
+interface ArtistLinkProps extends StyledComponentProps {
   artistName: string;
   artistId?: string;
   onArtistClick?: (artistName: string, artistId?: string) => void;
-  className?: string;
 }
 
 export const ArtistLink = ({ 

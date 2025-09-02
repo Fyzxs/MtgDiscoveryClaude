@@ -1,8 +1,9 @@
 import React from 'react';
 import { Card, CardContent } from '@mui/material';
 import type { CardProps } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface AppCardProps extends CardProps {
+interface AppCardProps extends CardProps, StyledComponentProps {
   children: React.ReactNode;
   padding?: boolean;
 }

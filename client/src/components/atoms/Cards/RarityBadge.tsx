@@ -1,9 +1,9 @@
 import { Chip } from '@mui/material';
 import type { Rarity } from '../../../types/card';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface RarityBadgeProps {
+interface RarityBadgeProps extends StyledComponentProps {
   rarity: Rarity | string;
-  className?: string;
 }
 
 export const RarityBadge = ({ rarity, className = '' }: RarityBadgeProps) => {

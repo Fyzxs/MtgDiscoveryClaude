@@ -1,12 +1,12 @@
 import React from 'react';
 import { Modal, Box, CardMedia } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface CardModalProps {
+interface CardModalProps extends StyledComponentProps {
   open: boolean;
   onClose: () => void;
   imageUrl?: string;
   cardName?: string;
-  className?: string;
 }
 
 export const CardModal: React.FC<CardModalProps> = ({ 

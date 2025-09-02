@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { DarkBadge } from './DarkBadge';
+import type { PriceDisplayProps as StandardPriceProps } from '../../../types/components';
 
-interface PriceDisplayProps {
+interface PriceDisplayProps extends Omit<StandardPriceProps, 'price' | 'currency'> {
   price: string | number | null | undefined;
   currency?: 'USD' | 'EUR' | 'usd' | 'eur';
   label?: string;
-  className?: string;
 }
 
 export const PriceDisplay: React.FC<PriceDisplayProps> = ({ 

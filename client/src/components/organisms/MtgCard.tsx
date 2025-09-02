@@ -9,15 +9,14 @@ import { CardDetailsModal } from './CardDetailsModal';
 import { CardBadges } from '../atoms/Cards/CardBadges';
 import { getRarityGlowStyles } from '../../utils/rarityStyles';
 import { srOnly } from '../../styles/cardStyles';
+import type { StyledComponentProps, SelectionProps } from '../../types/components';
 
-interface MtgCardProps {
+interface MtgCardProps extends StyledComponentProps, SelectionProps {
   card: Card;
   context?: CardContext;
-  isSelected?: boolean;
   onCardClick?: (cardId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
-  className?: string;
 }
 
 export const MtgCard: React.FC<MtgCardProps> = React.memo(({ 

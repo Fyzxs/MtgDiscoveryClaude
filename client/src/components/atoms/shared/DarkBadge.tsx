@@ -1,16 +1,15 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface DarkBadgeProps {
+interface DarkBadgeProps extends StyledComponentProps {
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent) => void;
   href?: string;
   tabIndex?: number;
-  className?: string;
   component?: 'div' | 'a' | 'span';
   'aria-label'?: string;
-  sx?: SxProps<Theme>;
 }
 
 /**

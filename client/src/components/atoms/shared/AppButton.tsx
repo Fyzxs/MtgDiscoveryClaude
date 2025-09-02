@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button as MuiButtonBase, CircularProgress } from '@mui/material';
 import type { ButtonProps as MuiButtonProps } from '@mui/material';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface AppButtonProps extends Omit<MuiButtonProps, 'size'> {
+interface AppButtonProps extends Omit<MuiButtonProps, 'size'>, StyledComponentProps {
   isLoading?: boolean;
   size?: 'small' | 'medium' | 'large';
 }

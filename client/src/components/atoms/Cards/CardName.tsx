@@ -1,11 +1,11 @@
 import { Typography, Box } from '@mui/material';
 import { DarkBadge } from '../shared/DarkBadge';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface CardNameProps {
+interface CardNameProps extends StyledComponentProps {
   cardId?: string;
   cardName?: string;
   onCardClick?: (cardId?: string) => void;
-  className?: string;
 }
 
 export const CardName = ({ 

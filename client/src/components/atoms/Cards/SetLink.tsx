@@ -1,12 +1,12 @@
 import { Link, Typography, Box } from '@mui/material';
 import { SetIcon } from '../Sets/SetIcon';
+import type { StyledComponentProps } from '../../../types/components';
 
-interface SetLinkProps {
+interface SetLinkProps extends StyledComponentProps {
   setCode?: string;
   setName?: string;
   rarity?: string;
   onSetClick?: (setCode?: string) => void;
-  className?: string;
 }
 
 export const SetLink = ({ 

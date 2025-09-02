@@ -137,3 +137,36 @@ export interface SelectionProps {
   onSelectionChange?: (id: string, selected: boolean) => void;
   selectionMode?: 'none' | 'single' | 'multiple';
 }
+
+/**
+ * Props for modal/dialog components
+ */
+export interface ModalProps extends StyledComponentProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+/**
+ * Props for clickable components with navigation
+ */
+export interface ClickableProps extends StyledComponentProps {
+  onClick?: (e: React.MouseEvent) => void;
+  href?: string;
+  tabIndex?: number;
+  'aria-label'?: string;
+}
+
+/**
+ * Props for data display components that render null when no data
+ */
+export interface DataDisplayProps extends StyledComponentProps {
+  className?: string;
+}
+
+/**
+ * Props for components with loading states
+ */
+export interface LoadingProps {
+  isLoading?: boolean;
+  disabled?: boolean;
+}
