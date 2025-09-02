@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm run type-check:*)",
       "Bash(grep:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(rg:*)"
     ],
     "deny": [],
     "ask": []

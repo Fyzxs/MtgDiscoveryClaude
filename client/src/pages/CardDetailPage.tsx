@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -6,9 +6,11 @@ import {
   Typography,
   Box,
   Button,
-  CircularProgress
+  CircularProgress,
+  Alert
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { GET_CARDS_BY_NAME } from '../graphql/queries/cards';
 import { MtgCard } from '../components/organisms/MtgCard';
@@ -16,6 +18,8 @@ import { ResponsiveGridAutoFit } from '../components/atoms/layouts/ResponsiveGri
 import { useCardFiltering } from '../hooks/useCardFiltering';
 import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel';
 import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
+import { handleGraphQLError, globalLoadingManager } from '../utils/networkErrorHandler';
+import { AppErrorBoundary } from '../components/ErrorBoundaries';
 
 
 interface CardData {
@@ -60,22 +64,57 @@ export const CardDetailPage: React.FC = () => {
   const { cardName } = useParams<{ cardName: string }>();
   const navigate = useNavigate();
   const decodedCardName = decodeURIComponent(cardName || '');
+  const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const { loading, error, data } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
+  const { loading, error, data, refetch } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
     variables: {
       cardName: {
         cardName: decodedCardName
       }
     },
-    skip: !cardName
+    skip: !cardName,
+    errorPolicy: 'all'
   });
 
+  useEffect(() => {
+    const loadingKey = `card-detail-${decodedCardName}`;
+    globalLoadingManager.setLoading(loadingKey, loading);
+    
+    return () => {
+      globalLoadingManager.setLoading(loadingKey, false);
+    };
+  }, [loading, decodedCardName]);
+
+  useEffect(() => {
+    if (error) {
+      try {
+        const networkError = handleGraphQLError(error);
+        setUserFriendlyError(networkError.userMessage);
+      } catch {
+        setUserFriendlyError('Failed to load card details. Please try again.');
+      }
+    } else {
+      setUserFriendlyError(null);
+    }
+  }, [error]);
+
   const cards = data?.cardsByName?.data || [];
-  const hasError = error || data?.cardsByName?.__typename === 'FailureResponse';
-  const errorMessage = error?.message || data?.cardsByName?.status?.message;
+  const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
+  const graphQLError = data?.cardsByName?.status?.message;
 
   const handleBackClick = () => {
     navigate('/search/cards');
+  };
+
+  const handleRetry = async () => {
+    setRetryCount(prev => prev + 1);
+    setUserFriendlyError(null);
+    try {
+      await refetch();
+    } catch (retryError) {
+      console.error('Retry failed:', retryError);
+    }
   };
 
   // Use the shared card filtering hook (no search or sets filter for card detail page)
@@ -115,9 +154,33 @@ export const CardDetailPage: React.FC = () => {
         >
           Back to Search
         </Button>
-        <Typography color="error">
-          {errorMessage || 'Failed to load card details'}
-        </Typography>
+        
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          action={
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button 
+                color="inherit" 
+                size="small" 
+                startIcon={<RefreshIcon />}
+                onClick={handleRetry}
+                disabled={loading}
+              >
+                {loading ? 'Retrying...' : 'Retry'}
+              </Button>
+            </Box>
+          }
+        >
+          <Typography variant="body1">
+            {userFriendlyError || graphQLError || 'Failed to load card details'}
+          </Typography>
+          {retryCount > 0 && (
+            <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+              Retry attempts: {retryCount}
+            </Typography>
+          )}
+        </Alert>
       </Container>
     );
   }
@@ -180,21 +243,24 @@ export const CardDetailPage: React.FC = () => {
       />
 
       {/* Cards Grid */}
-      <ResponsiveGridAutoFit 
-        minWidth={250}
-        maxColumns={6}
-        gap={2}
-      >
-        {filteredCards.map((card) => (
-          <MtgCard 
-            key={card.id}
-            card={card}
-            context={{ isOnCardPage: true }}
-            onSelection={() => {}}
-            isSelected={false}
-          />
-        ))}
-      </ResponsiveGridAutoFit>
+      <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
+        <ResponsiveGridAutoFit 
+          minWidth={250}
+          maxColumns={6}
+          gap={2}
+        >
+          {filteredCards.map((card) => (
+            <AppErrorBoundary key={card.id} level="component" name={`Card-${card.id}`}>
+              <MtgCard 
+                card={card}
+                context={{ isOnCardPage: true }}
+                onSelection={() => {}}
+                isSelected={false}
+              />
+            </AppErrorBoundary>
+          ))}
+        </ResponsiveGridAutoFit>
+      </AppErrorBoundary>
     </Container>
   );
 };
