@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -10,8 +10,7 @@ import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { EmptyState } from '../components/atoms/shared/EmptyState';
 import type { SortOption } from '../components/atoms/shared/SortDropdown';
-import { useUrlState } from '../hooks/useUrlState';
-import { useFilterState, commonFilters, commonSorts } from '../hooks/useFilterState';
+import { useUrlFilterState, createUrlFilterConfig } from '../hooks/useUrlFilterState';
 import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { ResponsiveGrid } from '../components/atoms/layouts/ResponsiveGrid';
@@ -31,35 +30,17 @@ interface SetsResponse {
 }
 
 export const AllSetsPage: React.FC = () => {
-  // URL state configuration (don't manage 'page' here as it's handled by routing)
-  const urlStateConfig = {
-    search: { default: '' },
-    types: { default: [] },
-    sort: { default: 'release-desc' }
-  };
-
-  // Get initial values from URL
-  const { getInitialValues } = useUrlState({}, urlStateConfig);
-  const initialValues = getInitialValues();
-
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
   
-  // Configure filter state (memoized to prevent recreating on every render)
-  const filterConfig = useMemo(() => ({
-    searchFields: ['name', 'code'] as (keyof MtgSet)[],
-    sortOptions: {
-      'release-desc': (a: MtgSet, b: MtgSet) => new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime(),
-      'release-asc': (a: MtgSet, b: MtgSet) => new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime(),
-      'name-asc': commonSorts.alphabetical<MtgSet>('name', true),
-      'name-desc': commonSorts.alphabetical<MtgSet>('name', false),
-      'cards-desc': commonSorts.numeric<MtgSet>('cardCount', false),
-      'cards-asc': commonSorts.numeric<MtgSet>('cardCount', true)
-    },
-    filterFunctions: {
-      setTypes: commonFilters.multiSelect<MtgSet>('setType')
-    },
-    defaultSort: 'release-desc'
-  }), []);
+  // Simplified filter state with URL synchronization
+  const filterConfig = useMemo(() => 
+    createUrlFilterConfig('sets', {
+      urlParams: {
+        search: 'search',
+        sort: 'sort', 
+        filters: { setTypes: 'types' }
+      }
+    }), []);
 
   const {
     searchTerm,
@@ -69,15 +50,13 @@ export const AllSetsPage: React.FC = () => {
     setSearchTerm,
     setSortBy,
     updateFilter
-  } = useFilterState(
+  } = useUrlFilterState(
     data?.allSets?.data,
     filterConfig,
     {
-      search: initialValues.search || '',
-      sort: initialValues.sort || 'release-desc',
-      filters: {
-        setTypes: initialValues.types || []
-      }
+      search: '',
+      sort: 'release-desc',
+      filters: { setTypes: [] }
     }
   );
   
@@ -89,33 +68,7 @@ export const AllSetsPage: React.FC = () => {
     return Array.from(types).sort();
   };
 
-  // Sync non-search filters with URL immediately
-  useUrlState(
-    {
-      types: selectedSetTypes,
-      sort: sortBy
-    },
-    {
-      types: { default: [] },
-      sort: { default: 'release-desc' }
-    },
-    {
-      debounceMs: 0 // No debounce for dropdown/sort changes
-    }
-  );
-
-  // Sync search term separately with debounce
-  useUrlState(
-    {
-      search: searchTerm
-    },
-    {
-      search: { default: '' }
-    },
-    {
-      debounceMs: 300 // Match the search input debounce
-    }
-  );
+  // URL synchronization is handled automatically by useUrlFilterState
 
   const navigate = useNavigate();
   
@@ -125,13 +78,13 @@ export const AllSetsPage: React.FC = () => {
     }
   };
 
-  const handleSetTypeChange = (value: string[]) => {
+  const handleSetTypeChange = useCallback((value: string[]) => {
     updateFilter('setTypes', value);
-  };
+  }, [updateFilter]);
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = useCallback((value: string) => {
     setSortBy(value);
-  };
+  }, [setSortBy]);
 
   const sortOptions: SortOption[] = [
     { value: 'release-desc', label: 'Release Date (Newest)' },
@@ -161,7 +114,7 @@ export const AllSetsPage: React.FC = () => {
       <FilterPanel
         config={{
           search: {
-            value: initialValues.search || '',
+            value: searchTerm,
             onChange: setSearchTerm,
             placeholder: 'Search sets...',
             debounceMs: 300
