@@ -288,7 +288,6 @@ export const SetPage: React.FC = () => {
     // Process each group
     for (const [groupId, filteredGroupCards] of groupedCards.entries()) {
       const displayName = getGroupDisplayName(groupId, groupings);
-      const order = getGroupOrder(groupId, groupings);
       const totalGroupCards = totalCardsPerGroup.get(groupId) || [];
       
       groupsArray.push({

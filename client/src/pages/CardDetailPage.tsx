@@ -17,9 +17,6 @@ import { useCardFiltering } from '../hooks/useCardFiltering';
 import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel';
 import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
 
-interface CardDetailPageParams {
-  cardName: string;
-}
 
 interface CardData {
   id: string;

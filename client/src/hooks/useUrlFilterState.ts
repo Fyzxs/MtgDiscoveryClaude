@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useRef } from 'react';
+import { useMemo } from 'react';
 import { useFilterState } from './useFilterState';
 import { useUrlState } from './useUrlState';
 import type { UseFilterStateConfig } from '../types/filters';

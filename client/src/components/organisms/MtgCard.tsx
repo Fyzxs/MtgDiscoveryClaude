@@ -43,18 +43,6 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
     ? artists.filter(a => a !== context.currentArtist)
     : artists;
 
-  // Debug: Log what we're receiving
-  // console.log('MtgCard Debug:', {
-  //   cardName: card?.name,
-  //   artist: card?.artist,
-  //   collectorNumber: card?.collectorNumber,
-  //   rarity: card?.rarity,
-  //   displayArtists,
-  //   context
-  // });
-
-
-
   const selectCard = useCallback((cardElement: HTMLElement) => {
     // Only remove selected class from currently selected card (faster)
     const currentlySelected = document.querySelector('[data-mtg-card="true"].selected');
