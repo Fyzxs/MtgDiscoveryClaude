@@ -1,17 +1,19 @@
 import { gql } from '@apollo/client';
 
 export const ARTIST_NAME_SEARCH = gql`
-  query ArtistNameSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
-    artistNameSearch(searchTerm: $searchTerm) {
+  query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+    artistSearch(searchTerm: $searchTerm) {
       __typename
-      ... on SuccessArtistNameSearchResultsResponse {
+      ... on SuccessArtistSearchResultsResponse {
         data {
+          artistId
           name
         }
       }
       ... on FailureResponse {
         status {
           message
+          statusCode
         }
       }
     }

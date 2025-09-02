@@ -5,6 +5,7 @@ import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
 import { CardSearchPage } from './pages/CardSearchPage'
 import { ArtistSearchPage } from './pages/ArtistSearchPage'
+import { ArtistCardsPage } from './pages/ArtistCardsPage'
 import { CardDetailPage } from './pages/CardDetailPage'
 import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
@@ -79,6 +80,11 @@ function App() {
           <Route path="/search/artists" element={
             <PageErrorBoundary name="ArtistSearchPage">
               <ArtistSearchPage />
+            </PageErrorBoundary>
+          } />
+          <Route path="/artists/:artistName" element={
+            <PageErrorBoundary name="ArtistCardsPage">
+              <ArtistCardsPage />
             </PageErrorBoundary>
           } />
           <Route path="/card/:cardName" element={

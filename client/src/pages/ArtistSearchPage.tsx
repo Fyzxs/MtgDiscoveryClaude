@@ -14,15 +14,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import { ARTIST_NAME_SEARCH } from '../graphql/queries/artistSearch';
 
 interface ArtistNameResult {
+  artistId: string;
   name: string;
 }
 
 interface ArtistNameSearchResponse {
-  artistNameSearch: {
+  artistSearch: {
     __typename: string;
     data?: ArtistNameResult[];
     status?: {
       message: string;
+      statusCode: string;
     };
   };
 }
@@ -121,14 +123,14 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
           </Box>
         )}
         
-        {!loading && debouncedSearchTerm.length >= 3 && data?.artistNameSearch?.data && (
+        {!loading && debouncedSearchTerm.length >= 3 && data?.artistSearch?.data && (
           <SearchResults 
-            artists={data.artistNameSearch.data} 
+            artists={data.artistSearch.data} 
             onArtistClick={handleArtistClick}
           />
         )}
         
-        {!loading && debouncedSearchTerm.length >= 3 && data?.artistNameSearch?.data?.length === 0 && (
+        {!loading && debouncedSearchTerm.length >= 3 && data?.artistSearch?.data?.length === 0 && (
           <Typography>No artists found matching "{debouncedSearchTerm}"</Typography>
         )}
       </Box>
@@ -186,7 +188,7 @@ const SearchResults = React.memo<{
       }}>
         {sortedArtists.map((artist) => (
           <ArtistResult
-            key={artist.name}
+            key={artist.artistId}
             artist={artist}
             onArtistClick={onArtistClick}
             styles={artistPaperStyles}

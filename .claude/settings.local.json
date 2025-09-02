@@ -21,7 +21,10 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(rg:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(git checkout:*)",
+      "Bash(npm install)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
