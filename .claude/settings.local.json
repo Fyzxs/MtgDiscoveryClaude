@@ -9,7 +9,11 @@
       "Bash(do echo \"=== $dir ===\")",
       "Bash(ls:*)",
       "Bash(done)",
-      "Bash(dotnet clean:*)"
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet remove:*)"
     ],
     "deny": [],
     "ask": []
