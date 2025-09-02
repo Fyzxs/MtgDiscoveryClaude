@@ -80,6 +80,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
         }
 
         _dashboard.LogRulingsWritten(rulings.Count);
+        _dashboard.UpdateCompletedCount("Rulings", rulings.Count);
     }
 }
 

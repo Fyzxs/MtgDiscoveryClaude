@@ -113,6 +113,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
         }
 
         _dashboard.LogSetsWritten(sets.Count);
+        _dashboard.UpdateCompletedCount("Sets", sets.Count);
     }
 }
 

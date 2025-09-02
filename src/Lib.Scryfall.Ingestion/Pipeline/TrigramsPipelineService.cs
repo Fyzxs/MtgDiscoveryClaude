@@ -55,7 +55,7 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
         {
             current++;
             string trigram = aggregate.Trigram();
-            _dashboard.UpdateProgress("Trigrams:", current, trigramCount, "Writing Trigram", trigram);
+            _dashboard.UpdateProgress("Card Trigrams:", current, trigramCount, "Writing Trigram", trigram);
 
             CardNameTrigram entity = new()
             {
@@ -76,6 +76,7 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
         _aggregator.Clear();
 
         _logger.LogTrigramWritePhaseCompleted(trigramCount);
+        _dashboard.UpdateCompletedCount("Card Trigrams", trigramCount);
     }
 }
 

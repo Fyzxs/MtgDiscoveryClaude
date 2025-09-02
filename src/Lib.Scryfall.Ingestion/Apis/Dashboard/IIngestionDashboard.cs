@@ -11,6 +11,7 @@ public interface IIngestionDashboard : ILogger
     void UpdateTrigramProgress(int current, int total, string name);
     void AddCompletedSet(string name);
     void UpdateMemoryUsage();
+    void UpdateCompletedCount(string type, int count);
     void SetStartTime();
     void Refresh();
     void Complete(string message);

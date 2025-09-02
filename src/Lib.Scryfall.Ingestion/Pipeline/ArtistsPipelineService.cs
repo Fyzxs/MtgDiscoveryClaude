@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
@@ -16,6 +17,7 @@ namespace Lib.Scryfall.Ingestion.Pipeline;
 internal sealed class ArtistsPipelineService : IArtistsPipelineService
 {
     private readonly IArtistAggregator _artistAggregator;
+    private readonly IArtistTrigramAggregator _artistTrigramAggregator;
     private readonly ScryfallArtistItemsScribe _artistItemsScribe;
     private readonly ScryfallArtistCardsScribe _artistCardsScribe;
     private readonly ScryfallArtistSetsScribe _artistSetsScribe;
@@ -27,6 +29,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
         ILogger logger)
     {
         _artistAggregator = new MonoStateArtistAggregator();
+        _artistTrigramAggregator = new MonoStateArtistTrigramAggregator();
         _artistItemsScribe = new ScryfallArtistItemsScribe(logger);
         _artistCardsScribe = new ScryfallArtistCardsScribe(logger);
         _artistSetsScribe = new ScryfallArtistSetsScribe(logger);
@@ -55,6 +58,9 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             string artistId = artist.ArtistId();
             string displayName = artist.ArtistNames().FirstOrDefault() ?? artistId;
             _dashboard.UpdateProgress("Artists:", current, artistCount, "Writing", displayName);
+
+            // Track artist for trigram generation
+            _artistTrigramAggregator.TrackArtist(artistId, artist.ArtistNames());
 
             // Write ArtistItem (main artist record)
             ArtistAggregateData artistData = new()
@@ -95,6 +101,48 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
         }
 
         _dashboard.LogArtistsWritten(artistCount);
+        _dashboard.UpdateCompletedCount("Artists", artistCount);
+
+        // Write artist trigrams
+        await WriteArtistTrigramsAsync().ConfigureAwait(false);
+    }
+
+    private async Task WriteArtistTrigramsAsync()
+    {
+        List<IArtistTrigramAggregate> trigrams = _artistTrigramAggregator.GetTrigrams().ToList();
+        int trigramCount = trigrams.Count;
+
+        if (trigramCount == 0) return;
+
+        _dashboard.LogWritingArtistTrigrams(trigramCount);
+
+        int current = 0;
+        foreach (IArtistTrigramAggregate aggregate in trigrams)
+        {
+            current++;
+            string trigram = aggregate.Trigram();
+            _dashboard.UpdateProgress("Artist Trigrams:", current, trigramCount, "Writing Trigram", trigram);
+
+            ArtistNameTrigram entity = new()
+            {
+                Trigram = aggregate.Trigram(),
+                Artists = new Collection<ArtistNameTrigramEntry>(
+                    aggregate.Entries().Select(entry => new ArtistNameTrigramEntry
+                    {
+                        ArtistId = entry.ArtistId(),
+                        Name = entry.Name(),
+                        Normalized = entry.Normalized(),
+                        Positions = new Collection<int>(entry.Positions().ToList())
+                    }).ToList())
+            };
+
+            ArtistNameTrigramsScribe trigramScribe = new(_dashboard);
+            await trigramScribe.UpsertAsync(entity).ConfigureAwait(false);
+        }
+
+        _artistTrigramAggregator.Clear();
+        _dashboard.LogArtistTrigramsWritten(trigramCount);
+        _dashboard.UpdateCompletedCount("Artist Trigrams", trigramCount);
     }
 }
 
@@ -114,4 +162,14 @@ internal static partial class ArtistsPipelineServiceLoggerExtensions
         Level = LogLevel.Information,
         Message = "Successfully wrote {Count} artists to Cosmos DB")]
     public static partial void LogArtistsWritten(this ILogger logger, int count);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Writing {TrigramCount} artist trigram indexes to Cosmos DB")]
+    public static partial void LogWritingArtistTrigrams(this ILogger logger, int trigramCount);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Successfully wrote {TrigramCount} artist trigram indexes to Cosmos DB")]
+    public static partial void LogArtistTrigramsWritten(this ILogger logger, int trigramCount);
 }

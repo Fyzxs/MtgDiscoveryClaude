@@ -36,7 +36,7 @@ internal sealed class SilentDashboard : IIngestionDashboard
         {
             _logger.LogProgressUpdate(type, current, total, action);
         }
-        else if (type == "Trigrams" && (current == total || current % 500 == 0))
+        else if (type == "Card Trigrams" && (current == total || current % 500 == 0))
         {
             _logger.LogProgressUpdate(type, current, total, action);
         }
@@ -101,6 +101,15 @@ internal sealed class SilentDashboard : IIngestionDashboard
         _logger.LogIngestionComplete(message);
     }
 
+    public void UpdateCompletedCount(string type, int count)
+    {
+        // Log completed counts at specific milestones
+        if (count > 0 && (count % 100 == 0 || count == 1))
+        {
+            _logger.LogCompletedCount(type, count);
+        }
+    }
+
     // ILogger implementation - delegate to underlying logger
     public IDisposable BeginScope<TState>(TState state) => _logger.BeginScope(state);
 
@@ -153,4 +162,9 @@ internal static partial class SilentDashboardLoggerExtensions
         Level = LogLevel.Information,
         Message = "{Message}")]
     public static partial void LogIngestionComplete(this ILogger logger, string message);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Completed {Type}: {Count}")]
+    public static partial void LogCompletedCount(this ILogger logger, string type, int count);
 }

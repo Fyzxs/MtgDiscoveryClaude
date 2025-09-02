@@ -9,6 +9,7 @@ using Lib.Scryfall.Ingestion.Apis.Pipeline;
 using Lib.Scryfall.Ingestion.BulkIngestion;
 using Lib.Scryfall.Ingestion.Mappers;
 using Lib.Scryfall.Shared.Apis.Models;
+using Lib.Shared.Abstractions.Identifiers;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Pipeline;
@@ -17,8 +18,10 @@ internal sealed class CardsPipelineService : ICardsPipelineService
 {
     private readonly CardsBulkDataFetcher _cardsFetcher;
     private readonly ScryfallCardItemsScribe _cardScribe;
+    private readonly ScryfallCardsByNameScribe _cardsByNameScribe;
     private readonly ScryfallSetCardsScribe _setCardsScribe;
     private readonly IScryfallCardToSetCardMapper _setCardMapper;
+    private readonly ICardNameGuidGenerator _guidGenerator;
     private readonly IIngestionDashboard _dashboard;
     private readonly IBulkProcessingConfiguration _config;
 
@@ -31,8 +34,10 @@ internal sealed class CardsPipelineService : ICardsPipelineService
     {
         _cardsFetcher = cardsFetcher;
         _cardScribe = cardScribe;
+        _cardsByNameScribe = new ScryfallCardsByNameScribe(logger);
         _setCardsScribe = new ScryfallSetCardsScribe(logger);
         _setCardMapper = new ScryfallCardToSetCardMapper();
+        _guidGenerator = new CardNameGuidGenerator();
         _dashboard = dashboard;
         _config = config;
     }
@@ -101,12 +106,22 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             };
             await _cardScribe.UpsertAsync(cardItem).ConfigureAwait(false);
 
+            // Write the card by name (for name-based lookups)
+            CardNameGuid nameGuid = _guidGenerator.GenerateGuid((string)card.Data().name);
+            ScryfallCardByName cardByName = new()
+            {
+                NameGuid = nameGuid.AsSystemType().ToString(),
+                Data = card.Data()
+            };
+            await _cardsByNameScribe.UpsertAsync(cardByName).ConfigureAwait(false);
+
             // Write the set-card relationship
             ScryfallSetCard setCard = _setCardMapper.Map(card.Data());
             await _setCardsScribe.UpsertAsync(setCard).ConfigureAwait(false);
         }
 
         _dashboard.LogCardsWritten(cards.Count);
+        _dashboard.UpdateCompletedCount("Cards", cards.Count);
     }
 
 }
@@ -130,12 +145,12 @@ internal static partial class CardsPipelineServiceLoggerExtensions
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Writing {Count} cards and set-card relationships to Cosmos DB")]
+        Message = "Writing {Count} cards, cards-by-name, and set-card relationships to Cosmos DB")]
     public static partial void LogWritingCards(this ILogger logger, int count);
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Successfully wrote {Count} cards and set-card relationships to Cosmos DB")]
+        Message = "Successfully wrote {Count} cards, cards-by-name, and set-card relationships to Cosmos DB")]
     public static partial void LogCardsWritten(this ILogger logger, int count);
 
     [LoggerMessage(

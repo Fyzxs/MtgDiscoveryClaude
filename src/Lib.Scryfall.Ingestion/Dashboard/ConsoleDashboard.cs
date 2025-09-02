@@ -11,6 +11,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 {
     private readonly object _lock = new();
     private readonly Queue<string> _recentLogs = new(3);
+    private readonly Dictionary<string, int> _completedCounts = new();
     private readonly Stopwatch _stopwatch = new();
     private readonly char[] _spinnerChars = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
     private readonly int _refreshFrequency;
@@ -114,6 +115,15 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     public void AddCompletedSet(string name)
     {
         // No longer tracking completed sets
+    }
+
+    public void UpdateCompletedCount(string type, int count)
+    {
+        lock (_lock)
+        {
+            _completedCounts[type] = count;
+            CheckAndRefresh();
+        }
     }
 
     public void UpdateMemoryUsage()
@@ -294,6 +304,20 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             }
         }
 
+        // Display completed counts tracker
+        if (_completedCounts.Count > 0)
+        {
+            lines.Add("");
+            lines.Add("  Completed:");
+            string completedLine = "  ";
+            foreach (KeyValuePair<string, int> kvp in _completedCounts.OrderBy(x => GetTypeOrder(x.Key)))
+            {
+                if (completedLine.Length > 2) completedLine += " | ";
+                completedLine += $"{kvp.Key}: {kvp.Value:N0}";
+            }
+            lines.Add(completedLine);
+        }
+
         if (_recentLogs.Count > 0)
         {
             lines.Add("");
@@ -365,6 +389,20 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         }
 
         Refresh();
+    }
+
+    private static int GetTypeOrder(string type)
+    {
+        return type switch
+        {
+            "Sets" => 1,
+            "Cards" => 2,
+            "Rulings" => 3,
+            "Artists" => 4,
+            "Card Trigrams" => 5,
+            "Artist Trigrams" => 6,
+            _ => 99
+        };
     }
 
     private sealed class NullScope : IDisposable
