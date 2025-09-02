@@ -437,7 +437,7 @@ export const SetPage: React.FC = () => {
               key: 'artists',
               // Use selectedArtists which are already validated
               value: selectedArtists,
-              onChange: (value) => updateFilter('artists', value),
+              onChange: (value: string[]) => updateFilter('artists', value),
               options: allArtists,
               label: 'Artist',
               placeholder: 'All Artists',

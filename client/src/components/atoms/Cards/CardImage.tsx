@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CardMedia, Box, Alert, Typography } from '@mui/material';
+import { CardMedia, Box, Typography } from '@mui/material';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
 interface CardImageProps {

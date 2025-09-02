@@ -245,17 +245,14 @@ export const CardDetailPage: React.FC = () => {
       {/* Cards Grid */}
       <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
         <ResponsiveGridAutoFit 
-          minWidth={250}
-          maxColumns={6}
-          gap={2}
+          minItemWidth={250}
+          spacing={2}
         >
           {filteredCards.map((card) => (
             <AppErrorBoundary key={card.id} level="component" name={`Card-${card.id}`}>
               <MtgCard 
                 card={card}
                 context={{ isOnCardPage: true }}
-                onSelection={() => {}}
-                isSelected={false}
               />
             </AppErrorBoundary>
           ))}

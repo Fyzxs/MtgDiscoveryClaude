@@ -491,4 +491,4 @@ storybook-static
 
 
 # CLAUDE
-.claude/state/*
+.claude/state/**

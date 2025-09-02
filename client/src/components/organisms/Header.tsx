@@ -150,12 +150,11 @@ export const Header: React.FC = () => {
               Cards
             </MenuItem>
             <MenuItem 
-              disabled 
+              onClick={() => handleSearchMenuClick('/search/artists')}
               role="menuitem"
-              aria-label="Artist search coming soon"
-              sx={{ color: 'text.disabled' }}
+              aria-label="Search for Magic artists"
             >
-              Artists (Coming Soon)
+              Artists
             </MenuItem>
           </Menu>
         </Box>
