@@ -1,14 +1,21 @@
 # MTG Card Component System
 
-This is a comprehensive component library for displaying Magic: The Gathering cards following Atomic Design principles.
+This is a comprehensive component library for displaying Magic: The Gathering cards following Atomic Design principles with Material-UI components.
 
 ## Component Hierarchy
 
 ### Atoms (Basic Building Blocks)
-- **RarityBadge** - Displays card rarity with color-coded badges
+#### Shared Components
+- **AppButton** (`atoms/shared/AppButton.tsx`) - MUI Button wrapper with loading state
+- **AppCard** (`atoms/shared/AppCard.tsx`) - MUI Card wrapper with consistent styling
+- **AppInput** (`atoms/shared/AppInput.tsx`) - MUI TextField wrapper for forms
+- **PriceDisplay** (`atoms/shared/PriceDisplay.tsx`) - Color-coded price display
+- **DebouncedSearchInput** (`atoms/shared/DebouncedSearchInput.tsx`) - Search input with debouncing
+
+#### Card-Specific Atoms
+- **RarityBadge** - Displays card rarity with color-coded badges  
 - **ManaSymbol** - Individual mana symbol representation
 - **CardImage** - Card image with lazy loading and error states
-- **PriceDisplay** - Color-coded price display (green < $5, yellow $5-25, red > $25)
 - **ExternalLinkIcon** - Icons for external services (Scryfall, TCGPlayer, etc.)
 - **CollectorNumber** - Shows collector number with optional set code
 
@@ -18,36 +25,27 @@ This is a comprehensive component library for displaying Magic: The Gathering ca
 - **CardLinks** - External link group for card resources
 - **CollectorInfo** - Collector number + rarity badge combination
 - **CardMetadata** - Card name, type, set, and date information
+- **CardImageDisplay** - Enhanced card image with flip functionality
 
 ### Organisms (Complex Components)
-- **CardDisplay** - Full card display with all information and hover state
-- **CardCompact** - Compact card view optimized for grid layouts
+- **CardDisplayResponsive** - Full card display with responsive mobile/desktop layouts
+- **CardCompact** - Compact card view optimized for grid layouts (converted to MUI sx props)
+- **MtgCard** - Alternative card display component
+- **CardDetailsModal** - Modal for detailed card information
 
 ## Usage
 
 ### Basic Card Display
-```tsx
-import { CardDisplay } from './components/organisms/CardDisplayResponsive';
+Reference: `organisms/CardDisplayResponsive.tsx:21-28`
 
-<CardDisplay 
-  card={cardData} 
-  context={{
-    isOnSetPage: false,
-    showCollectorInfo: true
-  }}
-/>
-```
+### Compact Grid View  
+Reference: `organisms/CardCompact.tsx:11-16`
 
-### Compact Grid View
-```tsx
-import { CardCompact } from './components/organisms/CardCompact';
+### App Components
+Reference: `atoms/shared/AppButton.tsx:5-8` for props interface pattern
 
-<div className="grid grid-cols-3 gap-4">
-  {cards.map(card => (
-    <CardCompact key={card.id} card={card} />
-  ))}
-</div>
-```
+### MUI Styling Pattern
+Reference: `organisms/CardCompact.tsx:44-58` for sx props usage
 
 ## Context-Aware Display
 
@@ -59,12 +57,18 @@ Components adapt based on context:
 
 ## Styling
 
-All components use Tailwind CSS with:
-- Dark theme optimized for MTG aesthetic
-- Rarity-based border glows
-- Price-based color coding
-- Responsive design
-- Hover states and transitions
+All components use Material-UI with:
+- Dark theme optimized for MTG aesthetic (`theme/index.ts:137-183`)
+- Rarity-based colors and shadows (`theme/index.ts:160-168`)
+- Custom MTG theme extensions (`theme/index.ts:266-305`)
+- Responsive design using MUI breakpoints
+- Hover states via sx props
+
+### Migration from Tailwind
+Components are being converted from Tailwind classes to MUI sx props:
+- `className="bg-gray-900"` → `sx={{ bgcolor: 'grey.900' }}`
+- `className="flex gap-4"` → `sx={{ display: 'flex', gap: 2 }}`
+- Theme-based colors preferred over hardcoded values
 
 ## Demo Page
 
