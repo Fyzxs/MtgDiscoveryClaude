@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Typography } from '@mui/material';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
@@ -20,45 +21,44 @@ export const CardCompact: React.FC<CardCompactProps> = ({
   onClick,
   className = ''
 }) => {
-  // Determine border color based on rarity
-  const getBorderGlow = (rarity?: string): string => {
+  // Determine border glow based on rarity
+  const getBorderGlow = (rarity?: string) => {
     switch (rarity?.toLowerCase()) {
       case 'common':
-        return 'hover:shadow-gray-600/30';
+        return { '&:hover': { boxShadow: '0 0 20px rgba(156, 163, 175, 0.3)' } };
       case 'uncommon':
-        return 'hover:shadow-gray-400/30';
+        return { '&:hover': { boxShadow: '0 0 20px rgba(156, 163, 175, 0.4)' } };
       case 'rare':
-        return 'hover:shadow-yellow-600/30';
+        return { '&:hover': { boxShadow: '0 0 20px rgba(217, 119, 6, 0.3)' } };
       case 'mythic':
-        return 'hover:shadow-orange-600/30';
+        return { '&:hover': { boxShadow: '0 0 20px rgba(234, 88, 12, 0.4)' } };
       case 'special':
       case 'bonus':
-        return 'hover:shadow-purple-600/30';
+        return { '&:hover': { boxShadow: '0 0 20px rgba(147, 51, 234, 0.3)' } };
       default:
-        return 'hover:shadow-gray-700/30';
+        return {};
     }
   };
 
-  const glowClass = getBorderGlow(card.rarity);
-
   return (
-    <div 
-      className={`
-        relative 
-        bg-gray-900 
-        rounded-lg 
-        overflow-hidden
-        hover:shadow-lg
-        ${glowClass}
-        transition-all 
-        duration-300
-        cursor-pointer
-        ${className}
-      `}
+    <Box 
+      sx={{
+        position: 'relative',
+        bgcolor: 'grey.900',
+        borderRadius: 2,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'all 0.3s',
+        '&:hover': {
+          boxShadow: 3
+        },
+        ...getBorderGlow(card.rarity)
+      }}
       onClick={onClick}
+      className={className}
     >
       {/* Card Image */}
-      <div className="relative">
+      <Box sx={{ position: 'relative' }}>
         <CardImageDisplay 
           card={card}
           size="normal"
@@ -67,18 +67,27 @@ export const CardCompact: React.FC<CardCompactProps> = ({
         />
         
         {/* Overlay info at bottom of image */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/90 to-transparent p-3">
+        <Box 
+          sx={{ 
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            background: 'linear-gradient(to top, rgba(17, 24, 39, 1) 0%, rgba(17, 24, 39, 0.9) 50%, transparent 100%)',
+            p: 3
+          }}
+        >
           {/* Collector info row */}
-          <div className="flex justify-between items-center mb-2">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <CollectorNumber 
               number={card.collectorNumber} 
               setCode={card.setCode}
-              className="text-xs"
+              sx={{ fontSize: '0.75rem' }}
             />
             {card.rarity && (
               <RarityBadge rarity={card.rarity} />
             )}
-          </div>
+          </Box>
 
           {/* Artist */}
           <ArtistInfo
@@ -103,7 +112,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
           )}
 
           {/* Price and Links */}
-          <div className="flex justify-between items-center mt-2">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
             <PriceDisplay 
               price={card.prices?.usd} 
               currency="usd"
@@ -118,9 +127,9 @@ export const CardCompact: React.FC<CardCompactProps> = ({
               cardName={card.name}
               className="scale-75 origin-right"
             />
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
