@@ -8,7 +8,8 @@ import {
   Grid,
   Stack,
   Button,
-  Tooltip
+  Tooltip,
+  Chip
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { getLegalityColor } from '../../theme';
@@ -165,9 +166,20 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 </IconButton>
               </Box>
             )}
-            <Typography variant="h5" component="h2">
+            <Link 
+              href={`/card/${encodeURIComponent(card.name)}`}
+              variant="h5"
+              component="a"
+              sx={{ 
+                color: 'text.primary',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline'
+                }
+              }}
+            >
               {card.name}
-            </Typography>
+            </Link>
             {card.manaCost && <ManaCost manaCost={card.manaCost} />}
           </Box>
           <IconButton onClick={onClose}>

@@ -93,7 +93,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   // Format promo type text for display
   const formatPromoText = (promoType: string): string => {
     const formatMap: Record<string, string> = {
-      'prerelease': 'Prerelease',
+      'prerelease': 'Pre-Release',
       'promobundle': 'Promo Bundle',
       'buyabox': 'Buy-a-Box',
       'intro_pack': 'Intro Pack',
@@ -117,6 +117,9 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       'surgefoil': 'Surge Foil',
       'raisedfoil': 'Raised Foil',
       'sldbonus': 'SLD Bonus',
+      'datestamped': 'Date Stamped',
+      'promopack': 'Promo Pack',
+      'starterdeck': 'Starter Deck',
     };
     return formatMap[promoType.toLowerCase()] || promoType.replace(/_/g, ' ')
       .split(' ')

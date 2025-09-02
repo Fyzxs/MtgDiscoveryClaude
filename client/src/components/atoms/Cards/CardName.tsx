@@ -21,7 +21,7 @@ export const CardName: React.FC<CardNameProps> = ({
     <Box className={className}>
       <DarkBadge
         component="a"
-        href={`/cards/${cardId}`}
+        href={`/card/${encodeURIComponent(cardName)}`}
         tabIndex={-1}
         onClick={(e) => {
           e.stopPropagation();
