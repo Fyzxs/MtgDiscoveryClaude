@@ -1,4 +1,3 @@
-import React from 'react';
 import { DarkBadge } from '../shared/DarkBadge';
 
 interface ArtistLinkProps {
@@ -8,12 +7,12 @@ interface ArtistLinkProps {
   className?: string;
 }
 
-export const ArtistLink: React.FC<ArtistLinkProps> = ({ 
+export const ArtistLink = ({ 
   artistName,
   artistId,
   onArtistClick,
   className 
-}) => {
+}: ArtistLinkProps) => {
   return (
     <DarkBadge
       component="a"

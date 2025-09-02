@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 interface CollectorNumberProps {
@@ -7,11 +6,11 @@ interface CollectorNumberProps {
   className?: string;
 }
 
-export const CollectorNumber: React.FC<CollectorNumberProps> = ({ 
+export const CollectorNumber = ({ 
   number, 
   setCode,
   className = '' 
-}) => {
+}: CollectorNumberProps) => {
   if (!number) return null;
 
   return (

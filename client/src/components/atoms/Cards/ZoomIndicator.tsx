@@ -1,16 +1,16 @@
-import React from 'react';
 import { IconButton } from '@mui/material';
 import { ZoomIn } from '@mui/icons-material';
+import type { MouseEvent } from 'react';
 
 interface ZoomIndicatorProps {
-  onZoomClick: (e: React.MouseEvent) => void;
+  onZoomClick: (e: MouseEvent) => void;
   className?: string;
 }
 
-export const ZoomIndicator: React.FC<ZoomIndicatorProps> = ({ 
+export const ZoomIndicator = ({ 
   onZoomClick,
   className 
-}) => {
+}: ZoomIndicatorProps) => {
   return (
     <IconButton
       tabIndex={-1}

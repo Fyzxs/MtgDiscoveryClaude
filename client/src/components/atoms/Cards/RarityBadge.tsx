@@ -1,4 +1,3 @@
-import React from 'react';
 import { Chip } from '@mui/material';
 import type { Rarity } from '../../../types/card';
 
@@ -7,7 +6,7 @@ interface RarityBadgeProps {
   className?: string;
 }
 
-export const RarityBadge: React.FC<RarityBadgeProps> = ({ rarity, className = '' }) => {
+export const RarityBadge = ({ rarity, className = '' }: RarityBadgeProps) => {
   const getRarityColors = (r: string): { background: string; color: string } => {
     switch (r.toLowerCase()) {
       case 'common':

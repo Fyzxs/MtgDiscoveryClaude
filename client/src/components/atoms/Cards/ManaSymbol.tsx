@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@mui/material';
 
 interface ManaSymbolProps {
@@ -7,11 +6,11 @@ interface ManaSymbolProps {
   className?: string;
 }
 
-export const ManaSymbol: React.FC<ManaSymbolProps> = ({ 
+export const ManaSymbol = ({ 
   symbol, 
   size = 'medium',
   className = '' 
-}) => {
+}: ManaSymbolProps) => {
   const getSizeValue = () => {
     switch (size) {
       case 'small': return '1rem';

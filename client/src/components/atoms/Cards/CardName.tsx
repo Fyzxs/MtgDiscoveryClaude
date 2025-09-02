@@ -1,4 +1,3 @@
-import React from 'react';
 import { Typography, Box } from '@mui/material';
 import { DarkBadge } from '../shared/DarkBadge';
 
@@ -9,12 +8,12 @@ interface CardNameProps {
   className?: string;
 }
 
-export const CardName: React.FC<CardNameProps> = ({ 
+export const CardName = ({ 
   cardId,
   cardName,
   onCardClick,
   className 
-}) => {
+}: CardNameProps) => {
   if (!cardName) return null;
 
   return (

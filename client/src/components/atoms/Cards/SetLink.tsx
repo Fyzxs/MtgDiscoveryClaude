@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, Typography, Box } from '@mui/material';
 import { SetIcon } from '../Sets/SetIcon';
 
@@ -10,13 +9,13 @@ interface SetLinkProps {
   className?: string;
 }
 
-export const SetLink: React.FC<SetLinkProps> = ({ 
+export const SetLink = ({ 
   setCode,
   setName,
   rarity,
   onSetClick,
   className 
-}) => {
+}: SetLinkProps) => {
   if (!setName) return null;
 
   return (
