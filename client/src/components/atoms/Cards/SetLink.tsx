@@ -22,7 +22,16 @@ export const SetLink = ({
     <Box className={className}>
       <Link
         href={`/set/${setCode?.toLowerCase()}`}
-        tabIndex={-1}
+        tabIndex={0}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+            if (onSetClick) {
+              e.preventDefault();
+              onSetClick(setCode);
+            }
+          }
+        }}
         onClick={(e) => {
           e.stopPropagation();
           if (onSetClick) {

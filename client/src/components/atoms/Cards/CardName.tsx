@@ -21,7 +21,16 @@ export const CardName = ({
       <DarkBadge
         component="a"
         href={`/card/${encodeURIComponent(cardName)}`}
-        tabIndex={-1}
+        tabIndex={0}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.stopPropagation();
+            if (onCardClick) {
+              e.preventDefault();
+              onCardClick(cardId);
+            }
+          }
+        }}
         onClick={(e) => {
           e.stopPropagation();
           if (onCardClick) {

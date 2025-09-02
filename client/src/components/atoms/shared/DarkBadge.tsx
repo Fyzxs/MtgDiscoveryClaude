@@ -6,6 +6,7 @@ import type { StyledComponentProps } from '../../../types/components';
 interface DarkBadgeProps extends StyledComponentProps {
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
   href?: string;
   tabIndex?: number;
   component?: 'div' | 'a' | 'span';
@@ -19,6 +20,7 @@ interface DarkBadgeProps extends StyledComponentProps {
 export const DarkBadge: React.FC<DarkBadgeProps> = ({
   children,
   onClick,
+  onKeyDown,
   href,
   tabIndex,
   className,
@@ -59,6 +61,7 @@ export const DarkBadge: React.FC<DarkBadgeProps> = ({
         component="a"
         href={href}
         onClick={onClick}
+        onKeyDown={onKeyDown}
         tabIndex={tabIndex}
         className={className}
         aria-label={ariaLabel}
@@ -73,6 +76,7 @@ export const DarkBadge: React.FC<DarkBadgeProps> = ({
     <Box
       component={component}
       onClick={onClick}
+      onKeyDown={onKeyDown}
       tabIndex={tabIndex}
       className={className}
       aria-label={ariaLabel}

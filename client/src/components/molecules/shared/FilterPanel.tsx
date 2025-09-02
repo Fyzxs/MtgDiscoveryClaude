@@ -42,11 +42,22 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   // For horizontal layout using Grid
   if (layout === 'horizontal') {
     return (
-      <Box sx={{ mb: 4, ...sx }}>
-        <Grid container spacing={spacing} sx={{ alignItems: 'center', justifyContent: 'center' }}>
+      <Box 
+        component="section" 
+        role="search" 
+        aria-label="Filter and search options"
+        sx={{ mb: 4, ...sx }}
+      >
+        <Grid 
+          container 
+          spacing={spacing} 
+          sx={{ alignItems: 'center', justifyContent: 'center' }}
+          role="group"
+          aria-label="Filter controls"
+        >
           {/* Search Input */}
           {search && (
-            <Grid size={{ xs: 12, sm: 'auto' }}>
+            <Grid size={{ xs: 12, sm: 'auto' }} role="searchbox">
               <DebouncedSearchInput
                 value={search.value}
                 onChange={search.onChange}
@@ -68,6 +79,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 xs: 12, 
                 sm: 'auto' 
               }}
+              role="group"
+              aria-label={`${select.label} filter options`}
             >
               <MultiSelectDropdown
                 value={select.value}
@@ -138,6 +151,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 xs: 12, 
                 sm: 'auto' 
               }}
+              role="group"
+              aria-label="Sort options"
             >
               <SortDropdown
                 value={sort.value}
@@ -165,8 +180,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
   // For vertical/compact layout using Stack
   return (
-    <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center', ...sx }}>
-      <Stack spacing={spacing}>
+    <Box 
+      component="section" 
+      role="search" 
+      aria-label="Filter and search options"
+      sx={{ mb: 4, display: 'flex', justifyContent: 'center', ...sx }}
+    >
+      <Stack spacing={spacing} role="group" aria-label="Filter controls">
         <Stack 
           direction={layout === 'vertical' ? 'column' : 'row'} 
           spacing={spacing} 
