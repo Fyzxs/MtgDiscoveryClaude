@@ -1,146 +1,109 @@
 import React from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
-import type { ReactNode } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
+import { Box, Typography } from '@mui/material';
 
-interface ErrorBoundaryWrapperProps {
+type ErrorBoundaryLevel = 'page' | 'section' | 'component';
+type ErrorBoundaryVariant = 'default' | 'modal' | 'card-grid';
+
+interface AppErrorBoundaryProps {
   children: ReactNode;
   name?: string;
+  level?: ErrorBoundaryLevel;
+  variant?: ErrorBoundaryVariant;
+  resetKeys?: Array<string | number>;
+  onClose?: () => void;
+  customFallback?: ReactNode;
 }
 
 /**
- * Page-level error boundary for entire page components
+ * Unified error boundary component that replaces all specialized variants.
+ * Supports different levels (page/section/component) and variants for special behaviors.
  */
-export const PageErrorBoundary: React.FC<ErrorBoundaryWrapperProps> = ({ 
-  children, 
-  name 
-}) => (
-  <ErrorBoundary 
-    level="page" 
-    name={name || 'Page'}
-    resetOnPropsChange
-  >
-    {children}
-  </ErrorBoundary>
-);
+export const AppErrorBoundary: React.FC<AppErrorBoundaryProps> = ({
+  children,
+  name,
+  level = 'component',
+  variant = 'default',
+  resetKeys,
+  onClose,
+  customFallback
+}) => {
+  // Configure props based on level and variant
+  const getErrorBoundaryProps = () => {
+    const baseProps = {
+      level,
+      name: name || level.charAt(0).toUpperCase() + level.slice(1),
+      resetKeys,
+      isolate: level !== 'page',
+      resetOnPropsChange: level !== 'component'
+    };
 
-/**
- * Section-level error boundary for major page sections
- */
-export const SectionErrorBoundary: React.FC<ErrorBoundaryWrapperProps> = ({ 
-  children, 
-  name 
-}) => (
-  <ErrorBoundary 
-    level="section" 
-    name={name || 'Section'}
-    isolate
-    resetOnPropsChange
-  >
-    {children}
-  </ErrorBoundary>
-);
-
-/**
- * Component-level error boundary for individual components
- */
-export const ComponentErrorBoundary: React.FC<ErrorBoundaryWrapperProps> = ({ 
-  children, 
-  name 
-}) => (
-  <ErrorBoundary 
-    level="component" 
-    name={name || 'Component'}
-    isolate
-  >
-    {children}
-  </ErrorBoundary>
-);
-
-/**
- * Filter-specific error boundary with auto-retry
- */
-export const FilterErrorBoundary: React.FC<ErrorBoundaryWrapperProps> = ({ 
-  children, 
-  name 
-}) => (
-  <ErrorBoundary 
-    level="component" 
-    name={name || 'Filter'}
-    isolate
-    resetOnPropsChange
-  >
-    {children}
-  </ErrorBoundary>
-);
-
-/**
- * Card grid error boundary with custom fallback
- */
-export const CardGridErrorBoundary: React.FC<ErrorBoundaryWrapperProps> = ({ 
-  children, 
-  name 
-}) => (
-  <ErrorBoundary 
-    level="section" 
-    name={name || 'CardGrid'}
-    isolate
-    fallback={
-      <div style={{ 
-        padding: '2rem', 
-        textAlign: 'center',
-        color: '#999'
-      }}>
-        <p>Unable to load cards. Please try refreshing the page.</p>
-      </div>
+    // Handle variant-specific behavior
+    switch (variant) {
+      case 'modal':
+        return {
+          ...baseProps,
+          level: 'component' as const,
+          isolate: true,
+          onError: (error: Error, errorInfo: ErrorInfo) => {
+            console.error('Modal error:', error, errorInfo);
+            if (onClose) {
+              setTimeout(onClose, 2000);
+            }
+          }
+        };
+        
+      case 'card-grid':
+        return {
+          ...baseProps,
+          level: 'section' as const,
+          isolate: true,
+          fallback: customFallback || (
+            <Box sx={{ p: 4, textAlign: 'center', color: 'text.secondary' }}>
+              <Typography variant="body1">
+                Unable to load cards. Please try refreshing the page.
+              </Typography>
+            </Box>
+          )
+        };
+        
+      default:
+        return {
+          ...baseProps,
+          fallback: customFallback
+        };
     }
-  >
-    {children}
-  </ErrorBoundary>
+  };
+
+  return <ErrorBoundary {...getErrorBoundaryProps()}>{children}</ErrorBoundary>;
+};
+
+// Legacy exports for backward compatibility
+export const PageErrorBoundary: React.FC<{ children: ReactNode; name?: string }> = (props) => (
+  <AppErrorBoundary level="page" {...props} />
 );
 
-/**
- * Modal error boundary that closes on error
- */
-export const ModalErrorBoundary: React.FC<ErrorBoundaryWrapperProps & {
-  onClose?: () => void;
-}> = ({ 
-  children, 
-  name,
-  onClose
-}) => (
-  <ErrorBoundary 
-    level="component" 
-    name={name || 'Modal'}
-    isolate
-    onError={(error, errorInfo) => {
-      console.error('Modal error:', error, errorInfo);
-      // Close modal on error after delay
-      if (onClose) {
-        setTimeout(onClose, 2000);
-      }
-    }}
-  >
-    {children}
-  </ErrorBoundary>
+export const SectionErrorBoundary: React.FC<{ children: ReactNode; name?: string }> = (props) => (
+  <AppErrorBoundary level="section" {...props} />
 );
 
-/**
- * API/Data fetching error boundary with retry logic
- */
-export const DataErrorBoundary: React.FC<ErrorBoundaryWrapperProps & {
-  resetKeys?: Array<string | number>;
-}> = ({ 
-  children, 
-  name,
-  resetKeys = []
-}) => (
-  <ErrorBoundary 
-    level="section" 
-    name={name || 'Data'}
-    isolate
-    resetKeys={resetKeys}
-    resetOnPropsChange
-  >
-    {children}
-  </ErrorBoundary>
+export const ComponentErrorBoundary: React.FC<{ children: ReactNode; name?: string }> = (props) => (
+  <AppErrorBoundary level="component" {...props} />
+);
+
+export const FilterErrorBoundary: React.FC<{ children: ReactNode; name?: string }> = (props) => (
+  <AppErrorBoundary level="component" {...props} />
+);
+
+export const CardGridErrorBoundary: React.FC<{ children: ReactNode; name?: string }> = (props) => (
+  <AppErrorBoundary level="section" variant="card-grid" {...props} />
+);
+
+export const ModalErrorBoundary: React.FC<{ children: ReactNode; name?: string; onClose?: () => void }> = (props) => (
+  <AppErrorBoundary level="component" variant="modal" {...props} />
+);
+
+export const DataErrorBoundary: React.FC<{ children: ReactNode; name?: string; resetKeys?: Array<string | number> }> = (props) => (
+  <AppErrorBoundary level="section" {...props} />
 );
