@@ -208,12 +208,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   height: '100%'
                 }}
               />
-              <CardBadges 
-                finishes={card.finishes}
-                promoTypes={card.promoTypes}
-                frameEffects={card.frameEffects}
-                isPromo={card.promo}
-              />
             </Box>
             {/* Card ID */}
             <Box sx={{ 
@@ -323,6 +317,24 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               )}
 
               <Divider />
+
+              {/* Treatments */}
+              {(card.finishes?.length > 0 || card.promoTypes?.length > 0 || card.frameEffects?.length > 0 || card.promo) && (
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Treatments
+                  </Typography>
+                  <Box sx={{ pl: 2 }}>
+                    <CardBadges 
+                      finishes={card.finishes}
+                      promoTypes={card.promoTypes}
+                      frameEffects={card.frameEffects}
+                      isPromo={card.promo}
+                      inline={true}
+                    />
+                  </Box>
+                </Box>
+              )}
 
               {/* Artist */}
               {card.artist && (
