@@ -2,12 +2,12 @@ import React from 'react';
 import { Button as MuiButtonBase, CircularProgress } from '@mui/material';
 import type { ButtonProps as MuiButtonProps } from '@mui/material';
 
-interface MuiButtonPropsExtended extends Omit<MuiButtonProps, 'size'> {
+interface AppButtonProps extends Omit<MuiButtonProps, 'size'> {
   isLoading?: boolean;
   size?: 'small' | 'medium' | 'large';
 }
 
-export const MuiButton: React.FC<MuiButtonPropsExtended> = ({
+export const AppButton: React.FC<AppButtonProps> = ({
   children,
   isLoading = false,
   disabled,

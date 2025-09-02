@@ -1,11 +1,12 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import { Container, Typography, Box } from '@mui/material'
 import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
 import { CardSearchPage } from './pages/CardSearchPage'
 import { CardDetailPage } from './pages/CardDetailPage'
-import { Card } from './components/ui/Card'
-import { Button } from './components/ui/Button'
+import { AppCard as Card } from './components/atoms/shared/AppCard'
+import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/ErrorBoundaries'
 
@@ -13,27 +14,39 @@ function HomePage() {
   const navigate = useNavigate();
   
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">        
-      <Card variant="elevated" className="text-center max-w-2xl mx-auto">
-        <h2 className="text-2xl font-semibold text-white mb-4">
+    <Container maxWidth="lg" sx={{ py: 12 }}>        
+      <Card 
+        elevation={6} 
+        sx={{ 
+          textAlign: 'center', 
+          maxWidth: 600, 
+          mx: 'auto',
+          p: 4
+        }}
+      >
+        <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
           Welcome to MTG Discovery
-        </h2>
-        <p className="text-gray-400 mb-6">
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           Explore our card component system built with atomic design principles. 
           View Magic: The Gathering cards with proper styling, rarity indicators, 
           and responsive layouts.
-        </p>
-        <div className="flex gap-4 justify-center flex-wrap">
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Button 
             onClick={() => navigate('/sets')}
-            size="lg"
-            className="w-full sm:w-auto"
+            size="large"
+            variant="contained"
+            color="primary"
+            sx={{ 
+              width: { xs: '100%', sm: 'auto' }
+            }}
           >
             Browse All Sets
           </Button>
-        </div>
+        </Box>
       </Card>
-    </div>
+    </Container>
   );
 }
 

@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, CardContent } from '@mui/material';
 import type { CardProps } from '@mui/material';
 
-interface MuiCardProps extends CardProps {
+interface AppCardProps extends CardProps {
   children: React.ReactNode;
   padding?: boolean;
 }
 
-export const MuiCard: React.FC<MuiCardProps> = ({ 
+export const AppCard: React.FC<AppCardProps> = ({ 
   children, 
   padding = true,
   elevation = 2,

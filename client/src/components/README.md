@@ -27,7 +27,7 @@ This is a comprehensive component library for displaying Magic: The Gathering ca
 
 ### Basic Card Display
 ```tsx
-import { CardDisplay } from './components/organisms/CardDisplay';
+import { CardDisplay } from './components/organisms/CardDisplayResponsive';
 
 <CardDisplay 
   card={cardData} 
