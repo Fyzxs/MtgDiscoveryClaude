@@ -113,11 +113,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
                 className="text-sm font-bold"
               />
               <CardLinks
-                scryfallUri={card.scryfallUri}
-                purchaseUris={card.purchaseUris}
-                relatedUris={card.relatedUris}
-                setCode={card.setCode}
-                collectorNumber={card.collectorNumber}
+                scryfallUrl={card.scryfallUri}
                 cardName={card.name}
                 className="scale-75 origin-right"
               />
@@ -185,11 +181,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
               className="text-lg"
             />
             <CardLinks
-              scryfallUri={card.scryfallUri}
-              purchaseUris={card.purchaseUris}
-              relatedUris={card.relatedUris}
-              setCode={card.setCode}
-              collectorNumber={card.collectorNumber}
+              scryfallUrl={card.scryfallUri}
               cardName={card.name}
             />
           </div>

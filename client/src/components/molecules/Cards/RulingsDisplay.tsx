@@ -4,7 +4,7 @@ import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
 import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
 import { ErrorAlert } from '../../atoms/shared/ErrorAlert';
 import { formatRulingDate } from '../../../utils/dateFormatters';
-import { fetchWithRetry, handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
+import { fetchWithRetry, globalLoadingManager } from '../../../utils/networkErrorHandler';
 
 interface Ruling {
   object: string;
@@ -52,7 +52,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
           retryDelay: 1000,
           timeout: 8000,
           onRetry: (attemptNumber, error) => {
-            console.log(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.userMessage);
+            console.log(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.message);
           }
         });
         
@@ -65,7 +65,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
         setRulings(sortedRulings);
       } catch (err) {
         console.error('Error fetching rulings:', err);
-        const networkError = err as any;
+        const networkError = err as Error & { userMessage?: string };
         if (networkError.userMessage) {
           setError(networkError.userMessage);
         } else {

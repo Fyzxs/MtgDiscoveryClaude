@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApolloProvider } from '@apollo/client/react'
+import { Auth0Provider } from '@auth0/auth0-react'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import './index.css'
@@ -12,12 +13,20 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary level="page" name="Root">
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ApolloProvider client={apolloClient}>
-          <App />
-        </ApolloProvider>
-      </ThemeProvider>
+      <Auth0Provider
+        domain={import.meta.env.VITE_AUTH0_DOMAIN}
+        clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+        authorizationParams={{
+          redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI
+        }}
+      >
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <ApolloProvider client={apolloClient}>
+            <App />
+          </ApolloProvider>
+        </ThemeProvider>
+      </Auth0Provider>
     </ErrorBoundary>
   </StrictMode>,
 )

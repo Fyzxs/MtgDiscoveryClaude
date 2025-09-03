@@ -4,12 +4,13 @@ import { Container, Typography, Box } from '@mui/material'
 import { AllSetsPage } from './pages/AllSetsPage'
 import { SetPage } from './pages/SetPage'
 import { CardSearchPage } from './pages/CardSearchPage'
-import { CardDetailPage } from './pages/CardDetailPage'
+import { ArtistSearchPage } from './pages/ArtistSearchPage'
+import { ArtistCardsPage } from './pages/ArtistCardsPage'
+import { CardAllPrintingsPage } from './pages/CardAllPrintingsPage'
 import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/ErrorBoundaries'
-
 function HomePage() {
   const navigate = useNavigate();
   
@@ -75,9 +76,19 @@ function App() {
               <CardSearchPage />
             </PageErrorBoundary>
           } />
+          <Route path="/search/artists" element={
+            <PageErrorBoundary name="ArtistSearchPage">
+              <ArtistSearchPage />
+            </PageErrorBoundary>
+          } />
+          <Route path="/artists/:artistName" element={
+            <PageErrorBoundary name="ArtistCardsPage">
+              <ArtistCardsPage />
+            </PageErrorBoundary>
+          } />
           <Route path="/card/:cardName" element={
-            <PageErrorBoundary name="CardDetailPage">
-              <CardDetailPage />
+            <PageErrorBoundary name="CardAllPrintingsPage">
+              <CardAllPrintingsPage />
             </PageErrorBoundary>
           } />
           {/* Handle old query param URLs for backwards compatibility */}

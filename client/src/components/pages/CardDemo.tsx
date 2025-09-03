@@ -233,7 +233,7 @@ export const CardDemo: React.FC = () => {
             {/* Card Image Small */}
             <div className="bg-gray-800 p-4 rounded-lg">
               <h3 className="text-sm font-semibold text-gray-400 mb-3">CardImage (small)</h3>
-              <CardImage imageUris={card.imageUris} cardName={card.name} size="small" />
+              <CardImage imageUrl={card.imageUris} cardName={card.name} />
             </div>
 
             {/* Set Icon */}
@@ -274,9 +274,7 @@ export const CardDemo: React.FC = () => {
             <div className="bg-gray-800 p-4 rounded-lg">
               <h3 className="text-sm font-semibold text-gray-400 mb-3">CardLinks</h3>
               <CardLinks
-                scryfallUri={card.scryfallUri}
-                purchaseUris={card.purchaseUris}
-                relatedUris={card.relatedUris}
+                scryfallUrl={card.scryfallUri}
                 cardName={card.name}
               />
             </div>

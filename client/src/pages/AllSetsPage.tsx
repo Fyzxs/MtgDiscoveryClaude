@@ -13,7 +13,7 @@ import type { SortOption } from '../components/atoms/shared/SortDropdown';
 import { useUrlFilterState, createUrlFilterConfig } from '../hooks/useUrlFilterState';
 import { GraphQLQueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
-import { ResponsiveGrid } from '../components/atoms/layouts/ResponsiveGrid';
+import { ResponsiveGridAutoFit } from '../components/atoms/layouts/ResponsiveGrid';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import { CardGridErrorBoundary } from '../components/ErrorBoundaries';
 import type { MtgSet } from '../types/set';
@@ -107,7 +107,7 @@ export const AllSetsPage: React.FC = () => {
     >
     <Container maxWidth="xl" sx={{ mt: 2, mb: 4, px: 3, mx: 'auto' }}>
       <Typography variant="h3" component="h1" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-        All Magic Sets
+        All Sets
       </Typography>
 
       {/* Filters and Search */}
@@ -148,7 +148,7 @@ export const AllSetsPage: React.FC = () => {
 
       {/* Sets Grid */}
       <CardGridErrorBoundary name="AllSetsGrid">
-        <ResponsiveGrid minItemWidth={240} spacing={1.5}>
+        <ResponsiveGridAutoFit minItemWidth={240} spacing={1.5}>
           {filteredSets.map((set) => (
           <MtgSetCard
             key={set.id}
@@ -156,7 +156,7 @@ export const AllSetsPage: React.FC = () => {
             onSetClick={handleSetClick}
           />
           ))}
-        </ResponsiveGrid>
+        </ResponsiveGridAutoFit>
       </CardGridErrorBoundary>
 
       {filteredSets.length === 0 && (
