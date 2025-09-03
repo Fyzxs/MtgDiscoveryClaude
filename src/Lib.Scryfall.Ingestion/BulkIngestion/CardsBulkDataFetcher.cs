@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -109,7 +109,9 @@ internal sealed class CardsBulkDataFetcher
             // If we can't parse the date, assume it's released to be safe
             return true;
         }
+#pragma warning disable CA1031
         catch
+#pragma warning restore CA1031
         {
             // If any error occurs, assume it's released to be safe
             return true;

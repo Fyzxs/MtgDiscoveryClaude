@@ -1,10 +1,13 @@
 ﻿using App.MtgDiscovery.GraphQL.Schemas;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace App.MtgDiscovery.GraphQL;
 
@@ -38,6 +41,20 @@ internal class Startup
         services.AddSingleton<ILogger>(sp =>
             sp.GetRequiredService<ILoggerFactory>().CreateLogger("GraphQL"));
 
+        // Configure Auth0 JWT Authentication
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = $"https://{_configuration["Auth0:Domain"]}/";
+                options.Audience = _configuration["Auth0:Audience"];
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            });
+
+        services.AddAuthorization();
+
         // Register query method classes for DI
         //services.AddScoped<CardQueryMethods>();
         //services.AddScoped<SetQueryMethods>();
@@ -48,6 +65,7 @@ internal class Startup
             .AddApiQuery()
             .AddSetSchemaExtensions()
             .AddArtistSchemaExtensions()
+            .AddAuthorization()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 
@@ -61,6 +79,9 @@ internal class Startup
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseCors();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
