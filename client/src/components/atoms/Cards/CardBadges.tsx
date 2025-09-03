@@ -85,6 +85,14 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
 
   // Format promo type text for display
   const formatPromoText = (promoType: string): string => {
+    const lowerType = promoType.toLowerCase();
+    
+    // Handle FF + Roman numerals pattern (e.g., "ffxiv" -> "FF XIV")
+    const ffRomanMatch = lowerType.match(/^ff([ivxlcdm]+)$/);
+    if (ffRomanMatch) {
+      return `FF ${ffRomanMatch[1].toUpperCase()}`;
+    }
+    
     const formatMap: Record<string, string> = {
       'prerelease': 'Pre-Release',
       'promobundle': 'Promo Bundle',
@@ -114,7 +122,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       'promopack': 'Promo Pack',
       'starterdeck': 'Starter Deck',
     };
-    return formatMap[promoType.toLowerCase()] || promoType.replace(/_/g, ' ')
+    return formatMap[lowerType] || promoType.replace(/_/g, ' ')
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');

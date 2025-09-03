@@ -7,8 +7,26 @@ export const RARITY_ORDER: Record<string, number> = {
   bonus: 6
 };
 
+// Parse collector number for sorting purposes
+//
+// COLLECTOR NUMBER SORTING STRATEGY:
+// - This function determines sort order for collector numbers
+// - Current strategy: STRICT NUMERIC ONLY (^(\d+)$)
+//
+// KNOWN ISSUES BY SET:
+// - SET:40K - Special surge foil cards like "317★" should sort separately from "317"
+//   Solution: Non-numeric collector numbers get high sort value (999999) to sort last
+//
+// - CROSS-REFERENCE: See getNumericValue() in optimizedCardGrouping.ts for range matching
+//   Both functions use the same parsing strategy for consistency
+//
+// CURRENT SORTING BEHAVIOR:
+// - "1", "2", "317" -> sorted numerically (1, 2, 317)
+// - "317★", "42★"   -> sorted last (999999) as special variants
+// - "42a", "DMR-271" -> sorted last (999999) as non-numeric
 export const parseCollectorNumber = (num: string): number => {
-  const match = num.match(/^(\d+)/);
+  // Only treat as numeric if it's purely digits (no special characters like ★)
+  const match = num.match(/^(\d+)$/);
   return match ? parseInt(match[1], 10) : 999999;
 };
 

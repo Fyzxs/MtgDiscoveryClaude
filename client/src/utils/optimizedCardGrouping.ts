@@ -18,8 +18,30 @@ function snakeToCamel(str: string): string {
 }
 
 // Extract numeric value from collector number for range comparisons
+//
+// COLLECTOR NUMBER PARSING STRATEGY:
+// - This function determines how collector numbers are treated in range matching
+// - Current strategy: STRICT NUMERIC ONLY (^(\d+)$)
+//
+// KNOWN ISSUES BY SET:
+// - SET:40K - Has special surge foil cards with symbols: "317★", "42★"
+//   These should NOT match numeric ranges and be treated as special variants
+//   Solution: Strict matching prevents "317★" from being parsed as "317"
+//
+// - FUTURE CONSIDERATION: Some sets might need hybrid numbers like "42a" to match
+//   ranges based on their numeric prefix. If encountered, we may need:
+//   * Set-specific parsing strategies 
+//   * Separate functions for different parsing modes
+//   * Configuration-based approach per set
+//
+// CURRENT BEHAVIOR:
+// - "317"   -> 317 (matches ranges)
+// - "317★"  -> 0   (doesn't match ranges, treated as special)
+// - "42a"   -> 0   (doesn't match ranges, treated as special) 
+// - "DMR-271" -> 0 (doesn't match ranges, uses OR conditions)
 function getNumericValue(cn: string): number {
-  const match = cn.match(/^(\d+)/);
+  // Only treat as numeric if it's purely digits (no special characters)
+  const match = cn.match(/^(\d+)$/);
   return match ? parseInt(match[1], 10) : 0;
 }
 
@@ -191,26 +213,18 @@ function getCompiledMatchers(groupings: SetGrouping[]): GroupingMatcher[] {
     return cached;
   }
   
-  // Check if there's an "Other Cards" group - if so, process in normal order (lowest first)
-  // so that "Other Cards" gets processed last as a catch-all
-  const hasOtherCards = groupings.some(g => g.displayName === "Other Cards");
-  
   const matchers = groupings
     .map(compileGroupingMatcher)
-    .sort((a, b) => {
-      if (hasOtherCards) {
-        return a.order - b.order; // Normal order (lowest first) when "Other Cards" exists
-      } else {
-        return b.order - a.order; // Reverse order (highest first) otherwise
-      }
-    });
+    .sort((a, b) => a.order - b.order); // Always process in normal order (lowest first)
   
   matcherCache.set(cacheKey, matchers);
   
   // Limit cache size
   if (matcherCache.size > 10) {
     const firstKey = matcherCache.keys().next().value;
-    matcherCache.delete(firstKey);
+    if (firstKey) {
+      matcherCache.delete(firstKey);
+    }
   }
   
   return matchers;
