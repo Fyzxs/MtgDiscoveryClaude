@@ -3,6 +3,7 @@ using Lib.Scryfall.Ingestion.Services;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Scryfall.Ingestion.Factories;
+
 internal sealed class ScryfallSetDtoFactory : IScryfallDtoFactory<ExtScryfallSetDto>
 {
     private readonly ISetGroupingsLoader _groupingsLoader;

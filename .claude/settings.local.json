@@ -21,7 +21,15 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(rg:*)",
-      "Bash(find:*)"
+      "Bash(true)",
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm install)",
+      "Bash(npm run lint)",
+      "Bash(npm install:*)",
+      "Bash(npx eslint:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

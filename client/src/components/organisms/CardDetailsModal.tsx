@@ -355,7 +355,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                     {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
                       <Link
                         key={index}
-                        href={`?page=artist&name=${encodeURIComponent(artistName)}`}
+                        href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
                         sx={{
                           color: 'text.primary',
                           textDecoration: 'none',

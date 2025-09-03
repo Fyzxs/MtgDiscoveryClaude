@@ -60,7 +60,7 @@ interface CardsResponse {
   };
 }
 
-export const CardDetailPage: React.FC = () => {
+export const CardAllPrintingsPage: React.FC = () => {
   const { cardName } = useParams<{ cardName: string }>();
   const navigate = useNavigate();
   const decodedCardName = decodeURIComponent(cardName || '');
@@ -115,6 +115,10 @@ export const CardDetailPage: React.FC = () => {
     } catch (retryError) {
       console.error('Retry failed:', retryError);
     }
+  };
+
+  const handleArtistClick = (artistName: string) => {
+    navigate(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
   };
 
   // Use the shared card filtering hook (no search or sets filter for card detail page)
@@ -245,17 +249,15 @@ export const CardDetailPage: React.FC = () => {
       {/* Cards Grid */}
       <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
         <ResponsiveGridAutoFit 
-          minWidth={250}
-          maxColumns={6}
-          gap={2}
+          minItemWidth={250}
+          spacing={2}
         >
           {filteredCards.map((card) => (
             <AppErrorBoundary key={card.id} level="component" name={`Card-${card.id}`}>
               <MtgCard 
                 card={card}
                 context={{ isOnCardPage: true }}
-                onSelection={() => {}}
-                isSelected={false}
+                onArtistClick={handleArtistClick}
               />
             </AppErrorBoundary>
           ))}
