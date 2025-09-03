@@ -1,7 +1,7 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Aggregator.Cards.Models;
-using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
+using Lib.Aggregator.Scryfall.Shared.Mappers;
 using Lib.Shared.DataModels.Entities;
 using Newtonsoft.Json.Linq;
 

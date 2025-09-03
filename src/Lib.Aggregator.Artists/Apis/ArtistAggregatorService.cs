@@ -28,4 +28,9 @@ public sealed class ArtistAggregatorService : IArtistAggregatorService
     {
         return _artistAggregatorOperations.CardsByArtistAsync(artistId);
     }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
+    {
+        return _artistAggregatorOperations.CardsByArtistNameAsync(artistName);
+    }
 }

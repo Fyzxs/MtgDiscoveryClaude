@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Shared.DataModels.Entities;
 using Newtonsoft.Json.Linq;
 
-namespace Lib.Aggregator.Artists.Models;
+namespace Lib.Aggregator.Scryfall.Shared.Models;
 
-internal sealed class CardItemItrEntity : ICardItemItrEntity
+public sealed class CardItemItrEntity : ICardItemItrEntity
 {
     private readonly dynamic _data;
 
@@ -15,7 +15,6 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
         _data = scryfallCard?.Data;
     }
 
-    public string Object => _data?["object"] ?? "card";
     public string Id => _data?.id;
     public string OracleId => _data?.oracle_id;
     public int? ArenaId => _data?.arena_id;
@@ -34,7 +33,7 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public string Layout => _data?.layout;
     public bool HighResImage => _data?.highres_image ?? false;
     public string ImageStatus => _data?.image_status;
-    public IImageUrisItrEntity ImageUris => null; // Simplified for this implementation
+    public IImageUrisItrEntity ImageUris => _data?.image_uris != null ? new ImageUrisItrEntity(_data.image_uris) : null;
     public string ManaCost => _data?.mana_cost;
     public decimal? Cmc => _data?.cmc;
     public string TypeLine => _data?.type_line;
@@ -42,7 +41,7 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public ICollection<string> Colors => ConvertToStringArray(_data?.colors);
     public ICollection<string> ColorIdentity => ConvertToStringArray(_data?.color_identity);
     public ICollection<string> Keywords => ConvertToStringArray(_data?.keywords);
-    public ILegalitiesItrEntity Legalities => null; // Simplified for this implementation
+    public ILegalitiesItrEntity Legalities => _data?.legalities != null ? new LegalitiesItrEntity(_data.legalities) : null;
     public ICollection<string> Games => ConvertToStringArray(_data?.games);
     public bool Reserved => _data?.reserved ?? false;
     public bool GameChanger => _data?.game_changer ?? false;
@@ -54,7 +53,7 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public bool Reprint => _data?.reprint ?? false;
     public bool Variation => _data?.variation ?? false;
     public string SetId => _data?.set_id;
-    public string SetCode => _data?.set_code;
+    public string SetCode => _data?.set;
     public string SetName => _data?.set_name;
     public string SetType => _data?.set_type;
     public string SetUri => _data?.set_uri;
@@ -81,9 +80,9 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public ICollection<string> PromoTypes => ConvertToStringArray(_data?.promo_types);
     public int? EdhRecRank => _data?.edhrec_rank;
     public int? PennyRank => _data?.penny_rank;
-    public IPricesItrEntity Prices => null; // Simplified for this implementation
-    public IRelatedUrisItrEntity RelatedUris => null; // Simplified for this implementation
-    public IPurchaseUrisItrEntity PurchaseUris => null; // Simplified for this implementation
+    public IPricesItrEntity Prices => _data?.prices != null ? new PricesItrEntity(_data.prices) : null;
+    public IRelatedUrisItrEntity RelatedUris => _data?.related_uris != null ? new RelatedUrisItrEntity(_data.related_uris) : null;
+    public IPurchaseUrisItrEntity PurchaseUris => _data?.purchase_uris != null ? new PurchaseUrisItrEntity(_data.purchase_uris) : null;
     public string Power => _data?.power;
     public string Toughness => _data?.toughness;
     public string Loyalty => _data?.loyalty;
@@ -91,38 +90,64 @@ internal sealed class CardItemItrEntity : ICardItemItrEntity
     public string LifeModifier => _data?.life_modifier;
     public string HandModifier => _data?.hand_modifier;
     public ICollection<string> ColorIndicator => ConvertToStringArray(_data?.color_indicator);
-    public ICollection<ICardFaceItrEntity> CardFaces => []; // Simplified for this implementation
-    public ICollection<IAllPartsItrEntity> AllParts => []; // Simplified for this implementation
+    public ICollection<ICardFaceItrEntity> CardFaces => MapCardFaces(_data?.card_faces);
+    public ICollection<IAllPartsItrEntity> AllParts => MapAllParts(_data?.all_parts);
     public string PrintedName => _data?.printed_name;
     public string PrintedTypeLine => _data?.printed_type_line;
     public string PrintedText => _data?.printed_text;
     public string Watermark => _data?.watermark;
     public int? ContentWarning => _data?.content_warning;
-    public IPreviewItrEntity Preview => null; // Simplified for this implementation
+    public IPreviewItrEntity Preview => _data?.preview != null ? new PreviewItrEntity(_data.preview) : null;
     public ICollection<string> ProducedMana => ConvertToStringArray(_data?.produced_mana);
     public ICollection<int> AttractionLights => ConvertToIntArray(_data?.attraction_lights);
 
-    private static ICollection<string> ConvertToStringArray(dynamic value)
-    {
-        if (value == null) return [];
-
-        if (value is JArray jArray)
-        {
-            return jArray.ToObject<string[]>() ?? [];
-        }
-
-        return [];
-    }
-
     private static ICollection<int> ConvertToIntArray(dynamic value)
     {
-        if (value == null) return [];
-
+        if (value == null) return null;
         if (value is JArray jArray)
         {
-            return jArray.ToObject<int[]>() ?? [];
+            return jArray.Select(x => (int)x).ToArray();
         }
+        return null;
+    }
 
-        return [];
+    private static ICollection<string> ConvertToStringArray(dynamic value)
+    {
+        if (value == null) return null;
+        if (value is JArray jArray)
+        {
+            return jArray.Select(x => (string)x).ToArray();
+        }
+        return null;
+    }
+
+    private static ICollection<ICardFaceItrEntity> MapCardFaces(dynamic cardFaces)
+    {
+        if (cardFaces == null) return null;
+        if (cardFaces is JArray jArray)
+        {
+            ICardFaceItrEntity[] result = new ICardFaceItrEntity[jArray.Count];
+            for (int i = 0; i < jArray.Count; i++)
+            {
+                result[i] = new CardFaceItrEntity(jArray[i]);
+            }
+            return result;
+        }
+        return null;
+    }
+
+    private static ICollection<IAllPartsItrEntity> MapAllParts(dynamic allParts)
+    {
+        if (allParts == null) return null;
+        if (allParts is JArray jArray)
+        {
+            IAllPartsItrEntity[] result = new IAllPartsItrEntity[jArray.Count];
+            for (int i = 0; i < jArray.Count; i++)
+            {
+                result[i] = new AllPartsItrEntity(jArray[i]);
+            }
+            return result;
+        }
+        return null;
     }
 }

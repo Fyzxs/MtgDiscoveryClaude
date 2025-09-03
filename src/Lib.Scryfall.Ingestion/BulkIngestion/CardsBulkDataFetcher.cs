@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -74,12 +74,47 @@ internal sealed class CardsBulkDataFetcher
             dynamic card = serializer.Deserialize<dynamic>(jsonReader);
             if (card is not null)
             {
+                // Filter out unreleased cards
+                if (IsCardReleased(card) is false)
+                {
+                    continue;
+                }
+
                 // Get the actual set from the collection
                 string setCode = card.set;
                 IScryfallSet set = await _setsCollection.GetSetAsync(setCode).ConfigureAwait(false);
                 ExtScryfallCardDto dto = new(card);
                 yield return new ScryfallCard(dto, set);
             }
+        }
+    }
+
+    private static bool IsCardReleased(dynamic card)
+    {
+        try
+        {
+            string releasedAt = card.released_at;
+            if (string.IsNullOrEmpty(releasedAt))
+            {
+                // If no release date, assume it's released
+                return true;
+            }
+
+            if (DateTime.TryParse(releasedAt, out DateTime releaseDate))
+            {
+                // Card is released if the release date is today or in the past
+                return releaseDate.Date <= DateTime.Today;
+            }
+
+            // If we can't parse the date, assume it's released to be safe
+            return true;
+        }
+#pragma warning disable CA1031
+        catch
+#pragma warning restore CA1031
+        {
+            // If any error occurs, assume it's released to be safe
+            return true;
         }
     }
 }

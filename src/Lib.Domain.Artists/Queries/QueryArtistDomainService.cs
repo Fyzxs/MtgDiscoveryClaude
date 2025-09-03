@@ -30,4 +30,9 @@ internal sealed class QueryArtistDomainService : IArtistDomainService
     {
         return await _artistAggregatorService.CardsByArtistAsync(artistId).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
+    {
+        return await _artistAggregatorService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
+    }
 }

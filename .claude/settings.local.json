@@ -21,7 +21,8 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(rg:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
