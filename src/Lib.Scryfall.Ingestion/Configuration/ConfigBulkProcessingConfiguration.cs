@@ -12,6 +12,7 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
     private const string EnableMemoryThrottlingKey = "EnableMemoryThrottling";
     private const string DashboardRefreshFrequencyKey = "DashboardRefreshFrequency";
     private const string ProcessRulingsKey = "ProcessRulings";
+    private const string SetsOnlyKey = "SetsOnly";
     private const string SetCodesToProcessKey = "SetCodesToProcess";
 
     private readonly IConfig _config;
@@ -48,6 +49,15 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
         get
         {
             string value = _config[$"{BulkProcessingKey}:{ProcessRulingsKey}"];
+            return value.IzNotNullOrWhiteSpace() && bool.Parse(value);
+        }
+    }
+
+    public bool SetsOnly
+    {
+        get
+        {
+            string value = _config[$"{BulkProcessingKey}:{SetsOnlyKey}"];
             return value.IzNotNullOrWhiteSpace() && bool.Parse(value);
         }
     }

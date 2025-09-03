@@ -57,24 +57,28 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
                 rulings = await _rulingsPipeline.FetchAndAggregateRulingsAsync().ConfigureAwait(false);
             }
 
-            IReadOnlyList<IScryfallCard> cards = await _cardsPipeline.FetchCardsAsync().ConfigureAwait(false);
-
-            // Phase 2: Process cards (relationships, artists, etc.)
-            _dashboard.LogProcessingPhase();
-
-            // Convert sets to a lookup by set code
-            Dictionary<string, dynamic> setsByCode = sets.ToDictionary(
-                kvp => kvp.Value.Code(),
-                kvp => kvp.Value.Data()
-            );
-
-            _cardsPipeline.ProcessCards(cards, setsByCode);
-
-            // Track artists and trigrams from cards
-            foreach (IScryfallCard card in cards)
+            IReadOnlyList<IScryfallCard> cards = [];
+            if (_config.SetsOnly is false)
             {
-                _artistsPipeline.TrackArtist(card);
-                _trigramsPipeline.TrackCard(card);
+                cards = await _cardsPipeline.FetchCardsAsync().ConfigureAwait(false);
+
+                // Phase 2: Process cards (relationships, artists, etc.)
+                _dashboard.LogProcessingPhase();
+
+                // Convert sets to a lookup by set code
+                Dictionary<string, dynamic> setsByCode = sets.ToDictionary(
+                    kvp => kvp.Value.Code(),
+                    kvp => kvp.Value.Data()
+                );
+
+                _cardsPipeline.ProcessCards(cards, setsByCode);
+
+                // Track artists and trigrams from cards
+                foreach (IScryfallCard card in cards)
+                {
+                    _artistsPipeline.TrackArtist(card);
+                    _trigramsPipeline.TrackCard(card);
+                }
             }
 
             // Phase 3: Write all data
@@ -87,15 +91,20 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
                 await _rulingsPipeline.WriteRulingsAsync(rulings).ConfigureAwait(false);
             }
 
-            await _cardsPipeline.WriteCardsAsync(cards).ConfigureAwait(false);
+            if (!_config.SetsOnly)
+            {
+                await _cardsPipeline.WriteCardsAsync(cards).ConfigureAwait(false);
 
-            await _artistsPipeline.WriteArtistsAsync().ConfigureAwait(false);
+                await _artistsPipeline.WriteArtistsAsync().ConfigureAwait(false);
 
-            await _trigramsPipeline.WriteTrigramsAsync().ConfigureAwait(false);
+                await _trigramsPipeline.WriteTrigramsAsync().ConfigureAwait(false);
+            }
 
-            string completionMessage = _config.ProcessRulings
-                ? $"Ingestion completed: {sets.Count} sets, {rulings.Count} rulings, {cards.Count} cards processed"
-                : $"Ingestion completed: {sets.Count} sets, {cards.Count} cards processed (rulings skipped)";
+            string completionMessage = _config.SetsOnly
+                ? $"Sets-only ingestion completed: {sets.Count} sets processed"
+                : _config.ProcessRulings
+                    ? $"Ingestion completed: {sets.Count} sets, {rulings.Count} rulings, {cards.Count} cards processed"
+                    : $"Ingestion completed: {sets.Count} sets, {cards.Count} cards processed (rulings skipped)";
 
             _dashboard.Complete(completionMessage);
         }
