@@ -29,4 +29,9 @@ internal sealed class ArtistDataService : IArtistDataService
     {
         return await _artistDomainService.CardsByArtistAsync(artistId).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
+    {
+        return await _artistDomainService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
+    }
 }

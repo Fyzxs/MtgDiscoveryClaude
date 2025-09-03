@@ -67,4 +67,9 @@ public sealed class EntryService : IEntryService
     {
         return _artistEntryService.CardsByArtistAsync(artistId);
     }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
+    {
+        return _artistEntryService.CardsByArtistNameAsync(artistName);
+    }
 }

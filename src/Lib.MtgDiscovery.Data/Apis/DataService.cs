@@ -67,4 +67,9 @@ public sealed class DataService : IDataService
     {
         return _artistDataService.CardsByArtistAsync(artistId);
     }
+
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
+    {
+        return _artistDataService.CardsByArtistNameAsync(artistName);
+    }
 }

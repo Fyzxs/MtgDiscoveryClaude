@@ -76,6 +76,25 @@
       }
     ]
   },
+  "mar": {
+    "SetCode": "mar",
+    "Groupings": [
+      {
+        "Id": "borderless",
+        "DisplayName": "Alternate-Art Borderless Cards",
+        "Order": 0,
+        "CardCount": 13,
+        "RawQuery": "set:mar border:borderless -type:planeswalker",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "border": "borderless",
+            "type_line_excludes": "planeswalker"
+          }
+        }
+      }
+    ]
+  },
   "spm": {
     "SetCode": "spm",
     "Groupings": [
@@ -97,7 +116,7 @@
         "Id": "showcase",
         "DisplayName": "Showcase Cards",
         "Order": 1,
-        "CardCount": 11,
+        "CardCount": 18,
         "RawQuery": "set:spm frame:showcase",
         "ParsedFilters": {
           "CollectorNumberRange": null,
@@ -110,12 +129,28 @@
         "Id": "extendedart",
         "DisplayName": "Extended Art Cards",
         "Order": 2,
-        "CardCount": 2,
+        "CardCount": 16,
         "RawQuery": "set:spm frame:extendedart",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
             "frame": "extendedart"
+          }
+        }
+      },
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 3,
+        "CardCount": 1,
+        "RawQuery": "set:spm is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
           }
         }
       }
@@ -162,7 +197,7 @@
       },
       {
         "Id": "spidey-s-spectacular-showdown-scene-box",
-        "DisplayName": "Spidey&#39;s Spectacular Showdown Scene Box",
+        "DisplayName": "Spidey's Spectacular Showdown Scene Box",
         "Order": 1,
         "CardCount": 6,
         "RawQuery": "e:spe cn≥21 cn≤26",
@@ -635,7 +670,7 @@
       },
       {
         "Id": "neon-ink-serialized-chocobo",
-        "DisplayName": "Neon Ink &amp; Serialized Chocobo",
+        "DisplayName": "Neon Ink & Serialized Chocobo",
         "Order": 7,
         "CardCount": 6,
         "RawQuery": "e:fin cn≥551 cn≤551",
@@ -939,7 +974,7 @@
       },
       {
         "Id": "dragon-s-eye-lands",
-        "DisplayName": "Dragon&#39;s Eye Lands",
+        "DisplayName": "Dragon's Eye Lands",
         "Order": 1,
         "CardCount": 5,
         "RawQuery": "e:tdm cn≥287 cn≤291",
@@ -1190,27 +1225,6 @@
         "Order": 0,
         "CardCount": 2,
         "RawQuery": "set:plg25 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
-  "pl25": {
-    "SetCode": "pl25",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pl25 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -1530,6 +1544,27 @@
             "OrConditions": null
           },
           "Properties": {}
+        }
+      }
+    ]
+  },
+  "pl25": {
+    "SetCode": "pl25",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 6,
+        "RawQuery": "set:pl25 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
         }
       }
     ]
@@ -2511,6 +2546,101 @@
       }
     ]
   },
+  "mb2": {
+    "SetCode": "mb2",
+    "Groupings": [
+      {
+        "Id": "white-border-reprints",
+        "DisplayName": "White-Border Reprints",
+        "Order": 0,
+        "CardCount": 121,
+        "RawQuery": "e:mb2 cn≥1 cn≤121",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "121",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "future-frame-nonfoil",
+        "DisplayName": "Future Frame (Nonfoil)",
+        "Order": 1,
+        "CardCount": 22,
+        "RawQuery": "e:mb2 cn≥122 cn≤143",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "122",
+            "Max": "143",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "future-frame-foil-nonfoil",
+        "DisplayName": "Future Frame (Foil/Nonfoil)",
+        "Order": 2,
+        "CardCount": 99,
+        "RawQuery": "e:mb2 cn≥144 cn≤242",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "144",
+            "Max": "242",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "future-frame-foil",
+        "DisplayName": "Future Frame (Foil)",
+        "Order": 3,
+        "CardCount": 15,
+        "RawQuery": "e:mb2 cn≥243 cn≤257",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "243",
+            "Max": "257",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "alchemy-made-real",
+        "DisplayName": "Alchemy Made Real",
+        "Order": 4,
+        "CardCount": 7,
+        "RawQuery": "e:mb2 cn≥258 cn≤264",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "258",
+            "Max": "264",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "playtest-cards",
+        "DisplayName": "Playtest Cards",
+        "Order": 5,
+        "CardCount": 121,
+        "RawQuery": "e:mb2 cn≥265 cn≤999",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "265",
+            "Max": "999",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      }
+    ]
+  },
   "blb": {
     "SetCode": "blb",
     "Groupings": [
@@ -2815,101 +2945,6 @@
           "CollectorNumberRange": {
             "Min": "105",
             "Max": "355",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
-  "mb2": {
-    "SetCode": "mb2",
-    "Groupings": [
-      {
-        "Id": "white-border-reprints",
-        "DisplayName": "White-Border Reprints",
-        "Order": 0,
-        "CardCount": 121,
-        "RawQuery": "e:mb2 cn≥1 cn≤121",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "121",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "future-frame-nonfoil",
-        "DisplayName": "Future Frame (Nonfoil)",
-        "Order": 1,
-        "CardCount": 22,
-        "RawQuery": "e:mb2 cn≥122 cn≤143",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "122",
-            "Max": "143",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "future-frame-foil-nonfoil",
-        "DisplayName": "Future Frame (Foil/Nonfoil)",
-        "Order": 2,
-        "CardCount": 99,
-        "RawQuery": "e:mb2 cn≥144 cn≤242",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "144",
-            "Max": "242",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "future-frame-foil",
-        "DisplayName": "Future Frame (Foil)",
-        "Order": 3,
-        "CardCount": 15,
-        "RawQuery": "e:mb2 cn≥243 cn≤257",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "243",
-            "Max": "257",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "alchemy-made-real",
-        "DisplayName": "Alchemy Made Real",
-        "Order": 4,
-        "CardCount": 7,
-        "RawQuery": "e:mb2 cn≥258 cn≤264",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "258",
-            "Max": "264",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "playtest-cards",
-        "DisplayName": "Playtest Cards",
-        "Order": 5,
-        "CardCount": 121,
-        "RawQuery": "e:mb2 cn≥265 cn≤999",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "265",
-            "Max": "999",
             "OrConditions": null
           },
           "Properties": {}
@@ -3676,71 +3711,6 @@
       }
     ]
   },
-  "otc": {
-    "SetCode": "otc",
-    "Groupings": [
-      {
-        "Id": "commanders",
-        "DisplayName": "Commanders",
-        "Order": 0,
-        "CardCount": 8,
-        "RawQuery": "e:otc cn≥1 cn≤8",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "8",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "new-cards",
-        "DisplayName": "New Cards",
-        "Order": 1,
-        "CardCount": 32,
-        "RawQuery": "e:otc cn≥9 cn≤40",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "9",
-            "Max": "40",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "extended-art",
-        "DisplayName": "Extended Art",
-        "Order": 2,
-        "CardCount": 36,
-        "RawQuery": "e:otc cn≥41 cn≤76",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "41",
-            "Max": "76",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "reprints",
-        "DisplayName": "Reprints",
-        "Order": 3,
-        "CardCount": 266,
-        "RawQuery": "e:otc cn≥77 cn≤342",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "77",
-            "Max": "342",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
   "big": {
     "SetCode": "big",
     "Groupings": [
@@ -3820,6 +3790,71 @@
           "Properties": {
             "stamped": true
           }
+        }
+      }
+    ]
+  },
+  "otc": {
+    "SetCode": "otc",
+    "Groupings": [
+      {
+        "Id": "commanders",
+        "DisplayName": "Commanders",
+        "Order": 0,
+        "CardCount": 8,
+        "RawQuery": "e:otc cn≥1 cn≤8",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "8",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "new-cards",
+        "DisplayName": "New Cards",
+        "Order": 1,
+        "CardCount": 32,
+        "RawQuery": "e:otc cn≥9 cn≤40",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "9",
+            "Max": "40",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "extended-art",
+        "DisplayName": "Extended Art",
+        "Order": 2,
+        "CardCount": 36,
+        "RawQuery": "e:otc cn≥41 cn≤76",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "41",
+            "Max": "76",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "reprints",
+        "DisplayName": "Reprints",
+        "Order": 3,
+        "CardCount": 266,
+        "RawQuery": "e:otc cn≥77 cn≤342",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "77",
+            "Max": "342",
+            "OrConditions": null
+          },
+          "Properties": {}
         }
       }
     ]
@@ -3995,7 +4030,7 @@
       },
       {
         "Id": "prism-alternate-art",
-        "DisplayName": "&quot;Prism&quot; Alternate Art",
+        "DisplayName": "\"Prism\" Alternate Art",
         "Order": 1,
         "CardCount": 10,
         "RawQuery": "e:mkm (cn:\"79†\" OR cn:\"239†\" OR cn:\"73†\" OR cn:\"213†\" OR cn:\"7†\" OR cn:\"72†\" OR cn:\"190†\" OR cn:\"36†\" OR cn:\"146†\" OR cn:\"82†\")",
@@ -7963,7 +7998,7 @@
       },
       {
         "Id": "borderless-what-if-planeswalkers",
-        "DisplayName": "Borderless &quot;What-If&quot; Planeswalkers",
+        "DisplayName": "Borderless \"What-If\" Planeswalkers",
         "Order": 6,
         "CardCount": 10,
         "RawQuery": "e:one cn≥335 cn≤344",
@@ -8275,26 +8310,6 @@
       }
     ]
   },
-  "pw23": {
-    "SetCode": "pw23",
-    "Groupings": [
-      {
-        "Id": "promos",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 11,
-        "RawQuery": "e:pw23 cn≥1 cn≤999",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "999",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
   "p23": {
     "SetCode": "p23",
     "Groupings": [
@@ -8322,6 +8337,26 @@
         "ParsedFilters": {
           "CollectorNumberRange": {
             "Min": "6",
+            "Max": "999",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      }
+    ]
+  },
+  "pw23": {
+    "SetCode": "pw23",
+    "Groupings": [
+      {
+        "Id": "promos",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 11,
+        "RawQuery": "e:pw23 cn≥1 cn≤999",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
             "Max": "999",
             "OrConditions": null
           },
@@ -9194,7 +9229,7 @@
       },
       {
         "Id": "collector-s-edition-surge-foils",
-        "DisplayName": "Collector&#39;s Edition Surge Foils",
+        "DisplayName": "Collector's Edition Surge Foils",
         "Order": 7,
         "CardCount": 296,
         "RawQuery": "e:40k is:surgefoil",
@@ -9710,7 +9745,7 @@
       },
       {
         "Id": "lae-zel",
-        "DisplayName": "Lae&#39;zel",
+        "DisplayName": "Lae'zel",
         "Order": 2,
         "CardCount": 6,
         "RawQuery": "e:hbg (cn:\"2\" OR cn:\"2w\" OR cn:\"2u\" OR cn:\"2b\" OR cn:\"2r\" OR cn:\"2g\")",
@@ -10186,7 +10221,7 @@
       },
       {
         "Id": "oyaminartok-s-spellbook",
-        "DisplayName": "Oyaminartok&#39;s Spellbook",
+        "DisplayName": "Oyaminartok's Spellbook",
         "Order": 22,
         "CardCount": 15,
         "RawQuery": "e:hbg cn≥902 cn≤916",
@@ -10201,7 +10236,7 @@
       },
       {
         "Id": "hourglass-coven-s-spellbook",
-        "DisplayName": "Hourglass Coven&#39;s Spellbook",
+        "DisplayName": "Hourglass Coven's Spellbook",
         "Order": 23,
         "CardCount": 9,
         "RawQuery": "e:hbg (cn:\"H17\" OR cn:\"H18\" OR cn:\"H19\" OR cn:\"H20\" OR cn:\"H21\" OR cn:\"H22\" OR cn:\"H23\" OR cn:\"H24\" OR cn:\"H25\")",
@@ -12240,27 +12275,6 @@
       }
     ]
   },
-  "pw21": {
-    "SetCode": "pw21",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pw21 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "mh2": {
     "SetCode": "mh2",
     "Groupings": [
@@ -12434,6 +12448,27 @@
           "Properties": {
             "promo": true,
             "frame": "1997"
+          }
+        }
+      }
+    ]
+  },
+  "pw21": {
+    "SetCode": "pw21",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 6,
+        "RawQuery": "set:pw21 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
           }
         }
       }
@@ -13216,13 +13251,15 @@
     "Groupings": [
       {
         "Id": "everyone-s-invited",
-        "DisplayName": "Everyone&#39;s Invited!",
+        "DisplayName": "Everyone's Invited!",
         "Order": 0,
         "CardCount": 74,
         "RawQuery": "e:plst date:2025-05-12",
         "ParsedFilters": {
           "CollectorNumberRange": null,
-          "Properties": {}
+          "Properties": {
+            "date": "2025-05-12"
+          }
         }
       },
       {
@@ -13258,7 +13295,9 @@
         "RawQuery": "e:plst date:2024-09-30",
         "ParsedFilters": {
           "CollectorNumberRange": null,
-          "Properties": {}
+          "Properties": {
+            "date": "2024-09-30"
+          }
         }
       },
       {
@@ -13269,7 +13308,9 @@
         "RawQuery": "e:plst date:2024-12-02",
         "ParsedFilters": {
           "CollectorNumberRange": null,
-          "Properties": {}
+          "Properties": {
+            "date": "2024-12-02"
+          }
         }
       },
       {
@@ -13280,7 +13321,9 @@
         "RawQuery": "e:plst date:2024-08-02",
         "ParsedFilters": {
           "CollectorNumberRange": null,
-          "Properties": {}
+          "Properties": {
+            "date": "2024-08-02"
+          }
         }
       },
       {
@@ -14485,15 +14528,15 @@
       }
     ]
   },
-  "j20": {
-    "SetCode": "j20",
+  "pf20": {
+    "SetCode": "pf20",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 10,
-        "RawQuery": "set:j20 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 6,
+        "RawQuery": "set:pf20 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -14506,15 +14549,15 @@
       }
     ]
   },
-  "pf20": {
-    "SetCode": "pf20",
+  "j20": {
+    "SetCode": "j20",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pf20 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 10,
+        "RawQuery": "set:j20 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -14622,7 +14665,7 @@
       },
       {
         "Id": "secret-lair-x-sonic-friends-foes",
-        "DisplayName": "Secret Lair x Sonic: Friends &amp; Foes",
+        "DisplayName": "Secret Lair x Sonic: Friends & Foes",
         "Order": 6,
         "CardCount": 7,
         "RawQuery": "e:sld cn≥2081 cn≤2087",
@@ -14866,7 +14909,7 @@
       },
       {
         "Id": "everyone-s-invited",
-        "DisplayName": "Everyone&#39;s Invited!",
+        "DisplayName": "Everyone's Invited!",
         "Order": 21,
         "CardCount": 17,
         "RawQuery": "e:sld ((cn≥1896 cn≤1910) OR cn:\"894\" OR cn:\"1944\")",
@@ -14899,7 +14942,7 @@
       },
       {
         "Id": "secret-lair-x-marvel-s-deadpool",
-        "DisplayName": "Secret Lair x Marvel&#39;s Deadpool",
+        "DisplayName": "Secret Lair x Marvel's Deadpool",
         "Order": 23,
         "CardCount": 7,
         "RawQuery": "e:sld ((cn≥1753 cn≤1757) OR cn:\"868\" OR cn:\"869\")",
@@ -14947,7 +14990,7 @@
       },
       {
         "Id": "pick-em-and-stick-em",
-        "DisplayName": "Pick &#39;Em And Stick &#39;Em",
+        "DisplayName": "Pick 'Em And Stick 'Em",
         "Order": 26,
         "CardCount": 10,
         "RawQuery": "e:sld ((cn≥1428 cn≤1432) OR cn:\"335\" OR cn:\"336\" OR cn:\"337\" OR cn:\"338\" OR cn:\"339\")",
@@ -14968,7 +15011,7 @@
       },
       {
         "Id": "secret-lair-high-class-of-87",
-        "DisplayName": "Secret Lair High: Class of &#39;87",
+        "DisplayName": "Secret Lair High: Class of '87",
         "Order": 27,
         "CardCount": 4,
         "RawQuery": "e:sld cn≥1873 cn≤1876",
@@ -15327,7 +15370,7 @@
       },
       {
         "Id": "marvel-s-black-panther",
-        "DisplayName": "Marvel&#39;s Black Panther",
+        "DisplayName": "Marvel's Black Panther",
         "Order": 49,
         "CardCount": 7,
         "RawQuery": "e:sld ((cn≥1747 cn≤1752) OR cn:\"867\")",
@@ -15344,7 +15387,7 @@
       },
       {
         "Id": "marvel-s-captain-america",
-        "DisplayName": "Marvel&#39;s Captain America",
+        "DisplayName": "Marvel's Captain America",
         "Order": 50,
         "CardCount": 6,
         "RawQuery": "e:sld ((cn≥1726 cn≤1730) OR cn:\"863\")",
@@ -15361,7 +15404,7 @@
       },
       {
         "Id": "marvel-s-iron-man",
-        "DisplayName": "Marvel&#39;s Iron Man",
+        "DisplayName": "Marvel's Iron Man",
         "Order": 51,
         "CardCount": 7,
         "RawQuery": "e:sld ((cn≥1731 cn≤1736) OR cn:\"864\")",
@@ -15378,7 +15421,7 @@
       },
       {
         "Id": "marvel-s-storm",
-        "DisplayName": "Marvel&#39;s Storm",
+        "DisplayName": "Marvel's Storm",
         "Order": 52,
         "CardCount": 6,
         "RawQuery": "e:sld ((cn≥1742 cn≤1746) OR cn:\"866\")",
@@ -15413,7 +15456,7 @@
       },
       {
         "Id": "marvel-s-wolverine",
-        "DisplayName": "Marvel&#39;s Wolverine",
+        "DisplayName": "Marvel's Wolverine",
         "Order": 54,
         "CardCount": 6,
         "RawQuery": "e:sld ((cn≥1737 cn≤1741) OR cn:\"865\")",
@@ -15575,7 +15618,7 @@
       },
       {
         "Id": "d-d-50th-anniversary-superdrop",
-        "DisplayName": "D&amp;D 50th Anniversary Superdrop",
+        "DisplayName": "D&D 50th Anniversary Superdrop",
         "Order": 64,
         "CardCount": 6,
         "RawQuery": "e:sld (cn:\"874\" OR cn:\"875\" OR cn:\"876\" OR cn:\"877\" OR cn:\"878\" OR cn:\"879\")",
@@ -15597,7 +15640,7 @@
       },
       {
         "Id": "d-d-an-exhibition-of-adventure",
-        "DisplayName": "D&amp;D: An Exhibition of Adventure",
+        "DisplayName": "D&D: An Exhibition of Adventure",
         "Order": 65,
         "CardCount": 8,
         "RawQuery": "e:sld ((cn≥1778 cn≤1784) OR cn:\"873\")",
@@ -15614,7 +15657,7 @@
       },
       {
         "Id": "d-d-astarion-s-thirst",
-        "DisplayName": "D&amp;D: Astarion&#39;s Thirst",
+        "DisplayName": "D&D: Astarion's Thirst",
         "Order": 66,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1797 cn≤1801",
@@ -15629,7 +15672,7 @@
       },
       {
         "Id": "d-d-death-is-in-the-eyes-of-the-beholder-i",
-        "DisplayName": "D&amp;D: Death Is In The Eyes of the Beholder I",
+        "DisplayName": "D&D: Death Is In The Eyes of the Beholder I",
         "Order": 67,
         "CardCount": 6,
         "RawQuery": "e:sld cn≥1785 cn≤1790",
@@ -15644,7 +15687,7 @@
       },
       {
         "Id": "d-d-death-is-in-the-eyes-of-the-beholder-ii",
-        "DisplayName": "D&amp;D: Death Is In The Eyes of the Beholder II",
+        "DisplayName": "D&D: Death Is In The Eyes of the Beholder II",
         "Order": 68,
         "CardCount": 6,
         "RawQuery": "e:sld cn≥1791 cn≤1796",
@@ -15659,7 +15702,7 @@
       },
       {
         "Id": "d-d-karlach-s-rage",
-        "DisplayName": "D&amp;D: Karlach&#39;s Rage",
+        "DisplayName": "D&D: Karlach's Rage",
         "Order": 69,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1802 cn≤1806",
@@ -15674,7 +15717,7 @@
       },
       {
         "Id": "li-l-legends",
-        "DisplayName": "Li&#39;l Legends",
+        "DisplayName": "Li'l Legends",
         "Order": 70,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1682 cn≤1686",
@@ -15866,7 +15909,7 @@
       },
       {
         "Id": "assassin-s-creed-lethal-legends",
-        "DisplayName": "Assassin&#39;s Creed: Lethal Legends",
+        "DisplayName": "Assassin's Creed: Lethal Legends",
         "Order": 82,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1557 cn≤1561",
@@ -15881,7 +15924,7 @@
       },
       {
         "Id": "assassin-s-creed-da-vinci-s-designs",
-        "DisplayName": "Assassin&#39;s Creed: Da Vinci&#39;s Designs",
+        "DisplayName": "Assassin's Creed: Da Vinci's Designs",
         "Order": 83,
         "CardCount": 6,
         "RawQuery": "e:sld ((cn≥1570 cn≤1574) OR cn:\"802\")",
@@ -16097,7 +16140,7 @@
       },
       {
         "Id": "laura-plansker-s-diabolical-dioramas",
-        "DisplayName": "Laura Plansker&#39;s Diabolical Dioramas",
+        "DisplayName": "Laura Plansker's Diabolical Dioramas",
         "Order": 95,
         "CardCount": 8,
         "RawQuery": "e:sld cn≥1643 cn≤1646",
@@ -16160,7 +16203,7 @@
       },
       {
         "Id": "sheldon-s-spellbook",
-        "DisplayName": "Sheldon&#39;s Spellbook",
+        "DisplayName": "Sheldon's Spellbook",
         "Order": 99,
         "CardCount": 8,
         "RawQuery": "e:sld ((cn≥1691 cn≤1697) OR cn:\"828\")",
@@ -16585,7 +16628,7 @@
       },
       {
         "Id": "li-l-est-walkers",
-        "DisplayName": "Li&#39;l&#39;est Walkers",
+        "DisplayName": "Li'l'est Walkers",
         "Order": 125,
         "CardCount": 10,
         "RawQuery": "e:sld cn≥1419 cn≤1423",
@@ -16634,7 +16677,7 @@
       },
       {
         "Id": "dan-frazier-s-mox-box",
-        "DisplayName": "Dan Frazier&#39;s Mox Box",
+        "DisplayName": "Dan Frazier's Mox Box",
         "Order": 128,
         "CardCount": 3,
         "RawQuery": "e:sld cn≥1072 cn≤1074",
@@ -16730,7 +16773,7 @@
       },
       {
         "Id": "buggin-out",
-        "DisplayName": "Buggin&#39; Out",
+        "DisplayName": "Buggin' Out",
         "Order": 134,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1414 cn≤1418",
@@ -16762,7 +16805,7 @@
       },
       {
         "Id": "angels-they-re-just-like-us-but-cooler-and-with-wings",
-        "DisplayName": "Angels: They&#39;re Just Like Us but Cooler and With Wings",
+        "DisplayName": "Angels: They're Just Like Us but Cooler and With Wings",
         "Order": 136,
         "CardCount": 22,
         "RawQuery": "e:sld ((cn≥1335 cn≤1351) OR cn:\"731\" OR cn:\"1387\" OR cn:\"1388\" OR cn:\"1388a\" OR cn:\"1388b\")",
@@ -16815,7 +16858,7 @@
       },
       {
         "Id": "goblin-squabblin",
-        "DisplayName": "Goblin &amp; Squabblin&#39;",
+        "DisplayName": "Goblin & Squabblin'",
         "Order": 139,
         "CardCount": 10,
         "RawQuery": "e:sld cn≥1311 cn≤1315",
@@ -17043,7 +17086,7 @@
       },
       {
         "Id": "d-d-honor-among-thieves",
-        "DisplayName": "D&amp;D: Honor Among Thieves",
+        "DisplayName": "D&D: Honor Among Thieves",
         "Order": 153,
         "CardCount": 7,
         "RawQuery": "e:sld ((cn≥1237 cn≤1242) OR cn:\"728\")",
@@ -17150,7 +17193,7 @@
       },
       {
         "Id": "the-90s-binder-experience",
-        "DisplayName": "The &#39;90s Binder Experience",
+        "DisplayName": "The '90s Binder Experience",
         "Order": 160,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1227 cn≤1231",
@@ -17591,7 +17634,7 @@
       },
       {
         "Id": "li-l-er-walkers",
-        "DisplayName": "Li&#39;l&#39;er Walkers",
+        "DisplayName": "Li'l'er Walkers",
         "Order": 188,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥1140 cn≤1144",
@@ -17732,7 +17775,7 @@
       },
       {
         "Id": "li-l-giri-saves-the-day",
-        "DisplayName": "Li&#39;l Giri Saves the Day",
+        "DisplayName": "Li'l Giri Saves the Day",
         "Order": 197,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥401 cn≤405",
@@ -18087,7 +18130,7 @@
       },
       {
         "Id": "li-l-walkers",
-        "DisplayName": "Li&#39;l Walkers",
+        "DisplayName": "Li'l Walkers",
         "Order": 219,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥396 cn≤400",
@@ -18504,7 +18547,7 @@
       },
       {
         "Id": "teferi-s-time-trouble",
-        "DisplayName": "Teferi&#39;s Time Trouble",
+        "DisplayName": "Teferi's Time Trouble",
         "Order": 245,
         "CardCount": 3,
         "RawQuery": "e:sld cn≥251 cn≤253",
@@ -18581,7 +18624,7 @@
       },
       {
         "Id": "mother-s-day-2021",
-        "DisplayName": "Mother&#39;s Day 2021",
+        "DisplayName": "Mother's Day 2021",
         "Order": 250,
         "CardCount": 4,
         "RawQuery": "e:sld cn≥296 cn≤299",
@@ -18658,7 +18701,7 @@
       },
       {
         "Id": "saturday-morning-d-d",
-        "DisplayName": "Saturday Morning D&amp;D",
+        "DisplayName": "Saturday Morning D&D",
         "Order": 255,
         "CardCount": 7,
         "RawQuery": "e:sld ((cn≥310 cn≤315) OR cn:\"591\")",
@@ -18767,7 +18810,7 @@
       },
       {
         "Id": "valentine-s-day-2021",
-        "DisplayName": "Valentine&#39;s Day 2021",
+        "DisplayName": "Valentine's Day 2021",
         "Order": 262,
         "CardCount": 6,
         "RawQuery": "e:sld cn≥214 cn≤219",
@@ -19120,7 +19163,7 @@
       },
       {
         "Id": "international-women-s-day",
-        "DisplayName": "International Women&#39;s Day",
+        "DisplayName": "International Women's Day",
         "Order": 285,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥51 cn≤55",
@@ -19255,7 +19298,7 @@
       },
       {
         "Id": "explosion-sounds",
-        "DisplayName": "&lt;explosion sounds&gt;",
+        "DisplayName": "<explosion sounds>",
         "Order": 294,
         "CardCount": 5,
         "RawQuery": "e:sld cn≥17 cn≤21",
@@ -19814,7 +19857,7 @@
     "Groupings": [
       {
         "Id": "d-d-honor-among-thieves",
-        "DisplayName": "D&amp;D: Honor Among Thieves",
+        "DisplayName": "D&D: Honor Among Thieves",
         "Order": 0,
         "CardCount": 7,
         "RawQuery": "e:slx cn≥24 cn≤30",
@@ -19878,13 +19921,17 @@
     "SetCode": "slu",
     "Groupings": [
       {
-        "Id": "other-cards",
-        "DisplayName": "Other Cards",
+        "Id": "ultimate-edition-fetchlands",
+        "DisplayName": "Ultimate Edition: Fetchlands",
         "Order": 0,
-        "CardCount": 1,
-        "RawQuery": "e: cn≥ cn≤",
+        "CardCount": 5,
+        "RawQuery": "e:slu cn≥1 cn≤5",
         "ParsedFilters": {
-          "CollectorNumberRange": null,
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "5",
+            "OrConditions": null
+          },
           "Properties": {}
         }
       },
@@ -19904,17 +19951,13 @@
         }
       },
       {
-        "Id": "ultimate-edition-fetchlands",
-        "DisplayName": "Ultimate Edition: Fetchlands",
+        "Id": "other-cards",
+        "DisplayName": "Other Cards",
         "Order": 2,
-        "CardCount": 5,
-        "RawQuery": "e:slu cn≥1 cn≤5",
+        "CardCount": 1,
+        "RawQuery": "e: cn≥ cn≤",
         "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "5",
-            "OrConditions": null
-          },
+          "CollectorNumberRange": null,
           "Properties": {}
         }
       }
@@ -21470,6 +21513,22 @@
       }
     ]
   },
+  "cm2": {
+    "SetCode": "cm2",
+    "Groupings": [
+      {
+        "Id": "box",
+        "DisplayName": "Box-Exclusive Cards",
+        "Order": 0,
+        "CardCount": 312,
+        "RawQuery": "set:cm2 st:box",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {}
+        }
+      }
+    ]
+  },
   "bbd": {
     "SetCode": "bbd",
     "Groupings": [
@@ -21549,22 +21608,6 @@
           "Properties": {
             "datestamped": true
           }
-        }
-      }
-    ]
-  },
-  "cm2": {
-    "SetCode": "cm2",
-    "Groupings": [
-      {
-        "Id": "box",
-        "DisplayName": "Box-Exclusive Cards",
-        "Order": 0,
-        "CardCount": 312,
-        "RawQuery": "set:cm2 st:box",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {}
         }
       }
     ]
@@ -22534,15 +22577,15 @@
       }
     ]
   },
-  "f17": {
-    "SetCode": "f17",
+  "j17": {
+    "SetCode": "j17",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f17 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 9,
+        "RawQuery": "set:j17 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -22555,15 +22598,15 @@
       }
     ]
   },
-  "j17": {
-    "SetCode": "j17",
+  "f17": {
+    "SetCode": "f17",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 9,
-        "RawQuery": "set:j17 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f17 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -22877,7 +22920,7 @@
         "Id": "booster",
         "DisplayName": "In Boosters",
         "Order": 0,
-        "CardCount": 208,
+        "CardCount": 211,
         "RawQuery": "set:emn is:booster",
         "ParsedFilters": {
           "CollectorNumberRange": null,
@@ -23893,6 +23936,37 @@
       }
     ]
   },
+  "dvd": {
+    "SetCode": "dvd",
+    "Groupings": [
+      {
+        "Id": "divine",
+        "DisplayName": "Divine",
+        "Order": 0,
+        "CardCount": 29,
+        "RawQuery": "set:dvd cn>=1 cn<30",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": null,
+            "Max": "30",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "demonic",
+        "DisplayName": "Demonic",
+        "Order": 1,
+        "CardCount": 33,
+        "RawQuery": "set:dvd cn>=30",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {}
+        }
+      }
+    ]
+  },
   "jvc": {
     "SetCode": "jvc",
     "Groupings": [
@@ -23917,37 +23991,6 @@
         "Order": 1,
         "CardCount": 29,
         "RawQuery": "set:jvc cn>=34",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {}
-        }
-      }
-    ]
-  },
-  "evg": {
-    "SetCode": "evg",
-    "Groupings": [
-      {
-        "Id": "elves",
-        "DisplayName": "Elves",
-        "Order": 0,
-        "CardCount": 31,
-        "RawQuery": "set:evg cn>=1 cn<32",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": null,
-            "Max": "32",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "goblins",
-        "DisplayName": "Goblins",
-        "Order": 1,
-        "CardCount": 31,
-        "RawQuery": "set:evg cn>=32",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {}
@@ -23986,30 +24029,30 @@
       }
     ]
   },
-  "dvd": {
-    "SetCode": "dvd",
+  "evg": {
+    "SetCode": "evg",
     "Groupings": [
       {
-        "Id": "divine",
-        "DisplayName": "Divine",
+        "Id": "elves",
+        "DisplayName": "Elves",
         "Order": 0,
-        "CardCount": 29,
-        "RawQuery": "set:dvd cn>=1 cn<30",
+        "CardCount": 31,
+        "RawQuery": "set:evg cn>=1 cn<32",
         "ParsedFilters": {
           "CollectorNumberRange": {
             "Min": null,
-            "Max": "30",
+            "Max": "32",
             "OrConditions": null
           },
           "Properties": {}
         }
       },
       {
-        "Id": "demonic",
-        "DisplayName": "Demonic",
+        "Id": "goblins",
+        "DisplayName": "Goblins",
         "Order": 1,
-        "CardCount": 33,
-        "RawQuery": "set:dvd cn>=30",
+        "CardCount": 31,
+        "RawQuery": "set:evg cn>=32",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {}
@@ -24534,15 +24577,15 @@
       }
     ]
   },
-  "f14": {
-    "SetCode": "f14",
+  "j14": {
+    "SetCode": "j14",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f14 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 14,
+        "RawQuery": "set:j14 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -24555,15 +24598,15 @@
       }
     ]
   },
-  "j14": {
-    "SetCode": "j14",
+  "f14": {
+    "SetCode": "f14",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 14,
-        "RawQuery": "set:j14 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f14 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -24943,15 +24986,15 @@
       }
     ]
   },
-  "f13": {
-    "SetCode": "f13",
+  "j13": {
+    "SetCode": "j13",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f13 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 9,
+        "RawQuery": "set:j13 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -24964,15 +25007,15 @@
       }
     ]
   },
-  "j13": {
-    "SetCode": "j13",
+  "f13": {
+    "SetCode": "f13",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 9,
-        "RawQuery": "set:j13 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f13 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -25250,6 +25293,27 @@
       }
     ]
   },
+  "pdp13": {
+    "SetCode": "pdp13",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 3,
+        "RawQuery": "set:pdp13 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
   "pidw": {
     "SetCode": "pidw",
     "Groupings": [
@@ -25284,27 +25348,6 @@
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {}
-        }
-      }
-    ]
-  },
-  "pdp13": {
-    "SetCode": "pdp13",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 3,
-        "RawQuery": "set:pdp13 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
         }
       }
     ]
@@ -25702,15 +25745,15 @@
       }
     ]
   },
-  "p11": {
-    "SetCode": "p11",
+  "g11": {
+    "SetCode": "g11",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 7,
-        "RawQuery": "set:p11 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 8,
+        "RawQuery": "set:g11 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -25723,15 +25766,15 @@
       }
     ]
   },
-  "g11": {
-    "SetCode": "g11",
+  "p11": {
+    "SetCode": "p11",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 8,
-        "RawQuery": "set:g11 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 7,
+        "RawQuery": "set:p11 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26056,27 +26099,6 @@
       }
     ]
   },
-  "f10": {
-    "SetCode": "f10",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f10 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "g10": {
     "SetCode": "g10",
     "Groupings": [
@@ -26107,6 +26129,27 @@
         "Order": 0,
         "CardCount": 13,
         "RawQuery": "set:p10 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "f10": {
+    "SetCode": "f10",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 12,
+        "RawQuery": "set:f10 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26535,15 +26578,15 @@
       }
     ]
   },
-  "g09": {
-    "SetCode": "g09",
+  "p09": {
+    "SetCode": "p09",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 10,
-        "RawQuery": "set:g09 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 13,
+        "RawQuery": "set:p09 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26577,15 +26620,15 @@
       }
     ]
   },
-  "p09": {
-    "SetCode": "p09",
+  "g09": {
+    "SetCode": "g09",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 13,
-        "RawQuery": "set:p09 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 10,
+        "RawQuery": "set:g09 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26884,6 +26927,27 @@
       }
     ]
   },
+  "g08": {
+    "SetCode": "g08",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 5,
+        "RawQuery": "set:g08 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
   "p08": {
     "SetCode": "p08",
     "Groupings": [
@@ -26914,27 +26978,6 @@
         "Order": 0,
         "CardCount": 12,
         "RawQuery": "set:f08 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
-  "g08": {
-    "SetCode": "g08",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 5,
-        "RawQuery": "set:g08 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -27504,27 +27547,6 @@
       }
     ]
   },
-  "f07": {
-    "SetCode": "f07",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f07 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "p07": {
     "SetCode": "p07",
     "Groupings": [
@@ -27555,6 +27577,27 @@
         "Order": 0,
         "CardCount": 5,
         "RawQuery": "set:g07 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "f07": {
+    "SetCode": "f07",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 12,
+        "RawQuery": "set:f07 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -27906,6 +27949,27 @@
       }
     ]
   },
+  "f06": {
+    "SetCode": "f06",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 12,
+        "RawQuery": "set:f06 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
   "g06": {
     "SetCode": "g06",
     "Groupings": [
@@ -27915,6 +27979,27 @@
         "Order": 0,
         "CardCount": 4,
         "RawQuery": "set:g06 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "p06": {
+    "SetCode": "p06",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 7,
+        "RawQuery": "set:p06 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -27956,48 +28041,6 @@
           "CollectorNumberRange": null,
           "Properties": {
             "variation": true
-          }
-        }
-      }
-    ]
-  },
-  "f06": {
-    "SetCode": "f06",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f06 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
-  "p06": {
-    "SetCode": "p06",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 7,
-        "RawQuery": "set:p06 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
           }
         }
       }
@@ -28330,15 +28373,15 @@
       }
     ]
   },
-  "p05": {
-    "SetCode": "p05",
+  "f05": {
+    "SetCode": "f05",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:p05 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f05 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -28372,15 +28415,15 @@
       }
     ]
   },
-  "f05": {
-    "SetCode": "f05",
+  "p05": {
+    "SetCode": "p05",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f05 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 6,
+        "RawQuery": "set:p05 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -28861,15 +28904,15 @@
       }
     ]
   },
-  "f03": {
-    "SetCode": "f03",
+  "g03": {
+    "SetCode": "g03",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 13,
-        "RawQuery": "set:f03 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 3,
+        "RawQuery": "set:g03 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -28903,15 +28946,15 @@
       }
     ]
   },
-  "g03": {
-    "SetCode": "g03",
+  "f03": {
+    "SetCode": "f03",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 3,
-        "RawQuery": "set:g03 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 13,
+        "RawQuery": "set:f03 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29277,15 +29320,15 @@
       }
     ]
   },
-  "f02": {
-    "SetCode": "f02",
+  "pr2": {
+    "SetCode": "pr2",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f02 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 6,
+        "RawQuery": "set:pr2 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29298,15 +29341,15 @@
       }
     ]
   },
-  "pr2": {
-    "SetCode": "pr2",
+  "f02": {
+    "SetCode": "f02",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pr2 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f02 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29489,27 +29532,6 @@
       }
     ]
   },
-  "f01": {
-    "SetCode": "f01",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 7,
-        "RawQuery": "set:f01 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "mpr": {
     "SetCode": "mpr",
     "Groupings": [
@@ -29540,6 +29562,27 @@
         "Order": 0,
         "CardCount": 2,
         "RawQuery": "set:g01 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "f01": {
+    "SetCode": "f01",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 7,
+        "RawQuery": "set:f01 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29726,15 +29769,15 @@
       }
     ]
   },
-  "fnm": {
-    "SetCode": "fnm",
+  "g00": {
+    "SetCode": "g00",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 11,
-        "RawQuery": "set:fnm is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 2,
+        "RawQuery": "set:g00 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29747,15 +29790,15 @@
       }
     ]
   },
-  "g00": {
-    "SetCode": "g00",
+  "fnm": {
+    "SetCode": "fnm",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 2,
-        "RawQuery": "set:g00 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 11,
+        "RawQuery": "set:fnm is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {

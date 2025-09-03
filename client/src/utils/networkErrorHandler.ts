@@ -24,8 +24,7 @@ export interface NetworkError extends Error {
  */
 export const createNetworkError = (
   originalError: Error, 
-  status?: number,
-  response?: Response
+  status?: number
 ): NetworkError => {
   const networkError = originalError as NetworkError;
   networkError.isNetworkError = true;
@@ -146,8 +145,7 @@ export const fetchWithRetry = async <T>(
       if (!response.ok) {
         const error = createNetworkError(
           new Error(`HTTP ${response.status}: ${response.statusText}`),
-          response.status,
-          response
+          response.status
         );
 
         // If not retryable or on last attempt, throw the error

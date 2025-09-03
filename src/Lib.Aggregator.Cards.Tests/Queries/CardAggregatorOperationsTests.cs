@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AwesomeAssertions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
 using Lib.Aggregator.Cards.Queries;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
+using Lib.Aggregator.Scryfall.Shared.Mappers;
 using Lib.Cosmos.Apis;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 using TestConvenience.Core.Reflection;
 

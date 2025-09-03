@@ -257,6 +257,9 @@ public class ScryfallGroupingsScraper
                 displayName = System.Text.RegularExpressions.Regex.Replace(displayName, @"<[^>]+>", "");
                 displayName = displayName.Trim(); // Trim again after removing tags
             }
+            
+            // Decode HTML entities (e.g., &amp; -> &, &quot; -> ", etc.)
+            displayName = HttpUtility.HtmlDecode(displayName);
 
             // Find the href with card count
             var hrefIndex = section.IndexOf("href=\"", dotIndex);
@@ -396,6 +399,13 @@ public class ScryfallGroupingsScraper
         if (typeMatch.Success)
         {
             filters.Properties["type_line_contains"] = typeMatch.Groups[1].Value;
+        }
+
+        // date:YYYY-MM-DD patterns
+        var dateMatch = Regex.Match(query, @"date:(\d{4}-\d{2}-\d{2})");
+        if (dateMatch.Success)
+        {
+            filters.Properties["date"] = dateMatch.Groups[1].Value;
         }
 
         return filters;

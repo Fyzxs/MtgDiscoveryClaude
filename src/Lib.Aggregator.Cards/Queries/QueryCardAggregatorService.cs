@@ -7,6 +7,8 @@ using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Entities;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries.Mappers;
+using Lib.Aggregator.Scryfall.Shared.Mappers;
+using Lib.Aggregator.Scryfall.Shared.Models;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Identifiers;

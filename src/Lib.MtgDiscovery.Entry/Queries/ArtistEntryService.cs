@@ -15,15 +15,19 @@ internal sealed class ArtistEntryService : IArtistEntryService
     private readonly IArtistDataService _artistDataService;
     private readonly IArtistSearchTermArgEntityValidator _searchTermValidator;
     private readonly IArtistIdArgEntityValidator _artistIdValidator;
+    private readonly IArtistNameArgEntityValidator _artistNameValidator;
     private readonly IArtistSearchTermArgsToItrMapper _searchTermMapper;
     private readonly IArtistIdArgsToItrMapper _artistIdMapper;
+    private readonly IArtistNameArgsToItrMapper _artistNameMapper;
 
     public ArtistEntryService(ILogger logger) : this(
         new DataService(logger),
         new ArtistSearchTermArgEntityValidatorContainer(),
         new ArtistIdArgEntityValidatorContainer(),
+        new ArtistNameArgEntityValidatorContainer(),
         new ArtistSearchTermArgsToItrMapper(),
-        new ArtistIdArgsToItrMapper())
+        new ArtistIdArgsToItrMapper(),
+        new ArtistNameArgsToItrMapper())
     {
     }
 
@@ -31,14 +35,18 @@ internal sealed class ArtistEntryService : IArtistEntryService
         IArtistDataService artistDataService,
         IArtistSearchTermArgEntityValidator searchTermValidator,
         IArtistIdArgEntityValidator artistIdValidator,
+        IArtistNameArgEntityValidator artistNameValidator,
         IArtistSearchTermArgsToItrMapper searchTermMapper,
-        IArtistIdArgsToItrMapper artistIdMapper)
+        IArtistIdArgsToItrMapper artistIdMapper,
+        IArtistNameArgsToItrMapper artistNameMapper)
     {
         _artistDataService = artistDataService;
         _searchTermValidator = searchTermValidator;
         _artistIdValidator = artistIdValidator;
+        _artistNameValidator = artistNameValidator;
         _searchTermMapper = searchTermMapper;
         _artistIdMapper = artistIdMapper;
+        _artistNameMapper = artistNameMapper;
     }
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm)
@@ -59,5 +67,15 @@ internal sealed class ArtistEntryService : IArtistEntryService
 
         IArtistIdItrEntity mappedArgs = await _artistIdMapper.Map(artistId).ConfigureAwait(false);
         return await _artistDataService.CardsByArtistAsync(mappedArgs).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
+    {
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _artistNameValidator.Validate(artistName).ConfigureAwait(false);
+
+        if (result.IsNotValid()) return result.FailureStatus();
+
+        IArtistNameItrEntity mappedArgs = await _artistNameMapper.Map(artistName).ConfigureAwait(false);
+        return await _artistDataService.CardsByArtistNameAsync(mappedArgs).ConfigureAwait(false);
     }
 }
