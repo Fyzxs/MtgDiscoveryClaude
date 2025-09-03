@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { SearchInput } from '../atoms/shared/SearchInput';
+import { AuthButton } from '../auth/AuthButton';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
@@ -161,6 +162,9 @@ export const Header: React.FC = () => {
 
         {/* Spacer */}
         <Box sx={{ flexGrow: 1 }} />
+
+        {/* Authentication Button */}
+        <AuthButton />
 
         {/* Set Code Search */}
         <Box role="search" aria-label="Quick set search">

@@ -90,12 +90,20 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         }
       } else {
         // Direct property match or array contains
-        // Try both the original key and the camelCase version
-        let cardValue = (card as any)[key];
-        if (cardValue === undefined) {
-          // Try converting snake_case to camelCase
-          const camelKey = snakeToCamel(key);
-          cardValue = (card as any)[camelKey];
+        // Handle special property mappings first
+        let cardValue: any;
+        
+        if (key === 'date') {
+          // Map 'date' property to card's releasedAt field
+          cardValue = card.releasedAt;
+        } else {
+          // Try both the original key and the camelCase version
+          cardValue = (card as any)[key];
+          if (cardValue === undefined) {
+            // Try converting snake_case to camelCase
+            const camelKey = snakeToCamel(key);
+            cardValue = (card as any)[camelKey];
+          }
         }
         
         // Check direct property

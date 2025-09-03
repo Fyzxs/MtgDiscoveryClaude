@@ -6,12 +6,11 @@ import { SetPage } from './pages/SetPage'
 import { CardSearchPage } from './pages/CardSearchPage'
 import { ArtistSearchPage } from './pages/ArtistSearchPage'
 import { ArtistCardsPage } from './pages/ArtistCardsPage'
-import { CardDetailPage } from './pages/CardDetailPage'
+import { CardAllPrintingsPage } from './pages/CardAllPrintingsPage'
 import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/ErrorBoundaries'
-
 function HomePage() {
   const navigate = useNavigate();
   
@@ -88,8 +87,8 @@ function App() {
             </PageErrorBoundary>
           } />
           <Route path="/card/:cardName" element={
-            <PageErrorBoundary name="CardDetailPage">
-              <CardDetailPage />
+            <PageErrorBoundary name="CardAllPrintingsPage">
+              <CardAllPrintingsPage />
             </PageErrorBoundary>
           } />
           {/* Handle old query param URLs for backwards compatibility */}

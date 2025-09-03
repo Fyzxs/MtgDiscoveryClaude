@@ -24,7 +24,11 @@
       "Bash(true)",
       "Bash(git checkout:*)",
       "Bash(npm install)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm install:*)",
+      "Bash(npx eslint:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

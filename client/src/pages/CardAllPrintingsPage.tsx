@@ -60,7 +60,7 @@ interface CardsResponse {
   };
 }
 
-export const CardDetailPage: React.FC = () => {
+export const CardAllPrintingsPage: React.FC = () => {
   const { cardName } = useParams<{ cardName: string }>();
   const navigate = useNavigate();
   const decodedCardName = decodeURIComponent(cardName || '');
@@ -115,6 +115,10 @@ export const CardDetailPage: React.FC = () => {
     } catch (retryError) {
       console.error('Retry failed:', retryError);
     }
+  };
+
+  const handleArtistClick = (artistName: string) => {
+    navigate(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
   };
 
   // Use the shared card filtering hook (no search or sets filter for card detail page)
@@ -253,6 +257,7 @@ export const CardDetailPage: React.FC = () => {
               <MtgCard 
                 card={card}
                 context={{ isOnCardPage: true }}
+                onArtistClick={handleArtistClick}
               />
             </AppErrorBoundary>
           ))}

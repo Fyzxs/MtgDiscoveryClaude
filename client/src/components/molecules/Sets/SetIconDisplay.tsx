@@ -35,6 +35,7 @@ export const SetIconDisplay: React.FC<SetIconDisplayProps> = ({
         component="img"
         src={iconSvgUri}
         alt={`${setName} icon`}
+        loading="lazy"
         sx={{
           maxWidth: '120px',
           maxHeight: '120px',
