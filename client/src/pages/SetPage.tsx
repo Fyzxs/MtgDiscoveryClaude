@@ -27,7 +27,8 @@ import {
 } from '../components/ErrorBoundaries';
 import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
-import { groupCardsBySetGroupings, getGroupDisplayName, getGroupOrder } from '../utils/cardGrouping';
+import { groupCardsOptimized, getGroupDisplayName, getGroupOrder } from '../utils/optimizedCardGrouping';
+import { useOptimizedSort } from '../hooks/useOptimizedSort';
 
 interface CardsResponse {
   cardsBySetCode: {
@@ -73,11 +74,12 @@ export const SetPage: React.FC = () => {
     search: { default: '' },
     rarities: { default: [] },
     artists: { default: [] },
+    groups: { default: [] },
     sort: { default: 'collector-asc' }
   };
 
   // Get initial values from URL only once on mount
-  const { getInitialValues } = useUrlState({}, urlStateConfig);
+  const { getInitialValues, updateUrl } = useUrlState({}, urlStateConfig);
   const [initialValues] = useState(() => getInitialValues());
   const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_SET_CODE, {
     variables: { setCode: { setCode } },
@@ -106,6 +108,16 @@ export const SetPage: React.FC = () => {
     }
     return raw;
   }, [initialValues.artists]);
+
+  // Get initial groups from URL as array
+  const initialGroups = useMemo(() => {
+    let raw = initialValues.groups || [];
+    // Ensure raw is always an array (URL parsing might return a string for single values)
+    if (!Array.isArray(raw)) {
+      raw = raw ? [raw] : [];
+    }
+    return raw;
+  }, [initialValues.groups]);
 
   const { loading: setLoading, error: setError, data: setData } = useQuery<SetsResponse>(GET_SET_BY_CODE_WITH_GROUPINGS, {
     variables: { codes: { setCodes: [setCode] } },
@@ -178,12 +190,18 @@ export const SetPage: React.FC = () => {
       filters: {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         artists: initialArtists,  // Use raw initial values, normalize later
+        groups: initialGroups,   // Add groups filter
         showDigital: false
       }
     }
   );
 
   const selectedRarities = filters.rarities || [];
+  const selectedGroupIds = filters.groups || [];
+  
+  // Apply optimized sorting to filtered cards
+  const sortFn = (filterConfig.sortOptions as any)[sortBy] || filterConfig.sortOptions['collector-asc'];
+  const sortedCards = useOptimizedSort(filteredCards, sortBy, sortFn);
   
   // Update artist filter to normalize casing when data loads
   useEffect(() => {
@@ -200,6 +218,19 @@ export const SetPage: React.FC = () => {
       }
     }
   }, [artistMap]); // Only run when artistMap changes (when data loads)
+
+  // Update URL when filters change
+  useEffect(() => {
+    const urlUpdates: Record<string, any> = {
+      search: searchTerm || null,
+      sort: sortBy !== 'collector-asc' ? sortBy : null,
+      rarities: filters.rarities?.length > 0 ? filters.rarities : null,
+      artists: filters.artists?.length > 0 ? filters.artists : null,
+      groups: filters.groups?.length > 0 ? filters.groups : null
+    };
+    
+    updateUrl(urlUpdates);
+  }, [searchTerm, sortBy, filters.rarities, filters.artists, filters.groups, updateUrl]);
   
   // Normalize selected artists to match the case in our data
   const selectedArtists = useMemo(() => {
@@ -213,7 +244,7 @@ export const SetPage: React.FC = () => {
       return normalized || artist;
     }).filter((artist: string) => allArtists.includes(artist)); // Only keep valid artists
   }, [filters.artists, artistMap, allArtists]);
-  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]); // Empty = show all
+  
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
 
@@ -267,17 +298,14 @@ export const SetPage: React.FC = () => {
   const setInfo = setData?.setsByCode?.data?.[0];
   const cards = cardsData?.cardsBySetCode?.data || [];
 
-  // Compute card groups directly without state - using useMemo to avoid recalculation
-  const cardGroups = useMemo(() => {
-    if (!filteredCards || !setInfo || !cards) {
+  // Stable computation of all card groups (independent of sorting/filtering)
+  const allCardGroups = useMemo(() => {
+    if (!setInfo || !cards) {
       return [];
     }
 
     // Calculate total cards per group from ALL cards (unfiltered)
-    const totalCardsPerGroup = groupCardsBySetGroupings(cards, setInfo.groupings);
-    
-    // Use the new grouping system from the set data for filtered cards
-    const groupedCards = groupCardsBySetGroupings(filteredCards, setInfo.groupings);
+    const totalCardsPerGroup = groupCardsOptimized(cards, setInfo.groupings);
     
     // Convert to CardGroupConfig format for compatibility
     const groupsArray: CardGroupConfig[] = [];
@@ -285,19 +313,17 @@ export const SetPage: React.FC = () => {
     // Get groupings for proper ordering
     const groupings = setInfo.groupings || [];
     
-    // Process each group
-    for (const [groupId, filteredGroupCards] of groupedCards.entries()) {
+    // Process each group using total cards (before any filtering/sorting)
+    for (const [groupId, allGroupCards] of totalCardsPerGroup.entries()) {
       const displayName = getGroupDisplayName(groupId, groupings);
-      const totalGroupCards = totalCardsPerGroup.get(groupId) || [];
       
       groupsArray.push({
         id: groupId,
         name: groupId,
         displayName: displayName,
-        cards: filteredGroupCards,
-        totalCards: totalGroupCards.length,
+        cards: allGroupCards, // Will be replaced with filtered cards later
+        totalCards: allGroupCards.length,
         isVisible: true,
-        // These flags are no longer needed with the new system
         isFoilOnly: false,
         isVariation: false,
         isBooster: false,
@@ -313,7 +339,23 @@ export const SetPage: React.FC = () => {
     });
     
     return groupsArray;
-  }, [filteredCards, setInfo?.groupings, cards]);
+  }, [setInfo?.groupings, cards]); // Only depends on raw data, not sorting/filtering
+
+  // Apply filtering and sorting to the stable groups
+  const cardGroups = useMemo(() => {
+    if (!sortedCards || allCardGroups.length === 0) {
+      return allCardGroups;
+    }
+
+    // Re-group the sorted/filtered cards
+    const groupedSortedCards = groupCardsOptimized(sortedCards, setInfo?.groupings);
+    
+    // Update each group with filtered/sorted cards
+    return allCardGroups.map(group => ({
+      ...group,
+      cards: groupedSortedCards.get(group.id) || []
+    }));
+  }, [allCardGroups, sortedCards, setInfo?.groupings]);
 
   // Compute visible groups: if no groups selected, show all; otherwise show only selected
   const visibleGroupIds = useMemo(() => {
@@ -416,8 +458,11 @@ export const SetPage: React.FC = () => {
             {
               key: 'cardGroups',
               value: selectedGroupIds,
-              onChange: (groupIds: string[]) => setSelectedGroupIds(groupIds),
-              options: cardGroups.map(g => ({ value: g.id, label: g.displayName })),
+              onChange: (groupIds: string[]) => updateFilter('groups', groupIds),
+              options: cardGroups.map(g => ({ 
+                value: g.id, 
+                label: `${g.displayName} (${g.cards.length})` 
+              })),
               label: 'Card Group',
               placeholder: 'All Groups',
               minWidth: 200

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { Card as MuiCard, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import type { Card, CardContext } from '../../types/card';
@@ -19,7 +19,7 @@ interface MtgCardProps extends StyledComponentProps, SelectionProps {
   onArtistClick?: (artistName: string, artistId?: string) => void;
 }
 
-export const MtgCard: React.FC<MtgCardProps> = React.memo(({ 
+const MtgCardComponent: React.FC<MtgCardProps> = ({ 
   card, 
   context = {},
   isSelected = false,
@@ -32,16 +32,27 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
   const theme = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Parse multiple artists
-  const parseArtists = (artistString?: string): string[] => {
-    if (!artistString) return [];
-    return artistString.split(/\s+(?:&|and)\s+/i);
-  };
+  // Memoize expensive computations
+  const artists = useMemo(() => {
+    if (!card.artist) return [];
+    return card.artist.split(/\s+(?:&|and)\s+/i);
+  }, [card.artist]);
 
-  const artists = parseArtists(card.artist);
-  const displayArtists = context.isOnArtistPage && context.currentArtist
-    ? artists.filter(a => a !== context.currentArtist)
-    : artists;
+  const displayArtists = useMemo(() => {
+    return context.isOnArtistPage && context.currentArtist
+      ? artists.filter(a => a !== context.currentArtist)
+      : artists;
+  }, [artists, context.isOnArtistPage, context.currentArtist]);
+
+  // Memoize aria label to avoid recalculating on every render
+  const ariaLabel = useMemo(() => {
+    return `${card.name} - ${card.rarity} ${card.typeLine || 'card'} from ${card.setName}. Artist: ${card.artist}. ${isSelected ? 'Selected' : 'Not selected'}`;
+  }, [card.name, card.rarity, card.typeLine, card.setName, card.artist, isSelected]);
+
+  // Memoize hover styles to avoid recalculating rarity styles
+  const hoverStyles = useMemo(() => {
+    return getRarityGlowStyles(card.rarity, false, true);
+  }, [card.rarity]);
 
   const selectCard = useCallback((cardElement: HTMLElement) => {
     // Only remove selected class from currently selected card (faster)
@@ -119,7 +130,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       data-selected={isSelected ? "true" : "false"}
       tabIndex={0}
       role="button"
-      aria-label={`${card.name} - ${card.rarity} ${card.typeLine || 'card'} from ${card.setName}. Artist: ${card.artist}. ${isSelected ? 'Selected' : 'Not selected'}`}
+      aria-label={ariaLabel}
       aria-selected={isSelected}
       aria-describedby={`card-details-${card.id}`}
       sx={{
@@ -153,7 +164,7 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
           outlineOffset: '2px'
         },
         '&:hover:not(.selected)': {
-          ...getRarityGlowStyles(card.rarity, false, true),
+          ...hoverStyles,
           transform: 'scale(1.01)',
           '& .zoom-indicator': {
             opacity: 1,
@@ -183,7 +194,8 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       </Box>
 
       <CardBadges 
-        finishes={card.finishes}
+        foil={card.foil}
+        nonfoil={card.nonFoil}
         promoTypes={card.promoTypes}
         frameEffects={card.frameEffects}
         isPromo={card.promo}
@@ -232,4 +244,52 @@ export const MtgCard: React.FC<MtgCardProps> = React.memo(({
       />
     </MuiCard>
   );
+};
+
+// Memoized component with custom comparison for optimal performance
+export const MtgCard = React.memo(MtgCardComponent, (prevProps, nextProps) => {
+  // Custom comparison to prevent unnecessary re-renders
+  
+  // Card ID is the most important - if different, always re-render
+  if (prevProps.card.id !== nextProps.card.id) return false;
+  
+  // Selection state changes should always re-render
+  if (prevProps.isSelected !== nextProps.isSelected) return false;
+  
+  // Context changes that affect display
+  if (prevProps.context?.isOnSetPage !== nextProps.context?.isOnSetPage) return false;
+  if (prevProps.context?.isOnArtistPage !== nextProps.context?.isOnArtistPage) return false;
+  if (prevProps.context?.currentArtist !== nextProps.context?.currentArtist) return false;
+  if (prevProps.context?.currentSet !== nextProps.context?.currentSet) return false;
+  if (prevProps.context?.showCollectorInfo !== nextProps.context?.showCollectorInfo) return false;
+  
+  // Callback function references (usually stable but worth checking)
+  if (prevProps.onCardClick !== nextProps.onCardClick) return false;
+  if (prevProps.onSetClick !== nextProps.onSetClick) return false;
+  if (prevProps.onArtistClick !== nextProps.onArtistClick) return false;
+  
+  // Class name changes
+  if (prevProps.className !== nextProps.className) return false;
+  
+  // Card properties that affect visual display
+  if (prevProps.card.imageUris !== nextProps.card.imageUris) return false;
+  if (prevProps.card.cardFaces !== nextProps.card.cardFaces) return false;
+  if (prevProps.card.rarity !== nextProps.card.rarity) return false;
+  if (prevProps.card.finishes !== nextProps.card.finishes) return false;
+  if (prevProps.card.promoTypes !== nextProps.card.promoTypes) return false;
+  if (prevProps.card.frameEffects !== nextProps.card.frameEffects) return false;
+  if (prevProps.card.promo !== nextProps.card.promo) return false;
+  if (prevProps.card.name !== nextProps.card.name) return false;
+  if (prevProps.card.collectorNumber !== nextProps.card.collectorNumber) return false;
+  if (prevProps.card.artist !== nextProps.card.artist) return false;
+  if (prevProps.card.setCode !== nextProps.card.setCode) return false;
+  if (prevProps.card.setName !== nextProps.card.setName) return false;
+  if (prevProps.card.scryfallUri !== nextProps.card.scryfallUri) return false;
+  
+  // Price changes (for display)
+  if (prevProps.card.prices?.usd !== nextProps.card.prices?.usd) return false;
+  if (prevProps.card.purchaseUris?.tcgplayer !== nextProps.card.purchaseUris?.tcgplayer) return false;
+  
+  // If we get here, props are effectively the same
+  return true;
 });

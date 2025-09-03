@@ -2,8 +2,12 @@ import React from 'react';
 import { Box, Typography, Divider, Skeleton } from '@mui/material';
 import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
+import { VirtualizedCardGrid } from './VirtualizedCardGrid';
+import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import type { Card, CardContext } from '../../types/card';
+
+const VIRTUALIZATION_THRESHOLD = 50; // Use virtualization for groups with 50+ cards
 
 interface CardGroupProps {
   groupId: string;
@@ -18,7 +22,7 @@ interface CardGroupProps {
   isLoading?: boolean;
 }
 
-export const CardGroup: React.FC<CardGroupProps> = ({
+const CardGroupComponent: React.FC<CardGroupProps> = ({
   groupId,
   groupName,
   cards,
@@ -123,21 +127,30 @@ export const CardGroup: React.FC<CardGroupProps> = ({
       )}
       
       {cards.length > 0 ? (
-        <ResponsiveGridAutoFit 
-          minItemWidth={280} 
-          spacing={1.5}
-          sx={{ margin: '0 auto' }}
-        >
-          {cards.map((card) => (
-            <MtgCard
-              key={card.id}
-              card={card}
-              isSelected={selectedCardId === card.id}
-              onSelectionChange={onCardSelection}
-              context={context}
-            />
-          ))}
-        </ResponsiveGridAutoFit>
+        cards.length >= VIRTUALIZATION_THRESHOLD ? (
+          <VirtualizedCardGridWrapper 
+            cards={cards}
+            context={context}
+            onCardSelection={onCardSelection}
+            selectedCardId={selectedCardId}
+          />
+        ) : (
+          <ResponsiveGridAutoFit 
+            minItemWidth={280} 
+            spacing={1.5}
+            sx={{ margin: '0 auto' }}
+          >
+            {cards.map((card) => (
+              <MtgCard
+                key={card.id}
+                card={card}
+                isSelected={selectedCardId === card.id}
+                onSelectionChange={onCardSelection}
+                context={context}
+              />
+            ))}
+          </ResponsiveGridAutoFit>
+        )
       ) : (
         <Box sx={{ 
           textAlign: 'center', 
@@ -148,6 +161,60 @@ export const CardGroup: React.FC<CardGroupProps> = ({
           No cards match the current filters
         </Box>
       )}
+    </Box>
+  );
+};
+
+// Memoize CardGroup to prevent unnecessary re-renders when group selection changes
+export const CardGroup = React.memo(CardGroupComponent, (prevProps, nextProps) => {
+  // If both are invisible, don't re-render
+  if (!prevProps.isVisible && !nextProps.isVisible) {
+    return true; // Props are "equal" - skip re-render
+  }
+  
+  // If visibility changed, re-render (this is expected)
+  if (prevProps.isVisible !== nextProps.isVisible) {
+    return false; // Props are "different" - re-render
+  }
+  
+  // If both visible, check other important props
+  if (prevProps.isVisible && nextProps.isVisible) {
+    return (
+      prevProps.groupId === nextProps.groupId &&
+      prevProps.groupName === nextProps.groupName &&
+      prevProps.cards.length === nextProps.cards.length &&
+      prevProps.totalCards === nextProps.totalCards &&
+      prevProps.showHeader === nextProps.showHeader &&
+      prevProps.selectedCardId === nextProps.selectedCardId &&
+      prevProps.isLoading === nextProps.isLoading &&
+      // Deep comparison would be expensive, so use first card id as proxy for changes
+      (prevProps.cards.length === 0 || 
+       (nextProps.cards.length === 0) ||
+       prevProps.cards[0]?.id === nextProps.cards[0]?.id)
+    );
+  }
+  
+  return false; // Default to re-render if unsure
+});
+
+// Wrapper component for virtualized card grid with container dimensions
+const VirtualizedCardGridWrapper: React.FC<{
+  cards: Card[];
+  context: CardContext;
+  onCardSelection: (cardId: string, selected: boolean) => void;
+  selectedCardId: string | null;
+}> = ({ cards, context, onCardSelection, selectedCardId }) => {
+  const { containerRef, dimensions } = useContainerDimensions(600);
+  
+  return (
+    <Box ref={containerRef} sx={{ width: '100%' }}>
+      <VirtualizedCardGrid
+        cards={cards}
+        context={context}
+        onCardSelection={onCardSelection}
+        selectedCardId={selectedCardId}
+        containerWidth={dimensions.width}
+      />
     </Box>
   );
 };

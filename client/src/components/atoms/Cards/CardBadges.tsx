@@ -2,67 +2,60 @@ import React from 'react';
 import { Box, Chip } from '@mui/material';
 
 interface CardBadgesProps {
-  finishes?: string[];
+  foil?: boolean;       // Individual boolean properties instead of arrays
+  nonfoil?: boolean;
   promoTypes?: string[];
   frameEffects?: string[] | null;
   isPromo?: boolean;
-  excludeFinishes?: string[];
   excludePromoTypes?: string[];
   excludeFrameEffects?: string[];
   inline?: boolean;  // When true, display inline rather than absolute positioned
 }
 
 // Default exclusions - ignore these badge types
-const DEFAULT_EXCLUDE_FINISHES: string[] = [];
 const DEFAULT_EXCLUDE_PROMO_TYPES: string[] = ['boosterfun'];  // Ignore boosterfun
 const DEFAULT_EXCLUDE_FRAME_EFFECTS: string[] = ['inverted', 'legendary', 'enchantment', 'etched'];  // Ignore these frame effects
 
 export const CardBadges: React.FC<CardBadgesProps> = ({
-  finishes,
+  foil = false,
+  nonfoil = false,
   promoTypes,
   frameEffects,
   isPromo = false,
-  excludeFinishes = DEFAULT_EXCLUDE_FINISHES,
   excludePromoTypes = DEFAULT_EXCLUDE_PROMO_TYPES,
   excludeFrameEffects = DEFAULT_EXCLUDE_FRAME_EFFECTS,
   inline = false
 }) => {
   // Ensure arrays are not null
-  const safeFinishes = finishes || [];
   const safePromoTypes = promoTypes || [];
   const safeFrameEffects = frameEffects || [];
   
-  // Special foil logic: if card has special foil promo types and no nonfoil, hide regular foil
-  const hasSpecialFoilPromo = safePromoTypes.some(promo => 
-    ['surgefoil', 'raisedfoil', 'etched'].includes(promo.toLowerCase())
-  );
-  const hasNonFoil = safeFinishes.some(finish => finish.toLowerCase() === 'nonfoil');
+  // Special foil promo types: check for entries ending in foil, galaxyfoil, ripplefoil, or exactly oilslick
+  const hasSpecialFoilPromo = safePromoTypes.some(promo => {
+    const lowerPromo = promo.toLowerCase();
+    return lowerPromo.endsWith('foil') || 
+           lowerPromo.endsWith('galaxyfoil') || 
+           lowerPromo.endsWith('ripplefoil') ||
+           lowerPromo === 'oilslick';
+  });
   
   // Check if card is serialized - if so, only show that badge
   const isSerialized = safePromoTypes.some(promo => promo.toLowerCase() === 'serialized');
   
-  // Check if ONLY nonfoil
-  const isOnlyNonFoil = safeFinishes.length === 1 && safeFinishes[0]?.toLowerCase() === 'nonfoil';
+  // Apply new foil badge logic using boolean properties
+  const displayProperties: string[] = [];
   
-  // Filter out excluded finishes and apply special foil logic
-  const displayFinishes = isSerialized ? [] : safeFinishes.filter(finish => {
-    const lowerFinish = finish.toLowerCase();
-    
-    // Check exclusion list
-    if (excludeFinishes.includes(lowerFinish)) return false;
-    
-    // Special logic: hide 'foil' if has special foil promo and no nonfoil
-    if (lowerFinish === 'foil' && hasSpecialFoilPromo && !hasNonFoil) {
-      return false;
+  if (!isSerialized) {
+    // Non-foil badge: only show if card is BOTH non-foil AND foil (hybrid cards)
+    if (nonfoil && foil) {
+      displayProperties.push('nonfoil');
     }
     
-    // Hide nonfoil if it's the only finish
-    if (lowerFinish === 'nonfoil' && isOnlyNonFoil) {
-      return false;
+    // Foil badge: only show if card is foil BUT no special foil promo types
+    if (foil && !hasSpecialFoilPromo) {
+      displayProperties.push('foil');
     }
-    
-    return true;
-  });
+  }
   
   // Filter out excluded promo types - if serialized, only show that
   const displayPromoTypes = isSerialized 
@@ -177,7 +170,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   };
 
   // If no badges to display, return null
-  if (displayFinishes.length === 0 && displayPromoTypes.length === 0 && displayFrameEffects.length === 0 && !isPromo) {
+  if (displayProperties.length === 0 && displayPromoTypes.length === 0 && displayFrameEffects.length === 0 && !isPromo) {
     return null;
   }
 
@@ -201,13 +194,13 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
         })
       }}
     >
-      {/* Finish badges */}
-      {displayFinishes.map((finish, index) => (
+      {/* Property badges (foil/non-foil) */}
+      {displayProperties.map((property, index) => (
         <Chip
-          key={`finish-${index}`}
-          label={formatFinishText(finish)}
+          key={`property-${index}`}
+          label={formatFinishText(property)}
           size="small"
-          color={getFinishColor(finish)}
+          color={getFinishColor(property)}
           sx={{
             height: 20,
             fontSize: '0.625rem',
@@ -216,11 +209,11 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
               px: 1
             },
             backdropFilter: 'blur(4px)',
-            backgroundColor: finish.toLowerCase() === 'foil' 
+            backgroundColor: property.toLowerCase() === 'foil' 
               ? 'rgba(33, 150, 243, 0.9)' 
-              : finish.toLowerCase() === 'etched'
+              : property.toLowerCase() === 'etched'
               ? 'rgba(156, 39, 176, 0.9)'
-              : finish.toLowerCase() === 'nonfoil'
+              : property.toLowerCase() === 'nonfoil'
               ? 'rgba(158, 158, 158, 0.9)'
               : 'rgba(97, 97, 97, 0.9)',
             color: 'white',
