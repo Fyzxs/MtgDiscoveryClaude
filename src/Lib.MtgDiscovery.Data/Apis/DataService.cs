@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lib.MtgDiscovery.Data.Commands;
 using Lib.MtgDiscovery.Data.Queries;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -11,16 +12,18 @@ public sealed class DataService : IDataService
     private readonly ICardDataService _cardDataService;
     private readonly ISetDataService _setDataService;
     private readonly IArtistDataService _artistDataService;
+    private readonly IUserDataService _userDataService;
 
-    public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService(logger), new ArtistDataService(logger))
+    public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService(logger), new ArtistDataService(logger), new UserDataService(logger))
     {
 
     }
-    private DataService(ICardDataService cardDataService, ISetDataService setDataService, IArtistDataService artistDataService)
+    private DataService(ICardDataService cardDataService, ISetDataService setDataService, IArtistDataService artistDataService, IUserDataService userDataService)
     {
         _cardDataService = cardDataService;
         _setDataService = setDataService;
         _artistDataService = artistDataService;
+        _userDataService = userDataService;
     }
 
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
@@ -71,5 +74,10 @@ public sealed class DataService : IDataService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
     {
         return _artistDataService.CardsByArtistNameAsync(artistName);
+    }
+
+    public Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
+    {
+        return _userDataService.RegisterUserAsync(userInfo);
     }
 }

@@ -63,6 +63,7 @@ internal class Startup
         services
             .AddGraphQLServer()
             .AddApiQuery()
+            .AddApiMutation()
             .AddSetSchemaExtensions()
             .AddArtistSchemaExtensions()
             .AddAuthorization()

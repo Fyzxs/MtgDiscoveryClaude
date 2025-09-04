@@ -11,16 +11,18 @@ public sealed class EntryService : IEntryService
     private readonly ICardEntryService _cardEntryService;
     private readonly ISetEntryService _setEntryService;
     private readonly IArtistEntryService _artistEntryService;
+    private readonly IUserEntryService _userEntryService;
 
-    public EntryService(ILogger logger) : this(new CardEntryService(logger), new SetEntryService(logger), new ArtistEntryService(logger))
+    public EntryService(ILogger logger) : this(new CardEntryService(logger), new SetEntryService(logger), new ArtistEntryService(logger), new UserEntryService(logger))
     {
 
     }
-    private EntryService(ICardEntryService cardEntryService, ISetEntryService setEntryService, IArtistEntryService artistEntryService)
+    private EntryService(ICardEntryService cardEntryService, ISetEntryService setEntryService, IArtistEntryService artistEntryService, IUserEntryService userEntryService)
     {
         _cardEntryService = cardEntryService;
         _setEntryService = setEntryService;
         _artistEntryService = artistEntryService;
+        _userEntryService = userEntryService;
     }
 
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
@@ -71,5 +73,10 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
     {
         return _artistEntryService.CardsByArtistNameAsync(artistName);
+    }
+
+    public Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser)
+    {
+        return _userEntryService.RegisterUserAsync(authUser);
     }
 }

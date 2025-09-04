@@ -17,7 +17,7 @@ public class ScryfallGroupingsScraper
         // Parse command line arguments
         string specificSet = null;
         int maxSetsToProcess = int.MaxValue;
-        
+
         if (args.Length > 0)
         {
             // Check if first arg is a set code (letters) or a number
@@ -26,7 +26,7 @@ public class ScryfallGroupingsScraper
                 specificSet = args[0].ToLower();
                 Console.WriteLine($"Processing specific set: {specificSet}");
             }
-            
+
             // Check for second argument if first was a set code
             if (specificSet != null && args.Length > 1 && int.TryParse(args[1], out var max))
             {
@@ -38,7 +38,7 @@ public class ScryfallGroupingsScraper
         httpClient.DefaultRequestHeaders.Add("User-Agent", "MtgDiscoveryGroupingScraper/1.0");
 
         Dictionary<string, SetGroupingData> allGroupings;
-        
+
         if (specificSet != null)
         {
             // Process only the specific set
@@ -62,17 +62,17 @@ public class ScryfallGroupingsScraper
     static async Task<Dictionary<string, SetGroupingData>> ScrapeSpecificSet(HttpClient httpClient, string setCode)
     {
         var setGroupings = new Dictionary<string, SetGroupingData>();
-        
+
         try
         {
             Console.WriteLine($"\nScraping set: {setCode}");
             var groupings = await ScrapeSetGroupings(httpClient, setCode);
-            
+
             if (groupings.Count > 0)
             {
                 setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
                 Console.WriteLine($"Found {groupings.Count} groupings for {setCode}");
-                
+
                 // Print detailed info for debugging
                 foreach (var grouping in groupings)
                 {
@@ -102,7 +102,7 @@ public class ScryfallGroupingsScraper
         {
             Console.WriteLine($"Error scraping set {setCode}: {ex.Message}");
         }
-        
+
         return setGroupings;
     }
 
@@ -199,7 +199,7 @@ public class ScryfallGroupingsScraper
 
             // Extract anchor ID if present (can be in h2 tag or in an inner <a> tag)
             string anchorId = "";
-            
+
             // First check for id in the h2 tag (within first 100 chars)
             var h2IdIndex = section.IndexOf("id=\"");
             if (h2IdIndex >= 0 && h2IdIndex < 100)
@@ -211,7 +211,7 @@ public class ScryfallGroupingsScraper
                     anchorId = section.Substring(idStart, idEnd - idStart);
                 }
             }
-            
+
             // If not found in h2, look for <a id="..."> within the content
             if (string.IsNullOrEmpty(anchorId))
             {
@@ -245,19 +245,19 @@ public class ScryfallGroupingsScraper
                     displayName = displayName.Substring(linkStart, linkEnd - linkStart);
                 }
             }
-            
+
             // Clean up whitespace, newlines, and any remaining HTML entities
             displayName = displayName.Replace("\n", " ").Replace("\r", " ").Replace("\t", " ");
             displayName = System.Text.RegularExpressions.Regex.Replace(displayName, @"\s+", " ");
             displayName = displayName.Trim();
-            
+
             // Remove any remaining HTML tags
             if (displayName.Contains("<"))
             {
                 displayName = System.Text.RegularExpressions.Regex.Replace(displayName, @"<[^>]+>", "");
                 displayName = displayName.Trim(); // Trim again after removing tags
             }
-            
+
             // Decode HTML entities (e.g., &amp; -> &, &quot; -> ", etc.)
             displayName = HttpUtility.HtmlDecode(displayName);
 
@@ -308,27 +308,27 @@ public class ScryfallGroupingsScraper
         // Parse all collector number patterns
         var cnMinMatch = Regex.Match(query, @"cn[≥>=](\d+)");
         var cnMaxMatch = Regex.Match(query, @"cn[≤<=](\d+)");
-        
+
         // Extract individual collector numbers (e.g., cn:"796" or cn:"796★")
         var cnExactPattern = @"cn:""?([^""\s\)]+)""?";
         var cnExactMatches = Regex.Matches(query, cnExactPattern);
-        
+
         // Check if we have a complex condition (ranges AND/OR individual numbers)
         bool hasRange = cnMinMatch.Success || cnMaxMatch.Success;
         bool hasExactNumbers = cnExactMatches.Count > 0;
         bool hasOrCondition = query.Contains(" OR ");
-        
+
         if (hasRange || hasExactNumbers)
         {
             var collectorNumberRange = new CollectorNumberRange();
-            
+
             // Set range if present
             if (hasRange)
             {
                 collectorNumberRange.Min = cnMinMatch.Success ? cnMinMatch.Groups[1].Value : null;
                 collectorNumberRange.Max = cnMaxMatch.Success ? cnMaxMatch.Groups[1].Value : null;
             }
-            
+
             // Handle OR conditions or exact matches
             if (hasOrCondition && hasExactNumbers)
             {
@@ -338,7 +338,7 @@ public class ScryfallGroupingsScraper
                 {
                     orConditions.Add(match.Groups[1].Value);
                 }
-                
+
                 // If we have both range and OR conditions, keep both
                 // If we only have OR conditions (no range), just set OrConditions
                 if (orConditions.Count > 0)
@@ -353,17 +353,31 @@ public class ScryfallGroupingsScraper
                 collectorNumberRange.Min = cnValue;
                 collectorNumberRange.Max = cnValue;
             }
-            
+
             filters.CollectorNumberRange = collectorNumberRange;
         }
 
         filters.Properties = new Dictionary<string, object>();
 
-        // is:X patterns
+        // is:X patterns with custom mappings
         var isMatches = Regex.Matches(query, @"is:(\w+)");
         foreach (Match match in isMatches)
         {
-            filters.Properties[match.Groups[1].Value] = true;
+            var isValue = match.Groups[1].Value;
+
+            // Custom mappings for specific is: values to promoType
+            switch (isValue)
+            {
+                case "bab":
+                    filters.Properties["promoType"] = "buyabox";
+                    break;
+                case "pwdeck":
+                    filters.Properties["promoType"] = "planeswalkerdeck";
+                    break;
+                default:
+                    filters.Properties[isValue] = true;
+                    break;
+            }
         }
 
         // not:X patterns

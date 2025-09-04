@@ -21,11 +21,11 @@ public class UserQueryMethods
     }
 
     [Authorize]
-    public UserInfo GetCurrentUser(ClaimsPrincipal claimsPrincipal)
+    public CurrentUser GetCurrentUser(ClaimsPrincipal claimsPrincipal)
     {
         ArgumentNullException.ThrowIfNull(claimsPrincipal);
 
-        return new UserInfo
+        return new CurrentUser
         {
             Id = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown",
             Email = claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value ?? "unknown",
@@ -35,7 +35,7 @@ public class UserQueryMethods
     }
 }
 
-public class UserInfo
+public class CurrentUser
 {
     public string Id { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
