@@ -18,7 +18,7 @@ interface CardGroupProps {
   isLoading?: boolean;
 }
 
-export const CardGroup: React.FC<CardGroupProps> = ({
+const CardGroupComponent: React.FC<CardGroupProps> = ({
   groupId,
   groupName,
   cards,
@@ -126,7 +126,11 @@ export const CardGroup: React.FC<CardGroupProps> = ({
         <ResponsiveGridAutoFit 
           minItemWidth={280} 
           spacing={1.5}
-          sx={{ margin: '0 auto' }}
+          sx={{ 
+            margin: '0 auto',
+            // Add a subtle transition to smooth out any layout shifts
+            transition: 'grid-template-columns 0.15s ease-out'
+          }}
         >
           {cards.map((card) => (
             <MtgCard
@@ -151,3 +155,36 @@ export const CardGroup: React.FC<CardGroupProps> = ({
     </Box>
   );
 };
+
+// Memoize CardGroup to prevent unnecessary re-renders when group selection changes
+export const CardGroup = React.memo(CardGroupComponent, (prevProps, nextProps) => {
+  // If both are invisible, don't re-render
+  if (!prevProps.isVisible && !nextProps.isVisible) {
+    return true; // Props are "equal" - skip re-render
+  }
+  
+  // If visibility changed, re-render (this is expected)
+  if (prevProps.isVisible !== nextProps.isVisible) {
+    return false; // Props are "different" - re-render
+  }
+  
+  // If both visible, check other important props
+  if (prevProps.isVisible && nextProps.isVisible) {
+    return (
+      prevProps.groupId === nextProps.groupId &&
+      prevProps.groupName === nextProps.groupName &&
+      prevProps.cards.length === nextProps.cards.length &&
+      prevProps.totalCards === nextProps.totalCards &&
+      prevProps.showHeader === nextProps.showHeader &&
+      prevProps.selectedCardId === nextProps.selectedCardId &&
+      prevProps.isLoading === nextProps.isLoading &&
+      // Deep comparison would be expensive, so use first card id as proxy for changes
+      (prevProps.cards.length === 0 || 
+       (nextProps.cards.length === 0) ||
+       prevProps.cards[0]?.id === nextProps.cards[0]?.id)
+    );
+  }
+  
+  return false; // Default to re-render if unsure
+});
+

@@ -205,15 +205,27 @@ const ArtistResult = React.memo<{
   onArtistClick: (artistName: string) => void;
   styles: any;
 }>(({ artist, onArtistClick, styles }) => {
-  const handleClick = useCallback(() => {
-    onArtistClick(artist.name);
+  const artistUrl = `/artists/${encodeURIComponent(artist.name.toLowerCase().replace(/\s+/g, '-'))}`;
+  
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Only prevent default for left clicks to allow right-click context menu
+    if (e.button === 0) {
+      e.preventDefault();
+      onArtistClick(artist.name);
+    }
   }, [artist.name, onArtistClick]);
 
   return (
     <Paper
       elevation={0}
+      component="a"
+      href={artistUrl}
       onClick={handleClick}
-      sx={styles}
+      sx={{
+        ...styles,
+        textDecoration: 'none',
+        color: 'inherit'
+      }}
     >
       <Typography variant="body2">
         {artist.name}

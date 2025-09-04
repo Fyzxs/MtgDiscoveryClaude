@@ -7,7 +7,7 @@ interface Auth0TokenProviderProps {
 }
 
 export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children }) => {
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const { getIdTokenClaims, isAuthenticated } = useAuth0();
 
   useEffect(() => {
     const getToken = async (): Promise<string | null> => {
@@ -16,17 +16,18 @@ export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children
       }
       
       try {
-        const token = await getAccessTokenSilently();
-        return token;
+        const idTokenClaims = await getIdTokenClaims();
+        const idToken = idTokenClaims?.__raw;
+        return idToken || null;
       } catch (error) {
-        console.error('Failed to get Auth0 access token:', error);
+        console.error('Failed to get Auth0 ID token:', error);
         return null;
       }
     };
 
     // Set the token getter in Apollo Client
     setAuth0TokenGetter(getToken);
-  }, [getAccessTokenSilently, isAuthenticated]);
+  }, [getIdTokenClaims, isAuthenticated]);
 
 
   return <>{children}</>;

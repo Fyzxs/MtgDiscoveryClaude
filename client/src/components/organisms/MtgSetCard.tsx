@@ -26,14 +26,13 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   const theme = useTheme();
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Prevent default navigation if left-clicking
-    if (e.button === 0) {
+    // Only handle click if there's a custom onSetClick handler
+    // Otherwise let the anchor tag handle navigation naturally
+    if (onSetClick && e.button === 0) {
       e.preventDefault();
-      if (onSetClick) {
-        onSetClick(set.code);
-      }
+      onSetClick(set.code);
     }
-    // Allow right-click and middle-click to work normally
+    // Allow right-click, middle-click, and normal navigation to work
   };
 
   const setUrl = `/set/${set.code}`;

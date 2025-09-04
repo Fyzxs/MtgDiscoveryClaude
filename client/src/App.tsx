@@ -7,6 +7,7 @@ import { CardSearchPage } from './pages/CardSearchPage'
 import { ArtistSearchPage } from './pages/ArtistSearchPage'
 import { ArtistCardsPage } from './pages/ArtistCardsPage'
 import { CardAllPrintingsPage } from './pages/CardAllPrintingsPage'
+import { SignInRedirectPage } from './pages/SignInRedirectPage'
 import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
@@ -89,6 +90,11 @@ function App() {
           <Route path="/card/:cardName" element={
             <PageErrorBoundary name="CardAllPrintingsPage">
               <CardAllPrintingsPage />
+            </PageErrorBoundary>
+          } />
+          <Route path="/signin-redirect" element={
+            <PageErrorBoundary name="SignInRedirectPage">
+              <SignInRedirectPage />
             </PageErrorBoundary>
           } />
           {/* Handle old query param URLs for backwards compatibility */}

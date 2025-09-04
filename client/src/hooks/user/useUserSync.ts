@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { SYNC_USER_PROFILE, GET_USER_PROFILE } from '../../graphql/mutations/user';
 
 export interface UserProfile {
