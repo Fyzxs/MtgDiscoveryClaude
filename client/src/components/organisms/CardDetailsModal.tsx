@@ -328,7 +328,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               <Divider />
 
               {/* Treatments */}
-              {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo) && (
+              {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo || card.digital) && (
                 <Box>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     Treatments
@@ -340,6 +340,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                       promoTypes={card.promoTypes}
                       frameEffects={card.frameEffects}
                       isPromo={card.promo}
+                      digital={card.digital}
                       inline={true}
                     />
                   </Box>

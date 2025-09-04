@@ -199,6 +199,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         promoTypes={card.promoTypes}
         frameEffects={card.frameEffects}
         isPromo={card.promo}
+        digital={card.digital}
       />
 
       <ZoomIndicator

@@ -203,15 +203,27 @@ const CardResult = React.memo<{
   onCardClick: (cardName: string) => void;
   styles: any;
 }>(({ card, onCardClick, styles }) => {
-  const handleClick = useCallback(() => {
-    onCardClick(card.name);
+  const cardUrl = `/card/${encodeURIComponent(card.name)}`;
+  
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Only prevent default for left clicks to allow right-click context menu
+    if (e.button === 0) {
+      e.preventDefault();
+      onCardClick(card.name);
+    }
   }, [card.name, onCardClick]);
 
   return (
     <Paper
       elevation={0}
+      component="a"
+      href={cardUrl}
       onClick={handleClick}
-      sx={styles}
+      sx={{
+        ...styles,
+        textDecoration: 'none',
+        color: 'inherit'
+      }}
     >
       <Typography variant="body2">
         {card.name}

@@ -7,6 +7,7 @@ interface CardBadgesProps {
   promoTypes?: string[];
   frameEffects?: string[] | null;
   isPromo?: boolean;
+  digital?: boolean;    // Whether this card is digital
   excludePromoTypes?: string[];
   excludeFrameEffects?: string[];
   inline?: boolean;  // When true, display inline rather than absolute positioned
@@ -22,6 +23,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   promoTypes,
   frameEffects,
   isPromo = false,
+  digital = false,
   excludePromoTypes = DEFAULT_EXCLUDE_PROMO_TYPES,
   excludeFrameEffects = DEFAULT_EXCLUDE_FRAME_EFFECTS,
   inline = false
@@ -178,7 +180,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   };
 
   // If no badges to display, return null
-  if (displayProperties.length === 0 && displayPromoTypes.length === 0 && displayFrameEffects.length === 0 && !isPromo) {
+  if (displayProperties.length === 0 && displayPromoTypes.length === 0 && displayFrameEffects.length === 0 && !isPromo && !digital) {
     return null;
   }
 
@@ -230,6 +232,27 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
           }}
         />
       ))}
+      
+      {/* Digital badge */}
+      {digital && (
+        <Chip
+          label="Digital"
+          size="small"
+          sx={{
+            height: 20,
+            fontSize: '0.625rem',
+            fontWeight: 600,
+            '& .MuiChip-label': {
+              px: 1
+            },
+            backdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(138, 43, 226, 0.9)', // Purple for digital
+            color: 'white',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+        />
+      )}
       
       {/* Promo type badges */}
       {displayPromoTypes.map((promoType, index) => (

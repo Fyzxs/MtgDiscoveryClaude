@@ -37,10 +37,7 @@ export const Header: React.FC = () => {
     setSearchAnchorEl(null);
   };
 
-  const handleSearchMenuClick = (path: string) => {
-    navigate(path);
-    handleSearchMenuClose();
-  };
+  // handleSearchMenuClick no longer needed - using href directly
 
   return (
     <AppBar 
@@ -98,14 +95,31 @@ export const Header: React.FC = () => {
 
         {/* Navigation Links */}
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} role="menubar" aria-label="Primary navigation">
+          {/* Set Code Search */}
+          <Box role="search" aria-label="Quick set search">
+            <SearchInput
+              value={setCode}
+              onChange={setSetCode}
+              onSubmit={handleSetCodeSubmit}
+              placeholder="Jump to Set"
+              label="Set Code"
+              expandable={true}
+              expandedWidth={200}
+              collapsedWidth={150}
+              size="small"
+            />
+          </Box>
+
           <Button 
             color="primary" 
-            onClick={() => navigate('/sets')}
+            component="a"
+            href="/sets"
             role="menuitem"
             aria-label="Browse all Magic sets"
             sx={{ 
               textTransform: 'none',
-              fontWeight: 500
+              fontWeight: 500,
+              textDecoration: 'none'
             }}
           >
             All Sets
@@ -144,16 +158,22 @@ export const Header: React.FC = () => {
             }}
           >
             <MenuItem 
-              onClick={() => handleSearchMenuClick('/search/cards')}
+              component="a"
+              href="/search/cards"
+              onClick={handleSearchMenuClose}
               role="menuitem"
               aria-label="Search for Magic cards"
+              sx={{ textDecoration: 'none', color: 'inherit' }}
             >
               Cards
             </MenuItem>
             <MenuItem 
-              onClick={() => handleSearchMenuClick('/search/artists')}
+              component="a"
+              href="/search/artists"
+              onClick={handleSearchMenuClose}
               role="menuitem"
               aria-label="Search for Magic artists"
+              sx={{ textDecoration: 'none', color: 'inherit' }}
             >
               Artists
             </MenuItem>
@@ -165,21 +185,6 @@ export const Header: React.FC = () => {
 
         {/* Authentication Button */}
         <AuthButton />
-
-        {/* Set Code Search */}
-        <Box role="search" aria-label="Quick set search">
-          <SearchInput
-            value={setCode}
-            onChange={setSetCode}
-            onSubmit={handleSetCodeSubmit}
-            placeholder="Jump to Set"
-            label="Set Code"
-            expandable={true}
-            expandedWidth={200}
-            collapsedWidth={150}
-            size="small"
-          />
-        </Box>
       </Toolbar>
     </AppBar>
   );

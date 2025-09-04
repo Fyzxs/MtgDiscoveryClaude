@@ -76,10 +76,19 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
         data {
           id
           code
+          tcgPlayerId
           name
+          uri
+          scryfallUri
+          searchUri
           setType
           cardCount
+          printedSize
           releasedAt
+          digital
+          nonFoilOnly
+          foilOnly
+          block
           iconSvgUri
           groupings {
             id

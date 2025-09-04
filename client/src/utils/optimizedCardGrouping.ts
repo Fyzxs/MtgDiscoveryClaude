@@ -213,11 +213,33 @@ function getCompiledMatchers(groupings: SetGrouping[]): GroupingMatcher[] {
     return cached;
   }
   
-  const matchers = groupings
-    .map(compileGroupingMatcher)
-    .sort((a, b) => a.order - b.order); // Always process in normal order (lowest first)
+  const matchers = groupings.map(compileGroupingMatcher);
   
-  matcherCache.set(cacheKey, matchers);
+  // Separate "In Boosters" groups from specific groups
+  // "In Boosters" groups should display first (low order) but process last
+  const inBoosterGroups: GroupingMatcher[] = [];
+  const specificGroups: GroupingMatcher[] = [];
+  
+  matchers.forEach(matcher => {
+    const isInBoosterGroup = matcher.id.toLowerCase().includes('booster') || 
+                            matcher.displayName.toLowerCase().includes('booster') ||
+                            matcher.displayName.toLowerCase().includes('in boosters');
+    
+    if (isInBoosterGroup) {
+      inBoosterGroups.push(matcher);
+    } else {
+      specificGroups.push(matcher);
+    }
+  });
+  
+  // Sort each group by display order
+  specificGroups.sort((a, b) => a.order - b.order);
+  inBoosterGroups.sort((a, b) => a.order - b.order);
+  
+  // Processing order: specific groups first, then "In Boosters" groups
+  const processOrderMatchers = [...specificGroups, ...inBoosterGroups];
+  
+  matcherCache.set(cacheKey, processOrderMatchers);
   
   // Limit cache size
   if (matcherCache.size > 10) {
@@ -227,7 +249,7 @@ function getCompiledMatchers(groupings: SetGrouping[]): GroupingMatcher[] {
     }
   }
   
-  return matchers;
+  return processOrderMatchers;
 }
 
 /**

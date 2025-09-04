@@ -11,23 +11,29 @@ export const RARITY_ORDER: Record<string, number> = {
 //
 // COLLECTOR NUMBER SORTING STRATEGY:
 // - This function determines sort order for collector numbers
-// - Current strategy: STRICT NUMERIC ONLY (^(\d+)$)
+// - Current strategy: NUMERIC PREFIX EXTRACTION (^(\d+))
 //
-// KNOWN ISSUES BY SET:
-// - SET:40K - Special surge foil cards like "317★" should sort separately from "317"
-//   Solution: Non-numeric collector numbers get high sort value (999999) to sort last
-//
-// - CROSS-REFERENCE: See getNumericValue() in optimizedCardGrouping.ts for range matching
-//   Both functions use the same parsing strategy for consistency
+// DIFFERENCE FROM GROUPING:
+// - SORTING: Extracts numeric prefix for natural ordering ("317★" sorts as 317)
+// - GROUPING: Uses strict matching to prevent special variants from matching ranges
+// - See getNumericValue() in optimizedCardGrouping.ts for range matching behavior
 //
 // CURRENT SORTING BEHAVIOR:
-// - "1", "2", "317" -> sorted numerically (1, 2, 317)
-// - "317★", "42★"   -> sorted last (999999) as special variants
-// - "42a", "DMR-271" -> sorted last (999999) as non-numeric
+// - "317"        -> sorted as 634 (317 * 2, pure numeric comes first)
+// - "317★"       -> sorted as 635 (317 * 2 + 1, suffixed comes after)
+// - "318"        -> sorted as 636 (318 * 2, pure numeric comes first) 
+// - "318a"       -> sorted as 637 (318 * 2 + 1, suffixed comes after)
+// - "DMR-271"    -> sorted last (999999) if no numeric prefix
 export const parseCollectorNumber = (num: string): number => {
-  // Only treat as numeric if it's purely digits (no special characters like ★)
-  const match = num.match(/^(\d+)$/);
-  return match ? parseInt(match[1], 10) : 999999;
+  // Extract numeric prefix - allows special characters after digits
+  const match = num.match(/^(\d+)(.*)$/);
+  if (!match) return 999999;
+  
+  const numericValue = parseInt(match[1], 10);
+  const suffix = match[2];
+  
+  // Pure numeric gets even number, suffixed gets odd number (comes after)
+  return numericValue * 2 + (suffix ? 1 : 0);
 };
 
 export interface CardLike {

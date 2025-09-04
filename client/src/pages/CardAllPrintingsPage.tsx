@@ -103,9 +103,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
   const graphQLError = data?.cardsByName?.status?.message;
 
-  const handleBackClick = () => {
-    navigate('/search/cards');
-  };
+  // handleBackClick removed - using href directly on buttons
 
   const handleRetry = async () => {
     setRetryCount(prev => prev + 1);
@@ -153,8 +151,9 @@ export const CardAllPrintingsPage: React.FC = () => {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Button
           startIcon={<ArrowBackIcon />}
-          onClick={handleBackClick}
-          sx={{ mb: 2 }}
+          component="a"
+          href="/search/cards"
+          sx={{ mb: 2, textDecoration: 'none' }}
         >
           Back to Search
         </Button>
@@ -194,8 +193,9 @@ export const CardAllPrintingsPage: React.FC = () => {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Button
           startIcon={<ArrowBackIcon />}
-          onClick={handleBackClick}
-          sx={{ mb: 2 }}
+          component="a"
+          href="/search/cards"
+          sx={{ mb: 2, textDecoration: 'none' }}
         >
           Back to Search
         </Button>
@@ -208,8 +208,9 @@ export const CardAllPrintingsPage: React.FC = () => {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Button
         startIcon={<ArrowBackIcon />}
-        onClick={handleBackClick}
-        sx={{ mb: 3 }}
+        component="a"
+        href="/search/cards"
+        sx={{ mb: 3, textDecoration: 'none' }}
       >
         Back to Search
       </Button>

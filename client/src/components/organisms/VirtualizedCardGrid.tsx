@@ -33,6 +33,17 @@ export const VirtualizedCardGrid: React.FC<VirtualizedCardGridProps> = ({
     return Math.max(1, Math.floor(availableWidth / (CARD_WIDTH + SPACING)));
   }, [containerWidth]);
 
+  // Calculate the actual used width and centering offset
+  const usedWidth = useMemo(() => 
+    columnCount * (CARD_WIDTH + SPACING) - SPACING,
+    [columnCount]
+  );
+
+  const centerOffset = useMemo(() => 
+    Math.max(0, (containerWidth - usedWidth) / 2),
+    [containerWidth, usedWidth]
+  );
+
   const rowCount = useMemo(() => 
     Math.ceil(cards.length / columnCount), 
     [cards.length, columnCount]
@@ -63,6 +74,7 @@ export const VirtualizedCardGrid: React.FC<VirtualizedCardGridProps> = ({
       <div 
         style={{ 
           ...safeStyle, 
+          left: (safeStyle.left || 0) + centerOffset,
           padding: SPACING / 2,
           display: 'flex',
           justifyContent: 'center',
@@ -78,7 +90,7 @@ export const VirtualizedCardGrid: React.FC<VirtualizedCardGridProps> = ({
         />
       </div>
     );
-  }, [cards, columnCount, selectedCardId, onCardSelection, context]);
+  }, [cards, columnCount, selectedCardId, onCardSelection, context, centerOffset]);
 
   if (cards.length === 0) return null;
 

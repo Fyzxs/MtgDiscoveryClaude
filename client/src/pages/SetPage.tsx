@@ -5,7 +5,9 @@ import {
   Container, 
   Typography, 
   Box, 
-  Alert
+  Alert,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
@@ -75,6 +77,7 @@ export const SetPage: React.FC = () => {
     rarities: { default: [] },
     artists: { default: [] },
     groups: { default: [] },
+    showGroups: { default: true },
     sort: { default: 'collector-asc' }
   };
 
@@ -191,6 +194,7 @@ export const SetPage: React.FC = () => {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         artists: initialArtists,  // Use raw initial values, normalize later
         groups: initialGroups,   // Add groups filter
+        showGroups: initialValues.showGroups !== undefined ? initialValues.showGroups : true,
         showDigital: false
       }
     }
@@ -226,11 +230,12 @@ export const SetPage: React.FC = () => {
       sort: sortBy !== 'collector-asc' ? sortBy : null,
       rarities: filters.rarities?.length > 0 ? filters.rarities : null,
       artists: filters.artists?.length > 0 ? filters.artists : null,
-      groups: filters.groups?.length > 0 ? filters.groups : null
+      groups: filters.groups?.length > 0 ? filters.groups : null,
+      showGroups: filters.showGroups !== true ? filters.showGroups : null
     };
     
     updateUrl(urlUpdates);
-  }, [searchTerm, sortBy, filters.rarities, filters.artists, filters.groups, updateUrl]);
+  }, [searchTerm, sortBy, filters.rarities, filters.artists, filters.groups, filters.showGroups, updateUrl]);
   
   // Normalize selected artists to match the case in our data
   const selectedArtists = useMemo(() => {
@@ -269,11 +274,15 @@ export const SetPage: React.FC = () => {
     {
       rarities: selectedRarities,
       artists: filters.artists || [],  // Use raw filter values to preserve URL state
+      groups: filters.groups || [],
+      showGroups: filters.showGroups,
       sort: sortBy
     },
     {
       rarities: { default: [] },
       artists: { default: [] },
+      groups: { default: [] },
+      showGroups: { default: true },
       sort: { default: 'collector-asc' }
     },
     {
@@ -358,13 +367,18 @@ export const SetPage: React.FC = () => {
   }, [allCardGroups, sortedCards, setInfo?.groupings]);
 
   // Compute visible groups: if no groups selected, show all; otherwise show only selected
+  // Only include groups that have cards
   const visibleGroupIds = useMemo(() => {
+    const nonEmptyGroups = cardGroups.filter(g => g.cards.length > 0);
+    
     if (selectedGroupIds.length === 0) {
-      // No selection = show all groups
-      return new Set(cardGroups.map(g => g.id));
+      // No selection = show all non-empty groups
+      return new Set(nonEmptyGroups.map(g => g.id));
     }
-    // Show only selected groups
-    return new Set(selectedGroupIds);
+    // Show only selected groups that have cards
+    return new Set(selectedGroupIds.filter((id: string) => 
+      nonEmptyGroups.some(g => g.id === id)
+    ));
   }, [selectedGroupIds, cardGroups]);
 
   const handleRarityChange = (value: string[]) => {
@@ -454,15 +468,17 @@ export const SetPage: React.FC = () => {
             debounceMs: 300,
             minWidth: 300
           },
-          multiSelects: cardGroups.length > 1 ? [
+          multiSelects: cardGroups.filter(g => g.cards.length > 0).length > 1 && filters.showGroups !== false ? [
             {
               key: 'cardGroups',
               value: selectedGroupIds,
               onChange: (groupIds: string[]) => updateFilter('groups', groupIds),
-              options: cardGroups.map(g => ({ 
-                value: g.id, 
-                label: `${g.displayName} (${g.cards.length})` 
-              })),
+              options: cardGroups
+                .filter(g => g.cards.length > 0) // Only show groups with cards
+                .map(g => ({ 
+                  value: g.id, 
+                  label: `${g.displayName} (${g.cards.length})` 
+                })),
               label: 'Card Group',
               placeholder: 'All Groups',
               minWidth: 200
@@ -513,7 +529,21 @@ export const SetPage: React.FC = () => {
               }
             ],
             minWidth: 180
-          }
+          },
+          customFilters: cardGroups.filter(g => g.cards.length > 0).length > 1 ? [
+            <FormControlLabel
+              key="show-groups-toggle"
+              control={
+                <Switch
+                  checked={filters.showGroups !== false}
+                  onChange={(e) => updateFilter('showGroups', e.target.checked)}
+                  size="small"
+                />
+              }
+              label="Show Card Groups"
+              sx={{ minWidth: 150 }}
+            />
+          ] : []
         }}
           layout="compact"
           sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}
@@ -522,9 +552,11 @@ export const SetPage: React.FC = () => {
       )}
 
       <ResultsSummary 
-        current={cardGroups
-          .filter(g => visibleGroupIds.has(g.id))
-          .reduce((sum, g) => sum + g.cards.length, 0)} 
+        current={filters.showGroups === false 
+          ? sortedCards.length 
+          : cardGroups
+              .filter(g => g.cards.length > 0 && visibleGroupIds.has(g.id))
+              .reduce((sum, g) => sum + g.cards.length, 0)} 
         total={cards.length} 
         label="cards"
         textAlign="center"
@@ -577,25 +609,50 @@ export const SetPage: React.FC = () => {
             )}
           </>
         )}
-        {!cardsLoading && cardGroups.map((group) => (
-        <CardGroup
-          key={group.id}
-          groupId={group.id}
-          groupName={group.displayName.toUpperCase()}
-          cards={group.cards}
-          totalCards={group.totalCards}
-          isVisible={visibleGroupIds.has(group.id)}
-          showHeader={cardGroups.length > 1}
-          context={{
-            isOnSetPage: true,
-            currentSet: setCode,
-            hideSetInfo: true,
-            hideReleaseDate: allSameReleaseDate
-          }}
-          onCardSelection={handleCardSelection}
-          selectedCardId={selectedCardId}
-        />
-        ))}
+        {!cardsLoading && (
+          filters.showGroups === false ? (
+            // Flat display: show all sorted cards in a single group
+            <CardGroup
+              key="all-cards"
+              groupId="all-cards"
+              groupName="ALL CARDS"
+              cards={sortedCards}
+              isVisible={true}
+              showHeader={false}
+              context={{
+                isOnSetPage: true,
+                currentSet: setCode,
+                hideSetInfo: true,
+                hideReleaseDate: allSameReleaseDate
+              }}
+              onCardSelection={handleCardSelection}
+              selectedCardId={selectedCardId}
+            />
+          ) : (
+            // Grouped display: show cards organized by groups (filter out empty groups)
+            cardGroups
+              .filter(group => group.cards.length > 0) // Only show groups with cards
+              .map((group) => (
+                <CardGroup
+                  key={group.id}
+                  groupId={group.id}
+                  groupName={group.displayName.toUpperCase()}
+                  cards={group.cards}
+                  totalCards={group.totalCards}
+                  isVisible={visibleGroupIds.has(group.id)}
+                  showHeader={cardGroups.length > 1}
+                  context={{
+                    isOnSetPage: true,
+                    currentSet: setCode,
+                    hideSetInfo: true,
+                    hideReleaseDate: allSameReleaseDate
+                  }}
+                  onCardSelection={handleCardSelection}
+                  selectedCardId={selectedCardId}
+                />
+              ))
+          )
+        )}
       </CardGridErrorBoundary>
 
       {filteredCards.length === 0 && (
@@ -605,7 +662,8 @@ export const SetPage: React.FC = () => {
             setSearchTerm('');
             updateFilter('rarities', []);
             updateFilter('artists', []);
-            setSelectedGroupIds([]);
+            updateFilter('groups', []);
+            updateFilter('showGroups', true);
           }}
         />
       )}

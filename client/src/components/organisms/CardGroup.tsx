@@ -2,12 +2,8 @@ import React from 'react';
 import { Box, Typography, Divider, Skeleton } from '@mui/material';
 import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
-import { VirtualizedCardGrid } from './VirtualizedCardGrid';
-import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import type { Card, CardContext } from '../../types/card';
-
-const VIRTUALIZATION_THRESHOLD = 50; // Use virtualization for groups with 50+ cards
 
 interface CardGroupProps {
   groupId: string;
@@ -127,30 +123,25 @@ const CardGroupComponent: React.FC<CardGroupProps> = ({
       )}
       
       {cards.length > 0 ? (
-        cards.length >= VIRTUALIZATION_THRESHOLD ? (
-          <VirtualizedCardGridWrapper 
-            cards={cards}
-            context={context}
-            onCardSelection={onCardSelection}
-            selectedCardId={selectedCardId}
-          />
-        ) : (
-          <ResponsiveGridAutoFit 
-            minItemWidth={280} 
-            spacing={1.5}
-            sx={{ margin: '0 auto' }}
-          >
-            {cards.map((card) => (
-              <MtgCard
-                key={card.id}
-                card={card}
-                isSelected={selectedCardId === card.id}
-                onSelectionChange={onCardSelection}
-                context={context}
-              />
-            ))}
-          </ResponsiveGridAutoFit>
-        )
+        <ResponsiveGridAutoFit 
+          minItemWidth={280} 
+          spacing={1.5}
+          sx={{ 
+            margin: '0 auto',
+            // Add a subtle transition to smooth out any layout shifts
+            transition: 'grid-template-columns 0.15s ease-out'
+          }}
+        >
+          {cards.map((card) => (
+            <MtgCard
+              key={card.id}
+              card={card}
+              isSelected={selectedCardId === card.id}
+              onSelectionChange={onCardSelection}
+              context={context}
+            />
+          ))}
+        </ResponsiveGridAutoFit>
       ) : (
         <Box sx={{ 
           textAlign: 'center', 
@@ -197,24 +188,3 @@ export const CardGroup = React.memo(CardGroupComponent, (prevProps, nextProps) =
   return false; // Default to re-render if unsure
 });
 
-// Wrapper component for virtualized card grid with container dimensions
-const VirtualizedCardGridWrapper: React.FC<{
-  cards: Card[];
-  context: CardContext;
-  onCardSelection: (cardId: string, selected: boolean) => void;
-  selectedCardId: string | null;
-}> = ({ cards, context, onCardSelection, selectedCardId }) => {
-  const { containerRef, dimensions } = useContainerDimensions(600);
-  
-  return (
-    <Box ref={containerRef} sx={{ width: '100%' }}>
-      <VirtualizedCardGrid
-        cards={cards}
-        context={context}
-        onCardSelection={onCardSelection}
-        selectedCardId={selectedCardId}
-        containerWidth={dimensions.width}
-      />
-    </Box>
-  );
-};
