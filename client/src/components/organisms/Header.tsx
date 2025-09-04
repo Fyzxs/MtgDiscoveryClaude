@@ -9,7 +9,6 @@ import {
   MenuItem
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { SearchInput } from '../atoms/shared/SearchInput';
@@ -19,12 +18,11 @@ export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
   const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
-      // Navigate to set page
-      navigate(`/set/${setCode.trim().toLowerCase()}`);
+      // Force complete URL change to clear all parameters
+      window.location.href = `/set/${setCode.trim().toLowerCase()}`;
       setSetCode('');
     }
   };

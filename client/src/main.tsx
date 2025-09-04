@@ -9,6 +9,7 @@ import App from './App.tsx'
 import { apolloClient } from './graphql/apollo-client'
 import { theme } from './theme'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { Auth0TokenProvider } from './components/auth/Auth0TokenProvider'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -20,12 +21,14 @@ createRoot(document.getElementById('root')!).render(
           redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI
         }}
       >
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <ApolloProvider client={apolloClient}>
-            <App />
-          </ApolloProvider>
-        </ThemeProvider>
+        <Auth0TokenProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ApolloProvider client={apolloClient}>
+              <App />
+            </ApolloProvider>
+          </ThemeProvider>
+        </Auth0TokenProvider>
       </Auth0Provider>
     </ErrorBoundary>
   </StrictMode>,

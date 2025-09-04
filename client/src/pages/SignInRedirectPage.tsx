@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client/react';
 import { 
   Container, 
   Typography, 
@@ -8,11 +9,13 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
+import { REGISTER_USER } from '../graphql/mutations/user';
 
 export const SignInRedirectPage: React.FC = () => {
   const { isLoading, isAuthenticated, user, error } = useAuth0();
   const navigate = useNavigate();
-  const [setupStatus, setSetupStatus] = useState<'loading' | 'configuring' | 'complete' | 'error'>('loading');
+  const [registerUser] = useMutation(REGISTER_USER);
+  const [setupStatus, setSetupStatus] = useState<'loading' | 'registering' | 'complete' | 'error'>('loading');
   const [statusMessage, setStatusMessage] = useState('Completing sign-in...');
 
   useEffect(() => {
@@ -36,47 +39,53 @@ export const SignInRedirectPage: React.FC = () => {
       }
 
       try {
-        setSetupStatus('configuring');
-        setStatusMessage('Setting up your account...');
+        setSetupStatus('registering');
+        setStatusMessage('Registering your account...');
 
-        // Store user information locally
-        const userData = {
-          sub: user.sub,
-          email: user.email,
-          name: user.name || user.email,
-          picture: user.picture,
-          // Add collector number or other preferences here
-          collectorNumber: null, // This could be pulled from user metadata
-          lastLoginAt: new Date().toISOString(),
-        };
+        // Call GraphQL mutation to register user
+        const result = await registerUser();
 
-        localStorage.setItem('mtg-user-data', JSON.stringify(userData));
-        
-        // Here you could also make API calls to:
-        // 1. Register the user in your backend if they don't exist
-        // 2. Sync user preferences
-        // 3. Check for any pending collections or settings
+        if ((result.data as any)?.registerUserInfo?.__typename === 'SuccessUserRegistrationResponse') {
+          // Registration successful
+          const registrationData = (result.data as any).registerUserInfo.data;
+          
+          // Store user information locally for quick access
+          const userData = {
+            sub: user.sub,
+            email: user.email,
+            name: user.name || user.email,
+            picture: user.picture,
+            userId: registrationData.userId,
+            displayName: registrationData.displayName,
+            lastLoginAt: new Date().toISOString(),
+          };
 
-        // Simulate some setup time
-        await new Promise(resolve => setTimeout(resolve, 1000));
+          localStorage.setItem('mtg-user-data', JSON.stringify(userData));
 
-        setSetupStatus('complete');
-        setStatusMessage('Setup complete! Redirecting...');
+          setSetupStatus('complete');
+          setStatusMessage('Registration complete! Redirecting...');
 
-        // Redirect to home page after a brief delay
-        setTimeout(() => {
-          navigate('/', { replace: true });
-        }, 1500);
+          // Redirect to home page after a brief delay
+          setTimeout(() => {
+            navigate('/', { replace: true });
+          }, 1500);
+          
+        } else {
+          // Registration failed
+          const errorMsg = (result.data as any)?.registerUserInfo?.status?.message || 'Unknown registration error';
+          setSetupStatus('error');
+          setStatusMessage(`Registration failed: ${errorMsg}`);
+        }
 
-      } catch (setupError) {
-        console.error('User setup error:', setupError);
+      } catch (registrationError) {
+        console.error('User registration error:', registrationError);
         setSetupStatus('error');
-        setStatusMessage('Error setting up your account. Please try again.');
+        setStatusMessage('Error registering your account. Please try again.');
       }
     };
 
     handleUserSetup();
-  }, [isLoading, isAuthenticated, user, error, navigate]);
+  }, [isLoading, isAuthenticated, user, error, navigate, registerUser]);
 
   const getStatusColor = () => {
     switch (setupStatus) {

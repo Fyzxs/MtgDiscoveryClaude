@@ -16,17 +16,17 @@ export const setAuth0TokenGetter = (tokenGetter: () => Promise<string | null>) =
 const authLink = setContext(async (_, { headers }) => {
   if (getAuth0Token) {
     try {
-      const token = await getAuth0Token();
-      if (token) {
+      const idToken = await getAuth0Token();
+      if (idToken) {
         return {
           headers: {
             ...headers,
-            authorization: `Bearer ${token}`
+            authorization: `Bearer ${idToken}`
           }
         };
       }
     } catch (error) {
-      console.error('Auth0 token acquisition failed:', error);
+      console.error('Auth0 ID token acquisition failed:', error);
     }
   }
   

@@ -95,6 +95,30 @@ export const UPDATE_COLLECTOR_PROFILE = gql`
   }
 `;
 
+export const REGISTER_USER = gql`
+  mutation RegisterUser {
+    registerUserInfo {
+      __typename
+      ... on SuccessUserRegistrationResponse {
+        data {
+          userId
+          displayName
+        }
+        status {
+          message
+          statusCode
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;
+
 export const GET_USER_PROFILE = gql`
   query GetUserProfile {
     userProfile {
