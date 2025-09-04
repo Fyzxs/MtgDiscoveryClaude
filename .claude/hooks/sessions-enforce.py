@@ -15,7 +15,7 @@ DEFAULT_CONFIG = {
     "trigger_phrases": ["make it so", "run that"],
     "blocked_tools": ["Edit", "Write", "MultiEdit", "NotebookEdit"],
     "branch_enforcement": {
-        "enabled": True,
+        "enabled": False,
         "task_prefixes": ["implement-", "fix-", "refactor-", "migrate-", "test-", "docs-"],
         "branch_prefixes": {
             "implement-": "feature/",

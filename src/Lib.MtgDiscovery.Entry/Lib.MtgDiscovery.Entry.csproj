@@ -6,6 +6,7 @@
     <ProjectReference Include="..\Lib.MtgDiscovery.Data\Lib.MtgDiscovery.Data.csproj" />
     <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
     <ProjectReference Include="..\Lib.Domain.Sets\Lib.Domain.Sets.csproj" />
+    <ProjectReference Include="..\Lib.Shared.UserInfo\Lib.Shared.UserInfo.csproj" />
   </ItemGroup>
 
 </Project>

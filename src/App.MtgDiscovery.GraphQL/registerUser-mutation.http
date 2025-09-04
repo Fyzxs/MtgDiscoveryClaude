@@ -1,0 +1,153 @@
+###
+# User Registration Mutation Tests
+# Auth0 JWT Authentication required - extracts 'sub' and 'nickname' claims
+# Domain: dev-63szoyl0kt0p7e5q.us.auth0.com
+
+###
+# Variables
+# @name variables
+@baseUrl = https://localhost:65203
+@graphqlEndpoint = {{baseUrl}}/graphql
+@bearerToken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFHajJwbFhOYV9CWWVfd2pZcHFTQyJ9.eyJuaWNrbmFtZSI6InF1aW5udGdpbCttdGcwMSIsIm5hbWUiOiJxdWlubnRnaWwrbXRnMDFAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyL2ZkMDg3YWNiMjVmMzY0Y2I4OTM0Y2I2Y2E5NWEwOGU3P3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGcXUucG5nIiwidXBkYXRlZF9hdCI6IjIwMjUtMDktMDRUMDQ6NDU6MzYuMDM5WiIsImVtYWlsIjoicXVpbm50Z2lsK210ZzAxQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYtNjNzem95bDBrdDBwN2U1cS51cy5hdXRoMC5jb20vIiwiYXVkIjoiT1hZVGlBMmEyU3BOM2NOZjRFcjRpeDlESEhoTGRZQzUiLCJzdWIiOiJhdXRoMHw2OGI3YzJjMWI3NzNjNTg5N2U4Y2ViOGYiLCJpYXQiOjE3NTY5NjExMzgsImV4cCI6MTc1Njk5NzEzOCwic2lkIjoidGlnMzNCbVFDYlVBYThGN3h4VGhrU0k2Tk1zNi1FazQiLCJub25jZSI6ImJIUkljbkprTWtKbk4ySjBkM2N5YWxCWlMwVm9hRmQ2ZVVaUmZsQnVmbFF6ZEVwVWFsTitkR294YUE9PSJ9.J2pOxdUUZAnhxpnVRI-pUUX8EL3DLMFx2InjT-B_X3uuRf2VmjTTLZOx5IRXbCuHmDofF8dFdctAh_Ajt50L6dtkTuBFzLU7hipOqINFVKDVhoTsuqlFCCC2KgJgVeyp45808VPOMMpZlbg8OPP3r8Zf5_d6wHgLItGzTHz3UjcSutcv7Ojs7NjAD33wJPGQtublvg0dXdLpp_C3p7iZEWWqdsIYV6474OWGmDmqllNhhK3Vq9q7sZ_sTXyz9g5cgfLE4KNnHR3PzZOyYyZfifJDX6f6brKC_BhrpEfWouEr90Ba6N9-Qe6-fiBl70gGscGZLhaPFtZUupNd8hTQeQ
+
+### Register User Info - Basic
+# @ref variables
+# Replace YOUR_JWT_TOKEN_HERE with actual Auth0 JWT token
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation RegisterUser {
+  registerUserInfo {
+    __typename
+    ... on SuccessUserRegistrationResponse {
+      data {
+        userId
+        displayName
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+### Register User Info - Full Response
+# @ref variables
+# Replace YOUR_JWT_TOKEN_HERE with actual Auth0 JWT token
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation RegisterUserFull {
+  registerUserInfo {
+    __typename
+    ... on SuccessUserRegistrationResponse {
+      data {
+        userId
+        displayName
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+### Test without JWT Token (should fail)
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+mutation RegisterUserUnauthorized {
+  registerUserInfo {
+    __typename
+    ... on SuccessUserRegistrationResponse {
+      data {
+        userId
+        displayName
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+### GraphQL Schema Introspection - Mutation Type
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query IntrospectMutations {
+  __schema {
+    mutationType {
+      fields {
+        name
+        description
+        type {
+          name
+          kind
+        }
+      }
+    }
+  }
+}
+
+###
+# How to get Auth0 JWT Token:
+# 1. Go to your Auth0 dashboard (https://manage.auth0.com/)
+# 2. Navigate to Applications → Applications and find your SPA app
+# 3. Use Auth0's test tab or implement frontend login flow  
+# 4. Copy the JWT token from the response
+# 5. Replace YOUR_JWT_TOKEN_HERE with the actual token
+# 
+# Required JWT Claims:
+# - "sub": User's unique identifier (e.g., "auth0|68b7c2c1b773c5897e8ceb8f")
+# - "nickname": User's display name (e.g., "quinntgil+mtg01")
+#
+# The mutation extracts these claims automatically from the JWT
+
+###
+# Expected Response Examples:
+# 
+# registerUserInfo without token:
+# { "errors": [{ "message": "The current user is not authorized to access this resource.", "extensions": { "code": "AUTH_NOT_AUTHORIZED" } }] }
+#
+# registerUserInfo with valid token:
+# {
+#   "data": {
+#     "registerUserInfo": {
+#       "__typename": "SuccessUserRegistrationResponse",
+#       "data": {
+#         "userId": "550e8400-e29b-41d4-a716-446655440000",
+#         "displayName": "quinntgil+mtg01"
+#       },
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
