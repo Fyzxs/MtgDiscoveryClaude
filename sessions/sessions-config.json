@@ -11,7 +11,7 @@
     "enabled": true
   },
   "branch_enforcement": {
-    "enabled": true
+    "enabled": false
   },
   "api_mode": false
 }
