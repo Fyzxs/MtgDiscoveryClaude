@@ -42,6 +42,8 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
     {
+        //TODO: The inquisitor pattern and coupling with the query needs to be established.
+
         // Normalize the search term: lowercase and remove non-alphabetic characters
         string normalized = new(searchTerm.SearchTerm
             .ToLowerInvariant()
@@ -152,6 +154,8 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
     {
+        //TODO: The inquisitor pattern and coupling with the query needs to be established.
+
         // Normalize the artist name: lowercase and remove non-alphabetic characters
         string normalized = new(artistName.ArtistName
             .ToLowerInvariant()

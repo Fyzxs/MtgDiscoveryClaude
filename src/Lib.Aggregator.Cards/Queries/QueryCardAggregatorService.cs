@@ -79,7 +79,6 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
     {
         //TODO: The inquisitor pattern and coupling with the query needs to be established.
-        // First, get the set ID from the set code index
         ReadPointItem readPoint = new() { Id = new ProvidedCosmosItemId(setCode.SetCode), Partition = new ProvidedPartitionKeyValue(setCode.SetCode) };
         OpResponse<ScryfallSetCodeIndexItem> indexResponse = await _setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexItem>(readPoint).ConfigureAwait(false);
 
@@ -122,6 +121,8 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
     {
+        //TODO: The inquisitor pattern and coupling with the query needs to be established.
+
         // Generate the GUID for the card name
         ICardNameGuidGenerator guidGenerator = new CardNameGuidGenerator();
         CardNameGuid nameGuid = guidGenerator.GenerateGuid(cardName.CardName);
