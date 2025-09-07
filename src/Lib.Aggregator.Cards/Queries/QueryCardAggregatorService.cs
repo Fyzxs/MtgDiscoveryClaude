@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Entities;
 using Lib.Aggregator.Cards.Exceptions;
@@ -199,17 +200,12 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
                     foreach (CardNameTrigramDataItem entry in trigramDoc.Cards)
                     {
                         // Server-side filtering should have already filtered, but double-check
-                        if (entry.Normalized.Contains(normalized))
-                        {
-                            matchingCardNames.Add(entry.Name);
+                        if (entry.Normalized.Contains(normalized) is false) continue;
+                        matchingCardNames.Add(entry.Name);
 
-                            // Track how many trigrams matched for ranking
-                            if (cardNameMatchCounts.ContainsKey(entry.Name) is false)
-                            {
-                                cardNameMatchCounts[entry.Name] = 0;
-                            }
-                            cardNameMatchCounts[entry.Name]++;
-                        }
+                        // Track how many trigrams matched for ranking
+                        cardNameMatchCounts.TryAdd(entry.Name, 0);
+                        cardNameMatchCounts[entry.Name]++;
                     }
                 }
             }

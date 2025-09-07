@@ -2,11 +2,11 @@
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 
-public sealed class ArtistNameTrigramsScribe : CosmosScribe
+public sealed class ArtistNameTrigramsInquisitor : CosmosInquisitor
 {
-    public ArtistNameTrigramsScribe(ILogger logger)
+    public ArtistNameTrigramsInquisitor(ILogger logger)
         : base(new ArtistNameTrigramsCosmosContainer(logger))
     { }
 }

@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;

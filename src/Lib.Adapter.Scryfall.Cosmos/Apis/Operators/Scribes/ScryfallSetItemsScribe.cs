@@ -2,7 +2,7 @@
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 
 public sealed class ScryfallSetItemsScribe : CosmosScribe
 {

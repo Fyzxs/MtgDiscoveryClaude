@@ -2,11 +2,11 @@
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 
-public sealed class ScryfallSetCardsInquisitor : CosmosInquisitor
+public sealed class ScryfallSetCardsScribe : CosmosScribe
 {
-    public ScryfallSetCardsInquisitor(ILogger logger)
+    public ScryfallSetCardsScribe(ILogger logger)
         : base(new SetCardsCosmosContainer(logger))
     { }
 }

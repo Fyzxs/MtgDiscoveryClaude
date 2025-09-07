@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Aggregator.Artists.Apis;
 using Lib.Aggregator.Artists.Entities;
 using Lib.Aggregator.Artists.Operations;
