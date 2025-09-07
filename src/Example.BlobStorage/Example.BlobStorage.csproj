@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
-    <ProjectReference Include="..\Lib.BlobStorage\Lib.BlobStorage.csproj" />
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
   </ItemGroup>
 

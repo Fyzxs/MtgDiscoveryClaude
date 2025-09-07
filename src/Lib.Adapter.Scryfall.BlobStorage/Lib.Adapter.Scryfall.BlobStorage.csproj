@@ -3,7 +3,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
-    <ProjectReference Include="..\Lib.BlobStorage\Lib.BlobStorage.csproj" />
   </ItemGroup>
 
 </Project>
