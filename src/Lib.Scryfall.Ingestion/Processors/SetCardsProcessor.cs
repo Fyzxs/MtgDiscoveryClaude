@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Mappers;
@@ -32,21 +32,21 @@ internal sealed class SetCardsProcessor : ICardProcessor
 
     public async Task ProcessAsync(IScryfallCard card)
     {
-        ScryfallSetCard setCard = _mapper.Map(card.Data());
-        OpResponse<ScryfallSetCard> response = await _scribe.UpsertAsync(setCard).ConfigureAwait(false);
+        ScryfallSetCardItem setCardItem = _mapper.Map(card.Data());
+        OpResponse<ScryfallSetCardItem> response = await _scribe.UpsertAsync(setCardItem).ConfigureAwait(false);
 
         LogSuccess(card.Data(), response);
         LogFailure(card.Data(), response);
     }
 
-    private void LogSuccess(dynamic card, OpResponse<ScryfallSetCard> response)
+    private void LogSuccess(dynamic card, OpResponse<ScryfallSetCardItem> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogSetCardStored((string)card.id);
     }
 
-    private void LogFailure(dynamic card, OpResponse<ScryfallSetCard> response)
+    private void LogFailure(dynamic card, OpResponse<ScryfallSetCardItem> response)
     {
         if (response.IsSuccessful()) return;
 

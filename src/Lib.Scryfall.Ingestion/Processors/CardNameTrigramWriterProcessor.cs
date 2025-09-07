@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
@@ -45,11 +45,11 @@ internal sealed class CardNameTrigramWriterProcessor : ICardNameTrigramWriterPro
         int trigramCount = 0;
         foreach (ICardNameTrigramAggregate aggregate in _aggregator.GetTrigrams())
         {
-            CardNameTrigram entity = new()
+            CardNameTrigramItem entity = new()
             {
                 Trigram = aggregate.Trigram(),
-                Cards = new Collection<CardNameTrigramEntry>(
-                    aggregate.Entries().Select(entry => new CardNameTrigramEntry
+                Cards = new Collection<CardNameTrigramDataItem>(
+                    aggregate.Entries().Select(entry => new CardNameTrigramDataItem
                     {
                         Name = entry.Name(),
                         Normalized = entry.Normalized(),

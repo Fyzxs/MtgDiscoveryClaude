@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
@@ -108,22 +108,21 @@ internal sealed class CardsPipelineService : ICardsPipelineService
 
             // Write the card by name (for name-based lookups)
             CardNameGuid nameGuid = _guidGenerator.GenerateGuid((string)card.Data().name);
-            ScryfallCardByName cardByName = new()
+            ScryfallCardByNameItem cardByNameItem = new()
             {
                 NameGuid = nameGuid.AsSystemType().ToString(),
                 Data = card.Data()
             };
-            await _cardsByNameScribe.UpsertAsync(cardByName).ConfigureAwait(false);
+            await _cardsByNameScribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
 
             // Write the set-card relationship
-            ScryfallSetCard setCard = _setCardMapper.Map(card.Data());
-            await _setCardsScribe.UpsertAsync(setCard).ConfigureAwait(false);
+            ScryfallSetCardItem setCardItem = _setCardMapper.Map(card.Data());
+            await _setCardsScribe.UpsertAsync(setCardItem).ConfigureAwait(false);
         }
 
         _dashboard.LogCardsWritten(cards.Count);
         _dashboard.UpdateCompletedCount("Cards", cards.Count);
     }
-
 }
 
 internal static partial class CardsPipelineServiceLoggerExtensions

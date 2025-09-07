@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
+﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
@@ -8,6 +8,5 @@ public sealed class ScryfallSetCodeIndexGopher : CosmosGopher
 {
     public ScryfallSetCodeIndexGopher(ILogger logger)
         : base(new SetCodeIndexCosmosContainer(logger))
-    {
-    }
+    { }
 }

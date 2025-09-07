@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Data.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
@@ -24,8 +24,7 @@ internal sealed class SetEntryService : ISetEntryService
         new SetCodesArgEntityValidatorContainer(),
         new SetIdsArgsToItrMapper(),
         new SetCodesArgsToItrMapper())
-    {
-    }
+    { }
 
     private SetEntryService(
         ISetDataService setDataService,

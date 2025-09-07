@@ -1,3 +1,7 @@
-namespace Lib.MtgDiscovery.Data.Apis;
+﻿namespace Lib.MtgDiscovery.Data.Apis;
 
-public interface IDataService : ICardDataService, ISetDataService, IArtistDataService, IUserDataService;
+public interface IDataService :
+    ICardDataService,
+    ISetDataService,
+    IArtistDataService,
+    IUserDataService;

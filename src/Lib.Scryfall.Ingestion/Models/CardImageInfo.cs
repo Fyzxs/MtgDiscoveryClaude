@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Lib.BlobStorage.Apis.Ids;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Universal.Primitives;
 
@@ -22,14 +21,6 @@ internal sealed class CardImageInfo : ICardImageInfo
 
     public Url ImageUrl() => new ProvidedUrl(_uri);
 
-    public string StoragePath()
-    {
-        string cardId = _card.Id();
-        string first = cardId[..1];
-        string second = cardId.Substring(1, 1);
-        return new ProvidedBlobPathEntity($"{_imageType}/{_side}/{first}/{second}/{cardId}.jpg");
-    }
-
     public IDictionary<string, string> Metadata()
     {
         return new Dictionary<string, string>
@@ -46,8 +37,4 @@ internal sealed class CardImageInfo : ICardImageInfo
 
     public string LogValue() => $"[{_card.Name()}/{_card.Set().Code()} | {_side}/{_imageType}]";
 
-    string ICardImageInfo.StoragePath()
-    {
-        return StoragePath();
-    }
 }

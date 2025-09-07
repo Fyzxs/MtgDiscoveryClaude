@@ -10,6 +10,5 @@ internal sealed class AggregatorOperationException : OperationException
 {
     public AggregatorOperationException(string message, Exception innerException = null)
         : base(HttpStatusCode.InternalServerError, message, innerException)
-    {
-    }
+    { }
 }

@@ -8,6 +8,5 @@ public sealed class ScryfallSetAssociationsScribe : CosmosScribe
 {
     public ScryfallSetAssociationsScribe(ILogger logger)
         : base(new SetParentAssociationsCosmosContainer(logger))
-    {
-    }
+    { }
 }

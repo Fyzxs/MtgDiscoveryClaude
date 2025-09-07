@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Aggregator.Sets.Apis;
 using Lib.Aggregator.Sets.Entities;
@@ -106,8 +106,7 @@ internal sealed class QuerySetAggregatorService : ISetAggregatorService
 
         if (response.IsSuccessful() is false)
         {
-            return new FailureOperationResponse<ISetItemCollectionItrEntity>(
-                new AggregatorOperationException("Failed to retrieve all sets", response.Exception()));
+            return new FailureOperationResponse<ISetItemCollectionItrEntity>(new AggregatorOperationException("Failed to retrieve all sets", response.Exception()));
         }
 
         ICollection<ISetItemItrEntity> sets = response.Value

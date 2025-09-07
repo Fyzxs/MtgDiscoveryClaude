@@ -1,9 +1,7 @@
-using Lib.MtgDiscovery.Entry.Apis;
+﻿using Lib.MtgDiscovery.Entry.Apis;
 using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface ISetIdsArgsToItrMapper : ICreateMapper<ISetIdsArgEntity, ISetIdsItrEntity>
-{
-}
+internal interface ISetIdsArgsToItrMapper : ICreateMapper<ISetIdsArgEntity, ISetIdsItrEntity>;

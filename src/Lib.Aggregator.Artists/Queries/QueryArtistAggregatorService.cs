@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Aggregator.Artists.Apis;
 using Lib.Aggregator.Artists.Entities;
 using Lib.Aggregator.Artists.Operations;
+using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Aggregator.Scryfall.Shared.Mappers;
-using Lib.Aggregator.Scryfall.Shared.Models;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -76,15 +76,15 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
                 .WithParameter("@partition", firstChar)
                 .WithParameter("@normalized", normalized);
 
-            OpResponse<IEnumerable<ArtistNameTrigram>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigram>(
+            OpResponse<IEnumerable<ArtistNameTrigramItem>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramItem>(
                 queryDefinition,
                 new PartitionKey(firstChar)).ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
             {
-                foreach (ArtistNameTrigram trigramDoc in trigramResponse.Value)
+                foreach (ArtistNameTrigramItem trigramDoc in trigramResponse.Value)
                 {
-                    foreach (ArtistNameTrigramEntry entry in trigramDoc.Artists)
+                    foreach (ArtistNameTrigramDataItem entry in trigramDoc.Artists)
                     {
                         // Server-side filtering should have already filtered, but double-check
                         if (entry.Normalized.Contains(normalized))
@@ -125,7 +125,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @artistId")
             .WithParameter("@artistId", artistId.ArtistId);
 
-        OpResponse<IEnumerable<ScryfallArtistCard>> cardsResponse = await _artistCardsInquisitor.QueryAsync<ScryfallArtistCard>(
+        OpResponse<IEnumerable<ScryfallArtistCardItem>> cardsResponse = await _artistCardsInquisitor.QueryAsync<ScryfallArtistCardItem>(
             queryDefinition,
             new PartitionKey(artistId.ArtistId)).ConfigureAwait(false);
 
@@ -137,7 +137,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 
         // Convert ScryfallArtistCard to ScryfallCardItem for mapping
         List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallArtistCard artistCard in cardsResponse.Value)
+        foreach (ScryfallArtistCardItem artistCard in cardsResponse.Value)
         {
             ScryfallCardItem cardItem = new() { Data = artistCard.Data };
             ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
@@ -186,15 +186,15 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
                 .WithParameter("@partition", firstChar)
                 .WithParameter("@normalized", normalized);
 
-            OpResponse<IEnumerable<ArtistNameTrigram>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigram>(
+            OpResponse<IEnumerable<ArtistNameTrigramItem>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramItem>(
                 queryDefinition,
                 new PartitionKey(firstChar)).ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
             {
-                foreach (ArtistNameTrigram trigramDoc in trigramResponse.Value)
+                foreach (ArtistNameTrigramItem trigramDoc in trigramResponse.Value)
                 {
-                    foreach (ArtistNameTrigramEntry entry in trigramDoc.Artists)
+                    foreach (ArtistNameTrigramDataItem entry in trigramDoc.Artists)
                     {
                         // Server-side filtering should have already filtered, but double-check
                         if (entry.Normalized.Contains(normalized))

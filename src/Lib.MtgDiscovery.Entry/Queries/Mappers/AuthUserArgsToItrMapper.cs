@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.UserInfo.Values;
 
@@ -6,14 +6,13 @@ namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
 internal sealed class AuthUserArgsToItrMapper : IAuthUserArgsToItrMapper
 {
-    public async Task<IUserInfoItrEntity> Map(IAuthUserArgEntity args)
+    public Task<IUserInfoItrEntity> Map(IAuthUserArgEntity args)
     {
-        await Task.CompletedTask.ConfigureAwait(false);
-        return new UserInfoItrEntity
+        return Task.FromResult<IUserInfoItrEntity>(new UserInfoItrEntity
         {
             UserId = new UserId(args.UserId),
             UserSourceId = new UserSourceId(args.SourceId),
             UserNickname = new UserNickname(args.DisplayName)
-        };
+        });
     }
 }

@@ -2,7 +2,6 @@
 
 public interface IAllPartsItrEntity
 {
-    string ObjectString { get; }
     string Id { get; }
     string Component { get; }
     string Name { get; }

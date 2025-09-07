@@ -15,9 +15,8 @@ public sealed class DataService : IDataService
     private readonly IUserDataService _userDataService;
 
     public DataService(ILogger logger) : this(new CardDataService(logger), new SetDataService(logger), new ArtistDataService(logger), new UserDataService(logger))
-    {
+    { }
 
-    }
     private DataService(ICardDataService cardDataService, ISetDataService setDataService, IArtistDataService artistDataService, IUserDataService userDataService)
     {
         _cardDataService = cardDataService;
@@ -26,58 +25,25 @@ public sealed class DataService : IDataService
         _userDataService = userDataService;
     }
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
-    {
-        return _cardDataService.CardsByIdsAsync(args);
-    }
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardDataService.CardsByIdsAsync(args);
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
-    {
-        return _cardDataService.CardsBySetCodeAsync(setCode);
-    }
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => _cardDataService.CardsBySetCodeAsync(setCode);
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
-    {
-        return _cardDataService.CardsByNameAsync(cardName);
-    }
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardDataService.CardsByNameAsync(cardName);
 
-    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
-    {
-        return _cardDataService.CardNameSearchAsync(searchTerm);
-    }
+    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardDataService.CardNameSearchAsync(searchTerm);
 
-    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds)
-    {
-        return _setDataService.SetsAsync(setIds);
-    }
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds) => _setDataService.SetsAsync(setIds);
 
-    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes)
-    {
-        return _setDataService.SetsByCodeAsync(setCodes);
-    }
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => _setDataService.SetsByCodeAsync(setCodes);
 
-    public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
-    {
-        return _setDataService.AllSetsAsync();
-    }
+    public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync() => _setDataService.AllSetsAsync();
 
-    public Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
-    {
-        return _artistDataService.ArtistSearchAsync(searchTerm);
-    }
+    public Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistDataService.ArtistSearchAsync(searchTerm);
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId)
-    {
-        return _artistDataService.CardsByArtistAsync(artistId);
-    }
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => _artistDataService.CardsByArtistAsync(artistId);
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
-    {
-        return _artistDataService.CardsByArtistNameAsync(artistName);
-    }
+    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => _artistDataService.CardsByArtistNameAsync(artistName);
 
-    public Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
-    {
-        return _userDataService.RegisterUserAsync(userInfo);
-    }
+    public Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _userDataService.RegisterUserAsync(userInfo);
 }

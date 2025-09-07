@@ -31,8 +31,7 @@ internal sealed class CardEntryService : ICardEntryService
         new SetCodeArgsToItrMapper(),
         new CardNameArgsToItrMapper(),
         new CardSearchTermArgsToItrMapper())
-    {
-    }
+    { }
 
     private CardEntryService(
         ICardDataService cardDataService,

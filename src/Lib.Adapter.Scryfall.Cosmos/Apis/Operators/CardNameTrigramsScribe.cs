@@ -8,6 +8,5 @@ public sealed class CardNameTrigramsScribe : CosmosScribe
 {
     public CardNameTrigramsScribe(ILogger logger)
         : base(new CardNameTrigramsCosmosContainer(logger))
-    {
-    }
+    { }
 }

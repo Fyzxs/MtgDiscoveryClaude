@@ -8,6 +8,5 @@ public sealed class CardNameTrigramsInquisitor : CosmosInquisitor
 {
     public CardNameTrigramsInquisitor(ILogger logger)
         : base(new CardNameTrigramsCosmosContainer(logger))
-    {
-    }
+    { }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Microsoft.Extensions.Logging;
@@ -29,7 +29,7 @@ internal sealed class ArtistCardsWriterProcessor : IArtistProcessor
 
         foreach (dynamic cardData in artist.Cards())
         {
-            ScryfallArtistCard item = new()
+            ScryfallArtistCardItem item = new()
             {
                 ArtistId = artistId,
                 Data = cardData

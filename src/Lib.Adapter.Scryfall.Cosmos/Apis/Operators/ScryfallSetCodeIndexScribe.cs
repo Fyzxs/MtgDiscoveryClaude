@@ -8,6 +8,5 @@ public sealed class ScryfallSetCodeIndexScribe : CosmosScribe
 {
     public ScryfallSetCodeIndexScribe(ILogger logger)
         : base(new SetCodeIndexCosmosContainer(logger))
-    {
-    }
+    { }
 }

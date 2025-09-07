@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Data.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
@@ -28,8 +28,7 @@ internal sealed class ArtistEntryService : IArtistEntryService
         new ArtistSearchTermArgsToItrMapper(),
         new ArtistIdArgsToItrMapper(),
         new ArtistNameArgsToItrMapper())
-    {
-    }
+    { }
 
     private ArtistEntryService(
         IArtistDataService artistDataService,

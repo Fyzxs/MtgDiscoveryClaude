@@ -214,7 +214,6 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
             Loyalty = face.Loyalty,
             ManaCost = face.ManaCost,
             Name = face.Name,
-            ObjectString = face.ObjectString,
             OracleText = face.OracleText,
             Power = face.Power,
             PrintedName = face.PrintedName,
@@ -233,7 +232,6 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
         return source.Select(part => new AllPartsOutEntity
         {
             Id = part.Id,
-            ObjectString = part.ObjectString,
             Component = part.Component,
             Name = part.Name,
             TypeLine = part.TypeLine,

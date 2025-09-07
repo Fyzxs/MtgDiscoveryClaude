@@ -20,8 +20,7 @@ internal sealed class UserEntryService : IUserEntryService
         new DataService(logger),
         new AuthUserArgEntityValidatorContainer(),
         new AuthUserArgsToItrMapper())
-    {
-    }
+    { }
 
     private UserEntryService(
         IUserDataService userDataService,

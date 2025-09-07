@@ -8,6 +8,5 @@ public sealed class ScryfallSetItemsGopher : CosmosGopher
 {
     public ScryfallSetItemsGopher(ILogger logger)
         : base(new SetItemsCosmosContainer(logger))
-    {
-    }
+    { }
 }
