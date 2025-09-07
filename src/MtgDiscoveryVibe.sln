@@ -37,13 +37,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.BlobStorage", "Exam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared", "Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj", "{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.BlobStorage", "Lib.Adapter.Scryfall.BlobStorage\Lib.Adapter.Scryfall.BlobStorage.csproj", "{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.Cosmos", "Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj", "{07B9977E-C99B-4CCB-B307-0C1692ABA304}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.Cosmos.Tests", "Lib.Adapter.Scryfall.Cosmos.Tests\Lib.Adapter.Scryfall.Cosmos.Tests.csproj", "{BD7F511D-B774-42EA-8381-E29BB7615566}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.BlobStorage.Tests", "Lib.Adapter.Scryfall.BlobStorage.Tests\Lib.Adapter.Scryfall.BlobStorage.Tests.csproj", "{D066A54E-D708-4E7E-B0CD-22B127E6D241}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared.Tests", "Lib.Scryfall.Shared.Tests\Lib.Scryfall.Shared.Tests.csproj", "{F84A9A3D-F2EF-4AA4-82EB-4390497243E0}"
 EndProject
@@ -255,18 +251,6 @@ Global
 		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x64.Build.0 = Release|Any CPU
 		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x86.ActiveCfg = Release|Any CPU
 		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}.Release|x86.Build.0 = Release|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Debug|x64.Build.0 = Debug|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Debug|x86.Build.0 = Debug|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Release|x64.ActiveCfg = Release|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Release|x64.Build.0 = Release|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Release|x86.ActiveCfg = Release|Any CPU
-		{EE36A38B-9B60-4D9F-8DB3-FC5CDB8719FE}.Release|x86.Build.0 = Release|Any CPU
 		{07B9977E-C99B-4CCB-B307-0C1692ABA304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{07B9977E-C99B-4CCB-B307-0C1692ABA304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07B9977E-C99B-4CCB-B307-0C1692ABA304}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -291,18 +275,6 @@ Global
 		{BD7F511D-B774-42EA-8381-E29BB7615566}.Release|x64.Build.0 = Release|Any CPU
 		{BD7F511D-B774-42EA-8381-E29BB7615566}.Release|x86.ActiveCfg = Release|Any CPU
 		{BD7F511D-B774-42EA-8381-E29BB7615566}.Release|x86.Build.0 = Release|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Debug|x64.Build.0 = Debug|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Debug|x86.Build.0 = Debug|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Release|x64.ActiveCfg = Release|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Release|x64.Build.0 = Release|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Release|x86.ActiveCfg = Release|Any CPU
-		{D066A54E-D708-4E7E-B0CD-22B127E6D241}.Release|x86.Build.0 = Release|Any CPU
 		{F84A9A3D-F2EF-4AA4-82EB-4390497243E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F84A9A3D-F2EF-4AA4-82EB-4390497243E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F84A9A3D-F2EF-4AA4-82EB-4390497243E0}.Debug|x64.ActiveCfg = Debug|Any CPU
