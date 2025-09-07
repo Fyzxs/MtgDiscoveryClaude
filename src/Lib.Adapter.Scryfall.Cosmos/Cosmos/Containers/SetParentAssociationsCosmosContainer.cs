@@ -1,4 +1,5 @@
-﻿using Lib.Cosmos.Apis;
+﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers.Definitions;
+using Lib.Cosmos.Apis;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
@@ -7,6 +8,5 @@ internal sealed class SetParentAssociationsCosmosContainer : CosmosContainerAdap
 {
     public SetParentAssociationsCosmosContainer(ILogger logger)
         : base(logger, new SetParentAssociationsCosmosContainerDefinition(), new ServiceLocatorAuthCosmosConnectionConfig())
-    {
-    }
+    { }
 }

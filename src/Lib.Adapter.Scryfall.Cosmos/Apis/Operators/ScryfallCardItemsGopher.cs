@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
+﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
@@ -8,6 +8,5 @@ public sealed class ScryfallCardItemsGopher : CosmosGopher
 {
     public ScryfallCardItemsGopher(ILogger logger)
         : base(new CardItemsCosmosContainer(logger))
-    {
-    }
+    { }
 }

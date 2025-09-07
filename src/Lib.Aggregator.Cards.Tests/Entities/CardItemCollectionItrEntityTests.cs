@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lib.Aggregator.Cards.Tests.Fakes;
-using Lib.Aggregator.Scryfall.Shared.Models;
+using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Aggregator.Cards.Tests.Entities;

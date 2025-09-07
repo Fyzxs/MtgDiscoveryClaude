@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
@@ -39,7 +38,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
     {
         _dashboard.LogFetchingRulings();
 
-        List<dynamic> allRulings = new();
+        List<dynamic> allRulings = [];
         IAsyncEnumerable<dynamic> rulingStream = await _rulingsFetcher.FetchRulingsAsync().ConfigureAwait(false);
         int totalRulings = 0;
 

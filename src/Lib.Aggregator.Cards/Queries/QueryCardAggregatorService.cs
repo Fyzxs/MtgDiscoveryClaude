@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Entities;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries.Mappers;
+using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Aggregator.Scryfall.Shared.Mappers;
-using Lib.Aggregator.Scryfall.Shared.Models;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Identifiers;
@@ -37,8 +37,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         new CardNameTrigramsInquisitor(logger),
         new QueryCardsIdsToReadPointItemsMapper(),
         new ScryfallCardItemToCardItemItrEntityMapper())
-    {
-    }
+    { }
 
     private QueryCardAggregatorService(
         ICosmosGopher cardGopher,
@@ -95,7 +94,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @setId")
             .WithParameter("@setId", setId);
 
-        OpResponse<IEnumerable<ScryfallSetCard>> cardsResponse = await _setCardsInquisitor.QueryAsync<ScryfallSetCard>(
+        OpResponse<IEnumerable<ScryfallSetCardItem>> cardsResponse = await _setCardsInquisitor.QueryAsync<ScryfallSetCardItem>(
             queryDefinition,
             new PartitionKey(setId)).ConfigureAwait(false);
 
@@ -107,7 +106,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
         // Convert ScryfallSetCard to ScryfallCardItem for mapping
         List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallSetCard setCard in cardsResponse.Value)
+        foreach (ScryfallSetCardItem setCard in cardsResponse.Value)
         {
             ScryfallCardItem cardItem = new() { Data = setCard.Data };
             ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
@@ -129,7 +128,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @nameGuid")
             .WithParameter("@nameGuid", nameGuid.AsSystemType().ToString());
 
-        OpResponse<IEnumerable<ScryfallCardByName>> cardsResponse = await _cardsByNameInquisitor.QueryAsync<ScryfallCardByName>(
+        OpResponse<IEnumerable<ScryfallCardByNameItem>> cardsResponse = await _cardsByNameInquisitor.QueryAsync<ScryfallCardByNameItem>(
             queryDefinition,
             new PartitionKey(nameGuid.AsSystemType().ToString())).ConfigureAwait(false);
 
@@ -141,7 +140,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
         // Convert ScryfallCardByName to ScryfallCardItem for mapping
         List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallCardByName cardByName in cardsResponse.Value)
+        foreach (ScryfallCardByNameItem cardByName in cardsResponse.Value)
         {
             ScryfallCardItem cardItem = new() { Data = cardByName.Data };
             ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
@@ -157,7 +156,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
     public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
     {
         // Normalize the search term: lowercase and remove non-alphabetic characters
-        string normalized = new string(searchTerm.SearchTerm
+        string normalized = new(searchTerm.SearchTerm
             .ToLowerInvariant()
             .Where(char.IsLetter)
             .ToArray());
@@ -177,7 +176,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
         // Query each trigram and collect all matching card names
         HashSet<string> matchingCardNames = [];
-        Dictionary<string, int> cardNameMatchCounts = new();
+        Dictionary<string, int> cardNameMatchCounts = [];
 
         foreach (string trigram in trigrams)
         {
@@ -189,15 +188,15 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
                 .WithParameter("@partition", firstChar)
                 .WithParameter("@normalized", normalized);
 
-            OpResponse<IEnumerable<CardNameTrigram>> trigramResponse = await _cardNameTrigramsInquisitor.QueryAsync<CardNameTrigram>(
+            OpResponse<IEnumerable<CardNameTrigramItem>> trigramResponse = await _cardNameTrigramsInquisitor.QueryAsync<CardNameTrigramItem>(
                 queryDefinition,
                 new PartitionKey(firstChar)).ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
             {
-                foreach (CardNameTrigram trigramDoc in trigramResponse.Value)
+                foreach (CardNameTrigramItem trigramDoc in trigramResponse.Value)
                 {
-                    foreach (CardNameTrigramEntry entry in trigramDoc.Cards)
+                    foreach (CardNameTrigramDataItem entry in trigramDoc.Cards)
                     {
                         // Server-side filtering should have already filtered, but double-check
                         if (entry.Normalized.Contains(normalized))

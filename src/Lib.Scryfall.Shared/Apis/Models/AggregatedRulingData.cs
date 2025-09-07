@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Shared.Apis.Models;
 
+//TODO: This doesn't belong here... but brain no brain right now
 public sealed class AggregatedRulingData
 {
     [JsonProperty("oracle_id")]

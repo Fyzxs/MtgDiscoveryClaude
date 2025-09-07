@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 

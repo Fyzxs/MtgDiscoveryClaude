@@ -1,8 +1,8 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
 namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal sealed class ScryfallCardToSetCardMapper : IScryfallCardToSetCardMapper
 {
-    public ScryfallSetCard Map(dynamic scryfallCard) => new() { Data = scryfallCard };
+    public ScryfallSetCardItem Map(dynamic scryfallCard) => new() { Data = scryfallCard };
 }

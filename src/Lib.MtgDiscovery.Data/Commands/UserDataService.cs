@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Domain.User.Apis;
-using Lib.Shared.DataModels.Entities;
 using Lib.MtgDiscovery.Data.Apis;
+using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -12,16 +12,9 @@ internal sealed class UserDataService : IUserDataService
     private readonly IUserDomainService _userDomainService;
 
     public UserDataService(ILogger logger) : this(new UserDomainService(logger))
-    {
-    }
+    { }
 
-    private UserDataService(IUserDomainService userDomainService)
-    {
-        _userDomainService = userDomainService;
-    }
+    private UserDataService(IUserDomainService userDomainService) => _userDomainService = userDomainService;
 
-    public async Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
-    {
-        return await _userDomainService.RegisterUserAsync(userInfo).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userDomainService.RegisterUserAsync(userInfo).ConfigureAwait(false);
 }

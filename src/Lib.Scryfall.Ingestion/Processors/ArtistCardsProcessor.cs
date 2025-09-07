@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Scryfall.Shared.Apis.Models;
@@ -36,25 +36,25 @@ internal sealed class ArtistCardsProcessor : ICardProcessor
 
     private async Task ProcessArtistCard(string artistId, IScryfallCard card)
     {
-        ScryfallArtistCard artistCard = new()
+        ScryfallArtistCardItem artistCard = new()
         {
             ArtistId = artistId,
             Data = card.Data()
         };
-        OpResponse<ScryfallArtistCard> response = await _scribe.UpsertAsync(artistCard).ConfigureAwait(false);
+        OpResponse<ScryfallArtistCardItem> response = await _scribe.UpsertAsync(artistCard).ConfigureAwait(false);
 
         LogSuccess(artistId, card, response);
         LogFailure(artistId, card, response);
     }
 
-    private void LogSuccess(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCard> response)
+    private void LogSuccess(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCardItem> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogArtistCardStored(artistId, card.Id());
     }
 
-    private void LogFailure(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCard> response)
+    private void LogFailure(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCardItem> response)
     {
         if (response.IsSuccessful()) return;
 

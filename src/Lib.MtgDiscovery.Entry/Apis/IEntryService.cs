@@ -1,3 +1,7 @@
-namespace Lib.MtgDiscovery.Entry.Apis;
+﻿namespace Lib.MtgDiscovery.Entry.Apis;
 
-public interface IEntryService : ICardEntryService, ISetEntryService, IArtistEntryService, IUserEntryService;
+public interface IEntryService :
+    ICardEntryService,
+    ISetEntryService,
+    IArtistEntryService,
+    IUserEntryService;

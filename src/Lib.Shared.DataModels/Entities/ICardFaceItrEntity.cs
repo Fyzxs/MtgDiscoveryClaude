@@ -4,7 +4,6 @@ namespace Lib.Shared.DataModels.Entities;
 
 public interface ICardFaceItrEntity
 {
-    string ObjectString { get; }
     string Name { get; }
     string ManaCost { get; }
     string TypeLine { get; }

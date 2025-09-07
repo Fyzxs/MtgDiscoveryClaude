@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.DataModels.Entities;
 
@@ -6,9 +6,8 @@ namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
 internal sealed class CardSearchTermArgsToItrMapper : ICardSearchTermArgsToItrMapper
 {
-    public async Task<ICardSearchTermItrEntity> Map(ICardSearchTermArgEntity args)
+    public Task<ICardSearchTermItrEntity> Map(ICardSearchTermArgEntity args)
     {
-        await Task.CompletedTask.ConfigureAwait(false);
-        return new CardSearchTermItrEntity { SearchTerm = args.SearchTerm };
+        return Task.FromResult<ICardSearchTermItrEntity>(new CardSearchTermItrEntity { SearchTerm = args.SearchTerm });
     }
 }

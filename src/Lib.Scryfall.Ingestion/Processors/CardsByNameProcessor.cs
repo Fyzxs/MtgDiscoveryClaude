@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Scryfall.Shared.Apis.Models;
@@ -32,26 +32,26 @@ internal sealed class CardsByNameProcessor : ICardProcessor
         // Generate deterministic GUID from the English card name
         CardNameGuid nameGuid = _guidGenerator.GenerateGuid((string)card.Data().name);
 
-        ScryfallCardByName cardByName = new()
+        ScryfallCardByNameItem cardByNameItem = new()
         {
             NameGuid = nameGuid.AsSystemType().ToString(),
             Data = card.Data()
         };
 
-        OpResponse<ScryfallCardByName> response = await _scribe.UpsertAsync(cardByName).ConfigureAwait(false);
+        OpResponse<ScryfallCardByNameItem> response = await _scribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
 
         LogSuccess(card, nameGuid, response);
         LogFailure(card, nameGuid, response);
     }
 
-    private void LogSuccess(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByName> response)
+    private void LogSuccess(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByNameItem> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogCardByNameStored(card.Id(), nameGuid.AsSystemType().ToString());
     }
 
-    private void LogFailure(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByName> response)
+    private void LogFailure(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByNameItem> response)
     {
         if (response.IsSuccessful()) return;
 

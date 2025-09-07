@@ -8,6 +8,5 @@ public sealed class ScryfallArtistSetsScribe : CosmosScribe
 {
     public ScryfallArtistSetsScribe(ILogger logger)
         : base(new ArtistSetsCosmosContainer(logger))
-    {
-    }
+    { }
 }

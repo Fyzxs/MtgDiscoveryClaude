@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Internal.Text;
@@ -33,7 +32,7 @@ internal sealed class ArtistItemsProcessor : IArtistProcessor
         string artistId = artist.ArtistId();
         IEnumerable<string> artistNames = artist.ArtistNames().ToList();
 
-        ArtistAggregateData data = new()
+        ArtistAggregateItem data = new()
         {
             ArtistId = artistId,
             ArtistNames = artistNames,
@@ -42,7 +41,11 @@ internal sealed class ArtistItemsProcessor : IArtistProcessor
             SetIds = artist.SetIds()
         };
 
-        ScryfallArtistItem item = new(artistId, data);
+        ScryfallArtistItem item = new()
+        {
+            ArtistId = artistId,
+            Data = data
+        };
         await _scribe.UpsertAsync(item).ConfigureAwait(false);
         _logger.LogArtistItemWritten(artistId);
     }

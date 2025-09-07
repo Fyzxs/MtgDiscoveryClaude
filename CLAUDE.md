@@ -114,9 +114,9 @@ The platform consists of:
 The .NET solution implements a layered architecture with clear separation of concerns:
 
 1. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Service entry point, request validation, response formatting
-2. **Domain Layer** (`Lib.Domain.Cards`): Business logic and domain operations  
+2. **Domain Layer** (`Lib.Domain.Cards`, `Lib.Domain.User`): Business logic and domain operations  
 3. **Data Layer** (`Lib.MtgDiscovery.Data`): Data access coordination
-4. **Aggregator Layer** (`Lib.Aggregator.Cards`): Data aggregation and transformation
+4. **Aggregator Layer** (`Lib.Aggregator.Cards`, `Lib.Aggregator.User`): Data aggregation and transformation
 5. **Adapter Layer** (`Lib.Adapter.Scryfall.*`): External system integration (Cosmos DB, Blob Storage)
 6. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.BlobStorage`): Core infrastructure components
 7. **API Layer** (`App.MtgDiscovery.GraphQL`): GraphQL API endpoints
@@ -134,18 +134,24 @@ The React client (`client/` directory) follows atomic design principles:
 ### Project Structure
 
 #### Backend (.NET Projects)
-- **App.MtgDiscovery.GraphQL**: GraphQL API using HotChocolate
+- **App.MtgDiscovery.GraphQL**: GraphQL API using HotChocolate with authentication
 - **Lib.Universal**: Core utilities including configuration, service locator, and base primitives
 - **Lib.Cosmos**: Azure Cosmos DB integration library with full MicroObjects patterns
 - **Lib.BlobStorage**: Azure Blob Storage integration library
-- **Lib.Adapter.Scryfall.Cosmos**: Scryfall data models for Cosmos DB
+- **Lib.Adapter.Scryfall.Cosmos**: Scryfall data models for Cosmos DB including user storage
 - **Lib.Adapter.Scryfall.BlobStorage**: Scryfall image storage adapters
 - **Lib.Scryfall.Ingestion**: Scryfall API client and data ingestion
-- **Lib.MtgDiscovery.Entry**: Entry service layer with validation
+- **Lib.MtgDiscovery.Entry**: Entry service layer with validation and user operations
 - **Lib.Domain.Cards**: Card domain logic
+- **Lib.Domain.User**: User domain logic and registration
 - **Lib.MtgDiscovery.Data**: Data service layer
 - **Lib.Aggregator.Cards**: Card data aggregation
-- **Lib.Shared.***: Shared abstractions and data models
+- **Lib.Aggregator.User**: User data aggregation
+- **Lib.Shared.Abstractions**: Core interfaces and abstractions
+- **Lib.Shared.DataModels**: Entity interfaces and data transfer objects including user entities
+- **Lib.Shared.UserInfo**: User-specific value objects (UserId, UserSourceId, UserNickname)
+- **Lib.Shared.CollectorInfo**: Collector-specific data models
+- **Lib.Shared.Invocation**: Operation response patterns and utilities
 - **TestConvenience.Core**: Testing utilities including fakes, type wrappers, and reflection helpers
 - **Example.***: Example applications demonstrating specific functionality
 
@@ -264,6 +270,42 @@ When writing tests:
 - Use `ConfigureAwait(false)` on async calls
 - Create `InstanceWrapper : TypeWrapper<ClassUnderTest>` for testing classes with private constructors
 
+## User Registration System
+
+The platform implements JWT-based authentication with user registration functionality following the layered MicroObjects architecture.
+
+### Authentication Components
+- `App.MtgDiscovery.GraphQL/Authentication/AuthenticatedUser.cs:8-41` - Extracts user info from JWT claims
+- `App.MtgDiscovery.GraphQL/Authentication/IAuthenticatedUser.cs:5-10` - Authentication interface
+- `App.MtgDiscovery.GraphQL/Mutations/UserMutationMethods.cs:17-68` - GraphQL user mutations
+
+### User Data Flow
+Registration follows the standard layer pattern:
+1. **GraphQL Layer**: `UserMutationMethods.RegisterUserInfoAsync` validates JWT claims
+2. **Entry Layer**: `IUserEntryService.RegisterUserAsync` handles request validation  
+3. **Domain Layer**: `IUserDomainService.RegisterUserAsync` processes business logic
+4. **Data Layer**: Coordinates data access through aggregator layer
+5. **Aggregator Layer**: `IUserAggregatorService.RegisterUserAsync` handles data aggregation
+6. **Adapter Layer**: `UserInfoItem` and `UserInfoScribe` for Cosmos DB storage
+
+### User Information Types
+- `Lib.Shared.UserInfo/Values/UserId.cs:5-12` - Unique user identifier
+- `Lib.Shared.UserInfo/Values/UserSourceId.cs` - External identity provider ID
+- `Lib.Shared.UserInfo/Values/UserNickname.cs` - Display name
+- `Lib.Shared.DataModels/Entities/User/IUserInfoItrEntity.cs:5-10` - User info interface
+- `Lib.Shared.DataModels/Entities/User/IUserRegistrationItrEntity.cs:5-9` - Registration response
+
+### Storage Implementation
+- `Lib.Adapter.Scryfall.Cosmos/Apis/Entities/UserInfoItem.cs:6-19` - Cosmos DB document model
+- `Lib.Adapter.Scryfall.Cosmos/Apis/Operators/UserInfoScribe.cs:7-13` - Cosmos DB operations
+
+### Authentication Configuration
+JWT authentication is configured in `App.MtgDiscovery.GraphQL/Startup.cs:45-56` with Auth0 integration:
+- Uses Auth0 domain and audience configuration
+- Claims principal injection for user context
+- Authorization policies for protected GraphQL mutations
+- User ID generation using GUID namespace for consistency
+
 ## GraphQL Development
 
 ### Query Structure
@@ -278,6 +320,12 @@ When writing tests:
 3. Register types in schema extensions
 4. Create mappers for data transformation
 
+### Adding New Mutations
+1. Create mutation class extending `ApiMutation` with `[ExtendObjectType]`
+2. Use `[Authorize]` attribute for protected operations
+3. Inject `ClaimsPrincipal` for user context
+4. Register mutation extensions in schema configuration
+
 ## Critical Patterns to Follow
 
 1. **Never modify production code for test scenarios**
@@ -288,6 +336,8 @@ When writing tests:
 6. **Follow the 3-build-failure limit before stopping**
 7. **Service dependencies flow downward through layers (Entry → Domain → Data → Aggregator → Adapter)**
 8. **Use `IEntryService` for GraphQL to service layer communication**
+9. **Authentication requires JWT claims principal injection in GraphQL mutations**
+10. **User operations follow the same layered pattern as card operations**
 
 ## Frontend Development
 

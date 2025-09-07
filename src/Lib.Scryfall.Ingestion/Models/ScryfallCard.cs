@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Shared.Apis.Models;
-using Lib.Scryfall.Shared.Internal.Models;
 
 namespace Lib.Scryfall.Ingestion.Models;
 internal sealed class ScryfallCard : IScryfallCard

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net;
 using Lib.Shared.Invocation.Exceptions;
 
@@ -10,6 +10,5 @@ internal sealed class ArtistAggregatorOperationException : OperationException
 {
     public ArtistAggregatorOperationException(string message, Exception innerException = null)
         : base(HttpStatusCode.InternalServerError, message, innerException)
-    {
-    }
+    { }
 }

@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface ICardsArgsToItrMapper : ICreateMapper<ICardIdsArgEntity, ICardIdsItrEntity>
-{
-}
+internal interface ICardsArgsToItrMapper : ICreateMapper<ICardIdsArgEntity, ICardIdsItrEntity>;
+
 internal sealed class CardsArgsToItrMapper : ICardsArgsToItrMapper
 {
     public Task<ICardIdsItrEntity> Map(ICardIdsArgEntity arg)

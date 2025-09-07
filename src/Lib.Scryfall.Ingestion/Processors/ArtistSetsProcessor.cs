@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Microsoft.Extensions.Logging;
@@ -29,7 +29,11 @@ internal sealed class ArtistSetsProcessor : IArtistProcessor
 
         foreach (string setId in artist.SetIds())
         {
-            ScryfallArtistSet item = new(setId, artistId);
+            ScryfallArtistSetItem item = new()
+            {
+                ArtistId = artistId,
+                SetId = setId
+            };
             await _scribe.UpsertAsync(item).ConfigureAwait(false);
         }
 

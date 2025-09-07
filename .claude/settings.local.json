@@ -29,7 +29,9 @@
       "Bash(npm install:*)",
       "Bash(npx eslint:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

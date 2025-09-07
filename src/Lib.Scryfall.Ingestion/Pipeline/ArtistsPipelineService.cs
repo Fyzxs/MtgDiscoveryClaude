@@ -1,9 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Dtos;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
@@ -63,7 +62,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             _artistTrigramAggregator.TrackArtist(artistId, artist.ArtistNames());
 
             // Write ArtistItem (main artist record)
-            ArtistAggregateData artistData = new()
+            ArtistAggregateItem artistData = new()
             {
                 ArtistId = artistId,
                 ArtistNames = artist.ArtistNames(),
@@ -71,13 +70,17 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
                 CardIds = artist.CardIds(),
                 SetIds = artist.SetIds()
             };
-            ScryfallArtistItem artistItem = new(artistId, artistData);
+            ScryfallArtistItem artistItem = new()
+            {
+                ArtistId = artistId,
+                Data = artistData
+            };
             await _artistItemsScribe.UpsertAsync(artistItem).ConfigureAwait(false);
 
             // Write ArtistCard relationships (artist to each card)
             foreach (dynamic card in artist.Cards())
             {
-                ScryfallArtistCard artistCard = new()
+                ScryfallArtistCardItem artistCard = new()
                 {
                     ArtistId = artistId,
                     Data = card
@@ -88,15 +91,24 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             // Write ArtistSet relationships (artist to each set)
             foreach (string setId in artist.SetIds())
             {
-                ScryfallArtistSet artistSet = new(setId, artistId);
-                await _artistSetsScribe.UpsertAsync(artistSet).ConfigureAwait(false);
+                ScryfallArtistSetItem artistSetItem = new()
+                {
+                    ArtistId = artistId,
+                    SetId = setId
+
+                };
+                await _artistSetsScribe.UpsertAsync(artistSetItem).ConfigureAwait(false);
             }
 
             // Write SetArtist relationships (set to each artist)
             foreach (string setId in artist.SetIds())
             {
-                ScryfallSetArtist setArtist = new(artistId, setId);
-                await _setArtistsScribe.UpsertAsync(setArtist).ConfigureAwait(false);
+                ScryfallSetArtistItem setArtistItem = new()
+                {
+                    ArtistId = artistId,
+                    SetId = setId
+                };
+                await _setArtistsScribe.UpsertAsync(setArtistItem).ConfigureAwait(false);
             }
         }
 
@@ -123,11 +135,11 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             string trigram = aggregate.Trigram();
             _dashboard.UpdateProgress("Artist Trigrams:", current, trigramCount, "Writing Trigram", trigram);
 
-            ArtistNameTrigram entity = new()
+            ArtistNameTrigramItem entity = new()
             {
                 Trigram = aggregate.Trigram(),
-                Artists = new Collection<ArtistNameTrigramEntry>(
-                    aggregate.Entries().Select(entry => new ArtistNameTrigramEntry
+                Artists = new Collection<ArtistNameTrigramDataItem>(
+                    aggregate.Entries().Select(entry => new ArtistNameTrigramDataItem
                     {
                         ArtistId = entry.ArtistId(),
                         Name = entry.Name(),
