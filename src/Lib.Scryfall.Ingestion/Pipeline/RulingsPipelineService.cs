@@ -58,6 +58,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
 
     public async Task WriteRulingsAsync(Dictionary<string, IScryfallRuling> rulings)
     {
+        //TODO: qgil; 20250907 - I don't think we need a dictionary here, just a list.
         _dashboard.LogWritingRulings(rulings.Count);
 
         int current = 0;
@@ -68,11 +69,12 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
             current++;
             IScryfallRuling ruling = kvp.Value;
 
-            _dashboard.UpdateProgress("Rulings:", current, total, "Writing", ruling.OracleId());
+            _dashboard.UpdateProgress("Rulings:", current, total, "Writing", ruling.OracleId);
 
             ScryfallRulingItem entity = new()
             {
-                Data = ruling.Data()
+                OracleId = ruling.OracleId,
+                Data = ruling.Rulings
             };
 
             await _rulingScribe.UpsertAsync(entity).ConfigureAwait(false);

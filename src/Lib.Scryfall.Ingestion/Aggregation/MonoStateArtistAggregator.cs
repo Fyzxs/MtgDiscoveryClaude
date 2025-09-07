@@ -19,8 +19,8 @@ internal sealed class MonoStateArtistAggregator : IArtistAggregator
         // Process each artist ID with its associated name
         foreach (IArtistIdNamePair pair in card.ArtistIdNamePairs())
         {
-            string artistId = pair.ArtistId();
-            string artistName = pair.ArtistName();
+            string artistId = pair.ArtistId;
+            string artistName = pair.ArtistName;
 
             ArtistAggregate aggregate = s_artists.GetOrAdd(artistId, id => new ArtistAggregate(id));
 

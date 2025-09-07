@@ -16,5 +16,5 @@ internal sealed class UserDataService : IUserDataService
 
     private UserDataService(IUserDomainService userDomainService) => _userDomainService = userDomainService;
 
-    public async Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userDomainService.RegisterUserAsync(userInfo).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userDomainService.RegisterUserAsync(userInfo).ConfigureAwait(false);
 }

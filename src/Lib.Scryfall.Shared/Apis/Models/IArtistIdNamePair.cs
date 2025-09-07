@@ -2,6 +2,6 @@
 
 public interface IArtistIdNamePair
 {
-    string ArtistId();
-    string ArtistName();
+    string ArtistId { get; }
+    string ArtistName { get; }
 }

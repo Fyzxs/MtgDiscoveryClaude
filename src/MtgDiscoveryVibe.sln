@@ -73,8 +73,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Artists", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Scryfall.Shared", "Lib.Aggregator.Scryfall.Shared\Lib.Aggregator.Scryfall.Shared.csproj", "{34613393-1505-4B6B-BA4A-238CC60F94D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.UserInfo", "Lib.Shared.UserInfo\Lib.Shared.UserInfo.csproj", "{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.User", "Lib.Domain.User\Lib.Domain.User.csproj", "{C2F6245E-D1E1-4096-A863-976C2A0DF034}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.User", "Lib.Aggregator.User\Lib.Aggregator.User.csproj", "{1DF4B600-E361-4BFD-99E4-FB18E09AFBA3}"
@@ -467,18 +465,6 @@ Global
 		{34613393-1505-4B6B-BA4A-238CC60F94D1}.Release|x64.Build.0 = Release|Any CPU
 		{34613393-1505-4B6B-BA4A-238CC60F94D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{34613393-1505-4B6B-BA4A-238CC60F94D1}.Release|x86.Build.0 = Release|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Debug|x64.Build.0 = Debug|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Debug|x86.Build.0 = Debug|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Release|x64.ActiveCfg = Release|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Release|x64.Build.0 = Release|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Release|x86.ActiveCfg = Release|Any CPU
-		{0CCE42C6-4E01-4086-BC55-3BE3846DBCC5}.Release|x86.Build.0 = Release|Any CPU
 		{C2F6245E-D1E1-4096-A863-976C2A0DF034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C2F6245E-D1E1-4096-A863-976C2A0DF034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2F6245E-D1E1-4096-A863-976C2A0DF034}.Debug|x64.ActiveCfg = Debug|Any CPU

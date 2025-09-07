@@ -3,12 +3,17 @@ using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Shared.Apis.Models;
 
-//TODO: This doesn't belong here... but brain no brain right now
-public sealed class AggregatedRulingData
+public sealed class AggregatedRulingData : IAggregatedRulingData
+{
+    public string OracleId { get; init; }
+    public IReadOnlyCollection<dynamic> Rulings { get; init; }
+}
+
+public interface IAggregatedRulingData
 {
     [JsonProperty("oracle_id")]
-    public string OracleId { get; init; }
+    string OracleId { get; }
 
     [JsonProperty("rulings")]
-    public IReadOnlyCollection<dynamic> Rulings { get; init; }
+    IReadOnlyCollection<dynamic> Rulings { get; }
 }

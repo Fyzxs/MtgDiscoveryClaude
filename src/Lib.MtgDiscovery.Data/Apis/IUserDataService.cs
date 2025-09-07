@@ -6,5 +6,5 @@ namespace Lib.MtgDiscovery.Data.Apis;
 
 public interface IUserDataService
 {
-    Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
+    Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
 }

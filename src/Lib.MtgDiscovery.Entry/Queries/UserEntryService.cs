@@ -32,11 +32,11 @@ internal sealed class UserEntryService : IUserEntryService
         _authUserMapper = authUserMapper;
     }
 
-    public async Task<IOperationResponse<IUserRegistrationItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser)
+    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser)
     {
         IValidatorActionResult<IOperationResponse<IUserRegistrationItrEntity>> result = await _authUserValidator.Validate(authUser).ConfigureAwait(false);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        if (result.IsNotValid()) return new FailureOperationResponse<IUserInfoItrEntity>(result.FailureStatus().OuterException);
 
         IUserInfoItrEntity mappedArgs = await _authUserMapper.Map(authUser).ConfigureAwait(false);
         return await _userDataService.RegisterUserAsync(mappedArgs).ConfigureAwait(false);
