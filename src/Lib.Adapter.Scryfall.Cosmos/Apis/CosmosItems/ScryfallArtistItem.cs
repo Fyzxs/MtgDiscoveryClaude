@@ -10,7 +10,5 @@ public sealed class ScryfallArtistItem : CosmosItem
 
     [JsonProperty("artist_id")]
     public string ArtistId { get; set; }
-
-    [JsonProperty("data")]
     public ArtistAggregateItem Data { get; init; }
 }

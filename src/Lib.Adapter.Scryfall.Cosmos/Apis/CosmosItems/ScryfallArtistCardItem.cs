@@ -8,9 +8,7 @@ public sealed class ScryfallArtistCardItem : CosmosItem, IScryfallPayload
     public override string Id => Data.id;
     public override string Partition => ArtistId;
 
-    [JsonProperty("artistId")]
+    [JsonProperty("artist_id")]
     public string ArtistId { get; init; }
-
-    [JsonProperty("data")]
     public dynamic Data { get; init; }
 }

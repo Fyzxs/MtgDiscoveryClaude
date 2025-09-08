@@ -5,7 +5,7 @@ namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
 public sealed class ArtistNameTrigramDataItem
 {
-    [JsonProperty("artistId")]
+    [JsonProperty("artist_id")]
     public string ArtistId { get; init; }
 
     [JsonProperty("name")]

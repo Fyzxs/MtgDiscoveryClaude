@@ -10,7 +10,7 @@ public sealed class CardNameTrigramItem : CosmosItem
     public override string Id => Trigram;
 
     [JsonProperty("partition")]
-    public override string Partition => Trigram.Substring(0, 1);
+    public override string Partition => Trigram[..1];
 
     [JsonProperty("trigram")]
     public string Trigram { get; init; }
