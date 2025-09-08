@@ -111,15 +111,32 @@ The platform consists of:
 
 ### Backend Layered Architecture
 
-The .NET solution implements a layered architecture with clear separation of concerns:
+The .NET solution implements a layered architecture following the intended data flow:
 
-1. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Service entry point, request validation, response formatting
-2. **Domain Layer** (`Lib.Domain.Cards`, `Lib.Domain.Sets`, `Lib.Domain.Artists`, `Lib.Domain.User`): Business logic and domain operations  
-3. **Data Layer** (`Lib.MtgDiscovery.Data`): Data access coordination
-4. **Aggregator Layer** (`Lib.Aggregator.Cards`, `Lib.Aggregator.Sets`, `Lib.Aggregator.Artists`, `Lib.Aggregator.User`): Data aggregation and transformation
-5. **Adapter Layer** (`Lib.Adapter.Scryfall.*`): External system integration (Cosmos DB, Blob Storage)
-6. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.BlobStorage`): Core infrastructure components
-7. **API Layer** (`App.MtgDiscovery.GraphQL`): GraphQL API endpoints
+**Data Flow (Request → Response):**
+1. **App Layer** (`App.MtgDiscovery.GraphQL`): Translate request into ArgEntity
+2. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Validates ArgEntity and maps to ItrEntity  
+3. **Shared Layer** (`Lib.Shared.*`): Applies rules on the data (validation, filtering, transformation)
+4. **Domain Layer** (`Lib.Domain.*`): Applies ALWAYS rules on the data (business logic)
+5. **Aggregator Layer** (`Lib.Aggregator.*`): Knows what adapters to talk to, orchestrates data retrieval
+6. **Adapter Layer** (`Lib.Adapter.*`): Maps ItrEntity to ExtEntity, calls external world, maps ExtEntity back to ItrEntity
+7. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.Universal`): Core infrastructure components
+
+**Return Flow (Response ← Request):**
+- Aggregator aggregates adapter responses
+- Domain applies always rules  
+- Shared applies rules
+- Entry maps ItrEntity to OutEntity
+- App translates OutEntity to response
+
+**Layer Details:**
+- **App Layer**: GraphQL API endpoints using HotChocolate with authentication
+- **Entry Layer**: Service entry point, request validation, response formatting
+- **Shared Layer**: Cross-cutting action patterns (filtering, validation, enrichment), operation responses, entity interfaces
+- **Domain Layer**: Business logic and domain operations for Cards, Sets, Artists, User
+- **Aggregator Layer**: Data aggregation and transformation, coordinates multiple data sources
+- **Adapter Layer**: External system integration (Scryfall, Cosmos DB, Blob Storage)  
+- **Infrastructure Layer**: Core infrastructure components and utilities
 
 ### Frontend Architecture
 
@@ -134,29 +151,44 @@ The React client (`client/` directory) follows atomic design principles:
 ### Project Structure
 
 #### Backend (.NET Projects)
+
+**App Layer:**
 - **App.MtgDiscovery.GraphQL**: GraphQL API using HotChocolate with authentication
-- **Lib.Universal**: Core utilities including configuration, service locator, and base primitives
-- **Lib.Cosmos**: Azure Cosmos DB integration library with full MicroObjects patterns
-- **Lib.BlobStorage**: Azure Blob Storage integration library
-- **Lib.Adapter.Scryfall.Cosmos**: Scryfall data models for Cosmos DB including user storage
-- **Lib.Adapter.Scryfall.BlobStorage**: Scryfall image storage adapters
-- **Lib.Scryfall.Ingestion**: Scryfall API client and data ingestion
+
+**Entry Layer:**
 - **Lib.MtgDiscovery.Entry**: Entry service layer with validation and user operations
+
+**Shared Layer:**
+- **Lib.Shared.Abstractions**: Core interfaces and abstractions for action patterns (filtering, validation, transformation)
+- **Lib.Shared.DataModels**: Entity interfaces and data transfer objects including user entities
+- **Lib.Shared.Invocation**: Operation response patterns and utilities
+
+**Domain Layer:**
 - **Lib.Domain.Cards**: Card domain logic
 - **Lib.Domain.Sets**: Set domain logic and operations
 - **Lib.Domain.Artists**: Artist domain logic and search operations
 - **Lib.Domain.User**: User domain logic and registration
 - **Lib.Domain.Collector**: Collector domain logic (placeholder)
-- **Lib.MtgDiscovery.Data**: Data service layer
+
+**Aggregator Layer:**
 - **Lib.Aggregator.Cards**: Card data aggregation
 - **Lib.Aggregator.Sets**: Set data aggregation
 - **Lib.Aggregator.Artists**: Artist data aggregation
 - **Lib.Aggregator.User**: User data aggregation
 - **Lib.Aggregator.Collector**: Collector data aggregation (placeholder)
 - **Lib.Aggregator.Scryfall.Shared**: Shared aggregation utilities
-- **Lib.Shared.Abstractions**: Core interfaces and abstractions
-- **Lib.Shared.DataModels**: Entity interfaces and data transfer objects including user entities
-- **Lib.Shared.Invocation**: Operation response patterns and utilities
+
+**Adapter Layer:**
+- **Lib.Adapter.Scryfall.Cosmos**: Scryfall data models for Cosmos DB including user storage
+- **Lib.Adapter.Scryfall.BlobStorage**: Scryfall image storage adapters
+- **Lib.Scryfall.Ingestion**: Scryfall API client and data ingestion
+
+**Infrastructure Layer:**
+- **Lib.Universal**: Core utilities including configuration, service locator, and base primitives
+- **Lib.Cosmos**: Azure Cosmos DB integration library with full MicroObjects patterns
+- **Lib.BlobStorage**: Azure Blob Storage integration library
+
+**Testing and Examples:**
 - **TestConvenience.Core**: Testing utilities including fakes, type wrappers, and reflection helpers
 - **Example.***: Example applications demonstrating specific functionality
 
