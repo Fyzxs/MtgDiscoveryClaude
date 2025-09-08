@@ -114,9 +114,9 @@ The platform consists of:
 The .NET solution implements a layered architecture with clear separation of concerns:
 
 1. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Service entry point, request validation, response formatting
-2. **Domain Layer** (`Lib.Domain.Cards`, `Lib.Domain.User`): Business logic and domain operations  
+2. **Domain Layer** (`Lib.Domain.Cards`, `Lib.Domain.Sets`, `Lib.Domain.Artists`, `Lib.Domain.User`): Business logic and domain operations  
 3. **Data Layer** (`Lib.MtgDiscovery.Data`): Data access coordination
-4. **Aggregator Layer** (`Lib.Aggregator.Cards`, `Lib.Aggregator.User`): Data aggregation and transformation
+4. **Aggregator Layer** (`Lib.Aggregator.Cards`, `Lib.Aggregator.Sets`, `Lib.Aggregator.Artists`, `Lib.Aggregator.User`): Data aggregation and transformation
 5. **Adapter Layer** (`Lib.Adapter.Scryfall.*`): External system integration (Cosmos DB, Blob Storage)
 6. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.BlobStorage`): Core infrastructure components
 7. **API Layer** (`App.MtgDiscovery.GraphQL`): GraphQL API endpoints
@@ -143,14 +143,19 @@ The React client (`client/` directory) follows atomic design principles:
 - **Lib.Scryfall.Ingestion**: Scryfall API client and data ingestion
 - **Lib.MtgDiscovery.Entry**: Entry service layer with validation and user operations
 - **Lib.Domain.Cards**: Card domain logic
+- **Lib.Domain.Sets**: Set domain logic and operations
+- **Lib.Domain.Artists**: Artist domain logic and search operations
 - **Lib.Domain.User**: User domain logic and registration
+- **Lib.Domain.Collector**: Collector domain logic (placeholder)
 - **Lib.MtgDiscovery.Data**: Data service layer
 - **Lib.Aggregator.Cards**: Card data aggregation
+- **Lib.Aggregator.Sets**: Set data aggregation
+- **Lib.Aggregator.Artists**: Artist data aggregation
 - **Lib.Aggregator.User**: User data aggregation
+- **Lib.Aggregator.Collector**: Collector data aggregation (placeholder)
+- **Lib.Aggregator.Scryfall.Shared**: Shared aggregation utilities
 - **Lib.Shared.Abstractions**: Core interfaces and abstractions
 - **Lib.Shared.DataModels**: Entity interfaces and data transfer objects including user entities
-- **Lib.Shared.UserInfo**: User-specific value objects (UserId, UserSourceId, UserNickname)
-- **Lib.Shared.CollectorInfo**: Collector-specific data models
 - **Lib.Shared.Invocation**: Operation response patterns and utilities
 - **TestConvenience.Core**: Testing utilities including fakes, type wrappers, and reflection helpers
 - **Example.***: Example applications demonstrating specific functionality
@@ -167,9 +172,9 @@ The React client (`client/` directory) follows atomic design principles:
 ### Key Architectural Patterns
 
 #### MicroObjects Philosophy
-The codebase follows strict MicroObjects principles:
+The codebase follows MicroObjects principles with pragmatic DTO usage:
 - Every concept has explicit representation through interfaces and classes
-- No primitives - everything wrapped in domain objects
+- Primitives wrapped in domain objects where appropriate, strings used in DTOs for simplicity
 - No nulls - use Null Object pattern
 - Immutable objects with `private readonly` fields
 - Interface for every class (1:1 mapping)
@@ -289,11 +294,11 @@ Registration follows the standard layer pattern:
 6. **Adapter Layer**: `UserInfoItem` and `UserInfoScribe` for Cosmos DB storage
 
 ### User Information Types
-- `Lib.Shared.UserInfo/Values/UserId.cs:5-12` - Unique user identifier
-- `Lib.Shared.UserInfo/Values/UserSourceId.cs` - External identity provider ID
-- `Lib.Shared.UserInfo/Values/UserNickname.cs` - Display name
-- `Lib.Shared.DataModels/Entities/User/IUserInfoItrEntity.cs:5-10` - User info interface
-- `Lib.Shared.DataModels/Entities/User/IUserRegistrationItrEntity.cs:5-9` - Registration response
+- `Lib.Shared.DataModels/Entities/IUserInfoItrEntity.cs:5-10` - User info interface with string properties
+  - Properties: `string UserId`, `string UserSourceId`, `string UserNickname`
+- `Lib.Shared.DataModels/Entities/IUserRegistrationItrEntity.cs:5-7` - Registration response
+  - Property: `string UserId`
+- `Lib.Shared.DataModels/Entities/IAuthUserArgEntity.cs:3-8` - JWT authentication argument interface
 
 ### Storage Implementation
 - `Lib.Adapter.Scryfall.Cosmos/Apis/Entities/UserInfoItem.cs:6-19` - Cosmos DB document model
@@ -331,7 +336,7 @@ JWT authentication is configured in `App.MtgDiscovery.GraphQL/Startup.cs:45-56` 
 1. **Never modify production code for test scenarios**
 2. **Always check existing patterns in neighboring files before implementing**
 3. **Create interfaces before implementations**
-4. **Wrap all primitives in domain objects**
+4. **Balance MicroObjects with DTOs** - Wrap primitives in domain objects, but use strings in DTOs for simplicity
 5. **Use marker classes for type safety without implementation**
 6. **Follow the 3-build-failure limit before stopping**
 7. **Service dependencies flow downward through layers (Entry → Domain → Data → Aggregator → Adapter)**
