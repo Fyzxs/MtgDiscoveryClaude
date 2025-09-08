@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.MtgDiscovery.Data.Apis;
+using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators;
@@ -12,14 +12,14 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class SetEntryService : ISetEntryService
 {
-    private readonly ISetDataService _setDataService;
+    private readonly ISetDomainService _setDomainService;
     private readonly ISetIdsArgEntityValidator _idsValidator;
     private readonly ISetCodesArgEntityValidator _codesValidator;
     private readonly ISetIdsArgsToItrMapper _idsMapper;
     private readonly ISetCodesArgsToItrMapper _codesMapper;
 
     public SetEntryService(ILogger logger) : this(
-        new DataService(logger),
+        new SetDomainService(logger),
         new SetIdsArgEntityValidatorContainer(),
         new SetCodesArgEntityValidatorContainer(),
         new SetIdsArgsToItrMapper(),
@@ -27,13 +27,13 @@ internal sealed class SetEntryService : ISetEntryService
     { }
 
     private SetEntryService(
-        ISetDataService setDataService,
+        ISetDomainService setDomainService,
         ISetIdsArgEntityValidator idsValidator,
         ISetCodesArgEntityValidator codesValidator,
         ISetIdsArgsToItrMapper idsMapper,
         ISetCodesArgsToItrMapper codesMapper)
     {
-        _setDataService = setDataService;
+        _setDomainService = setDomainService;
         _idsValidator = idsValidator;
         _codesValidator = codesValidator;
         _idsMapper = idsMapper;
@@ -47,7 +47,7 @@ internal sealed class SetEntryService : ISetEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         ISetIdsItrEntity mappedArgs = await _idsMapper.Map(args).ConfigureAwait(false);
-        return await _setDataService.SetsAsync(mappedArgs).ConfigureAwait(false);
+        return await _setDomainService.SetsAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity args)
@@ -57,11 +57,11 @@ internal sealed class SetEntryService : ISetEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         ISetCodesItrEntity mappedArgs = await _codesMapper.Map(args).ConfigureAwait(false);
-        return await _setDataService.SetsByCodeAsync(mappedArgs).ConfigureAwait(false);
+        return await _setDomainService.SetsByCodeAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
     {
-        return await _setDataService.AllSetsAsync().ConfigureAwait(false);
+        return await _setDomainService.AllSetsAsync().ConfigureAwait(false);
     }
 }
