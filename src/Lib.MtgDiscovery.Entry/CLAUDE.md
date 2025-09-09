@@ -28,6 +28,46 @@ This library implements the entry point for all business operations in the MTG D
 - `AuthUserArgEntityValidator` - Validates JWT claim extraction
 
 ### Validation Pattern
+
+#### Design Decision: Many Small Validator Classes
+The validation system uses multiple small, focused classes rather than consolidated validation logic. This architectural decision was made after careful consideration of alternatives.
+
+**Pattern Structure:**
+- **Container**: Composes multiple validators in sequence
+- **Validator Class**: Implements validation logic (not a Func - maintains OOP)
+- **Nested Validator**: Typed behavior for testability
+- **Nested Message**: Typed message (not string - No Primitives)
+
+**Example Structure:**
+```
+CardIdsArgEntityValidatorContainer (1 class)
+├── IsNotNullCardIdsArgEntityValidator (3 classes: main + 2 nested)
+├── IdsNotNullCardIdsArgEntityValidator (3 classes: main + 2 nested)
+├── HasIdsCardIdsArgEntityValidator (3 classes: main + 2 nested)
+└── ValidCardIdsArgEntityValidator (3 classes: main + 2 nested)
+Total: 13 classes for complete validation
+```
+
+**Why This Pattern:**
+1. **Test Isolation**: Each validator independently testable with single failure reason
+2. **Compile-Time Safety**: Error messages are typed, not magic strings
+3. **Open/Closed Principle**: New validations are new classes, existing never change
+4. **Simple Tests**: No complex test configuration or string matching
+5. **Clear Failures**: Tests fail for exactly one reason
+
+**Tradeoffs Accepted:**
+- More files (appears verbose)
+- Learning curve for pattern
+- Many small classes instead of few large ones
+
+**Alternatives Rejected:**
+- **Func delegates**: Would lose type safety and testability
+- **Consolidated validator**: Moves complexity to test configuration
+- **String messages**: Violates No Primitives principle
+- **Inheritance hierarchies**: Adds unnecessary complexity
+
+**Key Insight**: The "class explosion" is precision, not complexity. Each class does ONE thing, tests ONE thing, and fails for ONE reason.
+
 All entry services follow consistent validation:
 1. Argument validation using validator containers
 2. Argument mapping to ITR entities

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Processors;
@@ -39,7 +36,7 @@ internal sealed class ScryfallIngestionService : IScryfallIngestionService
         _logger.LogIngestionStarted();
 
         // Collect all sets into a list for batch processing
-        List<IScryfallSet> allSets = new();
+        List<IScryfallSet> allSets = [];
         await foreach (IScryfallSet set in _scryfallSets.ConfigureAwait(false))
         {
             allSets.Add(set);

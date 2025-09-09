@@ -8,7 +8,35 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators;
 
+/// <summary>
+/// Validator interface for CardIds argument entities.
+/// </summary>
 internal interface ICardIdsArgEntityValidator : IValidatorAction<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>;
+
+/// <summary>
+/// Container composing multiple validation rules for CardIds arguments.
+/// 
+/// Design Decision: Multiple small validator classes over consolidated validation logic
+/// Reasoning:
+///   - Each validator is independently testable with single failure reason
+///   - Compile-time safety for error messages (no magic strings)
+///   - Follows Open/Closed Principle - new validations are new classes
+///   - Tests remain simple with no complex configuration
+///   - Clear separation of concerns - each class validates one thing
+/// 
+/// Tradeoffs Accepted:
+///   - More files (4 validators × 3 classes = 12 classes)
+///   - Appears verbose at first glance
+///   - Requires understanding the pattern
+/// 
+/// Alternatives Considered:
+///   - Func delegates: Would lose type safety and testability
+///   - Consolidated validator: Would move complexity to test configuration
+///   - String messages: Would violate No Primitives principle
+/// 
+/// Pattern Validated: 2025-01-08
+/// Next Review: When adding new validation requirements
+/// </summary>
 internal sealed class CardIdsArgEntityValidatorContainer : ValidatorActionContainer<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>, ICardIdsArgEntityValidator
 {
     public CardIdsArgEntityValidatorContainer() : base([
@@ -20,6 +48,16 @@ internal sealed class CardIdsArgEntityValidatorContainer : ValidatorActionContai
     { }
 }
 
+/// <summary>
+/// Validates that the CardIds argument entity is not null.
+/// 
+/// Structure Pattern: Validator + Nested Types
+///   - Validator: Typed behavior (not Func) for OOP and testability
+///   - Message: Typed message (not string) following No Primitives
+///   - Both are immutable and never change after creation
+/// 
+/// This class should NEVER change. If different validation is needed, create a new class.
+/// </summary>
 internal sealed class IsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionItrEntity>
 {
     public IsNotNullCardIdsArgEntityValidator() : base(new Validator(), new Message())

@@ -1,6 +1,4 @@
-using AwesomeAssertions;
-using Lib.Shared.Invocation.Primitives;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Lib.Shared.Invocation.Primitives;
 
 namespace Lib.Shared.Invocation.Tests.Primitives;
 
@@ -58,7 +56,6 @@ public sealed class PrincipalIdTests
         // Assert
         actual.Should().BeFalse();
     }
-
 
     [TestMethod, TestCategory("unit")]
     public void GetHashCode_WithSameValue_ReturnsSameHashCode()

@@ -375,6 +375,8 @@ JWT authentication is configured in `App.MtgDiscovery.GraphQL/Startup.cs:45-56` 
 8. **Use `IEntryService` for GraphQL to service layer communication**
 9. **Authentication requires JWT claims principal injection in GraphQL mutations**
 10. **User operations follow the same layered pattern as card operations**
+11. **Adapters must return `IOperationResponse<T>` from `Lib.Shared.Invocation`, NOT `OpResponse<T>` from `Lib.Cosmos`**
+12. **Adapter exceptions should extend `OperationException` from `Lib.Shared.Invocation.Exceptions`**
 
 ## Frontend Development
 
