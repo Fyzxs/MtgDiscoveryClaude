@@ -3,10 +3,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
     <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
-    <ProjectReference Include="..\Lib.MtgDiscovery.Data\Lib.MtgDiscovery.Data.csproj" />
     <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
     <ProjectReference Include="..\Lib.Domain.Sets\Lib.Domain.Sets.csproj" />
-    <ProjectReference Include="..\Lib.Shared.UserInfo\Lib.Shared.UserInfo.csproj" />
+    <ProjectReference Include="..\Lib.Domain.Artists\Lib.Domain.Artists.csproj" />
+    <ProjectReference Include="..\Lib.Domain.User\Lib.Domain.User.csproj" />
   </ItemGroup>
 
 </Project>

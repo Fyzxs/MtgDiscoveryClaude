@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis;
 using Lib.Scryfall.Ingestion.Apis.Collections;

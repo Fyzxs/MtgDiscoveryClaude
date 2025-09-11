@@ -11,8 +11,6 @@ public sealed class CardNameGuidGenerator : ICardNameGuidGenerator
 
     public CardNameGuid GenerateGuid(string cardName)
     {
-        ArgumentNullException.ThrowIfNull(cardName);
-
         if (string.IsNullOrWhiteSpace(cardName))
         {
             throw new ArgumentException("Card name cannot be empty or whitespace.", nameof(cardName));

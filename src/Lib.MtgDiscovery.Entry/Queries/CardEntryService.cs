@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.MtgDiscovery.Data.Apis;
+using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators;
@@ -11,7 +11,7 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class CardEntryService : ICardEntryService
 {
-    private readonly ICardDataService _cardDataService;
+    private readonly ICardDomainService _cardDomainService;
     private readonly ICardIdsArgEntityValidator _validator;
     private readonly ISetCodeArgEntityValidator _setCodeValidator;
     private readonly ICardNameArgEntityValidator _cardNameValidator;
@@ -22,7 +22,7 @@ internal sealed class CardEntryService : ICardEntryService
     private readonly ICardSearchTermArgsToItrMapper _searchTermMapper;
 
     public CardEntryService(ILogger logger) : this(
-        new DataService(logger),
+        new CardDomainService(logger),
         new CardIdsArgEntityValidatorContainer(),
         new SetCodeArgEntityValidatorContainer(),
         new CardNameArgEntityValidatorContainer(),
@@ -34,7 +34,7 @@ internal sealed class CardEntryService : ICardEntryService
     { }
 
     private CardEntryService(
-        ICardDataService cardDataService,
+        ICardDomainService cardDomainService,
         ICardIdsArgEntityValidator validator,
         ISetCodeArgEntityValidator setCodeValidator,
         ICardNameArgEntityValidator cardNameValidator,
@@ -44,7 +44,7 @@ internal sealed class CardEntryService : ICardEntryService
         ICardNameArgsToItrMapper cardNameMapper,
         ICardSearchTermArgsToItrMapper searchTermMapper)
     {
-        _cardDataService = cardDataService;
+        _cardDomainService = cardDomainService;
         _validator = validator;
         _setCodeValidator = setCodeValidator;
         _cardNameValidator = cardNameValidator;
@@ -62,7 +62,7 @@ internal sealed class CardEntryService : ICardEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         ICardIdsItrEntity mappedArgs = await _mapper.Map(args).ConfigureAwait(false);
-        return await _cardDataService.CardsByIdsAsync(mappedArgs).ConfigureAwait(false);
+        return await _cardDomainService.CardsByIdsAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
@@ -72,7 +72,7 @@ internal sealed class CardEntryService : ICardEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         ISetCodeItrEntity mappedArgs = await _setCodeMapper.Map(setCode).ConfigureAwait(false);
-        return await _cardDataService.CardsBySetCodeAsync(mappedArgs).ConfigureAwait(false);
+        return await _cardDomainService.CardsBySetCodeAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
@@ -82,7 +82,7 @@ internal sealed class CardEntryService : ICardEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         ICardNameItrEntity mappedArgs = await _cardNameMapper.Map(cardName).ConfigureAwait(false);
-        return await _cardDataService.CardsByNameAsync(mappedArgs).ConfigureAwait(false);
+        return await _cardDomainService.CardsByNameAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
@@ -92,6 +92,6 @@ internal sealed class CardEntryService : ICardEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         ICardSearchTermItrEntity mappedArgs = await _searchTermMapper.Map(searchTerm).ConfigureAwait(false);
-        return await _cardDataService.CardNameSearchAsync(mappedArgs).ConfigureAwait(false);
+        return await _cardDomainService.CardNameSearchAsync(mappedArgs).ConfigureAwait(false);
     }
 }

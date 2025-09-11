@@ -8,7 +8,7 @@ namespace Lib.Aggregator.Sets.Exceptions;
 internal sealed class AggregatorOperationException : OperationException
 #pragma warning restore CA1032
 {
-    public AggregatorOperationException(string message, Exception innerException = null)
-        : base(HttpStatusCode.InternalServerError, message, innerException)
+    public AggregatorOperationException(HttpStatusCode statusCode, string message, Exception innerException = null)
+        : base(statusCode, message, innerException)
     { }
 }

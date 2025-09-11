@@ -1,0 +1,10 @@
+﻿using System.Threading.Tasks;
+using Lib.Shared.DataModels.Entities;
+using Lib.Shared.Invocation.Operations;
+
+namespace Lib.Aggregator.User.Apis;
+
+public interface IUserAggregatorService
+{
+    Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
+}

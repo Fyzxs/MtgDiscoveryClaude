@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.MtgDiscovery.Data.Apis;
+using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators;
@@ -12,7 +12,7 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class ArtistEntryService : IArtistEntryService
 {
-    private readonly IArtistDataService _artistDataService;
+    private readonly IArtistDomainService _artistDomainService;
     private readonly IArtistSearchTermArgEntityValidator _searchTermValidator;
     private readonly IArtistIdArgEntityValidator _artistIdValidator;
     private readonly IArtistNameArgEntityValidator _artistNameValidator;
@@ -21,7 +21,7 @@ internal sealed class ArtistEntryService : IArtistEntryService
     private readonly IArtistNameArgsToItrMapper _artistNameMapper;
 
     public ArtistEntryService(ILogger logger) : this(
-        new DataService(logger),
+        new ArtistDomainService(logger),
         new ArtistSearchTermArgEntityValidatorContainer(),
         new ArtistIdArgEntityValidatorContainer(),
         new ArtistNameArgEntityValidatorContainer(),
@@ -31,7 +31,7 @@ internal sealed class ArtistEntryService : IArtistEntryService
     { }
 
     private ArtistEntryService(
-        IArtistDataService artistDataService,
+        IArtistDomainService artistDataService,
         IArtistSearchTermArgEntityValidator searchTermValidator,
         IArtistIdArgEntityValidator artistIdValidator,
         IArtistNameArgEntityValidator artistNameValidator,
@@ -39,7 +39,7 @@ internal sealed class ArtistEntryService : IArtistEntryService
         IArtistIdArgsToItrMapper artistIdMapper,
         IArtistNameArgsToItrMapper artistNameMapper)
     {
-        _artistDataService = artistDataService;
+        _artistDomainService = artistDataService;
         _searchTermValidator = searchTermValidator;
         _artistIdValidator = artistIdValidator;
         _artistNameValidator = artistNameValidator;
@@ -55,7 +55,7 @@ internal sealed class ArtistEntryService : IArtistEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         IArtistSearchTermItrEntity mappedArgs = await _searchTermMapper.Map(searchTerm).ConfigureAwait(false);
-        return await _artistDataService.ArtistSearchAsync(mappedArgs).ConfigureAwait(false);
+        return await _artistDomainService.ArtistSearchAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdArgEntity artistId)
@@ -65,7 +65,7 @@ internal sealed class ArtistEntryService : IArtistEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         IArtistIdItrEntity mappedArgs = await _artistIdMapper.Map(artistId).ConfigureAwait(false);
-        return await _artistDataService.CardsByArtistAsync(mappedArgs).ConfigureAwait(false);
+        return await _artistDomainService.CardsByArtistAsync(mappedArgs).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
@@ -75,6 +75,6 @@ internal sealed class ArtistEntryService : IArtistEntryService
         if (result.IsNotValid()) return result.FailureStatus();
 
         IArtistNameItrEntity mappedArgs = await _artistNameMapper.Map(artistName).ConfigureAwait(false);
-        return await _artistDataService.CardsByArtistNameAsync(mappedArgs).ConfigureAwait(false);
+        return await _artistDomainService.CardsByArtistNameAsync(mappedArgs).ConfigureAwait(false);
     }
 }

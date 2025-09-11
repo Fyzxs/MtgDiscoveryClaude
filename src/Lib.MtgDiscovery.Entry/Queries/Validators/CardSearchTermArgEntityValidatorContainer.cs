@@ -7,6 +7,27 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators;
 
+/// <summary>
+/// Container composing validation rules for card search term arguments.
+/// 
+/// Design Decision: Each validation concern is a separate class
+/// This validator demonstrates the pattern with business logic validation
+/// (minimum search length) alongside standard null checks.
+/// 
+/// Validation Sequence:
+///   1. Not null check (fail fast on null argument)
+///   2. Not empty check (fail fast on empty string)
+///   3. Business rule check (minimum 3 letters after normalization)
+/// 
+/// Pattern Benefits Demonstrated:
+///   - Business rules (min length) isolated from basic validation
+///   - Each rule independently testable
+///   - Complex logic (normalization) contained in single class
+///   - Easy to add new rules without touching existing ones
+/// 
+/// See CardIdsArgEntityValidatorContainer for full pattern documentation.
+/// Pattern Validated: 2025-01-08
+/// </summary>
 internal sealed class CardSearchTermArgEntityValidatorContainer : ValidatorActionContainer<ICardSearchTermArgEntity, IOperationResponse<ICardNameSearchResultCollectionItrEntity>>, ICardSearchTermArgEntityValidator
 {
     public CardSearchTermArgEntityValidatorContainer() : base([
@@ -16,6 +37,11 @@ internal sealed class CardSearchTermArgEntityValidatorContainer : ValidatorActio
         ])
     { }
 }
+
+/// <summary>
+/// Validates search term argument is not null.
+/// Standard null check following the typed validator pattern.
+/// </summary>
 internal sealed class IsNotNullCardSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionItrEntity>
 {
     public IsNotNullCardSearchTermArgEntityValidator() : base(new Validator(), new Message())
@@ -48,6 +74,18 @@ internal sealed class HasValidSearchTermArgEntityValidator : OperationResponseVa
     }
 }
 
+/// <summary>
+/// Validates search term meets minimum length requirement after normalization.
+/// 
+/// This demonstrates how business logic fits into the validator pattern:
+///   - Complex logic (normalization) is encapsulated in the Validator class
+///   - Business rule (3 letters minimum) is explicit and testable
+///   - Error message clearly states the business requirement
+/// 
+/// The normalization logic (lowercase, letters only) and the business rule
+/// (minimum 3 letters) are coupled here by design - they represent a single
+/// validation concern: "valid searchable term length".
+/// </summary>
 internal sealed class HasMinimumLengthSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionItrEntity>
 {
     public HasMinimumLengthSearchTermArgEntityValidator() : base(new Validator(), new Message())

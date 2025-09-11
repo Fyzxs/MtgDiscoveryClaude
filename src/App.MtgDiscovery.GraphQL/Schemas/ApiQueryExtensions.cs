@@ -15,7 +15,6 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<CardQueryMethods>()
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
-            .AddTypeExtension<UserQueryMethods>()
             .AddType<CardResponseModelUnionType>()
             .AddType<FailureResponseModelType>()
             .AddType<CardsSuccessDataResponseModelType>()

@@ -43,88 +43,129 @@ This document serves as a comprehensive architecture reference that can be appli
 - `.Tests` - Test projects (suffixed to source project name)
 - `.Shared` - Common components
 
-## Layered Architecture
+## MTG Discovery Platform Layered Architecture
 
-### Layer 1: App.[Client].Entry
-**Purpose**: The primary entry point for client requests
+The MTG Discovery platform implements a specific layered architecture following the data flow pattern below:
+
+### Data Flow Pattern
+
+**Request Flow (Inbound):**
+1. App → translate request into ArgEntity
+2. Entry.Entry → validates ArgEntity and maps to ItrEntity
+3. Shared → applies rules on the data
+4. Domain → applies ALWAYS rules on the data
+5. Aggregator → knows what adapters to talk to
+6. Adapter → maps from ItrEntity to ExtEntity, calls external world, maps ExtEntity back to ItrEntity
+
+**Response Flow (Outbound):**
+7. Aggregator → aggregates adapter responses
+8. Domain → applies always rules
+9. Shared → applies rules
+10. Entry → maps ItrEntity to OutEntity
+11. App → translates OutEntity to response
+
+### Layer Definitions
+
+### Layer 1: App Layer (`App.MtgDiscovery.GraphQL`)
+**Purpose**: Primary entry point for GraphQL requests
 
 **Responsibilities**:
-- HTTP endpoints or Azure Function triggers
-- Minimal logic - primarily routing and exception handling
-- Construct argument containers from incoming requests
-- Isolate external frameworks from business logic
+- GraphQL API endpoints using HotChocolate
+- Authentication and authorization
+- Translate requests into ArgEntity
+- Translate OutEntity to response format
+- HTTP-specific concerns and error handling
 
 **Pattern**:
 ```csharp
-IResult EntryMethod(...) {
-    try {
-        var args = new SpecificCallRequestArgs(requestData);
-        return DI.ClientDataService().MethodCall(..., args );
-    } catch(Exception ex) {
-        log.LogError(ex, "Something went wrong. Please look into it.");
-    }
+[Query]
+public async Task<CardSearchResponse> SearchCards(string searchTerm, ClaimsPrincipal user)
+{
+    var argEntity = new CardSearchTermArgEntity(searchTerm);
+    var response = await _entryService.CardNameSearchAsync(argEntity);
+    return MapToGraphQLResponse(response);
 }
 ```
 
-### Layer 2: Lib.[Client].Entry
-**Purpose**: Support the App entry layer and keep it thin
+### Layer 2: Entry Layer (`Lib.MtgDiscovery.Entry`)
+**Purpose**: Service entry point with validation and transformation
 
 **Responsibilities**:
-- Additional class declarations that support the App layer
-- Logic that would otherwise bloat the App layer
-- Maintains separation between external frameworks and business logic
+- Validate ArgEntity from App layer
+- Map ArgEntity to ItrEntity for internal processing
+- Map ItrEntity to OutEntity for response
+- Request validation and business rule enforcement
+- Response formatting and error handling
 
-### Layer 3: Lib.[Client].Data
-**Purpose**: Map between Service Domain Model and Client Response Model
-
-**Responsibilities**:
-- Transform Service Domain Model to Client-specific response format
-- Call the Client Logic layer
-- Handle client-specific data transformations
-
-### Layer 4: Lib.[Client].Logic
-**Purpose**: Apply client-specific business logic
+### Layer 3: Shared Layer (`Lib.Shared.*`)
+**Purpose**: Apply cross-cutting rules and provide common abstractions
 
 **Responsibilities**:
-- Client-specific business rules and logic
-- Call appropriate shared logic layers
-- Handle client-specific processing requirements
+- Action patterns: filtering, validation, transformation, enrichment
+- Operation response patterns and error handling
+- Entity interfaces (ArgEntity, ItrEntity, OutEntity patterns)
+- Cross-cutting concerns and shared utilities
 
-### Layer 5: Lib.Logic.[SharedScope]
-**Purpose**: Shared logic across multiple clients
+**Components**:
+- `Lib.Shared.Abstractions`: Action patterns and core interfaces
+- `Lib.Shared.DataModels`: Entity interfaces and data contracts
+- `Lib.Shared.Invocation`: Operation response patterns
 
-**Responsibilities**:
-- Business logic common to multiple clients
-- Call appropriate domain logic layers
-- Reusable processing components
-
-### Layer 6: Lib.Domain.Logic.[Domain]
-**Purpose**: Apply universal business logic to domain data
+### Layer 4: Domain Layer (`Lib.Domain.*`)
+**Purpose**: Apply universal business logic and ALWAYS rules
 
 **Responsibilities**:
 - Business rules that apply to all consumers
-- Receive Service Domain Model from Aggregator layer
-- Universal data validation and processing
+- Domain-specific logic for Cards, Sets, Artists, Users
+- Universal data validation and business constraints
+- Domain entity behavior and invariants
 
-### Layer 7: Lib.Aggregator.[Domain]
-**Purpose**: Construct Service Domain Model from multiple sources
+**Components**:
+- `Lib.Domain.Cards`: Card-specific business logic
+- `Lib.Domain.Sets`: Set-specific business logic
+- `Lib.Domain.Artists`: Artist-specific business logic
+- `Lib.Domain.User`: User-specific business logic
 
-**Responsibilities**:
-- Orchestrate data retrieval from multiple adapters
-- Map external models to internal Service Domain Model
-- Handle data aggregation and composition
-- Only handle queries (data flowing OUT)
-
-**Note**: Commands go directly from Domain Logic to Adapter layers
-
-### Layer 8: Lib.Adapter.[External].[Domain]
-**Purpose**: Interface with external systems
+### Layer 5: Aggregator Layer (`Lib.Aggregator.*`)
+**Purpose**: Orchestrate data retrieval and know which adapters to call
 
 **Responsibilities**:
-- Communicate with external services, databases, files
-- Isolate external system specifics
-- Provide consistent internal interface
-- Handle external system protocols and data formats
+- Determine which adapters to call for specific operations
+- Orchestrate data retrieval from multiple sources
+- Aggregate responses from multiple adapters
+- Handle data composition and coordination
+
+**Components**:
+- `Lib.Aggregator.Cards`: Card data aggregation
+- `Lib.Aggregator.Sets`: Set data aggregation
+- `Lib.Aggregator.Artists`: Artist data aggregation
+- `Lib.Aggregator.User`: User data aggregation
+
+### Layer 6: Adapter Layer (`Lib.Adapter.*`)
+**Purpose**: Interface with external systems and handle data transformation
+
+**Responsibilities**:
+- Map ItrEntity to ExtEntity for external system calls
+- Communicate with external services (Scryfall API, Cosmos DB, Blob Storage)
+- Map ExtEntity responses back to ItrEntity
+- Handle external system protocols and error conditions
+- Isolate external system specifics from internal layers
+
+**Components**:
+- `Lib.Adapter.Scryfall.Cosmos`: Cosmos DB integration
+- `Lib.Adapter.Scryfall.BlobStorage`: Blob storage integration
+- `Lib.Scryfall.Ingestion`: Scryfall API integration
+
+### Layer 7: Infrastructure Layer (`Lib.Cosmos`, `Lib.Universal`)
+**Purpose**: Provide core infrastructure and utilities
+
+**Responsibilities**:
+- Database connectivity and operations
+- Configuration management
+- Logging and telemetry
+- Core utilities and primitive types
+- Service locator and dependency injection support
+- Base abstractions and foundational patterns
 
 ## Implementation Patterns
 

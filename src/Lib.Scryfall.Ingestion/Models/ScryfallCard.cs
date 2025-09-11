@@ -135,7 +135,11 @@ internal sealed class ScryfallCard : IScryfallCard
         {
             string artistId = artistIds[i];
             string artistName = i < artistNames.Count ? artistNames[i] : string.Empty;
-            pairs.Add(new ArtistIdNamePair(artistId, artistName));
+            pairs.Add(new ArtistIdNamePair
+            {
+                ArtistId = artistId,
+                ArtistName = artistName
+            });
         }
 
         return pairs;

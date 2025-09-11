@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Outs.User;
@@ -34,10 +33,10 @@ public class UserMutationMethods
     public async Task<ResponseModel> RegisterUserInfoAsync(ClaimsPrincipal claimsPrincipal)
     {
         // Create AuthUserArgEntity directly from ClaimsPrincipal
-        AuthUserArgEntity authUserArg = new AuthUserArgEntity(claimsPrincipal);
+        AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
         // Call the entry service
-        IOperationResponse<IUserRegistrationItrEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
+        IOperationResponse<IUserInfoItrEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -48,11 +47,11 @@ public class UserMutationMethods
             }
         };
 
-        IUserRegistrationItrEntity registration = response.ResponseData;
+        IUserInfoItrEntity registration = response.ResponseData;
 
-        UserRegistrationOutEntity result = new UserRegistrationOutEntity
+        UserRegistrationOutEntity result = new()
         {
-            UserId = registration.UserId.AsSystemType(),
+            UserId = registration.UserId,
             DisplayName = authUserArg.DisplayName
         };
 
