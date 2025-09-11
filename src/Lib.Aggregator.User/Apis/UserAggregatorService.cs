@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
+using Lib.Adapter.User.Apis;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -10,29 +9,19 @@ namespace Lib.Aggregator.User.Apis;
 
 public sealed class UserAggregatorService : IUserAggregatorService
 {
-    private readonly UserInfoScribe _userInfoScribe;
+    private readonly IUserAdapterService _userAdapterService;
 
-    public UserAggregatorService(ILogger logger) : this(new UserInfoScribe(logger))
+    public UserAggregatorService(ILogger logger) : this(new UserAdapterService(logger))
     { }
 
-    private UserAggregatorService(UserInfoScribe userInfoScribe) => _userInfoScribe = userInfoScribe;
+    private UserAggregatorService(IUserAdapterService userAdapterService)
+    {
+        _userAdapterService = userAdapterService;
+    }
 
     public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
     {
-        UserInfoItem userItem = new()
-        {
-            UserId = userInfo.UserId,
-            DisplayName = userInfo.UserNickname,
-            SourceId = userInfo.UserSourceId
-        };
-
-        await _userInfoScribe.UpsertAsync(userItem).ConfigureAwait(false);
-
-        return new SuccessOperationResponse<IUserInfoItrEntity>(userInfo);
+        return await _userAdapterService.RegisterUserAsync(userInfo).ConfigureAwait(false);
     }
 
-    Task<IOperationResponse<IUserInfoItrEntity>> IUserAggregatorService.RegisterUserAsync(IUserInfoItrEntity userInfo)
-    {
-        throw new System.NotImplementedException();
-    }
 }

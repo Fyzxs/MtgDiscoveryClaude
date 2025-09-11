@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ using Lib.Shared.Invocation.Operations;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Adapter.Cards.Internals;
+namespace Lib.Adapter.Cards.Queries;
 
 /// <summary>
 /// Cosmos DB implementation of the card query adapter.
@@ -168,7 +168,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ICardItemItrEntity>>(cards);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardNameSearchResultItrEntity>>> SearchCardNamesAsync([NotNull] ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync([NotNull] ICardSearchTermItrEntity searchTerm)
     {
         // Extract primitives for external system interface
         string searchTermValue = searchTerm.SearchTerm;
@@ -180,8 +180,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
 
         if (normalized.Length < 3)
         {
-            return new FailureOperationResponse<IEnumerable<ICardNameSearchResultItrEntity>>(
-                new CardAdapterException("Search term must contain at least 3 letters"));
+            return new FailureOperationResponse<IEnumerable<string>>(new CardAdapterException("Search term must contain at least 3 letters"));
         }
 
         List<string> trigrams = [];
@@ -222,12 +221,11 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
             }
         }
 
-        List<ICardNameSearchResultItrEntity> sortedResults = matchingCardNames
+        ICollection<string> sortedResults = matchingCardNames
             .OrderByDescending(name => cardNameMatchCounts[name])
             .ThenBy(name => name)
-            .Select(name => new CardNameSearchResultItrEntity { Name = name } as ICardNameSearchResultItrEntity)
             .ToList();
 
-        return new SuccessOperationResponse<IEnumerable<ICardNameSearchResultItrEntity>>(sortedResults);
+        return new SuccessOperationResponse<IEnumerable<string>>(sortedResults);
     }
 }

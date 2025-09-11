@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 
-namespace Lib.Adapter.Cards.Apis;
+namespace Lib.Adapter.Artists.Apis;
 
 /// <summary>
-/// Specialized adapter interface for card query operations.
+/// Specialized adapter interface for artist query operations.
 /// 
 /// This interface represents the query-specific adapter functionality,
-/// separate from the main ICardAdapterService which coordinates all adapters.
+/// separate from the main IArtistAdapterService which coordinates all adapters.
 /// 
 /// Pattern: Main service inherits from specialized interfaces
-///   ICardAdapterService : ICardQueryAdapter, ICardCacheAdapter, ICardMetricsAdapter
+///   IArtistAdapterService : IArtistQueryAdapter, IArtistCacheAdapter, IArtistMetricsAdapter
 /// 
 /// Design Decision: Public specialized interface
 /// While concrete implementations are internal, the specialized interfaces are public
@@ -24,10 +23,9 @@ namespace Lib.Adapter.Cards.Apis;
 /// - Internal mapping: Adapter implementations map from storage entities to ITR entities
 /// Primitive extraction happens in the concrete implementation when interfacing with external systems.
 /// </summary>
-public interface ICardQueryAdapter
+public interface IArtistQueryAdapter
 {
-    Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByIdsAsync(ICardIdsItrEntity cardIds);
-    Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsBySetCodeAsync(ISetCodeItrEntity setCode);
-    Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByNameAsync(ICardNameItrEntity cardName);
-    Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermItrEntity searchTerm);
+    Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> SearchArtistsAsync(IArtistSearchTermItrEntity searchTerm);
+    Task<IOperationResponse<ICardItemCollectionItrEntity>> GetCardsByArtistIdAsync(IArtistIdItrEntity artistId);
+    Task<IOperationResponse<ICardItemCollectionItrEntity>> GetCardsByArtistNameAsync(IArtistNameItrEntity artistName);
 }

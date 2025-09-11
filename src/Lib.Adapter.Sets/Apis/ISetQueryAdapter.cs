@@ -3,16 +3,16 @@ using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 
-namespace Lib.Adapter.Cards.Apis;
+namespace Lib.Adapter.Sets.Apis;
 
 /// <summary>
-/// Specialized adapter interface for card query operations.
+/// Specialized adapter interface for set query operations.
 /// 
 /// This interface represents the query-specific adapter functionality,
-/// separate from the main ICardAdapterService which coordinates all adapters.
+/// separate from the main ISetAdapterService which coordinates all adapters.
 /// 
 /// Pattern: Main service inherits from specialized interfaces
-///   ICardAdapterService : ICardQueryAdapter, ICardCacheAdapter, ICardMetricsAdapter
+///   ISetAdapterService : ISetQueryAdapter, ISetCacheAdapter, ISetMetricsAdapter
 /// 
 /// Design Decision: Public specialized interface
 /// While concrete implementations are internal, the specialized interfaces are public
@@ -24,10 +24,9 @@ namespace Lib.Adapter.Cards.Apis;
 /// - Internal mapping: Adapter implementations map from storage entities to ITR entities
 /// Primitive extraction happens in the concrete implementation when interfacing with external systems.
 /// </summary>
-public interface ICardQueryAdapter
+public interface ISetQueryAdapter
 {
-    Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByIdsAsync(ICardIdsItrEntity cardIds);
-    Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsBySetCodeAsync(ISetCodeItrEntity setCode);
-    Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByNameAsync(ICardNameItrEntity cardName);
-    Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermItrEntity searchTerm);
+    Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetSetsByIdsAsync(ISetIdsItrEntity setIds);
+    Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetSetsByCodesAsync(ISetCodesItrEntity setCodes);
+    Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetAllSetsAsync();
 }

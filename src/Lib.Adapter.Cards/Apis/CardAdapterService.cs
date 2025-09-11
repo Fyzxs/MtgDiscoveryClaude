@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Adapter.Cards.Internals;
+using Lib.Adapter.Cards.Queries;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -50,7 +50,7 @@ public sealed class CardAdapterService : ICardAdapterService
         return await _cardQueryAdapter.GetCardsByNameAsync(cardName).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardNameSearchResultItrEntity>>> SearchCardNamesAsync(ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermItrEntity searchTerm)
     {
         return await _cardQueryAdapter.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
     }

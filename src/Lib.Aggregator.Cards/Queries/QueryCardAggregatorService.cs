@@ -66,14 +66,14 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
     public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
     {
-        IOperationResponse<IEnumerable<ICardNameSearchResultItrEntity>> response = await _cardAdapterService.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
             return new FailureOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{searchTerm.SearchTerm}'", response.OuterException));
         }
 
-        List<ICardNameSearchResultItrEntity> results = response.ResponseData.ToList();
+        List<ICardNameSearchResultItrEntity> results = response.ResponseData.Select(x => new CardNameSearchResultItrEntity { Name = x }).Cast<ICardNameSearchResultItrEntity>().ToList();
         return new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardNameSearchResultCollectionItrEntity { Names = results });
     }
 }
