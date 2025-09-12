@@ -104,7 +104,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
         if (value == null) return null;
         if (value is JArray jArray)
         {
-            return jArray.Select(x => (int)x).ToArray();
+            return [.. jArray.Select(x => (int)x)];
         }
         return null;
     }
@@ -114,7 +114,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
         if (value == null) return null;
         if (value is JArray jArray)
         {
-            return jArray.Select(x => (string)x).ToArray();
+            return [.. jArray.Select(x => (string)x)];
         }
         return null;
     }

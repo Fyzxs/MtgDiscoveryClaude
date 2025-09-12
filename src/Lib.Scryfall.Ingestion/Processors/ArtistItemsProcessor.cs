@@ -31,7 +31,7 @@ internal sealed class ArtistItemsProcessor : IArtistProcessor
     public async Task ProcessAsync(IArtistAggregate artist)
     {
         string artistId = artist.ArtistId();
-        IEnumerable<string> artistNames = artist.ArtistNames().ToList();
+        IEnumerable<string> artistNames = [.. artist.ArtistNames()];
 
         ArtistAggregateItem data = new()
         {

@@ -9,10 +9,10 @@ namespace Lib.Adapter.Sets.Entities;
 /// </summary>
 internal sealed class GroupingFiltersItrEntity : IGroupingFiltersItrEntity
 {
-    [JsonProperty("CollectorNumberRange")]
+    [JsonProperty(nameof(CollectorNumberRange))]
     public CollectorNumberRangeItrEntity InternalCollectorNumberRange { get; set; } = new();
 
-    [JsonProperty("Properties")]
+    [JsonProperty(nameof(Properties))]
     public Dictionary<string, object> InternalProperties { get; set; } = [];
 
     [JsonIgnore]

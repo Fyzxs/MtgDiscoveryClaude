@@ -1,4 +1,4 @@
-namespace App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
+﻿namespace App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
 
 public sealed class ArtistSearchResultOutEntity
 {

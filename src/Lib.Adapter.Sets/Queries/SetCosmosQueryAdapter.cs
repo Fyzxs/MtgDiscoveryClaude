@@ -95,10 +95,9 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
 
         OpResponse<ScryfallSetCodeIndexItem>[] indexResponses = await Task.WhenAll(indexTasks).ConfigureAwait(false);
 
-        List<string> setIds = indexResponses
+        List<string> setIds = [.. indexResponses
             .Where(r => r.IsSuccessful())
-            .Select(r => r.Value.SetId)
-            .ToList();
+            .Select(r => r.Value.SetId)];
 
         if (setIds.Count == 0)
         {

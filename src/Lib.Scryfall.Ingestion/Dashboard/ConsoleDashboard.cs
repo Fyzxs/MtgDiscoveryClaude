@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Lib.Scryfall.Ingestion.Dashboard;
 
 internal sealed class ConsoleDashboard : IIngestionDashboard
 {
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private readonly Queue<string> _recentLogs = new(3);
     private readonly Dictionary<string, int> _completedCounts = [];
     private readonly Stopwatch _stopwatch = new();

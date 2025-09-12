@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Outs.User;
 using HotChocolate.Types;
 

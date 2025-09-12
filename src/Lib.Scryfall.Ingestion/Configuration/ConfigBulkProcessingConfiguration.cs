@@ -69,10 +69,9 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
             string value = _config[$"{BulkProcessingKey}:{SetCodesToProcessKey}"];
             if (value.IzNullOrWhiteSpace()) return [];
 
-            return value.Split(',')
+            return [.. value.Split(',')
                 .Select(s => s.Trim().ToLowerInvariant())
-                .Where(s => s.IzNotNullOrWhiteSpace())
-                .ToList();
+                .Where(s => s.IzNotNullOrWhiteSpace())];
         }
     }
 }

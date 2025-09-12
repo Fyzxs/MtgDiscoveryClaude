@@ -98,10 +98,9 @@ internal sealed class HasMinimumLengthSearchTermArgEntityValidator : OperationRe
             if (arg?.SearchTerm == null) return Task.FromResult(false);
 
             // Normalize the search term to check minimum length
-            string normalized = new(arg.SearchTerm
+            string normalized = new([.. arg.SearchTerm
                 .ToLowerInvariant()
-                .Where(char.IsLetter)
-                .ToArray());
+                .Where(char.IsLetter)]);
 
             return Task.FromResult(normalized.Length >= 3);
         }

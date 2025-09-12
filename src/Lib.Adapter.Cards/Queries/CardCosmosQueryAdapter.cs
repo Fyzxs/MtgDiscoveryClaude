@@ -174,10 +174,9 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         // Extract primitives for external system interface
         string searchTermValue = searchTerm.SearchTerm;
 
-        string normalized = new(searchTermValue
+        string normalized = new([.. searchTermValue
             .ToLowerInvariant()
-            .Where(char.IsLetter)
-            .ToArray());
+            .Where(char.IsLetter)]);
 
         if (normalized.Length < 3)
         {
@@ -195,7 +194,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
 
         foreach (string trigram in trigrams)
         {
-            string firstChar = trigram.Substring(0, 1);
+            string firstChar = trigram[..1];
             QueryDefinition queryDefinition = new QueryDefinition(
                 "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE card FROM card IN c.cards WHERE CONTAINS(card.norm, @normalized))")
                 .WithParameter("@trigram", trigram)
@@ -222,10 +221,9 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
             }
         }
 
-        ICollection<string> sortedResults = matchingCardNames
+        ICollection<string> sortedResults = [.. matchingCardNames
             .OrderByDescending(name => cardNameMatchCounts[name])
-            .ThenBy(name => name)
-            .ToList();
+            .ThenBy(name => name)];
 
         return new SuccessOperationResponse<IEnumerable<string>>(sortedResults);
     }

@@ -25,7 +25,7 @@ public sealed class ExampleLibCosmosApplication : ExampleApplication
     {
         await Task.Delay(0).ConfigureAwait(false);
         SetItemCosmosScribe gopher = new(NullLogger.Instance);
-        OpResponse<CosmosItem> response = await gopher.UpsertAsync(new CosmosItem()).ConfigureAwait(false);
+        _ = await gopher.UpsertAsync(new CosmosItem()).ConfigureAwait(false);
     }
 }
 internal sealed class SetItemCosmosScribe : CosmosScribe

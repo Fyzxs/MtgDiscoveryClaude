@@ -128,7 +128,7 @@ internal sealed class ScryfallCard : IScryfallCard
     public IEnumerable<IArtistIdNamePair> ArtistIdNamePairs()
     {
         List<IArtistIdNamePair> pairs = [];
-        List<string> artistIds = ArtistIds().ToList();
+        List<string> artistIds = [.. ArtistIds()];
         List<string> artistNames = ExtractArtistNames();
 
         for (int i = 0; i < artistIds.Count; i++)
