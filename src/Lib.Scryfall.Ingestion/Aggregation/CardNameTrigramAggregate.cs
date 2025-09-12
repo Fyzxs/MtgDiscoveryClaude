@@ -12,7 +12,7 @@ internal sealed class CardNameTrigramAggregate : ICardNameTrigramAggregate
     public CardNameTrigramAggregate(string trigram)
     {
         _trigram = trigram;
-        _entries = new Dictionary<string, CardNameTrigramEntryImpl>();
+        _entries = [];
     }
 
     public string Trigram() => _trigram;
@@ -38,7 +38,7 @@ internal sealed class CardNameTrigramAggregate : ICardNameTrigramAggregate
         {
             _name = name;
             _normalized = normalized;
-            _positions = new HashSet<int>();
+            _positions = [];
         }
 
         public string Name() => _name;

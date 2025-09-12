@@ -1,6 +1,6 @@
 ﻿#pragma warning disable CA1056, CA1819
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
 

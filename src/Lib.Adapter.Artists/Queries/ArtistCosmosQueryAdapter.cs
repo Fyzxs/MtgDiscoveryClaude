@@ -7,6 +7,7 @@ using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Entities;
 using Lib.Adapter.Artists.Exceptions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Aggregator.Scryfall.Shared.Mappers;

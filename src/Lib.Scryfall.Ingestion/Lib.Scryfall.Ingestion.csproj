@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.RateLimiting" />
     <PackageReference Include="Newtonsoft.Json" />

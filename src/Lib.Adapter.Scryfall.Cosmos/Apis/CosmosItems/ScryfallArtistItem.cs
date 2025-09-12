@@ -1,4 +1,5 @@
-﻿using Lib.Cosmos.Apis;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;

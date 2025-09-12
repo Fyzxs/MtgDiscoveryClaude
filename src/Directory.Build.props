@@ -21,7 +21,6 @@
     <NuGetAudit>true</NuGetAudit>
     <NuGetAuditMode>all</NuGetAuditMode>
     <NuGetAuditLevel>low</NuGetAuditLevel>
-    <!-- Enable .editorconfig support -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <EnableEditorConfigSupport>true</EnableEditorConfigSupport>
   </PropertyGroup>
@@ -194,12 +193,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="MSTest.TestAdapter"/>
-    <PackageReference Include="MSTest.TestFramework"/>
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
   </ItemGroup>
 
   <ItemGroup Condition="$(IsTestBuild)">
-    <PackageReference Include="AwesomeAssertions"/>
+    <PackageReference Include="AwesomeAssertions" />
   </ItemGroup>
 
   <ItemGroup Condition="$(IsUnitTestBuild)">

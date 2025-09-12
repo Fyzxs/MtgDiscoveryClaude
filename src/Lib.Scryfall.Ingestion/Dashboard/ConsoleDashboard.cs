@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,7 +11,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 {
     private readonly object _lock = new();
     private readonly Queue<string> _recentLogs = new(3);
-    private readonly Dictionary<string, int> _completedCounts = new();
+    private readonly Dictionary<string, int> _completedCounts = [];
     private readonly Stopwatch _stopwatch = new();
     private readonly char[] _spinnerChars = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
     private readonly int _refreshFrequency;
@@ -204,7 +204,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
     private void DrawDashboard()
     {
-        List<string> lines = new List<string>();
+        List<string> lines = [];
         int width = Math.Max(80, Console.WindowWidth - 1);
         _lastWidth = width; // Track width for proper clearing on next refresh
 
@@ -218,7 +218,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             if (_progressTotal > 0)
             {
                 string progressBar = CreateProgressBar(_progressCurrent, _progressTotal, width);
-                int percent = (_progressCurrent * 100) / _progressTotal;
+                int percent = _progressCurrent * 100 / _progressTotal;
                 string typePadded = _progressType.PadRight(10);
                 lines.Add($"  {typePadded} {progressBar} {_progressCurrent:N0}/{_progressTotal:N0} ({percent}%)");
             }
@@ -249,7 +249,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             if (_setTotal > 0)
             {
                 string setProgress = CreateProgressBar(_setCurrent, _setTotal, width);
-                int setPercent = (_setCurrent * 100) / _setTotal;
+                int setPercent = _setCurrent * 100 / _setTotal;
                 lines.Add($"  Sets:           {setProgress} {_setCurrent}/{_setTotal} ({setPercent}%)");
                 lines.Add($"  Current Item:   {TruncateString(_setName, width - 18)}");
             }
@@ -258,7 +258,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                 if (_cardTotal > 0)
                 {
                     string cardProgress = CreateProgressBar(_cardCurrent, _cardTotal, width);
-                    int cardPercent = (_cardCurrent * 100) / _cardTotal;
+                    int cardPercent = _cardCurrent * 100 / _cardTotal;
                     lines.Add($"  Cards:          {cardProgress} {_cardCurrent:N0}/{_cardTotal:N0} ({cardPercent}%)");
                 }
                 else
@@ -273,7 +273,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                 if (_trigramTotal > 0)
                 {
                     string trigramProgress = CreateProgressBar(_trigramCurrent, _trigramTotal, width);
-                    int trigramPercent = (_trigramCurrent * 100) / _trigramTotal;
+                    int trigramPercent = _trigramCurrent * 100 / _trigramTotal;
                     lines.Add($"  Trigrams:       {trigramProgress} {_trigramCurrent:N0}/{_trigramTotal:N0} ({trigramPercent}%)");
                 }
                 else
@@ -288,7 +288,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                 if (_rulingTotal > 0)
                 {
                     string rulingProgress = CreateProgressBar(_rulingCurrent, _rulingTotal, width);
-                    int rulingPercent = (_rulingCurrent * 100) / _rulingTotal;
+                    int rulingPercent = _rulingCurrent * 100 / _rulingTotal;
                     lines.Add($"  Rulings:        {rulingProgress} {_rulingCurrent:N0}/{_rulingTotal:N0} ({rulingPercent}%)");
                 }
                 else
@@ -351,7 +351,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     {
         // Progress bar should be about 1/3 of console width, with min 20 and max 80
         int barWidth = Math.Min(80, Math.Max(20, consoleWidth / 3));
-        int filled = (current * barWidth) / total;
+        int filled = current * barWidth / total;
         int empty = barWidth - filled;
 
         return $"[{new string('█', filled)}{new string('░', empty)}]";

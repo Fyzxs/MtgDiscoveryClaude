@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Http;
 using Microsoft.Extensions.Logging;
@@ -52,9 +53,12 @@ internal sealed class RulingsBulkDataFetcher
 
     private async IAsyncEnumerable<dynamic> ParseRulingsFile(string url)
     {
-        using Stream stream = await _httpClient.StreamAsync(new Uri(url)).ConfigureAwait(false);
+        Stream stream = await _httpClient.StreamAsync(new Uri(url)).ConfigureAwait(false);
+        await using ConfiguredAsyncDisposable _ = stream.ConfigureAwait(false);
         using StreamReader reader = new(stream);
+#pragma warning disable CA2007 // It's a constructor
         using JsonTextReader jsonReader = new(reader);
+#pragma warning restore CA2007
 
         JsonSerializer serializer = new();
 
