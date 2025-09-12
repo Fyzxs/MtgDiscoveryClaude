@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Internal.Text;
@@ -30,7 +31,7 @@ internal sealed class ArtistItemsProcessor : IArtistProcessor
     public async Task ProcessAsync(IArtistAggregate artist)
     {
         string artistId = artist.ArtistId();
-        IEnumerable<string> artistNames = artist.ArtistNames().ToList();
+        IEnumerable<string> artistNames = [.. artist.ArtistNames()];
 
         ArtistAggregateItem data = new()
         {

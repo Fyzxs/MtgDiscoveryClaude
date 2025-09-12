@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
@@ -49,12 +50,12 @@ internal sealed class CardNameTrigramWriterProcessor : ICardNameTrigramWriterPro
             {
                 Trigram = aggregate.Trigram(),
                 Cards = new Collection<CardNameTrigramDataItem>(
-                    aggregate.Entries().Select(entry => new CardNameTrigramDataItem
+                    [.. aggregate.Entries().Select(entry => new CardNameTrigramDataItem
                     {
                         Name = entry.Name(),
                         Normalized = entry.Normalized(),
-                        Positions = new Collection<int>(entry.Positions().ToList())
-                    }).ToList())
+                        Positions = new Collection<int>([.. entry.Positions()])
+                    })])
             };
 
             await _scribe.UpsertAsync(entity).ConfigureAwait(false);

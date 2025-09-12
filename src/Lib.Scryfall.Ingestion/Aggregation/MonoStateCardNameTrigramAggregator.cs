@@ -31,10 +31,9 @@ internal sealed class MonoStateCardNameTrigramAggregator : ICardNameTrigramAggre
         if (string.IsNullOrWhiteSpace(nameToStore)) return;
 
         // Normalize: lowercase and remove non-alphabetic characters
-        string normalized = new string(textToIndex
+        string normalized = new([.. textToIndex
             .ToLowerInvariant()
-            .Where(char.IsLetter)
-            .ToArray());
+            .Where(char.IsLetter)]);
 
         if (normalized.Length < 3) return;
 
@@ -48,10 +47,9 @@ internal sealed class MonoStateCardNameTrigramAggregator : ICardNameTrigramAggre
                 t => new CardNameTrigramAggregate(t));
 
             // Store the normalized version of the name for server-side filtering
-            string normalizedName = new string(nameToStore
+            string normalizedName = new([.. nameToStore
                 .ToLowerInvariant()
-                .Where(char.IsLetter)
-                .ToArray());
+                .Where(char.IsLetter)]);
 
             aggregate.AddCard(nameToStore, normalizedName, position);
         }

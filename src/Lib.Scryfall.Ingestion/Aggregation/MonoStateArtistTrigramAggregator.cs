@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
@@ -22,10 +22,9 @@ internal sealed class MonoStateArtistTrigramAggregator : IArtistTrigramAggregato
         if (string.IsNullOrWhiteSpace(artistName)) return;
 
         // Normalize: lowercase and remove non-alphabetic characters
-        string normalized = new string(artistName
+        string normalized = new([.. artistName
             .ToLowerInvariant()
-            .Where(char.IsLetter)
-            .ToArray());
+            .Where(char.IsLetter)]);
 
         if (normalized.Length < 3) return;
 

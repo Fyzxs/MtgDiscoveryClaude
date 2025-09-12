@@ -51,7 +51,7 @@ public sealed class CosmosContainerQueryOperatorTests
         CosmosContainerQueryOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey).ConfigureAwait(false);
+        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         containerFake.GetItemQueryIteratorInvokeCount.Should().Be(1);
@@ -95,7 +95,7 @@ public sealed class CosmosContainerQueryOperatorTests
         CosmosContainerQueryOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey).ConfigureAwait(false);
+        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().HaveCount(2);
@@ -137,7 +137,7 @@ public sealed class CosmosContainerQueryOperatorTests
         CosmosContainerQueryOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey).ConfigureAwait(false);
+        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().BeEmpty();
@@ -179,7 +179,7 @@ public sealed class CosmosContainerQueryOperatorTests
         CosmosContainerQueryOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        _ = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey).ConfigureAwait(false);
+        _ = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         loggerFake.LogInvokeCount.Should().Be(1);
@@ -260,7 +260,7 @@ public sealed class CosmosContainerQueryOperatorTests
         CosmosContainerQueryOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey).ConfigureAwait(false);
+        OpResponse<IEnumerable<TestItem>> actual = await subject.QueryAsync<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         actual.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -276,4 +276,6 @@ public sealed class CosmosContainerQueryOperatorTests
         public string Id { get; init; }
         public string Name { get; init; }
     }
+
+    public TestContext TestContext { get; set; }
 }

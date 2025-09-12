@@ -37,14 +37,13 @@ internal sealed class CardsBulkDataFetcher
         string cardsUrl = null;
         foreach (dynamic item in catalog.data)
         {
-            if (item.type == "default_cards")
-            {
-                cardsUrl = item.download_uri;
-                break;
-            }
+            if ("default_cards".Equals(item.type) is false) continue;
+
+            cardsUrl = item.download_uri;
+            break;
         }
 
-        _logger.LogDownloadingCardsData(cardsUrl);
+        _logger.LogDownloadingCardsData(cardsUrl!);
 
         // Download and parse the cards file
         return ParseCardsFile(cardsUrl);

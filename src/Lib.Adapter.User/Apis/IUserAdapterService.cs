@@ -1,4 +1,4 @@
-namespace Lib.Adapter.User.Apis;
+﻿namespace Lib.Adapter.User.Apis;
 
 /// <summary>
 /// Main adapter service interface for user operations.

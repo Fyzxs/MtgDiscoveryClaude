@@ -18,7 +18,7 @@ internal sealed class ScryfallSetMapper : IScryfallSetMapper
 
         if (setItem.Groupings != null)
         {
-            groupings = setItem.Groupings.Select(g => new SetGroupingOutEntity
+            groupings = [.. setItem.Groupings.Select(g => new SetGroupingOutEntity
             {
                 Id = g.Id,
                 DisplayName = g.DisplayName,
@@ -37,7 +37,7 @@ internal sealed class ScryfallSetMapper : IScryfallSetMapper
                         : null,
                     Properties = g.Filters.Properties
                 } : null
-            }).ToList();
+            })];
         }
 
         return new ScryfallSetOutEntity

@@ -33,7 +33,7 @@ public sealed class HttpScryfallCollectionTests
         List<TestDomainModel> actual = [];
 
         // Act
-        await foreach (TestDomainModel item in subject.Items().ConfigureAwait(false))
+        await foreach (TestDomainModel item in subject.Items(TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
         {
             actual.Add(item);
         }
@@ -55,7 +55,7 @@ public sealed class HttpScryfallCollectionTests
         List<TestDomainModel> actual = [];
 
         // Act
-        await foreach (TestDomainModel item in subject.Items().ConfigureAwait(false))
+        await foreach (TestDomainModel item in subject.Items(TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
         {
             actual.Add(item);
         }
@@ -80,13 +80,13 @@ public sealed class HttpScryfallCollectionTests
 
         // Act
         int count1 = 0;
-        await foreach (TestDomainModel _ in subject.Items().ConfigureAwait(false))
+        await foreach (TestDomainModel _ in subject.Items(TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
         {
             count1++;
         }
 
         int count2 = 0;
-        await foreach (TestDomainModel _ in subject.Items().ConfigureAwait(false))
+        await foreach (TestDomainModel _ in subject.Items(TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
         {
             count2++;
         }
@@ -124,4 +124,6 @@ public sealed class HttpScryfallCollectionTests
         {
         }
     }
+
+    public TestContext TestContext { get; set; }
 }

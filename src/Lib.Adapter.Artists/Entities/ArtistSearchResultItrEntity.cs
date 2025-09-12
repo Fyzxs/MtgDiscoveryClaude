@@ -1,4 +1,4 @@
-using Lib.Shared.DataModels.Entities;
+﻿using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Adapter.Artists.Entities;
 

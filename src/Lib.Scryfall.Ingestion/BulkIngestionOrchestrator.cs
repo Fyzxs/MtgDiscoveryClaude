@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,7 +51,7 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
 
             Dictionary<string, IScryfallSet> sets = await _setsPipeline.FetchSetsAsync().ConfigureAwait(false);
 
-            Dictionary<string, IScryfallRuling> rulings = new();
+            Dictionary<string, IScryfallRuling> rulings = [];
             if (_config.ProcessRulings)
             {
                 rulings = await _rulingsPipeline.FetchAndAggregateRulingsAsync().ConfigureAwait(false);

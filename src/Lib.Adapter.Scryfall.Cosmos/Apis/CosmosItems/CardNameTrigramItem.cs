@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 

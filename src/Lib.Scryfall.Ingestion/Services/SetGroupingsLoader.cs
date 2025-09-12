@@ -23,12 +23,12 @@ internal sealed class SetGroupingsLoader : ISetGroupingsLoader
     {
         if (File.Exists(filePath) is false)
         {
-            return new Dictionary<string, SetGroupingData>();
+            return [];
         }
 
         string json = File.ReadAllText(filePath);
         return JsonConvert.DeserializeObject<Dictionary<string, SetGroupingData>>(json)
-               ?? new Dictionary<string, SetGroupingData>();
+               ?? [];
     }
 
     public SetGroupingData GetGroupingsForSet(string setCode)

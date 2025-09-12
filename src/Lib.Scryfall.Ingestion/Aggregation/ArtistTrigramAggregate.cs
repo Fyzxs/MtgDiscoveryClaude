@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 
@@ -12,7 +12,7 @@ internal sealed class ArtistTrigramAggregate : IArtistTrigramAggregate
     public ArtistTrigramAggregate(string trigram)
     {
         _trigram = trigram;
-        _entries = new Dictionary<string, ArtistTrigramEntryImpl>();
+        _entries = [];
     }
 
     public string Trigram() => _trigram;
@@ -41,7 +41,7 @@ internal sealed class ArtistTrigramAggregate : IArtistTrigramAggregate
             _artistId = artistId;
             _name = name;
             _normalized = normalized;
-            _positions = new HashSet<int>();
+            _positions = [];
         }
 
         public string ArtistId() => _artistId;

@@ -36,7 +36,7 @@ internal sealed class CardFaceItrEntity : ICardFaceItrEntity
         if (value == null) return null;
         if (value is Newtonsoft.Json.Linq.JArray jArray)
         {
-            return jArray.Select(x => (string)x).ToArray();
+            return [.. jArray.Select(x => (string)x)];
         }
         return null;
     }

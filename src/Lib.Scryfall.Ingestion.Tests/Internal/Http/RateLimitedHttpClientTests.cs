@@ -49,7 +49,7 @@ public sealed class RateLimitedHttpClientTests
         RateLimitedHttpClient subject = new InstanceWrapper(httpClientFake, rateLimiterFake);
 
         // Act
-        string actual = await subject.ResponseAs<string>(uri).ConfigureAwait(false);
+        string actual = await subject.ResponseAs<string>(uri, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         _ = actual.Should().Be(expectedResult);
@@ -156,4 +156,6 @@ public sealed class RateLimitedHttpClientTests
         public InstanceWrapper(IHttpClient innerClient, IScryfallRateLimiter rateLimiter)
             : base(innerClient, rateLimiter) { }
     }
+
+    public TestContext TestContext { get; set; }
 }

@@ -1,4 +1,4 @@
-using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+﻿using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Mutations;
 using HotChocolate.Execution.Configuration;

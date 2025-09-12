@@ -2,11 +2,11 @@
 
 namespace Example.Scryfall.ApiDemo;
 
-class Program
+internal class Program
 {
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        ScryfallApiDemoApplication app = new ScryfallApiDemoApplication();
+        ScryfallApiDemoApplication app = new();
         await app.StartUp(args).ConfigureAwait(false);
     }
 }

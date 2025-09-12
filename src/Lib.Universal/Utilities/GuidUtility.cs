@@ -79,7 +79,7 @@ public static class GuidUtility
         SwapByteOrder(namespaceBytes);
 
         // compute the hash of the namespace ID concatenated with the name (step 4)
-        byte[] data = namespaceBytes.Concat(nameBytes).ToArray();
+        byte[] data = [.. namespaceBytes, .. nameBytes];
         byte[] hash;
         using (HashAlgorithm algorithm = version == 3 ? MD5.Create() : SHA1.Create())
             hash = algorithm.ComputeHash(data);
@@ -112,8 +112,6 @@ public static class GuidUtility
 
     private static void SwapBytes(byte[] guid, int left, int right)
     {
-        byte temp = guid[left];
-        guid[left] = guid[right];
-        guid[right] = temp;
+        (guid[right], guid[left]) = (guid[left], guid[right]);
     }
 }

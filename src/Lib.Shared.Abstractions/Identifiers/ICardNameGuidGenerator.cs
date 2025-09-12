@@ -1,4 +1,4 @@
-namespace Lib.Shared.Abstractions.Identifiers;
+﻿namespace Lib.Shared.Abstractions.Identifiers;
 
 public interface ICardNameGuidGenerator
 {

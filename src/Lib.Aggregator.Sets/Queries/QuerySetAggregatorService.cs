@@ -33,7 +33,7 @@ internal sealed class QuerySetAggregatorService : ISetAggregatorService
             return new FailureOperationResponse<ISetItemCollectionItrEntity>(new AggregatorOperationException(System.Net.HttpStatusCode.InternalServerError, "Failed to retrieve sets by IDs", response.OuterException));
         }
 
-        ICollection<ISetItemItrEntity> sets = response.ResponseData.ToList();
+        ICollection<ISetItemItrEntity> sets = [.. response.ResponseData];
         return new SuccessOperationResponse<ISetItemCollectionItrEntity>(new SetItemCollectionItrEntity { Data = sets });
     }
 
@@ -46,7 +46,7 @@ internal sealed class QuerySetAggregatorService : ISetAggregatorService
             return new FailureOperationResponse<ISetItemCollectionItrEntity>(new AggregatorOperationException(System.Net.HttpStatusCode.InternalServerError, "Failed to retrieve sets by codes", response.OuterException));
         }
 
-        ICollection<ISetItemItrEntity> sets = response.ResponseData.ToList();
+        ICollection<ISetItemItrEntity> sets = [.. response.ResponseData];
         return new SuccessOperationResponse<ISetItemCollectionItrEntity>(new SetItemCollectionItrEntity { Data = sets });
     }
 
@@ -59,7 +59,7 @@ internal sealed class QuerySetAggregatorService : ISetAggregatorService
             return new FailureOperationResponse<ISetItemCollectionItrEntity>(new AggregatorOperationException(System.Net.HttpStatusCode.InternalServerError, "Failed to retrieve all sets", response.OuterException));
         }
 
-        ICollection<ISetItemItrEntity> sets = response.ResponseData.ToList();
+        ICollection<ISetItemItrEntity> sets = [.. response.ResponseData];
         return new SuccessOperationResponse<ISetItemCollectionItrEntity>(new SetItemCollectionItrEntity { Data = sets });
     }
 }

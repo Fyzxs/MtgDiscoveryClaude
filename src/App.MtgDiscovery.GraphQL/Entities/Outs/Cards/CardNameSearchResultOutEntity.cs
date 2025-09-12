@@ -1,4 +1,4 @@
-namespace App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
+﻿namespace App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
 
 public sealed class CardNameSearchResultOutEntity
 {
