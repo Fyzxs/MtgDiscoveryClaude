@@ -31,7 +31,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(npm uninstall:*)",
       "Bash(dotnet restore:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []
