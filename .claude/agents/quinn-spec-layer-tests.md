@@ -1,5 +1,5 @@
 ---
-name: quinn-layer-tests-gen
+name: quinn-spec-layer-tests
 description: Creates detailed unit test specifications for implementation tasks following established testing patterns and conventions
 model: opus
 ---
