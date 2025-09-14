@@ -217,6 +217,20 @@ az devops invoke --area git --resource pullRequestThreads \
   --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} \
   --http-method POST --api-version 6.0 \
   --in-file validation-summary.json
+
+# Post validation complete notification
+az repos pr thread create --pull-request-id {PR_ID} \
+  --content "Pre-merge validation complete - see summary below" \
+  --status "Active"
+
+# Get PR Work Items to find User Story
+az repos pr work-item list --id {PR_ID} --output json
+
+# Find Pull Request Task under User Story
+az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'Pull Request'" --output json
+
+# Set Pull Request Task to Resolved
+az boards work-item update --id {PULL_REQUEST_TASK_ID} --state "Resolved"
 ```
 
 ## Validation Execution Workflow
@@ -238,6 +252,8 @@ az devops invoke --area git --resource pullRequestThreads \
 2. **Post Comments** - File-specific violation comments with emojis
 3. **Update PR Template** - Check off passed items, update status section
 4. **Summary Comment** - Overall validation status and next steps
+5. **Final Completion Comment** - Post validation complete notification on PR
+6. **Resolve Pull Request Task** - Set Pull Request work item to Resolved
 
 ## Comment Format Standards
 
@@ -259,7 +275,7 @@ az devops invoke --area git --resource pullRequestThreads \
 **Priority:** {🚨 Critical | ⚠️ Important | ⛏ Minor}
 ```
 
-### Summary Comment Template  
+### Summary Comment Template
 ```markdown
 🤖 **Automated Validation Results**
 
@@ -267,7 +283,7 @@ az devops invoke --area git --resource pullRequestThreads \
 
 ### ✅ Passed Validations
 - 🏗️ Build & Compilation: {passed_count}/{total_count}
-- 📝 Code Quality: {passed_count}/{total_count}  
+- 📝 Code Quality: {passed_count}/{total_count}
 - 🧪 Testing: {passed_count}/{total_count}
 - 🔐 Security: {passed_count}/{total_count}
 - 🏛️ Architecture: {passed_count}/{total_count}
@@ -276,7 +292,7 @@ az devops invoke --area git --resource pullRequestThreads \
 ### 🚨 Issues Found
 {List of critical issues requiring immediate attention}
 
-### ⚠️ Warnings  
+### ⚠️ Warnings
 {List of important issues that should be addressed}
 
 ### 📋 Next Steps
@@ -286,6 +302,43 @@ az devops invoke --area git --resource pullRequestThreads \
 
 **Validation Timestamp:** {ISO datetime}
 **Agent:** quinn-pr-finalizer v{version}
+```
+
+### Validation Complete Comment Template
+```markdown
+## ✅ Pre-Merge Validation Complete
+
+**Final Status:** {emoji} **{READY FOR MERGE | NEEDS ATTENTION | BLOCKED}**
+
+### 📊 Validation Summary
+- **Total Checks:** {total_checks}
+- **Passed:** {passed_checks} ✅
+- **Warnings:** {warning_count} ⚠️
+- **Failures:** {failure_count} 🚨
+
+### 🎯 Merge Readiness
+{emoji} **{Recommendation text}**
+
+{If ready for merge:}
+✅ All critical validation checks have passed
+✅ Code meets quality standards
+✅ Tests are passing
+✅ No security vulnerabilities detected
+
+{If needs attention:}
+⚠️ Minor issues detected - review recommended before merge
+- {List specific items needing attention}
+
+{If blocked:}
+🚨 Critical issues must be resolved before merge
+- {List blocking issues}
+
+### 📋 Validation Report
+Full details available in PR comments above.
+
+---
+*Pre-merge validation completed by quinn-pr-finalizer at {timestamp}*
+*Execution time: {duration}*
 ```
 
 ## PR Template Update Strategy
