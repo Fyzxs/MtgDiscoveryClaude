@@ -1,0 +1,133 @@
+{
+  "fields": {
+    "Microsoft.VSTS.Common.ActivatedBy": {
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl"
+        }
+      },
+      "descriptor": "msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "displayName": "Quinn Gil",
+      "id": "bddafd7d-e0cb-4d97-8674-c625259eaec5",
+      "imageUrl": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "uniqueName": "nijamunkistich@gmail.com",
+      "url": "https://spsprodeus21.vssps.visualstudio.com/Abdd57dad-803b-496b-a6c8-17fbdd3d48f5/_apis/Identities/bddafd7d-e0cb-4d97-8674-c625259eaec5"
+    },
+    "Microsoft.VSTS.Common.ActivatedDate": "2025-09-14T06:57:49.197Z",
+    "Microsoft.VSTS.Common.Priority": 2,
+    "Microsoft.VSTS.Common.StateChangeDate": "2025-09-14T06:57:49.197Z",
+    "Microsoft.VSTS.Common.ValueArea": "Business",
+    "System.AreaId": 36,
+    "System.AreaLevel1": "MtgDiscovery",
+    "System.AreaPath": "MtgDiscovery",
+    "System.AssignedTo": {
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl"
+        }
+      },
+      "descriptor": "msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "displayName": "Quinn Gil",
+      "id": "bddafd7d-e0cb-4d97-8674-c625259eaec5",
+      "imageUrl": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "uniqueName": "nijamunkistich@gmail.com",
+      "url": "https://spsprodeus21.vssps.visualstudio.com/Abdd57dad-803b-496b-a6c8-17fbdd3d48f5/_apis/Identities/bddafd7d-e0cb-4d97-8674-c625259eaec5"
+    },
+    "System.AuthorizedAs": {
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl"
+        }
+      },
+      "descriptor": "msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "displayName": "Quinn Gil",
+      "id": "bddafd7d-e0cb-4d97-8674-c625259eaec5",
+      "imageUrl": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "uniqueName": "nijamunkistich@gmail.com",
+      "url": "https://spsprodeus21.vssps.visualstudio.com/Abdd57dad-803b-496b-a6c8-17fbdd3d48f5/_apis/Identities/bddafd7d-e0cb-4d97-8674-c625259eaec5"
+    },
+    "System.AuthorizedDate": "2025-09-14T06:57:49.197Z",
+    "System.BoardColumn": "Active",
+    "System.BoardColumnDone": false,
+    "System.ChangedBy": {
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl"
+        }
+      },
+      "descriptor": "msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "displayName": "Quinn Gil",
+      "id": "bddafd7d-e0cb-4d97-8674-c625259eaec5",
+      "imageUrl": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "uniqueName": "nijamunkistich@gmail.com",
+      "url": "https://spsprodeus21.vssps.visualstudio.com/Abdd57dad-803b-496b-a6c8-17fbdd3d48f5/_apis/Identities/bddafd7d-e0cb-4d97-8674-c625259eaec5"
+    },
+    "System.ChangedDate": "2025-09-14T06:57:49.197Z",
+    "System.CommentCount": 0,
+    "System.CreatedBy": {
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl"
+        }
+      },
+      "descriptor": "msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "displayName": "Quinn Gil",
+      "id": "bddafd7d-e0cb-4d97-8674-c625259eaec5",
+      "imageUrl": "https://dev.azure.com/fyzxs/_apis/GraphProfile/MemberAvatars/msa.MjVmYjNkY2QtNmViNS03OTU5LWI2YzMtYWI2Y2Y4NTExZjdl",
+      "uniqueName": "nijamunkistich@gmail.com",
+      "url": "https://spsprodeus21.vssps.visualstudio.com/Abdd57dad-803b-496b-a6c8-17fbdd3d48f5/_apis/Identities/bddafd7d-e0cb-4d97-8674-c625259eaec5"
+    },
+    "System.CreatedDate": "2025-09-13T07:55:12.9Z",
+    "System.Description": "<h2>Overview </h2>\n<p>Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user's collection, following the established CQRS pattern with Commands folder structure. </p>\n\n<p><strong>Total Tasks</strong>: 23 tasks (11 implementation + 12 test tasks) </p>\n\n<h2>Context </h2>\n<p>UserCards Cosmos schema has been defined: </p>\n<pre><code>UserCards\n{\n  partition: userId\n  id: cardId\n  cardId: card.Id\n  userId: user.Id\n  setId: card.set.Id\n  collected: [\n    {\n      finish: {nonfoil|foil|etched}\n      special: {none|altered|signed|proof}\n      count: {count}\n    }\n  ]\n}\n</code></pre>\n\n<p>The adapter layer follows established patterns from existing adapters (Cards, Artists, Sets, User) and integrates with the Lib.Cosmos infrastructure layer. </p>\n\n<h2>Reference Projects </h2>\n<ul>\n<li><strong>Pattern Reference</strong>: <code>src/Lib.Adapter.User/</code> - Use as primary template for adapter structure </li>\n<li><strong>CQRS Reference</strong>: <code>src/Lib.Adapter.Cards/</code> - Reference for CQRS folder structure (Queries folder) </li>\n<li><strong>Cosmos Integration</strong>: <code>src/Lib.Adapter.Scryfall.Cosmos/</code> - Where Cosmos Items and operators live </li>\n<li><strong>Infrastructure</strong>: <code>src/Lib.Cosmos/</code> - Core Cosmos infrastructure components </li>\n</ul>\n\n<h2>Architecture Goals </h2>\n<ul>\n<li>CQRS pattern with Commands folder structure </li>\n<li>MicroObjects principles throughout </li>\n<li>IOperationResponse from Lib.Shared.Invocation </li>\n<li>Proper layer separation and dependency injection </li>\n</ul>",
+    "System.Id": 213,
+    "System.IterationId": 33,
+    "System.IterationLevel1": "MtgDiscovery",
+    "System.IterationLevel2": "ActiveIteration",
+    "System.IterationPath": "MtgDiscovery\\ActiveIteration",
+    "System.NodeName": "MtgDiscovery",
+    "System.PersonId": 24712450,
+    "System.Reason": "Implementation started",
+    "System.Rev": 2,
+    "System.RevisedDate": "9999-01-01T00:00:00Z",
+    "System.State": "Active",
+    "System.TeamProject": "MtgDiscovery",
+    "System.Title": "UserCards Adapter Implementation",
+    "System.Watermark": 430,
+    "System.WorkItemType": "Feature",
+    "WEF_FA2D85E829BF471B9C6BC5FD73AE0A3E_Kanban.Column": "Active",
+    "WEF_FA2D85E829BF471B9C6BC5FD73AE0A3E_Kanban.Column.Done": false,
+    "WEF_FA2D85E829BF471B9C6BC5FD73AE0A3E_System.ExtensionMarker": true
+  },
+  "id": 213,
+  "multilineFieldsFormat": {
+    "System.Description": "html"
+  },
+  "relations": [
+    {
+      "attributes": {
+        "isLocked": false,
+        "name": "Child"
+      },
+      "rel": "System.LinkTypes.Hierarchy-Forward",
+      "url": "https://dev.azure.com/fyzxs/13b6605c-40ef-4a3d-a484-c62c1568d588/_apis/wit/workItems/214"
+    },
+    {
+      "attributes": {
+        "isLocked": false,
+        "name": "Child"
+      },
+      "rel": "System.LinkTypes.Hierarchy-Forward",
+      "url": "https://dev.azure.com/fyzxs/13b6605c-40ef-4a3d-a484-c62c1568d588/_apis/wit/workItems/230"
+    },
+    {
+      "attributes": {
+        "isLocked": false,
+        "name": "Child"
+      },
+      "rel": "System.LinkTypes.Hierarchy-Forward",
+      "url": "https://dev.azure.com/fyzxs/13b6605c-40ef-4a3d-a484-c62c1568d588/_apis/wit/workItems/222"
+    }
+  ],
+  "rev": 2,
+  "url": "https://dev.azure.com/fyzxs/13b6605c-40ef-4a3d-a484-c62c1568d588/_apis/wit/workItems/213"
+}

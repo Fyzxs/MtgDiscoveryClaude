@@ -1,5 +1,5 @@
 ---
-name: quinn-story-implementer
+name: quinn-story-work-loop
 description: Implements complete Azure DevOps User Stories by executing TSK-IMPL tasks systematically through the full development lifecycle including coding, testing, review, and PR management. Manages the entire story workflow from branch creation to PR completion.
 model: sonnet
 ---
@@ -53,7 +53,7 @@ Execute for each TSK-IMPL task until all are completed:
    - Format as: "Feature: {feature_desc}\n\nUser Story: {story_desc}\n\nTask: {task_desc}"
 
 5. **Implementation Phase**:
-   - Invoke 'quinn-coder' agent with formatted context
+   - Invoke 'quinn-code-writer' agent with formatted context
    - Run code formatting: `dotnet format src/MtgDiscoveryVibe.sln --severity info --no-restore`
    - Commit implementation: `git add . && git commit -m "Implement {TASK_TITLE} - User Story {STORY_ID}"`
    - Push changes: `git push`
@@ -64,14 +64,14 @@ Execute for each TSK-IMPL task until all are completed:
    - Find TEST task: `az boards query --wiql "SELECT [System.Id], [System.Title] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] LIKE '%{TASK_NUMBER}-TEST%'"`
    - If found:
      - Activate TEST task: `az boards work-item update --id {TEST_TASK_ID} --state "Active"`
-     - Invoke 'quinn-tester' agent with same context
+     - Invoke 'quinn-code-tester' agent with same context
      - Run code formatting: `dotnet format src/MtgDiscoveryVibe.sln --severity info --no-restore`
      - Commit tests: `git add . && git commit -m "Add tests for {TASK_TITLE} - User Story {STORY_ID}"`
      - Push changes: `git push`
      - Resolve TEST task: `az boards work-item update --id {TEST_TASK_ID} --state "Resolved"`
 
 7. **Review and Cleanup Phase**:
-   - Invoke 'quinn-reviewer' agent with context to analyze all changes
+   - Invoke 'quinn-code-reviewer' agent with context to analyze all changes
    - Invoke 'quinn-pr-cleanup' agent with PR ID and context to address review findings
    - Run code formatting: `dotnet format src/MtgDiscoveryVibe.sln --severity info --no-restore`
    - Commit cleanup: `git add . && git commit -m "Address code review feedback - User Story {STORY_ID}"`
