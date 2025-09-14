@@ -34,8 +34,9 @@ BEFORE STARTING:
 6. Create feature branch: `git checkout -b "feature/{STORY_ID}-{sanitized-story-title}"`
 7. Push branch to origin: `git push -u origin "feature/{STORY_ID}-{sanitized-story-title}"`
 8. Create draft PR: `az repos pr create --source-branch "feature/{STORY_ID}-{sanitized-story-title}" --target-branch "main" --title "User Story {STORY_ID}: {STORY_TITLE}" --description "Implements User Story {STORY_ID}" --draft true --output json`
-9. Find Code Review child task: `az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'Code Review'"`
-10. Update Code Review task with PR info: `az boards work-item update --id {CODE_REVIEW_TASK_ID} --description "PR #{PR_NUMBER}: {PR_URL}"`
+9. Link User Story to PR: `az repos pr work-item add --id {PR_ID} --work-items {STORY_ID}`
+10. Find Code Review child task: `az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'Code Review'"`
+11. Update Code Review task with PR info: `az boards work-item update --id {CODE_REVIEW_TASK_ID} --description "PR #{PR_NUMBER}: {PR_URL}"`
 
 **Phase 2: Task Implementation Loop**
 Execute for each TSK-IMPL task until all are completed:
@@ -84,8 +85,10 @@ Execute for each TSK-IMPL task until all are completed:
 1. Invoke 'quinn-pr-finalizer' agent with PR ID for comprehensive validation
 2. Resolve Code Review task: `az boards work-item update --id {CODE_REVIEW_TASK_ID} --state "Resolved"`
 3. Resolve User Story: `az boards work-item update --id {STORY_ID} --state "Resolved"`
-4. Activate PR for review: `az repos pr update --id {PR_ID} --draft false --auto-complete true`
-5. Complete TodoWrite with final status
+4. Activate PR for review: `az repos pr update --id {PR_ID} --draft false --auto-complete false`
+5. Find User Approval task: `az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'User Approval'"`
+6. Set User Approval to Active: `az boards work-item update --id {USER_APPROVAL_TASK_ID} --state "Active"`
+7. Complete TodoWrite with final status
 
 ## Error Handling & Recovery
 
@@ -104,17 +107,17 @@ Execute after each critical operation:
 
 ## Agent Integration Points
 
-### Quinn-Coder Integration
+### Quinn-Code-Writer Integration
 - **Input**: Formatted context (Feature + User Story + Task descriptions)
 - **Output**: Implementation code following MicroObjects patterns
 - **Post-Processing**: Automatic code formatting and commit
 
-### Quinn-Tester Integration  
+### Quinn-Code-Tester Integration  
 - **Input**: Same context as implementation phase
 - **Output**: Comprehensive test coverage for implemented features
 - **Post-Processing**: Test execution verification and commit
 
-### Quinn-Reviewer Integration
+### Quinn-Code-Reviewer Integration
 - **Input**: Context + diff analysis of all changes
 - **Output**: Code review findings with emoji categorization
 - **Post-Processing**: PR comments posted to Azure DevOps

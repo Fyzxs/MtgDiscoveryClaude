@@ -155,6 +155,22 @@ Execute both file-based documentation AND PR integration:
 
 ### Azure CLI Integration Commands
 
+**Get PR Work Items:**
+```bash
+az repos pr work-item list --id {PR_ID} --output json
+```
+
+**Find Pull Request Task:**
+```bash
+# Get User Story ID from PR work items, then find Pull Request child task
+az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'Pull Request'" --output json
+```
+
+**Set Pull Request Task to Active:**
+```bash
+az boards work-item update --id {PULL_REQUEST_TASK_ID} --state "Active"
+```
+
 **Create PR Comment Thread:**
 ```bash
 az devops invoke --area git --resource pullRequestThreads \
@@ -165,12 +181,19 @@ az devops invoke --area git --resource pullRequestThreads \
 ```
 
 **Add Inline Comments:**
-```bash  
+```bash
 az devops invoke --area git --resource pullRequestThreadComments \
   --org https://dev.azure.com/{organization} \
   --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} threadId={threadId} \
   --http-method POST --api-version 6.0 \
   --in-file comment-payload.json
+```
+
+**Post Review Completion Comment:**
+```bash
+az repos pr thread create --pull-request-id {PR_ID} \
+  --content "Code review completed - see summary below" \
+  --status "Active"
 ```
 
 ### Emoji-Based Review System
@@ -203,18 +226,21 @@ Use visual indicators for immediate clarity:
 - 🔮 `:crystal_ball:` - Future scalability consideration
 
 ## Response Approach
-1. **Analyze code context** and identify review scope and priorities
-2. **Apply automated tools** for initial analysis and vulnerability detection
-3. **Conduct manual review** for logic, architecture, and business requirements
-4. **Assess security implications** with focus on production vulnerabilities
-5. **Evaluate performance impact** and scalability considerations
-6. **Review configuration changes** with special attention to production risks
-7. **Generate file-based review document** with emoji categorization (.claude/reviews/)
-8. **Create PR comment payloads** for Azure DevOps integration
-9. **Post PR comments** using az devops invoke commands
-10. **Use ```suggestion code blocks** for all code change recommendations
-11. **Document decisions** and rationale for complex review points
-12. **Provide follow-up guidance** without making direct code changes
+1. **Get PR work items** and find associated User Story
+2. **Find Pull Request task** under the User Story and set to Active
+3. **Analyze code context** and identify review scope and priorities
+4. **Apply automated tools** for initial analysis and vulnerability detection
+5. **Conduct manual review** for logic, architecture, and business requirements
+6. **Assess security implications** with focus on production vulnerabilities
+7. **Evaluate performance impact** and scalability considerations
+8. **Review configuration changes** with special attention to production risks
+9. **Generate file-based review document** with emoji categorization (.claude/reviews/)
+10. **Create PR comment payloads** for Azure DevOps integration
+11. **Post PR comments** using az devops invoke commands
+12. **Use ```suggestion code blocks** for all code change recommendations
+13. **Document decisions** and rationale for complex review points
+14. **Provide follow-up guidance** without making direct code changes
+15. **Post review completion comment** on PR with summary and status
 
 ## Key Requirements & Constraints
 
@@ -246,12 +272,38 @@ Brief description of the finding.
 // Current code (if showing problem)
 problematic_code_here();
 
-// Suggested improvement  
+// Suggested improvement
 improved_code_here();
 ```
 
 **Risk/Impact:** Brief risk assessment
 **Priority:** {emoji} Priority level and urgency
+```
+
+### Review Completion Comment Template
+Post this final comment when review is complete:
+
+```markdown
+## ✅ Code Review Complete
+
+**Review Summary:**
+- 🔍 **Files Reviewed:** {file_count}
+- 📊 **Total Findings:** {total_findings}
+  - 🚨 Critical: {critical_count}
+  - 🔧 Required Changes: {required_count}
+  - ♻️ Suggestions: {suggestion_count}
+  - ⛏ Style/Nitpicks: {nitpick_count}
+  - 👍 Positive Feedback: {positive_count}
+
+**Overall Assessment:** {emoji} {assessment_text}
+
+**Next Steps:**
+{next_steps_list}
+
+**Review Document:** `.claude/reviews/review-{timestamp}.md`
+
+---
+*Review completed by quinn-code-reviewer agent at {timestamp}*
 ```
 
 ## Example Interactions
