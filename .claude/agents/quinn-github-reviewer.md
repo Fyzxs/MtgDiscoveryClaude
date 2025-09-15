@@ -155,105 +155,6 @@ Execute both file-based documentation AND PR integration:
    - Use emoji visual indicators for quick assessment
    - NEVER make direct code changes - only suggestions
 
-### GitHub CLI Integration Commands
-
-**Get PR Information:**
-```bash
-gh pr view {PR_NUMBER} --json number,title,state,files,author
-```
-
-**List PR Files:**
-```bash
-gh pr diff {PR_NUMBER} --name-only
-```
-
-**View PR Diff:**
-```bash
-gh pr diff {PR_NUMBER}
-```
-
-**Check PR Status:**
-```bash
-gh pr status
-```
-
-**Create General PR Comment:**
-```bash
-gh pr comment {PR_NUMBER} --body "Review comment content"
-```
-
-**Create Review with Comments:**
-```bash
-# Start a review
-gh pr review {PR_NUMBER} --comment --body "Starting code review..."
-
-# Add inline comments during review
-gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments \
-  --method POST \
-  --field path="{file_path}" \
-  --field line={line_number} \
-  --field side="RIGHT" \
-  --field body="{comment_content}"
-
-# Submit the review
-gh pr review {PR_NUMBER} --comment --body "Review summary..."
-```
-
-**Create Inline Comment on Specific Line:**
-```bash
-gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments \
-  --method POST \
-  --field path="{file_path}" \
-  --field line={line_number} \
-  --field side="RIGHT" \
-  --field body="{emoji} **{title}**
-
-{description}
-
-\`\`\`suggestion
-{suggested_code}
-\`\`\`
-
-**Risk/Impact:** {risk_assessment}
-**Priority:** {priority}"
-```
-
-**Create Review Comment with Multiple Files:**
-```bash
-# Create review comment JSON
-cat > review-comments.json << 'EOF'
-{
-  "body": "Review summary message",
-  "event": "COMMENT",
-  "comments": [
-    {
-      "path": "src/file1.js",
-      "line": 42,
-      "side": "RIGHT",
-      "body": "🔧 This needs fixing..."
-    },
-    {
-      "path": "src/file2.js",
-      "line": 15,
-      "side": "RIGHT",
-      "body": "♻️ Consider refactoring..."
-    }
-  ]
-}
-EOF
-
-# Submit the review with all comments
-gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/reviews \
-  --method POST \
-  --input review-comments.json
-```
-
-**Get Repository Info:**
-```bash
-# Get owner and repo from current directory
-gh repo view --json owner,name
-```
-
 ### Emoji-Based Review System
 Use visual indicators for immediate clarity:
 
@@ -301,26 +202,10 @@ Use visual indicators for immediate clarity:
 
 ### Phase 3: Documentation & PR Comments (EXECUTE BOTH)
 11. **Generate file-based review document** with emoji categorization (.claude/reviews/)
-12. **Create inline comments** for each finding:
-    ```bash
-    # Example: For each finding, post inline comment
-    gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments \
-      --method POST \
-      --field path="src/UserController.cs" \
-      --field line=42 \
-      --field side="RIGHT" \
-      --field body="🔧 **Null Check Missing**
-
-This method doesn't check for null before accessing the object.
-
-\`\`\`suggestion
-if (user == null) return NotFound();
-return Ok(user.Name);
-\`\`\`
+12. **Create inline comments** for each finding
 
 **Risk/Impact:** Potential NullReferenceException
-**Priority:** 🔧 Required fix"
-    ```
+**Priority:** 🔧 Required fix
 13. **Use ```suggestion code blocks** for all code change recommendations
 14. **Document decisions** and rationale for complex review points
 
