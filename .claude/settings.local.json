@@ -61,8 +61,8 @@
       "Bash(az repos pr thread list:*)",
       "Bash(az account show:*)",
       "Bash(az repos pr list:*)",
-      "Bash(python3:*)",
-      "Bash(/dev/null)"
+      "Bash(git log:*)",
+      "Bash(dotnet list:*)"
     ],
     "deny": [],
     "ask": []
