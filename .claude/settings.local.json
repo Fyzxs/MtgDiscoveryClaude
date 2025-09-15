@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Read(/dev/pts/**)",
       "Bash(cat:*)",
       "Bash(daic)",
       "Bash(dotnet build:*)",
@@ -34,7 +33,6 @@
       "Bash(rm:*)",
       "Bash(tree:*)",
       "Bash(chmod:*)",
-      "Bash(./FEATURE_UserCards_Adapter_Implementation_AzDO_Create.sh:*)",
       "Bash(az boards work-item show:*)",
       "Bash(az devops configure:*)",
       "Bash(az boards work-item list:*)",
@@ -50,14 +48,12 @@
       "Bash(git commit:*)",
       "Bash(az repos pr update:*)",
       "Bash(az repos pr work-item add:*)",
-      "Bash(quinn-code-writer \"Feature: UserCards Adapter Implementation - Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user''s collection, following the established CQRS pattern with Commands folder structure.\n\nUser Story: Define the core interfaces for the UserCards adapter service. This includes the main composite interface and specialized command interface following established adapter patterns. Main composite interface IUserCardsAdapterService defined. Specialized interface IUserCardsCommandAdapter defined. Interfaces follow established patterns with proper documentation. Composite interface pattern inheriting from specialized interfaces. XML documentation explaining design decisions. Public interface for aggregator layer consumption. Command operations using IOperationResponse pattern.\n\nTask: TSK-IMPL 3: Create Main Adapter Interface. Location: src/Lib.Adapter.UserCards/Apis/IUserCardsAdapterService.cs. Reference: Copy from src/Lib.Adapter.User/Apis/IUserAdapterService.cs:1-30. Pattern: Composite interface pattern inheriting from specialized interfaces. Modifications: Replace User with UserCards, inherit from IUserCardsCommandAdapter, update documentation.\")",
       "Bash(az repos pr show:*)",
       "Bash(git fetch:*)",
       "Bash(tee:*)",
       "Bash(dotnet test:*)",
       "Bash(az repos pr comment create:*)",
       "Bash(az devops invoke:*)",
-      "Bash(quinn-code-writer \"Feature: Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user''s collection, following the established CQRS pattern with Commands folder structure. UserCards Cosmos schema: {partition: userId, id: cardId, cardId: card.Id, userId: user.Id, setId: card.set.Id, collected: [{finish: {nonfoil|foil|etched}, special: {none|altered|signed|proof}, count: {count}}]}\n\nUser Story: Create the Cosmos DB document model for UserCards data storage, including the main item class and nested collection structure. UserCardItem class defined in Cosmos adapter project, follows established Item patterns, properties match schema requirements. Inherits from CosmosItem base class, JsonProperty attributes for property naming, CollectedItem nested class for collection data, proper partition key and ID override.\n\nTask: Create UserCardItem Class at src/Lib.Adapter.Scryfall.Cosmos/Apis/CosmosItems/UserCardItem.cs. Reference src/Lib.Adapter.Scryfall.Cosmos/Apis/CosmosItems/UserInfoItem.cs. Inherits from CosmosItem base class, override Id and Partition properties, use JsonProperty attributes, init setters. Properties: UserId (json_property user_id), CardId (json_property card_id), SetId (json_property set_id), CollectedList (json_property collected, type: List<CollectedItem>). Id property returns CardId value, Partition property returns UserId value.\")",
       "Bash(az repos pr work-item:*)",
       "Bash(az repos show:*)",
       "Bash(az repos pr comment list:*)",
@@ -65,12 +61,8 @@
       "Bash(az repos pr thread list:*)",
       "Bash(az account show:*)",
       "Bash(az repos pr list:*)",
-      "Bash(echo \"quinn-code-writer: Implementation of TSK-IMPL 7: Create Container Name Primitive\n\nFeature: Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user''s collection, following the established CQRS pattern with Commands folder structure. The adapter layer follows established patterns from existing adapters (Cards, Artists, Sets, User) and integrates with the Lib.Cosmos infrastructure layer.\n\nUser Story: Create the Cosmos DB container infrastructure components including container definition, adapter, and name primitive. Acceptance Criteria: Container definition created with proper partition key, Container adapter created for Cosmos operations, Container name primitive created.\n\nTask: Implementation task for Create Container Name Primitive following Cosmos infrastructure patterns.\n\nContext: This is for UserCards Cosmos container infrastructure following patterns in src/Lib.Cosmos/ for container name primitives.\")",
-      "Bash(quinn-code-writer \"Feature: Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user''s collection, following the established CQRS pattern with Commands folder structure. The adapter layer follows established patterns from existing adapters (Cards, Artists, Sets, User) and integrates with the Lib.Cosmos infrastructure layer.\n\nUser Story: Create the Cosmos DB container infrastructure components including container definition, adapter, and name primitive. Acceptance Criteria: Container definition created with proper partition key, Container adapter created for Cosmos operations, Container name primitive created.\n\nTask: Implementation task for Create Container Name Primitive following Cosmos infrastructure patterns.\n\nContext: This is for UserCards Cosmos container infrastructure following patterns in src/Lib.Cosmos/ for container name primitives.\")",
-      "Bash(agents invoke quinn-code-writer )",
-      "Bash(\"Feature: Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user''s collection, following the established CQRS pattern with Commands folder structure. \n\nUserCards Cosmos schema has been defined:\nUserCards\n{\n  partition: userId\n  id: cardId\n  cardId: card.Id\n  userId: user.Id\n  setId: card.set.Id\n  collected: [\n    {\n      finish: {nonfoil|foil|etched}\n      special: {none|altered|signed|proof}\n      count: {count}\n    }\n  ]\n}\n\nThe adapter layer follows established patterns from existing adapters (Cards, Artists, Sets, User) and integrates with the Lib.Cosmos infrastructure layer.\n\nPattern Reference: src/Lib.Adapter.User/ - Use as primary template for adapter structure\nCQRS Reference: src/Lib.Adapter.Cards/ - Reference for CQRS folder structure (Queries folder)\nCosmos Integration: src/Lib.Adapter.Scryfall.Cosmos/ - Where Cosmos Items and operators live\nInfrastructure: src/Lib.Cosmos/ - Core Cosmos infrastructure components\n\nArchitecture Goals:\n- CQRS pattern with Commands folder structure\n- MicroObjects principles throughout\n- IOperationResponse from Lib.Shared.Invocation\n- Proper layer separation and dependency injection\n\nUser Story: Implementation of Implement UserCards Command Adapter following established adapter patterns and MicroObjects principles.\n\nAcceptance Criteria:\n- Implementation follows established patterns\n- All tests pass\n- Code quality meets standards\n\nTask: Implementation task 1 for Implement UserCards Command Adapter.\")",
       "Bash(git log:*)",
-      "Bash(dotnet list src/Lib.Adapter.UserCards/Lib.Adapter.UserCards.csproj package --outdated)"
+      "Bash(dotnet list:*)"
     ],
     "deny": [],
     "ask": []

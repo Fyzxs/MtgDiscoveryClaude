@@ -26,5 +26,5 @@ public interface IUserCardCollectionItrEntity
     /// <summary>
     /// The list of collected versions of this card with quantities and finishes.
     /// </summary>
-    IEnumerable<ICollectedCardItrEntity> CollectedList { get; }
+    ICollection<ICollectedItemItrEntity> CollectedList { get; }
 }
