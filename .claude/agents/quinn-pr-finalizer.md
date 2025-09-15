@@ -203,15 +203,45 @@ az devops invoke --area git --resource pullRequests \
 ```
 
 ### Post Validation Comments
+
+**Create Inline Comment on Specific File/Line:**
 ```bash
-# Post file-specific violation comments
+# Create inline violation comment JSON
+cat > inline-violation.json << 'EOF'
+{
+  "comments": [
+    {
+      "parentCommentId": 0,
+      "content": "{emoji} **{VIOLATION_TYPE}**: {Brief description}\n\n**Issue:** {Detailed explanation}\n**Standard:** {Reference to guide}\n\n```suggestion\n{suggested_fix}\n```\n\n**Priority:** {priority_emoji} {priority_level}",
+      "commentType": 1
+    }
+  ],
+  "status": 1,
+  "threadContext": {
+    "filePath": "/{relative_file_path}",
+    "rightFileStart": {
+      "line": {violation_line},
+      "offset": 1
+    },
+    "rightFileEnd": {
+      "line": {violation_line_end},
+      "offset": 1
+    }
+  }
+}
+EOF
+
+# Post the inline violation comment
 az devops invoke --area git --resource pullRequestThreads \
   --org https://dev.azure.com/{organization} \
   --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} \
   --http-method POST --api-version 6.0 \
-  --in-file violation-comment.json
+  --in-file inline-violation.json
+```
 
-# Post general summary comment
+**Post General Summary Comment:**
+```bash
+# Post general summary comment (not file-specific)
 az devops invoke --area git --resource pullRequestThreads \
   --org https://dev.azure.com/{organization} \
   --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} \
@@ -249,20 +279,19 @@ az boards work-item update --id {PULL_REQUEST_TASK_ID} --state "Resolved"
 
 ### Phase 3: Reporting & PR Updates (< 30 seconds)
 1. **Generate Reports** - Compile all validation results
-2. **Post Comments** - File-specific violation comments with emojis
+2. **Post Inline Comments** - File-specific violation comments directly on code lines
 3. **Update PR Template** - Check off passed items, update status section
-4. **Summary Comment** - Overall validation status and next steps
+4. **Summary Comment** - Overall validation status referencing inline comments
 5. **Final Completion Comment** - Post validation complete notification on PR
 6. **Resolve Pull Request Task** - Set Pull Request work item to Resolved
 
 ## Comment Format Standards
 
-### Violation Comments
+### Violation Comments (Posted as Inline Comments)
 ```markdown
 {emoji} **{VIOLATION_TYPE}**: {Brief description}
 
 **Issue:** {Detailed explanation of the problem}
-**Location:** Line {line_number}
 **Standard:** {Reference to coding standard or guide}
 
 ```suggestion
@@ -274,6 +303,8 @@ az boards work-item update --id {PULL_REQUEST_TASK_ID} --state "Resolved"
 **Action Required:** {Specific steps to resolve}
 **Priority:** {🚨 Critical | ⚠️ Important | ⛏ Minor}
 ```
+
+**Note:** These violations are posted directly on the affected file and line using the threadContext API for precise location.
 
 ### Summary Comment Template
 ```markdown
