@@ -1,0 +1,4 @@
+{
+  "content": "✅ **IMPLEMENTED**: Default Empty Collection Added\n\n**Changes Made:**\n```diff\n- [JsonProperty(\"collected\")]\n- public IEnumerable<CollectedItem> CollectedList { get; init; }\n+ /// <summary>\n+ /// The list of collected versions of this card with quantities and finishes.\n+ /// </summary>\n+ [JsonProperty(\"collected\")]\n+ public IEnumerable<CollectedItem> CollectedList { get; init; } = [];\n```\n\n**Impact:** Eliminates potential null reference exceptions by ensuring the collection is always initialized. This provides safer default behavior when the property is not explicitly set.\n\n**Verification:** Tests continue to pass, and new instances will have an empty collection rather than null.",
+  "parentCommentId": 1
+}
