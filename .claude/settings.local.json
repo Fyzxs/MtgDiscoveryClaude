@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Read(/dev/pts/**)",
       "Bash(cat:*)",
       "Bash(daic)",
       "Bash(dotnet build:*)",
@@ -34,7 +33,6 @@
       "Bash(rm:*)",
       "Bash(tree:*)",
       "Bash(chmod:*)",
-      "Bash(./FEATURE_UserCards_Adapter_Implementation_AzDO_Create.sh:*)",
       "Bash(az boards work-item show:*)",
       "Bash(az devops configure:*)",
       "Bash(az boards work-item list:*)",
@@ -50,13 +48,21 @@
       "Bash(git commit:*)",
       "Bash(az repos pr update:*)",
       "Bash(az repos pr work-item add:*)",
-      "Bash(quinn-code-writer \"Feature: UserCards Adapter Implementation - Implementation of UserCards adapter layer for managing user card collections in Cosmos DB. This adapter will handle write operations (Scribe) for adding cards to a user''s collection, following the established CQRS pattern with Commands folder structure.\n\nUser Story: Define the core interfaces for the UserCards adapter service. This includes the main composite interface and specialized command interface following established adapter patterns. Main composite interface IUserCardsAdapterService defined. Specialized interface IUserCardsCommandAdapter defined. Interfaces follow established patterns with proper documentation. Composite interface pattern inheriting from specialized interfaces. XML documentation explaining design decisions. Public interface for aggregator layer consumption. Command operations using IOperationResponse pattern.\n\nTask: TSK-IMPL 3: Create Main Adapter Interface. Location: src/Lib.Adapter.UserCards/Apis/IUserCardsAdapterService.cs. Reference: Copy from src/Lib.Adapter.User/Apis/IUserAdapterService.cs:1-30. Pattern: Composite interface pattern inheriting from specialized interfaces. Modifications: Replace User with UserCards, inherit from IUserCardsCommandAdapter, update documentation.\")",
       "Bash(az repos pr show:*)",
       "Bash(git fetch:*)",
       "Bash(tee:*)",
       "Bash(dotnet test:*)",
       "Bash(az repos pr comment create:*)",
-      "Bash(az devops invoke:*)"
+      "Bash(az devops invoke:*)",
+      "Bash(az repos pr work-item:*)",
+      "Bash(az repos show:*)",
+      "Bash(az repos pr comment list:*)",
+      "Bash(az login:*)",
+      "Bash(az repos pr thread list:*)",
+      "Bash(az account show:*)",
+      "Bash(az repos pr list:*)",
+      "Bash(git log:*)",
+      "Bash(dotnet list:*)"
     ],
     "deny": [],
     "ask": []
