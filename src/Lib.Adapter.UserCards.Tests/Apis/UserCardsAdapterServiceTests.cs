@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AwesomeAssertions;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
-using AwesomeAssertions;
 
 namespace Lib.Adapter.UserCards.Tests.Apis;
 

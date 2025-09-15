@@ -7,7 +7,7 @@ using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Adapter.User.Persistence;
+namespace Lib.Adapter.User.Commands;
 
 /// <summary>
 /// Cosmos DB implementation of the user persistence adapter.
@@ -16,14 +16,14 @@ namespace Lib.Adapter.User.Persistence;
 /// implementing the specialized IUserPersistenceAdapter interface.
 /// The main UserAdapterService delegates to this implementation.
 /// </summary>
-internal sealed class UserCosmosPersistenceAdapter : IUserPersistenceAdapter
+internal sealed class UserCosmosCommandAdapter : IUserCommandAdapter
 {
     private readonly UserInfoScribe _userInfoScribe;
 
-    public UserCosmosPersistenceAdapter(ILogger logger) : this(new UserInfoScribe(logger))
+    public UserCosmosCommandAdapter(ILogger logger) : this(new UserInfoScribe(logger))
     { }
 
-    private UserCosmosPersistenceAdapter(UserInfoScribe userInfoScribe)
+    private UserCosmosCommandAdapter(UserInfoScribe userInfoScribe)
     {
         _userInfoScribe = userInfoScribe;
     }
