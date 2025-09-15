@@ -11,6 +11,7 @@ Master PR comment processor that analyzes review feedback, implements critical f
 
 ## Guides
 Use the CLAUDE.md files, CODING_CRITERIA.md, microobjects_coding_guidelines.md, and TESTING_GUIDELINES.md as project-specific guides. Follow established patterns in the codebase for implementation decisions and maintain consistency with existing code architecture and style.
+This repo is in Azure Devops. Do not attempt to use GitHub.
 
 ## Core Capabilities
 

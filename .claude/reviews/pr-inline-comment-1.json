@@ -1,0 +1,23 @@
+{
+  "comments": [
+    {
+      "parentCommentId": 0,
+      "content": "🔧 **Direct Logger Instantiation Violates Dependency Injection Pattern**\n\nDirect instantiation of `UserCardsScribe` within the constructor violates the \"No New Inline\" MicroObjects principle and prevents proper unit testing with mock scribes.\n\n```suggestion\npublic UserCardsCommandAdapter(ILogger logger) : this(logger, new UserCardsScribe(logger))\n{ }\n\nprivate UserCardsCommandAdapter(ILogger logger, IUserCardsScribe userCardsScribe)\n{\n    _logger = logger;\n    _userCardsScribe = userCardsScribe;\n}\n```\n\nThis pattern is used in other adapters like `UserAdapterService` and allows for better testability.\n\n**Risk/Impact:** Medium - Makes unit testing harder and violates established dependency injection patterns\n**Priority:** 🔧 Required for maintainability and testability",
+      "commentType": "text"
+    }
+  ],
+  "status": "active",
+  "threadContext": {
+    "filePath": "/src/Lib.Adapter.UserCards/Commands/UserCardsCommandAdapter.cs",
+    "leftFileStart": null,
+    "leftFileEnd": null,
+    "rightFileStart": {
+      "line": 38,
+      "offset": 1
+    },
+    "rightFileEnd": {
+      "line": 42,
+      "offset": 1
+    }
+  }
+}
