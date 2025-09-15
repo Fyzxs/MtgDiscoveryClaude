@@ -8,6 +8,7 @@
     <ProjectReference Include="..\Lib.Domain.Sets\Lib.Domain.Sets.csproj" />
     <ProjectReference Include="..\Lib.Domain.Artists\Lib.Domain.Artists.csproj" />
     <ProjectReference Include="..\Lib.Domain.User\Lib.Domain.User.csproj" />
+    <ProjectReference Include="..\Lib.Domain.UserCards\Lib.Domain.UserCards.csproj" />
   </ItemGroup>
 
 </Project>
