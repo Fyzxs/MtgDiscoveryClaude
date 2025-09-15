@@ -45,7 +45,7 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new CollectedCardItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
+            CollectedList = new[] { new CollectedItemItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
         };
 
         // Act
@@ -64,7 +64,7 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedCardItrEntity collectedCard = new CollectedCardItrEntityFake
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
@@ -98,7 +98,7 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedCardItrEntity collectedCard = new CollectedCardItrEntityFake
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "foil",
             Special = "altered",
@@ -172,7 +172,7 @@ internal sealed class LoggerFake : ILogger
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter) { }
 }
 
-internal sealed class CollectedCardItrEntityFake : ICollectedCardItrEntity
+internal sealed class CollectedItemItrEntityFake : ICollectedItemItrEntity
 {
     public string Finish { get; init; }
     public string Special { get; init; }
@@ -184,10 +184,7 @@ internal sealed class UserCardCollectionItrEntityFake : IUserCardCollectionItrEn
     public string UserId { get; init; }
     public string CardId { get; init; }
     public string SetId { get; init; }
-    public IEnumerable<ICollectedCardItrEntity> CollectedList { get; init; }
-
-    ICollection<ICollectedItemItrEntity> IUserCardCollectionItrEntity.CollectedList =>
-        CollectedList?.Cast<ICollectedItemItrEntity>().ToList() ?? new List<ICollectedItemItrEntity>();
+    public ICollection<ICollectedItemItrEntity> CollectedList { get; init; }
 }
 
 internal sealed class UserCardsScribeFake : IUserCardsScribe

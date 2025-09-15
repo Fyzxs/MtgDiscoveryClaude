@@ -44,7 +44,7 @@ public sealed class UserCardsAdapterServiceTests
         ILogger logger = new LoggerFake();
         UserCardsAdapterService service = new(logger);
 
-        ICollectedCardItrEntity collectedCard = new CollectedCardItrEntityFake
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
@@ -79,7 +79,7 @@ internal sealed class LoggerFake : ILogger
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter) { }
 }
 
-internal sealed class CollectedCardItrEntityFake : ICollectedCardItrEntity
+internal sealed class CollectedItemItrEntityFake : ICollectedItemItrEntity
 {
     public string Finish { get; init; }
     public string Special { get; init; }
@@ -91,8 +91,5 @@ internal sealed class UserCardCollectionItrEntityFake : IUserCardCollectionItrEn
     public string UserId { get; init; }
     public string CardId { get; init; }
     public string SetId { get; init; }
-    public IEnumerable<ICollectedCardItrEntity> CollectedList { get; init; }
-
-    ICollection<ICollectedItemItrEntity> IUserCardCollectionItrEntity.CollectedList =>
-        CollectedList?.Cast<ICollectedItemItrEntity>().ToList() ?? new List<ICollectedItemItrEntity>();
+    public ICollection<ICollectedItemItrEntity> CollectedList { get; init; }
 }
