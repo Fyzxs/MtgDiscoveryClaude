@@ -1,4 +1,4 @@
-namespace Lib.Adapter.UserCards.Apis;
+﻿namespace Lib.Adapter.UserCards.Apis;
 
 /// <summary>
 /// Main adapter service interface for user card collection operations.
