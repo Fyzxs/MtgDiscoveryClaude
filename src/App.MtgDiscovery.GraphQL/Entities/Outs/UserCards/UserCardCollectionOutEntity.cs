@@ -9,10 +9,3 @@ public sealed class UserCardCollectionOutEntity
     public string SetId { get; init; }
     public ICollection<CollectedItemOutEntity> CollectedList { get; init; }
 }
-
-public sealed class CollectedItemOutEntity
-{
-    public string Finish { get; init; }
-    public string Special { get; init; }
-    public int Count { get; init; }
-}
