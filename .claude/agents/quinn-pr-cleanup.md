@@ -112,6 +112,41 @@ az devops invoke --area git --resource pullRequestThreadComments \
   --in-file response-comment.json
 ```
 
+### Create Inline Comment for Code Changes
+```bash
+# Create inline comment JSON for implemented fixes
+cat > inline-fix-comment.json << 'EOF'
+{
+  "comments": [
+    {
+      "parentCommentId": 0,
+      "content": "✅ **FIXED**: {Description of fix}\n\n```diff\n- {old_code}\n+ {new_code}\n```\n\n**Verification:** {How to verify the fix}",
+      "commentType": 1
+    }
+  ],
+  "status": 5,
+  "threadContext": {
+    "filePath": "/{relative_file_path}",
+    "rightFileStart": {
+      "line": {start_line},
+      "offset": 1
+    },
+    "rightFileEnd": {
+      "line": {end_line},
+      "offset": 1
+    }
+  }
+}
+EOF
+
+# Post the inline comment showing the fix
+az devops invoke --area git --resource pullRequestThreads \
+  --org https://dev.azure.com/{organization} \
+  --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} \
+  --http-method POST --api-version 6.0 \
+  --in-file inline-fix-comment.json
+```
+
 ### Update Thread Status
 ```bash
 az devops invoke --area git --resource pullRequestThreads \
@@ -131,11 +166,12 @@ az repos pr thread create --pull-request-id {PR_ID} \
 ## Response Templates
 
 ### Implementation Response (When Code Changes Made)
+**For inline comments on specific files:**
 ```markdown
 ✅ **{ACTION_TYPE}**: {Brief description of what was implemented}
 
 **Changes Made:**
-```diff  
+```diff
 - {old code showing the issue}
 + {new code with the fix}
 ```
@@ -144,6 +180,8 @@ az repos pr thread create --pull-request-id {PR_ID} \
 **Verification:** {How to test or verify the change}
 {Additional context if needed}
 ```
+
+**Note:** Post this as an inline comment on the specific file and line where the change was made using the threadContext API.
 
 ### Question Response  
 ```markdown
