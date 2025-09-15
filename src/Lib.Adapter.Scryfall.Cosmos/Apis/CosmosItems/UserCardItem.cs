@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
@@ -19,17 +20,5 @@ public sealed class UserCardItem : CosmosItem
     public string SetId { get; init; }
 
     [JsonProperty("collected")]
-    public List<CollectedItem> CollectedList { get; init; }
-
-    public sealed class CollectedItem
-    {
-        [JsonProperty("finish")]
-        public string Finish { get; init; }
-
-        [JsonProperty("special")]
-        public string Special { get; init; }
-
-        [JsonProperty("count")]
-        public int Count { get; init; }
-    }
+    public IEnumerable<CollectedItem> CollectedList { get; init; }
 }
