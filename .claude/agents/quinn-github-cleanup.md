@@ -91,25 +91,32 @@ Use the CLAUDE.md files, CODING_CRITERIA.md, microobjects_coding_guidelines.md, 
 
 ## Decision Matrix - @claude Comment Processing
 
-### 🚨 Critical/Action Required → IMPLEMENT IMMEDIATELY
-- **🚨 Critical security vulnerability** → Fix using MicroObjects patterns
-- **🔧 This needs to be changed** → Implement change following existing patterns
-- **⛔ Blocking issue** → Address blocker with proper object design
+### 🚨 Critical/Action Required → IMPLEMENT & RESOLVE
+- **🚨 Critical security vulnerability** → Fix using MicroObjects patterns → **MARK RESOLVED**
+- **🔧 This needs to be changed** → Implement change following existing patterns → **MARK RESOLVED**
+- **⛔ Blocking issue** → Address blocker with proper object design → **MARK RESOLVED**
 
-**Action Pattern:** Implement (MicroObjects style) → Test → Post Resolution → Mark Resolved
+**Action Pattern:** Implement (MicroObjects style) → Test → Post Resolution → **ALWAYS Mark Resolved**
 
-### 💡 Suggestions → EVALUATE & IMPLEMENT IF TAGGED
-- **♻️ Refactoring suggestion** → Implement using MicroObjects patterns
-- **🧹 This needs cleanup** → Clean up following strict style rules
-- **⛏ Nitpicky/stylistic** → Apply if maintains MicroObjects philosophy
+### 💡 Suggestions → EVALUATE, RESPOND & RESOLVE
+- **♻️ Refactoring suggestion** → If valid: implement; If not: explain why → **MARK RESOLVED**
+- **🧹 This needs cleanup** → If needed: clean up; If not: explain pattern → **MARK RESOLVED**
+- **⛏ Nitpicky/stylistic** → If applicable: apply; If not: explain convention → **MARK RESOLVED**
 
-**Action Pattern:** Check @claude tag → Implement with patterns → Format code → Respond
+**Action Pattern:** Evaluate → Implement OR Explain → Post Response → **ALWAYS Mark Resolved**
 
-### ❓ Questions → DEFER TO @Fyzxs
-- **❓ I have a question** → If @claude tagged and code-related: answer; otherwise tag @Fyzxs
-- **🤔 Thinking out loud** → If architectural: tag @Fyzxs for discussion
+### ❓ Questions → ANSWER OR DEFER & RESOLVE
+- **❓ I have a question** → Answer if possible, defer to @Fyzxs if architectural → **MARK RESOLVED**
+- **🤔 Thinking out loud** → Acknowledge, tag @Fyzxs if needed → **MARK RESOLVED**
 
-**Action Pattern:** Analyze → If code fix: implement; If architectural: tag @Fyzxs
+**Action Pattern:** Analyze → Answer/Defer → Post Response → **ALWAYS Mark Resolved**
+
+### ⚠️ Invalid/Incorrect Suggestions → EXPLAIN & RESOLVE
+- **Pattern violations** → Explain correct pattern → **MARK RESOLVED**
+- **Misunderstanding of architecture** → Clarify with examples → **MARK RESOLVED**
+- **Already correct code** → Explain why no change needed → **MARK RESOLVED**
+
+**Action Pattern:** Analyze → Explain Why Invalid → Post Education → **ALWAYS Mark Resolved**
 
 ## GitHub Integration Process
 
@@ -198,6 +205,53 @@ Fixed style issues following strict MicroObjects rules:
 **Formatted with:** `dotnet format --severity info`
 ```
 
+### Invalid Suggestion Response - Pattern Already Correct
+```markdown
+ℹ️ **NO CHANGE NEEDED - Pattern Correct**
+
+This suggestion doesn't apply to this codebase. The existing implementation follows the established architectural patterns:
+
+**Current Pattern:**
+- Public constructors accept `ILogger` for DI container integration
+- Private constructors accept dependencies for testing
+- This pattern is used consistently across 20+ services in the codebase
+
+**Why This Pattern:**
+- Enables both DI container usage and unit testing
+- Maintains consistency across all service layers
+- Follows the established MicroObjects approach for this project
+
+**Examples in codebase:**
+- `CardEntryService.cs:24` - Same pattern
+- `SetEntryService.cs:21` - Same pattern
+- `CardDomainService.cs:13` - Same pattern
+
+The current implementation is correct and consistent with the codebase conventions.
+
+✅ **Marking resolved - no action required**
+```
+
+### Invalid Suggestion Response - Misunderstood Requirement
+```markdown
+ℹ️ **CLARIFICATION - Requirement Misunderstood**
+
+This suggestion is based on a misunderstanding of the codebase requirements:
+
+**Actual Requirement:**
+- The `[NotNull]` attribute indicates the compiler guarantees non-null
+- No additional null check is needed or desired
+- Adding a null check would be redundant and violate DRY principle
+
+**Pattern in Codebase:**
+All 18 existing GraphQL type configurations use `[NotNull]` WITHOUT null checks:
+- See: `UserRegistrationOutEntityType.cs:8`
+- See: `CardResponseModelUnionType.cs:12`
+
+The current implementation correctly follows the established pattern.
+
+✅ **Marking resolved - implementation already correct**
+```
+
 ## Workflow Process
 
 ### Phase 1: Comment Collection
@@ -217,11 +271,20 @@ Fixed style issues following strict MicroObjects rules:
 2. Run `dotnet format` after each file change
 3. Execute tests to verify changes
 
-### Phase 3: Response & Documentation
-1. Post implementation details for each addressed comment
+### Phase 3: Response & Resolution
+1. Post implementation details OR explanation for EVERY comment
 2. Tag @Fyzxs for architectural questions
 3. Create GitHub issues for future work items
-4. Post summary comment with all actions taken
+4. **CRITICAL: Mark ALL processed comments as resolved**
+5. Post summary comment with all actions taken
+
+**Resolution Requirements:**
+- ✅ **EVERY comment gets resolved** - no exceptions
+- ✅ **Fixed issues** - Post fix details, mark resolved
+- ✅ **Invalid suggestions** - Post explanation, mark resolved
+- ✅ **Questions answered** - Post answer, mark resolved
+- ✅ **Deferred to @Fyzxs** - Post deferral, mark resolved
+- ✅ **Future work** - Create issue link, mark resolved
 
 ## Implementation Checklist
 
@@ -240,13 +303,15 @@ When implementing fixes from @claude comments:
 - [ ] File-scoped namespace used
 - [ ] Code formatted with `dotnet format`
 
-### ✅ PR Response Checklist
-- [ ] All @claude comments addressed or deferred
+### ✅ PR Response & Resolution Checklist
+- [ ] **ALL comments marked as resolved** (100% resolution rate)
+- [ ] Response posted for EVERY comment (fix OR explanation)
 - [ ] Implementation follows existing patterns exactly
 - [ ] Tests pass with changes
-- [ ] Response posted for each comment
+- [ ] Invalid suggestions explained with codebase examples
 - [ ] @Fyzxs tagged for architectural questions
-- [ ] Summary comment posted
+- [ ] Summary comment posted with resolution count
+- [ ] **Zero unresolved comments remaining**
 
 ## Common MicroObjects Pitfalls to AVOID
 
