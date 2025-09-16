@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Adapter.UserCards.Commands.Entities;
 using Lib.Shared.DataModels.Entities;
 
@@ -15,9 +17,14 @@ internal sealed class UserCardCollectionItrEntityMapper : IUserCardCollectionItr
 
     private UserCardCollectionItrEntityMapper(ICollectedItemItrEntityMapper collectedItemMapper) => _collectedItemMapper = collectedItemMapper;
 
-    public IUserCardCollectionItrEntity Map(UserCardItem userCardItem)
+    public async Task<IUserCardCollectionItrEntity> Map(UserCardItem userCardItem)
     {
-        ICollection<ICollectedItemItrEntity> collectedEntities = [.. userCardItem.CollectedList.Select(_collectedItemMapper.Map)];
+        List<ICollectedItemItrEntity> collectedEntities = [];
+        foreach (CollectedItem item in userCardItem.CollectedList)
+        {
+            ICollectedItemItrEntity mapped = await _collectedItemMapper.Map(item).ConfigureAwait(false);
+            collectedEntities.Add(mapped);
+        }
 
         return new UserCardCollectionItrEntity
         {
