@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.Entities;
 using Lib.Shared.DataModels.Entities;
@@ -9,13 +9,19 @@ internal sealed class AddCardToCollectionArgsToItrMapper : IAddCardToCollectionA
 {
     public Task<IUserCardCollectionItrEntity> Map(IAuthUserArgEntity source1, IAddCardToCollectionArgEntity source2)
     {
+        // Convert single item to collection for pipeline compatibility
+        List<ICollectedItemItrEntity> collectedList = new List<ICollectedItemItrEntity>
+        {
+            MapToCollectedItemItrEntity(source2.CollectedItem)
+        };
+
         // Combine user ID from auth with args data
         return Task.FromResult<IUserCardCollectionItrEntity>(new UserCardCollectionItrEntity
         {
             UserId = source1.UserId,  // Get UserId from JWT auth
             CardId = source2.CardId,
             SetId = source2.SetId,
-            CollectedList = source2.CollectedList.Select(MapToCollectedItemItrEntity).ToList()
+            CollectedList = collectedList
         });
     }
 

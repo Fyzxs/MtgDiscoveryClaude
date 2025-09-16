@@ -22,7 +22,10 @@
     "supportAnsiColors": true
   },
   "request": {
-    "timeout": 30000
+    "timeout": 30000,
+    "https": {
+      "rejectUnauthorized": false
+    }
   },
   "dotenvEnabled": true,
   "dotenvFilename": ".env",

@@ -9,28 +9,11 @@ namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 internal sealed class AddCardToCollectionArgEntityValidatorContainer : ValidatorActionContainer<IAddCardToCollectionArgEntity, IOperationResponse<IUserCardCollectionItrEntity>>, IAddCardToCollectionArgEntityValidator
 {
     public AddCardToCollectionArgEntityValidatorContainer() : base([
-            new HasValidUserIdAddCardToCollectionArgEntityValidator(),
             new HasValidCardIdAddCardToCollectionArgEntityValidator(),
             new HasValidSetIdAddCardToCollectionArgEntityValidator(),
             new HasCollectedListAddCardToCollectionArgEntityValidator(),
         ])
     { }
-}
-
-internal sealed class HasValidUserIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
-{
-    public HasValidUserIdAddCardToCollectionArgEntityValidator() : base(new Validator(), new Message())
-    { }
-
-    public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
-    {
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg) => Task.FromResult(arg.UserId.IzNotNullOrWhiteSpace());
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "User ID cannot be empty";
-    }
 }
 
 internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
@@ -72,11 +55,11 @@ internal sealed class HasCollectedListAddCardToCollectionArgEntityValidator : Op
 
     public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg) => Task.FromResult(arg.CollectedList is not null && 0 < arg.CollectedList.Count);
+        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg) => Task.FromResult(arg.CollectedItem is not null);
     }
 
     public sealed class Message : OperationResponseMessage
     {
-        public override string AsSystemType() => "Must have at least one collected item";
+        public override string AsSystemType() => "Collected item cannot be null";
     }
 }
