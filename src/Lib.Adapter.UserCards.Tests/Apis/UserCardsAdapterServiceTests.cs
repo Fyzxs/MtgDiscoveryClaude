@@ -46,14 +46,14 @@ public sealed class UserCardsAdapterServiceTests
         ILogger logger = new LoggerFake();
         UserCardsAdapterService service = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new FakeCollectedItemItrEntity
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardCollectionItrEntity userCard = new FakeUserCardCollectionItrEntity
+        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",

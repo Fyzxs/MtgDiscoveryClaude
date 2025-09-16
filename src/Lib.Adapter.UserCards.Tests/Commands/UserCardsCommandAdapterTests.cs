@@ -36,17 +36,17 @@ public sealed class UserCardsCommandAdapterTests
     {
         // Arrange
         _ = new LoggerFake();
-        FakeUserCardsScribe scribe = new();
+        UserCardsScribeFake scribe = new();
 
         // Use TypeWrapper to access internal constructor
         UserCardsCommandAdapter adapter = new InstanceWrapper(scribe);
 
-        IUserCardCollectionItrEntity userCard = new FakeUserCardCollectionItrEntity
+        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new FakeCollectedItemItrEntity { Finish = "nonfoil", Special = "none", Count = 1 } }
+            CollectedList = new[] { new CollectedItemItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
         };
 
         // Act
@@ -65,14 +65,14 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new FakeCollectedItemItrEntity
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardCollectionItrEntity userCard = new FakeUserCardCollectionItrEntity
+        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -99,14 +99,14 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new FakeCollectedItemItrEntity
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "foil",
             Special = "altered",
             Count = 2
         };
 
-        IUserCardCollectionItrEntity userCard = new FakeUserCardCollectionItrEntity
+        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
         {
             UserId = "failuser",
             CardId = "failcard",
@@ -130,7 +130,7 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        IUserCardCollectionItrEntity userCard = new FakeUserCardCollectionItrEntity
+        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
         {
             UserId = null, // This should return failure response
             CardId = "card456",

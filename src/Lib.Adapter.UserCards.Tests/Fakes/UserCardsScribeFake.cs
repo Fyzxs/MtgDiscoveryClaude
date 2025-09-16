@@ -4,7 +4,7 @@ using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 
-internal sealed class FakeUserCardsScribe : ICosmosScribe
+internal sealed class UserCardsScribeFake : ICosmosScribe
 {
     public int UpsertAsyncCallCount { get; private set; }
 
@@ -14,13 +14,13 @@ internal sealed class FakeUserCardsScribe : ICosmosScribe
         await Task.CompletedTask.ConfigureAwait(false);
 
         // Return success response with the same item
-        return new FakeOpResponse<T>(item, HttpStatusCode.OK);
+        return new OpResponseFake<T>(item, HttpStatusCode.OK);
     }
 }
 
-internal sealed class FakeOpResponse<T> : OpResponse<T>
+internal sealed class OpResponseFake<T> : OpResponse<T>
 {
-    public FakeOpResponse(T value, HttpStatusCode statusCode)
+    public OpResponseFake(T value, HttpStatusCode statusCode)
     {
         Value = value;
         StatusCode = statusCode;

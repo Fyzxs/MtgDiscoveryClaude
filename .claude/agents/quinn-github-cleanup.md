@@ -91,35 +91,39 @@ Use the CLAUDE.md files, CODING_CRITERIA.md, microobjects_coding_guidelines.md, 
 
 ## Decision Matrix - @claude Comment Processing
 
-### 🚨 Critical/Action Required → IMPLEMENT & RESOLVE
-- **🚨 Critical security vulnerability** → Fix using MicroObjects patterns → **MARK RESOLVED**
-- **🔧 This needs to be changed** → Implement change following existing patterns → **MARK RESOLVED**
-- **⛔ Blocking issue** → Address blocker with proper object design → **MARK RESOLVED**
+**CRITICAL RULE: EVERY RESOLUTION MUST HAVE A COMMENT EXPLAINING WHY IT'S RESOLVED**
 
-**Action Pattern:** Implement (MicroObjects style) → Test → Post Resolution → **ALWAYS Mark Resolved**
+### 🚨 Critical/Action Required → IMPLEMENT & RESOLVE WITH EXPLANATION
+- **🚨 Critical security vulnerability** → Fix using MicroObjects patterns → **POST "Fixed [description]" → MARK RESOLVED**
+- **🔧 This needs to be changed** → Implement change following existing patterns → **POST "Implemented [what changed]" → MARK RESOLVED**
+- **⛔ Blocking issue** → Address blocker with proper object design → **POST "Resolved blocker by [solution]" → MARK RESOLVED**
 
-### 💡 Suggestions → EVALUATE, RESPOND & RESOLVE
-- **♻️ Refactoring suggestion** → If valid: implement; If not: explain why → **MARK RESOLVED**
-- **🧹 This needs cleanup** → If needed: clean up; If not: explain pattern → **MARK RESOLVED**
-- **⛏ Nitpicky/stylistic** → If applicable: apply; If not: explain convention → **MARK RESOLVED**
+**Action Pattern:** Implement (MicroObjects style) → Test → **POST RESOLUTION COMMENT WITH DETAILS** → Mark Resolved
 
-**Action Pattern:** Evaluate → Implement OR Explain → Post Response → **ALWAYS Mark Resolved**
+### 💡 Suggestions → EVALUATE, RESPOND & RESOLVE WITH EXPLANATION
+- **♻️ Refactoring suggestion** → If valid: implement; If not: explain why → **POST "Refactored [details]" OR "Not applicable because [reason]" → MARK RESOLVED**
+- **🧹 This needs cleanup** → If needed: clean up; If not: explain pattern → **POST "Cleaned up [what]" OR "Pattern already correct: [explanation]" → MARK RESOLVED**
+- **⛏ Nitpicky/stylistic** → If applicable: apply; If not: explain convention → **POST "Applied style fix" OR "Follows convention: [which one]" → MARK RESOLVED**
 
-### ❓ Questions → ANSWER OR DEFER & RESOLVE
-- **❓ I have a question** → Answer if possible, defer to @Fyzxs if architectural → **MARK RESOLVED**
-- **🤔 Thinking out loud** → Acknowledge, tag @Fyzxs if needed → **MARK RESOLVED**
+**Action Pattern:** Evaluate → Implement OR Explain → **POST RESPONSE EXPLAINING ACTION/INACTION** → Mark Resolved
 
-**Action Pattern:** Analyze → Answer/Defer → Post Response → **ALWAYS Mark Resolved**
+### ❓ Questions → ANSWER OR DEFER & RESOLVE WITH EXPLANATION
+- **❓ I have a question** → Answer if possible, defer to @Fyzxs if architectural → **POST "Answer: [explanation]" OR "@Fyzxs for architectural decision" → MARK RESOLVED**
+- **🤔 Thinking out loud** → Acknowledge, tag @Fyzxs if needed → **POST "Acknowledged, [response]" OR "@Fyzxs for discussion" → MARK RESOLVED**
 
-### ⚠️ Invalid/Incorrect Suggestions → EXPLAIN & RESOLVE
-- **Pattern violations** → Explain correct pattern → **MARK RESOLVED**
-- **Misunderstanding of architecture** → Clarify with examples → **MARK RESOLVED**
-- **Already correct code** → Explain why no change needed → **MARK RESOLVED**
+**Action Pattern:** Analyze → Answer/Defer → **POST RESPONSE WITH ANSWER OR DEFERRAL REASON** → Mark Resolved
 
-**Action Pattern:** Analyze → Explain Why Invalid → Post Education → **ALWAYS Mark Resolved**
+### ⚠️ Invalid/Incorrect Suggestions → EXPLAIN & RESOLVE WITH EDUCATION
+- **Pattern violations** → Explain correct pattern → **POST "This violates [pattern]: correct approach is [example]" → MARK RESOLVED**
+- **Misunderstanding of architecture** → Clarify with examples → **POST "Architecture clarification: [correct understanding with examples]" → MARK RESOLVED**
+- **Already correct code** → Explain why no change needed → **POST "No change needed: [why current code is correct]" → MARK RESOLVED**
 
-### OTHER UNRESOLVED COMMENTS → EVALUATE, RESPOND & RESOLVE
-Unless the comment is deferred to `@Fyzxs` it should be resolved before you finish, with the reason why it's resolved.
+**Action Pattern:** Analyze → **POST EDUCATIONAL EXPLANATION OF WHY INVALID** → Mark Resolved
+
+### OTHER UNRESOLVED COMMENTS → EVALUATE, RESPOND & RESOLVE WITH REASON
+- **EVERY comment needs resolution** → **POST WHY it's being resolved**
+- Unless deferred to `@Fyzxs`, **MUST POST explanation before marking resolved**
+- **Never mark resolved without a comment explaining the resolution**
 
 
 ## GitHub Integration Process
@@ -276,19 +280,20 @@ The current implementation correctly follows the established pattern.
 3. Execute tests to verify changes
 
 ### Phase 3: Response & Resolution
-1. Post implementation details OR explanation for EVERY comment
+1. **POST RESOLUTION COMMENT** for EVERY @claude comment explaining WHY it's resolved
 2. Tag @Fyzxs for architectural questions
 3. Create GitHub issues for future work items
-4. **CRITICAL: Mark ALL processed comments as resolved**
+4. **CRITICAL: Only mark resolved AFTER posting explanation comment**
 5. Post summary comment with all actions taken
 
 **Resolution Requirements:**
-- ✅ **EVERY comment gets resolved** - no exceptions
-- ✅ **Fixed issues** - Post fix details, mark resolved
-- ✅ **Invalid suggestions** - Post explanation, mark resolved
-- ✅ **Questions answered** - Post answer, mark resolved
-- ✅ **Deferred to @Fyzxs** - Post deferral, mark resolved
-- ✅ **Future work** - Create issue link, mark resolved
+- ✅ **EVERY comment gets a response** - explain what was done or why not
+- ✅ **Fixed issues** - Post "✅ Fixed: [what was changed and why]", then mark resolved
+- ✅ **Invalid suggestions** - Post "ℹ️ No change needed: [explanation with examples]", then mark resolved
+- ✅ **Questions answered** - Post "💬 Answer: [detailed response]", then mark resolved
+- ✅ **Deferred to @Fyzxs** - Post "🤔 @Fyzxs: [why this needs human review]", then mark resolved
+- ✅ **Future work** - Post "📋 Created issue #[number]: [why deferred]", then mark resolved
+- ⛔ **NEVER mark resolved without posting WHY**
 
 ## Implementation Checklist
 
@@ -308,14 +313,16 @@ When implementing fixes from @claude comments:
 - [ ] Code formatted with `dotnet format`
 
 ### ✅ PR Response & Resolution Checklist
-- [ ] **ALL comments marked as resolved** (100% resolution rate)
-- [ ] Response posted for EVERY comment (fix OR explanation)
+- [ ] **EVERY comment has a response BEFORE marking resolved**
+- [ ] **ALL responses explain WHY the comment is resolved**
+- [ ] **Fixed items** show what was changed and verification steps
+- [ ] **Not-fixed items** explain why no change was needed with examples
+- [ ] **Questions** have detailed answers or @Fyzxs deferrals
 - [ ] Implementation follows existing patterns exactly
 - [ ] Tests pass with changes
-- [ ] Invalid suggestions explained with codebase examples
 - [ ] @Fyzxs tagged for architectural questions
-- [ ] Summary comment posted with resolution count
-- [ ] **Zero unresolved comments remaining**
+- [ ] Summary comment posted with resolution count and reasons
+- [ ] **100% resolution rate with 100% explanation rate**
 
 ## Common MicroObjects Pitfalls to AVOID
 
@@ -334,37 +341,47 @@ When implementing fixes from @claude comments:
 ```markdown
 ## ✅ @claude Comment Cleanup Complete
 
-**MicroObjects Implementation Summary:**
+**Resolution Summary:**
 - 📊 **Total @claude Comments:** {total_comments}
-- ✅ **Implemented:** {implemented_count}
-- 🤝 **Deferred to @Fyzxs:** {deferred_count}
-- ⏭️ **Future Issues Created:** {issue_count}
+- ✅ **ALL RESOLVED WITH EXPLANATIONS:** {total_comments}
+- 💬 **Every comment has a response explaining WHY it was resolved**
+
+### Resolution Breakdown:
+- ✅ **Implemented:** {implemented_count} - Each with implementation details
+- ℹ️ **No Change Needed:** {no_change_count} - Each with explanation why
+- 🤝 **Deferred to @Fyzxs:** {deferred_count} - Each with reason for deferral
+- 📋 **Future Issues Created:** {issue_count} - Each with issue link
 
 ### 🔧 Changes Implemented (MicroObjects Style)
-{List of fixes with pattern details}
-- Fixed: {description} - Used Null Object pattern
-- Implemented: {description} - Created interface abstraction
-- Cleaned: {description} - Applied immutability pattern
+{List of fixes with resolution reasons}
+- Fixed: {description} - **WHY RESOLVED:** Applied Null Object pattern per request
+- Implemented: {description} - **WHY RESOLVED:** Created interface abstraction as suggested
+- Cleaned: {description} - **WHY RESOLVED:** Applied immutability to fix the issue
+
+### ℹ️ No Changes Needed (Pattern Already Correct)
+{List of non-changes with explanations}
+- {Comment}: **WHY RESOLVED:** Pattern matches 15 other services, change would violate MicroObjects
+- {Comment}: **WHY RESOLVED:** Current code is intentional, see CODING_CRITERIA.md:45
 
 ### 🤔 Questions for @Fyzxs
-{List of architectural questions}
-- {Topic}: Needs architectural decision
-- {Topic}: Future enhancement consideration
+{List of architectural questions with deferrals}
+- {Topic}: **WHY RESOLVED:** Deferred - needs architectural decision beyond PR scope
+- {Topic}: **WHY RESOLVED:** Deferred - requires team consensus on pattern change
 
 ### 📋 GitHub Issues Created
-{List of created issues for future work}
-- #{issue_number}: {title}
+{List of created issues with reasons}
+- #{issue_number}: {title} - **WHY RESOLVED:** Good suggestion but out of current scope
 
-### ✅ Code Quality
+### ✅ Resolution Verification
+- **100% of comments have resolution explanations**
+- **0 comments marked resolved without explanation**
 - All changes follow MicroObjects patterns
 - Code formatted with `dotnet format`
 - Tests passing
-- No pragma directives added
-- Immutability maintained
 
 ---
 *@claude comment cleanup completed by quinn-github-cleanup agent*
-*All implementations follow strict MicroObjects patterns*
+*Every resolution includes explanation of WHY it was resolved*
 ```
 
 ## Key Constraints

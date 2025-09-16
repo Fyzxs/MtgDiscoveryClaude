@@ -6,11 +6,6 @@ using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Adapter.UserCards.Commands.Mappers;
 
-internal interface IUserCardItemMapper
-{
-    UserCardItem Map(IUserCardCollectionItrEntity userCard);
-}
-
 internal sealed class UserCardItemMapper : IUserCardItemMapper
 {
     private readonly ICollectedItemMapper _collectedItemMapper;

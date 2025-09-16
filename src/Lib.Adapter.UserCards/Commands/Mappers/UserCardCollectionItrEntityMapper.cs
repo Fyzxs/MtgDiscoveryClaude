@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.UserCards.Commands.Entities;
 using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Adapter.UserCards.Commands.Mappers;
-
-internal interface IUserCardCollectionItrEntityMapper
-{
-    IUserCardCollectionItrEntity Map(UserCardItem userCardItem);
-}
 
 internal sealed class UserCardCollectionItrEntityMapper : IUserCardCollectionItrEntityMapper
 {
@@ -31,12 +27,4 @@ internal sealed class UserCardCollectionItrEntityMapper : IUserCardCollectionItr
             CollectedList = collectedEntities
         };
     }
-}
-
-internal sealed class UserCardCollectionItrEntity : IUserCardCollectionItrEntity
-{
-    public string UserId { get; init; }
-    public string CardId { get; init; }
-    public string SetId { get; init; }
-    public ICollection<ICollectedItemItrEntity> CollectedList { get; init; }
 }
