@@ -59,5 +59,5 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => _userEntryService.RegisterUserAsync(authUser);
 
-    public Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAddCardToCollectionArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(args);
+    public Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddCardToCollectionArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
 }

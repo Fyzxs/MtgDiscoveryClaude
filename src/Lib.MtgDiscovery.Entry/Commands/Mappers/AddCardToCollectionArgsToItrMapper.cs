@@ -7,14 +7,15 @@ namespace Lib.MtgDiscovery.Entry.Commands.Mappers;
 
 internal sealed class AddCardToCollectionArgsToItrMapper : IAddCardToCollectionArgsToItrMapper
 {
-    public Task<IUserCardCollectionItrEntity> Map(IAddCardToCollectionArgEntity source)
+    public Task<IUserCardCollectionItrEntity> Map(IAuthUserArgEntity source1, IAddCardToCollectionArgEntity source2)
     {
+        // Combine user ID from auth with args data
         return Task.FromResult<IUserCardCollectionItrEntity>(new UserCardCollectionItrEntity
         {
-            UserId = source.UserId,
-            CardId = source.CardId,
-            SetId = source.SetId,
-            CollectedList = source.CollectedList.Select(MapToCollectedItemItrEntity).ToList()
+            UserId = source1.UserId,  // Get UserId from JWT auth
+            CardId = source2.CardId,
+            SetId = source2.SetId,
+            CollectedList = source2.CollectedList.Select(MapToCollectedItemItrEntity).ToList()
         });
     }
 

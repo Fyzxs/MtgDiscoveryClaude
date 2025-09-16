@@ -17,14 +17,10 @@ Content-Type: application/json
 Authorization: Bearer {{$dotenv BEARER_TOKEN}}
 
 mutation AddSingleCard(
-  $cardId: String!
-  $setId: String!
-  $collectedList: [CollectedItemArgEntityInput!]!
+  $args: AddCardToCollectionArgEntityInput!
 ) {
   addCardToCollection(
-    cardId: $cardId
-    setId: $setId
-    collectedList: $collectedList
+    args: $args
   ) {
     __typename
     ... on SuccessUserCardCollectionResponse {
@@ -54,15 +50,17 @@ mutation AddSingleCard(
 
 {
   "variables": {
-    "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
-    "setId": "neo",
-    "collectedList": [
-      {
-        "finish": "nonfoil",
-        "special": "none",
-        "count": 1
-      }
-    ]
+    "args": {
+      "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
+      "setId": "neo",
+      "collectedList": [
+        {
+          "finish": "nonfoil",
+          "special": "none",
+          "count": 1
+        }
+      ]
+    }
   }
 }
 
@@ -74,14 +72,10 @@ Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
 mutation AddMultipleVariants(
-  $cardId: String!
-  $setId: String!
-  $collectedList: [CollectedItemArgEntityInput!]!
+  $args: AddCardToCollectionArgEntityInput!
 ) {
   addCardToCollection(
-    cardId: $cardId
-    setId: $setId
-    collectedList: $collectedList
+    args: $args
   ) {
     __typename
     ... on SuccessUserCardCollectionResponse {
@@ -111,25 +105,27 @@ mutation AddMultipleVariants(
 
 {
   "variables": {
-    "cardId": "11600105-56c6-4073-a4a6-8469030b39c9",
-    "setId": "dmu",
-    "collectedList": [
-      {
-        "finish": "nonfoil",
-        "special": "none",
-        "count": 2
-      },
-      {
-        "finish": "foil",
-        "special": "none",
-        "count": 1
-      },
-      {
-        "finish": "foil",
-        "special": "promo",
-        "count": 1
-      }
-    ]
+    "args": {
+      "cardId": "11600105-56c6-4073-a4a6-8469030b39c9",
+      "setId": "dmu",
+      "collectedList": [
+        {
+          "finish": "nonfoil",
+          "special": "none",
+          "count": 2
+        },
+        {
+          "finish": "foil",
+          "special": "none",
+          "count": 1
+        },
+        {
+          "finish": "foil",
+          "special": "promo",
+          "count": 1
+        }
+      ]
+    }
   }
 }
 
@@ -141,14 +137,10 @@ Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
 mutation AddCardWithVariables(
-  $cardId: String!
-  $setId: String!
-  $collectedList: [CollectedItemArgEntityInput!]!
+  $args: AddCardToCollectionArgEntityInput!
 ) {
   addCardToCollection(
-    cardId: $cardId
-    setId: $setId
-    collectedList: $collectedList
+    args: $args
   ) {
     __typename
     ... on SuccessUserCardCollectionResponse {
@@ -182,15 +174,17 @@ mutation AddCardWithVariables(
 
 {
   "variables": {
-    "cardId": "0000579f-7b35-4ed3-b44c-db2a538066fe",
-    "setId": "war",
-    "collectedList": [
-      {
-        "finish": "nonfoil",
-        "special": "none",
-        "count": 4
-      }
-    ]
+    "args": {
+      "cardId": "0000579f-7b35-4ed3-b44c-db2a538066fe",
+      "setId": "war",
+      "collectedList": [
+        {
+          "finish": "nonfoil",
+          "special": "none",
+          "count": 4
+        }
+      ]
+    }
   }
 }
 
@@ -202,14 +196,10 @@ Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
 mutation AddSpecialCards(
-  $cardId: String!
-  $setId: String!
-  $collectedList: [CollectedItemArgEntityInput!]!
+  $args: AddCardToCollectionArgEntityInput!
 ) {
   addCardToCollection(
-    cardId: $cardId
-    setId: $setId
-    collectedList: $collectedList
+    args: $args
   ) {
     __typename
     ... on SuccessUserCardCollectionResponse {
@@ -239,25 +229,27 @@ mutation AddSpecialCards(
 
 {
   "variables": {
-    "cardId": "3c92bca5-ec3a-4238-99a4-26c9594c8d1f",
-    "setId": "bro",
-    "collectedList": [
-      {
-        "finish": "foil",
-        "special": "showcase",
-        "count": 1
-      },
-      {
-        "finish": "nonfoil",
-        "special": "extended",
-        "count": 1
-      },
-      {
-        "finish": "foil",
-        "special": "retro",
-        "count": 2
-      }
-    ]
+    "args": {
+      "cardId": "3c92bca5-ec3a-4238-99a4-26c9594c8d1f",
+      "setId": "bro",
+      "collectedList": [
+        {
+          "finish": "foil",
+          "special": "showcase",
+          "count": 1
+        },
+        {
+          "finish": "nonfoil",
+          "special": "extended",
+          "count": 1
+        },
+        {
+          "finish": "foil",
+          "special": "retro",
+          "count": 2
+        }
+      ]
+    }
   }
 }
 
@@ -268,14 +260,10 @@ POST {{graphqlEndpoint}}
 Content-Type: application/json
 
 mutation AddCardUnauthorized(
-  $cardId: String!
-  $setId: String!
-  $collectedList: [CollectedItemArgEntityInput!]!
+  $args: AddCardToCollectionArgEntityInput!
 ) {
   addCardToCollection(
-    cardId: $cardId
-    setId: $setId
-    collectedList: $collectedList
+    args: $args
   ) {
     __typename
     ... on FailureResponse {
@@ -289,15 +277,17 @@ mutation AddCardUnauthorized(
 
 {
   "variables": {
-    "cardId": "test-card-id",
-    "setId": "test",
-    "collectedList": [
-      {
-        "finish": "nonfoil",
-        "special": "none",
-        "count": 1
-      }
-    ]
+    "args": {
+      "cardId": "test-card-id",
+      "setId": "test",
+      "collectedList": [
+        {
+          "finish": "nonfoil",
+          "special": "none",
+          "count": 1
+        }
+      ]
+    }
   }
 }
 
@@ -309,14 +299,10 @@ Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
 mutation AddCardInvalid(
-  $cardId: String!
-  $setId: String!
-  $collectedList: [CollectedItemArgEntityInput!]!
+  $args: AddCardToCollectionArgEntityInput!
 ) {
   addCardToCollection(
-    cardId: $cardId
-    setId: $setId
-    collectedList: $collectedList
+    args: $args
   ) {
     __typename
     ... on FailureResponse {
@@ -330,9 +316,11 @@ mutation AddCardInvalid(
 
 {
   "variables": {
-    "cardId": "",
-    "setId": "",
-    "collectedList": []
+    "args": {
+      "cardId": "",
+      "setId": "",
+      "collectedList": []
+    }
   }
 }
 
