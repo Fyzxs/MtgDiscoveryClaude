@@ -30,7 +30,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
     private readonly ICosmosGopher _setGopher;
     private readonly ICosmosGopher _setCodeIndexGopher;
     private readonly ICosmosInquisition _allSetsInquisition;
-    private readonly ScryfallSetItemToSetItemItrEntityMapper _setMapper;
+    private readonly IScryfallSetItemToSetItemItrEntityMapper _setMapper;
 
     public SetCosmosQueryAdapter(ILogger logger) : this(
         new ScryfallSetItemsGopher(logger),
@@ -43,7 +43,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
         ICosmosGopher setGopher,
         ICosmosGopher setCodeIndexGopher,
         ICosmosInquisition allSetsInquisition,
-        ScryfallSetItemToSetItemItrEntityMapper setMapper)
+        IScryfallSetItemToSetItemItrEntityMapper setMapper)
     {
         _setGopher = setGopher;
         _setCodeIndexGopher = setCodeIndexGopher;
@@ -69,10 +69,12 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
 
         OpResponse<ScryfallSetItem>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        IEnumerable<ISetItemItrEntity> successfulSets = responses
-            .Where(r => r.IsSuccessful())
-            .Select(r => _setMapper.Map(r.Value))
-            .Where(set => set != null);
+        List<ISetItemItrEntity> successfulSets = [];
+        foreach (OpResponse<ScryfallSetItem> response in responses.Where(r => r.IsSuccessful()))
+        {
+            ISetItemItrEntity mapped = await _setMapper.Map(response.Value).ConfigureAwait(false);
+            if (mapped != null) successfulSets.Add(mapped);
+        }
 
         return new SuccessOperationResponse<IEnumerable<ISetItemItrEntity>>(successfulSets);
     }
@@ -121,9 +123,12 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
                 new SetAdapterException("Failed to retrieve all sets", response.Exception()));
         }
 
-        IEnumerable<ISetItemItrEntity> sets = response.Value
-            .Select(item => _setMapper.Map(item))
-            .Where(set => set != null);
+        List<ISetItemItrEntity> sets = [];
+        foreach (ScryfallSetItem item in response.Value)
+        {
+            ISetItemItrEntity mapped = await _setMapper.Map(item).ConfigureAwait(false);
+            if (mapped != null) sets.Add(mapped);
+        }
 
         return new SuccessOperationResponse<IEnumerable<ISetItemItrEntity>>(sets);
     }
