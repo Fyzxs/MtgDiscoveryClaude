@@ -88,12 +88,12 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
     {
         // Create a dictionary for efficient merging based on finish + special combination
         Dictionary<(string finish, string special), CollectedItem> mergedItems = existing.CollectedList
-            .ToDictionary(item => (item.Finish, item.Special ?? "none"));
+            .ToDictionary(item => (item.Finish, item.Special));
 
         // Merge or add new collected items
         foreach (ICollectedItemItrEntity newItem in newData.CollectedList)
         {
-            (string finish, string special) key = (newItem.Finish, newItem.Special ?? "none");
+            (string finish, string special) key = (newItem.Finish, newItem.Special);
 
             if (mergedItems.TryGetValue(key, out CollectedItem existingItem))
             {
