@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Entities;
 using Lib.Shared.DataModels.Entities;
@@ -8,17 +9,14 @@ using Newtonsoft.Json;
 
 namespace Lib.Adapter.Sets.Queries.Mappers;
 
-/// <summary>
-/// Maps Scryfall set storage items to ITR entities within the adapter layer.
-/// </summary>
-internal sealed class ScryfallSetItemToSetItemItrEntityMapper
+internal sealed class ScryfallSetItemToSetItemItrEntityMapper : IScryfallSetItemToSetItemItrEntityMapper
 {
-    public ISetItemItrEntity Map(ScryfallSetItem scryfallSetItem)
+    public Task<ISetItemItrEntity> Map(ScryfallSetItem scryfallSetItem)
     {
         dynamic data = scryfallSetItem.Data;
         ICollection<ISetGroupingItrEntity> groupings = Groupings(data);
 
-        return new SetItemItrEntity
+        return Task.FromResult<ISetItemItrEntity>(new SetItemItrEntity
         {
             Id = data.id,
             Code = data.code,
@@ -38,7 +36,7 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
             IconSvgUri = data.icon_svg_uri,
             PrintedSize = data.printed_size ?? 0,
             Groupings = groupings
-        };
+        });
     }
 
     private static ICollection<ISetGroupingItrEntity> Groupings(dynamic data)

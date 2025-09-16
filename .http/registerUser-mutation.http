@@ -1,0 +1,153 @@
+###
+# User Registration Mutation Tests
+# Auth0 JWT Authentication required - extracts 'sub' and 'nickname' claims
+# Domain: dev-63szoyl0kt0p7e5q.us.auth0.com
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+@bearerToken = {{$dotenv BEARER_TOKEN}}
+
+### Register User Info - Basic
+# @ref variables
+# Replace YOUR_JWT_TOKEN_HERE with actual Auth0 JWT token
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation RegisterUser {
+  registerUserInfo {
+    __typename
+    ... on SuccessUserRegistrationResponse {
+      data {
+        userId
+        displayName
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+### Register User Info - Full Response
+# @ref variables
+# Replace YOUR_JWT_TOKEN_HERE with actual Auth0 JWT token
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation RegisterUserFull {
+  registerUserInfo {
+    __typename
+    ... on SuccessUserRegistrationResponse {
+      data {
+        userId
+        displayName
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+### Test without JWT Token (should fail)
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+mutation RegisterUserUnauthorized {
+  registerUserInfo {
+    __typename
+    ... on SuccessUserRegistrationResponse {
+      data {
+        userId
+        displayName
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+### GraphQL Schema Introspection - Mutation Type
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query IntrospectMutations {
+  __schema {
+    mutationType {
+      fields {
+        name
+        description
+        type {
+          name
+          kind
+        }
+      }
+    }
+  }
+}
+
+###
+# How to get Auth0 JWT Token:
+# 1. Go to your Auth0 dashboard (https://manage.auth0.com/)
+# 2. Navigate to Applications → Applications and find your SPA app
+# 3. Use Auth0's test tab or implement frontend login flow  
+# 4. Copy the JWT token from the response
+# 5. Replace YOUR_JWT_TOKEN_HERE with the actual token
+# 
+# Required JWT Claims:
+# - "sub": User's unique identifier (e.g., "auth0|68b7c2c1b773c5897e8ceb8f")
+# - "nickname": User's display name (e.g., "quinntgil+mtg01")
+#
+# The mutation extracts these claims automatically from the JWT
+
+###
+# Expected Response Examples:
+# 
+# registerUserInfo without token:
+# { "errors": [{ "message": "The current user is not authorized to access this resource.", "extensions": { "code": "AUTH_NOT_AUTHORIZED" } }] }
+#
+# registerUserInfo with valid token:
+# {
+#   "data": {
+#     "registerUserInfo": {
+#       "__typename": "SuccessUserRegistrationResponse",
+#       "data": {
+#         "userId": "550e8400-e29b-41d4-a716-446655440000",
+#         "displayName": "quinntgil+mtg01"
+#       },
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
