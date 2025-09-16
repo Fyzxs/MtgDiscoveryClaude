@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface IAuthUserArgsToItrMapper
-{
-    Task<IUserInfoItrEntity> Map(IAuthUserArgEntity args);
-}
+internal interface IAuthUserArgsToItrMapper : ICreateMapper<IAuthUserArgEntity, IUserInfoItrEntity>;

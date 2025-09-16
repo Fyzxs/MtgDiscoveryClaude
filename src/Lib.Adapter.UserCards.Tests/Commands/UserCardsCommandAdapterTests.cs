@@ -3,13 +3,14 @@ using System.Net;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
 using Lib.Adapter.UserCards.Commands;
 using Lib.Adapter.UserCards.Exceptions;
+using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
+using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 
 namespace Lib.Adapter.UserCards.Tests.Commands;
@@ -34,18 +35,18 @@ public sealed class UserCardsCommandAdapterTests
     public async Task Constructor_WithLoggerAndScribe_UsesProvidedScribe()
     {
         // Arrange
-        ILogger logger = new LoggerFake();
+        _ = new LoggerFake();
         UserCardsScribeFake scribe = new();
 
         // Use TypeWrapper to access internal constructor
-        UserCardsCommandAdapter adapter = new InstanceWrapper(logger, scribe);
+        UserCardsCommandAdapter adapter = new InstanceWrapper(scribe);
 
         IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new CollectedCardItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
+            CollectedList = new[] { new CollectedItemItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
         };
 
         // Act
@@ -64,7 +65,7 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedCardItrEntity collectedCard = new CollectedCardItrEntityFake
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
@@ -98,7 +99,7 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedCardItrEntity collectedCard = new CollectedCardItrEntityFake
+        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
         {
             Finish = "foil",
             Special = "altered",
@@ -165,55 +166,7 @@ public sealed class UserCardsCommandAdapterTests
     }
 }
 
-internal sealed class LoggerFake : ILogger
-{
-    public System.IDisposable BeginScope<TState>(TState state) where TState : notnull => null;
-    public bool IsEnabled(LogLevel logLevel) => true;
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter) { }
-}
-
-internal sealed class CollectedCardItrEntityFake : ICollectedCardItrEntity
-{
-    public string Finish { get; init; }
-    public string Special { get; init; }
-    public int Count { get; init; }
-}
-
-internal sealed class UserCardCollectionItrEntityFake : IUserCardCollectionItrEntity
-{
-    public string UserId { get; init; }
-    public string CardId { get; init; }
-    public string SetId { get; init; }
-    public IEnumerable<ICollectedCardItrEntity> CollectedList { get; init; }
-}
-
-internal sealed class UserCardsScribeFake : IUserCardsScribe
-{
-    public int UpsertAsyncCallCount { get; private set; }
-
-    public async Task<OpResponse<T>> UpsertAsync<T>(T item)
-    {
-        UpsertAsyncCallCount++;
-        await Task.CompletedTask.ConfigureAwait(false);
-
-        // Return success response with the same item
-        return new OpResponseFake<T>(item, HttpStatusCode.OK);
-    }
-}
-
-internal sealed class OpResponseFake<T> : OpResponse<T>
-{
-    public OpResponseFake(T value, HttpStatusCode statusCode)
-    {
-        Value = value;
-        StatusCode = statusCode;
-    }
-
-    public override T Value { get; }
-    public override HttpStatusCode StatusCode { get; }
-}
-
 internal sealed class InstanceWrapper : TypeWrapper<UserCardsCommandAdapter>
 {
-    public InstanceWrapper(ILogger logger, IUserCardsScribe scribe) : base(logger, scribe) { }
+    public InstanceWrapper(ICosmosScribe scribe) : base(scribe, null, null) { }
 }

@@ -155,49 +155,6 @@ Execute both file-based documentation AND PR integration:
    - Use emoji visual indicators for quick assessment
    - NEVER make direct code changes - only suggestions
 
-### Azure CLI Integration Commands
-
-**Get PR Work Items:**
-```bash
-az repos pr work-item list --id {PR_ID} --output json
-```
-
-**Find Pull Request Task:**
-```bash
-# Get User Story ID from PR work items, then find Pull Request child task
-az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'Pull Request'" --output json
-```
-
-**Set Pull Request Task to Active:**
-```bash
-az boards work-item update --id {PULL_REQUEST_TASK_ID} --state "Active"
-```
-
-**Create PR Comment Thread:**
-```bash
-az devops invoke --area git --resource pullRequestThreads \
-  --org https://dev.azure.com/{organization} \
-  --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} \
-  --http-method POST --api-version 6.0 \
-  --in-file thread-payload.json
-```
-
-**Add Inline Comments:**
-```bash
-az devops invoke --area git --resource pullRequestThreadComments \
-  --org https://dev.azure.com/{organization} \
-  --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} threadId={threadId} \
-  --http-method POST --api-version 6.0 \
-  --in-file comment-payload.json
-```
-
-**Post Review Completion Comment:**
-```bash
-az repos pr thread create --pull-request-id {PR_ID} \
-  --content "Code review completed - see summary below" \
-  --status "Active"
-```
-
 ### Emoji-Based Review System
 Use visual indicators for immediate clarity:
 

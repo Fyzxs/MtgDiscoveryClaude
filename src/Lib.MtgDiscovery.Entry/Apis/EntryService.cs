@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lib.MtgDiscovery.Entry.Commands;
 using Lib.MtgDiscovery.Entry.Queries;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -12,16 +13,28 @@ public sealed class EntryService : IEntryService
     private readonly ISetEntryService _setEntryService;
     private readonly IArtistEntryService _artistEntryService;
     private readonly IUserEntryService _userEntryService;
+    private readonly IUserCardsEntryService _userCardsEntryService;
 
-    public EntryService(ILogger logger) : this(new CardEntryService(logger), new SetEntryService(logger), new ArtistEntryService(logger), new UserEntryService(logger))
+    public EntryService(ILogger logger) : this(
+        new CardEntryService(logger),
+        new SetEntryService(logger),
+        new ArtistEntryService(logger),
+        new UserEntryService(logger),
+        new UserCardsEntryService(logger))
     { }
 
-    private EntryService(ICardEntryService cardEntryService, ISetEntryService setEntryService, IArtistEntryService artistEntryService, IUserEntryService userEntryService)
+    private EntryService(
+        ICardEntryService cardEntryService,
+        ISetEntryService setEntryService,
+        IArtistEntryService artistEntryService,
+        IUserEntryService userEntryService,
+        IUserCardsEntryService userCardsEntryService)
     {
         _cardEntryService = cardEntryService;
         _setEntryService = setEntryService;
         _artistEntryService = artistEntryService;
         _userEntryService = userEntryService;
+        _userCardsEntryService = userCardsEntryService;
     }
 
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args) => _cardEntryService.CardsByIdsAsync(args);
@@ -45,4 +58,6 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName) => _artistEntryService.CardsByArtistNameAsync(artistName);
 
     public Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => _userEntryService.RegisterUserAsync(authUser);
+
+    public Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddCardToCollectionArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
 }

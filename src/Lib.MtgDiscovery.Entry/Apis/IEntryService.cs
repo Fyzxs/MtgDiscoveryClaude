@@ -4,4 +4,5 @@ public interface IEntryService :
     ICardEntryService,
     ISetEntryService,
     IArtistEntryService,
-    IUserEntryService;
+    IUserEntryService,
+    IUserCardsEntryService;
