@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.Adapter.User.Persistence;
+using Lib.Adapter.User.Commands;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

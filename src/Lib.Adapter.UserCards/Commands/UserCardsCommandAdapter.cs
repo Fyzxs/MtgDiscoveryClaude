@@ -1,159 +1,129 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis;
+using Lib.Adapter.UserCards.Commands.Mappers;
 using Lib.Adapter.UserCards.Exceptions;
+using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.UserCards.Commands;
 
-/// <summary>
-/// Command adapter implementation for user card collection operations.
-/// Handles write operations for adding cards to user collections in Cosmos DB.
-///
-/// Design Pattern: Command adapter following CQRS principles
-/// - Focuses solely on command (write) operations
-/// - Maps between ITR entities and Cosmos storage entities
-/// - Delegates to UserCards Cosmos operators for data persistence
-///
-/// Entity Mapping Strategy:
-/// - Input: IUserCardCollectionItrEntity (from domain/aggregator layers)
-/// - Storage: UserCardItem (Cosmos document structure)
-/// - Output: IUserCardCollectionItrEntity (mapped back from storage)
-///
-/// Error Handling:
-/// All exceptions are wrapped in UserCardsAdapterException following
-/// the established adapter exception pattern.
-/// </summary>
 internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 {
-    private readonly IUserCardsScribe _userCardsScribe;
+    private readonly ICosmosGopher _userCardsGopher;
+    private readonly ICosmosScribe _userCardsScribe;
+    private readonly IUserCardItemMapper _userCardItemMapper;
+    private readonly IUserCardCollectionItrEntityMapper _userCardCollectionMapper;
     private readonly ILogger _logger;
 
-    public UserCardsCommandAdapter(ILogger logger) : this(logger, new UserCardsScribe(logger))
+    public UserCardsCommandAdapter(ILogger logger) : this(
+        new UserCardsGopher(logger),
+        new UserCardsScribe(logger),
+        new UserCardItemMapper(),
+        new UserCardCollectionItrEntityMapper(),
+        logger)
     { }
 
-    internal UserCardsCommandAdapter(ILogger logger, IUserCardsScribe userCardsScribe)
+    internal UserCardsCommandAdapter(
+        ICosmosGopher userCardsGopher,
+        ICosmosScribe userCardsScribe,
+        IUserCardItemMapper userCardItemMapper,
+        IUserCardCollectionItrEntityMapper userCardCollectionMapper,
+        ILogger logger)
     {
-        _logger = logger;
+        _userCardsGopher = userCardsGopher;
         _userCardsScribe = userCardsScribe;
+        _userCardItemMapper = userCardItemMapper;
+        _userCardCollectionMapper = userCardCollectionMapper;
+        _logger = logger;
     }
 
     public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
     {
-        if (userCard is null)
+        // Step 1: Try to read existing record
+        ReadPointItem readPoint = new()
+        {
+            Id = new ProvidedCosmosItemId(userCard.CardId),
+            Partition = new ProvidedPartitionKeyValue(userCard.UserId)
+        };
+        OpResponse<UserCardItem> existingResponse = await _userCardsGopher.ReadAsync<UserCardItem>(readPoint).ConfigureAwait(false);
+
+        UserCardItem itemToUpsert;
+
+        if (existingResponse.IsSuccessful())
+        {
+            // Step 2: Merge with existing collected items
+            UserCardItem existingItem = existingResponse.Value;
+            itemToUpsert = MergeCollectedItems(existingItem, userCard);
+        }
+        else
+        {
+            // Step 3: Create new item if none exists
+            itemToUpsert = await _userCardItemMapper.Map(userCard).ConfigureAwait(false);
+        }
+
+        // Step 4: Upsert the merged/new item
+        OpResponse<UserCardItem> upsertResponse = await _userCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
         {
             return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new UserCardsAdapterException("User card cannot be null"));
+                new UserCardsAdapterException($"Failed to add user card: {upsertResponse.StatusCode}"));
         }
 
-        if (string.IsNullOrWhiteSpace(userCard.UserId) || string.IsNullOrWhiteSpace(userCard.CardId))
-        {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new UserCardsAdapterException("UserId and CardId are required"));
-        }
-
-        try
-        {
-            UserCardItem userCardItem = MapToUserCardItem(userCard);
-            Lib.Cosmos.Apis.Operators.OpResponse<UserCardItem> upsertResult = await _userCardsScribe.UpsertAsync(userCardItem).ConfigureAwait(false);
-
-            if (upsertResult.IsNotSuccessful())
-            {
-                string message = $"Failed to upsert user card. UserId: {userCard.UserId}, CardId: {userCard.CardId}, StatusCode: {upsertResult.StatusCode}";
-                UserCardsAdapterException exception = new(message);
-                return new FailureOperationResponse<IUserCardCollectionItrEntity>(exception);
-            }
-
-            IUserCardCollectionItrEntity resultEntity = MapToItrEntity(upsertResult.Value);
-            return new SuccessOperationResponse<IUserCardCollectionItrEntity>(resultEntity);
-        }
-        catch (System.Exception ex)
-        {
-            string message = $"Failed to add user card. UserId: {userCard.UserId}, CardId: {userCard.CardId}";
-#pragma warning disable CA1848 // Use the LoggerMessage delegates
-            _logger.LogError(ex,
-                "Failed to add user card. UserId: {UserId}, CardId: {CardId}, SetId: {SetId}, Exception: {ExceptionType}",
-                userCard.UserId,
-                userCard.CardId,
-                userCard.SetId,
-                ex.GetType().Name);
-#pragma warning restore CA1848 // Use the LoggerMessage delegates
-            throw new UserCardsAdapterException(message, ex);
-        }
+        // Step 5: Map and return the result
+        IUserCardCollectionItrEntity resultEntity = await _userCardCollectionMapper.Map(upsertResponse.Value).ConfigureAwait(false);
+        return new SuccessOperationResponse<IUserCardCollectionItrEntity>(resultEntity);
     }
 
-    private static UserCardItem MapToUserCardItem(IUserCardCollectionItrEntity userCard)
+    private UserCardItem MergeCollectedItems(UserCardItem existing, IUserCardCollectionItrEntity newData)
     {
-        System.Collections.Generic.IEnumerable<CollectedItem> collectedItems = userCard.CollectedList.Select(MapToCollectedItem);
+        // Create a dictionary for efficient merging based on finish + special combination
+        Dictionary<(string finish, string special), CollectedItem> mergedItems = existing.CollectedList
+            .ToDictionary(item => (item.Finish, item.Special));
 
+        // Merge or add new collected items
+        foreach (ICollectedItemItrEntity newItem in newData.CollectedList)
+        {
+            (string finish, string special) key = (newItem.Finish, newItem.Special);
+
+            if (mergedItems.TryGetValue(key, out CollectedItem existingItem))
+            {
+                // Update count for existing finish/special combination
+                mergedItems[key] = new CollectedItem
+                {
+                    Finish = existingItem.Finish,
+                    Special = existingItem.Special,
+                    Count = existingItem.Count + newItem.Count
+                };
+            }
+            else
+            {
+                // Add new finish/special combination
+                mergedItems[key] = new CollectedItem
+                {
+                    Finish = newItem.Finish,
+                    Special = newItem.Special,
+                    Count = newItem.Count
+                };
+            }
+        }
+
+        // Return updated item
         return new UserCardItem
         {
-            UserId = userCard.UserId,
-            CardId = userCard.CardId,
-            SetId = userCard.SetId,
-            CollectedList = collectedItems
+            UserId = existing.UserId,
+            CardId = existing.CardId,
+            SetId = existing.SetId,
+            CollectedList = mergedItems.Values.ToList()
         };
     }
-
-    private static CollectedItem MapToCollectedItem(ICollectedCardItrEntity collected)
-    {
-        return new CollectedItem
-        {
-            Finish = collected.Finish,
-            Special = collected.Special,
-            Count = collected.Count
-        };
-    }
-
-    private static IUserCardCollectionItrEntity MapToItrEntity(UserCardItem userCardItem)
-    {
-        System.Collections.Generic.IEnumerable<ICollectedCardItrEntity> collectedEntities = userCardItem.CollectedList.Select(MapToCollectedItrEntity);
-
-        return new UserCardCollectionItrEntity
-        {
-            UserId = userCardItem.UserId,
-            CardId = userCardItem.CardId,
-            SetId = userCardItem.SetId,
-            CollectedList = collectedEntities
-        };
-    }
-
-    private static ICollectedCardItrEntity MapToCollectedItrEntity(CollectedItem collectedItem)
-    {
-        return new CollectedCardItrEntity
-        {
-            Finish = collectedItem.Finish,
-            Special = collectedItem.Special,
-            Count = collectedItem.Count
-        };
-    }
-}
-
-/// <summary>
-/// Concrete implementation of IUserCardCollectionItrEntity.
-/// Internal visibility following MicroObjects pattern where interfaces are public but implementations are internal.
-/// </summary>
-internal sealed class UserCardCollectionItrEntity : IUserCardCollectionItrEntity
-{
-    public string UserId { get; init; }
-    public string CardId { get; init; }
-    public string SetId { get; init; }
-    public System.Collections.Generic.IEnumerable<ICollectedCardItrEntity> CollectedList { get; init; }
-}
-
-/// <summary>
-/// Concrete implementation of ICollectedCardItrEntity.
-/// Internal visibility following MicroObjects pattern where interfaces are public but implementations are internal.
-/// </summary>
-internal sealed class CollectedCardItrEntity : ICollectedCardItrEntity
-{
-    public string Finish { get; init; }
-    public string Special { get; init; }
-    public int Count { get; init; }
 }

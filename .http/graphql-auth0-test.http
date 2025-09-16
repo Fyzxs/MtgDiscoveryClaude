@@ -1,0 +1,133 @@
+###
+# Auth0 JWT Authentication Test for GraphQL API
+# Domain: dev-63szoyl0kt0p7e5q.us.auth0.com
+# Client ID: OXYTiA2a2SpN3cNf4Er4ix9DHHhLdYC5
+# Audience: OXYTiA2a2SpN3cNf4Er4ix9DHHhLdYC5
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{baseUrl}}/graphql
+
+### Test Public Query (works without authentication)
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query TestPublicQuery($cardName: CardNameArgEntityInput!) {
+  cardsByName(cardName: $cardName) {
+    __typename
+    ... on SuccessCardsResponse {
+      data {
+        name
+        imageUris {
+          small
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
+    }
+  }
+}
+
+{
+  "cardName": {
+    "cardName": "Lightning Bolt"
+  }
+}
+
+### Test Authenticated Hello (should fail without JWT)
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query AuthenticatedHelloTest {
+  authenticatedHello
+}
+
+### Test Get Current User (should fail without JWT)
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetCurrentUserTest {
+  currentUser {
+    id
+    email
+    nickname
+    name
+  }
+}
+
+### Test Authenticated Hello with JWT Token
+# @ref variables
+# Replace YOUR_JWT_TOKEN_HERE with actual Auth0 JWT token
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+query AuthenticatedHelloWithToken {
+  authenticatedHello
+}
+
+### Test Get Current User with JWT Token
+# @ref variables
+# Replace YOUR_JWT_TOKEN_HERE with actual Auth0 JWT token
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+query GetCurrentUserWithToken {
+  currentUser {
+    id
+    email
+    nickname
+    name
+  }
+}
+
+### GraphQL Schema Introspection
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query IntrospectionQuery {
+  __schema {
+    queryType {
+      fields {
+        name
+        description
+      }
+    }
+  }
+}
+
+###
+# How to get Auth0 JWT Token:
+# 1. Go to your Auth0 dashboard (https://manage.auth0.com/)
+# 2. Navigate to Applications → Applications and find your SPA app
+# 3. Use Auth0's test tab or implement frontend login flow  
+# 4. Copy the JWT token from the response
+# 5. Replace YOUR_JWT_TOKEN_HERE with the actual token
+# 
+# Note: The JWT token should contain claims like:
+# - "nickname": for user's display name
+# - "email": for user's email address  
+# - "sub": for user's unique identifier
+# - "name": for user's full name
+
+###
+# Expected Response Examples:
+# 
+# authenticatedHello without token:
+# { "errors": [{ "message": "The current user is not authorized to access this resource.", "extensions": { "code": "AUTH_NOT_AUTHORIZED" } }] }
+#
+# authenticatedHello with valid token:
+# { "data": { "authenticatedHello": "Hello John! Your email is john@example.com" } }
+#
+# getCurrentUser with valid token:
+# { "data": { "getCurrentUser": { "id": "auth0|123456", "email": "john@example.com", "nickname": "John", "name": "John Doe" } } }
