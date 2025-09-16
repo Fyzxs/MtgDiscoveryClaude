@@ -7,14 +7,14 @@
     <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.25.0" />
     <PackageVersion Include="HotChocolate.AspNetCore.Authorization" Version="15.1.10" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
     <PackageVersion Include="Microsoft.ApplicationInsights.Profiler.AspNetCore" Version="2.7.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.19" />
     <PackageVersion Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="8.3.0" />
-    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.52.1" />
+    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.53.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.0.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Core" Version="2.0.0" />
@@ -24,34 +24,34 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.5" />
     <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.14.0" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.2.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Console" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.9" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="Polly" Version="8.5.2" />
-    <PackageVersion Include="Polly.RateLimiting" Version="8.5.2" />
+    <PackageVersion Include="Polly" Version="8.6.3" />
+    <PackageVersion Include="Polly.RateLimiting" Version="8.6.3" />
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="4.14.0" />
-    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.1" />
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
-    <PackageVersion Include="HotChocolate.AspNetCore" Version="14.3.0" />
-    <PackageVersion Include="HotChocolate.Data" Version="14.3.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.10" />
+    <PackageVersion Include="HotChocolate.Data" Version="15.1.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
   </ItemGroup>
   <ItemGroup>
     <!-- Hack for some vuln I don't remember -->
-    <PackageVersion Include="System.Text.Json" Version="9.0.8" />
+    <PackageVersion Include="System.Text.Json" Version="9.0.9" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
   </ItemGroup>
   <!-- Test Projects -->
@@ -63,7 +63,7 @@
     <PackageVersion Include="AwesomeAssertions" Version="9.1.0" />
     <PackageVersion Include="AwesomeAssertions.Analyzers" Version="0.33.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="3.10.1" />
-    <PackageVersion Include="MSTest.TestFramework" Version="3.10.1" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.10.4" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.10.4" />
   </ItemGroup>
 </Project>

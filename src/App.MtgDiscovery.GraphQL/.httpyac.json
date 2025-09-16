@@ -1,0 +1,30 @@
+{
+  "environmentVariables": {
+    "$shared": {
+      "BASE_URL": "https://localhost:65203",
+      "GRAPHQL_ENDPOINT": "{{BASE_URL}}/graphql"
+    },
+    "local": {
+      "BASE_URL": "https://localhost:65203"
+    },
+    "dev": {
+      "BASE_URL": "https://dev-api.example.com"
+    },
+    "staging": {
+      "BASE_URL": "https://staging-api.example.com"
+    },
+    "production": {
+      "BASE_URL": "https://api.example.com"
+    }
+  },
+  "log": {
+    "level": "info",
+    "supportAnsiColors": true
+  },
+  "request": {
+    "timeout": 30000
+  },
+  "dotenvEnabled": true,
+  "dotenvFilename": ".env",
+  "dotenvVariableProviderPriority": 1
+}
