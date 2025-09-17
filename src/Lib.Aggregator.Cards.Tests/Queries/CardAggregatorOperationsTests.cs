@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AwesomeAssertions;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Exceptions;
@@ -10,8 +9,6 @@ using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 

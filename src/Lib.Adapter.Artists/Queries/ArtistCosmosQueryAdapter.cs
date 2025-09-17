@@ -4,13 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
-using Lib.Adapter.Artists.Entities;
+using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Artists.Exceptions;
+using Lib.Adapter.Artists.Queries.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -43,68 +43,44 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         _artistCardsInquisitor = artistCardsInquisitor;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync([NotNull] IArtistSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync([NotNull] IArtistSearchTermXrfEntity xfrEntity)
     {
-        // Extract primitives for external system interface
-        string searchTermValue = searchTerm.SearchTerm;
-
-        // Normalize the search term: lowercase and remove non-alphabetic characters
-        string normalized = new([.. searchTermValue
-            .ToLowerInvariant()
-            .Where(char.IsLetter)]);
-
-        if (normalized.Length < 3)
-        {
-            return new FailureOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>(
-                new ArtistAdapterException("Search term must contain at least 3 letters"));
-        }
-
-        // Generate trigrams from the normalized search term
-        List<string> trigrams = [];
-        for (int i = 0; i <= normalized.Length - 3; i++)
-        {
-            trigrams.Add(normalized.Substring(i, 3));
-        }
-
         // Query each trigram and collect all matching artist data entities
         HashSet<string> seenArtistIds = [];
         List<ArtistNameTrigramDataExtEntity> matchingArtists = [];
         Dictionary<string, int> artistMatchCounts = [];
 
-        foreach (string trigram in trigrams)
+        foreach (string trigram in xfrEntity.SearchTerms)
         {
             // Query for this trigram with server-side filtering
-            string firstChar = trigram[..1];
             QueryDefinition queryDefinition = new QueryDefinition(
                 "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE artist FROM artist IN c.artists WHERE CONTAINS(artist.norm, @normalized))")
                 .WithParameter("@trigram", trigram)
-                .WithParameter("@partition", firstChar)
-                .WithParameter("@normalized", normalized);
+                .WithParameter("@partition", trigram[..1])
+                .WithParameter("@normalized", xfrEntity.Normalized);
 
             OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtEntity>(
                 queryDefinition,
-                new PartitionKey(firstChar)).ConfigureAwait(false);
+                new PartitionKey(trigram[..1])).ConfigureAwait(false);
 
-            if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
+            if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null) continue;
+
+            foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
             {
-                foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
+                foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
                 {
-                    foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
+                    // Server-side filtering should have already filtered, but double-check
+                    if (entry.Normalized.Contains(xfrEntity.Normalized) is false) continue;
+
+                    // Track unique artists and their match counts for sorting
+                    if (seenArtistIds.Add(entry.ArtistId))
                     {
-                        // Server-side filtering should have already filtered, but double-check
-                        if (entry.Normalized.Contains(normalized))
-                        {
-                            // Track unique artists and their match counts for sorting
-                            if (seenArtistIds.Add(entry.ArtistId))
-                            {
-                                matchingArtists.Add(entry);
-                                artistMatchCounts[entry.ArtistId] = 1;
-                            }
-                            else
-                            {
-                                artistMatchCounts[entry.ArtistId]++;
-                            }
-                        }
+                        matchingArtists.Add(entry);
+                        artistMatchCounts[entry.ArtistId] = 1;
+                    }
+                    else
+                    {
+                        artistMatchCounts[entry.ArtistId]++;
                     }
                 }
             }
@@ -118,57 +94,35 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>(sortedResults);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> GetCardsByArtistIdAsync([NotNull] IArtistIdItrEntity artistId)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync([NotNull] IArtistIdXfrEntity artistId)
     {
         // Extract primitives for external system interface
-        string artistIdValue = artistId.ArtistId;
 
         // Query all cards for this artist ID using the artist ID as partition key
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @artistId")
-            .WithParameter("@artistId", artistIdValue);
+            .WithParameter("@artistId", artistId.ArtistId);
 
         OpResponse<IEnumerable<ScryfallArtistCardExtEntity>> cardsResponse = await _artistCardsInquisitor.QueryAsync<ScryfallArtistCardExtEntity>(
             queryDefinition,
-            new PartitionKey(artistIdValue)).ConfigureAwait(false);
+            new PartitionKey(artistId.ArtistId)).ConfigureAwait(false);
 
-        if (cardsResponse.IsSuccessful() is false)
+        if (cardsResponse.IsNotSuccessful())
         {
             return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
-                new ArtistAdapterException($"Failed to retrieve cards for artist '{artistIdValue}'", cardsResponse.Exception()));
+                new ArtistAdapterException($"Failed to retrieve cards for artist '{artistId.ArtistId}'", cardsResponse.Exception()));
         }
 
         return new SuccessOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(cardsResponse.Value);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> GetCardsByArtistNameAsync([NotNull] IArtistNameItrEntity artistName)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync([NotNull] IArtistNameXfrEntity artistName)
     {
-        // Extract primitives for external system interface
-        string artistNameValue = artistName.ArtistName;
-
-        // Normalize the artist name: lowercase and remove non-alphabetic characters
-        string normalized = new([.. artistNameValue
-            .ToLowerInvariant()
-            .Where(char.IsLetter)]);
-
-        if (normalized.Length < 3)
-        {
-            return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
-                new ArtistAdapterException("Artist name must contain at least 3 letters"));
-        }
-
-        // Generate trigrams from the normalized artist name
-        List<string> trigrams = [];
-        for (int i = 0; i <= normalized.Length - 3; i++)
-        {
-            trigrams.Add(normalized.Substring(i, 3));
-        }
-
         // Query each trigram and collect all matching artist names
         HashSet<string> matchingArtistIds = [];
         Dictionary<string, int> artistMatchCounts = [];
         Dictionary<string, string> artistIdToName = [];
 
-        foreach (string trigram in trigrams)
+        foreach (string trigram in artistName.Trigrams)
         {
             // Query for this trigram with server-side filtering
             string firstChar = trigram[..1];
@@ -176,32 +130,29 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
                 "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE artist FROM artist IN c.artists WHERE CONTAINS(artist.norm, @normalized))")
                 .WithParameter("@trigram", trigram)
                 .WithParameter("@partition", firstChar)
-                .WithParameter("@normalized", normalized);
+                .WithParameter("@normalized", artistName.Normalized);
 
             OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtEntity>(
                 queryDefinition,
                 new PartitionKey(firstChar)).ConfigureAwait(false);
 
-            if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
-            {
-                foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
-                {
-                    foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
-                    {
-                        // Server-side filtering should have already filtered, but double-check
-                        if (entry.Normalized.Contains(normalized))
-                        {
-                            matchingArtistIds.Add(entry.ArtistId);
-                            artistIdToName[entry.ArtistId] = entry.Name;
+            if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null) continue;
 
-                            // Track how many trigrams matched for ranking
-                            if (artistMatchCounts.ContainsKey(entry.ArtistId) is false)
-                            {
-                                artistMatchCounts[entry.ArtistId] = 0;
-                            }
-                            artistMatchCounts[entry.ArtistId]++;
-                        }
+            foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
+            {
+                foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
+                {
+                    // Server-side filtering should have already filtered, but double-check
+                    if (entry.Normalized.Contains(artistName.Normalized) is false)
+                    {
+                        continue;
                     }
+
+                    matchingArtistIds.Add(entry.ArtistId);
+                    artistIdToName[entry.ArtistId] = entry.Name;
+
+                    artistMatchCounts.TryAdd(entry.ArtistId, 0);
+                    artistMatchCounts[entry.ArtistId]++;
                 }
             }
         }
@@ -210,7 +161,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         if (matchingArtistIds.Count == 0)
         {
             return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
-                new ArtistAdapterException($"Artist '{artistNameValue}' not found"));
+                new ArtistAdapterException($"Artist '{artistName.ArtistName}' not found"));
         }
 
         // Sort by match count to get best matches
@@ -220,7 +171,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
         string topMatchArtistId = sortedMatches.First();
         int topMatchScore = artistMatchCounts[topMatchArtistId];
-        int totalTrigrams = trigrams.Count;
+        int totalTrigrams = artistName.Trigrams.Count;
 
         // Smart disambiguation logic
         double confidenceScore = (double)topMatchScore / totalTrigrams;
@@ -245,15 +196,11 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
             string alternatives = string.Join(", ", ambiguousMatches);
             return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
-                new ArtistAdapterException($"Multiple artists found for '{artistNameValue}'. Consider using artist search for: {alternatives}"));
+                new ArtistAdapterException($"Multiple artists found for '{artistName.ArtistName}'. Consider using artist search for: {alternatives}"));
         }
 
-        // We have a high confidence match - use existing GetCardsByArtistIdAsync for complete card data
-        // Debug: Log which artist ID was selected
-        Console.WriteLine($"DEBUG: Selected artist ID '{topMatchArtistId}' for name '{artistNameValue}' with confidence {confidenceScore:F2}");
-
         // Use existing GetCardsByArtistIdAsync method to get complete card data
-        ArtistIdItrEntity artistIdEntity = new() { ArtistId = topMatchArtistId };
-        return await GetCardsByArtistIdAsync(artistIdEntity).ConfigureAwait(false);
+        ArtistIdXfrEntity artistIdEntity = new() { ArtistId = topMatchArtistId };
+        return await CardsByArtistIdAsync(artistIdEntity).ConfigureAwait(false);
     }
 }
