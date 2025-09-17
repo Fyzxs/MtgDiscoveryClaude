@@ -8,15 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 
-public sealed class SelectAllSetItemsInquisition : ICosmosInquisition
+public sealed class AllSetItemsInquisition : ICosmosInquisition
 {
     private readonly ICosmosInquisitor _inquisitor;
     private readonly InquiryDefinition _inquiry;
 
-    public SelectAllSetItemsInquisition(ILogger logger) : this(new ScryfallSetItemsInquisitor(logger), new SelectAllSetItemsQueryDefinition())
+    public AllSetItemsInquisition(ILogger logger) : this(new SetItemsInquisitor(logger), new AllSetItemsQueryDefinition())
     { }
 
-    private SelectAllSetItemsInquisition(ICosmosInquisitor inquisitor, InquiryDefinition inquiry)
+    private AllSetItemsInquisition(ICosmosInquisitor inquisitor, InquiryDefinition inquiry)
     {
         _inquisitor = inquisitor;
         _inquiry = inquiry;
