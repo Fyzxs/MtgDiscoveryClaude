@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Shared.DataModels.Entities;
+using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.Sets.Apis;
@@ -20,14 +20,14 @@ namespace Lib.Adapter.Sets.Apis;
 /// to allow the main service interface to inherit from them and provide a unified API.
 ///
 /// Entity Mapping Approach:
-/// - Input: Preserves ItrEntity parameters following MicroObjects principles
+/// - Input: Uses XfrEntity parameters following the layered architecture pattern
 /// - Output: Returns ExtEntity types from storage systems
-/// - Aggregator layer handles mapping from ExtEntity to ItrEntity
+/// - Aggregator layer handles mapping from ItrEntity to XfrEntity and ExtEntity to ItrEntity
 /// Primitive extraction happens in the concrete implementation when interfacing with external systems.
 /// </summary>
 public interface ISetQueryAdapter
 {
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync(ISetIdsItrEntity setIds);
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync(ISetCodesItrEntity setCodes);
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync(ISetIdsXfrEntity setIds);
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync(ISetCodesXfrEntity setCodes);
     Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync();
 }

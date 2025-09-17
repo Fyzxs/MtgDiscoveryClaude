@@ -7,11 +7,11 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Sets.Apis;
-using Lib.Adapter.Sets.Entities;
+using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Exceptions;
+using Lib.Adapter.Sets.Queries.Entities;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -47,7 +47,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
     }
 
     //TODO: Remove the Get prefix
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync([NotNull] ISetIdsItrEntity setIds)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync([NotNull] ISetIdsXfrEntity setIds)
     {
         // Extract primitives for external system interface
         IEnumerable<string> setIdList = setIds.SetIds;
@@ -74,7 +74,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>(successfulSets);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync([NotNull] ISetCodesItrEntity setCodes)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync([NotNull] ISetCodesXfrEntity setCodes)
     {
         // Extract primitives for external system interface
         IEnumerable<string> setCodeList = setCodes.SetCodes;
@@ -102,7 +102,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
         }
 
         //TODO: Should be a mapper
-        SetIdsItrEntity setIdsEntity = new() { SetIds = setIds };
+        ISetIdsXfrEntity setIdsEntity = new SetIdsXfrEntity { SetIds = setIds };
         return await GetSetsByIdsAsync(setIdsEntity).ConfigureAwait(false);
     }
 
