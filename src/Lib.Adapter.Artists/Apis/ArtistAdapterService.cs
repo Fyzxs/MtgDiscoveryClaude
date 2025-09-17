@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Adapter.Artists.Queries;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -34,17 +37,17 @@ public sealed class ArtistAdapterService : IArtistAdapterService
         _artistQueryAdapter = artistQueryAdapter;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> SearchArtistsAsync(IArtistSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermItrEntity searchTerm)
     {
         return await _artistQueryAdapter.SearchArtistsAsync(searchTerm).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> GetCardsByArtistIdAsync(IArtistIdItrEntity artistId)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> GetCardsByArtistIdAsync(IArtistIdItrEntity artistId)
     {
         return await _artistQueryAdapter.GetCardsByArtistIdAsync(artistId).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> GetCardsByArtistNameAsync(IArtistNameItrEntity artistName)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> GetCardsByArtistNameAsync(IArtistNameItrEntity artistName)
     {
         return await _artistQueryAdapter.GetCardsByArtistNameAsync(artistName).ConfigureAwait(false);
     }

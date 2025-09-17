@@ -1,0 +1,8 @@
+﻿using System.Collections.Generic;
+using Lib.Cosmos.Apis.Operators;
+using Lib.Shared.Abstractions.Mappers;
+using Lib.Shared.DataModels.Entities;
+
+namespace Lib.Aggregator.Cards.Queries.Mappers;
+
+internal interface IQueryCardsIdsToReadPointItemsMapper : ICreateMapper<ICardIdsItrEntity, IEnumerable<ReadPointItem>>;

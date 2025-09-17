@@ -19,15 +19,27 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public class ArtistQueryMethods
 {
     private readonly ICardItemItrToOutMapper _scryfallCardMapper;
+    private readonly ICardItemCollectionItrToOutMapper _cardCollectionMapper;
+    private readonly IArtistSearchResultCollectionItrToOutMapper _artistSearchMapper;
     private readonly IEntryService _entryService;
 
-    public ArtistQueryMethods(ILogger logger) : this(new CardItemItrToOutMapper(), new EntryService(logger))
+    public ArtistQueryMethods(ILogger logger) : this(
+        new CardItemItrToOutMapper(),
+        new CardItemCollectionItrToOutMapper(),
+        new ArtistSearchResultCollectionItrToOutMapper(),
+        new EntryService(logger))
     {
     }
 
-    private ArtistQueryMethods(ICardItemItrToOutMapper scryfallCardMapper, IEntryService entryService)
+    private ArtistQueryMethods(
+        ICardItemItrToOutMapper scryfallCardMapper,
+        ICardItemCollectionItrToOutMapper cardCollectionMapper,
+        IArtistSearchResultCollectionItrToOutMapper artistSearchMapper,
+        IEntryService entryService)
     {
         _scryfallCardMapper = scryfallCardMapper;
+        _cardCollectionMapper = cardCollectionMapper;
+        _artistSearchMapper = artistSearchMapper;
         _entryService = entryService;
     }
 
@@ -45,12 +57,7 @@ public class ArtistQueryMethods
             }
         };
 
-        List<ArtistSearchResultOutEntity> results = [];
-
-        foreach (IArtistSearchResultItrEntity artistResult in response.ResponseData.Artists)
-        {
-            results.Add(new ArtistSearchResultOutEntity { ArtistId = artistResult.ArtistId, Name = artistResult.Name });
-        }
+        List<ArtistSearchResultOutEntity> results = await _artistSearchMapper.Map(response.ResponseData.Artists).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<ArtistSearchResultOutEntity>>() { Data = results };
     }
@@ -69,13 +76,7 @@ public class ArtistQueryMethods
             }
         };
 
-        List<CardItemOutEntity> results = [];
-
-        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
-        {
-            CardItemOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
+        List<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results };
     }
@@ -94,13 +95,7 @@ public class ArtistQueryMethods
             }
         };
 
-        List<CardItemOutEntity> results = [];
-
-        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
-        {
-            CardItemOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
+        List<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results };
     }

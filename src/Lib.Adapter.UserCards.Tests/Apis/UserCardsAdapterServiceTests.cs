@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Tests.Fakes;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -60,7 +61,7 @@ public sealed class UserCardsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<IUserCardItrEntity> actual = await service.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await service.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();

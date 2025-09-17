@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
 namespace Lib.Universal.Caching;
+
 public sealed class MonoStateMemoryCache : IMemoryCache
 {
     private static readonly IMemoryCache s_memoryCache = new MemoryCache(new MemoryCacheOptions());

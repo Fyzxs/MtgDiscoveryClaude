@@ -6,6 +6,7 @@ using Lib.Universal.Primitives;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Models;
+
 internal sealed class ScryfallSet : IScryfallSet
 {
     private readonly ExtScryfallSetDto _dto;

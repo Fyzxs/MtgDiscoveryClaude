@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 
@@ -19,9 +20,9 @@ namespace Lib.Adapter.UserCards.Apis;
 /// to allow the main service interface to inherit from them and provide a unified API.
 ///
 /// Entity Mapping Approach:
-/// - Input: Accepts primitive parameters for query operations
-/// - Output: Returns ITR entities for consistency with main service interface
-/// - Internal mapping: Adapter implementations map from storage entities to ITR entities
+/// - Input: Accepts ItrEntity parameters for query operations
+/// - Output: Returns ExtEntity types from storage systems
+/// - Aggregator layer handles mapping from ExtEntity to ItrEntity
 /// </summary>
 public interface IUserCardsQueryAdapter
 {
@@ -30,5 +31,5 @@ public interface IUserCardsQueryAdapter
     /// </summary>
     /// <param name="userCardsSet">The user cards set entity containing userId and setId</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet);
+    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet);
 }

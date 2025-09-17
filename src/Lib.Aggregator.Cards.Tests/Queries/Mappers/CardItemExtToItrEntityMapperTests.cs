@@ -1,4 +1,6 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Aggregator.Scryfall.Shared.Mappers;
@@ -8,23 +10,23 @@ using Newtonsoft.Json.Linq;
 namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
 
 [TestClass]
-public sealed class CardItemExtToItrEntityMapperTests
+public sealed class CardItemExtToItrMapperTests
 {
     [TestMethod, TestCategory("unit")]
-    public void Map_WithNullInput_ReturnsNull()
+    public async Task Map_WithNullInput_ReturnsNull()
     {
         // Arrange
-        CardItemExtToItrEntityMapper subject = new();
+        CardItemExtToItrMapper subject = new();
 
         // Act
-        ICardItemItrEntity actual = subject.Map(null);
+        ICardItemItrEntity actual = await subject.Map(null).ConfigureAwait(false);
 
         // Assert
         actual.Should().BeNull();
     }
 
     [TestMethod, TestCategory("unit")]
-    public void Map_WithValidScryfallCard_ReturnsCardItemItrEntity()
+    public async Task Map_WithValidScryfallCard_ReturnsCardItemItrEntity()
     {
         // Arrange
         dynamic testData = new JObject
@@ -66,10 +68,10 @@ public sealed class CardItemExtToItrEntityMapperTests
         };
 
         ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(testData);
-        CardItemExtToItrEntityMapper subject = new();
+        CardItemExtToItrMapper subject = new();
 
         // Act
-        ICardItemItrEntity actual = subject.Map(scryfallCard);
+        ICardItemItrEntity actual = await subject.Map(scryfallCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -89,14 +91,14 @@ public sealed class CardItemExtToItrEntityMapperTests
     }
 
     [TestMethod, TestCategory("unit")]
-    public void Map_WithEmptyData_ReturnsEntityWithNullProperties()
+    public async Task Map_WithEmptyData_ReturnsEntityWithNullProperties()
     {
         // Arrange
         ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(new JObject());
-        CardItemExtToItrEntityMapper subject = new();
+        CardItemExtToItrMapper subject = new();
 
         // Act
-        ICardItemItrEntity actual = subject.Map(scryfallCard);
+        ICardItemItrEntity actual = await subject.Map(scryfallCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -111,15 +113,15 @@ public sealed class CardItemExtToItrEntityMapperTests
     }
 
     [TestMethod, TestCategory("unit")]
-    public void Map_ReturnsNewInstanceEachTime()
+    public async Task Map_ReturnsNewInstanceEachTime()
     {
         // Arrange
         ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(new JObject { ["id"] = "test-id" });
-        CardItemExtToItrEntityMapper subject = new();
+        CardItemExtToItrMapper subject = new();
 
         // Act
-        ICardItemItrEntity first = subject.Map(scryfallCard);
-        ICardItemItrEntity second = subject.Map(scryfallCard);
+        ICardItemItrEntity first = await subject.Map(scryfallCard).ConfigureAwait(false);
+        ICardItemItrEntity second = await subject.Map(scryfallCard).ConfigureAwait(false);
 
         // Assert
         first.Should().NotBeSameAs(second);

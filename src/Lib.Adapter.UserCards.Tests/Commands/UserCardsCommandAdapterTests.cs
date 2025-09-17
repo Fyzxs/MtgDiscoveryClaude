@@ -3,6 +3,7 @@ using Lib.Adapter.UserCards.Commands;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Cosmos.Apis.Operators;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -46,7 +47,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -77,7 +78,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -111,7 +112,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -135,7 +136,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -152,7 +153,7 @@ public sealed class UserCardsCommandAdapterTests
         UserCardsCommandAdapter adapter = new(logger);
 
         // Act
-        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(null).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(null).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();

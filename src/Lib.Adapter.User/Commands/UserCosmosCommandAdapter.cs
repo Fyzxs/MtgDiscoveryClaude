@@ -28,7 +28,7 @@ internal sealed class UserCosmosCommandAdapter : IUserCommandAdapter
         _userInfoScribe = userInfoScribe;
     }
 
-    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
+    public async Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
     {
         // Extract primitives for external system interface and map to storage entity
         UserInfoExtEntity userItem = new()
@@ -40,6 +40,6 @@ internal sealed class UserCosmosCommandAdapter : IUserCommandAdapter
 
         await _userInfoScribe.UpsertAsync(userItem).ConfigureAwait(false);
 
-        return new SuccessOperationResponse<IUserInfoItrEntity>(userInfo);
+        return new SuccessOperationResponse<UserInfoExtEntity>(userItem);
     }
 }

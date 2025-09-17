@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -21,7 +21,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual = 
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual =
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
@@ -36,7 +36,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual = 
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual =
             await subject.Validate(null!).ConfigureAwait(false);
 
         // Assert
@@ -53,7 +53,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual = 
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual =
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
@@ -69,7 +69,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual = 
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual =
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
@@ -85,7 +85,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual = 
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> actual =
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert

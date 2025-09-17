@@ -4,6 +4,7 @@ using Lib.Scryfall.Ingestion.Models;
 using Lib.Scryfall.Shared.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Transformers;
+
 internal sealed class ScryfallCardDtoTransformer : IScryfallDtoTransformer<ExtScryfallCardDto, IScryfallCard>
 {
     private readonly IScryfallSet _set;

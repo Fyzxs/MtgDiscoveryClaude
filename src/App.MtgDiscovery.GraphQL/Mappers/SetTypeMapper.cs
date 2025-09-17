@@ -13,9 +13,9 @@ internal interface ISetItemItrToOutMapper : ICreateMapper<ISetItemItrEntity, Scr
 
 internal sealed class SetItemItrToOutMapper : ISetItemItrToOutMapper
 {
-    public ScryfallSetOutEntity Map(ISetItemItrEntity setItem)
+    public Task<ScryfallSetOutEntity> Map(ISetItemItrEntity setItem)
     {
-        return new ScryfallSetOutEntity
+        ScryfallSetOutEntity result = new()
         {
             Id = setItem.Id,
             Code = setItem.Code,
@@ -36,6 +36,8 @@ internal sealed class SetItemItrToOutMapper : ISetItemItrToOutMapper
             PrintedSize = setItem.PrintedSize,
             Groupings = SetGroupingOutEntities(setItem)
         };
+
+        return Task.FromResult(result);
     }
 
     private static ICollection<SetGroupingOutEntity> SetGroupingOutEntities(ISetItemItrEntity setItem)
@@ -69,8 +71,4 @@ internal sealed class SetItemItrToOutMapper : ISetItemItrToOutMapper
         return groupings;
     }
 
-    Task<ScryfallSetOutEntity> ICreateMapper<ISetItemItrEntity, ScryfallSetOutEntity>.Map(ISetItemItrEntity source)
-    {
-        throw new System.NotImplementedException();
-    }
 }

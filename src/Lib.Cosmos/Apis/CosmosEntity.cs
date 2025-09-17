@@ -4,7 +4,6 @@ namespace Lib.Cosmos.Apis;
 
 public /* cosmos required */ class CosmosEntity
 {
-
     /// <summary>
     /// Gets or sets the type of the item.
     /// </summary>
