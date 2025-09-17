@@ -43,7 +43,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         _artistCardsInquisitor = artistCardsInquisitor;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync([NotNull] IArtistSearchTermXrfEntity xfrEntity)
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync([NotNull] IArtistSearchTermXfrEntity xfrEntity)
     {
         // Query each trigram and collect all matching artist data entities
         HashSet<string> seenArtistIds = [];

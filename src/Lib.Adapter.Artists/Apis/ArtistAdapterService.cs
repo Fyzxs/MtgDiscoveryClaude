@@ -43,7 +43,7 @@ public sealed class ArtistAdapterService : IArtistAdapterService
     /// </summary>
     /// <param name="searchTerm">The search term containing trigrams and normalized form for matching</param>
     /// <returns>Collection of artist trigram data entities that match the search criteria</returns>
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXrfEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm)
     {
         return await _artistQueryAdapter.SearchArtistsAsync(searchTerm).ConfigureAwait(false);
     }

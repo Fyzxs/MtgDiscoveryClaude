@@ -8,7 +8,7 @@ namespace Lib.Aggregator.Artists.Queries.Mappers;
 
 internal sealed class ArtistSearchTermItrToXfrMapper : IArtistSearchTermItrToXfrMapper
 {
-    public Task<IArtistSearchTermXrfEntity> Map(IArtistSearchTermItrEntity source)
+    public Task<IArtistSearchTermXfrEntity> Map(IArtistSearchTermItrEntity source)
     {
         string normalized = source.SearchTerm;
 
@@ -18,12 +18,12 @@ internal sealed class ArtistSearchTermItrToXfrMapper : IArtistSearchTermItrToXfr
             trigrams.Add(normalized.Substring(i, 3));
         }
 
-        ArtistSearchTermXrfEntity mapped = new()
+        ArtistSearchTermXfrEntity mapped = new()
         {
             Normalized = normalized,
             SearchTerms = trigrams
         };
 
-        return Task.FromResult<IArtistSearchTermXrfEntity>(mapped);
+        return Task.FromResult<IArtistSearchTermXfrEntity>(mapped);
     }
 }

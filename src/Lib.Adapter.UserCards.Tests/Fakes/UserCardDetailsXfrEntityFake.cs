@@ -1,8 +1,8 @@
-﻿using Lib.Shared.DataModels.Entities;
+using Lib.Adapter.UserCards.Apis.Entities;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 
-internal sealed class UserCardDetailsItrEntityFake : IUserCardDetailsItrEntity
+internal sealed class UserCardDetailsXfrEntityFake : IUserCardDetailsXfrEntity
 {
     public string Finish { get; init; }
     public string Special { get; init; }

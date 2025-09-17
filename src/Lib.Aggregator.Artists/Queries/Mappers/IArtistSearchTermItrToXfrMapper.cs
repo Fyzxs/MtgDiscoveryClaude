@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 
-internal interface IArtistSearchTermItrToXfrMapper : ICreateMapper<IArtistSearchTermItrEntity, IArtistSearchTermXrfEntity>;
+internal interface IArtistSearchTermItrToXfrMapper : ICreateMapper<IArtistSearchTermItrEntity, IArtistSearchTermXfrEntity>;

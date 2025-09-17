@@ -33,7 +33,7 @@ public interface IArtistQueryAdapter
     /// </summary>
     /// <param name="searchTerm">The search term containing trigrams and normalized form for matching</param>
     /// <returns>Collection of artist trigram data entities that match the search criteria</returns>
-    Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXrfEntity searchTerm);
+    Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm);
 
     /// <summary>
     /// Retrieves all cards associated with a specific artist using their unique identifier.
