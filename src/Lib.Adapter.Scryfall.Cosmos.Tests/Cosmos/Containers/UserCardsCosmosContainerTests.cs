@@ -1,6 +1,5 @@
 ﻿using System;
 using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers.Definitions;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.Cosmos.Containers;

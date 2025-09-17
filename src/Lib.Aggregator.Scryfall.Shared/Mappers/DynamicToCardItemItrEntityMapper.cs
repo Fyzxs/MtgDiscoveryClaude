@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Aggregator.Scryfall.Shared.Internals;
 using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Aggregator.Scryfall.Shared.Mappers;

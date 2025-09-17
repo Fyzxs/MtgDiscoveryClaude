@@ -4,7 +4,7 @@ using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;
 
-namespace Lib.MtgDiscovery.Entry.Queries.Validators;
+namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 
 internal sealed class SetCodeArgEntityValidatorContainer : ValidatorActionContainer<ISetCodeArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>, ISetCodeArgEntityValidator
 {
