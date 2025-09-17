@@ -10,10 +10,10 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis;
+using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -37,7 +37,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         _userCardsScribe = userCardsScribe;
     }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardXfrEntity userCard)
     {
         // Step 1: Try to read existing record
         ReadPointItem readPoint = new()
@@ -74,14 +74,14 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         return new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value);
     }
 
-    private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IUserCardItrEntity newData)
+    private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IUserCardXfrEntity newData)
     {
         // Create a dictionary for efficient merging based on finish + special combination
         Dictionary<(string finish, string special), UserCardDetailsExtEntity> mergedItems = existing.CollectedList
             .ToDictionary(item => (item.Finish, item.Special));
 
         // Merge or add new collected items
-        foreach (IUserCardDetailsItrEntity newItem in newData.CollectedList)
+        foreach (IUserCardDetailsXfrEntity newItem in newData.CollectedList)
         {
             (string finish, string special) key = (newItem.Finish, newItem.Special);
 
@@ -117,10 +117,10 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         };
     }
 
-    private static UserCardExtEntity MapUserCardToExtEntity(IUserCardItrEntity userCard)
+    private static UserCardExtEntity MapUserCardToExtEntity(IUserCardXfrEntity userCard)
     {
         List<UserCardDetailsExtEntity> collectedItems = [];
-        foreach (IUserCardDetailsItrEntity item in userCard.CollectedList)
+        foreach (IUserCardDetailsXfrEntity item in userCard.CollectedList)
         {
             collectedItems.Add(new UserCardDetailsExtEntity
             {
