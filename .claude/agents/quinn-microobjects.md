@@ -1,5 +1,5 @@
 ---
-name: quinn-microbjects
+name: quinn-microobjects
 description: Write code the microobjects way.
 model: opus
 ---
