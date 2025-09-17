@@ -4,8 +4,8 @@ namespace Lib.Aggregator.Cards.Tests.Fakes;
 
 internal static class FakeScryfallCardItemFactory
 {
-    public static ScryfallCardExtArg Create(dynamic data)
+    public static ScryfallCardItemExtEntity Create(dynamic data)
     {
-        return new ScryfallCardExtArg { Data = data };
+        return new ScryfallCardItemExtEntity { Data = data };
     }
 }

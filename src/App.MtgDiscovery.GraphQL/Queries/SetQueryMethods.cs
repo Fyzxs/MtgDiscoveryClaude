@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
@@ -17,14 +21,14 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class SetQueryMethods
 {
-    private readonly IScryfallSetMapper _scryfallSetMapper;
+    private readonly ISetItemItrToOutMapper _scryfallSetMapper;
     private readonly IEntryService _entryService;
 
-    public SetQueryMethods(ILogger logger) : this(new ScryfallSetMapper(), new EntryService(logger))
+    public SetQueryMethods(ILogger logger) : this(new SetItemItrToOutMapper(), new EntryService(logger))
     {
     }
 
-    private SetQueryMethods(IScryfallSetMapper scryfallSetMapper, IEntryService entryService)
+    private SetQueryMethods(ISetItemItrToOutMapper scryfallSetMapper, IEntryService entryService)
     {
         _scryfallSetMapper = scryfallSetMapper;
         _entryService = entryService;
@@ -37,20 +41,23 @@ public class SetQueryMethods
     {
         IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         List<ScryfallSetOutEntity> results = [];
 
         foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
         {
-            ScryfallSetOutEntity outEntity = _scryfallSetMapper.Map(setItem);
+            ScryfallSetOutEntity outEntity = await _scryfallSetMapper.Map(setItem).ConfigureAwait(false);
             results.Add(outEntity);
         }
 
@@ -62,20 +69,23 @@ public class SetQueryMethods
     {
         IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         List<ScryfallSetOutEntity> results = [];
 
         foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
         {
-            ScryfallSetOutEntity outEntity = _scryfallSetMapper.Map(setItem);
+            ScryfallSetOutEntity outEntity = await _scryfallSetMapper.Map(setItem).ConfigureAwait(false);
             results.Add(outEntity);
         }
 
@@ -87,20 +97,23 @@ public class SetQueryMethods
     {
         IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         List<ScryfallSetOutEntity> results = [];
 
         foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
         {
-            ScryfallSetOutEntity outEntity = _scryfallSetMapper.Map(setItem);
+            ScryfallSetOutEntity outEntity = await _scryfallSetMapper.Map(setItem).ConfigureAwait(false);
             results.Add(outEntity);
         }
 

@@ -20,17 +20,17 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IUserCardCollectionItrToOutMapper _mapper;
+    private readonly IUserCardItrToOutMapper _mapper;
 
     public UserCardsMutationMethods(ILogger logger) : this(
         new EntryService(logger),
-        new UserCardCollectionItrToOutMapper())
+        new UserCardItrToOutMapper())
     {
     }
 
     private UserCardsMutationMethods(
         IEntryService entryService,
-        IUserCardCollectionItrToOutMapper mapper)
+        IUserCardItrToOutMapper mapper)
     {
         _entryService = entryService;
         _mapper = mapper;
@@ -39,13 +39,13 @@ public sealed class UserCardsMutationMethods
     [Authorize]
     [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
     public async Task<ResponseModel> AddCardToCollectionAsync(
-        ClaimsPrincipal claimsPrincipal, AddCardToCollectionArgEntity args)
+        ClaimsPrincipal claimsPrincipal, UserCardArgEntity args)
     {
         // Extract user information from JWT claims
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
         // Pass both auth and args to entry service - it will combine them during mapping
-        IOperationResponse<IUserCardCollectionItrEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -57,8 +57,8 @@ public sealed class UserCardsMutationMethods
         };
 
         // Use mapper to transform ITR entity to OUT entity
-        UserCardCollectionOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
+        UserCardOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<UserCardCollectionOutEntity>() { Data = result };
+        return new SuccessDataResponseModel<UserCardOutEntity>() { Data = result };
     }
 }

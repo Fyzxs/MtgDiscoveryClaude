@@ -58,11 +58,11 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
             string trigram = aggregate.Trigram();
             _dashboard.UpdateProgress("Card Trigrams:", current, trigramCount, "Writing Trigram", trigram);
 
-            CardNameTrigramExtArg entity = new()
+            CardNameTrigramExtEntity entity = new()
             {
                 Trigram = aggregate.Trigram(),
-                Cards = new Collection<CardNameTrigramDataExtArg>(
-                    [.. aggregate.Entries().Select(entry => new CardNameTrigramDataExtArg
+                Cards = new Collection<CardNameTrigramDataExtEntity>(
+                    [.. aggregate.Entries().Select(entry => new CardNameTrigramDataExtEntity
                     {
                         Name = entry.Name(),
                         Normalized = entry.Normalized(),

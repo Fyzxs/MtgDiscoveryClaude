@@ -7,7 +7,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators;
 
-internal sealed class UserCardsSetArgEntityValidatorContainer : ValidatorActionContainer<IUserCardsSetArgEntity, IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>>, IUserCardsSetArgEntityValidator
+internal sealed class UserCardsSetArgEntityValidatorContainer : ValidatorActionContainer<IUserCardsSetArgEntity, IOperationResponse<IEnumerable<IUserCardItrEntity>>>, IUserCardsSetArgEntityValidator
 {
     public UserCardsSetArgEntityValidatorContainer() : base([
             new IsNotNullUserCardsSetArgEntityValidator(),
@@ -19,7 +19,7 @@ internal sealed class UserCardsSetArgEntityValidatorContainer : ValidatorActionC
     { }
 }
 
-internal sealed class IsNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardCollectionItrEntity>>
+internal sealed class IsNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
 {
     public IsNotNullUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -35,7 +35,7 @@ internal sealed class IsNotNullUserCardsSetArgEntityValidator : OperationRespons
     }
 }
 
-internal sealed class SetIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardCollectionItrEntity>>
+internal sealed class SetIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
 {
     public SetIdNotNullUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -51,7 +51,7 @@ internal sealed class SetIdNotNullUserCardsSetArgEntityValidator : OperationResp
     }
 }
 
-internal sealed class HasValidSetIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardCollectionItrEntity>>
+internal sealed class HasValidSetIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
 {
     public HasValidSetIdUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -67,7 +67,7 @@ internal sealed class HasValidSetIdUserCardsSetArgEntityValidator : OperationRes
     }
 }
 
-internal sealed class UserIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardCollectionItrEntity>>
+internal sealed class UserIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
 {
     public UserIdNotNullUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -83,7 +83,7 @@ internal sealed class UserIdNotNullUserCardsSetArgEntityValidator : OperationRes
     }
 }
 
-internal sealed class HasValidUserIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardCollectionItrEntity>>
+internal sealed class HasValidUserIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
 {
     public HasValidUserIdUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }

@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal sealed class CollectedItemFinishValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
+internal sealed class CollectedItemFinishValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
 {
     private static readonly HashSet<string> s_validFinishes = new(System.StringComparer.OrdinalIgnoreCase)
     {
@@ -18,14 +18,14 @@ internal sealed class CollectedItemFinishValidator : OperationResponseValidator<
     public CollectedItemFinishValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
+    public sealed class Validator : IValidator<IUserCardArgEntity>
     {
 
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg)
+        public Task<bool> IsValid(IUserCardArgEntity arg)
         {
-            if (arg.CollectedItem is null) return Task.FromResult(true); // Skip if null, handled by null validator
+            if (arg.UserCardDetails is null) return Task.FromResult(true); // Skip if null, handled by null validator
 
-            return Task.FromResult(s_validFinishes.Contains(arg.CollectedItem.Finish));
+            return Task.FromResult(s_validFinishes.Contains(arg.UserCardDetails.Finish));
         }
     }
 
