@@ -7,7 +7,7 @@ namespace Lib.Adapter.Artists.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary containing preprocessed search data
 /// optimized for external system queries.
 /// </summary>
-public interface IArtistSearchTermXrfEntity
+public interface IArtistSearchTermXfrEntity
 {
     /// <summary>
     /// Collection of three-character tokens (trigrams) derived from the search term.

@@ -4,6 +4,4 @@ using Lib.Shared.DataModels.Entities;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
 
-internal interface IUserCardItrToOutMapper : ICreateMapper<IUserCardItrEntity, UserCardOutEntity>
-{
-}
+internal interface IUserCardItrToOutMapper : ICreateMapper<IUserCardItrEntity, UserCardOutEntity>;

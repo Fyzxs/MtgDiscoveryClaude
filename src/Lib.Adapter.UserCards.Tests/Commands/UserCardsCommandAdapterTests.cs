@@ -5,7 +5,8 @@ using Lib.Adapter.UserCards.Exceptions;
 using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Shared.DataModels.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;
@@ -39,12 +40,12 @@ public sealed class UserCardsCommandAdapterTests
         // Use TypeWrapper to access internal constructor
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardItrEntity userCard = new UserCardItrEntityFake
+        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new UserCardDetailsItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
+            CollectedList = new[] { new UserCardDetailsXfrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
         };
 
         // Act
@@ -67,14 +68,14 @@ public sealed class UserCardsCommandAdapterTests
         // Use TypeWrapper to access internal constructor
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
+        IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardItrEntity userCard = new UserCardItrEntityFake
+        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -102,14 +103,14 @@ public sealed class UserCardsCommandAdapterTests
         UserCardsScribeFake scribe = new() { ShouldReturnFailure = true, FailureStatusCode = HttpStatusCode.InternalServerError };
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
+        IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
             Finish = "foil",
             Special = "altered",
             Count = 2
         };
 
-        IUserCardItrEntity userCard = new UserCardItrEntityFake
+        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -137,21 +138,21 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = [new() { Finish = "nonfoil", Special = "none", Count = 1 }]
+            CollectedList = [new UserCardDetailsExtEntity { Finish = "nonfoil", Special = "none", Count = 1 }]
         };
 
         UserCardsGopherFake gopher = new() { ShouldReturnExistingRecord = true, ExistingRecord = existingRecord };
         UserCardsScribeFake scribe = new();
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardDetailsItrEntity newCollectedCard = new UserCardDetailsItrEntityFake
+        IUserCardDetailsXfrEntity newCollectedCard = new UserCardDetailsXfrEntityFake
         {
             Finish = "foil",
             Special = "none",
             Count = 2
         };
 
-        IUserCardItrEntity userCard = new UserCardItrEntityFake
+        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -178,14 +179,14 @@ public sealed class UserCardsCommandAdapterTests
         UserCardsScribeFake scribe = new();
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
+        IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 3
         };
 
-        IUserCardItrEntity userCard = new UserCardItrEntityFake
+        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.UserCards.Apis;
+using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using TestConvenience.Core.Reflection;
 
@@ -44,14 +44,14 @@ public sealed class UserCardsAdapterServiceTests
         UserCardsQueryAdapterFake queryAdapterFake = new();
         UserCardsAdapterService subject = new InstanceWrapper(commandAdapterFake, queryAdapterFake);
 
-        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
+        IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardItrEntity userCard = new UserCardItrEntityFake
+        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -88,7 +88,7 @@ public sealed class UserCardsAdapterServiceTests
         UserCardsQueryAdapterFake queryAdapterFake = new() { UserCardsBySetAsyncResult = operationResponse };
         UserCardsAdapterService subject = new InstanceWrapper(commandAdapterFake, queryAdapterFake);
 
-        IUserCardsSetItrEntity userCardsSet = new UserCardsSetItrEntityFake
+        IUserCardsSetXfrEntity userCardsSet = new UserCardsSetXfrEntityFake
         {
             UserId = "user123",
             SetId = "set789"

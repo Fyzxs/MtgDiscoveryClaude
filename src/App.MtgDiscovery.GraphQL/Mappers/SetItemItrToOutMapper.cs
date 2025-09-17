@@ -2,14 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
-using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
-
-internal interface ISetItemItrToOutMapper : ICreateMapper<ISetItemItrEntity, ScryfallSetOutEntity>
-{
-}
 
 internal sealed class SetItemItrToOutMapper : ISetItemItrToOutMapper
 {

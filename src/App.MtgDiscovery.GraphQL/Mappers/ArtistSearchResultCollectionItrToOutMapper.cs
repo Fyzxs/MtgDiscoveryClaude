@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
 using Lib.Shared.DataModels.Entities;
@@ -9,12 +10,7 @@ internal sealed class ArtistSearchResultCollectionItrToOutMapper : IArtistSearch
 {
     public Task<List<ArtistSearchResultOutEntity>> Map(IEnumerable<IArtistSearchResultItrEntity> artistResults)
     {
-        List<ArtistSearchResultOutEntity> results = [];
-
-        foreach (IArtistSearchResultItrEntity artistResult in artistResults)
-        {
-            results.Add(new ArtistSearchResultOutEntity { ArtistId = artistResult.ArtistId, Name = artistResult.Name });
-        }
+        List<ArtistSearchResultOutEntity> results = artistResults.Select(artistResult => new ArtistSearchResultOutEntity { ArtistId = artistResult.ArtistId, Name = artistResult.Name }).ToList();
 
         return Task.FromResult(results);
     }
