@@ -6,7 +6,7 @@ using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;
 
-namespace Lib.MtgDiscovery.Entry.Queries.Validators;
+namespace Lib.MtgDiscovery.Entry.Queries.Validators.Sets;
 
 internal interface ISetIdsArgEntityValidator : IValidatorAction<ISetIdsArgEntity, IOperationResponse<ISetItemCollectionItrEntity>>;
 internal sealed class SetIdsArgEntityValidatorContainer : ValidatorActionContainer<ISetIdsArgEntity, IOperationResponse<ISetItemCollectionItrEntity>>, ISetIdsArgEntityValidator

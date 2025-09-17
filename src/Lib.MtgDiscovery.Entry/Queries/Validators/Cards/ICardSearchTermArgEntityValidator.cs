@@ -2,6 +2,6 @@
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 
-namespace Lib.MtgDiscovery.Entry.Queries.Validators;
+namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 
 internal interface ICardSearchTermArgEntityValidator : IValidatorAction<ICardSearchTermArgEntity, IOperationResponse<ICardNameSearchResultCollectionItrEntity>>;

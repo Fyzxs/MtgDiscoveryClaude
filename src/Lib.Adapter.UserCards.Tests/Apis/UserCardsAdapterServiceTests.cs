@@ -1,16 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AwesomeAssertions;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestConvenience.Core.Reflection;
-using TestConvenience.Core.Fakes;
 
 namespace Lib.Adapter.UserCards.Tests.Apis;
 
