@@ -29,7 +29,7 @@ internal sealed class SetArtistsProcessor : IArtistProcessor
 
         foreach (string setId in artist.SetIds())
         {
-            ScryfallSetArtistItem item = new()
+            ScryfallSetArtistExtArg item = new()
             {
                 ArtistId = artistId,
                 SetId = setId

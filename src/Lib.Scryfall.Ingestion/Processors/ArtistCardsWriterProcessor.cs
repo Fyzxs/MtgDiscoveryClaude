@@ -29,7 +29,7 @@ internal sealed class ArtistCardsWriterProcessor : IArtistProcessor
 
         foreach (dynamic cardData in artist.Cards())
         {
-            ScryfallArtistCardItem item = new()
+            ScryfallArtistCardExtArg item = new()
             {
                 ArtistId = artistId,
                 Data = cardData

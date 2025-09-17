@@ -71,7 +71,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
 
             _dashboard.UpdateProgress("Rulings:", current, total, "Writing", ruling.OracleId);
 
-            ScryfallRulingItem entity = new()
+            ScryfallRulingExtArg entity = new()
             {
                 OracleId = ruling.OracleId,
                 Data = ruling.Rulings

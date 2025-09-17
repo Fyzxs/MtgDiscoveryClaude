@@ -78,7 +78,7 @@ public sealed class CardAggregatorOperationsTests
             ["name"] = "Test Card"
         };
 
-        ScryfallCardItem scryfallCard = FakeScryfallCardItemFactory.Create(testData);
+        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(testData);
         FakeCardIdsItrEntity args = new() { CardIds = [cardId] };
         FakeCosmosGopher fakeGopher = new()
         {
@@ -114,7 +114,7 @@ public sealed class CardAggregatorOperationsTests
             ["name"] = "Test Card 1"
         };
 
-        ScryfallCardItem scryfallCard = FakeScryfallCardItemFactory.Create(testData);
+        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(testData);
         FakeCardIdsItrEntity args = new() { CardIds = cardIds };
 
         // Create a fake gopher that returns success for first call, failure for second

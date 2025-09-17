@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis;
@@ -54,14 +54,14 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             Id = new ProvidedCosmosItemId(userCard.CardId),
             Partition = new ProvidedPartitionKeyValue(userCard.UserId)
         };
-        OpResponse<UserCardItem> existingResponse = await _userCardsGopher.ReadAsync<UserCardItem>(readPoint).ConfigureAwait(false);
+        OpResponse<UserCardExtArg> existingResponse = await _userCardsGopher.ReadAsync<UserCardExtArg>(readPoint).ConfigureAwait(false);
 
-        UserCardItem itemToUpsert;
+        UserCardExtArg itemToUpsert;
 
         if (existingResponse.IsSuccessful())
         {
             // Step 2: Merge with existing collected items
-            UserCardItem existingItem = existingResponse.Value;
+            UserCardExtArg existingItem = existingResponse.Value;
             itemToUpsert = MergeCollectedItems(existingItem, userCard);
         }
         else
@@ -71,7 +71,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         }
 
         // Step 4: Upsert the merged/new item
-        OpResponse<UserCardItem> upsertResponse = await _userCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<UserCardExtArg> upsertResponse = await _userCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
         {
@@ -84,10 +84,10 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         return new SuccessOperationResponse<IUserCardCollectionItrEntity>(resultEntity);
     }
 
-    private UserCardItem MergeCollectedItems(UserCardItem existing, IUserCardCollectionItrEntity newData)
+    private UserCardExtArg MergeCollectedItems(UserCardExtArg existing, IUserCardCollectionItrEntity newData)
     {
         // Create a dictionary for efficient merging based on finish + special combination
-        Dictionary<(string finish, string special), CollectedItem> mergedItems = existing.CollectedList
+        Dictionary<(string finish, string special), CollectedCardInfoExtArg> mergedItems = existing.CollectedList
             .ToDictionary(item => (item.Finish, item.Special));
 
         // Merge or add new collected items
@@ -95,10 +95,10 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         {
             (string finish, string special) key = (newItem.Finish, newItem.Special);
 
-            if (mergedItems.TryGetValue(key, out CollectedItem existingItem))
+            if (mergedItems.TryGetValue(key, out CollectedCardInfoExtArg existingItem))
             {
                 // Update count for existing finish/special combination
-                mergedItems[key] = new CollectedItem
+                mergedItems[key] = new CollectedCardInfoExtArg
                 {
                     Finish = existingItem.Finish,
                     Special = existingItem.Special,
@@ -108,7 +108,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             else
             {
                 // Add new finish/special combination
-                mergedItems[key] = new CollectedItem
+                mergedItems[key] = new CollectedCardInfoExtArg
                 {
                     Finish = newItem.Finish,
                     Special = newItem.Special,
@@ -118,7 +118,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         }
 
         // Return updated item
-        return new UserCardItem
+        return new UserCardExtArg
         {
             UserId = existing.UserId,
             CardId = existing.CardId,

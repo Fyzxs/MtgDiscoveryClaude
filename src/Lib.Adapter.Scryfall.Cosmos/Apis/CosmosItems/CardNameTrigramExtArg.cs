@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+﻿using System.Collections.ObjectModel;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
-public sealed class ArtistNameTrigramItem : CosmosItem
+public sealed class CardNameTrigramExtArg : CosmosItem
 {
     [JsonProperty("id")]
     public override string Id => Trigram;
@@ -16,6 +16,6 @@ public sealed class ArtistNameTrigramItem : CosmosItem
     [JsonProperty("trigram")]
     public string Trigram { get; init; }
 
-    [JsonProperty("artists")]
-    public ICollection<ArtistNameTrigramDataItem> Artists { get; init; }
+    [JsonProperty("cards")]
+    public Collection<CardNameTrigramDataExtArg> Cards { get; init; }
 }

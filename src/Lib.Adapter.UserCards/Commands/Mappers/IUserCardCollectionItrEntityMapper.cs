@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Adapter.UserCards.Commands.Mappers;
 
-internal interface IUserCardCollectionItrEntityMapper : ICreateMapper<UserCardItem, IUserCardCollectionItrEntity>;
+internal interface IUserCardCollectionItrEntityMapper : ICreateMapper<UserCardExtArg, IUserCardCollectionItrEntity>;

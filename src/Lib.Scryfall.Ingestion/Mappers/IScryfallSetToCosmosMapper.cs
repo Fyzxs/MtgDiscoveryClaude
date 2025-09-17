@@ -5,5 +5,5 @@ namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal interface IScryfallSetToCosmosMapper
 {
-    ScryfallSetItem Map(IScryfallSet scryfallSet);
+    ScryfallSetExtArg Map(IScryfallSet scryfallSet);
 }

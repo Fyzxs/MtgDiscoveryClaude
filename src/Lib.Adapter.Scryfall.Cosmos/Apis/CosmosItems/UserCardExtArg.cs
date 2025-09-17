@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
-public sealed class UserCardItem : CosmosItem
+public sealed class UserCardExtArg : CosmosItem
 {
     public override string Id => CardId;
     public override string Partition => UserId;
@@ -32,5 +32,5 @@ public sealed class UserCardItem : CosmosItem
     /// The list of collected versions of this card with quantities and finishes.
     /// </summary>
     [JsonProperty("collected")]
-    public IEnumerable<CollectedItem> CollectedList { get; init; } = [];
+    public IEnumerable<CollectedCardInfoExtArg> CollectedList { get; init; } = [];
 }

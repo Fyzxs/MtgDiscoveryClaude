@@ -4,5 +4,5 @@ namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal sealed class ScryfallCardToSetCardMapper : IScryfallCardToSetCardMapper
 {
-    public ScryfallSetCardItem Map(dynamic scryfallCard) => new() { Data = scryfallCard };
+    public ScryfallSetCardItemExtArg Map(dynamic scryfallCard) => new() { Data = scryfallCard };
 }

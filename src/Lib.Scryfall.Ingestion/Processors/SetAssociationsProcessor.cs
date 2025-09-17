@@ -41,8 +41,8 @@ internal sealed class SetAssociationsProcessor : ISetProcessor
             return;
         }
 
-        ScryfallSetParentAssociationItem parentAssociationItem = _mapper.Map(set);
-        OpResponse<ScryfallSetParentAssociationItem> response = await _scribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
+        ScryfallSetParentAssociationExtArg parentAssociationItem = _mapper.Map(set);
+        OpResponse<ScryfallSetParentAssociationExtArg> response = await _scribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
 
         if (response.IsSuccessful())
         {

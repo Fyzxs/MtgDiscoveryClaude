@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Internal.Text;
@@ -33,7 +32,7 @@ internal sealed class ArtistItemsProcessor : IArtistProcessor
         string artistId = artist.ArtistId();
         IEnumerable<string> artistNames = [.. artist.ArtistNames()];
 
-        ArtistAggregateItem data = new()
+        ArtistAggregateExtArg data = new()
         {
             ArtistId = artistId,
             ArtistNames = artistNames,

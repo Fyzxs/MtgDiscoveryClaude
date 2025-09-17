@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
-public sealed class ScryfallRulingItem : CosmosItem
+public sealed class ScryfallRulingExtArg : CosmosItem
 {
     public override string Id => OracleId;
 

@@ -6,5 +6,5 @@ namespace Lib.Aggregator.Scryfall.Shared.Mappers;
 
 public sealed class ScryfallCardItemToCardItemItrEntityMapper
 {
-    public ICardItemItrEntity Map(ScryfallCardItem scryfallCard) => new CardItemItrEntity(scryfallCard);
+    public ICardItemItrEntity Map(ScryfallCardExtArg scryfallCard) => new CardItemItrEntity(scryfallCard);
 }

@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 
-public sealed class CardNameTrigramDataItem
+public sealed class CardNameTrigramDataExtArg : CosmosEntity
 {
     [JsonProperty("name")]
     public string Name { get; init; }

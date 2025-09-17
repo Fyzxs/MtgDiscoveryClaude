@@ -4,5 +4,5 @@ namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal interface IScryfallCardToCardItemMapper
 {
-    ScryfallCardItem Map(dynamic scryfallCard);
+    ScryfallCardExtArg Map(dynamic scryfallCard);
 }

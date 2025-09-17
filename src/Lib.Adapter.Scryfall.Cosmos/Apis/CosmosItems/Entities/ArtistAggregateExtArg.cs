@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 
-public sealed class ArtistAggregateItem
+public sealed class ArtistAggregateExtArg : CosmosEntity
 {
     [JsonProperty("artist_id")]
     public string ArtistId { get; init; }

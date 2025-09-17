@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities;
 
 namespace Lib.Adapter.Sets.Queries.Mappers;
 
-internal interface IScryfallSetItemToSetItemItrEntityMapper : ICreateMapper<ScryfallSetItem, ISetItemItrEntity>;
+internal interface IScryfallSetItemToSetItemItrEntityMapper : ICreateMapper<ScryfallSetExtArg, ISetItemItrEntity>;

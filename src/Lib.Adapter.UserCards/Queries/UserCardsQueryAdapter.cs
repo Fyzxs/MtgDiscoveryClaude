@@ -44,7 +44,7 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
         //TODO: This needs to be a mapper
         UserCardItemsBySetExtArgs args = new() { SetId = userCardsSet.SetId, UserId = userCardsSet.UserId };
 
-        OpResponse<IEnumerable<UserCardItem>> response = await _userCardsInquisition.QueryAsync<UserCardItem>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserCardExtArg>> response = await _userCardsInquisition.QueryAsync<UserCardExtArg>(args).ConfigureAwait(false);
 
         if (response.IsSuccessful() is false)
         {
