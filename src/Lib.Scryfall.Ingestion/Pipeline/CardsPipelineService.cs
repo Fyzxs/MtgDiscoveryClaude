@@ -100,7 +100,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             _dashboard.UpdateProgress("Cards:", current, total, "Writing", $"[{setCode}] {cardName}");
 
             // Write the card item
-            ScryfallCardItem cardItem = new()
+            ScryfallCardExtArg cardItem = new()
             {
                 Data = card.Data()
             };
@@ -108,7 +108,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
 
             // Write the card by name (for name-based lookups)
             CardNameGuid nameGuid = _guidGenerator.GenerateGuid((string)card.Data().name);
-            ScryfallCardByNameItem cardByNameItem = new()
+            ScryfallCardByNameExtArg cardByNameItem = new()
             {
                 NameGuid = nameGuid.AsSystemType().ToString(),
                 Data = card.Data()
@@ -116,7 +116,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             await _cardsByNameScribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
 
             // Write the set-card relationship
-            ScryfallSetCardItem setCardItem = _setCardMapper.Map(card.Data());
+            ScryfallSetCardItemExtArg setCardItem = _setCardMapper.Map(card.Data());
             await _setCardsScribe.UpsertAsync(setCardItem).ConfigureAwait(false);
         }
 

@@ -30,26 +30,26 @@ internal sealed class SetCodeIndexProcessor : ISetCodeIndexProcessor
 
     public async Task ProcessAsync(IScryfallSet set)
     {
-        ScryfallSetCodeIndexItem indexItem = new()
+        ScryfallSetCodeIndexExtArg indexItem = new()
         {
             SetCode = set.Code(),
             SetId = set.Id()
         };
 
-        OpResponse<ScryfallSetCodeIndexItem> response = await _scribe.UpsertAsync(indexItem).ConfigureAwait(false);
+        OpResponse<ScryfallSetCodeIndexExtArg> response = await _scribe.UpsertAsync(indexItem).ConfigureAwait(false);
 
         LogSuccess(set, response);
         LogFailure(set, response);
     }
 
-    private void LogSuccess(IScryfallSet set, OpResponse<ScryfallSetCodeIndexItem> response)
+    private void LogSuccess(IScryfallSet set, OpResponse<ScryfallSetCodeIndexExtArg> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogSetCodeIndexStored(set.Code());
     }
 
-    private void LogFailure(IScryfallSet set, OpResponse<ScryfallSetCodeIndexItem> response)
+    private void LogFailure(IScryfallSet set, OpResponse<ScryfallSetCodeIndexExtArg> response)
     {
         if (response.IsSuccessful()) return;
 

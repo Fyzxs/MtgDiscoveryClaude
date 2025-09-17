@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
-public sealed class ScryfallArtistSetItem : CosmosItem
+public sealed class ScryfallArtistSetExtArg : CosmosItem
 {
     public override string Id => SetId;
     public override string Partition => ArtistId;

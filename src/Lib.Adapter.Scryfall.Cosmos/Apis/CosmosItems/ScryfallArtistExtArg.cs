@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
@@ -11,5 +11,5 @@ public sealed class ScryfallArtistItem : CosmosItem
 
     [JsonProperty("artist_id")]
     public string ArtistId { get; set; }
-    public ArtistAggregateItem Data { get; init; }
+    public ArtistAggregateExtArg Data { get; init; }
 }
