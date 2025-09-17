@@ -10,7 +10,6 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis;
-using Lib.Adapter.UserCards.Commands.Mappers;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
@@ -24,29 +23,21 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 {
     private readonly ICosmosGopher _userCardsGopher;
     private readonly ICosmosScribe _userCardsScribe;
-    private readonly IUserCardItrToExtapper _userCardItemMapper;
-    private readonly IUserCardExtToItrMapper _userCardCollectionMapper;
 
     public UserCardsCommandAdapter(ILogger logger) : this(
         new UserCardsGopher(logger),
-        new UserCardsScribe(logger),
-        new UserCardItrToExtapper(),
-        new UserCardExtToItrMapper())
+        new UserCardsScribe(logger))
     { }
 
     internal UserCardsCommandAdapter(
         ICosmosGopher userCardsGopher,
-        ICosmosScribe userCardsScribe,
-        IUserCardItrToExtapper userCardItemMapper,
-        IUserCardExtToItrMapper userCardCollectionMapper)
+        ICosmosScribe userCardsScribe)
     {
         _userCardsGopher = userCardsGopher;
         _userCardsScribe = userCardsScribe;
-        _userCardItemMapper = userCardItemMapper;
-        _userCardCollectionMapper = userCardCollectionMapper;
     }
 
-    public async Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
     {
         // Step 1: Try to read existing record
         ReadPointItem readPoint = new()
@@ -67,7 +58,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         else
         {
             // Step 3: Create new item if none exists
-            itemToUpsert = await _userCardItemMapper.Map(userCard).ConfigureAwait(false);
+            itemToUpsert = MapUserCardToExtEntity(userCard);
         }
 
         // Step 4: Upsert the merged/new item
@@ -75,13 +66,12 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IUserCardItrEntity>(
+            return new FailureOperationResponse<UserCardExtEntity>(
                 new UserCardsAdapterException($"Failed to add user card: {upsertResponse.StatusCode}"));
         }
 
-        // Step 5: Map and return the result
-        IUserCardItrEntity resultEntity = await _userCardCollectionMapper.Map(upsertResponse.Value).ConfigureAwait(false);
-        return new SuccessOperationResponse<IUserCardItrEntity>(resultEntity);
+        // Step 5: Return the raw ExtEntity result
+        return new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value);
     }
 
     private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IUserCardItrEntity newData)
@@ -124,6 +114,28 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             CardId = existing.CardId,
             SetId = existing.SetId,
             CollectedList = [.. mergedItems.Values]
+        };
+    }
+
+    private static UserCardExtEntity MapUserCardToExtEntity(IUserCardItrEntity userCard)
+    {
+        List<UserCardDetailsExtEntity> collectedItems = [];
+        foreach (IUserCardDetailsItrEntity item in userCard.CollectedList)
+        {
+            collectedItems.Add(new UserCardDetailsExtEntity
+            {
+                Finish = item.Finish,
+                Special = item.Special,
+                Count = item.Count
+            });
+        }
+
+        return new UserCardExtEntity
+        {
+            UserId = userCard.UserId,
+            CardId = userCard.CardId,
+            SetId = userCard.SetId,
+            CollectedList = collectedItems
         };
     }
 }

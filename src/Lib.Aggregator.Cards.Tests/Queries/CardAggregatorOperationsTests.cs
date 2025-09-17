@@ -26,7 +26,7 @@ public sealed class CardAggregatorOperationsTests
         public TestableCardAggregatorOperations(
             ICosmosGopher cardGopher,
             QueryCardsIdsToReadPointItemsMapper mapper,
-            CardItemExtToItrEntityMapper cardMapper)
+            CardItemExtToItrMapper cardMapper)
             : base(cardGopher, mapper, cardMapper) { }
     }
 
@@ -50,7 +50,7 @@ public sealed class CardAggregatorOperationsTests
         FakeCardIdsItrEntity args = new() { CardIds = [] };
         FakeCosmosGopher fakeGopher = new();
         QueryCardsIdsToReadPointItemsMapper mapper = new();
-        CardItemExtToItrEntityMapper cardMapper = new();
+        CardItemExtToItrMapper cardMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
@@ -85,7 +85,7 @@ public sealed class CardAggregatorOperationsTests
             ReadAsyncResult = new FakeOpResponse<CosmosItem>(scryfallCard, HttpStatusCode.OK)
         };
         QueryCardsIdsToReadPointItemsMapper mapper = new();
-        CardItemExtToItrEntityMapper cardMapper = new();
+        CardItemExtToItrMapper cardMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
@@ -128,7 +128,7 @@ public sealed class CardAggregatorOperationsTests
         };
 
         QueryCardsIdsToReadPointItemsMapper mapper = new();
-        CardItemExtToItrEntityMapper cardMapper = new();
+        CardItemExtToItrMapper cardMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);

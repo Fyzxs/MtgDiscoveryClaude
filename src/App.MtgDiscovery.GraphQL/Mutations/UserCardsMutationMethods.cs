@@ -38,13 +38,10 @@ public sealed class UserCardsMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToCollectionAsync(
-        ClaimsPrincipal claimsPrincipal, UserCardArgEntity args)
+    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, UserCardArgEntity args)
     {
-        // Extract user information from JWT claims
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        // Pass both auth and args to entry service - it will combine them during mapping
         IOperationResponse<IUserCardItrEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
@@ -56,7 +53,6 @@ public sealed class UserCardsMutationMethods
             }
         };
 
-        // Use mapper to transform ITR entity to OUT entity
         UserCardOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<UserCardOutEntity>() { Data = result };

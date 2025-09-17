@@ -5,6 +5,7 @@ using Lib.Universal.Primitives;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Paging;
+
 internal sealed class HttpScryfallSetListPaging : HttpScryfallListPaging<ExtScryfallSetDto>
 {
     private const string HttpsApiScryfallComSets = "https://api.scryfall.com/sets";

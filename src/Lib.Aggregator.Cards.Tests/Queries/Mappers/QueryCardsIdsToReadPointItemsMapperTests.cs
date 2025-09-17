@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Cosmos.Apis.Operators;
@@ -9,7 +10,7 @@ namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
 public sealed class QueryCardsIdsToReadPointItemsMapperTests
 {
     [TestMethod, TestCategory("unit")]
-    public void Map_WithEmptyCardIds_ReturnsEmptyCollection()
+    public async Task Map_WithEmptyCardIds_ReturnsEmptyCollection()
     {
         // Arrange
         FakeCardIdsItrEntity args = new()
@@ -19,14 +20,14 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] actual = subject.Map(args).ToArray();
+        ReadPointItem[] actual = (await subject.Map(args).ConfigureAwait(false)).ToArray();
 
         // Assert
         actual.Should().BeEmpty();
     }
 
     [TestMethod, TestCategory("unit")]
-    public void Map_WithSingleCardId_ReturnsSingleReadPointItem()
+    public async Task Map_WithSingleCardId_ReturnsSingleReadPointItem()
     {
         // Arrange
         const string expectedId = "test-card-id";
@@ -37,7 +38,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] actual = subject.Map(args).ToArray();
+        ReadPointItem[] actual = (await subject.Map(args).ConfigureAwait(false)).ToArray();
 
         // Assert
         actual.Should().HaveCount(1);
@@ -46,7 +47,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
     }
 
     [TestMethod, TestCategory("unit")]
-    public void Map_WithMultipleCardIds_ReturnsMultipleReadPointItems()
+    public async Task Map_WithMultipleCardIds_ReturnsMultipleReadPointItems()
     {
         // Arrange
         string[] expectedIds = ["card-id-1", "card-id-2", "card-id-3"];
@@ -57,7 +58,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] actual = subject.Map(args).ToArray();
+        ReadPointItem[] actual = (await subject.Map(args).ConfigureAwait(false)).ToArray();
 
         // Assert
         actual.Should().HaveCount(3);
@@ -69,7 +70,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
     }
 
     [TestMethod, TestCategory("unit")]
-    public void Map_ReturnsNewInstancesEachTime()
+    public async Task Map_ReturnsNewInstancesEachTime()
     {
         // Arrange
         FakeCardIdsItrEntity args = new()
@@ -79,8 +80,8 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] firstCall = subject.Map(args).ToArray();
-        ReadPointItem[] secondCall = subject.Map(args).ToArray();
+        ReadPointItem[] firstCall = (await subject.Map(args).ConfigureAwait(false)).ToArray();
+        ReadPointItem[] secondCall = (await subject.Map(args).ConfigureAwait(false)).ToArray();
 
         // Assert
         firstCall.Should().NotBeSameAs(secondCall);

@@ -1,18 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <None Remove="Models\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
     <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
     <ProjectReference Include="..\Lib.Aggregator.Scryfall.Shared\Lib.Aggregator.Scryfall.Shared.csproj" />
     <ProjectReference Include="..\Lib.Adapter.Artists\Lib.Adapter.Artists.csproj" />
+    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

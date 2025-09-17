@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.MtgDiscovery.Entry.Apis;

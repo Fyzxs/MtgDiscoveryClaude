@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 
@@ -19,8 +20,8 @@ namespace Lib.Adapter.UserCards.Apis;
 ///
 /// Entity Mapping Approach:
 /// - Input: Preserves ItrEntity parameters following MicroObjects principles
-/// - Output: Returns ITR entities for consistency with main service interface
-/// - Internal mapping: Adapter implementations map from storage entities to ITR entities
+/// - Output: Returns ExtEntity types from storage systems
+/// - Aggregator layer handles mapping from ExtEntity to ItrEntity
 /// Primitive extraction happens in the concrete implementation when interfacing with external systems.
 /// </summary>
 public interface IUserCardsCommandAdapter
@@ -30,5 +31,5 @@ public interface IUserCardsCommandAdapter
     /// </summary>
     /// <param name="userCard">The user card collection information to add</param>
     /// <returns>The added user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard);
+    Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardItrEntity userCard);
 }
