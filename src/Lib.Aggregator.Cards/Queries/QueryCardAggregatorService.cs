@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
+using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Entities;
@@ -20,29 +21,46 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
     private readonly ICollectionCardItemExtToItrMapper _cardItemMapper;
     private readonly ICollectionSetCardItemExtToItrMapper _setCardItemMapper;
     private readonly ICollectionCardByNameExtToItrMapper _cardByNameMapper;
+    private readonly ICardIdsItrToXfrMapper _cardIdsItrToXfrMapper;
+    private readonly ISetCodeItrToXfrMapper _setCodeItrToXfrMapper;
+    private readonly ICardNameItrToXfrMapper _cardNameItrToXfrMapper;
+    private readonly ICardSearchTermItrToXfrMapper _cardSearchTermItrToXfrMapper;
 
     public QueryCardAggregatorService(ILogger logger) : this(
         new CardAdapterService(logger),
         new CollectionCardItemExtToItrMapper(),
         new CollectionSetCardItemExtToItrMapper(),
-        new CollectionCardByNameExtToItrMapper())
+        new CollectionCardByNameExtToItrMapper(),
+        new CardIdsItrToXfrMapper(),
+        new SetCodeItrToXfrMapper(),
+        new CardNameItrToXfrMapper(),
+        new CardSearchTermItrToXfrMapper())
     { }
 
     private QueryCardAggregatorService(
         ICardAdapterService cardAdapterService,
         ICollectionCardItemExtToItrMapper cardItemMapper,
         ICollectionSetCardItemExtToItrMapper setCardItemMapper,
-        ICollectionCardByNameExtToItrMapper cardByNameMapper)
+        ICollectionCardByNameExtToItrMapper cardByNameMapper,
+        ICardIdsItrToXfrMapper cardIdsItrToXfrMapper,
+        ISetCodeItrToXfrMapper setCodeItrToXfrMapper,
+        ICardNameItrToXfrMapper cardNameItrToXfrMapper,
+        ICardSearchTermItrToXfrMapper cardSearchTermItrToXfrMapper)
     {
         _cardAdapterService = cardAdapterService;
         _cardItemMapper = cardItemMapper;
         _setCardItemMapper = setCardItemMapper;
         _cardByNameMapper = cardByNameMapper;
+        _cardIdsItrToXfrMapper = cardIdsItrToXfrMapper;
+        _setCodeItrToXfrMapper = setCodeItrToXfrMapper;
+        _cardNameItrToXfrMapper = cardNameItrToXfrMapper;
+        _cardSearchTermItrToXfrMapper = cardSearchTermItrToXfrMapper;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
-        IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> response = await _cardAdapterService.GetCardsByIdsAsync(args).ConfigureAwait(false);
+        ICardIdsXfrEntity xfrEntity = await _cardIdsItrToXfrMapper.Map(args).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> response = await _cardAdapterService.GetCardsByIdsAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -56,7 +74,8 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
     {
-        IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> response = await _cardAdapterService.GetCardsBySetCodeAsync(setCode).ConfigureAwait(false);
+        ISetCodeXfrEntity xfrEntity = await _setCodeItrToXfrMapper.Map(setCode).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> response = await _cardAdapterService.GetCardsBySetCodeAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -70,7 +89,8 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
     {
-        IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> response = await _cardAdapterService.GetCardsByNameAsync(cardName).ConfigureAwait(false);
+        ICardNameXfrEntity xfrEntity = await _cardNameItrToXfrMapper.Map(cardName).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> response = await _cardAdapterService.GetCardsByNameAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -84,7 +104,8 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
 
     public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
     {
-        IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
+        ICardSearchTermXfrEntity xfrEntity = await _cardSearchTermItrToXfrMapper.Map(searchTerm).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
