@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
+using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
 using Lib.Adapter.Cards.Queries.Mappers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -12,7 +13,6 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Identifiers;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -60,7 +60,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         _cardIdsToReadPointMapper = cardIdsToReadPointMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync([NotNull] ICardIdsItrEntity cardIds)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync([NotNull] ICardIdsXfrEntity cardIds)
     {
         ICollection<ReadPointItem> items = await _cardIdsToReadPointMapper.Map(cardIds.CardIds).ConfigureAwait(false);
         IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem));
@@ -75,7 +75,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>(successfulCards);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode)
     {
         // Extract primitives for external system interface
         string setCodeValue = setCode.SetCode;
@@ -113,7 +113,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>(cardsResponse.Value);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameItrEntity cardName)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName)
     {
         // Extract primitives for external system interface
         string cardNameValue = cardName.CardName;
@@ -136,7 +136,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>(cardsResponse.Value);
     }
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync([NotNull] ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync([NotNull] ICardSearchTermXfrEntity searchTerm)
     {
         // Extract primitives for external system interface
         string searchTermValue = searchTerm.SearchTerm;
