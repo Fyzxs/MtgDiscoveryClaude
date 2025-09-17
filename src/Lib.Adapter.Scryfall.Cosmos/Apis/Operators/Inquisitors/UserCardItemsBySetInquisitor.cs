@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 
-public sealed class ScryfallSetItemsInquisitor : CosmosInquisitor
+public sealed class UserCardItemsBySetInquisitor : CosmosInquisitor
 {
-    public ScryfallSetItemsInquisitor(ILogger logger)
-        : base(new SetItemsCosmosContainer(logger))
+    public UserCardItemsBySetInquisitor(ILogger logger)
+        : base(new UserCardsCosmosContainer(logger))
     { }
 }

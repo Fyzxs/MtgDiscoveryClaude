@@ -35,7 +35,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
     public SetCosmosQueryAdapter(ILogger logger) : this(
         new ScryfallSetItemsGopher(logger),
         new ScryfallSetCodeIndexGopher(logger),
-        new SelectAllSetItemsInquisition(logger),
+        new AllSetItemsInquisition(logger),
         new ScryfallSetItemToSetItemItrEntityMapper())
     { }
 
@@ -51,6 +51,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
         _setMapper = setMapper;
     }
 
+    //TODO: Remove the Get prefix
     public async Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetSetsByIdsAsync([NotNull] ISetIdsItrEntity setIds)
     {
         // Extract primitives for external system interface
@@ -59,6 +60,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
 
         foreach (string setId in setIdList)
         {
+            //TODO: Technically this should be a Mapper. Take the collection in, return a collection of ReadPointItems
             ReadPointItem readPoint = new()
             {
                 Id = new ProvidedCosmosItemId(setId),
@@ -69,6 +71,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
 
         OpResponse<ScryfallSetItem>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);
 
+        //TODO: Technically this should be a Mapper. Take the collection in, return a collection of ISetItemItrEntity
         List<ISetItemItrEntity> successfulSets = [];
         foreach (OpResponse<ScryfallSetItem> response in responses.Where(r => r.IsSuccessful()))
         {
@@ -106,7 +109,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
             return new SuccessOperationResponse<IEnumerable<ISetItemItrEntity>>([]);
         }
 
-        // Create internal entity with found set IDs and recursively call GetSetsByIdsAsync
+        //TODO: Should be a mapper
         SetIdsItrEntity setIdsEntity = new() { SetIds = setIds };
         return await GetSetsByIdsAsync(setIdsEntity).ConfigureAwait(false);
     }
@@ -123,6 +126,7 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
                 new SetAdapterException("Failed to retrieve all sets", response.Exception()));
         }
 
+        //TODO: Should be a mapper
         List<ISetItemItrEntity> sets = [];
         foreach (ScryfallSetItem item in response.Value)
         {

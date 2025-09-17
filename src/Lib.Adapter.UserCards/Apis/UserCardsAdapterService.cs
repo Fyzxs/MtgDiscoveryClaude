@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Adapter.UserCards.Commands;
+using Lib.Adapter.UserCards.Queries;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -11,7 +13,7 @@ namespace Lib.Adapter.UserCards.Apis;
 ///
 /// This service coordinates all user card collection-related adapter operations by delegating
 /// to specialized adapters. Currently delegates to IUserCardsCommandAdapter for command
-/// operations, but provides the architectural structure for future expansion.
+/// operations and IUserCardsQueryAdapter for query operations.
 ///
 /// Future Expansion Examples:
 ///   - IUserCardsCacheAdapter for caching layer
@@ -25,17 +27,28 @@ namespace Lib.Adapter.UserCards.Apis;
 public sealed class UserCardsAdapterService : IUserCardsAdapterService
 {
     private readonly IUserCardsCommandAdapter _userCardsCommandAdapter;
+    private readonly IUserCardsQueryAdapter _userCardsQueryAdapter;
 
-    public UserCardsAdapterService(ILogger logger) : this(new UserCardsCommandAdapter(logger))
+    public UserCardsAdapterService(ILogger logger) : this(
+        new UserCardsCommandAdapter(logger),
+        new UserCardsQueryAdapter(logger))
     { }
 
-    private UserCardsAdapterService(IUserCardsCommandAdapter userCardsCommandAdapter)
+    private UserCardsAdapterService(
+        IUserCardsCommandAdapter userCardsCommandAdapter,
+        IUserCardsQueryAdapter userCardsQueryAdapter)
     {
         _userCardsCommandAdapter = userCardsCommandAdapter;
+        _userCardsQueryAdapter = userCardsQueryAdapter;
     }
 
     public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
     {
         return await _userCardsCommandAdapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    {
+        return await _userCardsQueryAdapter.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
     }
 }

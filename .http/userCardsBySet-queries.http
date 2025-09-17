@@ -1,0 +1,438 @@
+###
+# User Cards By Set Query Tests
+# Public query that accepts both userId and setId parameters
+# No authentication required
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+
+### Get User Cards By Set - Basic Query
+# @ref variables
+# Get all cards in a specific set owned by a specific user
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsBySet($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setArgs": {
+    "setId": "neo",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+### Get User Cards By Set - Full Response
+# @ref variables
+# Get all cards with metadata for a specific set
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsBySetFull($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "dmu",
+      "userId": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+
+### Get User Cards By Set - Different Sets
+# @ref variables
+# Query War of the Spark set
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsWAR($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "war",
+      "userId": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+
+### Get User Cards By Set - Brothers' War
+# @ref variables
+# Query The Brothers' War set
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsBRO($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "bro",
+      "userId": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+
+### Test without User ID (should fail)
+# @ref variables
+# This should return a validation error
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsNoUserId($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "neo"
+    }
+  }
+}
+
+### Test with Empty Set ID (should fail)
+# @ref variables
+# This should return a validation error
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsEmptySet($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "",
+      "userId": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+
+### Test with Empty User ID (should fail)
+# @ref variables
+# This should return a validation error
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsEmptyUserId($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "neo",
+      "userId": ""
+    }
+  }
+}
+
+### Test with Invalid Set ID
+# @ref variables
+# This should return empty results or error
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserCardsInvalidSet($setArgs: UserCardsSetArgEntityInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "setArgs": {
+      "setId": "invalid-set-code-12345",
+      "userId": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+
+### GraphQL Schema Introspection - UserCardsBySet Query
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query IntrospectUserCardsBySet {
+  __type(name: "Query") {
+    fields(includeDeprecated: true) {
+      name
+      description
+      args {
+        name
+        type {
+          name
+          kind
+          ofType {
+            name
+            kind
+          }
+        }
+      }
+      type {
+        name
+        kind
+      }
+    }
+  }
+}
+
+###
+# Usage Notes:
+# This is a public query that accepts both userId and setId as parameters.
+# No authentication is required.
+#
+# Parameters:
+# - userId: The unique identifier of the user whose cards to query
+# - setId: The set code to filter by (e.g., "neo", "dmu", "bro")
+#
+# The userId is used as the partition key in Cosmos DB for efficient querying
+
+###
+# Expected Response Examples:
+#
+# userCardsBySet without userId:
+# { "errors": [{ "message": "User ID is required", "extensions": { "code": "VALIDATION_ERROR" } }] }
+#
+# userCardsBySet with valid userId and cards in set:
+# {
+#   "data": {
+#     "userCardsBySet": {
+#       "__typename": "SuccessUserCardCollectionResponse",
+#       "data": [
+#         {
+#           "userId": "550e8400-e29b-41d4-a716-446655440000",
+#           "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
+#           "setId": "neo",
+#           "collectedList": [
+#             {
+#               "finish": "nonfoil",
+#               "special": "none",
+#               "count": 2
+#             },
+#             {
+#               "finish": "foil",
+#               "special": "showcase",
+#               "count": 1
+#             }
+#           ]
+#         },
+#         {
+#           "userId": "550e8400-e29b-41d4-a716-446655440000",
+#           "cardId": "abc12345-def6-7890-ghij-klmnopqrstuv",
+#           "setId": "neo",
+#           "collectedList": [
+#             {
+#               "finish": "nonfoil",
+#               "special": "none",
+#               "count": 4
+#             }
+#           ]
+#         }
+#       ],
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
+#
+# userCardsBySet with valid userId but no cards in set:
+# {
+#   "data": {
+#     "userCardsBySet": {
+#       "__typename": "SuccessUserCardCollectionResponse",
+#       "data": [],
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
+#
+# userCardsBySet with empty set ID:
+# {
+#   "data": {
+#     "userCardsBySet": {
+#       "__typename": "FailureResponse",
+#       "status": {
+#         "message": "Set ID cannot be empty",
+#         "statusCode": 400
+#       }
+#     }
+#   }
+# }
+
+###
+# QUERY NOTE:
+# This is a public query that allows querying any user's card collection.
+# 1. GraphQL Layer: Accepts userId and setId as query parameters
+# 2. Entry Layer: Validates both userId and setId are provided
+# 3. Adapter Layer: Uses userId as Cosmos DB partition key for efficient querying
+# 4. Database Layer: Query filters by both partition key (userId) and set_id
+#
+# This allows public viewing of user collections (e.g., for sharing collections)
