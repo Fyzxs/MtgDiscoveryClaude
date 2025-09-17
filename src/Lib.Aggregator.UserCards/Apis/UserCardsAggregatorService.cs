@@ -16,12 +16,12 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
 
     private UserCardsAggregatorService(IUserCardsAdapterService userCardsAdapterService) => _userCardsAdapterService = userCardsAdapterService;
 
-    public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
+    public async Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
     {
         return await _userCardsAdapterService.AddUserCardAsync(userCard).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
     {
         return await _userCardsAdapterService.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
     }

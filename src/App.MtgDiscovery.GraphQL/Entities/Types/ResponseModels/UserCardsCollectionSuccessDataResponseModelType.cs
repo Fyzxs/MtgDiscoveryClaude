@@ -7,9 +7,9 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class UserCardsCollectionSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<UserCardCollectionOutEntity>>>
+public sealed class UserCardsCollectionSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<UserCardOutEntity>>>
 {
-    protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<UserCardCollectionOutEntity>>> descriptor)
+    protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<UserCardOutEntity>>> descriptor)
     {
         descriptor.Name("SuccessUserCardsCollectionResponse");
         descriptor.Description("Response returned when querying user cards collection is successful");

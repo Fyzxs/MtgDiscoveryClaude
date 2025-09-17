@@ -13,7 +13,7 @@ public sealed class UserCardItemTests
     public void Constructor_WithInitializers_CreatesInstance()
     {
         // Arrange & Act
-        UserCardExtArg actual = new()
+        UserCardExtEntity actual = new()
         {
             UserId = "test-user-id",
             CardId = "test-card-id",
@@ -34,7 +34,7 @@ public sealed class UserCardItemTests
     public void Id_ReturnsCardIdValue()
     {
         // Arrange
-        UserCardExtArg actual = new()
+        UserCardExtEntity actual = new()
         {
             CardId = "expected-card-id"
         };
@@ -47,7 +47,7 @@ public sealed class UserCardItemTests
     public void Partition_ReturnsUserIdValue()
     {
         // Arrange
-        UserCardExtArg actual = new()
+        UserCardExtEntity actual = new()
         {
             UserId = "expected-user-id"
         };
@@ -60,10 +60,10 @@ public sealed class UserCardItemTests
     public void JsonPropertyAttributes_AreConfiguredCorrectly()
     {
         // Arrange
-        PropertyInfo userIdProperty = typeof(UserCardExtArg).GetProperty(nameof(UserCardExtArg.UserId));
-        PropertyInfo cardIdProperty = typeof(UserCardExtArg).GetProperty(nameof(UserCardExtArg.CardId));
-        PropertyInfo setIdProperty = typeof(UserCardExtArg).GetProperty(nameof(UserCardExtArg.SetId));
-        PropertyInfo collectedListProperty = typeof(UserCardExtArg).GetProperty(nameof(UserCardExtArg.CollectedList));
+        PropertyInfo userIdProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.UserId));
+        PropertyInfo cardIdProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.CardId));
+        PropertyInfo setIdProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.SetId));
+        PropertyInfo collectedListProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.CollectedList));
 
         // Act
         JsonPropertyAttribute userIdJsonAttribute = userIdProperty?.GetCustomAttributes(typeof(JsonPropertyAttribute), false).FirstOrDefault() as JsonPropertyAttribute;
@@ -89,7 +89,7 @@ public sealed class UserCardItemTests
     public void CollectedItem_ConstructorWithInitializers_CreatesInstance()
     {
         // Arrange & Act
-        CollectedCardInfoExtArg actual = new()
+        UserCardDetailsExtEntity actual = new()
         {
             Finish = "foil",
             Special = "signed",
@@ -107,9 +107,9 @@ public sealed class UserCardItemTests
     public void CollectedItem_JsonPropertyAttributes_AreConfiguredCorrectly()
     {
         // Arrange
-        PropertyInfo finishProperty = typeof(CollectedCardInfoExtArg).GetProperty(nameof(CollectedCardInfoExtArg.Finish));
-        PropertyInfo specialProperty = typeof(CollectedCardInfoExtArg).GetProperty(nameof(CollectedCardInfoExtArg.Special));
-        PropertyInfo countProperty = typeof(CollectedCardInfoExtArg).GetProperty(nameof(CollectedCardInfoExtArg.Count));
+        PropertyInfo finishProperty = typeof(UserCardDetailsExtEntity).GetProperty(nameof(UserCardDetailsExtEntity.Finish));
+        PropertyInfo specialProperty = typeof(UserCardDetailsExtEntity).GetProperty(nameof(UserCardDetailsExtEntity.Special));
+        PropertyInfo countProperty = typeof(UserCardDetailsExtEntity).GetProperty(nameof(UserCardDetailsExtEntity.Count));
 
         // Act
         JsonPropertyAttribute finishJsonAttribute = finishProperty?.GetCustomAttributes(typeof(JsonPropertyAttribute), false).FirstOrDefault() as JsonPropertyAttribute;

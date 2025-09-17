@@ -7,17 +7,15 @@ using Lib.Shared.DataModels.Entities;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
 
-internal interface IScryfallCardMapper : ICreateMapper<ICardItemItrEntity, ScryfallCardOutEntity>
+internal interface ICardItemItrToOutMapper : ICreateMapper<ICardItemItrEntity, CardItemOutEntity>
 {
 }
 
-internal sealed class ScryfallCardMapper : IScryfallCardMapper
+internal sealed class CardItemItrToOutMapper : ICardItemItrToOutMapper
 {
-    public Task<ScryfallCardOutEntity> Map(ICardItemItrEntity source)
+    public Task<CardItemOutEntity> Map(ICardItemItrEntity source)
     {
-        if (source == null) return Task.FromResult<ScryfallCardOutEntity>(null);
-
-        ScryfallCardOutEntity result = new()
+        CardItemOutEntity result = new()
         {
             Id = source.Id,
             OracleId = source.OracleId,

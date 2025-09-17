@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using AwesomeAssertions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Threading.Tasks;
 using Lib.Adapter.UserCards.Commands;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Adapter.UserCards.Tests.Fakes;
@@ -41,16 +37,16 @@ public sealed class UserCardsCommandAdapterTests
         // Use TypeWrapper to access internal constructor
         UserCardsCommandAdapter adapter = new InstanceWrapper(scribe);
 
-        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
+        IUserCardItrEntity userCard = new UserCardItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new CollectedItemItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
+            CollectedList = new[] { new UserCardDetailsItrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
         };
 
         // Act
-        IOperationResponse<IUserCardCollectionItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -65,14 +61,14 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
+        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
+        IUserCardItrEntity userCard = new UserCardItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -81,7 +77,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardCollectionItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -99,14 +95,14 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
+        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
         {
             Finish = "foil",
             Special = "altered",
             Count = 2
         };
 
-        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
+        IUserCardItrEntity userCard = new UserCardItrEntityFake
         {
             UserId = "failuser",
             CardId = "failcard",
@@ -115,7 +111,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardCollectionItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -130,7 +126,7 @@ public sealed class UserCardsCommandAdapterTests
         ILogger logger = new LoggerFake();
         UserCardsCommandAdapter adapter = new(logger);
 
-        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
+        IUserCardItrEntity userCard = new UserCardItrEntityFake
         {
             UserId = null, // This should return failure response
             CardId = "card456",
@@ -139,7 +135,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<IUserCardCollectionItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -156,7 +152,7 @@ public sealed class UserCardsCommandAdapterTests
         UserCardsCommandAdapter adapter = new(logger);
 
         // Act
-        IOperationResponse<IUserCardCollectionItrEntity> actual = await adapter.AddUserCardAsync(null).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> actual = await adapter.AddUserCardAsync(null).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();

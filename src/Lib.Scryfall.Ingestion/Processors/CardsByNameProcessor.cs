@@ -32,26 +32,26 @@ internal sealed class CardsByNameProcessor : ICardProcessor
         // Generate deterministic GUID from the English card name
         CardNameGuid nameGuid = _guidGenerator.GenerateGuid((string)card.Data().name);
 
-        ScryfallCardByNameExtArg cardByNameItem = new()
+        ScryfallCardByNameExtEntity cardByNameItem = new()
         {
             NameGuid = nameGuid.AsSystemType().ToString(),
             Data = card.Data()
         };
 
-        OpResponse<ScryfallCardByNameExtArg> response = await _scribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
+        OpResponse<ScryfallCardByNameExtEntity> response = await _scribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
 
         LogSuccess(card, nameGuid, response);
         LogFailure(card, nameGuid, response);
     }
 
-    private void LogSuccess(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByNameExtArg> response)
+    private void LogSuccess(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByNameExtEntity> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogCardByNameStored(card.Id(), nameGuid.AsSystemType().ToString());
     }
 
-    private void LogFailure(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByNameExtArg> response)
+    private void LogFailure(IScryfallCard card, CardNameGuid nameGuid, OpResponse<ScryfallCardByNameExtEntity> response)
     {
         if (response.IsSuccessful()) return;
 

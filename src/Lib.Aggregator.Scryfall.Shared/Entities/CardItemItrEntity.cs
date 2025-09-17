@@ -11,7 +11,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 {
     private readonly dynamic _data;
 
-    public CardItemItrEntity(ScryfallCardExtArg scryfallCard) => _data = scryfallCard?.Data;
+    public CardItemItrEntity(ScryfallCardItemExtEntity scryfallCard) => _data = scryfallCard?.Data;
 
     public string Id => _data?.id;
     public string OracleId => _data?.oracle_id;

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AwesomeAssertions;
+﻿using System.Threading.Tasks;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Shared.DataModels.Entities;
@@ -46,14 +44,14 @@ public sealed class UserCardsAdapterServiceTests
         ILogger logger = new LoggerFake();
         UserCardsAdapterService service = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
+        IUserCardDetailsItrEntity collectedCard = new UserCardDetailsItrEntityFake
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
+        IUserCardItrEntity userCard = new UserCardItrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -62,7 +60,7 @@ public sealed class UserCardsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<IUserCardCollectionItrEntity> actual = await service.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<IUserCardItrEntity> actual = await service.AddUserCardAsync(userCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();

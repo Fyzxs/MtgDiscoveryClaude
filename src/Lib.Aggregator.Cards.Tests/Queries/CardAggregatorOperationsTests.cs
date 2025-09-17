@@ -26,7 +26,7 @@ public sealed class CardAggregatorOperationsTests
         public TestableCardAggregatorOperations(
             ICosmosGopher cardGopher,
             QueryCardsIdsToReadPointItemsMapper mapper,
-            ScryfallCardItemToCardItemItrEntityMapper cardMapper)
+            CardItemExtToItrEntityMapper cardMapper)
             : base(cardGopher, mapper, cardMapper) { }
     }
 
@@ -50,7 +50,7 @@ public sealed class CardAggregatorOperationsTests
         FakeCardIdsItrEntity args = new() { CardIds = [] };
         FakeCosmosGopher fakeGopher = new();
         QueryCardsIdsToReadPointItemsMapper mapper = new();
-        ScryfallCardItemToCardItemItrEntityMapper cardMapper = new();
+        CardItemExtToItrEntityMapper cardMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
@@ -78,14 +78,14 @@ public sealed class CardAggregatorOperationsTests
             ["name"] = "Test Card"
         };
 
-        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(testData);
+        ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(testData);
         FakeCardIdsItrEntity args = new() { CardIds = [cardId] };
         FakeCosmosGopher fakeGopher = new()
         {
             ReadAsyncResult = new FakeOpResponse<CosmosItem>(scryfallCard, HttpStatusCode.OK)
         };
         QueryCardsIdsToReadPointItemsMapper mapper = new();
-        ScryfallCardItemToCardItemItrEntityMapper cardMapper = new();
+        CardItemExtToItrEntityMapper cardMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);
@@ -114,7 +114,7 @@ public sealed class CardAggregatorOperationsTests
             ["name"] = "Test Card 1"
         };
 
-        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(testData);
+        ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(testData);
         FakeCardIdsItrEntity args = new() { CardIds = cardIds };
 
         // Create a fake gopher that returns success for first call, failure for second
@@ -128,7 +128,7 @@ public sealed class CardAggregatorOperationsTests
         };
 
         QueryCardsIdsToReadPointItemsMapper mapper = new();
-        ScryfallCardItemToCardItemItrEntityMapper cardMapper = new();
+        CardItemExtToItrEntityMapper cardMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
             fakeGopher, mapper, cardMapper);

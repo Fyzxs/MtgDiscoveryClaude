@@ -31,7 +31,7 @@ internal sealed class UserCosmosCommandAdapter : IUserCommandAdapter
     public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
     {
         // Extract primitives for external system interface and map to storage entity
-        UserInfoExtArg userItem = new()
+        UserInfoExtEntity userItem = new()
         {
             UserId = userInfo.UserId,
             DisplayName = userInfo.UserNickname,

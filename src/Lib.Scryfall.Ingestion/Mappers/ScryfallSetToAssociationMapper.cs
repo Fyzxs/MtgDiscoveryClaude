@@ -3,7 +3,7 @@ using Lib.Scryfall.Shared.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Mappers;
 
-internal sealed class ScryfallSetToAssociationMapper : IScryfallSetToAssociationMapper
+internal sealed class SetToSetParentAssociationExtMapper : ISetToSetParentAssociationExtMapper
 {
     public bool HasParentSet(IScryfallSet scryfallSet)
     {
@@ -15,9 +15,9 @@ internal sealed class ScryfallSetToAssociationMapper : IScryfallSetToAssociation
         return HasParentSet(scryfallSet) is false;
     }
 
-    public ScryfallSetParentAssociationExtArg Map(IScryfallSet scryfallSet)
+    public ScryfallSetParentAssociationExtEntity Map(IScryfallSet scryfallSet)
     {
-        return new ScryfallSetParentAssociationExtArg
+        return new ScryfallSetParentAssociationExtEntity
         {
             SetId = scryfallSet.Id(),
             ParentSetCode = scryfallSet.ParentSetCode(),

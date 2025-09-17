@@ -4,4 +4,4 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal interface IAddCardToCollectionArgEntityValidator : IValidatorAction<IAddCardToCollectionArgEntity, IOperationResponse<IUserCardCollectionItrEntity>>;
+internal interface IAddCardToCollectionArgEntityValidator : IValidatorAction<IUserCardArgEntity, IOperationResponse<IUserCardItrEntity>>;

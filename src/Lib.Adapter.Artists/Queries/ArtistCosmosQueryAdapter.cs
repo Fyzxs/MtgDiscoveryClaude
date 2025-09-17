@@ -30,19 +30,19 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 {
     private readonly ICosmosInquisitor _artistNameTrigramsInquisitor;
     private readonly ICosmosInquisitor _artistCardsInquisitor;
-    private readonly ScryfallCardItemToCardItemItrEntityMapper _cardMapper;
+    private readonly CardItemExtToItrEntityMapper _cardMapper;
 
     public ArtistCosmosQueryAdapter(ILogger logger) : this(
         new ArtistNameTrigramsInquisitor(logger),
         new ScryfallArtistCardsInquisitor(logger),
-        new ScryfallCardItemToCardItemItrEntityMapper())
+        new CardItemExtToItrEntityMapper())
     {
     }
 
     private ArtistCosmosQueryAdapter(
         ICosmosInquisitor artistNameTrigramsInquisitor,
         ICosmosInquisitor artistCardsInquisitor,
-        ScryfallCardItemToCardItemItrEntityMapper cardMapper)
+        CardItemExtToItrEntityMapper cardMapper)
     {
         _artistNameTrigramsInquisitor = artistNameTrigramsInquisitor;
         _artistCardsInquisitor = artistCardsInquisitor;
@@ -87,15 +87,15 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
                 .WithParameter("@partition", firstChar)
                 .WithParameter("@normalized", normalized);
 
-            OpResponse<IEnumerable<ArtistNameTrigramExtArg>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtArg>(
+            OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtEntity>(
                 queryDefinition,
                 new PartitionKey(firstChar)).ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
             {
-                foreach (ArtistNameTrigramExtArg trigramDoc in trigramResponse.Value)
+                foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
                 {
-                    foreach (ArtistNameTrigramDataExtArg entry in trigramDoc.Artists)
+                    foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
                     {
                         // Server-side filtering should have already filtered, but double-check
                         if (entry.Normalized.Contains(normalized))
@@ -138,7 +138,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @artistId")
             .WithParameter("@artistId", artistIdValue);
 
-        OpResponse<IEnumerable<ScryfallArtistCardExtArg>> cardsResponse = await _artistCardsInquisitor.QueryAsync<ScryfallArtistCardExtArg>(
+        OpResponse<IEnumerable<ScryfallArtistCardExtEntity>> cardsResponse = await _artistCardsInquisitor.QueryAsync<ScryfallArtistCardExtEntity>(
             queryDefinition,
             new PartitionKey(artistIdValue)).ConfigureAwait(false);
 
@@ -150,9 +150,9 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
         // Convert ScryfallArtistCard to ScryfallCardItem for mapping
         List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallArtistCardExtArg artistCard in cardsResponse.Value)
+        foreach (ScryfallArtistCardExtEntity artistCard in cardsResponse.Value)
         {
-            ScryfallCardExtArg cardItem = new() { Data = artistCard.Data };
+            ScryfallCardItemExtEntity cardItem = new() { Data = artistCard.Data };
             ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
             if (mappedCard != null)
             {
@@ -201,15 +201,15 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
                 .WithParameter("@partition", firstChar)
                 .WithParameter("@normalized", normalized);
 
-            OpResponse<IEnumerable<ArtistNameTrigramExtArg>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtArg>(
+            OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtEntity>(
                 queryDefinition,
                 new PartitionKey(firstChar)).ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
             {
-                foreach (ArtistNameTrigramExtArg trigramDoc in trigramResponse.Value)
+                foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
                 {
-                    foreach (ArtistNameTrigramDataExtArg entry in trigramDoc.Artists)
+                    foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
                     {
                         // Server-side filtering should have already filtered, but double-check
                         if (entry.Normalized.Contains(normalized))

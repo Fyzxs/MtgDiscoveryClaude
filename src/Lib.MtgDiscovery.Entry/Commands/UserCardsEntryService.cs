@@ -14,33 +14,33 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
 {
     private readonly IUserCardsDomainService _userCardsDomainService;
     private readonly IAddCardToCollectionArgEntityValidator _validator;
-    private readonly IAddCardToCollectionArgsToItrMapper _mapper;
+    private readonly IUserCardArgsToItrMapper _mapper;
 
     public UserCardsEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
         new AddCardToCollectionArgEntityValidatorContainer(),
-        new AddCardToCollectionArgsToItrMapper())
+        new UserCardArgsToItrMapper())
     { }
 
     private UserCardsEntryService(
         IUserCardsDomainService userCardsDomainService,
         IAddCardToCollectionArgEntityValidator validator,
-        IAddCardToCollectionArgsToItrMapper mapper)
+        IUserCardArgsToItrMapper mapper)
     {
         _userCardsDomainService = userCardsDomainService;
         _validator = validator;
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddCardToCollectionArgEntity args)
+    public async Task<IOperationResponse<IUserCardItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IUserCardArgEntity args)
     {
         // Validate the card collection args
-        IValidatorActionResult<IOperationResponse<IUserCardCollectionItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IUserCardItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
         // Map args to ITR entity - mapper will combine authUser.UserId with args
-        IUserCardCollectionItrEntity mappedArgs = await _mapper.Map(authUser, args).ConfigureAwait(false);
+        IUserCardItrEntity mappedArgs = await _mapper.Map(authUser, args).ConfigureAwait(false);
         return await _userCardsDomainService.AddUserCardAsync(mappedArgs).ConfigureAwait(false);
     }
 }
