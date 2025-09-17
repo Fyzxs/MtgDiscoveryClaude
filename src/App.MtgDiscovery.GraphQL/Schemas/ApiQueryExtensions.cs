@@ -1,5 +1,6 @@
 ﻿using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using App.MtgDiscovery.GraphQL.Queries;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<CardQueryMethods>()
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
+            .AddTypeExtension<UserCardsQueryMethods>()
             .AddType<CardResponseModelUnionType>()
             .AddType<FailureResponseModelType>()
             .AddType<CardsSuccessDataResponseModelType>()
@@ -29,6 +31,11 @@ internal static class ApiQueryExtensions
             .AddType<ScryfallCardFaceOutEntityType>()
             .AddType<ScryfallAllPartsOutEntityType>()
             .AddType<ScryfallPreviewOutEntityType>()
+            // UserCards query types
+            .AddType<UserCardsCollectionResponseModelUnionType>()
+            .AddType<UserCardsCollectionSuccessDataResponseModelType>()
+            .AddType<UserCardCollectionOutEntityType>()
+            .AddType<CollectedItemOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }
