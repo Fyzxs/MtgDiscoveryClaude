@@ -18,8 +18,12 @@ internal sealed class CardItemExtToItrMapper : ICardItemExtToItrMapper
         _dynamicMapper = dynamicMapper;
     }
 
-    public async Task<ICardItemItrEntity> Map([NotNull] ScryfallCardItemExtEntity source)
+    public async Task<ICardItemItrEntity> Map(ScryfallCardItemExtEntity source)
     {
-        return await _dynamicMapper.Map(source.Data).ConfigureAwait(false);
+        if (source == null)
+        {
+            return null;
+        }
+        return await _dynamicMapper.Map(source).ConfigureAwait(false);
     }
 }
