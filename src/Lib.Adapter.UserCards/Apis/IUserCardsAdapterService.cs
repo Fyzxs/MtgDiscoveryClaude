@@ -22,9 +22,9 @@
 /// at the layer boundary, following MicroObjects principles. The adapter implementation
 /// handles internal primitive extraction when needed for external system calls.
 /// </summary>
-public interface IUserCardsAdapterService : IUserCardsCommandAdapter
+public interface IUserCardsAdapterService : IUserCardsCommandAdapter, IUserCardsQueryAdapter
 {
-    // All method signatures inherited from IUserCardsCommandAdapter
+    // All method signatures inherited from IUserCardsCommandAdapter and IUserCardsQueryAdapter
     // Future specialized interfaces (IUserCardsCacheAdapter, IUserCardsMetricsAdapter, etc.)
     // will be added to the inheritance list above
 }
