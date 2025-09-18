@@ -86,9 +86,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   const specialTypes = new Set(collection.filter(item => item.special !== 'none').map(item => item.special));
   const hasSpecials = specialTypes.size > 0;
 
-  // Get finish indicators (only show if multiple finish types exist)
+  // Get finish indicators (always show finish types)
   const getFinishIndicators = () => {
-    if (!hasMultipleFinishes) return null;
     const indicators: JSX.Element[] = [];
     if (finishTypes.includes('nonfoil')) {
       indicators.push(<EmojiWithTooltip key="nonfoil" emoji="📄">📄</EmojiWithTooltip>);
@@ -99,7 +98,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
     if (finishTypes.includes('etched')) {
       indicators.push(<EmojiWithTooltip key="etched" emoji="🌟">🌟</EmojiWithTooltip>);
     }
-    return <>{indicators}</>;
+    return indicators.length > 0 ? <>{indicators}</> : null;
   };
 
   // Get special indicators (always show if any special types exist)
@@ -181,15 +180,15 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   // Format display based on state
   const getDisplayText = () => {
     if (isHovered && !isMobile) {
-      // Hover state: show counts
-      const finishPart = hasMultipleFinishes ? getFinishCounts() : null;
+      // Hover state: show counts with padding to prevent size reduction
+      const finishPart = getFinishCounts();
       const specialPart = hasSpecials ? getSpecialCounts() : null;
       const separator = finishPart && specialPart ? ' | ' : '';
       return (
         <>
-          {finishPart}
+          &nbsp;&nbsp;{finishPart}
           {separator}
-          {specialPart}
+          {specialPart}&nbsp;&nbsp;
         </>
       );
     } else {
@@ -262,6 +261,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
           color: 'white',
           cursor: 'pointer',
           userSelect: 'none',
+          minWidth: 'max-content',
+          whiteSpace: 'nowrap',
           '&:hover': {
             color: 'primary.light'
           }
