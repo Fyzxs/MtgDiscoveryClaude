@@ -10,6 +10,7 @@ import {
   Button,
   Tooltip
 } from '@mui/material';
+// import { useQuery } from '@apollo/client'; // TODO: Uncomment after types generated
 import { getLegalityColor } from '../../theme';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
@@ -23,6 +24,9 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
+import { useCollectorParam } from '../../hooks/useCollectorParam';
+// import { GET_USER_CARD_BY_ID } from '../../graphql/queries/userCards'; // TODO: Uncomment after types generated
+import { formatCollectionInline } from '../../utils/collectionFormatters';
 import { ModalContainer } from '../molecules/shared/ModalContainer';
 import { ManaCost } from '../molecules/Cards/ManaCost';
 import { RarityBadge } from '../atoms/Cards/RarityBadge';
@@ -104,7 +108,27 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   hasPrevious,
   hasNext
 }) => {
+  const { hasCollector, collectorId } = useCollectorParam();
+
+  // Query for user collection data if collector parameter is present
+  // TODO: Uncomment after GraphQL types are generated
+  // const { data: userCardData } = useQuery(GET_USER_CARD_BY_ID, {
+  //   variables: {
+  //     cardArgs: {
+  //       cardId: card?.id,
+  //       collectorId: collectorId
+  //     }
+  //   },
+  //   skip: !hasCollector || !card?.id,
+  // });
+  const userCardData = null; // Temporary placeholder
+
   if (!card) return null;
+
+  // Extract collection data
+  const collectionData = userCardData?.userCardsByCard?.__typename === 'SuccessUserCardsCollectionResponse'
+    ? userCardData.userCardsByCard.data?.find((item: any) => item.cardId === card.id)
+    : undefined;
 
   const formatOracleText = (text?: string) => {
     if (!text) return null;
@@ -329,47 +353,55 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
               {/* Treatments */}
               {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo || card.digital) && (
-                <Box>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Treatments
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Treatments:
                   </Typography>
-                  <Box sx={{ pl: 2 }}>
-                    <CardBadges 
-                      foil={card.foil}
-                      nonfoil={card.nonFoil}
-                      promoTypes={card.promoTypes}
-                      frameEffects={card.frameEffects}
-                      isPromo={card.promo}
-                      digital={card.digital}
-                      inline={true}
-                    />
-                  </Box>
+                  <CardBadges
+                    foil={card.foil}
+                    nonfoil={card.nonFoil}
+                    promoTypes={card.promoTypes}
+                    frameEffects={card.frameEffects}
+                    isPromo={card.promo}
+                    digital={card.digital}
+                    inline={true}
+                  />
                 </Box>
               )}
 
               {/* Artist */}
               {card.artist && (
-                <Box>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Artist
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Artist:
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
-                      <Link
-                        key={index}
-                        href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
-                        sx={{
-                          color: 'text.primary',
-                          textDecoration: 'none',
-                          '&:hover': {
-                            textDecoration: 'underline'
-                          }
-                        }}
-                      >
-                        {artistName}
-                      </Link>
-                    ))}
-                  </Box>
+                  {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
+                    <Link
+                      key={index}
+                      href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
+                      sx={{
+                        color: 'text.primary',
+                        textDecoration: 'none',
+                        '&:hover': {
+                          textDecoration: 'underline'
+                        }
+                      }}
+                    >
+                      {artistName}{index < card.artist.split(/\s+(?:&|and)\s+/i).length - 1 ? ',' : ''}
+                    </Link>
+                  ))}
+                </Box>
+              )}
+
+              {/* Collection */}
+              {hasCollector && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Collection:
+                  </Typography>
+                  <Typography variant="body1">
+                    {formatCollectionInline(collectionData?.collectedList || [])}
+                  </Typography>
                 </Box>
               )}
 

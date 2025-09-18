@@ -29,3 +29,33 @@ export const GET_USER_CARDS_BY_SET = gql`
     }
   }
 `;
+
+export const GET_USER_CARD_BY_ID = gql`
+  query GetUserCardById($cardArgs: UserCardsCardArgEntityInput!) {
+    userCardsByCard(cardArgs: $cardArgs) {
+      __typename
+      ... on SuccessUserCardsCollectionResponse {
+        data {
+          userId
+          cardId
+          setId
+          collectedList {
+            finish
+            special
+            count
+          }
+        }
+        status {
+          message
+          statusCode
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;
