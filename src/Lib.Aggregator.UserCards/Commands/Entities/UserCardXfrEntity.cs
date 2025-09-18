@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lib.Adapter.UserCards.Apis.Entities;
 
 namespace Lib.Aggregator.UserCards.Commands.Entities;

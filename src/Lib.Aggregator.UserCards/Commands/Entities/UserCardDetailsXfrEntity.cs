@@ -1,4 +1,4 @@
-using Lib.Adapter.UserCards.Apis.Entities;
+﻿using Lib.Adapter.UserCards.Apis.Entities;
 
 namespace Lib.Aggregator.UserCards.Commands.Entities;
 

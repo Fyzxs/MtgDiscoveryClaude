@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
