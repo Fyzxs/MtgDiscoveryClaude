@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal sealed class AddCardToCollectionArgEntityValidatorContainer : ValidatorActionContainer<IAddCardToCollectionArgEntity, IOperationResponse<IUserCardCollectionItrEntity>>, IAddCardToCollectionArgEntityValidator
+internal sealed class AddCardToCollectionArgEntityValidatorContainer : ValidatorActionContainer<IUserCardArgEntity, IOperationResponse<IUserCardItrEntity>>, IAddCardToCollectionArgEntityValidator
 {
     public AddCardToCollectionArgEntityValidatorContainer() : base([
             new HasValidCardIdAddCardToCollectionArgEntityValidator(),
@@ -18,14 +19,14 @@ internal sealed class AddCardToCollectionArgEntityValidatorContainer : Validator
     { }
 }
 
-internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
+internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
 {
     public HasValidCardIdAddCardToCollectionArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
+    public sealed class Validator : IValidator<IUserCardArgEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg) => Task.FromResult(arg.CardId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IUserCardArgEntity arg) => Task.FromResult(arg.CardId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage
@@ -34,14 +35,14 @@ internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : Oper
     }
 }
 
-internal sealed class HasValidSetIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
+internal sealed class HasValidSetIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
 {
     public HasValidSetIdAddCardToCollectionArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
+    public sealed class Validator : IValidator<IUserCardArgEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg) => Task.FromResult(arg.SetId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IUserCardArgEntity arg) => Task.FromResult(arg.SetId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage

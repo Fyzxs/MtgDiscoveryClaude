@@ -7,9 +7,9 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class CardsByArtistSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<ScryfallCardOutEntity>>>
+public sealed class CardsByArtistSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<CardItemOutEntity>>>
 {
-    protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<ScryfallCardOutEntity>>> descriptor)
+    protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<CardItemOutEntity>>> descriptor)
     {
         descriptor.Name("SuccessCardsByArtistResponse");
         descriptor.Description("Response returned when cards by artist are successfully retrieved");

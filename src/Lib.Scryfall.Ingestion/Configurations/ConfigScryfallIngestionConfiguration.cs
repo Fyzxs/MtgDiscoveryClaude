@@ -1,6 +1,7 @@
 ﻿using Lib.Universal.Configurations;
 
 namespace Lib.Scryfall.Ingestion.Configurations;
+
 internal sealed class ConfigScryfallIngestionConfiguration : IScryfallIngestionConfiguration
 {
     private readonly IConfig _config;

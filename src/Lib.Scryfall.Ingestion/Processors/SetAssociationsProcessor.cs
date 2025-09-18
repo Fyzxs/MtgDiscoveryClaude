@@ -12,20 +12,20 @@ namespace Lib.Scryfall.Ingestion.Processors;
 internal sealed class SetAssociationsProcessor : ISetProcessor
 {
     private readonly ICosmosScribe _scribe;
-    private readonly IScryfallSetToAssociationMapper _mapper;
+    private readonly ISetToSetParentAssociationExtMapper _mapper;
     private readonly ILogger _logger;
 
     public SetAssociationsProcessor(ILogger logger)
         : this(
             new ScryfallSetAssociationsScribe(logger),
-            new ScryfallSetToAssociationMapper(),
+            new SetToSetParentAssociationExtMapper(),
             logger)
     {
     }
 
     private SetAssociationsProcessor(
         ICosmosScribe scribe,
-        IScryfallSetToAssociationMapper mapper,
+        ISetToSetParentAssociationExtMapper mapper,
         ILogger logger)
     {
         _scribe = scribe;
@@ -41,8 +41,8 @@ internal sealed class SetAssociationsProcessor : ISetProcessor
             return;
         }
 
-        ScryfallSetParentAssociationItem parentAssociationItem = _mapper.Map(set);
-        OpResponse<ScryfallSetParentAssociationItem> response = await _scribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
+        ScryfallSetParentAssociationExtEntity parentAssociationItem = _mapper.Map(set);
+        OpResponse<ScryfallSetParentAssociationExtEntity> response = await _scribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
 
         if (response.IsSuccessful())
         {

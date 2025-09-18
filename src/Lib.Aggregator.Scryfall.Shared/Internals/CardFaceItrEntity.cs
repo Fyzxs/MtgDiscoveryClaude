@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Scryfall.Shared.Internals;
 

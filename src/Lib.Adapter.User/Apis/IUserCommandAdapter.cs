@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.User.Apis;
@@ -19,11 +20,11 @@ namespace Lib.Adapter.User.Apis;
 /// 
 /// Entity Mapping Approach:
 /// - Input: Preserves ItrEntity parameters following MicroObjects principles
-/// - Output: Returns ITR entities for consistency with main service interface
-/// - Internal mapping: Adapter implementations map from storage entities to ITR entities
+/// - Output: Returns ExtEntity types from storage systems
+/// - Aggregator layer handles mapping from ExtEntity to ItrEntity
 /// Primitive extraction happens in the concrete implementation when interfacing with external systems.
 /// </summary>
 public interface IUserCommandAdapter
 {
-    Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
+    Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
 }

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestConvenience.Core\TestConvenience.Core.csproj" />
+  </ItemGroup>
+
+</Project>

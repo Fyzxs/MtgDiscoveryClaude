@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Apis;
@@ -16,5 +17,5 @@ public interface IUserCardsQueryEntryService
     /// </summary>
     /// <param name="setArgs">Arguments containing the set ID and user ID to query</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs);
+    Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs);
 }

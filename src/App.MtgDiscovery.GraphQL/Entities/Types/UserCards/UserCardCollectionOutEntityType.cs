@@ -4,9 +4,9 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 
-public sealed class UserCardCollectionOutEntityType : ObjectType<UserCardCollectionOutEntity>
+public sealed class UserCardCollectionOutEntityType : ObjectType<UserCardOutEntity>
 {
-    protected override void Configure([NotNull] IObjectTypeDescriptor<UserCardCollectionOutEntity> descriptor)
+    protected override void Configure([NotNull] IObjectTypeDescriptor<UserCardOutEntity> descriptor)
     {
         descriptor.Name("UserCardCollection");
         descriptor.Description("A user's card collection entry");

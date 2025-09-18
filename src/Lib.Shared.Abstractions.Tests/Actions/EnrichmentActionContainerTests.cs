@@ -32,7 +32,7 @@ public sealed class EnrichmentActionContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeEnrichmentAction action = new();
+        EnrichmentActionFake action = new();
         TestEnrichmentActionContainer subject = new(action);
 
         // Act
@@ -48,9 +48,9 @@ public sealed class EnrichmentActionContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeEnrichmentAction action1 = new();
-        FakeEnrichmentAction action2 = new();
-        FakeEnrichmentAction action3 = new();
+        EnrichmentActionFake action1 = new();
+        EnrichmentActionFake action2 = new();
+        EnrichmentActionFake action3 = new();
         TestEnrichmentActionContainer subject = new(action1, action2, action3);
 
         // Act
@@ -70,7 +70,7 @@ public sealed class EnrichmentActionContainerTests
         public string Value { get; set; } = "";
     }
 
-    private sealed class FakeEnrichmentAction : IEnrichmentAction<TestTarget>
+    private sealed class EnrichmentActionFake : IEnrichmentAction<TestTarget>
     {
         public int EnrichInvokeCount { get; private set; }
         public TestTarget EnrichInput { get; private set; } = default!;

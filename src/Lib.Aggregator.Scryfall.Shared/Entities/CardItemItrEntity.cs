@@ -2,7 +2,7 @@
 using System.Linq;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Scryfall.Shared.Internals;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Aggregator.Scryfall.Shared.Entities;
@@ -11,7 +11,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 {
     private readonly dynamic _data;
 
-    public CardItemItrEntity(ScryfallCardItem scryfallCard) => _data = scryfallCard?.Data;
+    public CardItemItrEntity(ScryfallCardItemExtEntity scryfallCard) => _data = scryfallCard?.Data;
 
     public string Id => _data?.id;
     public string OracleId => _data?.oracle_id;

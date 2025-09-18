@@ -8,6 +8,7 @@ using Lib.Universal.Http;
 using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Http;
+
 internal sealed class ScryfallHttpClient : IHttpClient
 {
     private readonly IHttpClient _innerClient;

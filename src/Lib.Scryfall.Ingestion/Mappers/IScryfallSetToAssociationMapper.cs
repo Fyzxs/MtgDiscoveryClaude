@@ -3,9 +3,9 @@ using Lib.Scryfall.Shared.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Mappers;
 
-internal interface IScryfallSetToAssociationMapper
+internal interface ISetToSetParentAssociationExtMapper
 {
-    ScryfallSetParentAssociationItem Map(IScryfallSet scryfallSet);
+    ScryfallSetParentAssociationExtEntity Map(IScryfallSet scryfallSet);
     bool HasParentSet(IScryfallSet scryfallSet);
     bool HasNoParentSet(IScryfallSet scryfallSet);
 }
