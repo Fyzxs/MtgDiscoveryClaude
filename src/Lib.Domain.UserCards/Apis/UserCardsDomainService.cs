@@ -16,12 +16,12 @@ public sealed class UserCardsDomainService : IUserCardsDomainService
 
     private UserCardsDomainService(IUserCardsAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
     {
         return await _userCardsAggregatorService.AddUserCardAsync(userCard).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
     {
         return await _userCardsAggregatorService.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
     }

@@ -8,8 +8,8 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Sets;
 
-internal interface ISetIdsArgEntityValidator : IValidatorAction<ISetIdsArgEntity, IOperationResponse<ISetItemCollectionItrEntity>>;
-internal sealed class SetIdsArgEntityValidatorContainer : ValidatorActionContainer<ISetIdsArgEntity, IOperationResponse<ISetItemCollectionItrEntity>>, ISetIdsArgEntityValidator
+internal interface ISetIdsArgEntityValidator : IValidatorAction<ISetIdsArgEntity, IOperationResponse<ISetItemCollectionOufEntity>>;
+internal sealed class SetIdsArgEntityValidatorContainer : ValidatorActionContainer<ISetIdsArgEntity, IOperationResponse<ISetItemCollectionOufEntity>>, ISetIdsArgEntityValidator
 {
     public SetIdsArgEntityValidatorContainer() : base([
             new IsNotNullSetIdsArgEntityValidator(),
@@ -20,7 +20,7 @@ internal sealed class SetIdsArgEntityValidatorContainer : ValidatorActionContain
     { }
 }
 
-internal sealed class IsNotNullSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionItrEntity>
+internal sealed class IsNotNullSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionOufEntity>
 {
     public IsNotNullSetIdsArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -36,7 +36,7 @@ internal sealed class IsNotNullSetIdsArgEntityValidator : OperationResponseValid
     }
 }
 
-internal sealed class IdsNotNullSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionItrEntity>
+internal sealed class IdsNotNullSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionOufEntity>
 {
     public IdsNotNullSetIdsArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -52,7 +52,7 @@ internal sealed class IdsNotNullSetIdsArgEntityValidator : OperationResponseVali
     }
 }
 
-internal sealed class HasIdsSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionItrEntity>
+internal sealed class HasIdsSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionOufEntity>
 {
     public HasIdsSetIdsArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -68,7 +68,7 @@ internal sealed class HasIdsSetIdsArgEntityValidator : OperationResponseValidato
     }
 }
 
-internal sealed class ValidSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionItrEntity>
+internal sealed class ValidSetIdsArgEntityValidator : OperationResponseValidator<ISetIdsArgEntity, ISetItemCollectionOufEntity>
 {
     public ValidSetIdsArgEntityValidator() : base(new Validator(), new Message())
     { }

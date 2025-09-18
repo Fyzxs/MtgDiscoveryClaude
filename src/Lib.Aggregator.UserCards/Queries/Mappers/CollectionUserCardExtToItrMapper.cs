@@ -23,10 +23,10 @@ internal sealed class CollectionUserCardExtToItrMapper : ICollectionUserCardExtT
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<IUserCardItrEntity>> Map([NotNull] IEnumerable<UserCardExtEntity> source)
+    public async Task<IEnumerable<IUserCardOufEntity>> Map([NotNull] IEnumerable<UserCardExtEntity> source)
     {
-        List<Task<IUserCardItrEntity>> tasks = [.. source.Select(item => _mapper.Map(item))];
-        IUserCardItrEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
+        List<Task<IUserCardOufEntity>> tasks = [.. source.Select(item => _mapper.Map(item))];
+        IUserCardOufEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
         return results;
     }
 }

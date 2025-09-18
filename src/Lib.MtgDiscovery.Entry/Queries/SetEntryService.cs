@@ -40,9 +40,9 @@ internal sealed class SetEntryService : ISetEntryService
         _codesMapper = codesMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity args)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByIdsAsync(ISetIdsArgEntity args)
     {
-        IValidatorActionResult<IOperationResponse<ISetItemCollectionItrEntity>> result = await _idsValidator.Validate(args).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> result = await _idsValidator.Validate(args).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -50,9 +50,9 @@ internal sealed class SetEntryService : ISetEntryService
         return await _setDomainService.SetsAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity args)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesArgEntity args)
     {
-        IValidatorActionResult<IOperationResponse<ISetItemCollectionItrEntity>> result = await _codesValidator.Validate(args).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> result = await _codesValidator.Validate(args).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -60,7 +60,7 @@ internal sealed class SetEntryService : ISetEntryService
         return await _setDomainService.SetsByCodeAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync()
     {
         return await _setDomainService.AllSetsAsync().ConfigureAwait(false);
     }

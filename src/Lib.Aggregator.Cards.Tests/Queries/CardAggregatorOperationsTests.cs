@@ -65,7 +65,7 @@ public sealed class CardAggregatorOperationsTests
             fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual =
+        IOperationResponse<ICardItemCollectionOufEntity> actual =
             await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert
@@ -106,7 +106,7 @@ public sealed class CardAggregatorOperationsTests
             fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual =
+        IOperationResponse<ICardItemCollectionOufEntity> actual =
             await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert
@@ -139,7 +139,7 @@ public sealed class CardAggregatorOperationsTests
             fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual =
+        IOperationResponse<ICardItemCollectionOufEntity> actual =
             await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert

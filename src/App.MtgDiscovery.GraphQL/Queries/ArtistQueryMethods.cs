@@ -19,23 +19,23 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class ArtistQueryMethods
 {
-    private readonly ICardItemItrToOutMapper _scryfallCardMapper;
-    private readonly ICollectionCardItemItrToOutMapper _cardCollectionMapper;
-    private readonly IArtistSearchResultCollectionItrToOutMapper _artistSearchMapper;
+    private readonly ICardItemOufToOutMapper _scryfallCardMapper;
+    private readonly ICollectionCardItemOufToOutMapper _cardCollectionMapper;
+    private readonly IArtistSearchResultCollectionOufToOutMapper _artistSearchMapper;
     private readonly IEntryService _entryService;
 
     public ArtistQueryMethods(ILogger logger) : this(
-        new CardItemItrToOutMapper(),
-        new CollectionCardItemItrToOutMapper(),
-        new ArtistSearchResultCollectionItrToOutMapper(),
+        new CardItemOufToOutMapper(),
+        new CollectionCardItemOufToOutMapper(),
+        new ArtistSearchResultCollectionOufToOutMapper(),
         new EntryService(logger))
     {
     }
 
     private ArtistQueryMethods(
-        ICardItemItrToOutMapper scryfallCardMapper,
-        ICollectionCardItemItrToOutMapper cardCollectionMapper,
-        IArtistSearchResultCollectionItrToOutMapper artistSearchMapper,
+        ICardItemOufToOutMapper scryfallCardMapper,
+        ICollectionCardItemOufToOutMapper cardCollectionMapper,
+        IArtistSearchResultCollectionOufToOutMapper artistSearchMapper,
         IEntryService entryService)
     {
         _scryfallCardMapper = scryfallCardMapper;
@@ -47,7 +47,7 @@ public class ArtistQueryMethods
     [GraphQLType(typeof(ArtistSearchResponseModelUnionType))]
     public async Task<ResponseModel> ArtistSearch(ArtistSearchTermArgEntity searchTerm)
     {
-        IOperationResponse<IArtistSearchResultCollectionItrEntity> response = await _entryService.ArtistSearchAsync(searchTerm).ConfigureAwait(false);
+        IOperationResponse<IArtistSearchResultCollectionOufEntity> response = await _entryService.ArtistSearchAsync(searchTerm).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -66,7 +66,7 @@ public class ArtistQueryMethods
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
     public async Task<ResponseModel> CardsByArtist(ArtistIdArgEntity artistId)
     {
-        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsByArtistAsync(artistId).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> response = await _entryService.CardsByArtistAsync(artistId).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -85,7 +85,7 @@ public class ArtistQueryMethods
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
     public async Task<ResponseModel> CardsByArtistName(ArtistNameArgEntity artistName)
     {
-        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> response = await _entryService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {

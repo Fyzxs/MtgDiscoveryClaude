@@ -40,7 +40,7 @@ public sealed class UserCardsCommandAdapterTests
         // Use TypeWrapper to access internal constructor
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -49,7 +49,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -75,7 +75,7 @@ public sealed class UserCardsCommandAdapterTests
             Count = 1
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -84,7 +84,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -110,7 +110,7 @@ public sealed class UserCardsCommandAdapterTests
             Count = 2
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -119,7 +119,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -152,7 +152,7 @@ public sealed class UserCardsCommandAdapterTests
             Count = 2
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -161,7 +161,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -186,7 +186,7 @@ public sealed class UserCardsCommandAdapterTests
             Count = 3
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -195,7 +195,7 @@ public sealed class UserCardsCommandAdapterTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();

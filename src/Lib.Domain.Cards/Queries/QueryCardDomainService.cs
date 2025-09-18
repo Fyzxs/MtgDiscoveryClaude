@@ -16,11 +16,11 @@ internal sealed class QueryCardDomainService : ICardDomainService
 
     private QueryCardDomainService(ICardAggregatorService cardAggregatorService) => _cardAggregatorService = cardAggregatorService;
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => await _cardAggregatorService.CardsByIdsAsync(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => await _cardAggregatorService.CardsByIdsAsync(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => await _cardAggregatorService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => await _cardAggregatorService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardAggregatorService.CardsByNameAsync(cardName).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardAggregatorService.CardsByNameAsync(cardName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardAggregatorService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardAggregatorService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
 }

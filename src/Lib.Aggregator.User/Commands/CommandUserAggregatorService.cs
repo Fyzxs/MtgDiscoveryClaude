@@ -28,16 +28,16 @@ internal sealed class CommandUserAggregatorService : IUserAggregatorService
         _userInfoMapper = userInfoMapper;
     }
 
-    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
+    public async Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
     {
         IOperationResponse<UserInfoExtEntity> response = await _userAdapterService.RegisterUserAsync(userInfo).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<IUserInfoItrEntity>(response.OuterException);
+            return new FailureOperationResponse<IUserInfoOufEntity>(response.OuterException);
         }
 
-        IUserInfoItrEntity mappedUserInfo = await _userInfoMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IUserInfoItrEntity>(mappedUserInfo);
+        IUserInfoOufEntity mappedUserInfo = await _userInfoMapper.Map(response.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<IUserInfoOufEntity>(mappedUserInfo);
     }
 }

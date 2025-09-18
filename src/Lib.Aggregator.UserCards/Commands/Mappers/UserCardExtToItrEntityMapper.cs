@@ -24,13 +24,13 @@ internal sealed class UserCardExtToItrEntityMapper : IUserCardExtToItrEntityMapp
         _mapper = mapper;
     }
 
-    public async Task<IUserCardItrEntity> Map([NotNull] UserCardExtEntity source)
+    public async Task<IUserCardOufEntity> Map([NotNull] UserCardExtEntity source)
     {
         IUserCardDetailsItrEntity[] mappedDetails = await Task.WhenAll(
             source.CollectedList.Select(detail => _mapper.Map(detail))
         ).ConfigureAwait(false);
 
-        return new UserCardItrEntity
+        return new UserCardOufEntity
         {
             UserId = source.UserId,
             CardId = source.CardId,

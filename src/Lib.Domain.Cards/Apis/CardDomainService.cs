@@ -15,11 +15,11 @@ public sealed class CardDomainService : ICardDomainService
 
     private CardDomainService(ICardDomainService cardDomainOperations) => _cardDomainOperations = cardDomainOperations;
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardDomainOperations.CardsByIdsAsync(args);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardDomainOperations.CardsByIdsAsync(args);
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => _cardDomainOperations.CardsBySetCodeAsync(setCode);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => _cardDomainOperations.CardsBySetCodeAsync(setCode);
 
-    public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardDomainOperations.CardsByNameAsync(cardName);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardDomainOperations.CardsByNameAsync(cardName);
 
-    public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardDomainOperations.CardNameSearchAsync(searchTerm);
+    public Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardDomainOperations.CardNameSearchAsync(searchTerm);
 }

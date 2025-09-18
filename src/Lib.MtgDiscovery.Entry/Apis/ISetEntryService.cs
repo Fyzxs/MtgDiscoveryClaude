@@ -6,7 +6,7 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface ISetEntryService
 {
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds);
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes);
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync();
+    Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds);
+    Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes);
+    Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync();
 }

@@ -10,5 +10,5 @@ namespace Lib.Aggregator.UserCards.Queries.Mappers;
 /// </summary>
 internal interface ICollectionUserCardExtToItrMapper
 {
-    Task<IEnumerable<IUserCardItrEntity>> Map(IEnumerable<UserCardExtEntity> source);
+    Task<IEnumerable<IUserCardOufEntity>> Map(IEnumerable<UserCardExtEntity> source);
 }

@@ -15,27 +15,27 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
 {
     private readonly IUserCardsDomainService _userCardsDomainService;
     private readonly IAddCardToCollectionArgEntityValidator _validator;
-    private readonly IUserCardArgsToItrMapper _mapper;
+    private readonly IAddUserCardArgsToItrMapper _mapper;
 
     public UserCardsEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
         new AddCardToCollectionArgEntityValidatorContainer(),
-        new UserCardArgsToItrMapper())
+        new AddUserCardArgsToItrMapper())
     { }
 
     private UserCardsEntryService(
         IUserCardsDomainService userCardsDomainService,
         IAddCardToCollectionArgEntityValidator validator,
-        IUserCardArgsToItrMapper mapper)
+        IAddUserCardArgsToItrMapper mapper)
     {
         _userCardsDomainService = userCardsDomainService;
         _validator = validator;
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<IUserCardItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IUserCardArgEntity args)
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args)
     {
-        IValidatorActionResult<IOperationResponse<IUserCardItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 

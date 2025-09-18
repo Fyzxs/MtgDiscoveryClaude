@@ -57,62 +57,62 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         _cardSearchTermItrToXfrMapper = cardSearchTermItrToXfrMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
     {
         ICardIdsXfrEntity xfrEntity = await _cardIdsItrToXfrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> response = await _cardAdapterService.GetCardsByIdsAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(new CardAggregatorOperationException("Failed to retrieve cards by IDs", response.OuterException));
+            return new FailureOperationResponse<ICardItemCollectionOufEntity>(new CardAggregatorOperationException("Failed to retrieve cards by IDs", response.OuterException));
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _cardItemMapper.Map(response.ResponseData).ConfigureAwait(false);
         ICollection<ICardItemItrEntity> cards = [.. mappedCards];
-        return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
+        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntity { Data = cards });
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
     {
         ISetCodeXfrEntity xfrEntity = await _setCodeItrToXfrMapper.Map(setCode).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> response = await _cardAdapterService.GetCardsBySetCodeAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for set '{setCode.SetCode}'", response.OuterException));
+            return new FailureOperationResponse<ICardItemCollectionOufEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for set '{setCode.SetCode}'", response.OuterException));
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _setCardItemMapper.Map(response.ResponseData).ConfigureAwait(false);
         ICollection<ICardItemItrEntity> cards = [.. mappedCards];
-        return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
+        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntity { Data = cards });
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
     {
         ICardNameXfrEntity xfrEntity = await _cardNameItrToXfrMapper.Map(cardName).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> response = await _cardAdapterService.GetCardsByNameAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for name '{cardName.CardName}'", response.OuterException));
+            return new FailureOperationResponse<ICardItemCollectionOufEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for name '{cardName.CardName}'", response.OuterException));
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _cardByNameMapper.Map(response.ResponseData).ConfigureAwait(false);
         ICollection<ICardItemItrEntity> cards = [.. mappedCards];
-        return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
+        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntity { Data = cards });
     }
 
-    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
     {
         ICardSearchTermXfrEntity xfrEntity = await _cardSearchTermItrToXfrMapper.Map(searchTerm).ConfigureAwait(false);
         IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{searchTerm.SearchTerm}'", response.OuterException));
+            return new FailureOperationResponse<ICardNameSearchResultCollectionOufEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{searchTerm.SearchTerm}'", response.OuterException));
         }
 
         List<ICardNameSearchResultItrEntity> results = [.. response.ResponseData.Select(x => new CardNameSearchResultItrEntity { Name = x }).Cast<ICardNameSearchResultItrEntity>()];
-        return new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardNameSearchResultCollectionItrEntity { Names = results });
+        return new SuccessOperationResponse<ICardNameSearchResultCollectionOufEntity>(new CardNameSearchResultCollectionOufEntity { Names = results });
     }
 }

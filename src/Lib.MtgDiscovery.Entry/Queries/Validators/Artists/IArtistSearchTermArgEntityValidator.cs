@@ -5,4 +5,4 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 
-internal interface IArtistSearchTermArgEntityValidator : IValidatorAction<IArtistSearchTermArgEntity, IOperationResponse<IArtistSearchResultCollectionItrEntity>>;
+internal interface IArtistSearchTermArgEntityValidator : IValidatorAction<IArtistSearchTermArgEntity, IOperationResponse<IArtistSearchResultCollectionOufEntity>>;

@@ -1,0 +1,7 @@
+﻿using App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
+using Lib.Shared.Abstractions.Mappers;
+using Lib.Shared.DataModels.Entities.Itrs;
+
+namespace App.MtgDiscovery.GraphQL.Mappers;
+
+internal interface ICardItemOufToOutMapper : ICreateMapper<ICardItemItrEntity, CardItemOutEntity>;

@@ -8,7 +8,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.UserCards;
 
-internal sealed class UserCardsSetArgEntityValidatorContainer : ValidatorActionContainer<IUserCardsSetArgEntity, IOperationResponse<IEnumerable<IUserCardItrEntity>>>, IUserCardsSetArgEntityValidator
+internal sealed class UserCardsSetArgEntityValidatorContainer : ValidatorActionContainer<IUserCardsBySetArgEntity, IOperationResponse<IEnumerable<IUserCardOufEntity>>>, IUserCardsSetArgEntityValidator
 {
     public UserCardsSetArgEntityValidatorContainer() : base([
             new IsNotNullUserCardsSetArgEntityValidator(),
@@ -20,14 +20,14 @@ internal sealed class UserCardsSetArgEntityValidatorContainer : ValidatorActionC
     { }
 }
 
-internal sealed class IsNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
+internal sealed class IsNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsBySetArgEntity, IEnumerable<IUserCardOufEntity>>
 {
     public IsNotNullUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardsSetArgEntity>
+    public sealed class Validator : IValidator<IUserCardsBySetArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsSetArgEntity arg) => Task.FromResult(arg is not null);
+        public Task<bool> IsValid(IUserCardsBySetArgEntity arg) => Task.FromResult(arg is not null);
     }
 
     public sealed class Message : OperationResponseMessage
@@ -36,14 +36,14 @@ internal sealed class IsNotNullUserCardsSetArgEntityValidator : OperationRespons
     }
 }
 
-internal sealed class SetIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
+internal sealed class SetIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsBySetArgEntity, IEnumerable<IUserCardOufEntity>>
 {
     public SetIdNotNullUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardsSetArgEntity>
+    public sealed class Validator : IValidator<IUserCardsBySetArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsSetArgEntity arg) => Task.FromResult(arg.SetId is not null);
+        public Task<bool> IsValid(IUserCardsBySetArgEntity arg) => Task.FromResult(arg.SetId is not null);
     }
 
     public sealed class Message : OperationResponseMessage
@@ -52,14 +52,14 @@ internal sealed class SetIdNotNullUserCardsSetArgEntityValidator : OperationResp
     }
 }
 
-internal sealed class HasValidSetIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
+internal sealed class HasValidSetIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsBySetArgEntity, IEnumerable<IUserCardOufEntity>>
 {
     public HasValidSetIdUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardsSetArgEntity>
+    public sealed class Validator : IValidator<IUserCardsBySetArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsSetArgEntity arg) => Task.FromResult(arg.SetId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IUserCardsBySetArgEntity arg) => Task.FromResult(arg.SetId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage
@@ -68,14 +68,14 @@ internal sealed class HasValidSetIdUserCardsSetArgEntityValidator : OperationRes
     }
 }
 
-internal sealed class UserIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
+internal sealed class UserIdNotNullUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsBySetArgEntity, IEnumerable<IUserCardOufEntity>>
 {
     public UserIdNotNullUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardsSetArgEntity>
+    public sealed class Validator : IValidator<IUserCardsBySetArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsSetArgEntity arg) => Task.FromResult(arg.UserId is not null);
+        public Task<bool> IsValid(IUserCardsBySetArgEntity arg) => Task.FromResult(arg.UserId is not null);
     }
 
     public sealed class Message : OperationResponseMessage
@@ -84,14 +84,14 @@ internal sealed class UserIdNotNullUserCardsSetArgEntityValidator : OperationRes
     }
 }
 
-internal sealed class HasValidUserIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsSetArgEntity, IEnumerable<IUserCardItrEntity>>
+internal sealed class HasValidUserIdUserCardsSetArgEntityValidator : OperationResponseValidator<IUserCardsBySetArgEntity, IEnumerable<IUserCardOufEntity>>
 {
     public HasValidUserIdUserCardsSetArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardsSetArgEntity>
+    public sealed class Validator : IValidator<IUserCardsBySetArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsSetArgEntity arg) => Task.FromResult(arg.UserId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IUserCardsBySetArgEntity arg) => Task.FromResult(arg.UserId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage

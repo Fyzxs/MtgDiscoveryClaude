@@ -5,4 +5,4 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 
-internal interface IArtistNameArgEntityValidator : IValidatorAction<IArtistNameArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>;
+internal interface IArtistNameArgEntityValidator : IValidatorAction<IArtistNameArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>;

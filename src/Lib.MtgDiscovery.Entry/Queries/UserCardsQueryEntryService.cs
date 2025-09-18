@@ -34,14 +34,13 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs)
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs)
     {
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardItrEntity>>> result = await _validator.Validate(setArgs).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> result = await _validator.Validate(bySetArgs).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
-        IUserCardsSetItrEntity itrEntity = await _mapper.Map(setArgs).ConfigureAwait(false);
-
+        IUserCardsSetItrEntity itrEntity = await _mapper.Map(bySetArgs).ConfigureAwait(false);
         return await _userCardsDomainService.UserCardsBySetAsync(itrEntity).ConfigureAwait(false);
     }
 }

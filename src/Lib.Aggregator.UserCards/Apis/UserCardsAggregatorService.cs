@@ -16,14 +16,14 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
     private readonly IUserCardsAdapterService _userCardsAdapterService;
     private readonly IUserCardExtToItrEntityMapper _userCardMapper;
     private readonly ICollectionUserCardExtToItrMapper _collectionMapper;
-    private readonly IUserCardItrToXfrMapper _userCardItrToXfrMapper;
+    private readonly IAddUserCardItrToXfrMapper _addUserCardItrToXfrMapper;
     private readonly IUserCardsSetItrToXfrMapper _userCardsSetItrToXfrMapper;
 
     public UserCardsAggregatorService(ILogger logger) : this(
         new UserCardsAdapterService(logger),
         new UserCardExtToItrEntityMapper(),
         new CollectionUserCardExtToItrMapper(),
-        new UserCardItrToXfrMapper(),
+        new AddUserCardItrToXfrMapper(),
         new UserCardsSetItrToXfrMapper())
     { }
 
@@ -31,41 +31,41 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
         IUserCardsAdapterService userCardsAdapterService,
         IUserCardExtToItrEntityMapper userCardMapper,
         ICollectionUserCardExtToItrMapper collectionMapper,
-        IUserCardItrToXfrMapper userCardItrToXfrMapper,
+        IAddUserCardItrToXfrMapper addUserCardItrToXfrMapper,
         IUserCardsSetItrToXfrMapper userCardsSetItrToXfrMapper)
     {
         _userCardsAdapterService = userCardsAdapterService;
         _userCardMapper = userCardMapper;
         _collectionMapper = collectionMapper;
-        _userCardItrToXfrMapper = userCardItrToXfrMapper;
+        _addUserCardItrToXfrMapper = addUserCardItrToXfrMapper;
         _userCardsSetItrToXfrMapper = userCardsSetItrToXfrMapper;
     }
 
-    public async Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
     {
-        IUserCardXfrEntity xfrEntity = await _userCardItrToXfrMapper.Map(userCard).ConfigureAwait(false);
+        IAddUserCardXfrEntity xfrEntity = await _addUserCardItrToXfrMapper.Map(userCard).ConfigureAwait(false);
         IOperationResponse<UserCardExtEntity> response = await _userCardsAdapterService.AddUserCardAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<IUserCardItrEntity>(response.OuterException);
+            return new FailureOperationResponse<IUserCardOufEntity>(response.OuterException);
         }
 
-        IUserCardItrEntity mappedUserCard = await _userCardMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IUserCardItrEntity>(mappedUserCard);
+        IUserCardOufEntity mappedUserCard = await _userCardMapper.Map(response.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<IUserCardOufEntity>(mappedUserCard);
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
     {
         IUserCardsSetXfrEntity xfrEntity = await _userCardsSetItrToXfrMapper.Map(userCardsSet).ConfigureAwait(false);
         IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsBySetAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<IEnumerable<IUserCardItrEntity>>(response.OuterException);
+            return new FailureOperationResponse<IEnumerable<IUserCardOufEntity>>(response.OuterException);
         }
 
-        IEnumerable<IUserCardItrEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IEnumerable<IUserCardItrEntity>>(mappedUserCards);
+        IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
     }
 }

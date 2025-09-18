@@ -11,7 +11,7 @@ internal sealed class UserCardsCommandAdapterFake : IUserCardsCommandAdapter
     public IOperationResponse<UserCardExtEntity> AddUserCardAsyncResult { get; init; }
     public int AddUserCardAsyncInvokeCount { get; private set; }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardXfrEntity userCard)
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard)
     {
         AddUserCardAsyncInvokeCount++;
         return await Task.FromResult(AddUserCardAsyncResult).ConfigureAwait(false);

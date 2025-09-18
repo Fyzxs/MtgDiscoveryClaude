@@ -29,7 +29,7 @@ namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 /// See CardIdsArgEntityValidatorContainer for full pattern documentation.
 /// Pattern Validated: 2025-01-08
 /// </summary>
-internal sealed class CardSearchTermArgEntityValidatorContainer : ValidatorActionContainer<ICardSearchTermArgEntity, IOperationResponse<ICardNameSearchResultCollectionItrEntity>>, ICardSearchTermArgEntityValidator
+internal sealed class CardSearchTermArgEntityValidatorContainer : ValidatorActionContainer<ICardSearchTermArgEntity, IOperationResponse<ICardNameSearchResultCollectionOufEntity>>, ICardSearchTermArgEntityValidator
 {
     public CardSearchTermArgEntityValidatorContainer() : base([
             new IsNotNullCardSearchTermArgEntityValidator(),
@@ -43,7 +43,7 @@ internal sealed class CardSearchTermArgEntityValidatorContainer : ValidatorActio
 /// Validates search term argument is not null.
 /// Standard null check following the typed validator pattern.
 /// </summary>
-internal sealed class IsNotNullCardSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionItrEntity>
+internal sealed class IsNotNullCardSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionOufEntity>
 {
     public IsNotNullCardSearchTermArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -59,7 +59,7 @@ internal sealed class IsNotNullCardSearchTermArgEntityValidator : OperationRespo
     }
 }
 
-internal sealed class HasValidSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionItrEntity>
+internal sealed class HasValidSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionOufEntity>
 {
     public HasValidSearchTermArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -87,7 +87,7 @@ internal sealed class HasValidSearchTermArgEntityValidator : OperationResponseVa
 /// (minimum 3 letters) are coupled here by design - they represent a single
 /// validation concern: "valid searchable term length".
 /// </summary>
-internal sealed class HasMinimumLengthSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionItrEntity>
+internal sealed class HasMinimumLengthSearchTermArgEntityValidator : OperationResponseValidator<ICardSearchTermArgEntity, ICardNameSearchResultCollectionOufEntity>
 {
     public HasMinimumLengthSearchTermArgEntityValidator() : base(new Validator(), new Message())
     { }

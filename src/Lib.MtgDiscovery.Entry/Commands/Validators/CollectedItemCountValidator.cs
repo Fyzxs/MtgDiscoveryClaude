@@ -6,14 +6,14 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal sealed class CollectedItemCountValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
+internal sealed class CollectedItemCountValidator : OperationResponseValidator<IAddUserCardArgEntity, IUserCardOufEntity>
 {
     public CollectedItemCountValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardArgEntity>
+    public sealed class Validator : IValidator<IAddUserCardArgEntity>
     {
-        public Task<bool> IsValid(IUserCardArgEntity arg)
+        public Task<bool> IsValid(IAddUserCardArgEntity arg)
         {
             return Task.FromResult(arg.UserCardDetails?.Count != 0);
         }
