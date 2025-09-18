@@ -8,7 +8,7 @@ namespace Lib.Aggregator.Cards.Tests.Fakes;
 
 internal sealed class CollectionCardByNameExtToItrMapperFake : ICollectionCardByNameExtToItrMapper
 {
-    public IEnumerable<ICardItemItrEntity> MapResult { get; init; } = new List<ICardItemItrEntity>();
+    public IEnumerable<ICardItemItrEntity> MapResult { get; init; } = [];
     public int MapInvokeCount { get; private set; }
     public IEnumerable<ScryfallCardByNameExtEntity> MapSourceInput { get; private set; } = default!;
 

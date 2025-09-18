@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Exceptions;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -22,13 +26,19 @@ namespace Lib.Adapter.UserCards.Queries;
 internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
 {
     private readonly ICosmosInquisition<UserCardItemsBySetExtEntitys> _userCardsInquisition;
+    private readonly ICosmosGopher _userCardsGopher;
 
-    public UserCardsQueryAdapter(ILogger logger) : this(new UserCardItemsBySetInquisition(logger))
+    public UserCardsQueryAdapter(ILogger logger) : this(
+        new UserCardItemsBySetInquisition(logger),
+        new UserCardsGopher(logger))
     { }
 
-    private UserCardsQueryAdapter(ICosmosInquisition<UserCardItemsBySetExtEntitys> userCardsInquisition)
+    private UserCardsQueryAdapter(
+        ICosmosInquisition<UserCardItemsBySetExtEntitys> userCardsInquisition,
+        ICosmosGopher userCardsGopher)
     {
         _userCardsInquisition = userCardsInquisition;
+        _userCardsGopher = userCardsGopher;
     }
 
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet)
@@ -45,5 +55,48 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
         }
 
         return new SuccessOperationResponse<IEnumerable<UserCardExtEntity>>(response.Value);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(IUserCardXfrEntity userCard)
+    {
+        ReadPointItem readPoint = new()
+        {
+            Id = new ProvidedCosmosItemId(userCard.CardId),
+            Partition = new ProvidedPartitionKeyValue(userCard.UserId)
+        };
+
+        OpResponse<UserCardExtEntity> response = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint).ConfigureAwait(false);
+
+        // Handle "not found" as successful with empty collection (HTTP 404 is valid for point reads)
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return new SuccessOperationResponse<IEnumerable<UserCardExtEntity>>([]);
+        }
+
+        if (response.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<IEnumerable<UserCardExtEntity>>(
+                new UserCardsAdapterException($"Failed to retrieve user card [user={userCard.UserId}] [card={userCard.CardId}]", response.Exception()));
+        }
+
+        return new SuccessOperationResponse<IEnumerable<UserCardExtEntity>>([response.Value]);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards)
+    {
+        IEnumerable<Task<OpResponse<UserCardExtEntity>>> readTasks = userCards.CardIds.Select(cardId =>
+            _userCardsGopher.ReadAsync<UserCardExtEntity>(new ReadPointItem
+            {
+                Id = new ProvidedCosmosItemId(cardId),
+                Partition = new ProvidedPartitionKeyValue(userCards.UserId)
+            }));
+
+        OpResponse<UserCardExtEntity>[] responses = await Task.WhenAll(readTasks).ConfigureAwait(false);
+
+        List<UserCardExtEntity> foundCards = [.. responses
+            .Where(r => r.StatusCode != System.Net.HttpStatusCode.NotFound && r.IsSuccessful())
+            .Select(r => r.Value)];
+
+        return new SuccessOperationResponse<IEnumerable<UserCardExtEntity>>(foundCards);
     }
 }

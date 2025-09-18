@@ -10,7 +10,7 @@ internal sealed class ArtistSearchResultCollectionOufToOutMapper : IArtistSearch
 {
     public Task<List<ArtistSearchResultOutEntity>> Map(IEnumerable<IArtistSearchResultItrEntity> artistResults)
     {
-        List<ArtistSearchResultOutEntity> results = artistResults.Select(artistResult => new ArtistSearchResultOutEntity { ArtistId = artistResult.ArtistId, Name = artistResult.Name }).ToList();
+        List<ArtistSearchResultOutEntity> results = [.. artistResults.Select(artistResult => new ArtistSearchResultOutEntity { ArtistId = artistResult.ArtistId, Name = artistResult.Name })];
 
         return Task.FromResult(results);
     }

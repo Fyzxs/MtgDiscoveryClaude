@@ -1,4 +1,5 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
+﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using App.MtgDiscovery.GraphQL.Queries;
@@ -17,6 +18,10 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
             .AddTypeExtension<UserCardsQueryMethods>()
+            // Input types for queries
+            .AddType<UserCardsBySetArgEntityInputType>()
+            .AddType<UserCardsByIdsArgEntityInputType>()
+            .AddType<UserCardArgEntityInputType>()
             .AddType<CardResponseModelUnionType>()
             .AddType<FailureResponseModelType>()
             .AddType<CardsSuccessDataResponseModelType>()
