@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities;
+﻿namespace Lib.Shared.DataModels.Entities.Args;
 
 public interface ICardSearchTermArgEntity
 {

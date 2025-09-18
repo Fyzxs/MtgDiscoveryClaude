@@ -17,7 +17,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
     public async Task Validate_WithValidArgs_ReturnsValidResult()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "id2"] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "id2"] };
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
@@ -49,7 +49,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
     public async Task Validate_WithNullCardIds_ReturnsInvalidResult()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = null! };
+        CardIdsArgEntityFake args = new() { CardIds = null! };
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
@@ -65,7 +65,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
     public async Task Validate_WithEmptyCardIds_ReturnsInvalidResult()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = [] };
+        CardIdsArgEntityFake args = new() { CardIds = [] };
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
@@ -81,7 +81,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
     public async Task Validate_WithInvalidCardIds_ReturnsInvalidResult()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "", "  ", null!] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "", "  ", null!] };
         CardIdsArgEntityValidatorContainer subject = new();
 
         // Act
@@ -93,7 +93,7 @@ public sealed class CardIdsArgEntityValidatorContainerTests
         actual.IsValid().Should().BeFalse();
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
@@ -106,7 +106,7 @@ public sealed class IsNotNullCardIdsArgEntityValidatorTests
     public async Task IsValid_WithNonNullArgs_ReturnsTrue()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new();
+        CardIdsArgEntityFake args = new();
         IsNotNullCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -142,7 +142,7 @@ public sealed class IsNotNullCardIdsArgEntityValidatorTests
         actual.Should().Be("Provided object is null");
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
@@ -155,7 +155,7 @@ public sealed class IdsNotNullCardIdsArgEntityValidatorTests
     public async Task IsValid_WithNonNullCardIds_ReturnsTrue()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = [] };
+        CardIdsArgEntityFake args = new() { CardIds = [] };
         IdsNotNullCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -169,7 +169,7 @@ public sealed class IdsNotNullCardIdsArgEntityValidatorTests
     public async Task IsValid_WithNullCardIds_ReturnsFalse()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = null! };
+        CardIdsArgEntityFake args = new() { CardIds = null! };
         IdsNotNullCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -192,7 +192,7 @@ public sealed class IdsNotNullCardIdsArgEntityValidatorTests
         actual.Should().Be("Provided list is null");
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
@@ -205,7 +205,7 @@ public sealed class HasIdsCardIdsArgEntityValidatorTests
     public async Task IsValid_WithNonEmptyCardIds_ReturnsTrue()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1"] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1"] };
         HasIdsCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -219,7 +219,7 @@ public sealed class HasIdsCardIdsArgEntityValidatorTests
     public async Task IsValid_WithEmptyCardIds_ReturnsFalse()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = [] };
+        CardIdsArgEntityFake args = new() { CardIds = [] };
         HasIdsCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -242,7 +242,7 @@ public sealed class HasIdsCardIdsArgEntityValidatorTests
         actual.Should().Be("Provided list is empty");
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
@@ -255,7 +255,7 @@ public sealed class ValidCardIdsArgEntityValidatorTests
     public async Task IsValid_WithValidCardIds_ReturnsTrue()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "id2", "id3"] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "id2", "id3"] };
         ValidCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -269,7 +269,7 @@ public sealed class ValidCardIdsArgEntityValidatorTests
     public async Task IsValid_WithEmptyStringInCardIds_ReturnsFalse()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "", "id3"] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "", "id3"] };
         ValidCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -283,7 +283,7 @@ public sealed class ValidCardIdsArgEntityValidatorTests
     public async Task IsValid_WithWhitespaceInCardIds_ReturnsFalse()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "  ", "id3"] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "  ", "id3"] };
         ValidCardIdsArgEntityValidator.Validator subject = new();
 
         // Act
@@ -306,7 +306,7 @@ public sealed class ValidCardIdsArgEntityValidatorTests
         actual.Should().Be("Provided list has invalid entries");
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }

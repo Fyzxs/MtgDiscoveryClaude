@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Lib.Shared.DataModels.Entities;
+namespace Lib.Shared.DataModels.Entities.Itrs;
 
 public interface ISetIdsItrEntity
 {
-    IReadOnlyCollection<string> SetIds { get; }
+    ICollection<string> SetIds { get; }
 }

@@ -15,7 +15,7 @@ public sealed class CardsArgsToItrMapperTests
     public async Task Map_WithValidArgs_ReturnsEntryCardIdsItrEntity()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "id2", "id3"] };
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "id2", "id3"] };
         CardsArgsToItrMapper subject = new();
 
         // Act
@@ -32,7 +32,7 @@ public sealed class CardsArgsToItrMapperTests
     public async Task Map_WithEmptyCardIds_ReturnsEmptyCollection()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = [] };
+        CardIdsArgEntityFake args = new() { CardIds = [] };
         CardsArgsToItrMapper subject = new();
 
         // Act
@@ -44,7 +44,7 @@ public sealed class CardsArgsToItrMapperTests
         actual.CardIds.Should().BeEmpty();
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }

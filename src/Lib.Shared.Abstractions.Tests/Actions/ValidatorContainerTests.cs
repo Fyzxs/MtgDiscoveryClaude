@@ -32,7 +32,7 @@ public sealed class ValidatorContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeValidator validator = new() { IsValidResult = true };
+        ValidatorFake validator = new() { IsValidResult = true };
         TestValidatorContainer subject = new(validator);
 
         // Act
@@ -49,8 +49,8 @@ public sealed class ValidatorContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeValidator validator1 = new() { IsValidResult = false };
-        FakeValidator validator2 = new() { IsValidResult = true };
+        ValidatorFake validator1 = new() { IsValidResult = false };
+        ValidatorFake validator2 = new() { IsValidResult = true };
         TestValidatorContainer subject = new(validator1, validator2);
 
         // Act
@@ -67,9 +67,9 @@ public sealed class ValidatorContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeValidator validator1 = new() { IsValidResult = true };
-        FakeValidator validator2 = new() { IsValidResult = true };
-        FakeValidator validator3 = new() { IsValidResult = true };
+        ValidatorFake validator1 = new() { IsValidResult = true };
+        ValidatorFake validator2 = new() { IsValidResult = true };
+        ValidatorFake validator3 = new() { IsValidResult = true };
         TestValidatorContainer subject = new(validator1, validator2, validator3);
 
         // Act
@@ -87,9 +87,9 @@ public sealed class ValidatorContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeValidator validator1 = new() { IsValidResult = true };
-        FakeValidator validator2 = new() { IsValidResult = false };
-        FakeValidator validator3 = new() { IsValidResult = true };
+        ValidatorFake validator1 = new() { IsValidResult = true };
+        ValidatorFake validator2 = new() { IsValidResult = false };
+        ValidatorFake validator3 = new() { IsValidResult = true };
         TestValidatorContainer subject = new(validator1, validator2, validator3);
 
         // Act
@@ -107,7 +107,7 @@ public sealed class ValidatorContainerTests
         public string Value { get; set; } = "";
     }
 
-    private sealed class FakeValidator : IValidator<TestTarget>
+    private sealed class ValidatorFake : IValidator<TestTarget>
     {
         public bool IsValidResult { get; init; }
         public int IsValidInvokeCount { get; private set; }

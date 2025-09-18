@@ -2,6 +2,7 @@
 using Lib.Aggregator.Artists.Apis;
 using Lib.Domain.Artists.Apis;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

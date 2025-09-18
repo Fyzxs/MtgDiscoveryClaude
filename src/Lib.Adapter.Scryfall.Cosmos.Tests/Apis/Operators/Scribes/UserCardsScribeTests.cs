@@ -2,6 +2,7 @@
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
+using TestConvenience.Core.Fakes;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.Apis.Operators.Scribes;
 
@@ -48,9 +49,3 @@ public sealed class UserCardsScribeTests
     }
 }
 
-internal sealed class LoggerFake : ILogger
-{
-    public IDisposable BeginScope<TState>(TState state) where TState : notnull => null;
-    public bool IsEnabled(LogLevel logLevel) => true;
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) { }
-}

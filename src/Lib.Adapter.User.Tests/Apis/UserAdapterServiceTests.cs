@@ -37,7 +37,7 @@ public sealed class UserAdapterServiceTests
             SourceId = "auth0123"
         };
 
-        IOperationResponse<UserInfoExtEntity> operationResponse = new FakeOperationResponse<UserInfoExtEntity>
+        IOperationResponse<UserInfoExtEntity> operationResponse = new OperationResponseFake<UserInfoExtEntity>
         {
             IsSuccess = true,
             ResponseData = expectedResult

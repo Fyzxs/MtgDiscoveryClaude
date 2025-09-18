@@ -31,7 +31,7 @@ public sealed class TransformationActionContainerTests
     {
         // Arrange
         TestTarget target = new() { Value = "Original" };
-        FakeTransformationAction action = new();
+        TransformationActionFake action = new();
         TestTransformationActionContainer subject = new(action);
 
         // Act
@@ -48,9 +48,9 @@ public sealed class TransformationActionContainerTests
         // Arrange
         TestTarget target = new() { Value = "Original" };
 
-        FakeTransformationAction action1 = new();
-        FakeTransformationAction action2 = new();
-        FakeTransformationAction action3 = new();
+        TransformationActionFake action1 = new();
+        TransformationActionFake action2 = new();
+        TransformationActionFake action3 = new();
 
         TestTransformationActionContainer subject = new(action1, action2, action3);
 
@@ -71,7 +71,7 @@ public sealed class TransformationActionContainerTests
         public string Value { get; set; } = "";
     }
 
-    private sealed class FakeTransformationAction : ITransformationAction<TestTarget>
+    private sealed class TransformationActionFake : ITransformationAction<TestTarget>
     {
         public int TransformationInvokeCount { get; private set; }
         public TestTarget TransformationInput { get; private set; } = default!;
