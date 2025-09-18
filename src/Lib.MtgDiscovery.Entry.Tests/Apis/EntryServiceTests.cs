@@ -7,6 +7,7 @@ using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 
 namespace Lib.MtgDiscovery.Entry.Tests.Apis;
@@ -37,13 +38,13 @@ public sealed class EntryServiceTests
     public async Task CardsByIdsAsync_WithValidArgs_DelegatesToCardEntryService()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "id2"] };
-        FakeCardItemCollectionItrEntity expectedResponse = new();
-        FakeCardEntryService fakeCardEntryService = new()
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "id2"] };
+        CardItemCollectionItrEntityFake expectedResponse = new();
+        CardEntryServiceFake fakeCardEntryService = new()
         {
             CardsByIdsAsyncResult = new SuccessOperationResponse<ICardItemCollectionItrEntity>(expectedResponse)
         };
-        FakeSetEntryService fakeSetEntryService = new();
+        SetEntryServiceFake fakeSetEntryService = new();
 
         EntryService subject = new TestableEntryService(fakeCardEntryService, fakeSetEntryService);
 
@@ -58,34 +59,23 @@ public sealed class EntryServiceTests
         fakeCardEntryService.CardsByIdsAsyncInput.Should().BeSameAs(args);
     }
 
-    private sealed class LoggerFake : ILogger
-    {
-        public IDisposable BeginScope<TState>(TState state) where TState : notnull => new DisposableFake();
-        public bool IsEnabled(LogLevel logLevel) => false;
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) { }
 
-        private sealed class DisposableFake : IDisposable
-        {
-            public void Dispose() { }
-        }
-    }
-
-    private sealed class FakeCardEntryService : ICardEntryService
+    private sealed class CardEntryServiceFake : ICardEntryService
     {
         public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } =
-            new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+            new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
         public int CardsByIdsAsyncInvokeCount { get; private set; }
         public ICardIdsArgEntity CardsByIdsAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
         public int CardsBySetCodeAsyncInvokeCount { get; private set; }
         public ISetCodeArgEntity CardsBySetCodeAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
         public int CardsByNameAsyncInvokeCount { get; private set; }
         public ICardNameArgEntity CardsByNameAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new FakeCardNameSearchResultCollectionItrEntity());
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardNameSearchResultCollectionItrEntityFake());
         public int CardNameSearchAsyncInvokeCount { get; private set; }
         public ICardSearchTermArgEntity CardNameSearchAsyncInput { get; private set; } = default!;
 
@@ -118,17 +108,17 @@ public sealed class EntryServiceTests
         }
     }
 
-    private sealed class FakeSetEntryService : ISetEntryService
+    private sealed class SetEntryServiceFake : ISetEntryService
     {
-        public IOperationResponse<ISetItemCollectionItrEntity> SetsByIdsAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new FakeSetItemCollectionItrEntity());
+        public IOperationResponse<ISetItemCollectionItrEntity> SetsByIdsAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new SetItemCollectionItrEntityFake());
         public int SetsByIdsAsyncInvokeCount { get; private set; }
         public ISetIdsArgEntity SetsByIdsAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ISetItemCollectionItrEntity> SetsByCodeAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new FakeSetItemCollectionItrEntity());
+        public IOperationResponse<ISetItemCollectionItrEntity> SetsByCodeAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new SetItemCollectionItrEntityFake());
         public int SetsByCodeAsyncInvokeCount { get; private set; }
         public ISetCodesArgEntity SetsByCodeAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ISetItemCollectionItrEntity> AllSetsAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new FakeSetItemCollectionItrEntity());
+        public IOperationResponse<ISetItemCollectionItrEntity> AllSetsAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new SetItemCollectionItrEntityFake());
         public int AllSetsAsyncInvokeCount { get; private set; }
 
         public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds)
@@ -152,22 +142,22 @@ public sealed class EntryServiceTests
         }
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
 
-    private sealed class FakeCardItemCollectionItrEntity : ICardItemCollectionItrEntity
+    private sealed class CardItemCollectionItrEntityFake : ICardItemCollectionItrEntity
     {
         public ICollection<ICardItemItrEntity> Data { get; init; } = [];
     }
 
-    private sealed class FakeCardNameSearchResultCollectionItrEntity : ICardNameSearchResultCollectionItrEntity
+    private sealed class CardNameSearchResultCollectionItrEntityFake : ICardNameSearchResultCollectionItrEntity
     {
         public ICollection<ICardNameSearchResultItrEntity> Names { get; init; } = [];
     }
 
-    private sealed class FakeSetItemCollectionItrEntity : ISetItemCollectionItrEntity
+    private sealed class SetItemCollectionItrEntityFake : ISetItemCollectionItrEntity
     {
         public ICollection<ISetItemItrEntity> Data { get; init; } = [];
     }

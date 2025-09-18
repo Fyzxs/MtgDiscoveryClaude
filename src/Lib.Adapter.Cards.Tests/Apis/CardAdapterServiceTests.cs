@@ -38,7 +38,7 @@ public sealed class CardAdapterServiceTests
             new() { Data = new { id = "card2", name = "Test Card 2" } }
         ];
 
-        IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> operationResponse = new FakeOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>
+        IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> operationResponse = new OperationResponseFake<IEnumerable<ScryfallCardItemExtEntity>>
         {
             IsSuccess = true,
             ResponseData = expectedResults
@@ -70,7 +70,7 @@ public sealed class CardAdapterServiceTests
             new() { Data = new { id = "card2", set_id = "set1" } }
         ];
 
-        IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> operationResponse = new FakeOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>
+        IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> operationResponse = new OperationResponseFake<IEnumerable<ScryfallSetCardItemExtEntity>>
         {
             IsSuccess = true,
             ResponseData = expectedResults
@@ -101,7 +101,7 @@ public sealed class CardAdapterServiceTests
             new() { NameGuid = "guid1", Data = new { id = "card1", name = "Lightning Bolt" } }
         ];
 
-        IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> operationResponse = new FakeOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>
+        IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> operationResponse = new OperationResponseFake<IEnumerable<ScryfallCardByNameExtEntity>>
         {
             IsSuccess = true,
             ResponseData = expectedResults
@@ -133,7 +133,7 @@ public sealed class CardAdapterServiceTests
             "Lightning Strike"
         ];
 
-        IOperationResponse<IEnumerable<string>> operationResponse = new FakeOperationResponse<IEnumerable<string>>
+        IOperationResponse<IEnumerable<string>> operationResponse = new OperationResponseFake<IEnumerable<string>>
         {
             IsSuccess = true,
             ResponseData = expectedResults

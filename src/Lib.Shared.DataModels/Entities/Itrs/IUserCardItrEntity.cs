@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lib.Shared.DataModels.Entities;
+namespace Lib.Shared.DataModels.Entities.Itrs;
 
 /// <summary>
 /// Represents a user's card collection entry following MicroObjects principles.

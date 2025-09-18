@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Queries.Mappers;
 

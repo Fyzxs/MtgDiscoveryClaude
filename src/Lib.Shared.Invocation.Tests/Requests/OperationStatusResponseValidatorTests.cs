@@ -15,7 +15,7 @@ public sealed class OperationStatusResponseValidatorTests
         }
     }
 
-    private sealed class FakeValidator : IValidator<string>
+    private sealed class ValidatorFake : IValidator<string>
     {
         public bool IsValidResult { get; init; }
         public int IsValidInvokeCount { get; private set; }
@@ -34,7 +34,7 @@ public sealed class OperationStatusResponseValidatorTests
     {
         // Arrange
         string testItem = "valid item";
-        FakeValidator validator = new() { IsValidResult = true };
+        ValidatorFake validator = new() { IsValidResult = true };
         TestOperationStatusResponseValidator subject = new(validator, "error message");
 
         // Act
@@ -52,7 +52,7 @@ public sealed class OperationStatusResponseValidatorTests
         // Arrange
         string testItem = "invalid item";
         string expectedMessage = "Validation failed";
-        FakeValidator validator = new() { IsValidResult = false };
+        ValidatorFake validator = new() { IsValidResult = false };
         TestOperationStatusResponseValidator subject = new(validator, expectedMessage);
 
         // Act

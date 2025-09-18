@@ -13,7 +13,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
     public async Task Map_WithEmptyCardIds_ReturnsEmptyCollection()
     {
         // Arrange
-        FakeCardIdsItrEntity args = new()
+        CardIdsItrEntityFake args = new()
         {
             CardIds = []
         };
@@ -31,7 +31,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
     {
         // Arrange
         const string expectedId = "test-card-id";
-        FakeCardIdsItrEntity args = new()
+        CardIdsItrEntityFake args = new()
         {
             CardIds = [expectedId]
         };
@@ -51,7 +51,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
     {
         // Arrange
         string[] expectedIds = ["card-id-1", "card-id-2", "card-id-3"];
-        FakeCardIdsItrEntity args = new()
+        CardIdsItrEntityFake args = new()
         {
             CardIds = expectedIds
         };
@@ -73,7 +73,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
     public async Task Map_ReturnsNewInstancesEachTime()
     {
         // Arrange
-        FakeCardIdsItrEntity args = new()
+        CardIdsItrEntityFake args = new()
         {
             CardIds = ["card-id"]
         };

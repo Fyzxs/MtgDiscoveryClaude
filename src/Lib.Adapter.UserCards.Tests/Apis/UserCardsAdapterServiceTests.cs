@@ -39,7 +39,7 @@ public sealed class UserCardsAdapterServiceTests
             CollectedList = new List<UserCardDetailsExtEntity>()
         };
 
-        IOperationResponse<UserCardExtEntity> operationResponse = new FakeOperationResponse<UserCardExtEntity> { IsSuccess = true, ResponseData = expectedResult };
+        IOperationResponse<UserCardExtEntity> operationResponse = new OperationResponseFake<UserCardExtEntity> { IsSuccess = true, ResponseData = expectedResult };
         UserCardsCommandAdapterFake commandAdapterFake = new() { AddUserCardAsyncResult = operationResponse };
         UserCardsQueryAdapterFake queryAdapterFake = new();
         UserCardsAdapterService subject = new InstanceWrapper(commandAdapterFake, queryAdapterFake);
@@ -83,7 +83,7 @@ public sealed class UserCardsAdapterServiceTests
             }
         };
 
-        IOperationResponse<IEnumerable<UserCardExtEntity>> operationResponse = new FakeOperationResponse<IEnumerable<UserCardExtEntity>> { IsSuccess = true, ResponseData = expectedResults };
+        IOperationResponse<IEnumerable<UserCardExtEntity>> operationResponse = new OperationResponseFake<IEnumerable<UserCardExtEntity>> { IsSuccess = true, ResponseData = expectedResults };
         UserCardsCommandAdapterFake commandAdapterFake = new();
         UserCardsQueryAdapterFake queryAdapterFake = new() { UserCardsBySetAsyncResult = operationResponse };
         UserCardsAdapterService subject = new InstanceWrapper(commandAdapterFake, queryAdapterFake);

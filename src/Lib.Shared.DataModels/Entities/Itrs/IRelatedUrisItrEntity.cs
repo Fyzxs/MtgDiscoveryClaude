@@ -1,5 +1,5 @@
 ﻿#pragma warning disable CA1056, CA1819
-namespace Lib.Shared.DataModels.Entities;
+namespace Lib.Shared.DataModels.Entities.Itrs;
 
 public interface IRelatedUrisItrEntity
 {

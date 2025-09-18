@@ -4,6 +4,7 @@ using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
@@ -66,7 +67,7 @@ public sealed class CardItemExtToItrMapperTests
             ["story_spotlight"] = false
         };
 
-        ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(testData);
+        ScryfallCardItemExtEntity scryfallCard = ScryfallCardItemFactoryFake.Create(testData);
         CardItemExtToItrMapper subject = new();
 
         // Act
@@ -93,7 +94,7 @@ public sealed class CardItemExtToItrMapperTests
     public async Task Map_WithEmptyData_ReturnsEntityWithNullProperties()
     {
         // Arrange
-        ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(new JObject());
+        ScryfallCardItemExtEntity scryfallCard = ScryfallCardItemFactoryFake.Create(new JObject());
         CardItemExtToItrMapper subject = new();
 
         // Act
@@ -115,7 +116,7 @@ public sealed class CardItemExtToItrMapperTests
     public async Task Map_ReturnsNewInstanceEachTime()
     {
         // Arrange
-        ScryfallCardItemExtEntity scryfallCard = FakeScryfallCardItemFactory.Create(new JObject { ["id"] = "test-id" });
+        ScryfallCardItemExtEntity scryfallCard = ScryfallCardItemFactoryFake.Create(new JObject { ["id"] = "test-id" });
         CardItemExtToItrMapper subject = new();
 
         // Act

@@ -9,6 +9,7 @@ using Lib.Aggregator.Artists.Queries.Entities;
 using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

@@ -1,17 +1,18 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class FakeCardAggregatorService : ICardAggregatorService
+internal sealed class CardAggregatorServiceFake : ICardAggregatorService
 {
-    public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } = new FakeOperationResponse<ICardItemCollectionItrEntity>();
+    public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } = new OperationResponseFake<ICardItemCollectionItrEntity>();
     public int CardsByIdsAsyncInvokeCount { get; private set; }
     public ICardIdsItrEntity CardsByIdsAsyncArgsInput { get; private set; } = default!;
 
-    public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new FakeOperationResponse<ICardItemCollectionItrEntity>();
+    public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new OperationResponseFake<ICardItemCollectionItrEntity>();
     public int CardsBySetCodeAsyncInvokeCount { get; private set; }
     public ISetCodeItrEntity CardsBySetCodeAsyncArgsInput { get; private set; } = default!;
 
@@ -29,7 +30,7 @@ internal sealed class FakeCardAggregatorService : ICardAggregatorService
         return Task.FromResult(CardsBySetCodeAsyncResult);
     }
 
-    public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new FakeOperationResponse<ICardItemCollectionItrEntity>();
+    public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new OperationResponseFake<ICardItemCollectionItrEntity>();
     public int CardsByNameAsyncInvokeCount { get; private set; }
     public ICardNameItrEntity CardsByNameAsyncArgsInput { get; private set; } = default!;
 
@@ -40,7 +41,7 @@ internal sealed class FakeCardAggregatorService : ICardAggregatorService
         return Task.FromResult(CardsByNameAsyncResult);
     }
 
-    public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new FakeOperationResponse<ICardNameSearchResultCollectionItrEntity>();
+    public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new OperationResponseFake<ICardNameSearchResultCollectionItrEntity>();
     public int CardNameSearchAsyncInvokeCount { get; private set; }
     public ICardSearchTermItrEntity CardNameSearchAsyncArgsInput { get; private set; } = default!;
 

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Sets.Entities;
 
 internal sealed class SetIdsItrEntity : ISetIdsItrEntity
 {
-    public IReadOnlyCollection<string> SetIds { get; init; }
+    public ICollection<string> SetIds { get; init; }
 }

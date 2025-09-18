@@ -8,6 +8,7 @@ using Lib.Aggregator.Cards.Queries;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
@@ -44,7 +45,7 @@ public sealed class CardAggregatorOperationsTests
     public async Task CardsByIdsAsync_WithEmptyIds_ReturnsEmptyCollection()
     {
         // Arrange
-        FakeCardIdsItrEntity args = new() { CardIds = [] };
+        CardIdsItrEntityFake args = new() { CardIds = [] };
         CardAdapterServiceFake fakeAdapterService = new();
         CollectionCardItemExtToItrMapperFake fakeCardItemMapper = new();
         CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
@@ -70,11 +71,11 @@ public sealed class CardAggregatorOperationsTests
         // Arrange
         const string cardId = "test-card-id";
 
-        FakeCardItemItrEntity expectedCard = new() { Id = cardId };
+        CardItemItrEntityFake expectedCard = new() { Id = cardId };
         List<ScryfallCardItemExtEntity> adapterResults = [new ScryfallCardItemExtEntity()];
         List<ICardItemItrEntity> mapperResults = [expectedCard];
 
-        FakeCardIdsItrEntity args = new() { CardIds = [cardId] };
+        CardIdsItrEntityFake args = new() { CardIds = [cardId] };
         CardAdapterServiceFake fakeAdapterService = new()
         {
             GetCardsByIdsAsyncResult = new SuccessOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>(adapterResults)
@@ -105,7 +106,7 @@ public sealed class CardAggregatorOperationsTests
     public async Task CardsByIdsAsync_WithAdapterFailure_ReturnsFailure()
     {
         // Arrange
-        FakeCardIdsItrEntity args = new() { CardIds = ["card1"] };
+        CardIdsItrEntityFake args = new() { CardIds = ["card1"] };
         CardAdapterServiceFake fakeAdapterService = new()
         {
             GetCardsByIdsAsyncResult = new FailureOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>(new CardAggregatorOperationException("Adapter failed"))

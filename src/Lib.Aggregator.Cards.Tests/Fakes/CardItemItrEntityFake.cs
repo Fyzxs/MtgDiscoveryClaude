@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class FakeCardItemItrEntity : ICardItemItrEntity
+internal sealed class CardItemItrEntityFake : ICardItemItrEntity
 {
     public string Id { get; init; } = string.Empty;
     public string OracleId { get; init; } = string.Empty;

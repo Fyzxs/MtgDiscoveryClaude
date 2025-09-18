@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities;
+﻿namespace Lib.Shared.DataModels.Entities.Itrs;
 
 /// <summary>
 /// Represents a specific version of a collected card with its finish and quantity.

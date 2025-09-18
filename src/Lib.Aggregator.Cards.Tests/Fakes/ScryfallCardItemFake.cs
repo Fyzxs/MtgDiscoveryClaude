@@ -2,7 +2,7 @@
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal static class FakeScryfallCardItemFactory
+internal static class ScryfallCardItemFactoryFake
 {
     public static ScryfallCardItemExtEntity Create(dynamic data)
     {

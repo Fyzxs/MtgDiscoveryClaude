@@ -2,6 +2,7 @@
 using Lib.Aggregator.Cards.Apis;
 using Lib.Domain.Cards.Apis;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
