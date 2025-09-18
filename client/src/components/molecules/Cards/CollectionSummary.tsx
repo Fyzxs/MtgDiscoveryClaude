@@ -62,11 +62,11 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
           variant="body2"
           sx={{
             fontSize: size === 'small' ? '0.75rem' : size === 'large' ? '1rem' : '0.875rem',
-            color: 'grey.400',
-            fontStyle: 'italic'
+            color: 'white',
+            fontWeight: 500
           }}
         >
-          [0]
+          ⭕
         </Typography>
       </Box>
     );
@@ -187,8 +187,6 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       const separator = finishPart && specialPart ? ' | ' : '';
       return (
         <>
-          [{totalCards}]
-          {(finishPart || specialPart) && ' → '}
           {finishPart}
           {separator}
           {specialPart}
@@ -288,11 +286,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       >
         <Box sx={{ p: 2, minWidth: 300 }}>
           <Typography variant="h6" gutterBottom sx={{ fontSize: '1rem', fontWeight: 600, mb: 2 }}>
-            Collection: [{totalCards}]
+            [{totalCards}] Cards
           </Typography>
-
-          {/* Horizontal separator */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }} />
 
           {/* Group by finish type */}
           {finishTypes.sort((a, b) => {
