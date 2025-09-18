@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Sets.Models;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;

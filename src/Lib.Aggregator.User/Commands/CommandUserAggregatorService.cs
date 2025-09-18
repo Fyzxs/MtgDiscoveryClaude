@@ -4,7 +4,6 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.User.Apis;
 using Lib.Aggregator.User.Apis;
 using Lib.Aggregator.User.Commands.Mappers;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

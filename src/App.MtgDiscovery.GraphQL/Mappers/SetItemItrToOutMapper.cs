@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
