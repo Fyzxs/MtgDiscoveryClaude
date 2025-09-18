@@ -20,7 +20,7 @@ internal sealed class CollectionCardByNameExtToItrMapper : ICollectionCardByName
 
     public async Task<IEnumerable<ICardItemItrEntity>> Map(IEnumerable<ScryfallCardByNameExtEntity> source)
     {
-        ICollection<Task<ICardItemItrEntity>> tasks = source.Select(item => _mapper.Map(item)).ToList();
+        ICollection<Task<ICardItemItrEntity>> tasks = [.. source.Select(item => _mapper.Map(item))];
         ICardItemItrEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
         return results;
     }

@@ -52,4 +52,14 @@ public sealed class UserCardsAdapterService : IUserCardsAdapterService
     {
         return await _userCardsQueryAdapter.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
     }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(IUserCardXfrEntity userCard)
+    {
+        return await _userCardsQueryAdapter.UserCardAsync(userCard).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards)
+    {
+        return await _userCardsQueryAdapter.UserCardsByIdsAsync(userCards).ConfigureAwait(false);
+    }
 }

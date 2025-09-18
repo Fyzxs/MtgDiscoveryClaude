@@ -79,7 +79,7 @@ public class ArtistQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = [.. results] };
     }
 
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
@@ -98,6 +98,6 @@ public class ArtistQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = [.. results] };
     }
 }

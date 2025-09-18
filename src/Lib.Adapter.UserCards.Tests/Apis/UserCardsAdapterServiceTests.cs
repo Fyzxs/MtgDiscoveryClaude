@@ -36,7 +36,7 @@ public sealed class UserCardsAdapterServiceTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new List<UserCardDetailsExtEntity>()
+            CollectedList = []
         };
 
         IOperationResponse<UserCardExtEntity> operationResponse = new OperationResponseFake<UserCardExtEntity> { IsSuccess = true, ResponseData = expectedResult };
@@ -72,16 +72,16 @@ public sealed class UserCardsAdapterServiceTests
     public async Task UserCardsBySetAsync_WithValidInput_DelegatesToQueryAdapter()
     {
         // Arrange
-        IEnumerable<UserCardExtEntity> expectedResults = new List<UserCardExtEntity>
-        {
+        IEnumerable<UserCardExtEntity> expectedResults =
+        [
             new()
             {
                 UserId = "user123",
                 CardId = "card456",
                 SetId = "set789",
-                CollectedList = new List<UserCardDetailsExtEntity>()
+                CollectedList = []
             }
-        };
+        ];
 
         IOperationResponse<IEnumerable<UserCardExtEntity>> operationResponse = new OperationResponseFake<IEnumerable<UserCardExtEntity>> { IsSuccess = true, ResponseData = expectedResults };
         UserCardsCommandAdapterFake commandAdapterFake = new();

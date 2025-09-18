@@ -18,27 +18,31 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public sealed class UserCardsQueryMethods
 {
     private readonly IEntryService _entryService;
-    private readonly ICollectionUserCardOufToOutMapper _mapper;
+    private readonly ICollectionUserCardOufToOutMapper _collectionMapper;
+    private readonly IUserCardOufToOutMapper _singleMapper;
 
     public UserCardsQueryMethods(ILogger logger) : this(
         new EntryService(logger),
-        new CollectionUserCardOufToOutMapper())
+        new CollectionUserCardOufToOutMapper(),
+        new UserCardOufToOutMapper())
     {
     }
 
     private UserCardsQueryMethods(
         IEntryService entryService,
-        ICollectionUserCardOufToOutMapper mapper)
+        ICollectionUserCardOufToOutMapper collectionMapper,
+        IUserCardOufToOutMapper singleMapper)
     {
         _entryService = entryService;
-        _mapper = mapper;
+        _collectionMapper = collectionMapper;
+        _singleMapper = singleMapper;
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> UserCardsBySet(UserCardsBySetArgEntity bySetArgs)
+    public async Task<ResponseModel> UserCardsBySet(UserCardsBySetArgEntity setArgs)
     {
         IOperationResponse<IEnumerable<IUserCardOufEntity>> response = await _entryService
-            .UserCardsBySetAsync(bySetArgs)
+            .UserCardsBySetAsync(setArgs)
             .ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
@@ -50,7 +54,49 @@ public sealed class UserCardsQueryMethods
             }
         };
 
-        List<UserCardOutEntity> results = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
+        List<UserCardOutEntity> results = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
+
+        return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = results };
+    }
+
+    [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
+    public async Task<ResponseModel> UserCard(UserCardArgEntity cardArgs)
+    {
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> response = await _entryService
+            .UserCardAsync(cardArgs)
+            .ConfigureAwait(false);
+
+        if (response.IsFailure) return new FailureResponseModel()
+        {
+            Status = new StatusDataModel()
+            {
+                Message = response.OuterException.StatusMessage,
+                StatusCode = response.OuterException.StatusCode
+            }
+        };
+
+        List<UserCardOutEntity> results = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
+
+        return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = results };
+    }
+
+    [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
+    public async Task<ResponseModel> UserCardsByIds(UserCardsByIdsArgEntity cardsArgs)
+    {
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> response = await _entryService
+            .UserCardsByIdsAsync(cardsArgs)
+            .ConfigureAwait(false);
+
+        if (response.IsFailure) return new FailureResponseModel()
+        {
+            Status = new StatusDataModel()
+            {
+                Message = response.OuterException.StatusMessage,
+                StatusCode = response.OuterException.StatusCode
+            }
+        };
+
+        List<UserCardOutEntity> results = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = results };
     }

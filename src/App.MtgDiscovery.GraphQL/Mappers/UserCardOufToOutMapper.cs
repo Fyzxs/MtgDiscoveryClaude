@@ -27,7 +27,7 @@ internal sealed class UserCardOufToOutMapper : IUserCardOufToOutMapper
             UserId = source.UserId,
             CardId = source.CardId,
             SetId = source.SetId,
-            CollectedList = mappedDetails.ToList()
+            CollectedList = [.. mappedDetails]
         };
 
         return result;

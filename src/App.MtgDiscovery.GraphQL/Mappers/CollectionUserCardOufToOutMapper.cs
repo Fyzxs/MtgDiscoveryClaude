@@ -24,6 +24,6 @@ internal sealed class CollectionUserCardOufToOutMapper : ICollectionUserCardOufT
             userCards.Select(userCard => _mapper.Map(userCard))
         ).ConfigureAwait(false);
 
-        return results.ToList();
+        return [.. results];
     }
 }

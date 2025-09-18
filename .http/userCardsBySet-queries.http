@@ -9,6 +9,42 @@
 @baseUrl = {{$dotenv BASE_URL}}
 @graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
 
+
+### Get User Cards By Set - Basic Query
+# @ref variables
+# Get all cards in a specific set owned by a specific user
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+query GetUserCard($cardArgs: UserCardArgEntityInput!) {
+  userCard(cardArgs: $cardArgs) {
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardArgs": {
+  "cardId": "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+  "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
 ### Get User Cards By Set - Basic Query
 # @ref variables
 # Get all cards in a specific set owned by a specific user
@@ -45,8 +81,8 @@ query GetUserCardsBySet($setArgs: UserCardsSetArgEntityInput!) {
 
 {
   "setArgs": {
-  "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
-  "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+    "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
   }
 }
 

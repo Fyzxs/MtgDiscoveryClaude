@@ -56,7 +56,7 @@ public class SetQueryMethods
 
         ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results.ToList() };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = [.. results] };
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
@@ -78,7 +78,7 @@ public class SetQueryMethods
 
         ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results.ToList() };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = [.. results] };
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
@@ -100,6 +100,6 @@ public class SetQueryMethods
 
         ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results.ToList() };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = [.. results] };
     }
 }
