@@ -11,12 +11,14 @@ import {
 } from '@mui/material';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
+import { GET_USER_CARDS_BY_SET } from '../graphql/queries/userCards';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
+import { useCollectorParam } from '../hooks/useCollectorParam';
 import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { RARITY_ORDER, parseCollectorNumber } from '../config/cardSortOptions';
@@ -27,7 +29,7 @@ import {
   FilterErrorBoundary, 
   CardGridErrorBoundary 
 } from '../components/ErrorBoundaries';
-import type { Card } from '../types/card';
+import type { Card, UserCardData } from '../types/card';
 import type { MtgSet } from '../types/set';
 import { groupCardsOptimized, getGroupDisplayName, getGroupOrder } from '../utils/optimizedCardGrouping';
 import { useOptimizedSort } from '../hooks/useOptimizedSort';
@@ -53,6 +55,17 @@ interface SetsResponse {
   };
 }
 
+interface UserCardsResponse {
+  userCardsBySet: {
+    __typename: string;
+    data?: UserCardData[];
+    status?: {
+      message: string;
+      statusCode: number;
+    };
+  };
+}
+
 interface CardGroupConfig {
   id: string;
   name: string;
@@ -68,8 +81,13 @@ interface CardGroupConfig {
 
 
 export const SetPage: React.FC = () => {
+  console.log('SetPage component rendering');
+
   // Get set code from route params
   const { setCode } = useParams<{ setCode: string }>();
+
+  // Check for collector parameter in URL
+  const { hasCollector, collectorId } = useCollectorParam();
 
   // URL state configuration for query parameters
   const urlStateConfig = {
@@ -126,6 +144,34 @@ export const SetPage: React.FC = () => {
     variables: { codes: { setCodes: [setCode] } },
     skip: !setCode
   });
+
+  // Define setInfo before using it in user cards query
+  const setInfo = setData?.setsByCode?.data?.[0];
+
+  // Debug logging - remove after testing
+  console.log('Debug - hasCollector:', hasCollector, 'collectorId:', collectorId, 'setInfo?.id:', setInfo?.id);
+
+  // Query user cards if collector parameter is present
+  const { loading: userCardsLoading, error: userCardsError, data: userCardsData } = useQuery<UserCardsResponse>(GET_USER_CARDS_BY_SET, {
+    variables: {
+      setArgs: {
+        setId: setInfo?.id,
+        userId: collectorId
+      }
+    },
+    skip: !setCode || !hasCollector || !collectorId || !setInfo?.id
+  });
+
+  // Create collection lookup map for cards
+  const collectionLookup = useMemo(() => {
+    if (!userCardsData?.userCardsBySet?.data) return new Map();
+
+    const lookup = new Map<string, UserCardData>();
+    userCardsData.userCardsBySet.data.forEach(userCard => {
+      lookup.set(userCard.cardId, userCard);
+    });
+    return lookup;
+  }, [userCardsData]);
 
   // Configure filter state (memoized to prevent recreating on every render)
   const filterConfig = useMemo(() => ({
@@ -303,8 +349,6 @@ export const SetPage: React.FC = () => {
     }
   );
 
-  // Define setInfo before using it in useEffect
-  const setInfo = setData?.setsByCode?.data?.[0];
   const cards = cardsData?.cardsBySetCode?.data || [];
 
   // Stable computation of all card groups (independent of sorting/filtering)
@@ -392,7 +436,8 @@ export const SetPage: React.FC = () => {
   // Combine query states
   const { isLoading, firstError } = useQueryStates([
     { loading: cardsLoading, error: cardsError },
-    { loading: setLoading, error: setError }
+    { loading: setLoading, error: setError },
+    { loading: userCardsLoading, error: userCardsError }
   ]);
 
   if (!setCode) {
@@ -581,10 +626,12 @@ export const SetPage: React.FC = () => {
                     isOnSetPage: true,
                     currentSet: setCode,
                     hideSetInfo: true,
-                    hideReleaseDate: false
+                    hideReleaseDate: false,
+                    hasCollector
                   }}
                   onCardSelection={() => {}}
                   selectedCardId={null}
+                  collectionLookup={collectionLookup}
                 />
               ))
             ) : (
@@ -601,10 +648,12 @@ export const SetPage: React.FC = () => {
                   isOnSetPage: true,
                   currentSet: setCode,
                   hideSetInfo: true,
-                  hideReleaseDate: false
+                  hideReleaseDate: false,
+                  hasCollector
                 }}
                 onCardSelection={() => {}}
                 selectedCardId={null}
+                collectionLookup={collectionLookup}
               />
             )}
           </>
@@ -623,10 +672,12 @@ export const SetPage: React.FC = () => {
                 isOnSetPage: true,
                 currentSet: setCode,
                 hideSetInfo: true,
-                hideReleaseDate: allSameReleaseDate
+                hideReleaseDate: allSameReleaseDate,
+                hasCollector
               }}
               onCardSelection={handleCardSelection}
               selectedCardId={selectedCardId}
+              collectionLookup={collectionLookup}
             />
           ) : (
             // Grouped display: show cards organized by groups (filter out empty groups)
@@ -645,10 +696,12 @@ export const SetPage: React.FC = () => {
                     isOnSetPage: true,
                     currentSet: setCode,
                     hideSetInfo: true,
-                    hideReleaseDate: allSameReleaseDate
+                    hideReleaseDate: allSameReleaseDate,
+                    hasCollector
                   }}
                   onCardSelection={handleCardSelection}
                   selectedCardId={selectedCardId}
+                  collectionLookup={collectionLookup}
                 />
               ))
           )

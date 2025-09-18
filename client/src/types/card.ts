@@ -188,4 +188,18 @@ export interface CardContext {
   showCollectorInfo?: boolean;
   hideSetInfo?: boolean;
   hideReleaseDate?: boolean;
+  hasCollector?: boolean;
+}
+
+export interface CollectionItem {
+  finish: 'nonfoil' | 'foil' | 'etched';
+  special: 'none' | 'artist_proof' | 'signed' | 'altered';
+  count: number;
+}
+
+export interface UserCardData {
+  userId: string;
+  cardId: string;
+  setId: string;
+  collectedList: CollectionItem[];
 }

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { Card as MuiCard, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import type { Card, CardContext } from '../../types/card';
+import type { Card, CardContext, UserCardData } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
@@ -14,14 +14,16 @@ import type { StyledComponentProps, SelectionProps } from '../../types/component
 interface MtgCardProps extends StyledComponentProps, SelectionProps {
   card: Card;
   context?: CardContext;
+  collectionData?: UserCardData;
   onCardClick?: (cardId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
 }
 
-const MtgCardComponent: React.FC<MtgCardProps> = ({ 
-  card, 
+const MtgCardComponent: React.FC<MtgCardProps> = ({
+  card,
   context = {},
+  collectionData,
   isSelected = false,
   onCardClick,
   onSetClick,
@@ -221,6 +223,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         tcgplayerUrl={card.purchaseUris?.tcgplayer}
         isSelected={isSelected}
         context={context}
+        collectionData={collectionData}
         onCardClick={onCardClick}
         onArtistClick={onArtistClick}
         onSetClick={onSetClick}

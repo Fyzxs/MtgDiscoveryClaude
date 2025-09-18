@@ -3,7 +3,7 @@ import { Box, Typography, Divider, Skeleton } from '@mui/material';
 import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import type { Card, CardContext } from '../../types/card';
+import type { Card, CardContext, UserCardData } from '../../types/card';
 
 interface CardGroupProps {
   groupId: string;
@@ -16,6 +16,7 @@ interface CardGroupProps {
   onCardSelection: (cardId: string, selected: boolean) => void;
   selectedCardId: string | null;
   isLoading?: boolean;
+  collectionLookup?: Map<string, UserCardData>;
 }
 
 const CardGroupComponent: React.FC<CardGroupProps> = ({
@@ -28,7 +29,8 @@ const CardGroupComponent: React.FC<CardGroupProps> = ({
   context,
   onCardSelection,
   selectedCardId,
-  isLoading = false
+  isLoading = false,
+  collectionLookup
 }) => {
   if (!isVisible) {
     return null;
@@ -139,6 +141,7 @@ const CardGroupComponent: React.FC<CardGroupProps> = ({
               isSelected={selectedCardId === card.id}
               onSelectionChange={onCardSelection}
               context={context}
+              collectionData={collectionLookup?.get(card.id)}
             />
           ))}
         </ResponsiveGridAutoFit>

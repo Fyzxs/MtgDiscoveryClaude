@@ -7,8 +7,9 @@ import { CardName } from '../../atoms/Cards/CardName';
 import { SetLink } from '../../atoms/Cards/SetLink';
 import { PriceDisplay } from '../../atoms/shared/PriceDisplay';
 import { CardLinks } from './CardLinks';
+import { CollectionSummary } from './CollectionSummary';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
-import type { CardContext } from '../../../types/card';
+import type { CardContext, UserCardData } from '../../../types/card';
 
 interface CardOverlayProps {
   cardId?: string;
@@ -25,6 +26,7 @@ interface CardOverlayProps {
   tcgplayerUrl?: string;
   isSelected?: boolean;
   context?: CardContext;
+  collectionData?: UserCardData;
   onCardClick?: (cardId?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
   onSetClick?: (setCode?: string) => void;
@@ -46,6 +48,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   tcgplayerUrl,
   isSelected = false,
   context = {},
+  collectionData,
   onCardClick,
   onArtistClick,
   onSetClick,
@@ -97,11 +100,17 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         )}
 
         {/* Collector Info Row */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <RarityCollectorBadge
             rarity={rarity}
             collectorNumber={collectorNumber}
           />
+          {context.hasCollector && collectionData && (
+            <CollectionSummary
+              collection={collectionData.collectedList}
+              size="small"
+            />
+          )}
         </Box>
 
         {/* Artist(s) */}
