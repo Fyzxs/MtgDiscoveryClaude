@@ -2,7 +2,7 @@
 
 namespace Lib.Shared.DataModels.Entities.Itrs;
 
-public interface IArtistSearchResultCollectionItrEntity
+public interface IArtistSearchResultCollectionOufEntity
 {
     ICollection<IArtistSearchResultItrEntity> Artists { get; }
 }

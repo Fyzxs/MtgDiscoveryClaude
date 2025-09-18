@@ -51,7 +51,7 @@ public sealed class UserCardsAdapterServiceTests
             Count = 1
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
@@ -60,7 +60,7 @@ public sealed class UserCardsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await subject.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await subject.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(operationResponse);

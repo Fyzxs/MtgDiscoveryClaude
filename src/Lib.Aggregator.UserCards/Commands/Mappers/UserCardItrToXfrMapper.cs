@@ -7,24 +7,24 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
 
-internal sealed class UserCardItrToXfrMapper : IUserCardItrToXfrMapper
+internal sealed class AddUserCardItrToXfrMapper : IAddUserCardItrToXfrMapper
 {
     private readonly IUserCardDetailsItrToXfrMapper _mapper;
 
-    public UserCardItrToXfrMapper() : this(new UserCardDetailsItrToXfrMapper())
+    public AddUserCardItrToXfrMapper() : this(new UserCardDetailsItrToXfrMapper())
     { }
 
-    private UserCardItrToXfrMapper(IUserCardDetailsItrToXfrMapper mapper)
+    private AddUserCardItrToXfrMapper(IUserCardDetailsItrToXfrMapper mapper)
     {
         _mapper = mapper;
     }
 
-    public async Task<IUserCardXfrEntity> Map(IUserCardItrEntity source)
+    public async Task<IAddUserCardXfrEntity> Map(IUserCardItrEntity source)
     {
         IEnumerable<Task<IUserCardDetailsXfrEntity>> detailsTasks = source.CollectedList.Select(_mapper.Map);
         IUserCardDetailsXfrEntity[] details = await Task.WhenAll(detailsTasks).ConfigureAwait(false);
 
-        return new UserCardXfrEntity
+        return new AddUserCardXfrEntity
         {
             UserId = source.UserId,
             CardId = source.CardId,

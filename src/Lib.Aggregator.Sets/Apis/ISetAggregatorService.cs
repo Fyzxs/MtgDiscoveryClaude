@@ -6,7 +6,7 @@ namespace Lib.Aggregator.Sets.Apis;
 
 public interface ISetAggregatorService
 {
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds);
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes);
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync();
+    Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds);
+    Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes);
+    Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync();
 }

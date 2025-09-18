@@ -18,7 +18,7 @@ public sealed class UserAggregatorService : IUserAggregatorService
         _userAggregatorOperations = userAggregatorOperations;
     }
 
-    public Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
+    public Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
     {
         return _userAggregatorOperations.RegisterUserAsync(userInfo);
     }

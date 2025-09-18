@@ -6,6 +6,6 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.UserCards;
 
-internal interface IUserCardsSetArgEntityValidator : IValidatorAction<IUserCardsSetArgEntity, IOperationResponse<IEnumerable<IUserCardItrEntity>>>
+internal interface IUserCardsSetArgEntityValidator : IValidatorAction<IUserCardsBySetArgEntity, IOperationResponse<IEnumerable<IUserCardOufEntity>>>
 {
 }

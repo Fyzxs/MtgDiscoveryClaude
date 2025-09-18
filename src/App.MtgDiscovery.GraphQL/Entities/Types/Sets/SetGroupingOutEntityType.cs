@@ -16,22 +16,3 @@ public sealed class SetGroupingOutEntityType : ObjectType<SetGroupingOutEntity>
         descriptor.Field(f => f.Filters).Type<GroupingFiltersOutEntityType>();
     }
 }
-
-public sealed class GroupingFiltersOutEntityType : ObjectType<GroupingFiltersOutEntity>
-{
-    protected override void Configure([NotNull] IObjectTypeDescriptor<GroupingFiltersOutEntity> descriptor)
-    {
-        descriptor.Field(f => f.CollectorNumberRange).Type<CollectorNumberRangeOutEntityType>();
-        descriptor.Field(f => f.Properties).Type<AnyType>();
-    }
-}
-
-public sealed class CollectorNumberRangeOutEntityType : ObjectType<CollectorNumberRangeOutEntity>
-{
-    protected override void Configure([NotNull] IObjectTypeDescriptor<CollectorNumberRangeOutEntity> descriptor)
-    {
-        descriptor.Field(f => f.Min).Type<StringType>();
-        descriptor.Field(f => f.Max).Type<StringType>();
-        descriptor.Field(f => f.OrConditions).Type<ListType<StringType>>();
-    }
-}

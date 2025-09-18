@@ -4,9 +4,9 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 
-public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<UserCardArgEntity>
+public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<AddUserCardArgEntity>
 {
-    protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardArgEntity> descriptor)
+    protected override void Configure([NotNull] IInputObjectTypeDescriptor<AddUserCardArgEntity> descriptor)
     {
         descriptor.Name("AddCardToCollectionInput");
         descriptor.Description("Input for adding cards to a user's collection");

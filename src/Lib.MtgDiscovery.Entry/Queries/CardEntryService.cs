@@ -56,9 +56,9 @@ internal sealed class CardEntryService : ICardEntryService
         _searchTermMapper = searchTermMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -66,9 +66,9 @@ internal sealed class CardEntryService : ICardEntryService
         return await _cardDomainService.CardsByIdsAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _setCodeValidator.Validate(setCode).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _setCodeValidator.Validate(setCode).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -76,9 +76,9 @@ internal sealed class CardEntryService : ICardEntryService
         return await _cardDomainService.CardsBySetCodeAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _cardNameValidator.Validate(cardName).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _cardNameValidator.Validate(cardName).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -86,9 +86,9 @@ internal sealed class CardEntryService : ICardEntryService
         return await _cardDomainService.CardsByNameAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
+    public async Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
     {
-        IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
