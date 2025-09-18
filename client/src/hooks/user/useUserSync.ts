@@ -43,23 +43,26 @@ export const useUserSync = (): UserSyncState => {
 
   const [syncUserProfile] = useMutation(SYNC_USER_PROFILE);
   
-  const { loading: profileLoading, refetch: refetchProfile } = useQuery(GET_USER_PROFILE, {
+  const { loading: profileLoading, data: profileData, error: profileError, refetch: refetchProfile } = useQuery(GET_USER_PROFILE, {
     skip: !isAuthenticated,
-    errorPolicy: 'all',
-    onCompleted: (data) => {
-      if (data?.userProfile?.__typename === 'SuccessUserProfileResponse') {
-        setUserProfile(data.userProfile.data);
-        setIsFirstTimeUser(false);
-      } else if (data?.userProfile?.__typename === 'FailureResponse') {
-        // User doesn't exist in backend yet
-        setIsFirstTimeUser(true);
-      }
-    },
-    onError: (error) => {
-      console.log('User profile query error (expected for new users):', error);
+    errorPolicy: 'all'
+  }) as any;
+
+  // Handle profile query results
+  useEffect(() => {
+    if (profileData?.userProfile?.__typename === 'SuccessUserProfileResponse') {
+      setUserProfile(profileData.userProfile.data);
+      setIsFirstTimeUser(false);
+    } else if (profileData?.userProfile?.__typename === 'FailureResponse') {
+      // User doesn't exist in backend yet
       setIsFirstTimeUser(true);
     }
-  });
+
+    if (profileError) {
+      console.log('User profile query error (expected for new users):', profileError);
+      setIsFirstTimeUser(true);
+    }
+  }, [profileData, profileError]);
 
   const syncUser = useCallback(async () => {
     if (!isAuthenticated || !user) {
@@ -82,7 +85,7 @@ export const useUserSync = (): UserSyncState => {
         variables: {
           userProfile: userInput
         }
-      });
+      }) as any;
 
       if (data?.syncUserProfile?.__typename === 'SuccessUserProfileResponse') {
         setUserProfile(data.syncUserProfile.data);

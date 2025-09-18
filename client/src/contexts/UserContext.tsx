@@ -1,6 +1,9 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useAuth0, User } from '@auth0/auth0-react';
-import { useUserSync, UserProfile, CollectorProfile } from '../hooks/user/useUserSync';
+import React, { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import type { User } from '@auth0/auth0-react';
+import { useUserSync } from '../hooks/user/useUserSync';
+import type { UserProfile, CollectorProfile } from '../hooks/user/useUserSync';
 
 interface UserContextType {
   // Auth0 user data
