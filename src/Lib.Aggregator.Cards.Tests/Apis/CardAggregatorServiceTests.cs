@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Tests.Fakes;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
+using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 
 namespace Lib.Aggregator.Cards.Tests.Apis;
@@ -34,19 +34,19 @@ public sealed class CardAggregatorServiceTests
     public async Task CardsByIdsAsync_CallsDependency()
     {
         // Arrange
-        FakeCardIdsItrEntity args = new()
+        CardIdsItrEntityFake args = new()
         {
             CardIds = ["id1", "id2"]
         };
 
-        FakeCardItemCollectionItrEntity expectedCollection = new();
-        FakeOperationResponse<ICardItemCollectionItrEntity> expectedResponse = new()
+        CardItemCollectionItrEntityFake expectedCollection = new();
+        OperationResponseFake<ICardItemCollectionItrEntity> expectedResponse = new()
         {
             IsSuccess = true,
             ResponseData = expectedCollection
         };
 
-        FakeCardAggregatorService fakeOperations = new()
+        CardAggregatorServiceFake fakeOperations = new()
         {
             CardsByIdsAsyncResult = expectedResponse
         };
@@ -62,15 +62,4 @@ public sealed class CardAggregatorServiceTests
         fakeOperations.CardsByIdsAsyncArgsInput.Should().BeSameAs(args);
     }
 
-    private sealed class LoggerFake : ILogger
-    {
-        public IDisposable BeginScope<TState>(TState state) where TState : notnull => new DisposableFake();
-        public bool IsEnabled(LogLevel logLevel) => false;
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) { }
-
-        private sealed class DisposableFake : IDisposable
-        {
-            public void Dispose() { }
-        }
-    }
 }

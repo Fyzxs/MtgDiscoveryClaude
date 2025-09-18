@@ -11,19 +11,19 @@ namespace Lib.Scryfall.Ingestion.Processors;
 
 internal sealed class CardItemsProcessor : ICardProcessor
 {
-    private readonly IScryfallCardToCardItemMapper _mapper;
+    private readonly ICardItemDynamicToExtMapper _mapper;
     private readonly ICosmosScribe _scribe;
     private readonly ILogger _logger;
 
     public CardItemsProcessor(ILogger logger)
         : this(
-            new ScryfallCardToCardItemMapper(),
+            new CardItemDynamicToExtMapper(),
             new ScryfallCardItemsScribe(logger),
             logger)
     {
     }
 
-    private CardItemsProcessor(IScryfallCardToCardItemMapper mapper, ICosmosScribe scribe, ILogger logger)
+    private CardItemsProcessor(ICardItemDynamicToExtMapper mapper, ICosmosScribe scribe, ILogger logger)
     {
         _mapper = mapper;
         _scribe = scribe;
@@ -32,21 +32,21 @@ internal sealed class CardItemsProcessor : ICardProcessor
 
     public async Task ProcessAsync(IScryfallCard card)
     {
-        ScryfallCardItem cardItem = _mapper.Map(card.Data());
-        OpResponse<ScryfallCardItem> response = await _scribe.UpsertAsync(cardItem).ConfigureAwait(false);
+        ScryfallCardItemExtEntity cardItem = _mapper.Map(card.Data());
+        OpResponse<ScryfallCardItemExtEntity> response = await _scribe.UpsertAsync(cardItem).ConfigureAwait(false);
 
         LogSuccess(card, response);
         LogFailure(card, response);
     }
 
-    private void LogSuccess(IScryfallCard card, OpResponse<ScryfallCardItem> response)
+    private void LogSuccess(IScryfallCard card, OpResponse<ScryfallCardItemExtEntity> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogCardItemStored(card.Id());
     }
 
-    private void LogFailure(IScryfallCard card, OpResponse<ScryfallCardItem> response)
+    private void LogFailure(IScryfallCard card, OpResponse<ScryfallCardItemExtEntity> response)
     {
         if (response.IsSuccessful()) return;
 

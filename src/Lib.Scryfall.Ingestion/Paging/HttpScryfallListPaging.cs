@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Lib.Scryfall.Ingestion.Paging;
+
 internal class HttpScryfallListPaging<T> : IScryfallListPaging<T> where T : IScryfallDto
 {
     private readonly IScryfallSearchUri _searchUri;

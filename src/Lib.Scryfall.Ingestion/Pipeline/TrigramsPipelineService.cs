@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
@@ -58,11 +58,11 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
             string trigram = aggregate.Trigram();
             _dashboard.UpdateProgress("Card Trigrams:", current, trigramCount, "Writing Trigram", trigram);
 
-            CardNameTrigramItem entity = new()
+            CardNameTrigramExtEntity entity = new()
             {
                 Trigram = aggregate.Trigram(),
-                Cards = new Collection<CardNameTrigramDataItem>(
-                    [.. aggregate.Entries().Select(entry => new CardNameTrigramDataItem
+                Cards = new Collection<CardNameTrigramDataExtEntity>(
+                    [.. aggregate.Entries().Select(entry => new CardNameTrigramDataExtEntity
                     {
                         Name = entry.Name(),
                         Normalized = entry.Normalized(),

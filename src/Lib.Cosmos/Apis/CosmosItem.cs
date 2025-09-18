@@ -6,9 +6,8 @@ namespace Lib.Cosmos.Apis;
 /// <summary>
 /// Base class for items stored in Cosmos DB containers.
 /// </summary>
-public /* cosmos required */ class CosmosItem
+public /* cosmos required */ class CosmosItem : CosmosEntity
 {
-    private string _itemType;
 
     /// <summary>
     /// Gets or sets the unique identifier for the item.
@@ -28,13 +27,4 @@ public /* cosmos required */ class CosmosItem
     [JsonProperty("created_date")]
     public string CreatedDate { get; set; } = DateTime.UtcNow.ToString("O");
 
-    /// <summary>
-    /// Gets or sets the type of the item.
-    /// </summary>
-    [JsonProperty("item_type")]
-    public string ItemType
-    {
-        get => _itemType ??= GetType().FullName;
-        set => _itemType = value;
-    }
 }

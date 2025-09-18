@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands;
 using Lib.MtgDiscovery.Entry.Queries;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -64,7 +65,7 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => _userEntryService.RegisterUserAsync(authUser);
 
-    public Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddCardToCollectionArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
+    public Task<IOperationResponse<IUserCardItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IUserCardArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
 
-    public Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs) => _userCardsQueryEntryService.UserCardsBySetAsync(setArgs);
+    public Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs) => _userCardsQueryEntryService.UserCardsBySetAsync(setArgs);
 }

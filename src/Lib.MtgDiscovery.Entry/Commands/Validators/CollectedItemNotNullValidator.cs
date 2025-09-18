@@ -1,20 +1,21 @@
 ﻿using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal sealed class CollectedItemNotNullValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
+internal sealed class CollectedItemNotNullValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
 {
     public CollectedItemNotNullValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
+    public sealed class Validator : IValidator<IUserCardArgEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg)
+        public Task<bool> IsValid(IUserCardArgEntity arg)
         {
-            return Task.FromResult(arg.CollectedItem is not null);
+            return Task.FromResult(arg.UserCardDetails is not null);
         }
     }
 

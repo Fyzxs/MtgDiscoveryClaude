@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis;
-using Lib.Adapter.UserCards.Commands.Mappers;
+using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -20,33 +23,21 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 {
     private readonly ICosmosGopher _userCardsGopher;
     private readonly ICosmosScribe _userCardsScribe;
-    private readonly IUserCardItemMapper _userCardItemMapper;
-    private readonly IUserCardCollectionItrEntityMapper _userCardCollectionMapper;
-    private readonly ILogger _logger;
 
     public UserCardsCommandAdapter(ILogger logger) : this(
         new UserCardsGopher(logger),
-        new UserCardsScribe(logger),
-        new UserCardItemMapper(),
-        new UserCardCollectionItrEntityMapper(),
-        logger)
+        new UserCardsScribe(logger))
     { }
 
     internal UserCardsCommandAdapter(
         ICosmosGopher userCardsGopher,
-        ICosmosScribe userCardsScribe,
-        IUserCardItemMapper userCardItemMapper,
-        IUserCardCollectionItrEntityMapper userCardCollectionMapper,
-        ILogger logger)
+        ICosmosScribe userCardsScribe)
     {
         _userCardsGopher = userCardsGopher;
         _userCardsScribe = userCardsScribe;
-        _userCardItemMapper = userCardItemMapper;
-        _userCardCollectionMapper = userCardCollectionMapper;
-        _logger = logger;
     }
 
-    public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardXfrEntity userCard)
     {
         // Step 1: Try to read existing record
         ReadPointItem readPoint = new()
@@ -54,51 +45,50 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             Id = new ProvidedCosmosItemId(userCard.CardId),
             Partition = new ProvidedPartitionKeyValue(userCard.UserId)
         };
-        OpResponse<UserCardItem> existingResponse = await _userCardsGopher.ReadAsync<UserCardItem>(readPoint).ConfigureAwait(false);
+        OpResponse<UserCardExtEntity> existingResponse = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint).ConfigureAwait(false);
 
-        UserCardItem itemToUpsert;
+        UserCardExtEntity itemToUpsert;
 
         if (existingResponse.IsSuccessful())
         {
             // Step 2: Merge with existing collected items
-            UserCardItem existingItem = existingResponse.Value;
+            UserCardExtEntity existingItem = existingResponse.Value;
             itemToUpsert = MergeCollectedItems(existingItem, userCard);
         }
         else
         {
             // Step 3: Create new item if none exists
-            itemToUpsert = await _userCardItemMapper.Map(userCard).ConfigureAwait(false);
+            itemToUpsert = MapUserCardToExtEntity(userCard);
         }
 
         // Step 4: Upsert the merged/new item
-        OpResponse<UserCardItem> upsertResponse = await _userCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<UserCardExtEntity> upsertResponse = await _userCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
+            return new FailureOperationResponse<UserCardExtEntity>(
                 new UserCardsAdapterException($"Failed to add user card: {upsertResponse.StatusCode}"));
         }
 
-        // Step 5: Map and return the result
-        IUserCardCollectionItrEntity resultEntity = await _userCardCollectionMapper.Map(upsertResponse.Value).ConfigureAwait(false);
-        return new SuccessOperationResponse<IUserCardCollectionItrEntity>(resultEntity);
+        // Step 5: Return the raw ExtEntity result
+        return new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value);
     }
 
-    private UserCardItem MergeCollectedItems(UserCardItem existing, IUserCardCollectionItrEntity newData)
+    private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IUserCardXfrEntity newData)
     {
         // Create a dictionary for efficient merging based on finish + special combination
-        Dictionary<(string finish, string special), CollectedItem> mergedItems = existing.CollectedList
+        Dictionary<(string finish, string special), UserCardDetailsExtEntity> mergedItems = existing.CollectedList
             .ToDictionary(item => (item.Finish, item.Special));
 
         // Merge or add new collected items
-        foreach (ICollectedItemItrEntity newItem in newData.CollectedList)
+        foreach (IUserCardDetailsXfrEntity newItem in newData.CollectedList)
         {
             (string finish, string special) key = (newItem.Finish, newItem.Special);
 
-            if (mergedItems.TryGetValue(key, out CollectedItem existingItem))
+            if (mergedItems.TryGetValue(key, out UserCardDetailsExtEntity existingItem))
             {
                 // Update count for existing finish/special combination
-                mergedItems[key] = new CollectedItem
+                mergedItems[key] = new UserCardDetailsExtEntity
                 {
                     Finish = existingItem.Finish,
                     Special = existingItem.Special,
@@ -108,7 +98,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             else
             {
                 // Add new finish/special combination
-                mergedItems[key] = new CollectedItem
+                mergedItems[key] = new UserCardDetailsExtEntity
                 {
                     Finish = newItem.Finish,
                     Special = newItem.Special,
@@ -118,12 +108,34 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         }
 
         // Return updated item
-        return new UserCardItem
+        return new UserCardExtEntity
         {
             UserId = existing.UserId,
             CardId = existing.CardId,
             SetId = existing.SetId,
             CollectedList = [.. mergedItems.Values]
+        };
+    }
+
+    private static UserCardExtEntity MapUserCardToExtEntity(IUserCardXfrEntity userCard)
+    {
+        List<UserCardDetailsExtEntity> collectedItems = [];
+        foreach (IUserCardDetailsXfrEntity item in userCard.CollectedList)
+        {
+            collectedItems.Add(new UserCardDetailsExtEntity
+            {
+                Finish = item.Finish,
+                Special = item.Special,
+                Count = item.Count
+            });
+        }
+
+        return new UserCardExtEntity
+        {
+            UserId = userCard.UserId,
+            CardId = userCard.CardId,
+            SetId = userCard.SetId,
+            CollectedList = collectedItems
         };
     }
 }

@@ -33,7 +33,7 @@ public sealed class FilterActionContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeFilterAction action = new() { FilterResult = new FakeFilterActionResult { IsFilteredOutValue = false } };
+        FilterActionFake action = new() { FilterResult = new FilterActionResultFake { IsFilteredOutValue = false } };
         TestFilterActionContainer subject = new(action);
 
         // Act
@@ -51,15 +51,15 @@ public sealed class FilterActionContainerTests
         // Arrange
         TestTarget target = new();
         TestResult failureResult = new() { Value = "Failed" };
-        FakeFilterAction action1 = new()
+        FilterActionFake action1 = new()
         {
-            FilterResult = new FakeFilterActionResult
+            FilterResult = new FilterActionResultFake
             {
                 IsFilteredOutValue = true,
                 FailureStatusValue = failureResult
             }
         };
-        FakeFilterAction action2 = new() { FilterResult = new FakeFilterActionResult { IsFilteredOutValue = false } };
+        FilterActionFake action2 = new() { FilterResult = new FilterActionResultFake { IsFilteredOutValue = false } };
         TestFilterActionContainer subject = new(action1, action2);
 
         // Act
@@ -77,9 +77,9 @@ public sealed class FilterActionContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeFilterAction action1 = new() { FilterResult = new FakeFilterActionResult { IsFilteredOutValue = false } };
-        FakeFilterAction action2 = new() { FilterResult = new FakeFilterActionResult { IsFilteredOutValue = false } };
-        FakeFilterAction action3 = new() { FilterResult = new FakeFilterActionResult { IsFilteredOutValue = false } };
+        FilterActionFake action1 = new() { FilterResult = new FilterActionResultFake { IsFilteredOutValue = false } };
+        FilterActionFake action2 = new() { FilterResult = new FilterActionResultFake { IsFilteredOutValue = false } };
+        FilterActionFake action3 = new() { FilterResult = new FilterActionResultFake { IsFilteredOutValue = false } };
         TestFilterActionContainer subject = new(action1, action2, action3);
 
         // Act
@@ -102,9 +102,9 @@ public sealed class FilterActionContainerTests
         public string Value { get; set; } = "";
     }
 
-    private sealed class FakeFilterAction : IFilterAction<TestTarget, TestResult>
+    private sealed class FilterActionFake : IFilterAction<TestTarget, TestResult>
     {
-        public IFilterActionResult<TestResult> FilterResult { get; init; } = new FakeFilterActionResult();
+        public IFilterActionResult<TestResult> FilterResult { get; init; } = new FilterActionResultFake();
         public int FilterInvokeCount { get; private set; }
         public TestTarget FilterInput { get; private set; } = default!;
 
@@ -116,7 +116,7 @@ public sealed class FilterActionContainerTests
         }
     }
 
-    private sealed class FakeFilterActionResult : IFilterActionResult<TestResult>
+    private sealed class FilterActionResultFake : IFilterActionResult<TestResult>
     {
         public bool IsFilteredOutValue { get; init; }
         public TestResult FailureStatusValue { get; init; } = new();

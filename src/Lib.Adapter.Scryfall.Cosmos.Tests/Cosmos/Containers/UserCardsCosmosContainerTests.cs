@@ -1,7 +1,6 @@
-﻿using System;
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers.Definitions;
+﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
 using Microsoft.Extensions.Logging;
+using TestConvenience.Core.Fakes;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.Cosmos.Containers;
 
@@ -36,9 +35,3 @@ public sealed class UserCardsCosmosContainerTests
 
 }
 
-internal sealed class LoggerFake : ILogger
-{
-    public IDisposable BeginScope<TState>(TState state) where TState : notnull => null;
-    public bool IsEnabled(LogLevel logLevel) => true;
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) { }
-}

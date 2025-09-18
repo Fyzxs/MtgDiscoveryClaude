@@ -4,9 +4,9 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 
-public sealed class CollectedItemArgEntityInputType : InputObjectType<CollectedItemArgEntity>
+public sealed class CollectedItemArgEntityInputType : InputObjectType<UserCardDetailsArgEntity>
 {
-    protected override void Configure([NotNull] IInputObjectTypeDescriptor<CollectedItemArgEntity> descriptor)
+    protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardDetailsArgEntity> descriptor)
     {
         descriptor.Name("CollectedItemInput");
         descriptor.Description("Represents a collected item with its finish and count");
