@@ -13,6 +13,7 @@ internal sealed class AddCardToCollectionArgEntityValidatorContainer : Validator
             new HasValidCardIdAddCardToCollectionArgEntityValidator(),
             new HasValidSetIdAddCardToCollectionArgEntityValidator(),
             new CollectedItemNotNullValidator(),
+            new CollectedItemCountValidator(),
             new CollectedItemFinishValidator(),
             new CollectedItemSpecialValidator(),
         ])

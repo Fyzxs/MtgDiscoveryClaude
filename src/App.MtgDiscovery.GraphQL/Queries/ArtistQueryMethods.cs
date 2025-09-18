@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
@@ -78,7 +79,7 @@ public class ArtistQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
     }
 
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
@@ -97,6 +98,6 @@ public class ArtistQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
     }
 }

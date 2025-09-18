@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
@@ -48,7 +49,7 @@ public class CardQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
@@ -67,7 +68,7 @@ public class CardQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
@@ -86,7 +87,7 @@ public class CardQueryMethods
 
         ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results.ToList() };
     }
 
     [GraphQLType(typeof(CardNameSearchResponseModelUnionType))]
@@ -110,6 +111,6 @@ public class CardQueryMethods
             results.Add(new CardNameSearchResultOutEntity { Name = nameResult.Name });
         }
 
-        return new SuccessDataResponseModel<ICollection<CardNameSearchResultOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardNameSearchResultOutEntity>>() { Data = results };
     }
 }

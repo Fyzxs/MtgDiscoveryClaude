@@ -19,6 +19,6 @@ internal sealed class CardItemExtToItrMapper : ICardItemExtToItrMapper
 
     public async Task<ICardItemItrEntity> Map(ScryfallCardItemExtEntity source)
     {
-        return await _mapper.Map(source).ConfigureAwait(false);
+        return await _mapper.Map(source.Data).ConfigureAwait(false);
     }
 }
