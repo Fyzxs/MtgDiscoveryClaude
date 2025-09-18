@@ -8,7 +8,6 @@ using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
@@ -20,13 +19,13 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public class ArtistQueryMethods
 {
     private readonly ICardItemItrToOutMapper _scryfallCardMapper;
-    private readonly ICardItemCollectionItrToOutMapper _cardCollectionMapper;
+    private readonly ICollectionCardItemItrToOutMapper _cardCollectionMapper;
     private readonly IArtistSearchResultCollectionItrToOutMapper _artistSearchMapper;
     private readonly IEntryService _entryService;
 
     public ArtistQueryMethods(ILogger logger) : this(
         new CardItemItrToOutMapper(),
-        new CardItemCollectionItrToOutMapper(),
+        new CollectionCardItemItrToOutMapper(),
         new ArtistSearchResultCollectionItrToOutMapper(),
         new EntryService(logger))
     {
@@ -34,7 +33,7 @@ public class ArtistQueryMethods
 
     private ArtistQueryMethods(
         ICardItemItrToOutMapper scryfallCardMapper,
-        ICardItemCollectionItrToOutMapper cardCollectionMapper,
+        ICollectionCardItemItrToOutMapper cardCollectionMapper,
         IArtistSearchResultCollectionItrToOutMapper artistSearchMapper,
         IEntryService entryService)
     {
@@ -77,9 +76,9 @@ public class ArtistQueryMethods
             }
         };
 
-        List<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
+        ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
     }
 
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
@@ -96,8 +95,8 @@ public class ArtistQueryMethods
             }
         };
 
-        List<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
+        ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
     }
 }

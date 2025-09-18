@@ -2,26 +2,25 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Queries.Mappers;
 
 internal sealed class CollectionCardByNameExtToItrMapper : ICollectionCardByNameExtToItrMapper
 {
-    private readonly ICardByNameExtToItrMapper _itemMapper;
+    private readonly ICardByNameExtToItrMapper _mapper;
 
     public CollectionCardByNameExtToItrMapper() : this(new CardByNameExtToItrMapper())
     { }
 
-    private CollectionCardByNameExtToItrMapper(ICardByNameExtToItrMapper itemMapper)
+    private CollectionCardByNameExtToItrMapper(ICardByNameExtToItrMapper mapper)
     {
-        _itemMapper = itemMapper;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<ICardItemItrEntity>> Map(IEnumerable<ScryfallCardByNameExtEntity> source)
     {
-        ICollection<Task<ICardItemItrEntity>> tasks = source.Select(item => _itemMapper.Map(item)).ToList();
+        ICollection<Task<ICardItemItrEntity>> tasks = source.Select(item => _mapper.Map(item)).ToList();
         ICardItemItrEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
         return results;
     }

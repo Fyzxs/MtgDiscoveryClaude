@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Aggregator.Artists.Queries.Entities;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;

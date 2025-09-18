@@ -4,7 +4,6 @@ using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.Validators;
 using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;

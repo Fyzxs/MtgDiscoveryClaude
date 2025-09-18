@@ -7,7 +7,6 @@ using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
@@ -19,23 +18,19 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public sealed class UserCardsQueryMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IUserCardItrToOutMapper _mapper;
     private readonly IUserCardCollectionItrToOutMapper _collectionMapper;
 
     public UserCardsQueryMethods(ILogger logger) : this(
         new EntryService(logger),
-        new UserCardItrToOutMapper(),
         new UserCardCollectionItrToOutMapper())
     {
     }
 
     private UserCardsQueryMethods(
         IEntryService entryService,
-        IUserCardItrToOutMapper mapper,
         IUserCardCollectionItrToOutMapper collectionMapper)
     {
         _entryService = entryService;
-        _mapper = mapper;
         _collectionMapper = collectionMapper;
     }
 
