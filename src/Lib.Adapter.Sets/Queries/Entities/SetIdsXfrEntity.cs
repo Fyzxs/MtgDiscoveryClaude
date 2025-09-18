@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lib.Adapter.Sets.Apis.Entities;
 
 namespace Lib.Adapter.Sets.Queries.Entities;

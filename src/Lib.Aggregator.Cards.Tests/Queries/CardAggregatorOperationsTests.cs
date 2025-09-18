@@ -24,8 +24,14 @@ public sealed class CardAggregatorOperationsTests
             ICardAdapterService cardAdapterService,
             ICollectionCardItemExtToItrMapper cardItemMapper,
             ICollectionSetCardItemExtToItrMapper setCardItemMapper,
-            ICollectionCardByNameExtToItrMapper cardByNameMapper)
-            : base(cardAdapterService, cardItemMapper, setCardItemMapper, cardByNameMapper) { }
+            ICollectionCardByNameExtToItrMapper cardByNameMapper,
+            ICardIdsItrToXfrMapper cardIdsItrToXfrMapper,
+            ISetCodeItrToXfrMapper setCodeItrToXfrMapper,
+            ICardNameItrToXfrMapper cardNameItrToXfrMapper,
+            ICardSearchTermItrToXfrMapper cardSearchTermItrToXfrMapper)
+            : base(cardAdapterService, cardItemMapper, setCardItemMapper, cardByNameMapper,
+                cardIdsItrToXfrMapper, setCodeItrToXfrMapper, cardNameItrToXfrMapper, cardSearchTermItrToXfrMapper)
+        { }
     }
 
     [TestMethod, TestCategory("unit")]
@@ -50,9 +56,14 @@ public sealed class CardAggregatorOperationsTests
         CollectionCardItemExtToItrMapperFake fakeCardItemMapper = new();
         CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
         CollectionCardByNameExtToItrMapperFake fakeCardByNameMapper = new();
+        CardIdsItrToXfrMapperFake fakeCardIdsMapper = new();
+        SetCodeItrToXfrMapperFake fakeSetCodeMapper = new();
+        CardNameItrToXfrMapperFake fakeCardNameMapper = new();
+        CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
-            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper);
+            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
+            fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
         IOperationResponse<ICardItemCollectionItrEntity> actual =
@@ -86,9 +97,14 @@ public sealed class CardAggregatorOperationsTests
         };
         CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
         CollectionCardByNameExtToItrMapperFake fakeCardByNameMapper = new();
+        CardIdsItrToXfrMapperFake fakeCardIdsMapper = new();
+        SetCodeItrToXfrMapperFake fakeSetCodeMapper = new();
+        CardNameItrToXfrMapperFake fakeCardNameMapper = new();
+        CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
-            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper);
+            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
+            fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
         IOperationResponse<ICardItemCollectionItrEntity> actual =
@@ -114,9 +130,14 @@ public sealed class CardAggregatorOperationsTests
         CollectionCardItemExtToItrMapperFake fakeCardItemMapper = new();
         CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
         CollectionCardByNameExtToItrMapperFake fakeCardByNameMapper = new();
+        CardIdsItrToXfrMapperFake fakeCardIdsMapper = new();
+        SetCodeItrToXfrMapperFake fakeSetCodeMapper = new();
+        CardNameItrToXfrMapperFake fakeCardNameMapper = new();
+        CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
 
         QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
-            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper);
+            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
+            fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
         IOperationResponse<ICardItemCollectionItrEntity> actual =

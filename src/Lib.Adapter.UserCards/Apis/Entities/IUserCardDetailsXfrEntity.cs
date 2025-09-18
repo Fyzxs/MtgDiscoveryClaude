@@ -1,4 +1,4 @@
-namespace Lib.Adapter.UserCards.Apis.Entities;
+﻿namespace Lib.Adapter.UserCards.Apis.Entities;
 
 /// <summary>
 /// Transfer representation of user card details used by the adapter layer.

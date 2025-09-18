@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lib.Adapter.Cards.Apis.Entities;
 
 namespace Lib.Aggregator.Cards.Queries.Entities;
