@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.User.Commands;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -34,7 +35,7 @@ public sealed class UserAdapterService : IUserAdapterService
         _userCommandAdapter = userCommandAdapter;
     }
 
-    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
+    public async Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
     {
         return await _userCommandAdapter.RegisterUserAsync(userInfo).ConfigureAwait(false);
     }
