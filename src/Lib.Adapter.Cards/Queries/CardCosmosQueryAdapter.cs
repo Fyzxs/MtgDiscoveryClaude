@@ -3,16 +3,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
+using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
+using Lib.Adapter.Cards.Queries.Mappers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
-using Lib.Aggregator.Scryfall.Shared.Mappers;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Identifiers;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -33,7 +33,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
     private readonly ICosmosInquisitor _setCardsInquisitor;
     private readonly ICosmosInquisitor _cardsByNameInquisitor;
     private readonly ICosmosInquisitor _cardNameTrigramsInquisitor;
-    private readonly ScryfallCardItemToCardItemItrEntityMapper _cardMapper;
+    private readonly ICollectionCardIdToReadPointItemMapper _cardIdsToReadPointMapper;
 
     public CardCosmosQueryAdapter(ILogger logger) : this(
         new ScryfallCardItemsGopher(logger),
@@ -41,7 +41,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         new ScryfallSetCardsInquisitor(logger),
         new ScryfallCardsByNameInquisitor(logger),
         new CardNameTrigramsInquisitor(logger),
-        new ScryfallCardItemToCardItemItrEntityMapper())
+        new CollectionCardIdToReadPointItemMapper())
     { }
 
     private CardCosmosQueryAdapter(
@@ -50,43 +50,32 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         ICosmosInquisitor setCardsInquisitor,
         ICosmosInquisitor cardsByNameInquisitor,
         ICosmosInquisitor cardNameTrigramsInquisitor,
-        ScryfallCardItemToCardItemItrEntityMapper cardMapper)
+        ICollectionCardIdToReadPointItemMapper cardIdsToReadPointMapper)
     {
         _cardGopher = cardGopher;
         _setCodeIndexGopher = setCodeIndexGopher;
         _setCardsInquisitor = setCardsInquisitor;
         _cardsByNameInquisitor = cardsByNameInquisitor;
         _cardNameTrigramsInquisitor = cardNameTrigramsInquisitor;
-        _cardMapper = cardMapper;
+        _cardIdsToReadPointMapper = cardIdsToReadPointMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByIdsAsync([NotNull] ICardIdsItrEntity cardIds)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync([NotNull] ICardIdsXfrEntity cardIds)
     {
-        // Extract primitives for external system interface
-        IEnumerable<string> cardIdList = cardIds.CardIds;
-        List<Task<OpResponse<ScryfallCardItem>>> tasks = [];
+        ICollection<ReadPointItem> items = await _cardIdsToReadPointMapper.Map(cardIds.CardIds).ConfigureAwait(false);
+        IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem));
 
-        foreach (string cardId in cardIdList)
-        {
-            ReadPointItem readPoint = new()
-            {
-                Id = new ProvidedCosmosItemId(cardId),
-                Partition = new ProvidedPartitionKeyValue(cardId)
-            };
-            tasks.Add(_cardGopher.ReadAsync<ScryfallCardItem>(readPoint));
-        }
+        OpResponse<ScryfallCardItemExtEntity>[] responses = await Task.WhenAll(collection).ConfigureAwait(false);
 
-        OpResponse<ScryfallCardItem>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);
+        IEnumerable<ScryfallCardItemExtEntity> successfulCards = responses
+            .Where(task => task.IsSuccessful())
+            .Select(task => task.Value)
+            .Where(card => card is not null);
 
-        IEnumerable<ICardItemItrEntity> successfulCards = responses
-            .Where(r => r.IsSuccessful())
-            .Select(r => _cardMapper.Map(r.Value))
-            .Where(card => card != null);
-
-        return new SuccessOperationResponse<IEnumerable<ICardItemItrEntity>>(successfulCards);
+        return new SuccessOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>(successfulCards);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode)
     {
         // Extract primitives for external system interface
         string setCodeValue = setCode.SetCode;
@@ -96,13 +85,13 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
             Partition = new ProvidedPartitionKeyValue(setCodeValue)
         };
 
-        OpResponse<ScryfallSetCodeIndexItem> indexResponse = await _setCodeIndexGopher
-            .ReadAsync<ScryfallSetCodeIndexItem>(readPoint)
+        OpResponse<ScryfallSetCodeIndexExtEntity> indexResponse = await _setCodeIndexGopher
+            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint)
             .ConfigureAwait(false);
 
         if (indexResponse.IsSuccessful() is false || indexResponse.Value == null)
         {
-            return new FailureOperationResponse<IEnumerable<ICardItemItrEntity>>(
+            return new FailureOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>(
                 new CardAdapterException($"Set code '{setCodeValue}' not found"));
         }
 
@@ -111,31 +100,20 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @setId")
             .WithParameter("@setId", setId);
 
-        OpResponse<IEnumerable<ScryfallSetCardItem>> cardsResponse = await _setCardsInquisitor
-            .QueryAsync<ScryfallSetCardItem>(queryDefinition, new PartitionKey(setId))
+        OpResponse<IEnumerable<ScryfallSetCardItemExtEntity>> cardsResponse = await _setCardsInquisitor
+            .QueryAsync<ScryfallSetCardItemExtEntity>(queryDefinition, new PartitionKey(setId))
             .ConfigureAwait(false);
 
         if (cardsResponse.IsSuccessful() is false)
         {
-            return new FailureOperationResponse<IEnumerable<ICardItemItrEntity>>(
+            return new FailureOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>(
                 new CardAdapterException($"Failed to retrieve cards for set '{setCodeValue}'", cardsResponse.Exception()));
         }
 
-        List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallSetCardItem setCard in cardsResponse.Value)
-        {
-            ScryfallCardItem cardItem = new() { Data = setCard.Data };
-            ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
-            if (mappedCard != null)
-            {
-                cards.Add(mappedCard);
-            }
-        }
-
-        return new SuccessOperationResponse<IEnumerable<ICardItemItrEntity>>(cards);
+        return new SuccessOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>(cardsResponse.Value);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByNameAsync(ICardNameItrEntity cardName)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName)
     {
         // Extract primitives for external system interface
         string cardNameValue = cardName.CardName;
@@ -145,31 +123,20 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @nameGuid")
             .WithParameter("@nameGuid", nameGuid.AsSystemType().ToString());
 
-        OpResponse<IEnumerable<ScryfallCardByNameItem>> cardsResponse = await _cardsByNameInquisitor
-            .QueryAsync<ScryfallCardByNameItem>(queryDefinition, new PartitionKey(nameGuid.AsSystemType().ToString()))
+        OpResponse<IEnumerable<ScryfallCardByNameExtEntity>> cardsResponse = await _cardsByNameInquisitor
+            .QueryAsync<ScryfallCardByNameExtEntity>(queryDefinition, new PartitionKey(nameGuid.AsSystemType().ToString()))
             .ConfigureAwait(false);
 
         if (cardsResponse.IsSuccessful() is false)
         {
-            return new FailureOperationResponse<IEnumerable<ICardItemItrEntity>>(
+            return new FailureOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>(
                 new CardAdapterException($"Failed to retrieve cards for name '{cardNameValue}'", cardsResponse.Exception()));
         }
 
-        List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallCardByNameItem cardByName in cardsResponse.Value)
-        {
-            ScryfallCardItem cardItem = new() { Data = cardByName.Data };
-            ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
-            if (mappedCard != null)
-            {
-                cards.Add(mappedCard);
-            }
-        }
-
-        return new SuccessOperationResponse<IEnumerable<ICardItemItrEntity>>(cards);
+        return new SuccessOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>(cardsResponse.Value);
     }
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync([NotNull] ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync([NotNull] ICardSearchTermXfrEntity searchTerm)
     {
         // Extract primitives for external system interface
         string searchTermValue = searchTerm.SearchTerm;
@@ -201,15 +168,15 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
                 .WithParameter("@partition", firstChar)
                 .WithParameter("@normalized", normalized);
 
-            OpResponse<IEnumerable<CardNameTrigramItem>> trigramResponse = await _cardNameTrigramsInquisitor
-                .QueryAsync<CardNameTrigramItem>(queryDefinition, new PartitionKey(firstChar))
+            OpResponse<IEnumerable<CardNameTrigramExtEntity>> trigramResponse = await _cardNameTrigramsInquisitor
+                .QueryAsync<CardNameTrigramExtEntity>(queryDefinition, new PartitionKey(firstChar))
                 .ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)
             {
-                foreach (CardNameTrigramItem trigramDoc in trigramResponse.Value)
+                foreach (CardNameTrigramExtEntity trigramDoc in trigramResponse.Value)
                 {
-                    foreach (CardNameTrigramDataItem entry in trigramDoc.Cards)
+                    foreach (CardNameTrigramDataExtEntity entry in trigramDoc.Cards)
                     {
                         if (entry.Normalized.Contains(normalized) is false) continue;
                         matchingCardNames.Add(entry.Name);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Lib.Universal.Http;
 
 namespace Lib.Scryfall.Ingestion.Http;
+
 internal sealed class RateLimitedHttpClient : IHttpClient
 {
     private readonly IHttpClient _innerClient;

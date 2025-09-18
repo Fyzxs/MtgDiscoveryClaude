@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators;
+using Lib.MtgDiscovery.Entry.Queries.Validators.UserCards;
 using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -33,9 +34,9 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs)
+    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs)
     {
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> result = await _validator.Validate(setArgs).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardItrEntity>>> result = await _validator.Validate(setArgs).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 

@@ -33,7 +33,7 @@ public sealed class ValidatorActionContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeValidatorAction action = new() { ValidateResult = new FakeValidatorActionResult { IsValidValue = true } };
+        ValidatorActionFake action = new() { ValidateResult = new ValidatorActionResultFake { IsValidValue = true } };
         TestValidatorActionContainer subject = new(action);
 
         // Act
@@ -51,15 +51,15 @@ public sealed class ValidatorActionContainerTests
         // Arrange
         TestTarget target = new();
         TestResult failureResult = new() { Value = "Failed" };
-        FakeValidatorAction action1 = new()
+        ValidatorActionFake action1 = new()
         {
-            ValidateResult = new FakeValidatorActionResult
+            ValidateResult = new ValidatorActionResultFake
             {
                 IsValidValue = false,
                 FailureStatusValue = failureResult
             }
         };
-        FakeValidatorAction action2 = new() { ValidateResult = new FakeValidatorActionResult { IsValidValue = true } };
+        ValidatorActionFake action2 = new() { ValidateResult = new ValidatorActionResultFake { IsValidValue = true } };
         TestValidatorActionContainer subject = new(action1, action2);
 
         // Act
@@ -77,9 +77,9 @@ public sealed class ValidatorActionContainerTests
     {
         // Arrange
         TestTarget target = new();
-        FakeValidatorAction action1 = new() { ValidateResult = new FakeValidatorActionResult { IsValidValue = true } };
-        FakeValidatorAction action2 = new() { ValidateResult = new FakeValidatorActionResult { IsValidValue = true } };
-        FakeValidatorAction action3 = new() { ValidateResult = new FakeValidatorActionResult { IsValidValue = true } };
+        ValidatorActionFake action1 = new() { ValidateResult = new ValidatorActionResultFake { IsValidValue = true } };
+        ValidatorActionFake action2 = new() { ValidateResult = new ValidatorActionResultFake { IsValidValue = true } };
+        ValidatorActionFake action3 = new() { ValidateResult = new ValidatorActionResultFake { IsValidValue = true } };
         TestValidatorActionContainer subject = new(action1, action2, action3);
 
         // Act
@@ -102,9 +102,9 @@ public sealed class ValidatorActionContainerTests
         public string Value { get; set; } = "";
     }
 
-    private sealed class FakeValidatorAction : IValidatorAction<TestTarget, TestResult>
+    private sealed class ValidatorActionFake : IValidatorAction<TestTarget, TestResult>
     {
-        public IValidatorActionResult<TestResult> ValidateResult { get; init; } = new FakeValidatorActionResult();
+        public IValidatorActionResult<TestResult> ValidateResult { get; init; } = new ValidatorActionResultFake();
         public int ValidateInvokeCount { get; private set; }
         public TestTarget ValidateInput { get; private set; } = default!;
 
@@ -116,7 +116,7 @@ public sealed class ValidatorActionContainerTests
         }
     }
 
-    private sealed class FakeValidatorActionResult : IValidatorActionResult<TestResult>
+    private sealed class ValidatorActionResultFake : IValidatorActionResult<TestResult>
     {
         public bool IsValidValue { get; init; }
         public TestResult FailureStatusValue { get; init; } = new();

@@ -5,6 +5,7 @@ using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Transformers;
+
 internal sealed class ScryfallSetDtoTransformer : IScryfallDtoTransformer<ExtScryfallSetDto, IScryfallSet>
 {
     private readonly ILogger _cardListPagingLogger;
