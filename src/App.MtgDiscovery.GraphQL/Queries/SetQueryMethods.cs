@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
@@ -55,7 +56,7 @@ public class SetQueryMethods
 
         ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<ScryfallSetOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results.ToList() };
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
@@ -77,7 +78,7 @@ public class SetQueryMethods
 
         ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<ScryfallSetOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results.ToList() };
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
@@ -99,6 +100,6 @@ public class SetQueryMethods
 
         ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<ICollection<ScryfallSetOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results.ToList() };
     }
 }
