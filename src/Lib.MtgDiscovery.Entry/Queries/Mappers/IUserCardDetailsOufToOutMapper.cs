@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities.Outs.UserCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface IUserCardDetailsOufToOutMapper : ICreateMapper<IUserCardDetailsItrEntity, CollectedItemOutEntity>;
+internal interface IUserCardDetailsOufToOutMapper : ICreateMapper<IUserCardDetailsOufEntity, CollectedItemOutEntity>;
