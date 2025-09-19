@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Card as MuiCard, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import type { Card, CardContext, UserCardData } from '../../types/card';
@@ -11,11 +11,12 @@ import { getRarityGlowStyles } from '../../utils/rarityStyles';
 import { srOnly } from '../../styles/cardStyles';
 import type { StyledComponentProps, SelectionProps } from '../../types/components';
 
-interface MtgCardProps extends StyledComponentProps, SelectionProps {
+interface MtgCardProps extends StyledComponentProps {
   card: Card;
   context?: CardContext;
   collectionData?: UserCardData;
-  onCardClick?: (cardId?: string) => void;
+  index: number;
+  groupId: string;
   onSetClick?: (setCode?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
 }
@@ -24,15 +25,14 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
   card,
   context = {},
   collectionData,
-  isSelected = false,
-  onCardClick,
+  index,
+  groupId,
   onSetClick,
   onArtistClick,
   className = ''
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const theme = useTheme();
-  const cardRef = useRef<HTMLDivElement>(null);
 
   // Memoize expensive computations
   const artists = useMemo(() => {
@@ -48,68 +48,51 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
 
   // Memoize aria label to avoid recalculating on every render
   const ariaLabel = useMemo(() => {
-    return `${card.name} - ${card.rarity} ${card.typeLine || 'card'} from ${card.setName}. Artist: ${card.artist}. ${isSelected ? 'Selected' : 'Not selected'}`;
-  }, [card.name, card.rarity, card.typeLine, card.setName, card.artist, isSelected]);
+    return `${card.name} - ${card.rarity} ${card.typeLine || 'card'} from ${card.setName}. Artist: ${card.artist}`;
+  }, [card.name, card.rarity, card.typeLine, card.setName, card.artist]);
 
   // Memoize hover styles to avoid recalculating rarity styles
   const hoverStyles = useMemo(() => {
     return getRarityGlowStyles(card.rarity, false, true);
   }, [card.rarity]);
 
-  const selectCard = useCallback((cardElement: HTMLElement) => {
-    // Only remove selected class from currently selected card (faster)
-    const currentlySelected = document.querySelector('[data-mtg-card="true"].selected');
-    if (currentlySelected && currentlySelected !== cardElement) {
-      currentlySelected.classList.remove('selected');
-      currentlySelected.setAttribute('data-selected', 'false');
-      currentlySelected.setAttribute('aria-selected', 'false');
-    }
-    
-    // Add selected class to this card
-    cardElement.classList.add('selected');
-    cardElement.setAttribute('data-selected', 'true');
-    cardElement.setAttribute('aria-selected', 'true');
-  }, []);
-
   const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Don't trigger selection if clicking on links or zoom indicator
     const target = e.target as HTMLElement;
     const clickedLink = target.closest('a');
     const clickedZoom = target.closest('.zoom-indicator');
-    
-    // If clicking a link, don't do anything - let the link handle itself
+
+    // If clicking a link or zoom, let it handle itself - don't prevent default
     if (clickedLink || clickedZoom) {
       return;
     }
-    
+
+    // Only prevent default for card selection clicks
     e.preventDefault();
     e.stopPropagation();
-    
-    // Simple CSS class manipulation - no React state needed
-    const cardElement = e.currentTarget as HTMLElement;
-    selectCard(cardElement);
-  }, [selectCard]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const cardElement = e.currentTarget as HTMLElement;
-    
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        e.stopPropagation();
-        selectCard(cardElement);
-        break;
-        
-      case 'Escape':
-        e.preventDefault();
-        // Deselect card
-        cardElement.classList.remove('selected');
-        cardElement.setAttribute('data-selected', 'false');
-        cardElement.setAttribute('aria-selected', 'false');
-        break;
+
+    // Clear ALL selections across ALL card groups on the page
+    const allSelected = document.querySelectorAll('[data-selected="true"]');
+    allSelected.forEach(selected => {
+      if (selected !== cardElement) {
+        selected.setAttribute('data-selected', 'false');
+      }
+    });
+
+    // Always select the clicked card (don't toggle)
+    cardElement.setAttribute('data-selected', 'true');
+
+    // Remove focus from any other focused element to clear blue borders
+    const focused = document.querySelector(':focus');
+    if (focused && focused !== cardElement) {
+      (focused as HTMLElement).blur();
     }
-  }, [selectCard]);
+
+    // Focus this card to enable keyboard navigation from here
+    cardElement.focus();
+  }, []);
 
   const handleZoomClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -122,18 +105,16 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
   }, []);
 
   return (
-    <MuiCard 
-      ref={cardRef}
+    <MuiCard
       elevation={4}
       onClick={handleCardClick}
-      onKeyDown={handleKeyDown}
       data-mtg-card="true"
       data-card-id={card.id}
-      data-selected={isSelected ? "true" : "false"}
-      tabIndex={0}
+      data-selected="false"
+      data-card-index={index}
+      tabIndex={-1}
       role="button"
       aria-label={ariaLabel}
-      aria-selected={isSelected}
       aria-describedby={`card-details-${card.id}`}
       sx={{
         position: 'relative',
@@ -144,28 +125,28 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         borderColor: 'grey.700',
         overflow: 'hidden',
         boxShadow: theme.mtg.shadows.card.normal,
-        transition: 'transform 0.05s ease-in-out',
+        transition: 'transform 0.05s ease-out',
         transform: 'scale(1)',
         cursor: 'pointer',
         outline: 'none',
-        // Selected state using CSS class
-        '&.selected': {
+        '&:focus': {
+          outline: 'none'
+        },
+        '&:focus-visible': {
+          outline: 'none'
+        },
+        // CSS-only selection styles
+        '&[data-selected="true"]': {
           border: '4px solid',
-          borderColor: '#1976d2 !important',
-          boxShadow: `${theme.mtg.shadows.card.selected}, ${theme.mtg.shadows.card.normal} !important`,
-          transform: 'scale(1.05) !important',
-          transition: 'none !important',
+          borderColor: '#1976d2',
+          boxShadow: `${theme.mtg.shadows.card.selected}, ${theme.mtg.shadows.card.normal}`,
+          transform: 'scale(1.05)',
           '& .zoom-indicator': {
             opacity: 1,
             transform: 'scale(1)'
           }
         },
-        '&:focus': {
-          outline: '2px solid',
-          outlineColor: 'primary.light',
-          outlineOffset: '2px'
-        },
-        '&:hover:not(.selected)': {
+        '&:hover:not([data-selected="true"])': {
           ...hoverStyles,
           transform: 'scale(1.01)',
           '& .zoom-indicator': {
@@ -174,7 +155,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
           }
         }
       }}
-      className={`${className} ${isSelected ? 'selected' : ''}`}
+      className={className}
     >
       <Box sx={{ 
         width: '100%',
@@ -221,10 +202,10 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         price={card.prices?.usd}
         scryfallUrl={card.scryfallUri}
         tcgplayerUrl={card.purchaseUris?.tcgplayer}
-        isSelected={isSelected}
+        isSelected={false}
         context={context}
         collectionData={collectionData}
-        onCardClick={onCardClick}
+        onCardClick={undefined}
         onArtistClick={onArtistClick}
         onSetClick={onSetClick}
       />
@@ -257,8 +238,9 @@ export const MtgCard = React.memo(MtgCardComponent, (prevProps, nextProps) => {
   // Card ID is the most important - if different, always re-render
   if (prevProps.card.id !== nextProps.card.id) return false;
   
-  // Selection state changes should always re-render
-  if (prevProps.isSelected !== nextProps.isSelected) return false;
+  // Index or group changes should re-render
+  if (prevProps.index !== nextProps.index) return false;
+  if (prevProps.groupId !== nextProps.groupId) return false;
   
   // Context changes that affect display
   if (prevProps.context?.isOnSetPage !== nextProps.context?.isOnSetPage) return false;

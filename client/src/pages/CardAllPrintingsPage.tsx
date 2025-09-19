@@ -13,8 +13,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { GET_CARDS_BY_NAME } from '../graphql/queries/cards';
-import { MtgCard } from '../components/organisms/MtgCard';
-import { ResponsiveGridAutoFit } from '../components/atoms/layouts/ResponsiveGrid';
+import { CardGrid } from '../components/organisms/CardGrid';
 import { useCardFiltering } from '../hooks/useCardFiltering';
 import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel';
 import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
@@ -264,21 +263,21 @@ export const CardAllPrintingsPage: React.FC = () => {
 
       {/* Cards Grid */}
       <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
-        <ResponsiveGridAutoFit
-          minItemWidth={280}
-          spacing={1.5}
-        >
-          {filteredCards.map((card) => (
-            <AppErrorBoundary key={card.id} level="component" name={`Card-${card.id}`}>
-              <MtgCard
-                card={card}
-                context={{ isOnCardPage: true, hasCollector }}
-                onArtistClick={handleArtistClick}
-                collectionData={hasCollector ? getCollectionData(card.id) || undefined : undefined}
-              />
-            </AppErrorBoundary>
-          ))}
-        </ResponsiveGridAutoFit>
+        <CardGrid
+          cards={filteredCards}
+          groupId="all-printings"
+          context={{
+            isOnCardPage: true,
+            hasCollector,
+            showCollectorInfo: hasCollector
+          }}
+          collectionLookup={hasCollector ? new Map(
+            filteredCards.map(card => [card.id, getCollectionData(card.id) || undefined])
+              .filter(([_, data]) => data !== undefined)
+          ) : undefined}
+          isLoading={false}
+          onArtistClick={handleArtistClick}
+        />
       </AppErrorBoundary>
     </Container>
   );

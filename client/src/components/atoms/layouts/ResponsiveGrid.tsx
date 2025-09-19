@@ -4,6 +4,9 @@ import type { GridLayoutProps } from '../../../types/components';
 
 export interface ResponsiveGridProps extends GridLayoutProps {
   minItemWidth?: number | string;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
+  tabIndex?: number;
+  'data-grid-container'?: string;
 }
 
 /**
@@ -18,7 +21,10 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   alignItems = 'start',
   sx = {},
   className,
-  component = 'div'
+  component = 'div',
+  onKeyDown,
+  tabIndex,
+  'data-grid-container': dataGridContainer
 }) => {
   const theme = useTheme();
   // Use theme spacing or direct value
@@ -31,6 +37,9 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     <Box
       component={component}
       className={className}
+      onKeyDown={onKeyDown}
+      tabIndex={tabIndex}
+      data-grid-container={dataGridContainer}
       sx={{
         display: 'grid',
         gridTemplateColumns: `repeat(auto-fill, ${itemWidth})`,
