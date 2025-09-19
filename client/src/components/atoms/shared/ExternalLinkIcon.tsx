@@ -135,10 +135,9 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       className={className}
       tabIndex={-1}
       onClick={(e) => {
+        // Stop propagation to prevent card selection
         e.stopPropagation();
-        // Force immediate navigation to bypass any React delays
-        window.open(url, '_blank', 'noopener,noreferrer');
-        e.preventDefault();
+        // Let the browser handle the link naturally - don't prevent default
       }}
       sx={{
         display: 'inline-flex',

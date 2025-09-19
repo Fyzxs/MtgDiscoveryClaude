@@ -121,12 +121,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
     enabled: open && hasCollector && !!card?.id && !!collectorId
   });
 
-  // Debug logging when modal is open
-  if (open) {
-    console.log('CardDetailsModal opened for card:', card?.id, 'collectorId:', collectorId);
-    console.log('CardDetailsModal - collection loading:', collectionLoading, 'data:', collectionData);
-  }
-
   if (!card) return null;
 
   const formatOracleText = (text?: string) => {

@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
-import { 
-  Container, 
-  Typography, 
+import {
+  Container,
+  Typography,
   Box,
   Alert
 } from '@mui/material';
 import { GET_CARDS_BY_ARTIST } from '../graphql/queries/cards';
-import { ResponsiveGridAutoFit } from '../components/atoms/layouts/ResponsiveGrid';
-import { MtgCard } from '../components/organisms/MtgCard';
+import { CardGrid } from '../components/organisms/CardGrid';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { useUrlState } from '../hooks/useUrlState';
@@ -203,8 +202,6 @@ export const ArtistCardsPage: React.FC = () => {
   const displayArtistName = artistNameInfo.primaryName;
   const alternateNames = artistNameInfo.alternateNames;
 
-
-
   // Sync non-search filters with URL immediately
   useUrlState(
     {
@@ -356,21 +353,19 @@ export const ArtistCardsPage: React.FC = () => {
 
         {/* Card Grid */}
         <CardGridErrorBoundary name="ArtistPageCardGrid">
-          <ResponsiveGridAutoFit sx={{ mt: 3 }}>
-            {filteredCards.map((card) => (
-              <MtgCard
-                key={card.id}
-                card={card}
-                context={{
-                  isOnArtistPage: true,
-                  currentArtist: displayArtistName,
-                  hideSetInfo: false,
-                  showCollectorInfo: true,
-                  hasCollector
-                }}
-              />
-            ))}
-          </ResponsiveGridAutoFit>
+          <CardGrid
+            cards={filteredCards}
+            groupId="artist-cards"
+            context={{
+              isOnArtistPage: true,
+              currentArtist: displayArtistName,
+              hideSetInfo: false,
+              showCollectorInfo: true,
+              hasCollector
+            }}
+            isLoading={cardsLoading}
+            sx={{ mt: 3 }}
+          />
         </CardGridErrorBoundary>
 
         {!cardsLoading && filteredCards.length === 0 && (
