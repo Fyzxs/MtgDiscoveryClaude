@@ -19,11 +19,12 @@ import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { RARITY_ORDER } from '../config/cardSortOptions';
 import { getUniqueRarities, getUniqueSets } from '../utils/cardUtils';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
-import { 
-  SectionErrorBoundary, 
-  FilterErrorBoundary, 
-  CardGridErrorBoundary 
+import {
+  SectionErrorBoundary,
+  FilterErrorBoundary,
+  CardGridErrorBoundary
 } from '../components/ErrorBoundaries';
+import { useCollectorParam } from '../hooks/useCollectorParam';
 import type { Card } from '../types/card';
 
 interface CardsResponse {
@@ -89,6 +90,9 @@ export const ArtistCardsPage: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
   const decodedArtistName = decodeURIComponent(artistName || '').replace(/-/g, ' ');
   const pascalCasedName = toPascalCase(decodedArtistName);
+
+  // Check for collector parameter
+  const { hasCollector, collectorId } = useCollectorParam();
 
   // URL state configuration for query parameters
   const urlStateConfig = {
@@ -186,7 +190,8 @@ export const ArtistCardsPage: React.FC = () => {
   const selectedSets = filters.sets || [];
   
   const cards = cardsData?.cardsByArtistName?.data || [];
-  
+
+
   // Get the most common artist name variation and alternates from loaded cards
   const artistNameInfo = useMemo(() => {
     if (cards.length === 0) {
@@ -197,6 +202,8 @@ export const ArtistCardsPage: React.FC = () => {
   
   const displayArtistName = artistNameInfo.primaryName;
   const alternateNames = artistNameInfo.alternateNames;
+
+
 
   // Sync non-search filters with URL immediately
   useUrlState(
@@ -358,7 +365,8 @@ export const ArtistCardsPage: React.FC = () => {
                   isOnArtistPage: true,
                   currentArtist: displayArtistName,
                   hideSetInfo: false,
-                  showCollectorInfo: true
+                  showCollectorInfo: true,
+                  hasCollector
                 }}
               />
             ))}
