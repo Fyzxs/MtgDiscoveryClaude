@@ -1,13 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
-using App.MtgDiscovery.GraphQL.Entities.Outs.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.User;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -36,7 +35,7 @@ public class UserMutationMethods
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
         // Call the entry service
-        IOperationResponse<IUserInfoOufEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
+        IOperationResponse<UserRegistrationOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -47,14 +46,6 @@ public class UserMutationMethods
             }
         };
 
-        IUserInfoOufEntity registration = response.ResponseData;
-
-        UserRegistrationOutEntity result = new()
-        {
-            UserId = registration.UserId,
-            DisplayName = authUserArg.DisplayName
-        };
-
-        return new SuccessDataResponseModel<UserRegistrationOutEntity>() { Data = result };
+        return new SuccessDataResponseModel<UserRegistrationOutEntity>() { Data = response.ResponseData };
     }
 }

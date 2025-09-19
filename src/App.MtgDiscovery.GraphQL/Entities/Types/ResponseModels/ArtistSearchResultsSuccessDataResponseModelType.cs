@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
 using App.MtgDiscovery.GraphQL.Entities.Types.Artists;
 using HotChocolate.Types;
+using Lib.Shared.DataModels.Entities.Outs.Artists;
 using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;

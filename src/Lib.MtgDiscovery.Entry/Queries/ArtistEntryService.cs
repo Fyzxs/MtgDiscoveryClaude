@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
@@ -6,7 +7,10 @@ using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 using Lib.Shared.Abstractions.Actions;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.Artists;
+using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Response;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.MtgDiscovery.Entry.Queries;
@@ -14,12 +18,14 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 internal sealed class ArtistEntryService : IArtistEntryService
 {
     private readonly IArtistDomainService _artistDomainService;
-    private readonly IArtistSearchTermArgEntityValidator _searchTermValidator;
-    private readonly IArtistIdArgEntityValidator _artistIdValidator;
-    private readonly IArtistNameArgEntityValidator _artistNameValidator;
-    private readonly IArtistSearchTermArgsToItrMapper _searchTermMapper;
-    private readonly IArtistIdArgsToItrMapper _artistIdMapper;
-    private readonly IArtistNameArgsToItrMapper _artistNameMapper;
+    private readonly IArtistSearchTermArgEntityValidator _artistSearchTermArgEntityValidator;
+    private readonly IArtistIdArgEntityValidator _artistIdArgEntityValidator;
+    private readonly IArtistNameArgEntityValidator _artistNameArgEntityValidator;
+    private readonly IArtistSearchTermArgsToItrMapper _artistSearchTermArgsToItrMapper;
+    private readonly IArtistIdArgsToItrMapper _artistIdArgsToItrMapper;
+    private readonly IArtistNameArgsToItrMapper _artistNameArgsToItrMapper;
+    private readonly IArtistSearchResultCollectionOufToOutMapper _artistSearchResultOufToOutMapper;
+    private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
 
     public ArtistEntryService(ILogger logger) : this(
         new ArtistDomainService(logger),
@@ -28,54 +34,69 @@ internal sealed class ArtistEntryService : IArtistEntryService
         new ArtistNameArgEntityValidatorContainer(),
         new ArtistSearchTermArgsToItrMapper(),
         new ArtistIdArgsToItrMapper(),
-        new ArtistNameArgsToItrMapper())
+        new ArtistNameArgsToItrMapper(),
+        new ArtistSearchResultCollectionOufToOutMapper(),
+        new CollectionCardItemOufToOutMapper())
     { }
 
     private ArtistEntryService(
-        IArtistDomainService artistDataService,
-        IArtistSearchTermArgEntityValidator searchTermValidator,
-        IArtistIdArgEntityValidator artistIdValidator,
-        IArtistNameArgEntityValidator artistNameValidator,
-        IArtistSearchTermArgsToItrMapper searchTermMapper,
-        IArtistIdArgsToItrMapper artistIdMapper,
-        IArtistNameArgsToItrMapper artistNameMapper)
+        IArtistDomainService artistDomainService,
+        IArtistSearchTermArgEntityValidator artistSearchTermArgEntityValidator,
+        IArtistIdArgEntityValidator artistIdArgEntityValidator,
+        IArtistNameArgEntityValidator artistNameArgEntityValidator,
+        IArtistSearchTermArgsToItrMapper artistSearchTermArgsToItrMapper,
+        IArtistIdArgsToItrMapper artistIdArgsToItrMapper,
+        IArtistNameArgsToItrMapper artistNameArgsToItrMapper,
+        IArtistSearchResultCollectionOufToOutMapper artistSearchResultOufToOutMapper,
+        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper)
     {
-        _artistDomainService = artistDataService;
-        _searchTermValidator = searchTermValidator;
-        _artistIdValidator = artistIdValidator;
-        _artistNameValidator = artistNameValidator;
-        _searchTermMapper = searchTermMapper;
-        _artistIdMapper = artistIdMapper;
-        _artistNameMapper = artistNameMapper;
+        _artistDomainService = artistDomainService;
+        _artistSearchTermArgEntityValidator = artistSearchTermArgEntityValidator;
+        _artistIdArgEntityValidator = artistIdArgEntityValidator;
+        _artistNameArgEntityValidator = artistNameArgEntityValidator;
+        _artistSearchTermArgsToItrMapper = artistSearchTermArgsToItrMapper;
+        _artistIdArgsToItrMapper = artistIdArgsToItrMapper;
+        _artistNameArgsToItrMapper = artistNameArgsToItrMapper;
+        _artistSearchResultOufToOutMapper = artistSearchResultOufToOutMapper;
+        _cardItemOufToOutMapper = cardItemOufToOutMapper;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm)
+    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm)
     {
-        IValidatorActionResult<IOperationResponse<IArtistSearchResultCollectionOufEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IArtistSearchResultCollectionOufEntity>> validatorResult = await _artistSearchTermArgEntityValidator.Validate(searchTerm).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<ArtistSearchResultOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        IArtistSearchTermItrEntity itrEntity = await _artistSearchTermArgsToItrMapper.Map(searchTerm).ConfigureAwait(false);
+        IOperationResponse<IArtistSearchResultCollectionOufEntity> opResponse = await _artistDomainService.ArtistSearchAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<ArtistSearchResultOutEntity>>(opResponse.OuterException);
 
-        IArtistSearchTermItrEntity mappedArgs = await _searchTermMapper.Map(searchTerm).ConfigureAwait(false);
-        return await _artistDomainService.ArtistSearchAsync(mappedArgs).ConfigureAwait(false);
+        List<ArtistSearchResultOutEntity> outEntities = await _artistSearchResultOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<ArtistSearchResultOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdArgEntity artistId)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(IArtistIdArgEntity artistId)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _artistIdValidator.Validate(artistId).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _artistIdArgEntityValidator.Validate(artistId).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        IArtistIdItrEntity itrEntity = await _artistIdArgsToItrMapper.Map(artistId).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
-        IArtistIdItrEntity mappedArgs = await _artistIdMapper.Map(artistId).ConfigureAwait(false);
-        return await _artistDomainService.CardsByArtistAsync(mappedArgs).ConfigureAwait(false);
+        List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _artistNameValidator.Validate(artistName).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _artistNameArgEntityValidator.Validate(artistName).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        IArtistNameItrEntity itrEntity = await _artistNameArgsToItrMapper.Map(artistName).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistNameAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
-        IArtistNameItrEntity mappedArgs = await _artistNameMapper.Map(artistName).ConfigureAwait(false);
-        return await _artistDomainService.CardsByArtistNameAsync(mappedArgs).ConfigureAwait(false);
+        List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }
 }

@@ -21,5 +21,5 @@ public sealed class CardAggregatorService : ICardAggregatorService
 
     public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardAggregatorOperations.CardsByNameAsync(cardName);
 
-    public Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardAggregatorOperations.CardNameSearchAsync(searchTerm);
+    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardAggregatorOperations.CardNameSearchAsync(searchTerm);
 }

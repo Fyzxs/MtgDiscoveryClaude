@@ -2,14 +2,12 @@
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
-using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
-using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -20,20 +18,14 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IUserCardOufToOutMapper _mapper;
 
-    public UserCardsMutationMethods(ILogger logger) : this(
-        new EntryService(logger),
-        new UserCardOufToOutMapper())
+    public UserCardsMutationMethods(ILogger logger) : this(new EntryService(logger))
     {
     }
 
-    private UserCardsMutationMethods(
-        IEntryService entryService,
-        IUserCardOufToOutMapper mapper)
+    private UserCardsMutationMethods(IEntryService entryService)
     {
         _entryService = entryService;
-        _mapper = mapper;
     }
 
     [Authorize]
@@ -42,7 +34,7 @@ public sealed class UserCardsMutationMethods
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        IOperationResponse<IUserCardOufEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
+        IOperationResponse<UserCardOutEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -52,9 +44,7 @@ public sealed class UserCardsMutationMethods
                 StatusCode = response.OuterException.StatusCode
             }
         };
-        //TODO: Pretty sure this mapping should be done in the entry. But this is a MASSIVE change.
-        UserCardOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<UserCardOutEntity>() { Data = result };
+        return new SuccessDataResponseModel<UserCardOutEntity>() { Data = response.ResponseData };
     }
 }

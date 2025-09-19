@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -7,6 +8,7 @@ using Lib.MtgDiscovery.Entry.Queries.Validators.UserCards;
 using Lib.Shared.Abstractions.Actions;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -15,12 +17,13 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
 {
     private readonly IUserCardsDomainService _userCardsDomainService;
-    private readonly IUserCardsSetArgEntityValidator _setValidator;
-    private readonly IUserCardsSetArgToItrMapper _setMapper;
-    private readonly IUserCardArgEntityValidator _cardValidator;
-    private readonly IUserCardArgToItrMapper _cardMapper;
-    private readonly IUserCardsByIdsArgEntityValidator _idsValidator;
-    private readonly IUserCardsByIdsArgToItrMapper _idsMapper;
+    private readonly IUserCardsSetArgEntityValidator _userCardsSetArgEntityValidator;
+    private readonly IUserCardsSetArgToItrMapper _userCardsSetArgToItrMapper;
+    private readonly IUserCardArgEntityValidator _userCardArgEntityValidator;
+    private readonly IUserCardArgToItrMapper _userCardArgToItrMapper;
+    private readonly IUserCardsByIdsArgEntityValidator _userCardsByIdsArgEntityValidator;
+    private readonly IUserCardsByIdsArgToItrMapper _userCardsByIdsArgToItrMapper;
+    private readonly ICollectionUserCardOufToOutMapper _userCardOufToOutMapper;
 
     public UserCardsQueryEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
@@ -29,54 +32,66 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
         new UserCardArgEntityValidatorContainer(),
         new UserCardArgToItrMapper(),
         new UserCardsByIdsArgEntityValidatorContainer(),
-        new UserCardsByIdsArgToItrMapper())
+        new UserCardsByIdsArgToItrMapper(),
+        new CollectionUserCardOufToOutMapper())
     { }
 
     private UserCardsQueryEntryService(
         IUserCardsDomainService userCardsDomainService,
-        IUserCardsSetArgEntityValidator setValidator,
-        IUserCardsSetArgToItrMapper setMapper,
-        IUserCardArgEntityValidator cardValidator,
-        IUserCardArgToItrMapper cardMapper,
-        IUserCardsByIdsArgEntityValidator idsValidator,
-        IUserCardsByIdsArgToItrMapper idsMapper)
+        IUserCardsSetArgEntityValidator userCardsSetArgEntityValidator,
+        IUserCardsSetArgToItrMapper userCardsSetArgToItrMapper,
+        IUserCardArgEntityValidator userCardArgEntityValidator,
+        IUserCardArgToItrMapper userCardArgToItrMapper,
+        IUserCardsByIdsArgEntityValidator userCardsByIdsArgEntityValidator,
+        IUserCardsByIdsArgToItrMapper userCardsByIdsArgToItrMapper,
+        ICollectionUserCardOufToOutMapper userCardOufToOutMapper)
     {
         _userCardsDomainService = userCardsDomainService;
-        _setValidator = setValidator;
-        _setMapper = setMapper;
-        _cardValidator = cardValidator;
-        _cardMapper = cardMapper;
-        _idsValidator = idsValidator;
-        _idsMapper = idsMapper;
+        _userCardsSetArgEntityValidator = userCardsSetArgEntityValidator;
+        _userCardsSetArgToItrMapper = userCardsSetArgToItrMapper;
+        _userCardArgEntityValidator = userCardArgEntityValidator;
+        _userCardArgToItrMapper = userCardArgToItrMapper;
+        _userCardsByIdsArgEntityValidator = userCardsByIdsArgEntityValidator;
+        _userCardsByIdsArgToItrMapper = userCardsByIdsArgToItrMapper;
+        _userCardOufToOutMapper = userCardOufToOutMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardArgEntity cardArgs)
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs)
     {
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> result = await _cardValidator.Validate(cardArgs).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> validatorResult = await _userCardArgEntityValidator.Validate(cardArgs).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<UserCardOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        IUserCardItrEntity itrEntity = await _userCardArgToItrMapper.Map(cardArgs).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> opResponse = await _userCardsDomainService.UserCardAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<UserCardOutEntity>>(opResponse.OuterException);
 
-        IUserCardItrEntity oufEntity = await _cardMapper.Map(cardArgs).ConfigureAwait(false);
-        return await _userCardsDomainService.UserCardAsync(oufEntity).ConfigureAwait(false);
+        List<UserCardOutEntity> outEntities = await _userCardOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<UserCardOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs)
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs)
     {
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> result = await _setValidator.Validate(bySetArgs).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> validatorResult = await _userCardsSetArgEntityValidator.Validate(bySetArgs).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<UserCardOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        IUserCardsSetItrEntity itrEntity = await _userCardsSetArgToItrMapper.Map(bySetArgs).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> opResponse = await _userCardsDomainService.UserCardsBySetAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<UserCardOutEntity>>(opResponse.OuterException);
 
-        IUserCardsSetItrEntity itrEntity = await _setMapper.Map(bySetArgs).ConfigureAwait(false);
-        return await _userCardsDomainService.UserCardsBySetAsync(itrEntity).ConfigureAwait(false);
+        List<UserCardOutEntity> outEntities = await _userCardOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<UserCardOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs)
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs)
     {
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> result = await _idsValidator.Validate(cardsArgs).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> validatorResult = await _userCardsByIdsArgEntityValidator.Validate(cardsArgs).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<UserCardOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+        IUserCardsByIdsItrEntity itrEntity = await _userCardsByIdsArgToItrMapper.Map(cardsArgs).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> opResponse = await _userCardsDomainService.UserCardsByIdsAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<UserCardOutEntity>>(opResponse.OuterException);
 
-        IUserCardsByIdsItrEntity itrEntity = await _idsMapper.Map(cardsArgs).ConfigureAwait(false);
-        return await _userCardsDomainService.UserCardsByIdsAsync(itrEntity).ConfigureAwait(false);
+        List<UserCardOutEntity> outEntities = await _userCardOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<UserCardOutEntity>>(outEntities);
     }
 }

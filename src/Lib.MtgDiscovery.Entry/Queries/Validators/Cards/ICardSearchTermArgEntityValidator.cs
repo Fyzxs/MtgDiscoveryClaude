@@ -5,4 +5,4 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 
-internal interface ICardSearchTermArgEntityValidator : IValidatorAction<ICardSearchTermArgEntity, IOperationResponse<ICardNameSearchResultCollectionOufEntity>>;
+internal interface ICardSearchTermArgEntityValidator : IValidatorAction<ICardSearchTermArgEntity, IOperationResponse<ICardNameSearchCollectionOufEntity>>;

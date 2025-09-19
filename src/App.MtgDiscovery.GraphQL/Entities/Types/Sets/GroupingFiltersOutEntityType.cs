@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
+using Lib.Shared.DataModels.Entities.Outs.Sets;
 using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
