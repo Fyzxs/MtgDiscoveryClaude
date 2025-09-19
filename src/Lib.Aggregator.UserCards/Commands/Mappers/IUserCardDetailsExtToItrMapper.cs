@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
 
-internal interface IUserCardDetailsExtToItrMapper : ICreateMapper<UserCardDetailsExtEntity, IUserCardDetailsItrEntity>;
+internal interface IUserCardDetailsExtToOufMapper : ICreateMapper<UserCardDetailsExtEntity, IUserCardDetailsOufEntity>;

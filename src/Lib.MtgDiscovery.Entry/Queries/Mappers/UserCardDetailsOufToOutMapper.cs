@@ -6,7 +6,7 @@ namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
 internal sealed class UserCardDetailsOufToOutMapper : IUserCardDetailsOufToOutMapper
 {
-    public Task<CollectedItemOutEntity> Map(IUserCardDetailsItrEntity source)
+    public Task<CollectedItemOutEntity> Map(IUserCardDetailsOufEntity source)
     {
         CollectedItemOutEntity result = new()
         {

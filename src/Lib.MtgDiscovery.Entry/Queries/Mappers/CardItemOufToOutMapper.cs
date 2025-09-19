@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
@@ -96,7 +97,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
             ContentWarning = source.ContentWarning,
             Preview = MapPreview(source.Preview),
             ProducedMana = source.ProducedMana,
-            AttractionLights = source.AttractionLights
+            AttractionLights = source.AttractionLights,
+            UserCollection = new List<CollectedItemOutEntity>() // Default to empty collection
         };
 
         return Task.FromResult(result);

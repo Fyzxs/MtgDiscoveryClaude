@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Sets;
-using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Outs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -21,16 +17,16 @@ internal sealed class SetEntryService : ISetEntryService
     private readonly ISetDomainService _setDomainService;
     private readonly ISetIdsArgEntityValidator _setIdsArgEntityValidator;
     private readonly ISetCodesArgEntityValidator _setCodesArgEntityValidator;
-    private readonly ISetIdsArgsToItrMapper _setIdsArgsToItrMapper;
-    private readonly ISetCodesArgsToItrMapper _setCodesArgsToItrMapper;
+    private readonly ISetIdsArgToItrMapper _setIdsArgToItrMapper;
+    private readonly ISetCodesArgToItrMapper _setCodesArgToItrMapper;
     private readonly ICollectionSetItemOufToOutMapper _setItemOufToOutMapper;
 
     public SetEntryService(ILogger logger) : this(
         new SetDomainService(logger),
         new SetIdsArgEntityValidatorContainer(),
         new SetCodesArgEntityValidatorContainer(),
-        new SetIdsArgsToItrMapper(),
-        new SetCodesArgsToItrMapper(),
+        new SetIdsArgToItrMapper(),
+        new SetCodesArgToItrMapper(),
         new CollectionSetItemOufToOutMapper())
     { }
 
@@ -38,15 +34,15 @@ internal sealed class SetEntryService : ISetEntryService
         ISetDomainService setDomainService,
         ISetIdsArgEntityValidator setIdsArgEntityValidator,
         ISetCodesArgEntityValidator setCodesArgEntityValidator,
-        ISetIdsArgsToItrMapper setIdsArgsToItrMapper,
-        ISetCodesArgsToItrMapper setCodesArgsToItrMapper,
+        ISetIdsArgToItrMapper setIdsArgToItrMapper,
+        ISetCodesArgToItrMapper setCodesArgToItrMapper,
         ICollectionSetItemOufToOutMapper setItemOufToOutMapper)
     {
         _setDomainService = setDomainService;
         _setIdsArgEntityValidator = setIdsArgEntityValidator;
         _setCodesArgEntityValidator = setCodesArgEntityValidator;
-        _setIdsArgsToItrMapper = setIdsArgsToItrMapper;
-        _setCodesArgsToItrMapper = setCodesArgsToItrMapper;
+        _setIdsArgToItrMapper = setIdsArgToItrMapper;
+        _setCodesArgToItrMapper = setCodesArgToItrMapper;
         _setItemOufToOutMapper = setItemOufToOutMapper;
     }
 
@@ -55,7 +51,7 @@ internal sealed class SetEntryService : ISetEntryService
         IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> validatorResult = await _setIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<ScryfallSetOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        ISetIdsItrEntity itrEntity = await _setIdsArgsToItrMapper.Map(args).ConfigureAwait(false);
+        ISetIdsItrEntity itrEntity = await _setIdsArgToItrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<List<ScryfallSetOutEntity>>(opResponse.OuterException);
 
@@ -68,7 +64,7 @@ internal sealed class SetEntryService : ISetEntryService
         IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> validatorResult = await _setCodesArgEntityValidator.Validate(args).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<ScryfallSetOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        ISetCodesItrEntity itrEntity = await _setCodesArgsToItrMapper.Map(args).ConfigureAwait(false);
+        ISetCodesItrEntity itrEntity = await _setCodesArgToItrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsByCodeAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<List<ScryfallSetOutEntity>>(opResponse.OuterException);
 

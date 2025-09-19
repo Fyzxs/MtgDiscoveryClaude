@@ -8,5 +8,5 @@ internal sealed class UserCardCollectionOufEntity : IUserCardOufEntity
     public string UserId { get; init; }
     public string CardId { get; init; }
     public string SetId { get; init; }
-    public ICollection<IUserCardDetailsItrEntity> CollectedList { get; init; }
+    public ICollection<IUserCardDetailsOufEntity> CollectedList { get; init; }
 }

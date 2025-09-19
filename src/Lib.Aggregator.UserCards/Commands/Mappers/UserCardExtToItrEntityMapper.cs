@@ -14,19 +14,19 @@ namespace Lib.Aggregator.UserCards.Commands.Mappers;
 /// </summary>
 internal sealed class UserCardExtToItrEntityMapper : IUserCardExtToItrEntityMapper
 {
-    private readonly IUserCardDetailsExtToItrMapper _mapper;
+    private readonly IUserCardDetailsExtToOufMapper _mapper;
 
-    public UserCardExtToItrEntityMapper() : this(new UserCardDetailsExtToItrMapper())
+    public UserCardExtToItrEntityMapper() : this(new UserCardDetailsExtToOufMapper())
     { }
 
-    internal UserCardExtToItrEntityMapper(IUserCardDetailsExtToItrMapper mapper)
+    internal UserCardExtToItrEntityMapper(IUserCardDetailsExtToOufMapper mapper)
     {
         _mapper = mapper;
     }
 
     public async Task<IUserCardOufEntity> Map([NotNull] UserCardExtEntity source)
     {
-        IUserCardDetailsItrEntity[] mappedDetails = await Task.WhenAll(
+        IUserCardDetailsOufEntity[] mappedDetails = await Task.WhenAll(
             source.CollectedList.Select(detail => _mapper.Map(detail))
         ).ConfigureAwait(false);
 

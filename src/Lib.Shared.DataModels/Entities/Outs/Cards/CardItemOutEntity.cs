@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CA1056, CA1819
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 
 namespace Lib.Shared.DataModels.Entities.Outs.Cards;
 
@@ -177,4 +178,7 @@ public class CardItemOutEntity
     public ICollection<string> ProducedMana { get; set; }
 
     public ICollection<int> AttractionLights { get; set; }
+
+    // User collection data (populated when UserId provided)
+    public ICollection<CollectedItemOutEntity> UserCollection { get; set; }
 }
