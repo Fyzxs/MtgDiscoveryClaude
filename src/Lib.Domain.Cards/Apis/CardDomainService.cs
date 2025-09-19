@@ -21,5 +21,5 @@ public sealed class CardDomainService : ICardDomainService
 
     public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardDomainOperations.CardsByNameAsync(cardName);
 
-    public Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardDomainOperations.CardNameSearchAsync(searchTerm);
+    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardDomainOperations.CardNameSearchAsync(searchTerm);
 }

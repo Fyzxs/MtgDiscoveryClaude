@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
+using Lib.Shared.DataModels.Entities.Outs.Sets;
 using App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 using HotChocolate.Types;
 using Lib.Shared.Invocation.Response.Models;
