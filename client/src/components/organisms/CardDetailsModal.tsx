@@ -25,6 +25,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { useCollectionData } from '../../hooks/useCollectionData';
 // import { GET_USER_CARD_BY_ID } from '../../graphql/queries/userCards'; // TODO: Uncomment after types generated
 import { formatCollectionInline } from '../../utils/collectionFormatters';
 import { ModalContainer } from '../molecules/shared/ModalContainer';
@@ -36,6 +37,9 @@ import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
 import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { CardBadges } from '../atoms/Cards/CardBadges';
+import { SetLink } from '../atoms/Cards/SetLink';
+import { ArtistLinks } from '../molecules/Cards/ArtistLinks';
+import { CardName } from '../atoms/Cards/CardName';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -110,25 +114,20 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 }) => {
   const { hasCollector, collectorId } = useCollectorParam();
 
-  // Query for user collection data if collector parameter is present
-  // TODO: Uncomment after GraphQL types are generated
-  // const { data: userCardData } = useQuery(GET_USER_CARD_BY_ID, {
-  //   variables: {
-  //     cardArgs: {
-  //       cardId: card?.id,
-  //       collectorId: collectorId
-  //     }
-  //   },
-  //   skip: !hasCollector || !card?.id,
-  // });
-  const userCardData = null; // Temporary placeholder
+  // Only fetch collection data when modal is actually open
+  const { collectionData, loading: collectionLoading } = useCollectionData({
+    cardId: card?.id || '',
+    userId: collectorId || '',
+    enabled: open && hasCollector && !!card?.id && !!collectorId
+  });
+
+  // Debug logging when modal is open
+  if (open) {
+    console.log('CardDetailsModal opened for card:', card?.id, 'collectorId:', collectorId);
+    console.log('CardDetailsModal - collection loading:', collectionLoading, 'data:', collectionData);
+  }
 
   if (!card) return null;
-
-  // Extract collection data
-  const collectionData = userCardData?.userCardsByCard?.__typename === 'SuccessUserCardsCollectionResponse'
-    ? userCardData.userCardsByCard.data?.find((item: any) => item.cardId === card.id)
-    : undefined;
 
   const formatOracleText = (text?: string) => {
     if (!text) return null;
@@ -187,20 +186,26 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 </IconButton>
               </Box>
             )}
-            <Link 
-              href={`/card/${encodeURIComponent(card.name)}`}
-              variant="h5"
-              component="a"
-              sx={{ 
-                color: 'text.primary',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'underline'
+            <CardName
+              cardId={card.id}
+              cardName={card.name}
+              sx={{
+                '& .MuiBadge-root': {
+                  bgcolor: 'transparent',
+                  px: 0,
+                  py: 0
+                },
+                '& .MuiBadge-root:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.05)'
+                },
+                '& .MuiTypography-root': {
+                  fontSize: '3rem !important',
+                  fontWeight: 'bold !important',
+                  lineHeight: '1.1 !important',
+                  color: 'text.primary !important'
                 }
               }}
-            >
-              {card.name}
-            </Link>
+            />
             {card.manaCost && <ManaCost manaCost={card.manaCost} />}
           </Box>
           <IconButton onClick={onClose}>
@@ -285,20 +290,13 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
                   {card.rarity && <RarityBadge rarity={card.rarity} />}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Link 
-                      href={`/set/${card.setCode}`}
-                      sx={{ 
-                        color: 'text.secondary',
-                        textDecoration: 'none',
-                        '&:hover': {
-                          textDecoration: 'underline'
-                        }
-                      }}
-                    >
-                      {card.setName}
-                    </Link>
+                    <SetLink
+                      setCode={card.setCode}
+                      setName={card.setName}
+                      rarity={card.rarity}
+                    />
                     <Typography variant="body2" color="text.secondary">
-                      ({card.setCode?.toUpperCase()}) · #{card.collectorNumber}
+                      · #{card.collectorNumber}
                     </Typography>
                   </Box>
                 </Box>
@@ -351,6 +349,18 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
               <Divider />
 
+              {/* Collection */}
+              {hasCollector && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Collection:
+                  </Typography>
+                  <Typography variant="body1">
+                    {formatCollectionInline(collectionData?.collectedList || [])}
+                  </Typography>
+                </Box>
+              )}
+
               {/* Treatments */}
               {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo || card.digital) && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -375,33 +385,10 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   <Typography variant="subtitle1" fontWeight="bold">
                     Artist:
                   </Typography>
-                  {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
-                    <Link
-                      key={index}
-                      href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
-                      sx={{
-                        color: 'text.primary',
-                        textDecoration: 'none',
-                        '&:hover': {
-                          textDecoration: 'underline'
-                        }
-                      }}
-                    >
-                      {artistName}{index < card.artist.split(/\s+(?:&|and)\s+/i).length - 1 ? ',' : ''}
-                    </Link>
-                  ))}
-                </Box>
-              )}
-
-              {/* Collection */}
-              {hasCollector && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    Collection:
-                  </Typography>
-                  <Typography variant="body1">
-                    {formatCollectionInline(collectionData?.collectedList || [])}
-                  </Typography>
+                  <ArtistLinks
+                    artists={card.artist.split(/\s+(?:&|and)\s+/i)}
+                    artistIds={card.artistIds}
+                  />
                 </Box>
               )}
 

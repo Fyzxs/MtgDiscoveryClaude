@@ -20,6 +20,8 @@ import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel'
 import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
 import { handleGraphQLError, globalLoadingManager } from '../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../components/ErrorBoundaries';
+import { useCollectorParam } from '../hooks/useCollectorParam';
+import { useBulkCollectionData } from '../hooks/useCollectionData';
 
 
 interface CardData {
@@ -67,6 +69,9 @@ export const CardAllPrintingsPage: React.FC = () => {
   const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
+  // Check if we have a collector parameter
+  const { hasCollector, collectorId } = useCollectorParam();
+
   const { loading, error, data, refetch } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
     variables: {
       cardName: {
@@ -103,6 +108,16 @@ export const CardAllPrintingsPage: React.FC = () => {
   const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
   const graphQLError = data?.cardsByName?.status?.message;
 
+  // Fetch collection data for all cards if we have a collector
+  const cardIds = cards.map(card => card.id);
+
+  const { getCardData: getCollectionData, loading: collectionLoading } = useBulkCollectionData({
+    cardIds,
+    userId: collectorId || 'no-collector',
+    enabled: hasCollector && cardIds.length > 0 && !!collectorId
+  });
+
+
   // handleBackClick removed - using href directly on buttons
 
   const handleRetry = async () => {
@@ -138,7 +153,7 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
         </Box>
@@ -148,7 +163,7 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   if (hasError) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
         <Button
           startIcon={<ArrowBackIcon />}
           component="a"
@@ -190,7 +205,7 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   if (cards.length === 0) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
         <Button
           startIcon={<ArrowBackIcon />}
           component="a"
@@ -205,7 +220,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       <Button
         startIcon={<ArrowBackIcon />}
         component="a"
@@ -249,16 +264,17 @@ export const CardAllPrintingsPage: React.FC = () => {
 
       {/* Cards Grid */}
       <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
-        <ResponsiveGridAutoFit 
-          minItemWidth={250}
-          spacing={2}
+        <ResponsiveGridAutoFit
+          minItemWidth={280}
+          spacing={1.5}
         >
           {filteredCards.map((card) => (
             <AppErrorBoundary key={card.id} level="component" name={`Card-${card.id}`}>
-              <MtgCard 
+              <MtgCard
                 card={card}
-                context={{ isOnCardPage: true }}
+                context={{ isOnCardPage: true, hasCollector }}
                 onArtistClick={handleArtistClick}
+                collectionData={hasCollector ? getCollectionData(card.id) || undefined : undefined}
               />
             </AppErrorBoundary>
           ))}

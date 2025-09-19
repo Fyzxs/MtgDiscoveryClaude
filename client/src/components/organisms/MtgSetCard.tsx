@@ -8,6 +8,7 @@ import { CardCountDisplay } from '../atoms/shared/CardCountDisplay';
 import { TopBadges } from '../molecules/Sets/TopBadges';
 import { SetIconDisplay } from '../molecules/Sets/SetIconDisplay';
 import { BottomBadges } from '../molecules/Sets/BottomBadges';
+import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 
 interface MtgSetCardProps {
   set: MtgSet;
@@ -24,6 +25,10 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   const [isHovered, setIsHovered] = React.useState(false);
   const setTypeColor = getSetTypeColor(set.setType);
   const theme = useTheme();
+  const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+
+  const setPath = `/set/${set.code}`;
+  const setUrl = buildUrlWithCollector(setPath);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only handle click if there's a custom onSetClick handler
@@ -31,11 +36,12 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     if (onSetClick && e.button === 0) {
       e.preventDefault();
       onSetClick(set.code);
+    } else if (e.button === 0) {
+      // Use collector navigation for regular clicks
+      createCollectorClickHandler(setPath)(e);
     }
     // Allow right-click, middle-click, and normal navigation to work
   };
-
-  const setUrl = `/set/${set.code}`;
 
   return (
     <Card
