@@ -20,7 +20,6 @@ import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
 import { handleGraphQLError, globalLoadingManager } from '../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../components/ErrorBoundaries';
 import { useCollectorParam } from '../hooks/useCollectorParam';
-import { useBulkCollectionData } from '../hooks/useCollectionData';
 
 
 interface CardData {
@@ -74,7 +73,8 @@ export const CardAllPrintingsPage: React.FC = () => {
   const { loading, error, data, refetch } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
     variables: {
       cardName: {
-        cardName: decodedCardName
+        cardName: decodedCardName,
+        userId: collectorId || undefined
       }
     },
     skip: !cardName,
@@ -107,14 +107,6 @@ export const CardAllPrintingsPage: React.FC = () => {
   const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
   const graphQLError = data?.cardsByName?.status?.message;
 
-  // Fetch collection data for all cards if we have a collector
-  const cardIds = cards.map(card => card.id);
-
-  const { getCardData: getCollectionData, loading: collectionLoading } = useBulkCollectionData({
-    cardIds,
-    userId: collectorId || 'no-collector',
-    enabled: hasCollector && cardIds.length > 0 && !!collectorId
-  });
 
 
   // handleBackClick removed - using href directly on buttons
@@ -271,10 +263,6 @@ export const CardAllPrintingsPage: React.FC = () => {
             hasCollector,
             showCollectorInfo: hasCollector
           }}
-          collectionLookup={hasCollector ? new Map(
-            filteredCards.map(card => [card.id, getCollectionData(card.id) || undefined])
-              .filter(([_, data]) => data !== undefined)
-          ) : undefined}
           isLoading={false}
           onArtistClick={handleArtistClick}
         />

@@ -4,7 +4,6 @@ import {
   Typography,
   IconButton,
   Divider,
-  Link,
   Grid,
   Stack,
   Button,
@@ -25,9 +24,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { useCollectionData } from '../../hooks/useCollectionData';
 // import { GET_USER_CARD_BY_ID } from '../../graphql/queries/userCards'; // TODO: Uncomment after types generated
-import { formatCollectionInline } from '../../utils/collectionFormatters';
+import { CollectionSummary } from '../molecules/Cards/CollectionSummary';
 import { ModalContainer } from '../molecules/shared/ModalContainer';
 import { ManaCost } from '../molecules/Cards/ManaCost';
 import { RarityBadge } from '../atoms/Cards/RarityBadge';
@@ -112,14 +110,8 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   hasPrevious,
   hasNext
 }) => {
-  const { hasCollector, collectorId } = useCollectorParam();
+  const { hasCollector } = useCollectorParam();
 
-  // Only fetch collection data when modal is actually open
-  const { collectionData, loading: collectionLoading } = useCollectionData({
-    cardId: card?.id || '',
-    userId: collectorId || '',
-    enabled: open && hasCollector && !!card?.id && !!collectorId
-  });
 
   if (!card) return null;
 
@@ -349,9 +341,10 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   <Typography variant="subtitle1" fontWeight="bold">
                     Collection:
                   </Typography>
-                  <Typography variant="body1">
-                    {formatCollectionInline(collectionData?.collectedList || [])}
-                  </Typography>
+                  <CollectionSummary
+                    collectionData={card?.userCollection}
+                    size="medium"
+                  />
                 </Box>
               )}
 

@@ -59,8 +59,11 @@ export const createCardSortOptions = <T extends CardLike>(): Record<string, Sort
   'collector-desc': (a, b) => parseCollectorNumber(b.collectorNumber || '') - parseCollectorNumber(a.collectorNumber || ''),
   'name-asc': (a, b) => a.name.localeCompare(b.name),
   'name-desc': (a, b) => b.name.localeCompare(a.name),
-  'rarity': (a, b) => {
+  'rarity-asc': (a, b) => {
     return (RARITY_ORDER[a.rarity?.toLowerCase() || ''] ?? 99) - (RARITY_ORDER[b.rarity?.toLowerCase() || ''] ?? 99);
+  },
+  'rarity-desc': (a, b) => {
+    return (RARITY_ORDER[b.rarity?.toLowerCase() || ''] ?? 99) - (RARITY_ORDER[a.rarity?.toLowerCase() || ''] ?? 99);
   },
   'price-desc': (a, b) => {
     const priceA = parseFloat(a.prices?.usd || '0');
@@ -102,7 +105,8 @@ export const ALL_SORT_OPTIONS = {
   'collector-desc': { value: 'collector-desc', label: 'Collector # (High-Low)' },
   'name-asc': { value: 'name-asc', label: 'Name (A-Z)' },
   'name-desc': { value: 'name-desc', label: 'Name (Z-A)' },
-  'rarity': { value: 'rarity', label: 'Rarity' },
+  'rarity-asc': { value: 'rarity-asc', label: 'Rarity (C-M)' },
+  'rarity-desc': { value: 'rarity-desc', label: 'Rarity (M-C)' },
   'price-desc': { value: 'price-desc', label: 'Price (High-Low)' },
   'price-asc': { value: 'price-asc', label: 'Price (Low-High)' },
   'release-desc': { value: 'release-desc', label: 'Release Date (Newest)' },
@@ -117,11 +121,25 @@ export const SET_PAGE_SORT_OPTIONS = [
   ALL_SORT_OPTIONS['collector-desc'],
   ALL_SORT_OPTIONS['name-asc'],
   ALL_SORT_OPTIONS['name-desc'],
-  ALL_SORT_OPTIONS['rarity'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
   ALL_SORT_OPTIONS['price-desc'],
   ALL_SORT_OPTIONS['price-asc'],
   ALL_SORT_OPTIONS['release-desc'],
   ALL_SORT_OPTIONS['release-asc']
+];
+
+// Artist page sort options
+export const ARTIST_PAGE_SORT_OPTIONS = [
+  ALL_SORT_OPTIONS['release-desc'],
+  ALL_SORT_OPTIONS['release-asc'],
+  ALL_SORT_OPTIONS['name-asc'],
+  ALL_SORT_OPTIONS['name-desc'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
+  ALL_SORT_OPTIONS['price-desc'],
+  ALL_SORT_OPTIONS['price-asc'],
+  ALL_SORT_OPTIONS['set-asc']
 ];
 
 // Card detail page sort options (no collector number or name sorting)
@@ -130,7 +148,8 @@ export const CARD_DETAIL_SORT_OPTIONS = [
   ALL_SORT_OPTIONS['release-asc'],
   ALL_SORT_OPTIONS['set-asc'],
   ALL_SORT_OPTIONS['set-desc'],
-  ALL_SORT_OPTIONS['rarity'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
   ALL_SORT_OPTIONS['price-desc'],
   ALL_SORT_OPTIONS['price-asc']
 ];

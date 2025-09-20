@@ -15,7 +15,7 @@ import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { QueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
-import { RARITY_ORDER } from '../config/cardSortOptions';
+import { RARITY_ORDER, ARTIST_PAGE_SORT_OPTIONS } from '../config/cardSortOptions';
 import { getUniqueRarities, getUniqueSets } from '../utils/cardUtils';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import {
@@ -106,7 +106,12 @@ export const ArtistCardsPage: React.FC = () => {
   const [initialValues] = useState(() => getInitialValues());
 
   const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_ARTIST, {
-    variables: { artistName: { artistName: decodedArtistName } },
+    variables: {
+      artistName: {
+        artistName: decodedArtistName,
+        userId: collectorId || undefined
+      }
+    },
     skip: !artistName
   });
   
@@ -325,16 +330,7 @@ export const ArtistCardsPage: React.FC = () => {
                 sort: {
                   value: sortBy,
                   onChange: handleSortChange,
-                  options: [
-                    { value: 'release-desc', label: 'Release Date (Newest)' },
-                    { value: 'release-asc', label: 'Release Date (Oldest)' },
-                    { value: 'name-asc', label: 'Name (A-Z)' },
-                    { value: 'name-desc', label: 'Name (Z-A)' },
-                    { value: 'rarity', label: 'Rarity' },
-                    { value: 'price-desc', label: 'Price (High-Low)' },
-                    { value: 'price-asc', label: 'Price (Low-High)' },
-                    { value: 'set-asc', label: 'Set (A-Z)' }
-                  ],
+                  options: ARTIST_PAGE_SORT_OPTIONS,
                   minWidth: 180
                 }
               }}

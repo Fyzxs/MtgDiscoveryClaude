@@ -3,13 +3,12 @@ import { Box } from '@mui/material';
 import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';
-import type { Card, CardContext, UserCardData } from '../../types/card';
+import type { Card, CardContext } from '../../types/card';
 
 interface CardGridProps {
   cards: Card[];
   groupId: string;
   context: CardContext;
-  collectionLookup?: Map<string, UserCardData>;
   spacing?: number;
   minItemWidth?: number;
   sx?: any;
@@ -40,7 +39,6 @@ export const CardGrid: React.FC<CardGridProps> = ({
   cards,
   groupId,
   context,
-  collectionLookup,
   spacing = 1.5,
   minItemWidth = 280,
   sx = {},
@@ -111,7 +109,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
             index={index}
             groupId={groupId}
             context={context}
-            collectionData={collectionLookup?.get(card.id)}
+            collectionData={card.userCollection}
             onArtistClick={onArtistClick}
             onSetClick={onSetClick}
           />

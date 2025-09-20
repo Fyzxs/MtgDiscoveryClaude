@@ -9,12 +9,12 @@ import { CardDetailsModal } from './CardDetailsModal';
 import { CardBadges } from '../atoms/Cards/CardBadges';
 import { getRarityGlowStyles } from '../../utils/rarityStyles';
 import { srOnly } from '../../styles/cardStyles';
-import type { StyledComponentProps, SelectionProps } from '../../types/components';
+import type { StyledComponentProps } from '../../types/components';
 
 interface MtgCardProps extends StyledComponentProps {
   card: Card;
   context?: CardContext;
-  collectionData?: UserCardData;
+  collectionData?: UserCardData | UserCardData[];
   index: number;
   groupId: string;
   onSetClick?: (setCode?: string) => void;
@@ -26,11 +26,13 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
   context = {},
   collectionData,
   index,
-  groupId,
+  groupId: _groupId,
   onSetClick,
   onArtistClick,
   className = ''
 }) => {
+  // Use embedded collection data from card if not provided as prop
+  const effectiveCollectionData = collectionData || card.userCollection;
   const [modalOpen, setModalOpen] = useState(false);
   const theme = useTheme();
 
@@ -204,7 +206,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         tcgplayerUrl={card.purchaseUris?.tcgplayer}
         isSelected={false}
         context={context}
-        collectionData={collectionData}
+        collectionData={effectiveCollectionData}
         onCardClick={undefined}
         onArtistClick={onArtistClick}
         onSetClick={onSetClick}
@@ -250,7 +252,6 @@ export const MtgCard = React.memo(MtgCardComponent, (prevProps, nextProps) => {
   if (prevProps.context?.showCollectorInfo !== nextProps.context?.showCollectorInfo) return false;
   
   // Callback function references (usually stable but worth checking)
-  if (prevProps.onCardClick !== nextProps.onCardClick) return false;
   if (prevProps.onSetClick !== nextProps.onSetClick) return false;
   if (prevProps.onArtistClick !== nextProps.onArtistClick) return false;
   

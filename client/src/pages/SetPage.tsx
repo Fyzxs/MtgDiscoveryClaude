@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useQuery, useApolloClient } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import {
   Container,
@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
-import { getCollectionManager } from '../services/collectionManager';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
@@ -21,7 +20,7 @@ import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { useCollectorParam } from '../hooks/useCollectorParam';
 import { QueryStateContainer, useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
-import { RARITY_ORDER, parseCollectorNumber } from '../config/cardSortOptions';
+import { RARITY_ORDER, parseCollectorNumber, SET_PAGE_SORT_OPTIONS } from '../config/cardSortOptions';
 import { getUniqueArtists, getUniqueRarities } from '../utils/cardUtils';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import { 
@@ -29,7 +28,7 @@ import {
   FilterErrorBoundary, 
   CardGridErrorBoundary 
 } from '../components/ErrorBoundaries';
-import type { Card, UserCardData } from '../types/card';
+import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
 import { groupCardsOptimized, getGroupDisplayName, getGroupOrder } from '../utils/optimizedCardGrouping';
 import { useOptimizedSort } from '../hooks/useOptimizedSort';
@@ -79,12 +78,13 @@ export const SetPage: React.FC = () => {
   // Check for collector parameter in URL
   const { hasCollector, collectorId } = useCollectorParam();
 
-  // Apollo client for CollectionManager
-  const apolloClient = useApolloClient();
+  // Debug logging for collector data
+  if (hasCollector) {
+    console.log('SetPage: hasCollector=true, collectorId=', collectorId);
+  }
+
 
   // State for collection data
-  const [collectionMap, setCollectionMap] = useState<Map<string, UserCardData>>(new Map());
-  const [collectionLoading, setCollectionLoading] = useState(false);
 
   // URL state configuration for query parameters
   const urlStateConfig = {
@@ -100,7 +100,12 @@ export const SetPage: React.FC = () => {
   const { getInitialValues, updateUrl } = useUrlState({}, urlStateConfig);
   const [initialValues] = useState(() => getInitialValues());
   const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_SET_CODE, {
-    variables: { setCode: { setCode } },
+    variables: {
+      setCode: {
+        setCode,
+        userId: collectorId || undefined
+      }
+    },
     skip: !setCode
   });
   
@@ -146,32 +151,6 @@ export const SetPage: React.FC = () => {
   const setInfo = setData?.setsByCode?.data?.[0];
 
 
-  // Fetch collection data using CollectionManager when set info is available
-  useEffect(() => {
-    if (!hasCollector || !collectorId || !setInfo?.id) {
-      setCollectionMap(new Map());
-      return;
-    }
-
-    const fetchCollectionData = async () => {
-      try {
-        setCollectionLoading(true);
-        const manager = getCollectionManager(apolloClient);
-        const data = await manager.requestSetCollectionData(setInfo.id, collectorId);
-        setCollectionMap(data);
-      } catch (error) {
-        console.error('Failed to fetch collection data:', error);
-        setCollectionMap(new Map());
-      } finally {
-        setCollectionLoading(false);
-      }
-    };
-
-    fetchCollectionData();
-  }, [hasCollector, collectorId, setInfo?.id, apolloClient]);
-
-  // Create collection lookup map for cards
-  const collectionLookup = collectionMap;
 
   // Configure filter state (memoized to prevent recreating on every render)
   const filterConfig = useMemo(() => ({
@@ -333,20 +312,31 @@ export const SetPage: React.FC = () => {
 
   const cards = cardsData?.cardsBySetCode?.data || [];
 
+  // Debug logging for query errors
+  if (cardsError) {
+    console.error('SetPage: cardsError=', cardsError);
+    if (hasCollector) {
+      console.error('SetPage: Error occurred with collectorId=', collectorId);
+    }
+  }
+  if (hasCollector && cards.length > 0) {
+    console.log('SetPage: First card userCollection=', cards[0].userCollection);
+  }
+
   // Stable computation of all card groups (independent of sorting/filtering)
   const allCardGroups = useMemo(() => {
-    if (!setInfo || !cards) {
+    if (!cards || cards.length === 0) {
       return [];
     }
 
     // Calculate total cards per group from ALL cards (unfiltered)
-    const totalCardsPerGroup = groupCardsOptimized(cards, setInfo.groupings);
+    const totalCardsPerGroup = groupCardsOptimized(cards, setInfo?.groupings);
     
     // Convert to CardGroupConfig format for compatibility
     const groupsArray: CardGroupConfig[] = [];
     
     // Get groupings for proper ordering
-    const groupings = setInfo.groupings || [];
+    const groupings = setInfo?.groupings || [];
     
     // Process each group using total cards (before any filtering/sorting)
     for (const [groupId, allGroupCards] of totalCardsPerGroup.entries()) {
@@ -418,8 +408,7 @@ export const SetPage: React.FC = () => {
   // Combine query states
   const { isLoading, firstError } = useQueryStates([
     { loading: cardsLoading, error: cardsError },
-    { loading: setLoading, error: setError },
-    { loading: collectionLoading, error: null }
+    { loading: setLoading, error: setError }
   ]);
 
   if (!setCode) {
@@ -444,21 +433,10 @@ export const SetPage: React.FC = () => {
 
   const setName = setInfo?.name || cards[0]?.setName || setCode.toUpperCase();
   // Note: allArtists and artistMap are now created earlier for initial value normalization
-  
-  // Check if all cards have the same release date
-  const allSameReleaseDate = cards.length > 0 && 
-    cards.every(card => card.releasedAt === cards[0].releasedAt);
 
-  // Check for GraphQL failure
-  if (cardsData?.cardsBySetCode?.__typename === 'FailureResponse') {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
-          {cardsData.cardsBySetCode.status?.message || 'Failed to load cards'}
-        </Alert>
-      </Container>
-    );
-  }
+  // Check if all cards have the same release date
+  const allSameReleaseDate = cards.length > 0 &&
+    cards.every(card => card.releasedAt === cards[0].releasedAt);
 
   return (
     <QueryStateContainer
@@ -536,25 +514,16 @@ export const SetPage: React.FC = () => {
           sort: {
             value: sortBy,
             onChange: handleSortChange,
-            options: [
-              { value: 'collector-asc', label: 'Collector # (Low-High)' },
-              { value: 'collector-desc', label: 'Collector # (High-Low)' },
-              { value: 'name-asc', label: 'Name (A-Z)' },
-              { value: 'name-desc', label: 'Name (Z-A)' },
-              { value: 'rarity', label: 'Rarity' },
-              { value: 'price-desc', label: 'Price (High-Low)' },
-              { value: 'price-asc', label: 'Price (Low-High)' },
-              { 
-                value: 'release-desc', 
-                label: 'Release Date (Newest)',
-                condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
-              },
-              { 
-                value: 'release-asc', 
-                label: 'Release Date (Oldest)',
-                condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
+            options: SET_PAGE_SORT_OPTIONS.map(opt => {
+              // Add conditional display for release date options
+              if (opt.value === 'release-desc' || opt.value === 'release-asc') {
+                return {
+                  ...opt,
+                  condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
+                };
               }
-            ],
+              return opt;
+            }),
             minWidth: 180
           },
           customFilters: cardGroups.filter(g => g.cards.length > 0).length > 1 ? [
@@ -611,7 +580,6 @@ export const SetPage: React.FC = () => {
                     hideReleaseDate: false,
                     hasCollector
                   }}
-                  collectionLookup={collectionLookup}
                 />
               ))
             ) : (
@@ -631,7 +599,6 @@ export const SetPage: React.FC = () => {
                   hideReleaseDate: false,
                   hasCollector
                 }}
-                collectionLookup={collectionLookup}
               />
             )}
           </>
@@ -653,7 +620,6 @@ export const SetPage: React.FC = () => {
                 hideReleaseDate: allSameReleaseDate,
                 hasCollector
               }}
-              collectionLookup={collectionLookup}
             />
           ) : (
             // Grouped display: show cards organized by groups (filter out empty groups)
@@ -675,7 +641,6 @@ export const SetPage: React.FC = () => {
                     hideReleaseDate: allSameReleaseDate,
                     hasCollector
                   }}
-                  collectionLookup={collectionLookup}
                 />
               ))
           )

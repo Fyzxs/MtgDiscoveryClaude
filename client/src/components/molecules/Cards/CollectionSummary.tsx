@@ -7,7 +7,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import type { CollectionItem } from '../../../types/card';
+import type { UserCardData } from '../../../types/card';
 
 // Emoji definitions with tooltips for accessibility
 const EMOJI_TOOLTIPS = {
@@ -29,12 +29,12 @@ const EmojiWithTooltip: React.FC<{ emoji: keyof typeof EMOJI_TOOLTIPS; children:
 );
 
 interface CollectionSummaryProps {
-  collection: CollectionItem[];
+  collectionData?: UserCardData | UserCardData[];
   size?: 'small' | 'medium' | 'large';
 }
 
 export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
-  collection,
+  collectionData,
   size = 'medium'
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -42,11 +42,16 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Calculate totals and group data
-  const totalCards = collection.reduce((sum, item) => sum + item.count, 0);
+  // Convert to array if single item, handle empty data
+  const collection = collectionData
+    ? (Array.isArray(collectionData) ? collectionData : [collectionData])
+    : [];
 
-  if (totalCards === 0) {
-    // Show empty state for cards with 0 collection count
+  // Calculate totals and group data
+  const totalCards = collection.reduce((sum, item) => sum + (item?.count || 0), 0);
+
+  // Show empty state for cards with 0 collection count or no data
+  if (totalCards === 0 || collection.length === 0) {
     return (
       <Box
         sx={{
@@ -74,13 +79,14 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
   // Group by finish type and check for multiple finishes
   const finishGroups = collection.reduce((acc, item) => {
-    if (!acc[item.finish]) acc[item.finish] = [];
-    acc[item.finish].push(item);
+    if (item && item.count > 0) {
+      if (!acc[item.finish]) acc[item.finish] = [];
+      acc[item.finish].push(item);
+    }
     return acc;
-  }, {} as Record<string, CollectionItem[]>);
+  }, {} as Record<string, UserCardData[]>);
 
   const finishTypes = Object.keys(finishGroups);
-  const hasMultipleFinishes = finishTypes.length > 1;
 
   // Group by special type and check for specials
   const specialTypes = new Set(collection.filter(item => item.special !== 'none').map(item => item.special));
@@ -88,7 +94,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
   // Get finish indicators (always show finish types)
   const getFinishIndicators = () => {
-    const indicators: JSX.Element[] = [];
+    const indicators: React.ReactElement[] = [];
     if (finishTypes.includes('nonfoil')) {
       indicators.push(<EmojiWithTooltip key="nonfoil" emoji="📄">📄</EmojiWithTooltip>);
     }
@@ -104,10 +110,10 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   // Get special indicators (always show if any special types exist)
   const getSpecialIndicators = () => {
     if (!hasSpecials) return null;
-    const indicators: JSX.Element[] = [];
+    const indicators: React.ReactElement[] = [];
     // Order: 📜 → ✍️ → 🎨
-    if (specialTypes.has('proof')) {
-      indicators.push(<EmojiWithTooltip key="proof" emoji="📜">📜</EmojiWithTooltip>);
+    if (specialTypes.has('artist_proof')) {
+      indicators.push(<EmojiWithTooltip key="artist_proof" emoji="📜">📜</EmojiWithTooltip>);
     }
     if (specialTypes.has('signed')) {
       indicators.push(<EmojiWithTooltip key="signed" emoji="✍️">✍️</EmojiWithTooltip>);
@@ -120,7 +126,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
   // Get counts for hover state
   const getFinishCounts = () => {
-    const counts: JSX.Element[] = [];
+    const counts: React.ReactElement[] = [];
     if (finishTypes.includes('nonfoil')) {
       const count = finishGroups.nonfoil.reduce((sum, item) => sum + item.count, 0);
       counts.push(
@@ -149,11 +155,11 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   };
 
   const getSpecialCounts = () => {
-    const counts: JSX.Element[] = [];
-    if (specialTypes.has('proof')) {
-      const count = collection.filter(item => item.special === 'proof').reduce((sum, item) => sum + item.count, 0);
+    const counts: React.ReactElement[] = [];
+    if (specialTypes.has('artist_proof')) {
+      const count = collection.filter(item => item && item.special === 'artist_proof').reduce((sum, item) => sum + item.count, 0);
       counts.push(
-        <span key="proof">
+        <span key="artist_proof">
           <EmojiWithTooltip emoji="📜">📜</EmojiWithTooltip>{count}
         </span>
       );
@@ -314,8 +320,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
                 {specialCards.map((card, idx) => (
                   <React.Fragment key={idx}>
                     {idx > 0 && ', '}
-                    <EmojiWithTooltip emoji={card.special === 'proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}>
-                      {card.special === 'proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}
+                    <EmojiWithTooltip emoji={card.special === 'artist_proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}>
+                      {card.special === 'artist_proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}
                     </EmojiWithTooltip> {card.count}
                   </React.Fragment>
                 ))}
@@ -329,14 +335,14 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
           {hasSpecials && (
             <>
               <Box sx={{ borderBottom: 1, borderColor: 'divider', my: 2 }} />
-              {['proof', 'signed', 'altered'].filter(special =>
+              {['artist_proof', 'signed', 'altered'].filter(special =>
                 collection.some(item => item.special === special)
               ).map((special) => {
                 const totalCount = collection
                   .filter(item => item.special === special)
                   .reduce((sum, item) => sum + item.count, 0);
-                const specialIcon = special === 'proof' ? '📜' : special === 'signed' ? '✍️' : '🎨';
-                const specialName = special === 'proof' ? 'Artist Proof' : special === 'signed' ? 'Signed' : 'Altered';
+                const specialIcon = special === 'artist_proof' ? '📜' : special === 'signed' ? '✍️' : '🎨';
+                const specialName = special === 'artist_proof' ? 'Artist Proof' : special === 'signed' ? 'Signed' : 'Altered';
 
                 return (
                   <Typography key={special} variant="body2" sx={{ mb: 1 }}>

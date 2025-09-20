@@ -26,7 +26,7 @@ interface CardOverlayProps {
   tcgplayerUrl?: string;
   isSelected?: boolean;
   context?: CardContext;
-  collectionData?: UserCardData;
+  collectionData?: UserCardData | UserCardData[];
   onCardClick?: (cardId?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
   onSetClick?: (setCode?: string) => void;
@@ -101,13 +101,15 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
 
         {/* Collector Info Row */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <RarityCollectorBadge
-            rarity={rarity}
-            collectorNumber={collectorNumber}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <RarityCollectorBadge
+              rarity={rarity}
+              collectorNumber={collectorNumber}
+            />
+          </Box>
           {context.hasCollector && (
             <CollectionSummary
-              collection={collectionData?.collectedList || []}
+              collectionData={collectionData}
               size="small"
             />
           )}

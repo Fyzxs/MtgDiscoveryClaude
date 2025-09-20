@@ -172,6 +172,11 @@ export const GET_CARDS_BY_NAME = gql`
           }
           producedMana
           attractions
+          userCollection {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
@@ -355,6 +360,11 @@ export const GET_CARDS_BY_SET_CODE = gql`
           }
           producedMana
           attractions
+          userCollection {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
@@ -429,6 +439,11 @@ export const GET_CARDS_BY_IDS = gql`
             tcgplayer
             cardmarket
             cardhoarder
+          }
+          userCollection {
+            finish
+            special
+            count
           }
         }
       }
@@ -613,6 +628,11 @@ export const GET_CARDS_BY_ARTIST = gql`
           }
           producedMana
           attractions
+          userCollection {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
