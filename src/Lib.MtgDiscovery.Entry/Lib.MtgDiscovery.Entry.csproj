@@ -11,4 +11,8 @@
     <ProjectReference Include="..\Lib.Domain.UserCards\Lib.Domain.UserCards.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Queries\Mappers\ArgToItrs\" />
+  </ItemGroup>
+
 </Project>
