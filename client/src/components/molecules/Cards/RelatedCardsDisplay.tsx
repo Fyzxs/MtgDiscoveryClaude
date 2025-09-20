@@ -146,10 +146,12 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
               minItemWidth={280} 
               spacing={1.5}
             >
-              {cards.map((card) => (
-                <MtgCard 
+              {cards.map((card, index) => (
+                <MtgCard
                   key={card.id}
                   card={card}
+                  index={index}
+                  groupId="related"
                   context={{
                     isOnCardPage: true
                   }}

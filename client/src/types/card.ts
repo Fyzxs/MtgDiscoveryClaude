@@ -174,6 +174,9 @@ export interface Card {
   preview?: Preview | null;
   producedMana?: string[] | null;
   attractions?: string[] | null;
+  // Collection data will be embedded when collector ID is provided to GraphQL query
+  // Empty array means no collection
+  userCollection?: UserCardData | UserCardData[];
 }
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'mythic' | 'special' | 'bonus';
@@ -191,15 +194,8 @@ export interface CardContext {
   hasCollector?: boolean;
 }
 
-export interface CollectionItem {
+export interface UserCardData {
   finish: 'nonfoil' | 'foil' | 'etched';
   special: 'none' | 'artist_proof' | 'signed' | 'altered';
   count: number;
-}
-
-export interface UserCardData {
-  userId: string;
-  cardId: string;
-  setId: string;
-  collectedList: CollectionItem[];
 }

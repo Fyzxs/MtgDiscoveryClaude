@@ -9,7 +9,6 @@ import { ResponsiveGridAutoFit } from '../../atoms/layouts/ResponsiveGrid';
 import { GET_CARDS_BY_NAME } from '../../../graphql/queries/cards';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
-import { useBulkCollectionData } from '../../../hooks/useCollectionData';
 import type { Card } from '../../../types/card';
 
 interface AllPrintingsDisplayProps {
@@ -35,10 +34,11 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   const { hasCollector, collectorId } = useCollectorParam();
 
   const { loading, error, data } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
-    variables: { 
-      cardName: { 
-        cardName: cardName 
-      } 
+    variables: {
+      cardName: {
+        cardName: cardName,
+        userId: collectorId || undefined
+      }
     },
     skip: !cardName,
     errorPolicy: 'all'
@@ -72,13 +72,6 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
       return dateA - dateB; // Oldest first
     });
 
-  // Fetch collection data for other printings if we have a collector
-  const otherCardIds = otherCards.map(card => card.id);
-  const { getCardData: getCollectionData, loading: collectionLoading } = useBulkCollectionData({
-    cardIds: otherCardIds,
-    userId: collectorId || '',
-    enabled: hasCollector && otherCardIds.length > 0 && !!collectorId && expanded
-  });
 
   const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
 
@@ -114,15 +107,18 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
           spacing={1.5}
           sx={{ mt: 1 }}
         >
-          {otherCards.map((card) => (
+          {otherCards.map((card, index) => (
             <MtgCard
               key={card.id}
               card={card}
+              index={index}
+              groupId="all-printings"
               context={{
                 isOnCardPage: true,
-                hasCollector
+                hasCollector,
+                showCollectorInfo: hasCollector
               }}
-              collectionData={hasCollector ? getCollectionData(card.id) || undefined : undefined}
+              collectionData={card.userCollection}
             />
           ))}
         </ResponsiveGridAutoFit>
