@@ -1,12 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Commands.Mappers;
-using Lib.MtgDiscovery.Entry.Commands.Validators;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.Shared.Abstractions.Actions.Validators;
+using Lib.MtgDiscovery.Entry.Commands.UserCards;
+using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -15,40 +11,19 @@ namespace Lib.MtgDiscovery.Entry.Commands;
 
 internal sealed class UserCardsEntryService : IUserCardsEntryService
 {
-    private readonly IUserCardsDomainService _userCardsDomainService;
-    private readonly IAddCardToCollectionArgEntityValidator _addCardToCollectionArgEntityValidator;
-    private readonly IAddUserCardArgToItrMapper _addUserCardArgToItrMapper;
-    private readonly IUserCardOufToOutMapper _userCardOufToOutMapper;
+    private readonly IAddCardToCollectionEntryService _addCardToCollection;
 
     public UserCardsEntryService(ILogger logger) : this(
-        new UserCardsDomainService(logger),
-        new AddCardToCollectionArgEntityValidatorContainer(),
-        new AddUserCardArgToItrMapper(),
-        new UserCardOufToOutMapper())
+        new AddCardToCollectionEntryService(logger))
     { }
 
-    private UserCardsEntryService(
-        IUserCardsDomainService userCardsDomainService,
-        IAddCardToCollectionArgEntityValidator addCardToCollectionArgEntityValidator,
-        IAddUserCardArgToItrMapper addUserCardArgToItrMapper,
-        IUserCardOufToOutMapper userCardOufToOutMapper)
+    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection)
     {
-        _userCardsDomainService = userCardsDomainService;
-        _addCardToCollectionArgEntityValidator = addCardToCollectionArgEntityValidator;
-        _addUserCardArgToItrMapper = addUserCardArgToItrMapper;
-        _userCardOufToOutMapper = userCardOufToOutMapper;
+        _addCardToCollection = addCardToCollection;
     }
 
     public async Task<IOperationResponse<UserCardOutEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args)
     {
-        IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(args).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<UserCardOutEntity>(validatorResult.FailureStatus().OuterException);
-
-        IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(authUser, args).ConfigureAwait(false);
-        IOperationResponse<IUserCardOufEntity> opResponse = await _userCardsDomainService.AddUserCardAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<UserCardOutEntity>(opResponse.OuterException);
-
-        UserCardOutEntity outEntity = await _userCardOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<UserCardOutEntity>(outEntity);
+        return await _addCardToCollection.Execute(new AddCardToCollectionArgsEntity { AuthUser = authUser, AddUserCard = args }).ConfigureAwait(false);
     }
 }
