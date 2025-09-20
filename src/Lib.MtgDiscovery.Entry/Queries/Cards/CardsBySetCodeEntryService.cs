@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
+using Lib.MtgDiscovery.Entry.Queries.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -18,24 +19,28 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
     private readonly ISetCodeArgEntityValidator _setCodeArgEntityValidator;
     private readonly ISetCodeArgToItrMapper _setCodeArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
+    private readonly IUserCardEnrichment _userCardEnrichment;
 
     public CardsBySetCodeEntryService(ILogger logger) : this(
         new CardDomainService(logger),
         new SetCodeArgEntityValidatorContainer(),
         new SetCodeArgToItrMapper(),
-        new CollectionCardItemOufToOutMapper())
+        new CollectionCardItemOufToOutMapper(),
+        new UserCardEnrichment(logger))
     { }
 
     private CardsBySetCodeEntryService(
         ICardDomainService cardDomainService,
         ISetCodeArgEntityValidator setCodeArgEntityValidator,
         ISetCodeArgToItrMapper setCodeArgToItrMapper,
-        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper)
+        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
+        IUserCardEnrichment userCardEnrichment)
     {
         _cardDomainService = cardDomainService;
         _setCodeArgEntityValidator = setCodeArgEntityValidator;
         _setCodeArgToItrMapper = setCodeArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
+        _userCardEnrichment = userCardEnrichment;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ISetCodeArgEntity setCode)
@@ -48,6 +53,9 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        await _userCardEnrichment.Enrich(outEntities, setCode).ConfigureAwait(false);
+
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }
 }
