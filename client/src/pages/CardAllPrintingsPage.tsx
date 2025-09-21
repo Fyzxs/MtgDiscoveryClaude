@@ -16,7 +16,13 @@ import { GET_CARDS_BY_NAME } from '../graphql/queries/cards';
 import { CardGrid } from '../components/organisms/CardGrid';
 import { useCardFiltering } from '../hooks/useCardFiltering';
 import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel';
-import { CARD_DETAIL_SORT_OPTIONS } from '../config/cardSortOptions';
+import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS } from '../config/cardSortOptions';
+import { CollectorFiltersSection } from '../components/molecules/shared/CollectorFiltersSection';
+import {
+  getCollectionCountOptions,
+  getSignedCardsOptions,
+  createCardFilterFunctions
+} from '../utils/cardUtils';
 import { handleGraphQLError, globalLoadingManager } from '../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../components/ErrorBoundaries';
 import { useCollectorParam } from '../hooks/useCollectorParam';
@@ -48,6 +54,15 @@ interface CardData {
       small: string;
     };
   }>;
+  userCollection?: Array<{
+    finish: string;
+    special: string;
+    count: number;
+  }> | {
+    finish: string;
+    special: string;
+    count: number;
+  };
 }
 
 interface CardsResponse {
@@ -138,8 +153,9 @@ export const CardAllPrintingsPage: React.FC = () => {
     hasMultipleArtists,
     hasMultipleRarities
   } = useCardFiltering(cards, {
-    defaultSort: 'release-desc',
-    includeSets: false
+    defaultSort: hasCollector ? 'collection-desc' : 'release-desc',
+    includeSets: false,
+    includeCollectorFilters: hasCollector
   });
 
   if (loading) {
@@ -241,9 +257,36 @@ export const CardAllPrintingsPage: React.FC = () => {
         filteredCount={filteredCards.length}
         totalCount={totalCards}
         showSearch={false}
-        sortOptions={CARD_DETAIL_SORT_OPTIONS}
+        sortOptions={hasCollector ? CARD_DETAIL_COLLECTOR_SORT_OPTIONS : CARD_DETAIL_SORT_OPTIONS}
         centerControls={true}
       />
+
+      {/* Collector-specific filters */}
+      {hasCollector && (
+        <CollectorFiltersSection
+          config={{
+            collectionCounts: {
+              key: 'collectionCounts',
+              value: filters.collectionCounts || [],
+              onChange: (value: string[]) => updateFilter('collectionCounts', value),
+              options: getCollectionCountOptions(),
+              label: 'Collection Count',
+              placeholder: 'All Counts',
+              minWidth: 180
+            },
+            signedCards: {
+              key: 'signedCards',
+              value: filters.signedCards || [],
+              onChange: (value: string[]) => updateFilter('signedCards', value),
+              options: getSignedCardsOptions(),
+              label: 'Signed Cards',
+              placeholder: 'All Cards',
+              minWidth: 150
+            }
+          }}
+          sx={{ mt: 2, mb: 3, mx: 'auto', maxWidth: '800px' }}
+        />
+      )}
 
       {/* Results Summary */}
       <ResultsSummary 

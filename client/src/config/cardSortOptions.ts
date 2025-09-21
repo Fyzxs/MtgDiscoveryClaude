@@ -212,6 +212,20 @@ export const CARD_DETAIL_SORT_OPTIONS = [
   ALL_SORT_OPTIONS['price-asc']
 ];
 
+// Card detail page sort options with collection count (for collector view)
+export const CARD_DETAIL_COLLECTOR_SORT_OPTIONS = [
+  ALL_SORT_OPTIONS['collection-desc'],
+  ALL_SORT_OPTIONS['collection-asc'],
+  ALL_SORT_OPTIONS['release-desc'],
+  ALL_SORT_OPTIONS['release-asc'],
+  ALL_SORT_OPTIONS['set-asc'],
+  ALL_SORT_OPTIONS['set-desc'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
+  ALL_SORT_OPTIONS['price-desc'],
+  ALL_SORT_OPTIONS['price-asc']
+];
+
 // All sets page sort options (if needed)
 export const ALL_SETS_SORT_OPTIONS = [
   ALL_SORT_OPTIONS['name-asc'],
