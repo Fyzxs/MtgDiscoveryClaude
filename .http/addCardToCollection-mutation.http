@@ -23,20 +23,25 @@ mutation AddSingleCard(
     args: $args
   ) {
     __typename
-    ... on SuccessUserCardCollectionResponse {
+    ... on SuccessCardsResponse {
       data {
-        userId
-        cardId
-        setId
-        collectedList {
+        id
+        name
+        manaCost
+        typeLine
+        oracleText
+        rarity
+        setName
+        artist
+        imageUris {
+          normal
+          large
+        }
+        userCollection {
           finish
           special
           count
         }
-      }
-      status {
-        message
-        statusCode
       }
     }
     ... on FailureResponse {
@@ -52,7 +57,7 @@ mutation AddSingleCard(
     "args": {
       "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
       "setId": "neo",
-      "collectedItem": {
+      "userCardDetails": {
         "finish": "nonfoil",
         "special": "proof",
         "count": 1
@@ -71,7 +76,7 @@ mutation AddFoilCard(
   $args: AddCardToCollectionInput!
 ) {
   addCardToCollectionAsync(
-    args: $args
+    args: $11111
   ) {
     __typename
     ... on SuccessUserCardCollectionResponse {

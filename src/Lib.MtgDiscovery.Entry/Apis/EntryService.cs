@@ -70,7 +70,7 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<UserRegistrationOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => _userEntryService.RegisterUserAsync(authUser);
 
-    public Task<IOperationResponse<UserCardOutEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
+    public Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
 
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => _userCardsQueryEntryService.UserCardAsync(cardArgs);
 
