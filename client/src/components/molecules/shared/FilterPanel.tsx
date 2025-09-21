@@ -10,9 +10,10 @@ import {
 import { DebouncedSearchInput } from '../../atoms/shared/DebouncedSearchInput';
 import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
 import { SortDropdown } from '../../atoms/shared/SortDropdown';
-import type { 
-  FilterPanelConfig, 
-  FilterLayout 
+import { CollectorFiltersSection } from './CollectorFiltersSection';
+import type {
+  FilterPanelConfig,
+  FilterLayout
 } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';
 
@@ -36,7 +37,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
     multiSelects = [],
     autocompletes = [],
     sort,
-    customFilters = []
+    customFilters = [],
+    collectorFilters
   } = config;
 
   // For horizontal layout using Grid
@@ -174,6 +176,14 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
             </Grid>
           ))}
         </Grid>
+
+        {/* Collector Filters Section */}
+        {collectorFilters && (
+          <CollectorFiltersSection
+            config={collectorFilters}
+            sx={{ mt: 3 }}
+          />
+        )}
       </Box>
     );
   }
@@ -280,6 +290,14 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
           {/* Custom Filter Components */}
           {customFilters}
         </Stack>
+
+        {/* Collector Filters Section */}
+        {collectorFilters && (
+          <CollectorFiltersSection
+            config={collectorFilters}
+            sx={{ mt: 2 }}
+          />
+        )}
       </Stack>
     </Box>
   );

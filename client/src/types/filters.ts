@@ -87,6 +87,15 @@ export interface SortConfig {
 }
 
 /**
+ * Collector-specific filter section configuration
+ */
+export interface CollectorFiltersConfig {
+  collectionCounts?: MultiSelectConfig;
+  signedCards?: MultiSelectConfig;
+  finishes?: MultiSelectConfig;
+}
+
+/**
  * Complete filter panel configuration
  */
 export interface FilterPanelConfig {
@@ -95,6 +104,7 @@ export interface FilterPanelConfig {
   autocompletes?: AutocompleteConfig[];
   sort?: SortConfig;
   customFilters?: React.ReactNode[];
+  collectorFilters?: CollectorFiltersConfig;
 }
 
 /**
