@@ -15,14 +15,21 @@ import { useUrlState } from '../hooks/useUrlState';
 import { useFilterState, commonFilters } from '../hooks/useFilterState';
 import { QueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
-import { RARITY_ORDER, ARTIST_PAGE_SORT_OPTIONS } from '../config/cardSortOptions';
-import { getUniqueRarities, getUniqueSets } from '../utils/cardUtils';
+import { RARITY_ORDER, ARTIST_PAGE_SORT_OPTIONS, ARTIST_PAGE_COLLECTOR_SORT_OPTIONS } from '../config/cardSortOptions';
+import {
+  getUniqueRarities,
+  getUniqueSets,
+  getCollectionCountOptions,
+  getSignedCardsOptions,
+  createCardFilterFunctions
+} from '../utils/cardUtils';
 import { BackToTopFab } from '../components/molecules/shared/BackToTopFab';
 import {
   SectionErrorBoundary,
   FilterErrorBoundary,
   CardGridErrorBoundary
 } from '../components/ErrorBoundaries';
+import { CollectorFiltersSection } from '../components/molecules/shared/CollectorFiltersSection';
 import { useCollectorParam } from '../hooks/useCollectorParam';
 import type { Card } from '../types/card';
 
@@ -98,7 +105,10 @@ export const ArtistCardsPage: React.FC = () => {
     search: { default: '' },
     rarities: { default: [] },
     sets: { default: [] },
-    sort: { default: 'release-desc' }
+    sort: { default: 'release-desc' },
+    // Collector-specific filters
+    counts: { default: [] },
+    signed: { default: [] }
   };
 
   // Get initial values from URL only once on mount
@@ -119,6 +129,7 @@ export const ArtistCardsPage: React.FC = () => {
   const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsByArtistName?.data || []), [cardsData]);
   const allSetObjects = useMemo(() => getUniqueSets(cardsData?.cardsByArtistName?.data || []), [cardsData]);
   const allSets = useMemo(() => allSetObjects.map(set => set.value), [allSetObjects]);
+
   
   // Create a map for set code to display label
   const setLabelMap = useMemo(() => {
@@ -128,9 +139,12 @@ export const ArtistCardsPage: React.FC = () => {
   }, [allSetObjects]);
 
   // Configure filter state (memoized to prevent recreating on every render)
-  const filterConfig = useMemo(() => ({
-    searchFields: ['name'] as (keyof Card)[],
-    sortOptions: {
+  const filterConfig = useMemo(() => {
+    const cardFilterFunctions = createCardFilterFunctions<Card>();
+
+    return {
+      searchFields: ['name'] as (keyof Card)[],
+      sortOptions: {
       'release-desc': (a: Card, b: Card) => {
         if (!a.releasedAt && !b.releasedAt) return 0;
         if (!a.releasedAt) return 1;
@@ -158,15 +172,29 @@ export const ArtistCardsPage: React.FC = () => {
         const priceB = parseFloat(b.prices?.usd || '0');
         return priceA - priceB;
       },
-      'set-asc': (a: Card, b: Card) => (a.setName || '').localeCompare(b.setName || '')
+      'set-asc': (a: Card, b: Card) => (a.setName || '').localeCompare(b.setName || ''),
+      // Collection count sorting (only available for collector views)
+      'collection-asc': (a: Card, b: Card) => {
+        const getTotal = (card: Card) => {
+          if (!card.userCollection) return 0;
+          const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+          return collectionArray.reduce((sum, item) => sum + item.count, 0);
+        };
+        return getTotal(a) - getTotal(b);
+      },
+      'collection-desc': (a: Card, b: Card) => {
+        const getTotal = (card: Card) => {
+          if (!card.userCollection) return 0;
+          const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+          return collectionArray.reduce((sum, item) => sum + item.count, 0);
+        };
+        return getTotal(b) - getTotal(a);
+      }
     },
-    filterFunctions: {
-      rarities: commonFilters.multiSelect<Card>('rarity'),
-      sets: commonFilters.multiSelect<Card>('setCode'),
-      showDigital: (card: Card, show: boolean) => show || !card.digital
-    },
+    filterFunctions: cardFilterFunctions,
     defaultSort: 'release-desc'
-  }), []);
+    };
+  }, []);
 
   const {
     searchTerm,
@@ -185,7 +213,10 @@ export const ArtistCardsPage: React.FC = () => {
       filters: {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         sets: Array.isArray(initialValues.sets) ? initialValues.sets : (initialValues.sets ? [initialValues.sets] : []),
-        showDigital: false
+        showDigital: false,
+        // Collector-specific filters
+        collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
+        signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
       }
     }
   );
@@ -212,12 +243,17 @@ export const ArtistCardsPage: React.FC = () => {
     {
       rarities: selectedRarities,
       sets: selectedSets,
-      sort: sortBy
+      sort: sortBy,
+      // Collector-specific filters
+      counts: filters.collectionCounts || [],
+      signed: filters.signedCards || []
     },
     {
       rarities: { default: [] },
       sets: { default: [] },
-      sort: { default: 'release-desc' }
+      sort: { default: 'release-desc' },
+      counts: { default: [] },
+      signed: { default: [] }
     },
     {
       debounceMs: 0 // No debounce for dropdown/sort changes
@@ -330,13 +366,41 @@ export const ArtistCardsPage: React.FC = () => {
                 sort: {
                   value: sortBy,
                   onChange: handleSortChange,
-                  options: ARTIST_PAGE_SORT_OPTIONS,
+                  options: hasCollector ? ARTIST_PAGE_COLLECTOR_SORT_OPTIONS : ARTIST_PAGE_SORT_OPTIONS,
                   minWidth: 180
                 }
               }}
               layout="compact"
               sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}
             />
+
+            {/* Collector-specific filters */}
+            {hasCollector && (
+              <CollectorFiltersSection
+                config={{
+                  collectionCounts: {
+                    key: 'collectionCounts',
+                    value: filters.collectionCounts || [],
+                    onChange: (value: string[]) => updateFilter('collectionCounts', value),
+                    options: getCollectionCountOptions(),
+                    label: 'Collection Count',
+                    placeholder: 'All Counts',
+                    minWidth: 180
+                  },
+                  signedCards: {
+                    key: 'signedCards',
+                    value: filters.signedCards || [],
+                    onChange: (value: string[]) => updateFilter('signedCards', value),
+                    options: getSignedCardsOptions(),
+                    label: 'Signed Cards',
+                    placeholder: 'All Cards',
+                    minWidth: 150
+                  }
+                }}
+                title="Collection Filters"
+                sx={{ mt: 2 }}
+              />
+            )}
           </FilterErrorBoundary>
         )}
 
@@ -371,6 +435,10 @@ export const ArtistCardsPage: React.FC = () => {
               setSearchTerm('');
               updateFilter('rarities', []);
               updateFilter('sets', []);
+              if (hasCollector) {
+                updateFilter('collectionCounts', []);
+                updateFilter('signedCards', []);
+              }
             }}
           />
         )}

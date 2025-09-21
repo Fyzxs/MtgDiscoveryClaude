@@ -24,7 +24,6 @@ import { RARITY_ORDER, parseCollectorNumber, SET_PAGE_SORT_OPTIONS, SET_PAGE_COL
 import {
   getUniqueArtists,
   getUniqueRarities,
-  getUniqueFinishes,
   getCollectionCountOptions,
   getSignedCardsOptions,
   createCardFilterFunctions
@@ -103,8 +102,7 @@ export const SetPage: React.FC = () => {
     sort: { default: 'collector-asc' },
     // Collector-specific filters
     counts: { default: [] },
-    signed: { default: [] },
-    finishes: { default: [] }
+    signed: { default: [] }
   };
 
   // Get initial values from URL only once on mount
@@ -124,11 +122,6 @@ export const SetPage: React.FC = () => {
   const allArtists = useMemo(() => getUniqueArtists(cardsData?.cardsBySetCode?.data || []), [cardsData]);
   const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsBySetCode?.data || []), [cardsData]);
 
-  // Get unique finishes from user collection data (only available when hasCollector is true)
-  const allFinishes = useMemo(() => {
-    if (!hasCollector) return [];
-    return getUniqueFinishes(cardsData?.cardsBySetCode?.data || []);
-  }, [cardsData, hasCollector]);
 
   // Create artist map for normalization
   const artistMap = useMemo(() => {
@@ -250,8 +243,7 @@ export const SetPage: React.FC = () => {
         showDigital: false,
         // Collector-specific filters
         collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
-        signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : []),
-        finishes: Array.isArray(initialValues.finishes) ? initialValues.finishes : (initialValues.finishes ? [initialValues.finishes] : [])
+        signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
       }
     }
   );
@@ -290,12 +282,11 @@ export const SetPage: React.FC = () => {
       showGroups: filters.showGroups !== true ? filters.showGroups : null,
       // Collector-specific filters (only persist if hasCollector is true)
       counts: (hasCollector && filters.collectionCounts?.length > 0) ? filters.collectionCounts : null,
-      signed: (hasCollector && filters.signedCards?.length > 0) ? filters.signedCards : null,
-      finishes: (hasCollector && filters.finishes?.length > 0) ? filters.finishes : null
+      signed: (hasCollector && filters.signedCards?.length > 0) ? filters.signedCards : null
     };
 
     updateUrl(urlUpdates);
-  }, [searchTerm, sortBy, filters.rarities, filters.artists, filters.groups, filters.showGroups, filters.collectionCounts, filters.signedCards, filters.finishes, hasCollector, updateUrl]);
+  }, [searchTerm, sortBy, filters.rarities, filters.artists, filters.groups, filters.showGroups, filters.collectionCounts, filters.signedCards, hasCollector, updateUrl]);
   
   // Normalize selected artists to match the case in our data
   const selectedArtists = useMemo(() => {
