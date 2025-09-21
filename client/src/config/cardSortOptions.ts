@@ -50,6 +50,15 @@ export interface CardLike {
   releasedAt?: string;
   setName?: string;
   setCode?: string;
+  userCollection?: Array<{
+    finish: string;
+    special: string;
+    count: number;
+  }> | {
+    finish: string;
+    special: string;
+    count: number;
+  };
 }
 
 export type SortOption<T = CardLike> = (a: T, b: T) => number;
@@ -96,6 +105,22 @@ export const createCardSortOptions = <T extends CardLike>(): Record<string, Sort
     const setA = a.setName || '';
     const setB = b.setName || '';
     return setB.localeCompare(setA);
+  },
+  'collection-asc': (a, b) => {
+    const getTotal = (card: CardLike) => {
+      if (!card.userCollection) return 0;
+      const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+      return collectionArray.reduce((sum, item) => sum + item.count, 0);
+    };
+    return getTotal(a) - getTotal(b);
+  },
+  'collection-desc': (a, b) => {
+    const getTotal = (card: CardLike) => {
+      if (!card.userCollection) return 0;
+      const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+      return collectionArray.reduce((sum, item) => sum + item.count, 0);
+    };
+    return getTotal(b) - getTotal(a);
   }
 });
 
@@ -112,7 +137,9 @@ export const ALL_SORT_OPTIONS = {
   'release-desc': { value: 'release-desc', label: 'Release Date (Newest)' },
   'release-asc': { value: 'release-asc', label: 'Release Date (Oldest)' },
   'set-asc': { value: 'set-asc', label: 'Set Name (A-Z)' },
-  'set-desc': { value: 'set-desc', label: 'Set Name (Z-A)' }
+  'set-desc': { value: 'set-desc', label: 'Set Name (Z-A)' },
+  'collection-asc': { value: 'collection-asc', label: 'Collection Count (Low-High)' },
+  'collection-desc': { value: 'collection-desc', label: 'Collection Count (High-Low)' }
 };
 
 // Page-specific sort options
@@ -129,8 +156,39 @@ export const SET_PAGE_SORT_OPTIONS = [
   ALL_SORT_OPTIONS['release-asc']
 ];
 
+// Set page sort options with collection count (for collector view)
+export const SET_PAGE_COLLECTOR_SORT_OPTIONS = [
+  ALL_SORT_OPTIONS['collection-desc'],
+  ALL_SORT_OPTIONS['collection-asc'],
+  ALL_SORT_OPTIONS['collector-asc'],
+  ALL_SORT_OPTIONS['collector-desc'],
+  ALL_SORT_OPTIONS['name-asc'],
+  ALL_SORT_OPTIONS['name-desc'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
+  ALL_SORT_OPTIONS['price-desc'],
+  ALL_SORT_OPTIONS['price-asc'],
+  ALL_SORT_OPTIONS['release-desc'],
+  ALL_SORT_OPTIONS['release-asc']
+];
+
 // Artist page sort options
 export const ARTIST_PAGE_SORT_OPTIONS = [
+  ALL_SORT_OPTIONS['release-desc'],
+  ALL_SORT_OPTIONS['release-asc'],
+  ALL_SORT_OPTIONS['name-asc'],
+  ALL_SORT_OPTIONS['name-desc'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
+  ALL_SORT_OPTIONS['price-desc'],
+  ALL_SORT_OPTIONS['price-asc'],
+  ALL_SORT_OPTIONS['set-asc']
+];
+
+// Artist page sort options with collection count (for collector view)
+export const ARTIST_PAGE_COLLECTOR_SORT_OPTIONS = [
+  ALL_SORT_OPTIONS['collection-desc'],
+  ALL_SORT_OPTIONS['collection-asc'],
   ALL_SORT_OPTIONS['release-desc'],
   ALL_SORT_OPTIONS['release-asc'],
   ALL_SORT_OPTIONS['name-asc'],
