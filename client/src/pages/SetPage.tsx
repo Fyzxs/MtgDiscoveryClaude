@@ -24,6 +24,7 @@ import { RARITY_ORDER, parseCollectorNumber, SET_PAGE_SORT_OPTIONS, SET_PAGE_COL
 import {
   getUniqueArtists,
   getUniqueRarities,
+  getUniqueFinishes,
   getCollectionCountOptions,
   getSignedCardsOptions,
   createCardFilterFunctions
@@ -118,9 +119,10 @@ export const SetPage: React.FC = () => {
     skip: !setCode
   });
   
-  // Get unique artists and rarities from data
+  // Get unique artists, rarities, and finishes from data
   const allArtists = useMemo(() => getUniqueArtists(cardsData?.cardsBySetCode?.data || []), [cardsData]);
   const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsBySetCode?.data || []), [cardsData]);
+  const allFinishes = useMemo(() => getUniqueFinishes(cardsData?.cardsBySetCode?.data || []), [cardsData]);
 
 
   // Create artist map for normalization
