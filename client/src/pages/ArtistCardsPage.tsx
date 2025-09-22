@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from 'react';
-import { useQuery } from '@apollo/client/react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Container,
@@ -7,7 +6,6 @@ import {
   Box,
   Alert
 } from '@mui/material';
-import { GET_CARDS_BY_ARTIST } from '../graphql/queries/cards';
 import { CardGrid } from '../components/organisms/CardGrid';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
@@ -31,6 +29,7 @@ import {
 } from '../components/ErrorBoundaries';
 import { CollectorFiltersSection } from '../components/molecules/shared/CollectorFiltersSection';
 import { useCollectorParam } from '../hooks/useCollectorParam';
+import { useCardCache } from '../hooks/useCardCache';
 import type { Card } from '../types/card';
 
 interface CardsResponse {
@@ -115,15 +114,43 @@ export const ArtistCardsPage: React.FC = () => {
   const { getInitialValues } = useUrlState({}, urlStateConfig);
   const [initialValues] = useState(() => getInitialValues());
 
-  const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_ARTIST, {
-    variables: {
-      artistName: {
-        artistName: decodedArtistName,
-        userId: collectorId || undefined
+  // Use card cache for fetching cards by artist
+  const { fetchCardsByArtist } = useCardCache();
+  const [cardsLoading, setCardsLoading] = useState(true);
+  const [cardsError, setCardsError] = useState<Error | null>(null);
+  const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
+
+  useEffect(() => {
+    if (!artistName) return;
+
+    const loadCards = async () => {
+      setCardsLoading(true);
+      setCardsError(null);
+      try {
+        const cards = await fetchCardsByArtist(decodedArtistName);
+        setCardsData({
+          cardsByArtistName: {
+            __typename: 'SuccessCardsByArtistResponse',
+            data: cards
+          }
+        });
+      } catch (err) {
+        setCardsError(err as Error);
+        setCardsData({
+          cardsByArtistName: {
+            __typename: 'FailureResponse',
+            status: {
+              message: (err as Error).message
+            }
+          }
+        });
+      } finally {
+        setCardsLoading(false);
       }
-    },
-    skip: !artistName
-  });
+    };
+
+    loadCards();
+  }, [artistName, decodedArtistName, fetchCardsByArtist]);
   
   // Get unique rarities and sets from data
   const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsByArtistName?.data || []), [cardsData]);
