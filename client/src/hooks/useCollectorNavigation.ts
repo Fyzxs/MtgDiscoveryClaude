@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCollectorParam } from './useCollectorParam';
 
 interface NavigationHelpers {
@@ -34,6 +35,7 @@ interface NavigationHelpers {
  */
 export const useCollectorNavigation = (): NavigationHelpers => {
   const collectorParam = useCollectorParam();
+  const navigate = useNavigate();
 
   const buildUrlWithCollector = useCallback((path: string, additionalParams?: Record<string, string>): string => {
     const url = new URL(path, window.location.origin);
@@ -55,8 +57,9 @@ export const useCollectorNavigation = (): NavigationHelpers => {
 
   const navigateWithCollector = useCallback((path: string, additionalParams?: Record<string, string>): void => {
     const fullUrl = buildUrlWithCollector(path, additionalParams);
-    window.location.href = fullUrl;
-  }, [buildUrlWithCollector]);
+    // Use React Router navigation instead of window.location to preserve SPA behavior and cache
+    navigate(fullUrl);
+  }, [buildUrlWithCollector, navigate]);
 
   const createCollectorClickHandler = useCallback((path: string, additionalParams?: Record<string, string>) => {
     return (e: React.MouseEvent) => {

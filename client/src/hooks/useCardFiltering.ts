@@ -55,6 +55,33 @@ export function useCardFiltering<T extends CardLike>(
     defaultSort
   }), [searchFields, defaultSort]);
 
+  // Memoize initial state to prevent infinite re-renders
+  const initialState = useMemo(() => ({
+    search: initialSearch,
+    sort: initialSort || defaultSort,
+    filters: {
+      rarities: initialFilters.rarities || [],
+      artists: initialFilters.artists || [],
+      sets: initialFilters.sets || [],
+      showDigital: initialFilters.showDigital || false,
+      ...(includeCollectorFilters ? {
+        collectionCounts: initialFilters.collectionCounts || [],
+        signedCards: initialFilters.signedCards || []
+      } : {})
+    }
+  }), [
+    initialSearch,
+    initialSort,
+    defaultSort,
+    initialFilters.rarities,
+    initialFilters.artists,
+    initialFilters.sets,
+    initialFilters.showDigital,
+    initialFilters.collectionCounts,
+    initialFilters.signedCards,
+    includeCollectorFilters
+  ]);
+
   // Use the filter state hook
   const {
     searchTerm,
@@ -67,20 +94,7 @@ export function useCardFiltering<T extends CardLike>(
   } = useFilterState(
     data,
     filterConfig,
-    {
-      search: initialSearch,
-      sort: initialSort || defaultSort,
-      filters: {
-        rarities: initialFilters.rarities || [],
-        artists: initialFilters.artists || [],
-        sets: initialFilters.sets || [],
-        showDigital: initialFilters.showDigital || false,
-        ...(includeCollectorFilters ? {
-          collectionCounts: initialFilters.collectionCounts || [],
-          signedCards: initialFilters.signedCards || []
-        } : {})
-      }
-    }
+    initialState
   );
 
   return {

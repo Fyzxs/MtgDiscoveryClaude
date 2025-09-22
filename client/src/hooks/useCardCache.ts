@@ -5,7 +5,8 @@ import { cardCacheManager } from '../services/CardCacheManager';
 import {
   GET_CARDS_BY_SET_CODE,
   GET_CARDS_BY_NAME,
-  GET_CARDS_BY_IDS
+  GET_CARDS_BY_IDS,
+  GET_CARDS_BY_ARTIST
 } from '../graphql/queries/cards';
 import type { Card } from '../types/card';
 import type { CollectorCardData } from '../services/CardCacheManager';
@@ -30,7 +31,7 @@ export function useCardCache() {
           variables: {
             ids: {
               ids: [cardId],
-              ...(hasCollector && collectorId ? { collectorId } : {})
+              ...(hasCollector && collectorId ? { userId: collectorId } : {})
             }
           }
         });
@@ -57,7 +58,7 @@ export function useCardCache() {
           variables: {
             ids: {
               ids: missingIds,
-              ...(hasCollector && collectorId ? { collectorId } : {})
+              ...(hasCollector && collectorId ? { userId: collectorId } : {})
             }
           }
         });
@@ -80,7 +81,7 @@ export function useCardCache() {
           variables: {
             setCode: {
               setCode,
-              ...(hasCollector && collectorId ? { collectorId } : {})
+              ...(hasCollector && collectorId ? { userId: collectorId } : {})
             }
           }
         });
@@ -99,32 +100,46 @@ export function useCardCache() {
    * Fetch cards by name through the cache
    */
   const fetchCardsByName = useCallback(async (cardName: string): Promise<Card[]> => {
-    // For name searches, we don't cache by set, just return all matching cards
-    const response = await apolloClient.query({
-      query: GET_CARDS_BY_NAME,
-      variables: {
-        cardName: {
-          cardName,
-          ...(hasCollector && collectorId ? { collectorId } : {})
-        }
-      }
-    });
+    return cardCacheManager.fetchCardsByName(
+      cardName,
+      async () => {
+        const response = await apolloClient.query({
+          query: GET_CARDS_BY_NAME,
+          variables: {
+            cardName: {
+              cardName,
+              ...(hasCollector && collectorId ? { userId: collectorId } : {})
+            }
+          }
+        });
 
-    const cards = (response.data as any)?.cardsByName?.data || [];
-
-    // For name searches, we cache each card individually using the fetch pattern
-    // This ensures they're available for future individual card fetches
-    const cachePromises = cards.map((card: Card) =>
-      cardCacheManager.fetchCard(
-        card.id,
-        async () => card,
-        hasCollector ? collectorId : null
-      )
+        return (response.data as any)?.cardsByName?.data || [];
+      },
+      hasCollector ? collectorId : null
     );
+  }, [apolloClient, hasCollector, collectorId]);
 
-    await Promise.all(cachePromises);
+  /**
+   * Fetch cards by artist through the cache
+   */
+  const fetchCardsByArtist = useCallback(async (artistName: string): Promise<Card[]> => {
+    return cardCacheManager.fetchCardsByArtist(
+      artistName,
+      async () => {
+        const response = await apolloClient.query({
+          query: GET_CARDS_BY_ARTIST,
+          variables: {
+            artistName: {
+              artistName,
+              ...(hasCollector && collectorId ? { userId: collectorId } : {})
+            }
+          }
+        });
 
-    return cards;
+        return (response.data as any)?.cardsByArtistName?.data || [];
+      },
+      hasCollector ? collectorId : null
+    );
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
@@ -172,6 +187,7 @@ export function useCardCache() {
     fetchCards,
     fetchSetCards,
     fetchCardsByName,
+    fetchCardsByArtist,
     updateCollectorCard,
     clearCache,
     hasCollectorContext: hasCollector,

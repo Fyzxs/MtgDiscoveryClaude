@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client/react';
 import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { GET_CARDS_BY_IDS } from '../../../graphql/queries/cards';
 import { MtgCard } from '../../organisms/MtgCard';
 import { ResponsiveGridAutoFit } from '../../atoms/layouts/ResponsiveGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
+import { useCardCache } from '../../../hooks/useCardCache';
 import type { Card } from '../../../types/card';
 
 interface RelatedCardsDisplayProps {
@@ -24,19 +23,51 @@ interface CardsResponse {
   };
 }
 
-export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({ 
+export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
   relatedCardIds,
   currentCardId
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
   const filteredIds = relatedCardIds.filter(id => id !== currentCardId);
-  
-  const { loading, error, data } = useQuery<CardsResponse>(GET_CARDS_BY_IDS, {
-    variables: { ids: { cardIds: filteredIds } },
-    skip: filteredIds.length === 0 || !expanded,
-    errorPolicy: 'all'
-  });
+
+  // Use card cache for fetching cards by IDs
+  const { fetchCards } = useCardCache();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<CardsResponse | null>(null);
+
+  useEffect(() => {
+    if (!expanded || filteredIds.length === 0) return;
+
+    const loadCards = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const cards = await fetchCards(filteredIds);
+        setData({
+          cardsById: {
+            __typename: 'SuccessCardsResponse',
+            data: cards
+          }
+        });
+      } catch (err) {
+        setError(err as Error);
+        setData({
+          cardsById: {
+            __typename: 'FailureResponse',
+            status: {
+              message: (err as Error).message
+            }
+          }
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCards();
+  }, [expanded, filteredIds, fetchCards]);
 
   useEffect(() => {
     const loadingKey = `related-cards-${currentCardId}`;

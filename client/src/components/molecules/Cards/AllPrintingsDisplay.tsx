@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client/react';
 import { Typography } from '@mui/material';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
 import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
 import { ErrorText } from '../../atoms/shared/ErrorAlert';
 import { MtgCard } from '../../organisms/MtgCard';
 import { ResponsiveGridAutoFit } from '../../atoms/layouts/ResponsiveGrid';
-import { GET_CARDS_BY_NAME } from '../../../graphql/queries/cards';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { useCardCache } from '../../../hooks/useCardCache';
 import type { Card } from '../../../types/card';
 
 interface AllPrintingsDisplayProps {
@@ -33,16 +32,43 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   // Check for collector parameter
   const { hasCollector, collectorId } = useCollectorParam();
 
-  const { loading, error, data } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
-    variables: {
-      cardName: {
-        cardName: cardName,
-        userId: collectorId || undefined
+  // Use card cache for fetching cards by name
+  const { fetchCardsByName } = useCardCache();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<CardsResponse | null>(null);
+
+  useEffect(() => {
+    if (!cardName) return;
+
+    const loadCards = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const cards = await fetchCardsByName(cardName);
+        setData({
+          cardsByName: {
+            __typename: 'SuccessCardsResponse',
+            data: cards
+          }
+        });
+      } catch (err) {
+        setError(err as Error);
+        setData({
+          cardsByName: {
+            __typename: 'FailureResponse',
+            status: {
+              message: (err as Error).message
+            }
+          }
+        });
+      } finally {
+        setLoading(false);
       }
-    },
-    skip: !cardName,
-    errorPolicy: 'all'
-  });
+    };
+
+    loadCards();
+  }, [cardName, fetchCardsByName]);
 
   useEffect(() => {
     const loadingKey = `all-printings-${currentCardId}`;
