@@ -27,22 +27,17 @@ interface CacheConfig {
 // Collector-specific card data
 interface CollectorCardData {
   cardId: string;
-  finish: string;
-  special: string;
+  finish: 'nonfoil' | 'foil' | 'etched';
+  special: 'none' | 'artist_proof' | 'signed' | 'altered';
   count: number;
 }
 
-// Update result for cache operations
-interface CacheUpdateResult {
-  updated: boolean;
-  key: string;
-  source: 'cache' | 'api';
-}
 
 // Fetcher function types for cache-through operations
 type CardFetcher = () => Promise<Card>;
 type CardsFetcher = (missingIds: string[]) => Promise<Card[]>;
 type SetCardsFetcher = () => Promise<Card[]>;
+type CollectorUpdater = () => Promise<Card>;
 
 /**
  * Comprehensive Card Cache Manager that handles all card data caching
@@ -65,7 +60,7 @@ type SetCardsFetcher = () => Promise<Card[]>;
  * - fetchCard() - Get single card, fetch if needed
  * - fetchCards() - Bulk card fetch with cache-through
  * - fetchSetCards() - Get set cards with cache-through
- * - updateCollectorCard() - Handle collector updates
+ * - updateCollectorCardData() - Update collector data via API and cache result
  * - clear() - Clear all cache entries
  */
 export class CardCacheManager {
@@ -396,38 +391,25 @@ export class CardCacheManager {
   }
 
   /**
-   * Update card with new collector data (e.g., after collection update)
-   * This updates the userCollection field on cached card entries
+   * Update collector card data through the cache (fetch-through pattern)
+   * This handles the API call and caches the response for the collector context only
    */
-  updateCollectorCard(
+  async updateCollectorCardData(
     collectorData: CollectorCardData,
-    collectorId: string
-  ): CacheUpdateResult {
-    const key = this.generateKey(CacheType.CARD, collectorData.cardId, collectorId);
-    const existingEntry = this.cache.get(key);
+    collectorId: string,
+    updater: () => Promise<Card>
+  ): Promise<Card> {
+    // Call the API to update the collector data
+    const updatedCard = await updater();
 
-    if (existingEntry && !this.isExpired(existingEntry)) {
-      // Update existing entry's userCollection field
-      const card = existingEntry.data as Card;
-      if (card) {
-        card.userCollection = {
-          finish: collectorData.finish,
-          special: collectorData.special,
-          count: collectorData.count
-        };
-        existingEntry.timestamp = Date.now();
-        this.updateAccessOrder(key);
+    // Cache the updated card for the collector context only
+    this.setCard(collectorData.cardId, updatedCard, collectorId);
 
-        if (this.config.enableLogging) {
-          console.log(`[CardCache] Updated collector data: ${key}`);
-        }
-
-        return { updated: true, key, source: 'cache' };
-      }
+    if (this.config.enableLogging) {
+      console.log(`[CardCache] Cached updated collector card: ${collectorData.cardId} for collector: ${collectorId}`);
     }
 
-    // No existing entry to update - would need to fetch full card first
-    return { updated: false, key, source: 'api' };
+    return updatedCard;
   }
 
   /**
@@ -453,9 +435,9 @@ export const cardCacheManager = new CardCacheManager({
 // Export types for consumers
 export type {
   CacheConfig,
-  CacheUpdateResult,
   CollectorCardData,
   CardFetcher,
   CardsFetcher,
-  SetCardsFetcher
+  SetCardsFetcher,
+  CollectorUpdater
 };
