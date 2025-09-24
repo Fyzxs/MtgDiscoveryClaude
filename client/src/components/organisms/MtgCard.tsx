@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Card as MuiCard, Box } from '@mui/material';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { Card as MuiCard, Box, keyframes } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import type { Card, CardContext, UserCardData } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
@@ -9,6 +9,9 @@ import { CardDetailsModal } from './CardDetailsModal';
 import { CardBadges } from '../atoms/Cards/CardBadges';
 import { getRarityGlowStyles } from '../../utils/rarityStyles';
 import { srOnly } from '../../styles/cardStyles';
+import { useCardCollectionEntry } from '../../hooks/useCardCollectionEntry3';
+import { useCollection } from '../../contexts/CollectionContext';
+import type { CardFinish } from '../../types/collection';
 import type { StyledComponentProps } from '../../types/components';
 
 interface MtgCardProps extends StyledComponentProps {
@@ -21,6 +24,17 @@ interface MtgCardProps extends StyledComponentProps {
   onArtistClick?: (artistName: string, artistId?: string) => void;
 }
 
+// Flash animation for success/error feedback
+const flashSuccess = keyframes`
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.5; }
+`;
+
+const flashError = keyframes`
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.6; }
+`;
+
 const MtgCardComponent: React.FC<MtgCardProps> = ({
   card,
   context = {},
@@ -32,9 +46,16 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
   className = ''
 }) => {
   // Use embedded collection data from card if not provided as prop
-  const effectiveCollectionData = collectionData || card.userCollection;
+  // Treat empty arrays as no collection data
+  const cardCollection = (card as any).userCollection;
+  const hasCardCollection = cardCollection && (Array.isArray(cardCollection) ? cardCollection.length > 0 : true);
+  const effectiveCollectionData = collectionData || (hasCardCollection ? cardCollection : undefined);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const [flashType, setFlashType] = useState<'success' | 'error' | null>(null);
   const theme = useTheme();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { submitCollectionUpdate, setIsAnyCardEntering } = useCollection();
 
   // Memoize expensive computations
   const artists = useMemo(() => {
@@ -57,6 +78,58 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
   const hoverStyles = useMemo(() => {
     return getRarityGlowStyles(card.rarity, false, true);
   }, [card.rarity]);
+
+  // Determine available finishes
+  const availableFinishes = useMemo<CardFinish[]>(() => {
+    const finishes: CardFinish[] = [];
+    if (card.nonFoil) finishes.push('non-foil');
+    if (card.foil) finishes.push('foil');
+    if (card.finishes?.includes('etched')) finishes.push('etched');
+    return finishes.length > 0 ? finishes : ['non-foil']; // Default to non-foil if none specified
+  }, [card.nonFoil, card.foil, card.finishes]);
+
+  // Handle collection update submission
+  const handleCollectionSubmit = useCallback(async (update: any) => {
+    try {
+      // Add setId to the update
+      await submitCollectionUpdate({ ...update, setId: card.setId }, card.name);
+      setFlashType('success');
+    } catch (error) {
+      setFlashType('error');
+    }
+
+    // Flash animation
+    setTimeout(() => {
+      setFlashType(null);
+    }, 900); // 3 flashes at 300ms each
+  }, [submitCollectionUpdate, card.name, card.setId]);
+
+  // Collection entry hook
+  useCardCollectionEntry({
+    cardId: card.id,
+    isSelected,
+    availableFinishes,
+    onSubmit: handleCollectionSubmit,
+    onEntryStateChange: setIsAnyCardEntering
+  });
+
+  // Track selection state from DOM attribute
+  useEffect(() => {
+    if (!cardRef.current) return;
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-selected') {
+          const selected = cardRef.current?.getAttribute('data-selected') === 'true';
+          setIsSelected(selected || false);
+        }
+      });
+    });
+
+    observer.observe(cardRef.current, { attributes: true, attributeFilter: ['data-selected'] });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Don't trigger selection if clicking on links or zoom indicator
@@ -108,6 +181,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
 
   return (
     <MuiCard
+      ref={cardRef}
       elevation={4}
       onClick={handleCardClick}
       data-mtg-card="true"
@@ -131,6 +205,21 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         transform: 'scale(1)',
         cursor: 'pointer',
         outline: 'none',
+        // Flash overlay using pseudo-element
+        '&::after': flashType ? {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: flashType === 'success' ? '#4caf50' : '#f44336',
+          pointerEvents: 'none',
+          zIndex: 9999,
+          animation: flashType === 'success'
+            ? `${flashSuccess} 0.3s ease-in-out 3`
+            : `${flashError} 0.3s ease-in-out 3`,
+        } : {},
         '&:focus': {
           outline: 'none'
         },
@@ -159,7 +248,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
       }}
       className={className}
     >
-      <Box sx={{ 
+      <Box sx={{
         width: '100%',
         aspectRatio: '745 / 1040',
         position: 'relative'
@@ -178,7 +267,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         />
       </Box>
 
-      <CardBadges 
+      <CardBadges
         foil={card.foil}
         nonfoil={card.nonFoil}
         promoTypes={card.promoTypes}
@@ -190,23 +279,12 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
       <ZoomIndicator
         onZoomClick={handleZoomClick}
       />
-      
+
+
       <CardOverlay
-        cardId={card.id}
-        cardName={card.name}
-        rarity={card.rarity}
-        collectorNumber={card.collectorNumber}
-        releaseDate={card.releasedAt}
-        artists={displayArtists}
-        artistIds={card.artistIds}
-        setCode={card.setCode}
-        setName={card.setName}
-        price={card.prices?.usd}
-        scryfallUrl={card.scryfallUri}
-        tcgplayerUrl={card.purchaseUris?.tcgplayer}
+        card={card}
         isSelected={false}
         context={context}
-        collectionData={effectiveCollectionData}
         onCardClick={undefined}
         onArtistClick={onArtistClick}
         onSetClick={onSetClick}
@@ -236,28 +314,28 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
 // Memoized component with custom comparison for optimal performance
 export const MtgCard = React.memo(MtgCardComponent, (prevProps, nextProps) => {
   // Custom comparison to prevent unnecessary re-renders
-  
+
   // Card ID is the most important - if different, always re-render
   if (prevProps.card.id !== nextProps.card.id) return false;
-  
+
   // Index or group changes should re-render
   if (prevProps.index !== nextProps.index) return false;
   if (prevProps.groupId !== nextProps.groupId) return false;
-  
+
   // Context changes that affect display
   if (prevProps.context?.isOnSetPage !== nextProps.context?.isOnSetPage) return false;
   if (prevProps.context?.isOnArtistPage !== nextProps.context?.isOnArtistPage) return false;
   if (prevProps.context?.currentArtist !== nextProps.context?.currentArtist) return false;
   if (prevProps.context?.currentSet !== nextProps.context?.currentSet) return false;
   if (prevProps.context?.showCollectorInfo !== nextProps.context?.showCollectorInfo) return false;
-  
+
   // Callback function references (usually stable but worth checking)
   if (prevProps.onSetClick !== nextProps.onSetClick) return false;
   if (prevProps.onArtistClick !== nextProps.onArtistClick) return false;
-  
+
   // Class name changes
   if (prevProps.className !== nextProps.className) return false;
-  
+
   // Card properties that affect visual display
   if (prevProps.card.imageUris !== nextProps.card.imageUris) return false;
   if (prevProps.card.cardFaces !== nextProps.card.cardFaces) return false;
@@ -272,11 +350,14 @@ export const MtgCard = React.memo(MtgCardComponent, (prevProps, nextProps) => {
   if (prevProps.card.setCode !== nextProps.card.setCode) return false;
   if (prevProps.card.setName !== nextProps.card.setName) return false;
   if (prevProps.card.scryfallUri !== nextProps.card.scryfallUri) return false;
-  
+
   // Price changes (for display)
   if (prevProps.card.prices?.usd !== nextProps.card.prices?.usd) return false;
   if (prevProps.card.purchaseUris?.tcgplayer !== nextProps.card.purchaseUris?.tcgplayer) return false;
-  
+
+  // Collection data changes (critical for collector view)
+  if ((prevProps.card as any).userCollection !== (nextProps.card as any).userCollection) return false;
+
   // If we get here, props are effectively the same
   return true;
 });

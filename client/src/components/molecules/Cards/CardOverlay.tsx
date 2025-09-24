@@ -9,24 +9,12 @@ import { PriceDisplay } from '../../atoms/shared/PriceDisplay';
 import { CardLinks } from './CardLinks';
 import { CollectionSummary } from './CollectionSummary';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
-import type { CardContext, UserCardData } from '../../../types/card';
+import type { Card, CardContext } from '../../../types/card';
 
 interface CardOverlayProps {
-  cardId?: string;
-  cardName?: string;
-  rarity?: string;
-  collectorNumber?: string;
-  releaseDate?: string;
-  artists: string[];
-  artistIds?: string[];
-  setCode?: string;
-  setName?: string;
-  price?: string | null;
-  scryfallUrl?: string;
-  tcgplayerUrl?: string;
+  card: Card;
   isSelected?: boolean;
   context?: CardContext;
-  collectionData?: UserCardData | UserCardData[];
   onCardClick?: (cardId?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
   onSetClick?: (setCode?: string) => void;
@@ -34,27 +22,30 @@ interface CardOverlayProps {
 }
 
 export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
-  cardId,
-  cardName,
-  rarity,
-  collectorNumber,
-  releaseDate,
-  artists,
-  artistIds,
-  setCode,
-  setName,
-  price,
-  scryfallUrl,
-  tcgplayerUrl,
+  card,
   isSelected = false,
   context = {},
-  collectionData,
   onCardClick,
   onArtistClick,
   onSetClick,
   className
 }) => {
   const theme = useTheme();
+
+  // Extract properties from card object
+  const cardId = card.id;
+  const cardName = card.name;
+  const rarity = card.rarity;
+  const collectorNumber = card.collectorNumber;
+  const releaseDate = card.releasedAt;
+  const artists = card.artist ? card.artist.split(' // ') : [];
+  const artistIds = card.artistIds;
+  const setCode = card.setCode;
+  const setName = card.setName;
+  const price = card.prices?.usd;
+  const scryfallUrl = card.scryfallUri;
+  const tcgplayerUrl = card.purchaseUris?.tcgplayer;
+  const collectionData = (card as any).userCollection;
 
   return (
     <Box
@@ -107,10 +98,11 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
               collectorNumber={collectorNumber}
             />
           </Box>
-          {context.hasCollector && (
+          {context.hasCollector && collectionData && (
             <CollectionSummary
               collectionData={collectionData}
               size="small"
+              card={card}
             />
           )}
         </Box>

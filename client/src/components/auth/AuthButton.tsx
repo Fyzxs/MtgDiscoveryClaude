@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Box, Typography, CircularProgress } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
+import { MyCollectionButton } from '../organisms/MyCollectionButton';
 
 export const AuthButton: React.FC = () => {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading, getAccessTokenSilently, getIdTokenClaims } = useAuth0();
@@ -46,9 +47,10 @@ export const AuthButton: React.FC = () => {
   if (isAuthenticated && user) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Typography 
-          variant="body2" 
-          sx={{ 
+        <MyCollectionButton />
+        <Typography
+          variant="body2"
+          sx={{
             color: 'text.primary',
             cursor: 'pointer',
             '&:hover': { textDecoration: 'underline' }
@@ -58,9 +60,9 @@ export const AuthButton: React.FC = () => {
         >
           Welcome, {user.name || user.email}
         </Typography>
-        <Button 
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} 
-          variant="outlined" 
+        <Button
+          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+          variant="outlined"
           size="small"
         >
           Logout

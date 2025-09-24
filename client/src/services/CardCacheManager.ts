@@ -559,7 +559,9 @@ export class CardCacheManager {
 
     // Cache miss - fetch from API
     const cards = await fetcher();
+
     this.setSetCards(setId, cards, collectorId, ttlMs);
+
     if (this.config.enableLogging) {
       console.log(`[CardCache] Stored set: ${setId} with ${cards.length} cards, cache size: ${this.cache.size}`);
     }
@@ -657,12 +659,9 @@ declare global {
 // Export a singleton instance for global use
 export const cardCacheManager = (() => {
   if (!window.__cardCacheManager) {
-    console.log('[CardCache] Creating new singleton instance');
     window.__cardCacheManager = new CardCacheManager({
-      enableLogging: true // Enable logging to see cache hits/misses
+      enableLogging: false // Disable logging
     });
-  } else {
-    console.log('[CardCache] Reusing existing singleton instance');
   }
   return window.__cardCacheManager;
 })();
