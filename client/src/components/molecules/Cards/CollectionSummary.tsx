@@ -7,7 +7,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import type { UserCardData } from '../../../types/card';
+import type { UserCardData, Card } from '../../../types/card';
 
 // Emoji definitions with tooltips for accessibility
 const EMOJI_TOOLTIPS = {
@@ -31,11 +31,13 @@ const EmojiWithTooltip: React.FC<{ emoji: keyof typeof EMOJI_TOOLTIPS; children:
 interface CollectionSummaryProps {
   collectionData?: UserCardData | UserCardData[];
   size?: 'small' | 'medium' | 'large';
+  card?: Card; // Optional card object for debugging
 }
 
 export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   collectionData,
-  size = 'medium'
+  size = 'medium',
+  card
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isHovered, setIsHovered] = useState(false);

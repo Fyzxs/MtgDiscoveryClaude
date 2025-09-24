@@ -86,11 +86,6 @@ export const SetPage: React.FC = () => {
   // Check for collector parameter in URL
   const { hasCollector, collectorId } = useCollectorParam();
 
-  // Debug logging for collector data
-  if (hasCollector) {
-    console.log('SetPage: hasCollector=true, collectorId=', collectorId);
-  }
-
 
   // State for collection data
 
@@ -123,8 +118,12 @@ export const SetPage: React.FC = () => {
     const loadCards = async () => {
       setCardsLoading(true);
       setCardsError(null);
+      // Clear stale cards immediately when collectorId changes
+      setCardsData({ cardsBySetCode: { __typename: 'SuccessCardsResponse', data: [] } });
+
       try {
         const cards = await fetchSetCards(setCode);
+
         setCardsData({
           cardsBySetCode: {
             __typename: 'SuccessCardsResponse',
@@ -147,7 +146,7 @@ export const SetPage: React.FC = () => {
     };
 
     loadCards();
-  }, [setCode, fetchSetCards]);
+  }, [setCode, collectorId, fetchSetCards]);
   
   // Get unique artists, rarities, and finishes from data
   const allArtists = useMemo(() => getUniqueArtists(cardsData?.cardsBySetCode?.data || []), [cardsData]);
@@ -282,10 +281,12 @@ export const SetPage: React.FC = () => {
 
   const selectedRarities = filters.rarities || [];
   const selectedGroupIds = filters.groups || [];
-  
+
   // Apply optimized sorting to filtered cards
+  // Include collectorId in sort key to invalidate cache when collection context changes
+  const sortKey = hasCollector ? `${sortBy}-ctor-${collectorId}` : sortBy;
   const sortFn = (filterConfig.sortOptions as any)[sortBy] || filterConfig.sortOptions['collector-asc'];
-  const sortedCards = useOptimizedSort(filteredCards, sortBy, sortFn);
+  const sortedCards = useOptimizedSort(filteredCards, sortKey, sortFn);
   
   // Update artist filter to normalize casing when data loads
   useEffect(() => {
@@ -380,12 +381,6 @@ export const SetPage: React.FC = () => {
   // Debug logging for query errors
   if (cardsError) {
     console.error('SetPage: cardsError=', cardsError);
-    if (hasCollector) {
-      console.error('SetPage: Error occurred with collectorId=', collectorId);
-    }
-  }
-  if (hasCollector && cards.length > 0) {
-    console.log('SetPage: First card userCollection=', cards[0].userCollection);
   }
 
   // Stable computation of all card groups (independent of sorting/filtering)
