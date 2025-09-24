@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserCards.Apis;
@@ -6,7 +7,6 @@ using Lib.MtgDiscovery.Entry.Commands.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.Validators;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Entities;
-using Lib.MtgDiscovery.Entry.Queries.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs;
@@ -51,9 +51,9 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         _userCardOufToOutMapper = userCardOufToOutMapper;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(AddCardToCollectionArgsEntity input)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity input)
     {
-        IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input.AddUserCard).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);

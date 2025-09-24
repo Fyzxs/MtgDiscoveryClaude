@@ -17,7 +17,7 @@ internal sealed class AddUserCardArgToItrMapper : IAddUserCardArgToItrMapper
         _mapper = mapper;
     }
 
-    public async Task<IUserCardItrEntity> Map(AddCardToCollectionArgsEntity source)
+    public async Task<IUserCardItrEntity> Map(IAddCardToCollectionArgsEntity source)
     {
         IUserCardDetailsItrEntity mappedDetails = await _mapper.Map(source.AddUserCard.UserCardDetails).ConfigureAwait(false);
 
