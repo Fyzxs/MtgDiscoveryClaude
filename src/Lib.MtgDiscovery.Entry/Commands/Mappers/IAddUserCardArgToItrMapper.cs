@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Mappers;
 
-internal interface IAddUserCardArgToItrMapper : ICreateMapper<AddCardToCollectionArgsEntity, IUserCardItrEntity>;
+internal interface IAddUserCardArgToItrMapper : ICreateMapper<IAddCardToCollectionArgsEntity, IUserCardItrEntity>;

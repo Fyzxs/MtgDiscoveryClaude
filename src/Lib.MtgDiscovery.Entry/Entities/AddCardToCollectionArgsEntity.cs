@@ -2,7 +2,7 @@ using Lib.Shared.DataModels.Entities.Args;
 
 namespace Lib.MtgDiscovery.Entry.Entities;
 
-internal sealed class AddCardToCollectionArgsEntity
+internal sealed class AddCardToCollectionArgsEntity : IAddCardToCollectionArgsEntity
 {
     public IAuthUserArgEntity AuthUser { get; init; }
     public IAddUserCardArgEntity AddUserCard { get; init; }

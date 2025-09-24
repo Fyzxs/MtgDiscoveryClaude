@@ -6,6 +6,7 @@ public sealed class AddUserCardArgEntity : IAddUserCardArgEntity
 {
     public string CardId { get; init; }
     public string SetId { get; init; }
+    public string UserId { get; init; }
 
     // GraphQL needs concrete type for input, not interface
     public UserCardDetailsArgEntity UserCardDetails { get; init; }
