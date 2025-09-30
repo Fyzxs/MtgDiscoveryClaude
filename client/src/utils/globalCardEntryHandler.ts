@@ -19,12 +19,17 @@ class GlobalCardEntryHandler {
     document.addEventListener('keydown', this.handleKeyDown.bind(this), true);
   }
 
+  private getDefaultFinish(cardId: string): CardFinish {
+    const handler = this.handlers.get(cardId);
+    return handler?.availableFinishes[0] || 'non-foil';
+  }
+
   register(cardId: string, handler: CardHandler) {
     this.handlers.set(cardId, handler);
     if (!this.entryStates.has(cardId)) {
       this.entryStates.set(cardId, {
         count: '',
-        finish: 'non-foil',
+        finish: this.getDefaultFinish(cardId),
         special: 'none',
         isNegative: false
       });
@@ -173,7 +178,7 @@ class GlobalCardEntryHandler {
     this.isEntering.set(cardId, false);
     this.entryStates.set(cardId, {
       count: '',
-      finish: 'non-foil',
+      finish: this.getDefaultFinish(cardId),
       special: 'none',
       isNegative: false
     });
@@ -220,7 +225,7 @@ class GlobalCardEntryHandler {
       this.isEntering.set(cardId, false);
       this.entryStates.set(cardId, {
         count: '',
-        finish: 'non-foil',
+        finish: this.getDefaultFinish(cardId),
         special: 'none',
         isNegative: false
       });
@@ -243,7 +248,7 @@ class GlobalCardEntryHandler {
     this.isEntering.set(cardId, false);
     this.entryStates.set(cardId, {
       count: '',
-      finish: 'non-foil',
+      finish: this.getDefaultFinish(cardId),
       special: 'none',
       isNegative: false
     });

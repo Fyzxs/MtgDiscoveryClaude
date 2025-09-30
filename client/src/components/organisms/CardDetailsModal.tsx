@@ -357,6 +357,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   <CardBadges
                     foil={card.foil}
                     nonfoil={card.nonFoil}
+                    etched={card.finishes?.includes('etched')}
                     promoTypes={card.promoTypes}
                     frameEffects={card.frameEffects}
                     isPromo={card.promo}
