@@ -88,11 +88,17 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             if (mergedItems.TryGetValue(key, out UserCardDetailsExtEntity existingItem))
             {
                 // Update count for existing finish/special combination
+                int newCount = existingItem.Count + newItem.Count;
+                if (newCount < 0)
+                {
+                    newCount = 0;
+                }
+
                 mergedItems[key] = new UserCardDetailsExtEntity
                 {
                     Finish = existingItem.Finish,
                     Special = existingItem.Special,
-                    Count = existingItem.Count + newItem.Count
+                    Count = newCount
                 };
             }
             else
