@@ -10,7 +10,7 @@ import { CardGrid } from '../components/organisms/CardGrid';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
 import { SearchEmptyState } from '../components/atoms/shared/EmptyState';
 import { useUrlState } from '../hooks/useUrlState';
-import { useFilterState, commonFilters } from '../hooks/useFilterState';
+import { useFilterState } from '../hooks/useFilterState';
 import { QueryStateContainer } from '../components/molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../components/molecules/shared/FilterPanel';
 import { RARITY_ORDER, ARTIST_PAGE_SORT_OPTIONS, ARTIST_PAGE_COLLECTOR_SORT_OPTIONS } from '../config/cardSortOptions';
@@ -97,7 +97,7 @@ export const ArtistCardsPage: React.FC = () => {
   const pascalCasedName = toPascalCase(decodedArtistName);
 
   // Check for collector parameter
-  const { hasCollector, collectorId } = useCollectorParam();
+  const { hasCollector, collectorId: _collectorId } = useCollectorParam();
 
   // URL state configuration for query parameters
   const urlStateConfig = {
