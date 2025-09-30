@@ -10,13 +10,31 @@ import {
   Alert
 } from '@mui/material';
 import { REGISTER_USER } from '../graphql/mutations/user';
+import { getTokenReadyState } from '../graphql/apollo-client';
 
 export const SignInRedirectPage: React.FC = () => {
   const { isLoading, isAuthenticated, user, error } = useAuth0();
   const navigate = useNavigate();
   const [registerUser] = useMutation(REGISTER_USER);
-  const [setupStatus, setSetupStatus] = useState<'loading' | 'registering' | 'complete' | 'error'>('loading');
+  const [setupStatus, setSetupStatus] = useState<'loading' | 'waiting-token' | 'registering' | 'complete' | 'error'>('loading');
   const [statusMessage, setStatusMessage] = useState('Completing sign-in...');
+  const [tokenReady, setTokenReady] = useState(false);
+
+  // Monitor token ready state
+  useEffect(() => {
+    const checkTokenReady = () => {
+      const ready = getTokenReadyState();
+      if (ready !== tokenReady) {
+        console.log('SignInRedirectPage - Token ready state changed:', ready);
+        setTokenReady(ready);
+      }
+    };
+
+    if (isAuthenticated && isLoading === false) {
+      const interval = setInterval(checkTokenReady, 100);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, isLoading, tokenReady]);
 
   useEffect(() => {
     const handleUserSetup = async () => {
@@ -38,11 +56,18 @@ export const SignInRedirectPage: React.FC = () => {
         return;
       }
 
+      // Wait for Auth0 token to be ready before making GraphQL call
+      if (!tokenReady) {
+        setSetupStatus('waiting-token');
+        setStatusMessage('Preparing authentication token...');
+        return;
+      }
+
       try {
         setSetupStatus('registering');
         setStatusMessage('Registering your account...');
 
-        // Call GraphQL mutation to register user
+        // Call GraphQL mutation to register user - now with token ready
         const result = await registerUser();
 
         if ((result.data as any)?.registerUserInfo?.__typename === 'SuccessUserRegistrationResponse') {
@@ -85,7 +110,7 @@ export const SignInRedirectPage: React.FC = () => {
     };
 
     handleUserSetup();
-  }, [isLoading, isAuthenticated, user, error, navigate, registerUser]);
+  }, [isLoading, isAuthenticated, user, error, tokenReady, navigate, registerUser]);
 
   const getStatusColor = () => {
     switch (setupStatus) {
@@ -126,6 +151,11 @@ export const SignInRedirectPage: React.FC = () => {
             <Typography variant="body1" color="text.secondary">
               Hello, {user.name || user.email}!
             </Typography>
+            {setupStatus === 'waiting-token' && (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                Preparing secure authentication...
+              </Typography>
+            )}
           </Box>
         )}
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -29,7 +29,12 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
-  const filteredIds = relatedCardIds.filter(id => id !== currentCardId);
+
+  // Memoize filteredIds to prevent infinite re-renders
+  const filteredIds = useMemo(() =>
+    relatedCardIds.filter(id => id !== currentCardId),
+    [relatedCardIds, currentCardId]
+  );
 
   // Use card cache for fetching cards by IDs
   const { fetchCards } = useCardCache();
@@ -37,14 +42,22 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<CardsResponse | null>(null);
 
+  // Use ref to store latest fetchCards function to avoid dependency issues
+  const fetchCardsRef = useRef(fetchCards);
+  fetchCardsRef.current = fetchCards;
+
   useEffect(() => {
+    console.log('[RelatedCards] useEffect triggered:', { expanded, filteredIdsLength: filteredIds.length });
+
     if (!expanded || filteredIds.length === 0) return;
 
     const loadCards = async () => {
+      console.log('[RelatedCards] Loading cards:', filteredIds);
       setLoading(true);
       setError(null);
       try {
-        const cards = await fetchCards(filteredIds);
+        const cards = await fetchCardsRef.current(filteredIds);
+        console.log('[RelatedCards] Cards loaded:', cards.length);
         setData({
           cardsById: {
             __typename: 'SuccessCardsResponse',
@@ -52,6 +65,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
           }
         });
       } catch (err) {
+        console.error('[RelatedCards] Error loading cards:', err);
         setError(err as Error);
         setData({
           cardsById: {
@@ -67,7 +81,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
     };
 
     loadCards();
-  }, [expanded, filteredIds, fetchCards]);
+  }, [expanded, filteredIds]);
 
   useEffect(() => {
     const loadingKey = `related-cards-${currentCardId}`;

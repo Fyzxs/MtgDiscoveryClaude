@@ -4,6 +4,7 @@ import { Box, Chip } from '@mui/material';
 interface CardBadgesProps {
   foil?: boolean;       // Individual boolean properties instead of arrays
   nonfoil?: boolean;
+  etched?: boolean;
   promoTypes?: string[];
   frameEffects?: string[] | null;
   isPromo?: boolean;
@@ -20,6 +21,7 @@ const DEFAULT_EXCLUDE_FRAME_EFFECTS: string[] = ['inverted', 'legendary', 'encha
 export const CardBadges: React.FC<CardBadgesProps> = ({
   foil = false,
   nonfoil = false,
+  etched = false,
   promoTypes,
   frameEffects,
   isPromo = false,
@@ -52,10 +54,15 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
     if (nonfoil && foil) {
       displayProperties.push('nonfoil');
     }
-    
+
     // Foil badge: only show if card is foil BUT no special foil promo types
     if (foil && !hasSpecialFoilPromo) {
       displayProperties.push('foil');
+    }
+
+    // Etched badge: show if card has etched finish
+    if (etched) {
+      displayProperties.push('etched');
     }
   }
   
