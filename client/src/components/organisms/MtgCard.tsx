@@ -35,39 +35,28 @@ const flashError = keyframes`
   50% { opacity: 0.6; }
 `;
 
+// Subtle pulse for submitting state
+const submitPulse = keyframes`
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.25; }
+`;
+
 const MtgCardComponent: React.FC<MtgCardProps> = ({
   card,
   context = {},
-  collectionData,
+  collectionData: _collectionData,
   index,
   groupId: _groupId,
   onSetClick,
   onArtistClick,
   className = ''
 }) => {
-  // Use embedded collection data from card if not provided as prop
-  // Treat empty arrays as no collection data
-  const cardCollection = (card as any).userCollection;
-  const hasCardCollection = cardCollection && (Array.isArray(cardCollection) ? cardCollection.length > 0 : true);
-  const effectiveCollectionData = collectionData || (hasCardCollection ? cardCollection : undefined);
   const [modalOpen, setModalOpen] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
-  const [flashType, setFlashType] = useState<'success' | 'error' | null>(null);
+  // REMOVED: Flash state moved to DOM data attribute for performance
   const theme = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
-  const { submitCollectionUpdate, setIsAnyCardEntering } = useCollection();
-
-  // Memoize expensive computations
-  const artists = useMemo(() => {
-    if (!card.artist) return [];
-    return card.artist.split(/\s+(?:&|and)\s+/i);
-  }, [card.artist]);
-
-  const displayArtists = useMemo(() => {
-    return context.isOnArtistPage && context.currentArtist
-      ? artists.filter(a => a !== context.currentArtist)
-      : artists;
-  }, [artists, context.isOnArtistPage, context.currentArtist]);
+  const { submitCollectionUpdate } = useCollection();
 
   // Memoize aria label to avoid recalculating on every render
   const ariaLabel = useMemo(() => {
@@ -90,18 +79,25 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
 
   // Handle collection update submission
   const handleCollectionSubmit = useCallback(async (update: any) => {
-    try {
-      // Add setId to the update
-      await submitCollectionUpdate({ ...update, setId: card.setId }, card.name);
-      setFlashType('success');
-    } catch (error) {
-      setFlashType('error');
-    }
+    const cardElement = cardRef.current;
+    if (!cardElement) return;
 
-    // Flash animation
-    setTimeout(() => {
-      setFlashType(null);
-    }, 900); // 3 flashes at 300ms each
+    // Mark as submitting for instant visual feedback (but keep selected for rapid entry)
+    cardElement.setAttribute('data-submitting', 'true');
+
+    try {
+      // Fire-and-forget submission
+      await submitCollectionUpdate({ ...update, setId: card.setId }, card.name);
+      // Success flash via DOM (after mutation succeeds)
+      cardElement.removeAttribute('data-submitting');
+      cardElement.setAttribute('data-flash', 'success');
+      setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
+    } catch (error) {
+      // Error flash via DOM
+      cardElement.removeAttribute('data-submitting');
+      cardElement.setAttribute('data-flash', 'error');
+      setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
+    }
   }, [submitCollectionUpdate, card.name, card.setId]);
 
   // Collection entry hook
@@ -109,8 +105,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
     cardId: card.id,
     isSelected,
     availableFinishes,
-    onSubmit: handleCollectionSubmit,
-    onEntryStateChange: setIsAnyCardEntering
+    onSubmit: handleCollectionSubmit
   });
 
   // Track selection state from DOM attribute
@@ -205,21 +200,46 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         transform: 'scale(1)',
         cursor: 'pointer',
         outline: 'none',
-        // Flash overlay using pseudo-element
-        '&::after': flashType ? {
+        // Instant deselection when submitting (no animation lag)
+        '&[data-submitting="true"]': {
+          transition: 'none !important',
+          transform: 'scale(1) !important',
+          border: '3px solid',
+          borderColor: 'grey.700',
+          boxShadow: theme.mtg.shadows.card.normal,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#1976d2',
+            opacity: 0.2,
+            animation: `${submitPulse} 0.6s ease-in-out infinite`,
+            pointerEvents: 'none',
+            zIndex: 999,
+          }
+        },
+        // Flash overlay using pseudo-element (CSS-only, no React state)
+        '&[data-flash="success"]::after, &[data-flash="error"]::after': {
           content: '""',
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: flashType === 'success' ? '#4caf50' : '#f44336',
           pointerEvents: 'none',
           zIndex: 9999,
-          animation: flashType === 'success'
-            ? `${flashSuccess} 0.3s ease-in-out 3`
-            : `${flashError} 0.3s ease-in-out 3`,
-        } : {},
+        },
+        '&[data-flash="success"]::after': {
+          backgroundColor: '#4caf50',
+          animation: `${flashSuccess} 0.3s ease-in-out 3`,
+        },
+        '&[data-flash="error"]::after': {
+          backgroundColor: '#f44336',
+          animation: `${flashError} 0.3s ease-in-out 3`,
+        },
         '&:focus': {
           outline: 'none'
         },

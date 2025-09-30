@@ -8,7 +8,6 @@ interface UseCardCollectionEntryOptions {
   isSelected: boolean;
   availableFinishes?: CardFinish[];
   onSubmit: (update: CardCollectionUpdate) => Promise<void>;
-  onEntryStateChange?: (isEntering: boolean) => void;
 }
 
 interface UseCardCollectionEntryReturn {
@@ -21,8 +20,7 @@ export function useCardCollectionEntry({
   cardId,
   isSelected,
   availableFinishes = ['non-foil', 'foil', 'etched'],
-  onSubmit,
-  onEntryStateChange
+  onSubmit
 }: UseCardCollectionEntryOptions): UseCardCollectionEntryReturn {
   // Just dummy state for React compatibility
   const [isEntering] = useState(false);

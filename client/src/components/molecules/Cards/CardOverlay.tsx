@@ -102,7 +102,6 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
             <CollectionSummary
               collectionData={collectionData}
               size="small"
-              card={card}
             />
           )}
         </Box>

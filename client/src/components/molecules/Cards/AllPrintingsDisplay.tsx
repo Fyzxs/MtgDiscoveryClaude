@@ -30,7 +30,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
 
   // Check for collector parameter
-  const { hasCollector, collectorId } = useCollectorParam();
+  const { hasCollector, collectorId: _collectorId } = useCollectorParam();
 
   // Use card cache for fetching cards by name
   const { fetchCardsByName } = useCardCache();

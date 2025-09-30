@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { useCardCache } from '../hooks/useCardCache';
@@ -10,7 +10,7 @@ import {
   FormControlLabel,
   Switch
 } from '@mui/material';
-import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
+// import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
@@ -111,6 +111,13 @@ export const SetPage: React.FC = () => {
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
+  const cardsDataRef = useRef<CardsResponse | null>(null);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    cardsDataRef.current = cardsData;
+    console.log('[SetPage] cardsData state updated, card count:', cardsData?.cardsBySetCode?.data?.length || 0);
+  }, [cardsData]);
 
   useEffect(() => {
     if (!setCode) return;
@@ -147,6 +154,74 @@ export const SetPage: React.FC = () => {
 
     loadCards();
   }, [setCode, collectorId, fetchSetCards]);
+
+  // Listen for collection updates and update the card in place
+  useEffect(() => {
+    const handleCollectionUpdate = (event: Event) => {
+      const detail = (event as CustomEvent).detail;
+      console.log('[SetPage] Collection updated event detail:', detail);
+      console.log('[SetPage] userCollection from event:', detail.userCollection);
+
+      // Defer the heavy array operations to avoid blocking UI
+      queueMicrotask(() => {
+        // Update the specific card's userCollection in the existing cards array
+        const currentData = cardsDataRef.current;
+
+        if (!currentData?.cardsBySetCode?.data) {
+          console.log('[SetPage] No cards data to update');
+          return;
+        }
+
+        console.log('[SetPage] Searching for card in', currentData.cardsBySetCode.data.length, 'cards');
+        let foundCard = false;
+
+        // Force a completely new array with new card object
+        const updatedCards: any[] = [];
+
+        for (const card of currentData.cardsBySetCode.data) {
+          if (card.id === detail.cardId) {
+            foundCard = true;
+            console.log('[SetPage] ✅ Found and updating card:', card.name);
+            console.log('[SetPage] Old userCollection:', (card as any).userCollection);
+            console.log('[SetPage] New userCollection:', detail.userCollection);
+
+            try {
+              // Create a completely new card object
+              const updatedCard = {
+                ...card,
+                userCollection: detail.userCollection
+              };
+              console.log('[SetPage] Created updatedCard successfully');
+              updatedCards.push(updatedCard);
+              console.log('[SetPage] Pushed updated card, array now has', updatedCards.length, 'cards');
+            } catch (err) {
+              console.error('[SetPage] Error creating updated card:', err);
+            }
+          } else {
+            updatedCards.push(card);
+          }
+        }
+
+        if (!foundCard) {
+          console.log('[SetPage] ❌ Card not found with ID:', detail.cardId);
+          console.log('[SetPage] First 3 card IDs:', currentData.cardsBySetCode.data.slice(0, 3).map(c => c.id));
+        }
+
+        console.log('[SetPage] Updated cards array, triggering re-render');
+        const newState = {
+          cardsBySetCode: {
+            __typename: 'SuccessCardsResponse',
+            data: updatedCards
+          }
+        };
+        console.log('[SetPage] Setting new state with', updatedCards.length, 'cards');
+        setCardsData(newState);
+      });
+    };
+
+    window.addEventListener('collection-updated', handleCollectionUpdate as EventListener);
+    return () => window.removeEventListener('collection-updated', handleCollectionUpdate as EventListener);
+  }, []);
   
   // Get unique artists, rarities, and finishes from data
   const allArtists = useMemo(() => getUniqueArtists(cardsData?.cardsBySetCode?.data || []), [cardsData]);

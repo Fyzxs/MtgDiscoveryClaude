@@ -1,6 +1,6 @@
 import { domOverlay } from './directDomOverlay';
-import { domHelpPanel } from './directDomHelpPanel';
 import type { CardFinish, CardSpecial, CollectionEntryState } from '../types/collection';
+import { perfMonitor } from './performanceMonitor';
 
 interface CardHandler {
   cardId: string;
@@ -39,6 +39,12 @@ class GlobalCardEntryHandler {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    // Don't capture keys when user is typing in an input/textarea/select
+    const target = event.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+      return;
+    }
+
     // Find selected card via DOM
     const selectedCard = document.querySelector('[data-selected="true"][data-card-id]');
     if (!selectedCard) return;
@@ -88,7 +94,6 @@ class GlobalCardEntryHandler {
         // IMMEDIATELY show overlay
         const state = this.entryStates.get(cardId)!;
         domOverlay.show(cardId, state, false);
-        domHelpPanel.show();
         this.isEntering.set(cardId, true);
       }
 
@@ -173,31 +178,68 @@ class GlobalCardEntryHandler {
       isNegative: false
     });
     domOverlay.hide(cardId);
-    domHelpPanel.hide();
   }
 
   private async submitEntry(cardId: string) {
+    perfMonitor.start('submit-entry-total');
+
     const handler = this.handlers.get(cardId);
     const state = this.entryStates.get(cardId);
     if (!handler || !state) return;
 
-    const count = parseInt(state.count || '0');
-    const finalCount = state.isNegative ? -count : count;
-
-    try {
-      await handler.onSubmit({
+    // Pre-calculate BEFORE any DOM operations
+    perfMonitor.measure('submit-prepare-data', () => {
+      const count = parseInt(state.count || '0');
+      const finalCount = state.isNegative ? -count : count;
+      (window as any).__tempUpdateData = {
         cardId,
         count: finalCount,
         finish: state.finish,
         special: state.special
+      };
+    });
+
+    const updateData = (window as any).__tempUpdateData;
+    delete (window as any).__tempUpdateData;
+
+    // Get card element for instant state updates
+    const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+
+    // CRITICAL: Instant visual feedback - no animations
+    perfMonitor.measure('submit-hide-ui', () => {
+      // 1. Mark card as submitting (disables transform transition) but KEEP selected
+      if (cardElement) {
+        cardElement.setAttribute('data-submitting', 'true');
+        // Don't deselect - user wants to stay on same card for rapid entry
+      }
+
+      // 2. Hide overlay immediately
+      domOverlay.hide(cardId);
+
+      // 3. Reset state immediately after
+      this.isEntering.set(cardId, false);
+      this.entryStates.set(cardId, {
+        count: '',
+        finish: 'non-foil',
+        special: 'none',
+        isNegative: false
       });
-      this.cancelEntry(cardId);
-    } catch (error) {
-      // Let user retry
-    }
+    });
+
+    perfMonitor.end('submit-entry-total');
+
+    // Fire-and-forget the submission - don't block UI
+    handler.onSubmit(updateData).catch(error => {
+      console.error('[GlobalCardEntry] Submission failed:', error);
+      // Error handling happens in CollectionContext (toast)
+    });
   }
 
   reset(cardId: string) {
+    // Only hide if we're actually entering (navigating away from entry mode)
+    // Don't hide if submitEntry already did it
+    const wasEntering = this.isEntering.get(cardId);
+
     this.isEntering.set(cardId, false);
     this.entryStates.set(cardId, {
       count: '',
@@ -205,8 +247,11 @@ class GlobalCardEntryHandler {
       special: 'none',
       isNegative: false
     });
-    domOverlay.hide(cardId);
-    domHelpPanel.hide();
+
+    // Hide overlay if user was entering (navigating away), but submitEntry already hides it
+    if (wasEntering) {
+      domOverlay.hide(cardId);
+    }
   }
 }
 

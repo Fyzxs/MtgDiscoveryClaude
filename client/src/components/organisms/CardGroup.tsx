@@ -109,28 +109,30 @@ export const CardGroup = React.memo(CardGroupComponent, (prevProps, nextProps) =
   if (!prevProps.isVisible && !nextProps.isVisible) {
     return true; // Props are "equal" - skip re-render
   }
-  
+
   // If visibility changed, re-render (this is expected)
   if (prevProps.isVisible !== nextProps.isVisible) {
     return false; // Props are "different" - re-render
   }
-  
+
   // If both visible, check other important props
   if (prevProps.isVisible && nextProps.isVisible) {
+    // Use array reference equality - if the array reference changed, re-render
+    // This allows parent components to trigger re-renders by creating new arrays
+    // when individual card data changes (like userCollection updates)
+    if (prevProps.cards !== nextProps.cards) {
+      return false; // Array reference changed - re-render
+    }
+
     return (
       prevProps.groupId === nextProps.groupId &&
       prevProps.groupName === nextProps.groupName &&
-      prevProps.cards.length === nextProps.cards.length &&
       prevProps.totalCards === nextProps.totalCards &&
       prevProps.showHeader === nextProps.showHeader &&
-      prevProps.isLoading === nextProps.isLoading &&
-      // Deep comparison would be expensive, so use first card id as proxy for changes
-      (prevProps.cards.length === 0 || 
-       (nextProps.cards.length === 0) ||
-       prevProps.cards[0]?.id === nextProps.cards[0]?.id)
+      prevProps.isLoading === nextProps.isLoading
     );
   }
-  
+
   return false; // Default to re-render if unsure
 });
 
