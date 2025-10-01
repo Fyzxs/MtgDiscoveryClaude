@@ -1,0 +1,17 @@
+{
+  "finish": {
+    "nonfoil": "◆",
+    "foil": "★",
+    "etched": "◇"
+  },
+  "special": {
+    "artistProof": "証",
+    "signed": "署",
+    "altered": "改"
+  },
+  "status": {
+    "collected": "✓",
+    "notCollected": "○",
+    "partial": "△"
+  }
+}
