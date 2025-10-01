@@ -11,10 +11,7 @@ public sealed class ProvidedCosmosItemId : CosmosItemId
     /// Initializes a new instance of the <see cref="ProvidedCosmosItemId"/> class.
     /// </summary>
     /// <param name="value">The item ID value.</param>
-    public ProvidedCosmosItemId(string value)
-    {
-        _value = value;
-    }
+    public ProvidedCosmosItemId(string value) => _value = value;
 
     /// <summary>
     /// Returns the provided item ID value.

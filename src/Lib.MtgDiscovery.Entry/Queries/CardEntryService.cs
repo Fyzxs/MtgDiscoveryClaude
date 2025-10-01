@@ -35,23 +35,11 @@ internal sealed class CardEntryService : ICardEntryService
         _cardNameSearch = cardNameSearch;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args)
-    {
-        return await _cardsByIds.Execute(args).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => await _cardsByIds.Execute(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
-    {
-        return await _cardsBySetCode.Execute(setCode).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(ISetCodeArgEntity setCode) => await _cardsBySetCode.Execute(setCode).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(ICardNameArgEntity cardName)
-    {
-        return await _cardsByName.Execute(cardName).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(ICardNameArgEntity cardName) => await _cardsByName.Execute(cardName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
-    {
-        return await _cardNameSearch.Execute(searchTerm).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm) => await _cardNameSearch.Execute(searchTerm).ConfigureAwait(false);
 }

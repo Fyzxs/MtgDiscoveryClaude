@@ -18,13 +18,7 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
         new AddCardToCollectionEntryService(logger))
     { }
 
-    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection)
-    {
-        _addCardToCollection = addCardToCollection;
-    }
+    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection) => _addCardToCollection = addCardToCollection;
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args)
-    {
-        return await _addCardToCollection.Execute(new AddCardToCollectionArgsEntity { AuthUser = authUser, AddUserCard = args }).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => await _addCardToCollection.Execute(new AddCardToCollectionArgsEntity { AuthUser = authUser, AddUserCard = args }).ConfigureAwait(false);
 }
