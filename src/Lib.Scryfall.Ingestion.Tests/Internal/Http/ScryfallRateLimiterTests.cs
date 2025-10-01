@@ -52,6 +52,7 @@ public sealed class ScryfallRateLimiterTests
         {
             // Simulate waiting for the rate limit to reset
         }
+
         await Task.Delay(110, TestContext.CancellationTokenSource.Token).ConfigureAwait(false); // Wait more than 100ms
         Stopwatch stopwatch = Stopwatch.StartNew();
 

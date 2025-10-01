@@ -16,13 +16,7 @@ internal sealed class AllScryfallSetCollection : IAsyncEnumerable<IScryfallSet>
     {
     }
 
-    private AllScryfallSetCollection(IAsyncEnumerable<IScryfallSet> source)
-    {
-        _source = source;
-    }
+    private AllScryfallSetCollection(IAsyncEnumerable<IScryfallSet> source) => _source = source;
 
-    public IAsyncEnumerator<IScryfallSet> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-    {
-        return _source.GetAsyncEnumerator(cancellationToken);
-    }
+    public IAsyncEnumerator<IScryfallSet> GetAsyncEnumerator(CancellationToken cancellationToken = default) => _source.GetAsyncEnumerator(cancellationToken);
 }

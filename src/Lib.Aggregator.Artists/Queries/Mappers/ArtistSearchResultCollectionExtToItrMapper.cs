@@ -13,10 +13,7 @@ internal sealed class ArtistSearchExtToItrMapper : IArtistSearchExtToItrMapper
 
     public ArtistSearchExtToItrMapper() : this(new ArtistNameTrigramDataExtToItrEntityMapper()) { }
 
-    internal ArtistSearchExtToItrMapper(IArtistNameTrigramDataExtToItrEntityMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    internal ArtistSearchExtToItrMapper(IArtistNameTrigramDataExtToItrEntityMapper mapper) => _mapper = mapper;
 
     public async Task<IArtistSearchResultCollectionOufEntity> Map(IEnumerable<ArtistNameTrigramDataExtEntity> source)
     {

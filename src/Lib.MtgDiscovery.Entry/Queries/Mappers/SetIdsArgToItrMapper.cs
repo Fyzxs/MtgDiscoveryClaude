@@ -7,8 +7,5 @@ namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
 internal sealed class SetIdsArgToItrMapper : ISetIdsArgToItrMapper
 {
-    public Task<ISetIdsItrEntity> Map(ISetIdsArgEntity arg)
-    {
-        return Task.FromResult<ISetIdsItrEntity>(new EntrySetIdsItrEntity(arg.SetIds));
-    }
+    public Task<ISetIdsItrEntity> Map(ISetIdsArgEntity arg) => Task.FromResult<ISetIdsItrEntity>(new EntrySetIdsItrEntity(arg.SetIds));
 }

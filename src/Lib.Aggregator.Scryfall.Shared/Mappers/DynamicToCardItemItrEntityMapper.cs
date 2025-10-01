@@ -6,8 +6,5 @@ namespace Lib.Aggregator.Scryfall.Shared.Mappers;
 
 public sealed class DynamicToCardItemItrEntityMapper : IDynamicToCardItemItrEntityMapper
 {
-    public Task<ICardItemItrEntity> Map(dynamic source)
-    {
-        return Task.FromResult<ICardItemItrEntity>(new CardItemItrEntity(source));
-    }
+    public Task<ICardItemItrEntity> Map(dynamic source) => Task.FromResult<ICardItemItrEntity>(new CardItemItrEntity(source));
 }

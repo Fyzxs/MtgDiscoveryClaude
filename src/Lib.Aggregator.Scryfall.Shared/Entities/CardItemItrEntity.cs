@@ -107,6 +107,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
         {
             return [.. jArray.Select(x => (int)x)];
         }
+
         return null;
     }
 
@@ -117,6 +118,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
         {
             return [.. jArray.Select(x => (string)x)];
         }
+
         return null;
     }
 
@@ -130,8 +132,10 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
             {
                 result[i] = new CardFaceItrEntity(jArray[i]);
             }
+
             return result;
         }
+
         return null;
     }
 
@@ -145,8 +149,10 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
             {
                 result[i] = new AllPartsItrEntity(jArray[i]);
             }
+
             return result;
         }
+
         return null;
     }
 }

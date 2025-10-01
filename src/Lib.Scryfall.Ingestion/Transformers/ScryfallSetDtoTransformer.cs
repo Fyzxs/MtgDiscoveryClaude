@@ -10,13 +10,7 @@ internal sealed class ScryfallSetDtoTransformer : IScryfallDtoTransformer<ExtScr
 {
     private readonly ILogger _cardListPagingLogger;
 
-    public ScryfallSetDtoTransformer(ILogger cardListPagingLogger)
-    {
-        _cardListPagingLogger = cardListPagingLogger;
-    }
+    public ScryfallSetDtoTransformer(ILogger cardListPagingLogger) => _cardListPagingLogger = cardListPagingLogger;
 
-    public IScryfallSet Transform(ExtScryfallSetDto dto)
-    {
-        return new ScryfallSet(dto, _cardListPagingLogger);
-    }
+    public IScryfallSet Transform(ExtScryfallSetDto dto) => new ScryfallSet(dto, _cardListPagingLogger);
 }

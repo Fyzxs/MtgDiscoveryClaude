@@ -11,10 +11,7 @@ internal sealed class MaxSetsFilter : IScryfallSetFilter
     private readonly IScryfallIngestionConfiguration _config;
     private int _processedCount;
 
-    public MaxSetsFilter(IScryfallIngestionConfiguration config)
-    {
-        _config = config;
-    }
+    public MaxSetsFilter(IScryfallIngestionConfiguration config) => _config = config;
 
     public bool ShouldInclude(IScryfallSet set)
     {

@@ -7,10 +7,7 @@ public abstract class ValidatorActionResponse<TToValidate, TValidatorResponse, T
 {
     private readonly IValidatorAction<TToValidate, TValidatorResponse> _validator;
 
-    protected ValidatorActionResponse(IValidatorAction<TToValidate, TValidatorResponse> validator)
-    {
-        _validator = validator;
-    }
+    protected ValidatorActionResponse(IValidatorAction<TToValidate, TValidatorResponse> validator) => _validator = validator;
 
     public async Task<IAsyncTryOut<TReturnResponse>> TryIsValid(TToValidate toValidate)
     {

@@ -23,10 +23,7 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
     {
     }
 
-    private ConfigBulkProcessingConfiguration(IConfig config)
-    {
-        _config = config;
-    }
+    private ConfigBulkProcessingConfiguration(IConfig config) => _config = config;
 
     public bool EnableMemoryThrottling
     {

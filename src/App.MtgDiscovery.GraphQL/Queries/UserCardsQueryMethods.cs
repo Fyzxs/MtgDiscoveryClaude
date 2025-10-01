@@ -21,10 +21,7 @@ public sealed class UserCardsQueryMethods
     {
     }
 
-    private UserCardsQueryMethods(IEntryService entryService)
-    {
-        _entryService = entryService;
-    }
+    private UserCardsQueryMethods(IEntryService entryService) => _entryService = entryService;
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
     public async Task<ResponseModel> UserCardsBySet(UserCardsBySetArgEntity setArgs)
@@ -33,14 +30,17 @@ public sealed class UserCardsQueryMethods
             .UserCardsBySetAsync(setArgs)
             .ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = response.ResponseData };
     }
@@ -52,14 +52,17 @@ public sealed class UserCardsQueryMethods
             .UserCardAsync(cardArgs)
             .ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = response.ResponseData };
     }
@@ -71,14 +74,17 @@ public sealed class UserCardsQueryMethods
             .UserCardsByIdsAsync(cardsArgs)
             .ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = response.ResponseData };
     }

@@ -18,10 +18,7 @@ internal sealed class CollectionUserCardExtToItrMapper : ICollectionUserCardExtT
     public CollectionUserCardExtToItrMapper() : this(new UserCardExtToItrEntityMapper())
     { }
 
-    private CollectionUserCardExtToItrMapper(IUserCardExtToItrEntityMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private CollectionUserCardExtToItrMapper(IUserCardExtToItrEntityMapper mapper) => _mapper = mapper;
 
     public async Task<IEnumerable<IUserCardOufEntity>> Map([NotNull] IEnumerable<UserCardExtEntity> source)
     {

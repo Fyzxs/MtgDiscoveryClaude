@@ -13,10 +13,7 @@ public sealed class AuthUserArgEntity : IAuthUserArgEntity
 
     private readonly ClaimsPrincipal _claimsPrincipal;
 
-    public AuthUserArgEntity(ClaimsPrincipal claimsPrincipal)
-    {
-        _claimsPrincipal = claimsPrincipal;
-    }
+    public AuthUserArgEntity(ClaimsPrincipal claimsPrincipal) => _claimsPrincipal = claimsPrincipal;
 
     // IAuthUserArgEntity implementation - extract values from JWT on demand
     public string UserId

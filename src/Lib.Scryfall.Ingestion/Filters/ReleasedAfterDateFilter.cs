@@ -9,10 +9,7 @@ internal sealed class ReleasedAfterDateFilter : IScryfallSetFilter
     private const bool Include = true;
     private readonly IScryfallIngestionConfiguration _config;
 
-    public ReleasedAfterDateFilter(IScryfallIngestionConfiguration config)
-    {
-        _config = config;
-    }
+    public ReleasedAfterDateFilter(IScryfallIngestionConfiguration config) => _config = config;
 
     public bool ShouldInclude(IScryfallSet set)
     {

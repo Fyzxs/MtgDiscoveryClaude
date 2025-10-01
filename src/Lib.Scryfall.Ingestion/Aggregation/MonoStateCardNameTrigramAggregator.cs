@@ -55,13 +55,7 @@ internal sealed class MonoStateCardNameTrigramAggregator : ICardNameTrigramAggre
         }
     }
 
-    public IEnumerable<ICardNameTrigramAggregate> GetTrigrams()
-    {
-        return s_trigrams.Values.ToList();
-    }
+    public IEnumerable<ICardNameTrigramAggregate> GetTrigrams() => s_trigrams.Values.ToList();
 
-    public void Clear()
-    {
-        s_trigrams.Clear();
-    }
+    public void Clear() => s_trigrams.Clear();
 }

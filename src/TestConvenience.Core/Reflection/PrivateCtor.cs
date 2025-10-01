@@ -105,6 +105,7 @@ internal sealed class ValueTypeArray : Array<Type>
         {
             types[index] = _args[index].GetType();
         }
+
         return types;
     }
 }

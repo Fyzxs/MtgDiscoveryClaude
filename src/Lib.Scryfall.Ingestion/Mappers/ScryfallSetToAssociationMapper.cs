@@ -5,15 +5,9 @@ namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal sealed class SetToSetParentAssociationExtMapper : ISetToSetParentAssociationExtMapper
 {
-    public bool HasParentSet(IScryfallSet scryfallSet)
-    {
-        return scryfallSet.HasParentSet();
-    }
+    public bool HasParentSet(IScryfallSet scryfallSet) => scryfallSet.HasParentSet();
 
-    public bool HasNoParentSet(IScryfallSet scryfallSet)
-    {
-        return HasParentSet(scryfallSet) is false;
-    }
+    public bool HasNoParentSet(IScryfallSet scryfallSet) => HasParentSet(scryfallSet) is false;
 
     public ScryfallSetParentAssociationExtEntity Map(IScryfallSet scryfallSet)
     {

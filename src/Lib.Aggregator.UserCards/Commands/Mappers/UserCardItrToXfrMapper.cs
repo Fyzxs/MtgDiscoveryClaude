@@ -14,10 +14,7 @@ internal sealed class AddUserCardItrToXfrMapper : IAddUserCardItrToXfrMapper
     public AddUserCardItrToXfrMapper() : this(new UserCardDetailsItrToXfrMapper())
     { }
 
-    private AddUserCardItrToXfrMapper(IUserCardDetailsItrToXfrMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private AddUserCardItrToXfrMapper(IUserCardDetailsItrToXfrMapper mapper) => _mapper = mapper;
 
     public async Task<IAddUserCardXfrEntity> Map(IUserCardItrEntity source)
     {

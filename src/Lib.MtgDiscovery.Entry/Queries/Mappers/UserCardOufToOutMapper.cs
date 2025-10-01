@@ -11,10 +11,7 @@ internal sealed class UserCardOufToOutMapper : IUserCardOufToOutMapper
 
     public UserCardOufToOutMapper() : this(new UserCardDetailsOufToOutMapper()) { }
 
-    internal UserCardOufToOutMapper(IUserCardDetailsOufToOutMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    internal UserCardOufToOutMapper(IUserCardDetailsOufToOutMapper mapper) => _mapper = mapper;
 
     public async Task<UserCardOutEntity> Map(IUserCardOufEntity source)
     {

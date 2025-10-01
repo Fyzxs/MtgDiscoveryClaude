@@ -26,6 +26,7 @@ internal sealed class ArtistTrigramAggregate : IArtistTrigramAggregate
             entry = new ArtistTrigramEntryImpl(artistId, name, normalized);
             _entries[key] = entry;
         }
+
         entry.AddPosition(position);
     }
 

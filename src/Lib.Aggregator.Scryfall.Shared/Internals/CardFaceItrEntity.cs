@@ -38,6 +38,7 @@ internal sealed class CardFaceItrEntity : ICardFaceItrEntity
         {
             return [.. jArray.Select(x => (string)x)];
         }
+
         return null;
     }
 }

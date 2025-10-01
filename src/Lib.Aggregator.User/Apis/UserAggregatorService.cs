@@ -13,13 +13,7 @@ public sealed class UserAggregatorService : IUserAggregatorService
     public UserAggregatorService(ILogger logger) : this(new CommandUserAggregatorService(logger))
     { }
 
-    private UserAggregatorService(IUserAggregatorService userAggregatorOperations)
-    {
-        _userAggregatorOperations = userAggregatorOperations;
-    }
+    private UserAggregatorService(IUserAggregatorService userAggregatorOperations) => _userAggregatorOperations = userAggregatorOperations;
 
-    public Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
-    {
-        return _userAggregatorOperations.RegisterUserAsync(userInfo);
-    }
+    public Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _userAggregatorOperations.RegisterUserAsync(userInfo);
 }

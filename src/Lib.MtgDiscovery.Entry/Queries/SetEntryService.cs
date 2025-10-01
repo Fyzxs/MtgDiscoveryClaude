@@ -32,18 +32,9 @@ internal sealed class SetEntryService : ISetEntryService
         _allSets = allSets;
     }
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity args)
-    {
-        return await _setsByIds.Execute(args).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity args) => await _setsByIds.Execute(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity args)
-    {
-        return await _setsByCode.Execute(args).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity args) => await _setsByCode.Execute(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> AllSetsAsync()
-    {
-        return await _allSets.Execute(new NoArgsEntity()).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> AllSetsAsync() => await _allSets.Execute(new NoArgsEntity()).ConfigureAwait(false);
 }

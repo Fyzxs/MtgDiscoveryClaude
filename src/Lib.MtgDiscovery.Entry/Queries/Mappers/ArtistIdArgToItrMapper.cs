@@ -7,8 +7,5 @@ namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
 internal sealed class ArtistIdArgToItrMapper : IArtistIdArgToItrMapper
 {
-    public Task<IArtistIdItrEntity> Map(IArtistIdArgEntity args)
-    {
-        return Task.FromResult<IArtistIdItrEntity>(new ArtistIdItrEntity { ArtistId = args.ArtistId });
-    }
+    public Task<IArtistIdItrEntity> Map(IArtistIdArgEntity args) => Task.FromResult<IArtistIdItrEntity>(new ArtistIdItrEntity { ArtistId = args.ArtistId });
 }

@@ -22,24 +22,24 @@ public class ArtistQueryMethods
     {
     }
 
-    private ArtistQueryMethods(IEntryService entryService)
-    {
-        _entryService = entryService;
-    }
+    private ArtistQueryMethods(IEntryService entryService) => _entryService = entryService;
 
     [GraphQLType(typeof(ArtistSearchResponseModelUnionType))]
     public async Task<ResponseModel> ArtistSearch(ArtistSearchTermArgEntity searchTerm)
     {
         IOperationResponse<List<ArtistSearchResultOutEntity>> response = await _entryService.ArtistSearchAsync(searchTerm).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<ArtistSearchResultOutEntity>>() { Data = response.ResponseData };
     }
@@ -49,14 +49,17 @@ public class ArtistQueryMethods
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByArtistAsync(artistId).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
@@ -66,14 +69,17 @@ public class ArtistQueryMethods
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }

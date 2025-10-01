@@ -31,18 +31,9 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
         _userCardsByIds = userCardsByIds;
     }
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs)
-    {
-        return await _userCard.Execute(cardArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => await _userCard.Execute(cardArgs).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs)
-    {
-        return await _userCardsBySet.Execute(bySetArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => await _userCardsBySet.Execute(bySetArgs).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs)
-    {
-        return await _userCardsByIds.Execute(cardsArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => await _userCardsByIds.Execute(cardsArgs).ConfigureAwait(false);
 }

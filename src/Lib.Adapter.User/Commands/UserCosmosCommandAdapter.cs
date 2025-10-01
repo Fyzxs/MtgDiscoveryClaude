@@ -23,10 +23,7 @@ internal sealed class UserCosmosCommandAdapter : IUserCommandAdapter
     public UserCosmosCommandAdapter(ILogger logger) : this(new UserInfoScribe(logger))
     { }
 
-    private UserCosmosCommandAdapter(UserInfoScribe userInfoScribe)
-    {
-        _userInfoScribe = userInfoScribe;
-    }
+    private UserCosmosCommandAdapter(UserInfoScribe userInfoScribe) => _userInfoScribe = userInfoScribe;
 
     public async Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
     {

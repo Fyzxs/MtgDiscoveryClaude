@@ -13,16 +13,17 @@ internal interface ICardGroupingMatcher
 
 internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
 {
+
+    [GeneratedRegex(@"^(\d+)")]
+    private static partial Regex MyRegex();
+
     private readonly ISetGroupingsLoader _groupingsLoader;
 
     public CardGroupingMatcher() : this(new MonoStateSetGroupingsLoader())
     {
     }
 
-    private CardGroupingMatcher(ISetGroupingsLoader groupingsLoader)
-    {
-        _groupingsLoader = groupingsLoader;
-    }
+    private CardGroupingMatcher(ISetGroupingsLoader groupingsLoader) => _groupingsLoader = groupingsLoader;
 
     public string GetGroupIdForCard(dynamic cardData, string setCode)
     {
@@ -144,6 +145,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
                 {
                     return false;
                 }
+
                 string valueStr = property.Value?.ToString() ?? string.Empty;
                 if (cardValue.Contains(valueStr, StringComparison.OrdinalIgnoreCase) is false)
                 {
@@ -203,10 +205,12 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
             {
                 return true;
             }
+
             if (propertyKey == "border" && CheckBorderColor(cardData, stringValue))
             {
                 return true;
             }
+
             if (CheckArrayContains(cardData, "finishes", stringValue) ||
                 CheckArrayContains(cardData, "frame_effects", stringValue) ||
                 CheckArrayContains(cardData, "promo_types", stringValue))
@@ -256,13 +260,16 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
                 {
                     return token.Value<bool>();
                 }
+
                 if (token.Type == JTokenType.String)
                 {
                     return token.Value<string>();
                 }
+
                 return token;
             }
         }
+
         return null;
     }
 
@@ -275,6 +282,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
                 return token.ToString();
             }
         }
+
         return null;
     }
 
@@ -287,9 +295,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
                 return array;
             }
         }
+
         return null;
     }
-
-    [GeneratedRegex(@"^(\d+)")]
-    private static partial Regex MyRegex();
 }

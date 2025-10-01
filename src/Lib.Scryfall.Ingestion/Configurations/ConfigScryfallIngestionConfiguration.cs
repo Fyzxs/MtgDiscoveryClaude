@@ -8,12 +8,6 @@ internal sealed class ConfigScryfallIngestionConfiguration : IScryfallIngestionC
     public ConfigScryfallIngestionConfiguration() : this(new MonoStateConfig())
     {
     }
-    private ConfigScryfallIngestionConfiguration(IConfig config)
-    {
-        _config = config;
-    }
-    public IScryfallProcessingConfig ProcessingConfig()
-    {
-        return new ConfigScryfallProcessingConfig($"{IScryfallIngestionConfiguration.ScryfallIngestionConfigurationKey}:{IScryfallIngestionConfiguration.ProcessingKey}", _config);
-    }
+    private ConfigScryfallIngestionConfiguration(IConfig config) => _config = config;
+    public IScryfallProcessingConfig ProcessingConfig() => new ConfigScryfallProcessingConfig($"{IScryfallIngestionConfiguration.ScryfallIngestionConfigurationKey}:{IScryfallIngestionConfiguration.ProcessingKey}", _config);
 }

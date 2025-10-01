@@ -17,10 +17,7 @@ internal sealed class ScryfallHttpClient : IHttpClient
     {
     }
 
-    private ScryfallHttpClient(IHttpClient innerClient)
-    {
-        _innerClient = innerClient;
-    }
+    private ScryfallHttpClient(IHttpClient innerClient) => _innerClient = innerClient;
 
     public async Task<HttpResponseMessage> SendAsync([NotNull] HttpRequestMessage request)
     {
@@ -40,10 +37,7 @@ internal sealed class ScryfallHttpClient : IHttpClient
         return JsonConvert.DeserializeObject<T>(content);
     }
 
-    public async Task SaveAsFileAsync(string url, string fileName)
-    {
-        await SaveAsFileAsync(new Uri(url), fileName).ConfigureAwait(false);
-    }
+    public async Task SaveAsFileAsync(string url, string fileName) => await SaveAsFileAsync(new Uri(url), fileName).ConfigureAwait(false);
 
     public async Task SaveAsFileAsync(Uri uri, string fileName)
     {
@@ -57,10 +51,7 @@ internal sealed class ScryfallHttpClient : IHttpClient
         await stream.CopyToAsync(fileStream).ConfigureAwait(false);
     }
 
-    public async Task<Stream> StreamAsync(string url)
-    {
-        return await StreamAsync(new Uri(url)).ConfigureAwait(false);
-    }
+    public async Task<Stream> StreamAsync(string url) => await StreamAsync(new Uri(url)).ConfigureAwait(false);
 
     public async Task<Stream> StreamAsync(Uri url)
     {

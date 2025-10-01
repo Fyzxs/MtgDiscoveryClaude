@@ -9,10 +9,7 @@ internal sealed class NullScryfallSet : IScryfallSet
 {
     private readonly string _code;
 
-    public NullScryfallSet(string code)
-    {
-        _code = code;
-    }
+    public NullScryfallSet(string code) => _code = code;
 
     public string Code() => _code;
     public string Name() => string.Empty;

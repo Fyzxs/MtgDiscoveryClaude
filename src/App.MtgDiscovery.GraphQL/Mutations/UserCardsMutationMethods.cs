@@ -24,10 +24,7 @@ public sealed class UserCardsMutationMethods
     {
     }
 
-    private UserCardsMutationMethods(IEntryService entryService)
-    {
-        _entryService = entryService;
-    }
+    private UserCardsMutationMethods(IEntryService entryService) => _entryService = entryService;
 
     [Authorize]
     [GraphQLType(typeof(AddCardToCollectionResponseModelUnionType))]
@@ -37,14 +34,17 @@ public sealed class UserCardsMutationMethods
 
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
