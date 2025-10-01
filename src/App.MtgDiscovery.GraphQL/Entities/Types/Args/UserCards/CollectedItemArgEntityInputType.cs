@@ -22,5 +22,9 @@ public sealed class CollectedItemArgEntityInputType : InputObjectType<UserCardDe
         descriptor.Field(x => x.Count)
             .Type<NonNullType<IntType>>()
             .Description("The number of copies of this variant");
+
+        descriptor.Field(x => x.SetGroupId)
+            .Type<StringType>()
+            .Description("The set grouping ID (e.g., 'borderless', 'showcase'). Null if card has no grouping.");
     }
 }

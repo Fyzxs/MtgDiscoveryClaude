@@ -99,6 +99,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
                     Finish = existingItem.Finish,
                     Special = existingItem.Special,
                     Count = newCount
+                    // setGroupId from newItem intentionally omitted - used for aggregation only
                 };
             }
             else
@@ -109,6 +110,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
                     Finish = newItem.Finish,
                     Special = newItem.Special,
                     Count = newItem.Count
+                    // setGroupId from newItem intentionally omitted - used for aggregation only
                 };
             }
         }
@@ -129,11 +131,14 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         List<UserCardDetailsExtEntity> collectedItems = [];
         foreach (IUserCardDetailsXfrEntity item in addUserCard.CollectedList)
         {
+            // Note: setGroupId from item is used to update UserSetCards aggregation
+            // but is NOT persisted in the UserCard record itself
             collectedItems.Add(new UserCardDetailsExtEntity
             {
                 Finish = item.Finish,
                 Special = item.Special,
                 Count = item.Count
+                // setGroupId intentionally omitted - used for aggregation only
             });
         }
 
