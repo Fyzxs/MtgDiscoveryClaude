@@ -61,8 +61,5 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
         }
     }
 
-    private bool ShouldNotInclude(IScryfallSet set)
-    {
-        return _filters.Any(filter => filter.ShouldNotInclude(set));
-    }
+    private bool ShouldNotInclude(IScryfallSet set) => _filters.Any(filter => filter.ShouldNotInclude(set));
 }

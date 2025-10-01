@@ -19,10 +19,7 @@ internal sealed class UserCardExtToItrEntityMapper : IUserCardExtToItrEntityMapp
     public UserCardExtToItrEntityMapper() : this(new UserCardDetailsExtToOufMapper())
     { }
 
-    internal UserCardExtToItrEntityMapper(IUserCardDetailsExtToOufMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    internal UserCardExtToItrEntityMapper(IUserCardDetailsExtToOufMapper mapper) => _mapper = mapper;
 
     public async Task<IUserCardOufEntity> Map([NotNull] UserCardExtEntity source)
     {

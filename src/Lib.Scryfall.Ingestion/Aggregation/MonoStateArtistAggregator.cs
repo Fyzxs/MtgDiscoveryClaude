@@ -30,15 +30,9 @@ internal sealed class MonoStateArtistAggregator : IArtistAggregator
         }
     }
 
-    public IEnumerable<IArtistAggregate> GetArtists()
-    {
-        return s_artists.Values.ToList();
-    }
+    public IEnumerable<IArtistAggregate> GetArtists() => s_artists.Values.ToList();
 
-    public IEnumerable<IArtistAggregate> GetDirtyArtists()
-    {
-        return s_artists.Values.Where(a => a.IsDirty()).ToList();
-    }
+    public IEnumerable<IArtistAggregate> GetDirtyArtists() => s_artists.Values.Where(a => a.IsDirty()).ToList();
 
     public void MarkAllClean()
     {
@@ -48,8 +42,5 @@ internal sealed class MonoStateArtistAggregator : IArtistAggregator
         }
     }
 
-    public void Clear()
-    {
-        s_artists.Clear();
-    }
+    public void Clear() => s_artists.Clear();
 }

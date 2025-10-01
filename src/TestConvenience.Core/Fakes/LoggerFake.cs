@@ -10,10 +10,7 @@ public sealed class LoggerFake : ILogger
 {
     public int LogInvokeCount { get; private set; }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-    {
-        LogInvokeCount++;
-    }
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) => LogInvokeCount++;
 
     public bool IsEnabled(LogLevel logLevel) => true;
 

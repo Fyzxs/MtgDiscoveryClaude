@@ -111,11 +111,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
         return DateTime.MinValue;
     }
 
-    public void ProcessCards(IReadOnlyList<IScryfallCard> cards, IReadOnlyDictionary<string, dynamic> setsByCode)
-    {
-        _dashboard.LogProcessingCards(cards.Count);
-        // Card processing logic (if any) goes here
-    }
+    public void ProcessCards(IReadOnlyList<IScryfallCard> cards, IReadOnlyDictionary<string, dynamic> setsByCode) => _dashboard.LogProcessingCards(cards.Count);// Card processing logic (if any) goes here
 
     public async Task WriteCardsAsync(IReadOnlyList<IScryfallCard> cards)
     {

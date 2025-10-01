@@ -44,10 +44,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
         _dashboard = dashboard;
     }
 
-    public void TrackArtist(IScryfallCard card)
-    {
-        _artistAggregator.Track(card);
-    }
+    public void TrackArtist(IScryfallCard card) => _artistAggregator.Track(card);
 
     public async Task WriteArtistsAsync()
     {

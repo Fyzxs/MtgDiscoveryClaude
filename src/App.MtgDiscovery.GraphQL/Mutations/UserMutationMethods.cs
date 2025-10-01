@@ -22,10 +22,7 @@ public class UserMutationMethods
     {
     }
 
-    private UserMutationMethods(IEntryService entryService)
-    {
-        _entryService = entryService;
-    }
+    private UserMutationMethods(IEntryService entryService) => _entryService = entryService;
 
     [Authorize]
     [GraphQLType(typeof(UserRegistrationResponseModelUnionType))]
@@ -37,14 +34,17 @@ public class UserMutationMethods
         // Call the entry service
         IOperationResponse<UserRegistrationOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<UserRegistrationOutEntity>() { Data = response.ResponseData };
     }

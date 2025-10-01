@@ -16,13 +16,7 @@ internal sealed class UserEntryService : IUserEntryService
         new RegisterUserEntryService(logger))
     { }
 
-    private UserEntryService(IRegisterUserEntryService registerUser)
-    {
-        _registerUser = registerUser;
-    }
+    private UserEntryService(IRegisterUserEntryService registerUser) => _registerUser = registerUser;
 
-    public async Task<IOperationResponse<UserRegistrationOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser)
-    {
-        return await _registerUser.Execute(authUser).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<UserRegistrationOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => await _registerUser.Execute(authUser).ConfigureAwait(false);
 }

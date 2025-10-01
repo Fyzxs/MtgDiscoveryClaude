@@ -25,10 +25,7 @@ public class SetQueryMethods
     {
     }
 
-    private SetQueryMethods(IEntryService entryService)
-    {
-        _entryService = entryService;
-    }
+    private SetQueryMethods(IEntryService entryService) => _entryService = entryService;
 
     public string TestSet() => "Set query endpoint is working!";
 
