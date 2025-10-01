@@ -13,7 +13,8 @@ internal sealed class UserCardDetailsItrToXfrMapper : IUserCardDetailsItrToXfrMa
         {
             Finish = source.Finish,
             Special = source.Special,
-            Count = source.Count
+            Count = source.Count,
+            SetGroupId = source.SetGroupId
         });
     }
 }
