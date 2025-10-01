@@ -174,6 +174,8 @@ export interface Card {
   preview?: Preview | null;
   producedMana?: string[] | null;
   attractions?: string[] | null;
+  // Set grouping information for collection tracking
+  setGroupId?: string | null;
   // Collection data will be embedded when collector ID is provided to GraphQL query
   // Empty array means no collection
   userCollection?: UserCardData | UserCardData[];
