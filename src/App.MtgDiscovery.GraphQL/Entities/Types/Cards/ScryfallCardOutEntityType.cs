@@ -151,6 +151,9 @@ internal class ScryfallCardOutEntityType : ObjectType<CardItemOutEntity>
         descriptor.Field(f => f.SetCode)
             .Description("The set code");
 
+        descriptor.Field(f => f.SetGroupId)
+            .Description("The set grouping ID for collector-focused categorization (e.g., borderless, showcase, extended art)");
+
         descriptor.Field(f => f.SetName)
             .Description("The set name");
 

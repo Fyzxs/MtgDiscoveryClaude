@@ -44,6 +44,7 @@ internal sealed class CardItemItrEntityFake : ICardItemItrEntity
     public bool Variation { get; init; }
     public string SetId { get; init; } = string.Empty;
     public string SetCode { get; init; } = string.Empty;
+    public string SetGroupId { get; init; } = string.Empty;
     public string SetName { get; init; } = string.Empty;
     public string SetType { get; init; } = string.Empty;
     public string SetUri { get; init; } = string.Empty;

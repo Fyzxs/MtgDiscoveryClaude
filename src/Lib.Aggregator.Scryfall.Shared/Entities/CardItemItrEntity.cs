@@ -52,6 +52,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
     public bool Variation => _data?.variation ?? false;
     public string SetId => _data?.set_id;
     public string SetCode => _data?.set;
+    public string SetGroupId => _data?.set_group_id;
     public string SetName => _data?.set_name;
     public string SetType => _data?.set_type;
     public string SetUri => _data?.set_uri;

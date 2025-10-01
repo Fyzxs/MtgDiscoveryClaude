@@ -52,6 +52,7 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
             Variation = source.Variation,
             SetId = source.SetId,
             SetCode = source.SetCode,
+            SetGroupId = source.SetGroupId,
             SetName = source.SetName,
             SetType = source.SetType,
             SetUri = source.SetUri,

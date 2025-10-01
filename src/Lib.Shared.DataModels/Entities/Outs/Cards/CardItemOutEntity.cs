@@ -85,6 +85,8 @@ public class CardItemOutEntity
 
     public string SetCode { get; set; }
 
+    public string SetGroupId { get; set; }
+
     public string SetName { get; set; }
 
     public string SetType { get; set; }
