@@ -2,7 +2,7 @@
 
 namespace Example.Scryfall.BulkIngestion;
 
-internal class Program
+internal sealed class Program
 {
     private static async Task Main(string[] args)
     {

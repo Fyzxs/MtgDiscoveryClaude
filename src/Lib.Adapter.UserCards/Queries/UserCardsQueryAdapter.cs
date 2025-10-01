@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
@@ -84,11 +83,11 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
 
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards)
     {
-        const int batchSize = 20; // Process in batches to avoid Cosmos DB rate limiting
+        const int BatchSize = 20;
         List<UserCardExtEntity> foundCards = [];
 
         // Process card IDs in batches
-        foreach (IEnumerable<string> batch in userCards.CardIds.Chunk(batchSize))
+        foreach (IEnumerable<string> batch in userCards.CardIds.Chunk(BatchSize))
         {
             IEnumerable<Task<OpResponse<UserCardExtEntity>>> readTasks = batch.Select(cardId =>
                 _userCardsGopher.ReadAsync<UserCardExtEntity>(new ReadPointItem

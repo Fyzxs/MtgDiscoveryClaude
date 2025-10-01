@@ -3,7 +3,7 @@ using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 
-internal class ScryfallLegalitiesOutEntityType : ObjectType<LegalitiesOutEntity>
+internal sealed class ScryfallLegalitiesOutEntityType : ObjectType<LegalitiesOutEntity>
 {
     protected override void Configure(IObjectTypeDescriptor<LegalitiesOutEntity> descriptor)
     {

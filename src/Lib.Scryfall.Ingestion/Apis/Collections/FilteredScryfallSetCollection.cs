@@ -37,7 +37,6 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
             [
                 new NonDigitalSetFilter(),
                 new PreviewSetFilter(logger),
-                new ForeignSetFilter(logger),
                 new SpecificSetsFilter(ingestionConfiguration),
                 new ReleasedAfterDateFilter(ingestionConfiguration),
                 new MaxSetsFilter(ingestionConfiguration)
