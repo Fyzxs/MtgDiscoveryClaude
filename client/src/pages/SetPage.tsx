@@ -466,17 +466,17 @@ export const SetPage: React.FC = () => {
 
     // Calculate total cards per group from ALL cards (unfiltered)
     const totalCardsPerGroup = groupCardsOptimized(cards, setInfo?.groupings);
-    
+
     // Convert to CardGroupConfig format for compatibility
     const groupsArray: CardGroupConfig[] = [];
-    
-    // Get groupings for proper ordering
+
+    // Get groupings metadata for proper ordering and display names
     const groupings = setInfo?.groupings || [];
-    
+
     // Process each group using total cards (before any filtering/sorting)
     for (const [groupId, allGroupCards] of totalCardsPerGroup.entries()) {
       const displayName = getGroupDisplayName(groupId, groupings);
-      
+
       groupsArray.push({
         id: groupId,
         name: groupId,
@@ -490,14 +490,24 @@ export const SetPage: React.FC = () => {
         isPromo: false
       });
     }
-    
-    // Sort groups by their defined order
+
+    // Sort groups by their defined order (if groupings metadata exists)
+    // Otherwise, sort alphabetically by display name with 'default-cards' last
     groupsArray.sort((a, b) => {
-      const orderA = getGroupOrder(a.id, groupings);
-      const orderB = getGroupOrder(b.id, groupings);
-      return orderA - orderB;
+      if (groupings.length > 0) {
+        // Use defined order from groupings metadata
+        const orderA = getGroupOrder(a.id, groupings);
+        const orderB = getGroupOrder(b.id, groupings);
+        return orderA - orderB;
+      } else {
+        // Fallback: put 'default-cards' last, sort others alphabetically
+        if (a.id === 'default-cards') return 1;
+        if (b.id === 'default-cards') return -1;
+        return a.displayName.localeCompare(b.displayName);
+      }
     });
-    
+
+
     return groupsArray;
   }, [setInfo?.groupings, cards]); // Only depends on raw data, not sorting/filtering
 
@@ -509,13 +519,13 @@ export const SetPage: React.FC = () => {
 
     // Re-group the sorted/filtered cards
     const groupedSortedCards = groupCardsOptimized(sortedCards, setInfo?.groupings);
-    
+
     // Update each group with filtered/sorted cards
     return allCardGroups.map(group => ({
       ...group,
       cards: groupedSortedCards.get(group.id) || []
     }));
-  }, [allCardGroups, sortedCards, setInfo?.groupings]);
+  }, [allCardGroups, sortedCards, setInfo?.groupings, cards.length]);
 
   // Compute visible groups: if no groups selected, show all; otherwise show only selected
   // Only include groups that have cards

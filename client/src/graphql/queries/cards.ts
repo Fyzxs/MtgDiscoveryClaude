@@ -172,6 +172,7 @@ export const GET_CARDS_BY_NAME = gql`
           }
           producedMana
           attractions
+          setGroupId
           userCollection {
             finish
             special
@@ -360,6 +361,7 @@ export const GET_CARDS_BY_SET_CODE = gql`
           }
           producedMana
           attractions
+          setGroupId
           userCollection {
             finish
             special
@@ -628,6 +630,7 @@ export const GET_CARDS_BY_ARTIST = gql`
           }
           producedMana
           attractions
+          setGroupId
           userCollection {
             finish
             special
