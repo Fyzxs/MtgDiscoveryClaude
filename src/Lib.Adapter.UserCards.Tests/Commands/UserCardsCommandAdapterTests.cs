@@ -45,7 +45,7 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new UserCardDetailsXfrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
+            CollectedList = [new UserCardDetailsXfrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 }]
         };
 
         // Act
@@ -80,7 +80,7 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            CollectedList = [collectedCard]
         };
 
         // Act
@@ -115,7 +115,7 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            CollectedList = [collectedCard]
         };
 
         // Act
@@ -157,7 +157,7 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { newCollectedCard }
+            CollectedList = [newCollectedCard]
         };
 
         // Act
@@ -191,7 +191,7 @@ public sealed class UserCardsCommandAdapterTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            CollectedList = [collectedCard]
         };
 
         // Act

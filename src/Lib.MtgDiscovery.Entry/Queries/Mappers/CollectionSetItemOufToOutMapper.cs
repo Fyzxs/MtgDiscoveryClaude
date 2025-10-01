@@ -24,6 +24,6 @@ internal sealed class CollectionSetItemOufToOutMapper : ICollectionSetItemOufToO
             collection.Data.Select(setItem => _mapper.Map(setItem))
         ).ConfigureAwait(false);
 
-        return mappedSets.ToList();
+        return [.. mappedSets];
     }
 }

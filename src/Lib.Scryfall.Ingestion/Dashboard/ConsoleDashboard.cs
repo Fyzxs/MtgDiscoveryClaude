@@ -14,7 +14,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private readonly Queue<string> _recentLogs = new(3);
     private readonly Dictionary<string, int> _completedCounts = [];
     private readonly Stopwatch _stopwatch = new();
-    private readonly char[] _spinnerChars = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
+    private readonly char[] _spinnerChars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
     private readonly int _refreshFrequency;
     private readonly bool _enableMemoryThrottling;
     private int _updateCounter;

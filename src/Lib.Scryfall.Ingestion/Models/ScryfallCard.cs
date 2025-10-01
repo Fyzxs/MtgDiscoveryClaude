@@ -55,10 +55,7 @@ internal sealed class ScryfallCard : IScryfallCard
         if (string.IsNullOrEmpty(groupId) is false)
         {
             JObject dataObject = _dto.Data as JObject;
-            if (dataObject is not null)
-            {
-                dataObject["set_group_id"] = groupId;
-            }
+            dataObject?["set_group_id"] = groupId;
         }
 
         _isEnriched = true;
@@ -201,7 +198,7 @@ internal sealed class ScryfallCard : IScryfallCard
             string artistString = (string)artistField;
 
             // Handle multiple artists separated by " & " or " and "
-            string[] separators = { " & ", " and " };
+            string[] separators = [" & ", " and "];
             string[] artistNames = artistString.Split(separators, System.StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string name in artistNames)

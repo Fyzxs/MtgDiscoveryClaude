@@ -16,8 +16,6 @@ internal sealed class CollectionCardNameSearchOufToOutMapper : ICollectionCardNa
     {
         await Task.CompletedTask.ConfigureAwait(false);
 
-        return search.Names
-            .Select(nameResult => new CardNameSearchResultOutEntity { Name = nameResult.Name })
-            .ToList();
+        return [.. search.Names.Select(nameResult => new CardNameSearchResultOutEntity { Name = nameResult.Name })];
     }
 }
