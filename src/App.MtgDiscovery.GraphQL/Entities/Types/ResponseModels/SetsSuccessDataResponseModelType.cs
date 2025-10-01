@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-internal class SetsSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<ScryfallSetOutEntity>>>
+internal sealed class SetsSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<ScryfallSetOutEntity>>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<ScryfallSetOutEntity>>> descriptor)
     {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Scryfall.Shared.Internals;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Newtonsoft.Json.Linq;
