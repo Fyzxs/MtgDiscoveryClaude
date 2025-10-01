@@ -181,19 +181,13 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
         ArtistAggregateExtEntity existingData = existingResponse.Value.Data;
 
         // Merge CardIds (union of existing + new)
-        IEnumerable<string> mergedCardIds = existingData.CardIds
-            .Union(newArtistData.CardIds())
-            .ToList();
+        IEnumerable<string> mergedCardIds = [.. existingData.CardIds.Union(newArtistData.CardIds())];
 
         // Merge SetIds (union of existing + new)
-        IEnumerable<string> mergedSetIds = existingData.SetIds
-            .Union(newArtistData.SetIds())
-            .ToList();
+        IEnumerable<string> mergedSetIds = [.. existingData.SetIds.Union(newArtistData.SetIds())];
 
         // Merge ArtistNames (union of existing + new, preserving order)
-        IEnumerable<string> mergedNames = existingData.ArtistNames
-            .Union(newArtistData.ArtistNames())
-            .ToList();
+        IEnumerable<string> mergedNames = [.. existingData.ArtistNames.Union(newArtistData.ArtistNames())];
 
         return new ArtistAggregateExtEntity
         {

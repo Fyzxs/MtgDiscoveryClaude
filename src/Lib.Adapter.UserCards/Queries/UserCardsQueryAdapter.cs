@@ -85,7 +85,7 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards)
     {
         const int batchSize = 20; // Process in batches to avoid Cosmos DB rate limiting
-        List<UserCardExtEntity> foundCards = new();
+        List<UserCardExtEntity> foundCards = [];
 
         // Process card IDs in batches
         foreach (IEnumerable<string> batch in userCards.CardIds.Chunk(batchSize))

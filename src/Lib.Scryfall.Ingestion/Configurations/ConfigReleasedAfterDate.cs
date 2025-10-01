@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Lib.Universal.Configurations;
 using Lib.Universal.Extensions;
 

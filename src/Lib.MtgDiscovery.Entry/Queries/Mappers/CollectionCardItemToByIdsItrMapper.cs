@@ -12,7 +12,7 @@ internal sealed class CollectionCardItemToByIdsItrMapper : ICollectionCardItemTo
 {
     public Task<IUserCardsByIdsItrEntity> Map(List<CardItemOutEntity> cards, IUserIdArgEntity argEntity)
     {
-        List<string> cardIds = cards.Select(c => c.Id).ToList();
+        List<string> cardIds = [.. cards.Select(c => c.Id)];
 
         IUserCardsByIdsItrEntity result = new UserCardsByIdsItrEntity
         {
