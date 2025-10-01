@@ -32,18 +32,9 @@ internal sealed class ArtistEntryService : IArtistEntryService
         _cardsByArtistName = cardsByArtistName;
     }
 
-    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm)
-    {
-        return await _artistSearch.Execute(searchTerm).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm) => await _artistSearch.Execute(searchTerm).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(IArtistIdArgEntity artistId)
-    {
-        return await _cardsByArtist.Execute(artistId).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(IArtistIdArgEntity artistId) => await _cardsByArtist.Execute(artistId).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
-    {
-        return await _cardsByArtistName.Execute(artistName).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(IArtistNameArgEntity artistName) => await _cardsByArtistName.Execute(artistName).ConfigureAwait(false);
 }

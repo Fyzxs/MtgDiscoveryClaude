@@ -23,10 +23,7 @@ internal sealed class ValidatorWithResponse<TToValidate, TResponseType> : IValid
 {
     private readonly IValidatorAction<TToValidate, IOperationResponse<TResponseType>> _validator;
 
-    public ValidatorWithResponse(IValidatorAction<TToValidate, IOperationResponse<TResponseType>> validator)
-    {
-        _validator = validator;
-    }
+    public ValidatorWithResponse(IValidatorAction<TToValidate, IOperationResponse<TResponseType>> validator) => _validator = validator;
 
     public async Task<AsyncTryOut<IOperationResponse<TResponseType>>> TryValidate(TToValidate toValidate)
     {

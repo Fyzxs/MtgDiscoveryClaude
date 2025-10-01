@@ -13,10 +13,7 @@ public sealed class ProvidedPartitionKeyValue : PartitionKeyValue
     /// Initializes a new instance of the <see cref="ProvidedPartitionKeyValue"/> class.
     /// </summary>
     /// <param name="value">The partition key string value.</param>
-    public ProvidedPartitionKeyValue(string value)
-    {
-        _value = value;
-    }
+    public ProvidedPartitionKeyValue(string value) => _value = value;
 
     /// <summary>
     /// Returns a PartitionKey created from the provided string value.

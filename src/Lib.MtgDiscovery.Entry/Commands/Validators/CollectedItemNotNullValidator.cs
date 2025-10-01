@@ -13,10 +13,7 @@ internal sealed class CollectedItemNotNullValidator : OperationResponseValidator
 
     public sealed class Validator : IValidator<IAddCardToCollectionArgsEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg)
-        {
-            return Task.FromResult(arg.AddUserCard.UserCardDetails is not null);
-        }
+        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg) => Task.FromResult(arg.AddUserCard.UserCardDetails is not null);
     }
 
     public sealed class Message : OperationResponseMessage

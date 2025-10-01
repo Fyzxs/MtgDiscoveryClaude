@@ -24,10 +24,7 @@ internal sealed class MonoStateCosmosClientAdapter : ICosmosClientAdapter
         _genesisDevice = genesisDevice;
     }
 
-    private ICosmosGenesisClientAdapter MonoState()
-    {
-        return s_cache.GetOrAdd(_containerDefinition.CacheKey(), _ => NewAdapter());
-    }
+    private ICosmosGenesisClientAdapter MonoState() => s_cache.GetOrAdd(_containerDefinition.CacheKey(), _ => NewAdapter());
 
     private ICosmosGenesisClientAdapter NewAdapter()
     {

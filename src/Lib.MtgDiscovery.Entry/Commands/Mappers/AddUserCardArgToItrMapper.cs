@@ -12,10 +12,7 @@ internal sealed class AddUserCardArgToItrMapper : IAddUserCardArgToItrMapper
     public AddUserCardArgToItrMapper() : this(new UserCardDetailsArgToItrMapper())
     { }
 
-    private AddUserCardArgToItrMapper(IUserCardDetailsArgToItrMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private AddUserCardArgToItrMapper(IUserCardDetailsArgToItrMapper mapper) => _mapper = mapper;
 
     public async Task<IUserCardItrEntity> Map(IAddCardToCollectionArgsEntity source)
     {
