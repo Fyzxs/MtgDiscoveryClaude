@@ -23,6 +23,11 @@ internal sealed class ConfigScryfallProcessingConfig : IScryfallProcessingConfig
         return new ConfigSpecificSetCodes($"{_parentKey}:{IScryfallProcessingConfig.SpecificSetsKey}", _config);
     }
 
+    public ReleasedAfterDate SetsReleasedAfter()
+    {
+        return new ConfigReleasedAfterDate($"{_parentKey}:{IScryfallProcessingConfig.SetsReleasedAfterKey}", _config);
+    }
+
     public SetBatchSize SetBatchSize()
     {
         return new ConfigSetBatchSize($"{_parentKey}:{IScryfallProcessingConfig.SetBatchSizeKey}", _config);

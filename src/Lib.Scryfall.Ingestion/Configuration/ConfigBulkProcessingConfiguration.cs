@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Universal.Configurations;
@@ -14,6 +15,7 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
     private const string ProcessRulingsKey = "ProcessRulings";
     private const string SetsOnlyKey = "SetsOnly";
     private const string SetCodesToProcessKey = "SetCodesToProcess";
+    private const string SetsReleasedAfterKey = "SetsReleasedAfter";
 
     private readonly IConfig _config;
 
@@ -72,6 +74,25 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
             return [.. value.Split(',')
                 .Select(s => s.Trim().ToLowerInvariant())
                 .Where(s => s.IzNotNullOrWhiteSpace())];
+        }
+    }
+
+    public DateTime? SetsReleasedAfter
+    {
+        get
+        {
+            string value = _config[$"{BulkProcessingKey}:{SetsReleasedAfterKey}"];
+            if (value.IzNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            if (DateTime.TryParse(value, out DateTime parsedDate))
+            {
+                return parsedDate;
+            }
+
+            return null;
         }
     }
 }
