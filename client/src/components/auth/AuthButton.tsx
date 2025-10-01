@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Box, Typography, CircularProgress } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
-import { MyCollectionButton } from '../organisms/MyCollectionButton';
+import { MyCollectionButton } from '../molecules/ui/MyCollectionButton';
 
 export const AuthButton: React.FC = () => {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading, getAccessTokenSilently, getIdTokenClaims } = useAuth0();

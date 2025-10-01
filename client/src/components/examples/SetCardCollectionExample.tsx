@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { MtgSetCardWithCollection } from '../organisms/MtgSetCardWithCollection';
+import { MtgSetCardWithCollection } from '../molecules/Sets/MtgSetCardWithCollection';
 import { useSetCollectionProgress } from '../../hooks/useSetCollectionProgress';
 import type { MtgSet } from '../../types/set';
 
@@ -14,7 +14,7 @@ import type { MtgSet } from '../../types/set';
 
 interface SetCardCollectionExampleProps {
   sets: MtgSet[];
-  onSetClick?: (setCode: string) => void;
+  onSetClick?: (setCode?: string) => void;
 }
 
 export const SetCardCollectionExample: React.FC<SetCardCollectionExampleProps> = ({

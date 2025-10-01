@@ -11,7 +11,7 @@ import type { UserCardData } from '../../../types/card';
 
 // Emoji definitions with tooltips for accessibility
 const EMOJI_TOOLTIPS = {
-  '📄': 'Nonfoil',
+  '🔹': 'Nonfoil',
   '✨': 'Foil',
   '🌟': 'Etched',
   '📜': 'Artist Proof',
@@ -96,7 +96,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   const getFinishIndicators = () => {
     const indicators: React.ReactElement[] = [];
     if (finishTypes.includes('nonfoil')) {
-      indicators.push(<EmojiWithTooltip key="nonfoil" emoji="📄">📄</EmojiWithTooltip>);
+      indicators.push(<EmojiWithTooltip key="nonfoil" emoji="🔹">🔹</EmojiWithTooltip>);
     }
     if (finishTypes.includes('foil')) {
       indicators.push(<EmojiWithTooltip key="foil" emoji="✨">✨</EmojiWithTooltip>);
@@ -131,7 +131,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       const count = finishGroups.nonfoil.reduce((sum, item) => sum + item.count, 0);
       counts.push(
         <span key="nonfoil">
-          <EmojiWithTooltip emoji="📄">📄</EmojiWithTooltip>{count}
+          <EmojiWithTooltip emoji="🔹">🔹</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -303,7 +303,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
           }).map((finish) => {
             const finishCards = finishGroups[finish];
             const finishTotal = finishCards.reduce((sum, item) => sum + item.count, 0);
-            const finishIcon = finish === 'nonfoil' ? '📄' : finish === 'foil' ? '✨' : '🌟';
+            const finishIcon = finish === 'nonfoil' ? '🔹' : finish === 'foil' ? '✨' : '🌟';
             const finishName = finish === 'nonfoil' ? 'Nonfoil' : finish === 'foil' ? 'Foil' : 'Etched';
 
             // Group by special type within finish

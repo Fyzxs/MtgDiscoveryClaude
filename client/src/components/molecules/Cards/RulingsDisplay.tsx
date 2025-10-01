@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
-import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
-import { ErrorAlert } from '../../atoms/shared/ErrorAlert';
+import { LoadingContainer, ErrorAlert } from '../../atoms';
 import { formatRulingDate } from '../../../utils/dateFormatters';
 import { fetchWithRetry, globalLoadingManager } from '../../../utils/networkErrorHandler';
 

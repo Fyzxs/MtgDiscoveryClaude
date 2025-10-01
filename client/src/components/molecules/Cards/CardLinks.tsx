@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { ExternalLinkIcon } from '../../atoms/shared/ExternalLinkIcon';
+import { ExternalLinkIcon } from '../../atoms';
 
 interface CardLinksProps {
   scryfallUrl?: string;

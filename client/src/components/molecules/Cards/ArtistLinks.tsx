@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { ArtistLink } from '../../atoms/Cards/ArtistLink';
+import { ArtistLink } from '../../atoms';
 
 interface ArtistLinksProps {
   artists: string[];

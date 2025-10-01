@@ -1,19 +1,22 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import { Container, Typography, Box } from '@mui/material'
-import { AllSetsPage } from './pages/AllSetsPage'
-import { SetPage } from './pages/SetPage'
-import { CardSearchPage } from './pages/CardSearchPage'
-import { ArtistSearchPage } from './pages/ArtistSearchPage'
-import { ArtistCardsPage } from './pages/ArtistCardsPage'
-import { CardAllPrintingsPage } from './pages/CardAllPrintingsPage'
-import { SignInRedirectPage } from './pages/SignInRedirectPage'
+import {
+  AllSetsPage,
+  SetPage,
+  CardSearchPage,
+  ArtistSearchPage,
+  ArtistCardsPage,
+  CardAllPrintingsPage,
+  SignInRedirectPage
+} from './components/pages'
 import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/ErrorBoundaries'
 import { CollectionProvider } from './contexts/CollectionContext'
 import { UserProvider } from './contexts/UserContext'
+import { I18nProvider } from './components/providers/I18nProvider'
 function HomePage() {
   const navigate = useNavigate();
   
@@ -56,9 +59,10 @@ function HomePage() {
 
 function App() {
   return (
-    <UserProvider>
-      <CollectionProvider>
-        <BrowserRouter>
+    <I18nProvider>
+      <UserProvider>
+        <CollectionProvider>
+          <BrowserRouter>
           <Layout>
             <Routes>
             <Route path="/" element={
@@ -105,9 +109,10 @@ function App() {
             <Route path="*" element={<LegacyRedirect />} />
           </Routes>
         </Layout>
-        </BrowserRouter>
-      </CollectionProvider>
-    </UserProvider>
+          </BrowserRouter>
+        </CollectionProvider>
+      </UserProvider>
+    </I18nProvider>
   )
 }
 
