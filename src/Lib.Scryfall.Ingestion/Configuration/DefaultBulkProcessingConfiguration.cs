@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
 
 namespace Lib.Scryfall.Ingestion.Configuration;
@@ -10,4 +11,5 @@ internal sealed class DefaultBulkProcessingConfiguration : IBulkProcessingConfig
     public bool ProcessRulings => false;
     public bool SetsOnly => false;
     public IReadOnlyCollection<string> SetCodesToProcess => [];
+    public DateTime? SetsReleasedAfter => null;
 }
