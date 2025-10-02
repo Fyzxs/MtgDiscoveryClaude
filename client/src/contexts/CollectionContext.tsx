@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useRef, useCallback, useState } from 'react';
 import { NotificationToastStack } from '../components/organisms/NotificationToastStack';
 import type { NotificationToastStackRef } from '../components/organisms/NotificationToastStack';
-import { QuickEntryKeysFab } from '../components/molecules/Cards/QuickEntryKeysFab';
 import type { CardCollectionUpdate } from '../types/collection';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { ADD_CARD_TO_COLLECTION } from '../graphql/mutations/addCardToCollection';
@@ -169,7 +168,6 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
     <CollectionContext.Provider value={value}>
       {children}
       <NotificationToastStack ref={toastStackRef} />
-      <QuickEntryKeysFab />
     </CollectionContext.Provider>
   );
 };
