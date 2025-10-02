@@ -19,15 +19,22 @@ import { UserProvider } from './contexts/UserContext'
 import { I18nProvider } from './components/providers/I18nProvider'
 function HomePage() {
   const navigate = useNavigate();
-  
+
   return (
-    <Container maxWidth="lg" sx={{ py: 12 }}>        
-      <Card 
-        elevation={6} 
-        sx={{ 
-          textAlign: 'center', 
-          maxWidth: 600, 
-          mx: 'auto',
+    <Container
+      maxWidth="lg"
+      sx={{
+        py: 12,
+        display: 'flex',
+        justifyContent: 'center'
+      }}
+    >
+      <Card
+        elevation={6}
+        sx={{
+          textAlign: 'center',
+          maxWidth: 600,
+          width: '100%',
           p: 4
         }}
       >
