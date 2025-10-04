@@ -8,8 +8,8 @@ public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<AddU
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<AddUserCardArgEntity> descriptor)
     {
-        _ = descriptor.Name("AddCardToCollectionInput");
-        _ = descriptor.Description("Input for adding cards to a user's collection");
+        _ = descriptor.Name("AddCardToCollectionInput")
+            .Description("Input for adding cards to a user's collection");
 
         _ = descriptor.Field(x => x.CardId)
             .Type<NonNullType<StringType>>()

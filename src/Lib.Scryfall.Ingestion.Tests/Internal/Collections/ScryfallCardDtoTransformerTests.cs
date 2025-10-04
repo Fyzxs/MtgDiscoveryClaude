@@ -64,7 +64,8 @@ public sealed class ScryfallCardDtoTransformerTests
             'oracle_text': 'Trample',
             'power': '4',
             'toughness': '3',
-            'rarity': 'uncommon'
+            'rarity': 'uncommon',
+            'set': 'test'
         }");
         ExtScryfallCardDto dto = new(rawData);
         IScryfallSet set = new ScryfallSetFake();
@@ -88,7 +89,8 @@ public sealed class ScryfallCardDtoTransformerTests
         // Arrange
         dynamic rawData = JsonConvert.DeserializeObject(@"{
             'id': 'minimal-id',
-            'name': 'Minimal Card'
+            'name': 'Minimal Card',
+            'set': 'test'
         }");
         ExtScryfallCardDto dto = new(rawData);
         IScryfallSet set = new ScryfallSetFake();
@@ -113,6 +115,7 @@ public sealed class ScryfallCardDtoTransformerTests
             'name': 'Front Face // Back Face',
             'mana_cost': '',
             'type_line': 'Creature — Human // Creature — Werewolf',
+            'set': 'test',
             'card_faces': [
                 {
                     'name': 'Front Face',
@@ -153,7 +156,8 @@ public sealed class ScryfallCardDtoTransformerTests
         // Arrange
         dynamic rawData = JsonConvert.DeserializeObject(@"{
             'id': 'test-id',
-            'name': 'Test Card'
+            'name': 'Test Card',
+            'set': 'test'
         }");
         ExtScryfallCardDto dto = new(rawData);
         IScryfallSet set = new ScryfallSetFake();
