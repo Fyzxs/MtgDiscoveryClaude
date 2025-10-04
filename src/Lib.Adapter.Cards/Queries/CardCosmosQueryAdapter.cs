@@ -28,6 +28,7 @@ namespace Lib.Adapter.Cards.Queries;
 /// </summary>
 internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
 {
+    //TODO: This class is missing mappers; but it's needs an Inquisitor touch first
     private readonly ICosmosGopher _cardGopher;
     private readonly ICosmosGopher _setCodeIndexGopher;
     private readonly ICosmosInquisitor _setCardsInquisitor;
@@ -77,7 +78,6 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
 
     public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode)
     {
-        // Extract primitives for external system interface
         string setCodeValue = setCode.SetCode;
         ReadPointItem readPoint = new()
         {
@@ -115,7 +115,6 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
 
     public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName)
     {
-        // Extract primitives for external system interface
         string cardNameValue = cardName.CardName;
         ICardNameGuidGenerator guidGenerator = new CardNameGuidGenerator();
         CardNameGuid nameGuid = guidGenerator.GenerateGuid(cardNameValue);
@@ -179,9 +178,9 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
                     foreach (CardNameTrigramDataExtEntity entry in trigramDoc.Cards)
                     {
                         if (entry.Normalized.Contains(normalized) is false) continue;
-                        matchingCardNames.Add(entry.Name);
+                        _ = matchingCardNames.Add(entry.Name);
 
-                        cardNameMatchCounts.TryAdd(entry.Name, 0);
+                        _ = cardNameMatchCounts.TryAdd(entry.Name, 0);
                         cardNameMatchCounts[entry.Name]++;
                     }
                 }

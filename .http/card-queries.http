@@ -9,12 +9,43 @@
 POST {{$dotenv GRAPHQL_ENDPOINT}}
 Content-Type: application/json
 
-query GetCardsBatch($ids: CardIdsArgEntityInput!) {
-  cardsById(ids: $ids) {
+query GetCardsBatch($ids: CardIdsArgEntityInput!, $ids2: CardIdsArgEntityInput!) {
+  first:cardsById(ids: $ids) {
     __typename
     ... on SuccessCardsResponse {
       data {
         id
+        setGroupId
+        name
+        manaCost
+        typeLine
+        oracleText
+        rarity
+        setName
+        artist
+        imageUris {
+          normal
+          large
+        }
+        userCollection {
+          finish
+          special
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
+    }
+  },
+  second:cardsById(ids: $ids2) {
+    __typename
+    ... on SuccessCardsResponse {
+      data {
+        id
+        setGroupId
         name
         manaCost
         typeLine
@@ -49,6 +80,12 @@ query GetCardsBatch($ids: CardIdsArgEntityInput!) {
       "d5c83259-9b90-47c2-b48e-c7d78519e792",
       "11600105-56c6-4073-a4a6-8469030b39c9",
       "0000579f-7b35-4ed3-b44c-db2a538066fe"
+    ]
+  },  
+  "ids2": {
+    "userId":"6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "cardIds": [
+      "35372b69-6086-44e0-9f7c-681e362e5142"
     ]
   }
 }
