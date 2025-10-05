@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-
 namespace Lib.Adapter.UserCards.Apis.Entities;
 
 /// <summary>
@@ -25,7 +23,7 @@ public interface IAddUserCardXfrEntity
     string SetId { get; }
 
     /// <summary>
-    /// The list of collected versions of this card with quantities and finishes.
+    /// The details of this specific collected card version with finish, quantity, and set grouping.
     /// </summary>
-    ICollection<IUserCardDetailsXfrEntity> CollectedList { get; }
+    IUserCardDetailsXfrEntity Details { get; }
 }

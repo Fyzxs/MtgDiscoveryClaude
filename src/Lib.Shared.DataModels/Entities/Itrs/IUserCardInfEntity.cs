@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-
 namespace Lib.Shared.DataModels.Entities.Itrs;
 
 /// <summary>
@@ -28,7 +26,7 @@ public interface IUserCardItrEntity
     string SetId { get; }
 
     /// <summary>
-    /// The list of collected versions of this card with quantities and finishes.
+    /// The details of this specific collected card version with finish, quantity, and set grouping.
     /// </summary>
-    ICollection<IUserCardDetailsItrEntity> CollectedList { get; }
+    IUserCardDetailsItrEntity Details { get; }
 }
