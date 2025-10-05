@@ -26,7 +26,7 @@ namespace Lib.Adapter.Cards.Queries;
 /// implementing the specialized ICardQueryAdapter interface.
 /// The main CardAdapterService delegates to this implementation.
 /// </summary>
-internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
+internal sealed class CardsQueryAdapter : ICardQueryAdapter
 {
     //TODO: This class is missing mappers; but it's needs an Inquisitor touch first
     private readonly ICosmosGopher _cardGopher;
@@ -36,7 +36,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
     private readonly ICosmosInquisitor _cardNameTrigramsInquisitor;
     private readonly ICollectionCardIdToReadPointItemMapper _cardIdsToReadPointMapper;
 
-    public CardCosmosQueryAdapter(ILogger logger) : this(
+    public CardsQueryAdapter(ILogger logger) : this(
         new ScryfallCardItemsGopher(logger),
         new ScryfallSetCodeIndexGopher(logger),
         new ScryfallSetCardsInquisitor(logger),
@@ -45,7 +45,7 @@ internal sealed class CardCosmosQueryAdapter : ICardQueryAdapter
         new CollectionCardIdToReadPointItemMapper())
     { }
 
-    private CardCosmosQueryAdapter(
+    private CardsQueryAdapter(
         ICosmosGopher cardGopher,
         ICosmosGopher setCodeIndexGopher,
         ICosmosInquisitor setCardsInquisitor,

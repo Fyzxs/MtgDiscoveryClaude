@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.Artists.Queries;
 
-internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
+internal sealed class ArtistsQueryAggregator : IArtistAggregatorService
 {
     private readonly IArtistAdapterService _artistAdapterService;
     private readonly IArtistCardExtToItrEntityMapper _artistCardToItrMapper;
@@ -22,7 +22,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
     private readonly IArtistNameItrToXfrMapper _artistNameToXfrMapper;
     private readonly IArtistSearchExtToItrMapper _artistSearchResultCollectionMapper;
 
-    public QueryArtistAggregatorService(ILogger logger) : this(
+    public ArtistsQueryAggregator(ILogger logger) : this(
         new ArtistAdapterService(logger),
         new ArtistCardExtToItrEntityMapper(),
         new ArtistSearchTermItrToXfrMapper(),
@@ -31,7 +31,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         new ArtistSearchExtToItrMapper())
     { }
 
-    private QueryArtistAggregatorService(IArtistAdapterService artistAdapterService,
+    private ArtistsQueryAggregator(IArtistAdapterService artistAdapterService,
         IArtistCardExtToItrEntityMapper artistCardToItrMapper,
         IArtistSearchTermItrToXfrMapper artistSearchItrToXfrMapper,
         IArtistIdItrToXfrMapper aristIdToXfrMapper,

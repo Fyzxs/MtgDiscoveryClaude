@@ -10,17 +10,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.User.Commands;
 
-internal sealed class CommandUserAggregatorService : IUserAggregatorService
+internal sealed class UserCommandAggregator : IUserAggregatorService
 {
     private readonly IUserAdapterService _userAdapterService;
     private readonly IUserInfoExtToItrEntityMapper _userInfoMapper;
 
-    public CommandUserAggregatorService(ILogger logger) : this(
+    public UserCommandAggregator(ILogger logger) : this(
         new UserAdapterService(logger),
         new UserInfoExtToItrEntityMapper())
     { }
 
-    private CommandUserAggregatorService(
+    private UserCommandAggregator(
         IUserAdapterService userAdapterService,
         IUserInfoExtToItrEntityMapper userInfoMapper)
     {

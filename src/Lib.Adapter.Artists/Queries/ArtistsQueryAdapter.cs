@@ -23,18 +23,18 @@ namespace Lib.Adapter.Artists.Queries;
 /// implementing complex trigram search and disambiguation logic.
 /// The main ArtistAdapterService delegates to this implementation.
 /// </summary>
-internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
+internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
 {
     private readonly ICosmosInquisitor _artistNameTrigramsInquisitor;
     private readonly ICosmosInquisitor _artistCardsInquisitor;
 
-    public ArtistCosmosQueryAdapter(ILogger logger) : this(
+    public ArtistsQueryAdapter(ILogger logger) : this(
         new ArtistNameTrigramsInquisitor(logger),
         new ScryfallArtistCardsInquisitor(logger))
     {
     }
 
-    private ArtistCosmosQueryAdapter(
+    private ArtistsQueryAdapter(
         ICosmosInquisitor artistNameTrigramsInquisitor,
         ICosmosInquisitor artistCardsInquisitor)
     {

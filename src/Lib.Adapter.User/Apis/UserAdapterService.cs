@@ -27,7 +27,7 @@ public sealed class UserAdapterService : IUserAdapterService
 {
     private readonly IUserCommandAdapter _userCommandAdapter;
 
-    public UserAdapterService(ILogger logger) : this(new UserCosmosCommandAdapter(logger))
+    public UserAdapterService(ILogger logger) : this(new UserCommandAdapter(logger))
     { }
 
     private UserAdapterService(IUserCommandAdapter userCommandAdapter) => _userCommandAdapter = userCommandAdapter;
