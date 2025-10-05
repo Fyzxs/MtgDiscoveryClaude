@@ -61,7 +61,8 @@ mutation AddSingleCard(
       "userCardDetails": {
         "finish": "nonfoil",
         "special": "proof",
-        "count": 1
+        "count": 1,
+        "setGroupId": "normal"
       }
     }
 }

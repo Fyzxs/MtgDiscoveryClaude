@@ -55,7 +55,7 @@ public sealed class UserCardsAdapterServiceTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = [collectedCard]
+            Details = collectedCard
         };
 
         // Act

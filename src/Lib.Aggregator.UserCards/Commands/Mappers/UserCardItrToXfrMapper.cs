@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Aggregator.UserCards.Commands.Entities;
@@ -18,15 +16,14 @@ internal sealed class AddUserCardItrToXfrMapper : IAddUserCardItrToXfrMapper
 
     public async Task<IAddUserCardXfrEntity> Map(IUserCardItrEntity source)
     {
-        IEnumerable<Task<IUserCardDetailsXfrEntity>> detailsTasks = source.CollectedList.Select(_mapper.Map);
-        IUserCardDetailsXfrEntity[] details = await Task.WhenAll(detailsTasks).ConfigureAwait(false);
+        IUserCardDetailsXfrEntity details = await _mapper.Map(source.Details).ConfigureAwait(false);
 
         return new AddUserCardXfrEntity
         {
             UserId = source.UserId,
             CardId = source.CardId,
             SetId = source.SetId,
-            CollectedList = details
+            Details = details
         };
     }
 }

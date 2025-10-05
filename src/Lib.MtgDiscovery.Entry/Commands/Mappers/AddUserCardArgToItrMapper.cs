@@ -23,7 +23,7 @@ internal sealed class AddUserCardArgToItrMapper : IAddUserCardArgToItrMapper
             UserId = source.AuthUser.UserId,
             CardId = source.AddUserCard.CardId,
             SetId = source.AddUserCard.SetId,
-            CollectedList = [mappedDetails]
+            Details = mappedDetails
         };
     }
 }

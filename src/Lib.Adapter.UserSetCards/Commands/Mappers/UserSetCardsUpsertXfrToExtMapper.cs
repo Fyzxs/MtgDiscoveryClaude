@@ -14,7 +14,6 @@ internal sealed class UserSetCardsUpsertXfrToExtMapper : IUserSetCardsUpsertXfrT
             SetId = source.SetId,
             TotalCards = source.TotalCards,
             UniqueCards = source.UniqueCards,
-            Collecting = source.Collecting,
             Groups = MapGroups(source.Groups)
         };
 

@@ -16,7 +16,6 @@ internal sealed class UserSetCardResolver : IUserSetCardResolver
             SetId = context.SetId,
             TotalCards = 0,
             UniqueCards = 0,
-            Collecting = [],
             Groups = []
         };
     }
