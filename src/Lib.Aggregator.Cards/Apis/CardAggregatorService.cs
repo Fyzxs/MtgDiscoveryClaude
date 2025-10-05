@@ -10,7 +10,7 @@ public sealed class CardAggregatorService : ICardAggregatorService
 {
     private readonly ICardAggregatorService _cardAggregatorOperations;
 
-    public CardAggregatorService(ILogger logger) : this(new QueryCardAggregatorService(logger))
+    public CardAggregatorService(ILogger logger) : this(new CardsQueryAggregator(logger))
     { }
 
     private CardAggregatorService(ICardAggregatorService cardAggregatorOperations) => _cardAggregatorOperations = cardAggregatorOperations;

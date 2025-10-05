@@ -24,19 +24,19 @@ namespace Lib.Adapter.Sets.Queries;
 /// implementing the specialized ISetQueryAdapter interface.
 /// The main SetAdapterService delegates to this implementation.
 /// </summary>
-internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
+internal sealed class SetsQueryAdapter : ISetQueryAdapter
 {
     private readonly ICosmosGopher _setGopher;
     private readonly ICosmosGopher _setCodeIndexGopher;
     private readonly ICosmosInquisition _allSetsInquisition;
 
-    public SetCosmosQueryAdapter(ILogger logger) : this(
+    public SetsQueryAdapter(ILogger logger) : this(
         new ScryfallSetItemsGopher(logger),
         new ScryfallSetCodeIndexGopher(logger),
         new AllSetItemsInquisition(logger))
     { }
 
-    private SetCosmosQueryAdapter(
+    private SetsQueryAdapter(
         ICosmosGopher setGopher,
         ICosmosGopher setCodeIndexGopher,
         ICosmosInquisition allSetsInquisition)

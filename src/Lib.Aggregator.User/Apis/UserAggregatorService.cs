@@ -10,7 +10,7 @@ public sealed class UserAggregatorService : IUserAggregatorService
 {
     private readonly IUserAggregatorService _userAggregatorOperations;
 
-    public UserAggregatorService(ILogger logger) : this(new CommandUserAggregatorService(logger))
+    public UserAggregatorService(ILogger logger) : this(new UserCommandAggregator(logger))
     { }
 
     private UserAggregatorService(IUserAggregatorService userAggregatorOperations) => _userAggregatorOperations = userAggregatorOperations;

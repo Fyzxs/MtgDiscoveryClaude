@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.Cards.Queries;
 
-internal sealed class QueryCardAggregatorService : ICardAggregatorService
+internal sealed class CardsQueryAggregator : ICardAggregatorService
 {
     private readonly ICardAdapterService _cardAdapterService;
     private readonly ICollectionCardItemExtToItrMapper _cardItemMapper;
@@ -26,7 +26,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
     private readonly ICardNameItrToXfrMapper _cardNameItrToXfrMapper;
     private readonly ICardSearchTermItrToXfrMapper _cardSearchTermItrToXfrMapper;
 
-    public QueryCardAggregatorService(ILogger logger) : this(
+    public CardsQueryAggregator(ILogger logger) : this(
         new CardAdapterService(logger),
         new CollectionCardItemExtToItrMapper(),
         new CollectionSetCardItemExtToItrMapper(),
@@ -37,7 +37,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
         new CardSearchTermItrToXfrMapper())
     { }
 
-    private QueryCardAggregatorService(
+    private CardsQueryAggregator(
         ICardAdapterService cardAdapterService,
         ICollectionCardItemExtToItrMapper cardItemMapper,
         ICollectionSetCardItemExtToItrMapper setCardItemMapper,

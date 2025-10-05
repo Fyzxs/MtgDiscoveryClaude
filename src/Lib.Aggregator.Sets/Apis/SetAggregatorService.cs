@@ -10,7 +10,7 @@ public sealed class SetAggregatorService : ISetAggregatorService
 {
     private readonly ISetAggregatorService _querySetAggregatorService;
 
-    public SetAggregatorService(ILogger logger) : this(new QuerySetAggregatorService(logger))
+    public SetAggregatorService(ILogger logger) : this(new SetsQueryAggregator(logger))
     { }
 
     private SetAggregatorService(ISetAggregatorService querySetAggregatorService) => _querySetAggregatorService = querySetAggregatorService;

@@ -13,21 +13,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.Sets.Queries;
 
-internal sealed class QuerySetAggregatorService : ISetAggregatorService
+internal sealed class SetsQueryAggregator : ISetAggregatorService
 {
     private readonly ISetAdapterService _setAdapterService;
     private readonly ICollectionSetItemExtToItrMapper _setItemMapper;
     private readonly ISetIdsItrToXfrMapper _setIdsItrToXfrMapper;
     private readonly ISetCodesItrToXfrMapper _setCodesItrToXfrMapper;
 
-    public QuerySetAggregatorService(ILogger logger) : this(
+    public SetsQueryAggregator(ILogger logger) : this(
         new SetAdapterService(logger),
         new CollectionSetItemExtToItrMapper(),
         new SetIdsItrToXfrMapper(),
         new SetCodesItrToXfrMapper())
     { }
 
-    private QuerySetAggregatorService(
+    private SetsQueryAggregator(
         ISetAdapterService setAdapterService,
         ICollectionSetItemExtToItrMapper setItemMapper,
         ISetIdsItrToXfrMapper setIdsItrToXfrMapper,

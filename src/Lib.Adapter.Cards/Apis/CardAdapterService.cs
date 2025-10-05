@@ -28,7 +28,7 @@ public sealed class CardAdapterService : ICardAdapterService
 {
     private readonly ICardQueryAdapter _cardQueryAdapter;
 
-    public CardAdapterService(ILogger logger) : this(new CardCosmosQueryAdapter(logger))
+    public CardAdapterService(ILogger logger) : this(new CardsQueryAdapter(logger))
     { }
 
     private CardAdapterService(ICardQueryAdapter cardQueryAdapter) => _cardQueryAdapter = cardQueryAdapter;

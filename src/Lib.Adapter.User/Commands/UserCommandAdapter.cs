@@ -16,14 +16,14 @@ namespace Lib.Adapter.User.Commands;
 /// implementing the specialized IUserPersistenceAdapter interface.
 /// The main UserAdapterService delegates to this implementation.
 /// </summary>
-internal sealed class UserCosmosCommandAdapter : IUserCommandAdapter
+internal sealed class UserCommandAdapter : IUserCommandAdapter
 {
     private readonly UserInfoScribe _userInfoScribe;
 
-    public UserCosmosCommandAdapter(ILogger logger) : this(new UserInfoScribe(logger))
+    public UserCommandAdapter(ILogger logger) : this(new UserInfoScribe(logger))
     { }
 
-    private UserCosmosCommandAdapter(UserInfoScribe userInfoScribe) => _userInfoScribe = userInfoScribe;
+    private UserCommandAdapter(UserInfoScribe userInfoScribe) => _userInfoScribe = userInfoScribe;
 
     public async Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync([NotNull] IUserInfoItrEntity userInfo)
     {

@@ -28,7 +28,7 @@ public sealed class SetAdapterService : ISetAdapterService
 {
     private readonly ISetQueryAdapter _setQueryAdapter;
 
-    public SetAdapterService(ILogger logger) : this(new SetCosmosQueryAdapter(logger))
+    public SetAdapterService(ILogger logger) : this(new SetsQueryAdapter(logger))
     { }
 
     private SetAdapterService(ISetQueryAdapter setQueryAdapter) => _setQueryAdapter = setQueryAdapter;
