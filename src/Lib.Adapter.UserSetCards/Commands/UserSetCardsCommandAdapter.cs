@@ -1,8 +1,11 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserSetCards.Apis;
 using Lib.Adapter.UserSetCards.Apis.Entities;
+using Lib.Adapter.UserSetCards.Commands.Integrators;
 using Lib.Adapter.UserSetCards.Commands.Mappers;
+using Lib.Adapter.UserSetCards.Commands.Resolvers;
 using Lib.Adapter.UserSetCards.Exceptions;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
@@ -19,27 +22,46 @@ namespace Lib.Adapter.UserSetCards.Commands;
 internal sealed class UserSetCardsCommandAdapter : IUserSetCardsCommandAdapter
 {
     private readonly ICosmosScribe _userSetCardsScribe;
-    private readonly IUserSetCardsUpsertXfrToExtMapper _xfrToExtMapper;
+    private readonly ICosmosGopher _userSetCardsGopher;
+    private readonly IAddCardToSetXfrToExtMapper _readPointMapper;
+    private readonly IUserSetCardIntegrator _integrator;
+    private readonly IUserSetCardResolver _resolver;
 
-    public UserSetCardsCommandAdapter(ILogger logger) : this(new UserSetCardsScribe(logger), new UserSetCardsUpsertXfrToExtMapper())
+    public UserSetCardsCommandAdapter(ILogger logger) : this(
+        new UserSetCardsScribe(logger),
+        new UserSetCardsGopher(logger),
+        new AddCardToSetXfrToExtMapper(),
+        new UserSetCardIntegrator(),
+        new UserSetCardResolver())
     { }
 
-    private UserSetCardsCommandAdapter(ICosmosScribe userSetCardsScribe, IUserSetCardsUpsertXfrToExtMapper xfrToExtMapper)
+    private UserSetCardsCommandAdapter(
+        ICosmosScribe userSetCardsScribe,
+        ICosmosGopher userSetCardsGopher,
+        IAddCardToSetXfrToExtMapper readPointMapper,
+        IUserSetCardIntegrator integrator,
+        IUserSetCardResolver resolver)
     {
         _userSetCardsScribe = userSetCardsScribe;
-        _xfrToExtMapper = xfrToExtMapper;
+        _userSetCardsGopher = userSetCardsGopher;
+        _readPointMapper = readPointMapper;
+        _integrator = integrator;
+        _resolver = resolver;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> UpsertUserSetCardAsync(IUserSetCardUpsertXfrEntity entity)
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity)
     {
-        UserSetCardExtEntity extEntity = await _xfrToExtMapper.Map(entity).ConfigureAwait(false);
+        ReadPointItem readPoint = await _readPointMapper.Map(entity).ConfigureAwait(false);
+        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
 
-        OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(extEntity).ConfigureAwait(false);
+        UserSetCardExtEntity existingRecord = _resolver.Resolve(readResponse, entity);
+        UserSetCardExtEntity updatedRecord = _integrator.Integrate(existingRecord, entity);
+
+        OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<UserSetCardExtEntity>(
-                new UserSetCardsAdapterException($"Failed to upsert UserSetCard: {upsertResponse.StatusCode}"));
+            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
         }
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);

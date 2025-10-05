@@ -38,8 +38,7 @@ internal sealed class UserSetCardsQueryAdapter : IUserSetCardsQueryAdapter
 
         if (readResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<UserSetCardExtEntity>(
-                new UserSetCardsAdapterException($"UserSetCard not found for userId: {readParams.UserId}, setId: {readParams.SetId}"));
+            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
         }
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(readResponse.Value);

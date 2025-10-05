@@ -10,10 +10,6 @@ namespace Lib.Adapter.UserSetCards.Apis;
 /// This interface provides command operations (read-modify-write) for the UserSetCards collection
 /// which tracks aggregate collection data per set per user.
 ///
-/// IMPORTANT: This adapter handles ONLY storage operations (read/upsert).
-/// No business logic, aggregation calculations, or group management should be performed here.
-/// Those responsibilities belong to the UserSetCardsAggregatorService.
-///
 /// Entity Mapping Approach:
 /// - Input: Uses XfrEntity parameters following the layered architecture pattern
 /// - Output: Returns ExtEntity types from storage systems
@@ -25,12 +21,16 @@ namespace Lib.Adapter.UserSetCards.Apis;
 public interface IUserSetCardsCommandAdapter
 {
     /// <summary>
-    /// Upserts user set card data to storage.
+    /// Adds or removes a card from a user's set collection.
     ///
-    /// Storage-only operation that writes data to Cosmos DB.
-    /// Creates new record or updates existing based on userId/setId combination.
+    /// This method implements the atomic read-modify-write operation:
+    /// 1. Retrieves existing record (or creates new if none exists)
+    /// 2. Updates totals and card collections based on count (positive=add, negative=remove)
+    /// 3. Upserts the modified record
+    ///
+    /// This logic is intrinsic to maintaining UserSetCard data integrity.
     /// </summary>
-    /// <param name="entity">User set card data to persist</param>
-    /// <returns>Persisted user set card ExtEntity wrapped in operation response</returns>
-    Task<IOperationResponse<UserSetCardExtEntity>> UpsertUserSetCardAsync(IUserSetCardUpsertXfrEntity entity);
+    /// <param name="entity">Card modification parameters</param>
+    /// <returns>Updated user set card ExtEntity wrapped in operation response</returns>
+    Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity);
 }

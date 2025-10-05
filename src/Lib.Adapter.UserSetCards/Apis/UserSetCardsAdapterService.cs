@@ -1,4 +1,5 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Commands;
 using Lib.Adapter.UserSetCards.Queries;
@@ -38,6 +39,6 @@ public sealed class UserSetCardsAdapterService : IUserSetCardsAdapterService
     public async Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) =>
         await _queryAdapter.GetUserSetCardAsync(readParams).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> UpsertUserSetCardAsync(IUserSetCardUpsertXfrEntity entity) =>
-        await _commandAdapter.UpsertUserSetCardAsync(entity).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) =>
+        await _commandAdapter.AddCardToSetAsync(entity).ConfigureAwait(false);
 }
