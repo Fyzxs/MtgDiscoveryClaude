@@ -69,7 +69,8 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
           userCardDetails: {
             finish: FINISH_MAP[update.finish] || 'nonfoil',
             special: SPECIAL_MAP[update.special] || 'none',
-            count: update.count
+            count: update.count,
+            setGroupId: update.setGroupId || 'normal'
           }
         }
       }));
