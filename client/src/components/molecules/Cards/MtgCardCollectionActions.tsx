@@ -37,7 +37,11 @@ export const useMtgCardCollectionActions = ({
 
     try {
       // Fire-and-forget submission
-      await submitCollectionUpdate({ ...update, setId: card.setId }, card.name);
+      await submitCollectionUpdate({
+        ...update,
+        setId: card.setId,
+        setGroupId: card.setGroupId || undefined
+      }, card.name);
       // Success flash via DOM (after mutation succeeds)
       cardElement.removeAttribute('data-submitting');
       cardElement.setAttribute('data-flash', 'success');
