@@ -26,7 +26,7 @@ public sealed class UserSetCardExtEntity : CosmosItem
     public int UniqueCards { get; init; }
 
     [JsonProperty("collecting")]
-    public ICollection<string> GroupsCollecting { get; init; } = [];
+    public ICollection<UserSetCardCollectingExtEntity> Collecting { get; init; } = [];
 
     [JsonProperty("groups")]
     public Dictionary<string, UserSetCardGroupExtEntity> Groups { get; init; } = [];

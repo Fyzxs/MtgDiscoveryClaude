@@ -10,11 +10,16 @@ namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 internal sealed class UserSetCardExtToItrMapper : IUserSetCardExtToItrMapper
 {
     private readonly IUserSetCardGroupExtToItrMapper _groupMapper;
+    private readonly IUserSetCardCollectingExtToOufMapper _collectingMapper;
 
-    public UserSetCardExtToItrMapper() : this(new UserSetCardGroupExtToItrMapper())
+    public UserSetCardExtToItrMapper() : this(new UserSetCardGroupExtToItrMapper(), new UserSetCardCollectingExtToOufMapper())
     { }
 
-    private UserSetCardExtToItrMapper(IUserSetCardGroupExtToItrMapper groupMapper) => _groupMapper = groupMapper;
+    private UserSetCardExtToItrMapper(IUserSetCardGroupExtToItrMapper groupMapper, IUserSetCardCollectingExtToOufMapper collectingMapper)
+    {
+        _groupMapper = groupMapper;
+        _collectingMapper = collectingMapper;
+    }
 
     public async Task<IUserSetCardOufEntity> Map(UserSetCardExtEntity userSetCardExt)
     {
@@ -26,6 +31,17 @@ internal sealed class UserSetCardExtToItrMapper : IUserSetCardExtToItrMapper
             mappedGroups.Add(group.Key, mappedGroup);
         }
 
+        List<IUserSetCardCollectingOufEntity> mappedCollecting = [];
+
+        if (userSetCardExt.Collecting is not null)
+        {
+            foreach (UserSetCardCollectingExtEntity collecting in userSetCardExt.Collecting)
+            {
+                IUserSetCardCollectingOufEntity mappedCollectingItem = await _collectingMapper.Map(collecting).ConfigureAwait(false);
+                mappedCollecting.Add(mappedCollectingItem);
+            }
+        }
+
         return new UserSetCardOufEntity
         {
             UserId = userSetCardExt.UserId,
@@ -33,7 +49,7 @@ internal sealed class UserSetCardExtToItrMapper : IUserSetCardExtToItrMapper
             TotalCards = userSetCardExt.TotalCards,
             UniqueCards = userSetCardExt.UniqueCards,
             Groups = mappedGroups,
-            GroupsCollecting = userSetCardExt.GroupsCollecting?.ToList() ?? []
+            Collecting = mappedCollecting
         };
     }
 }

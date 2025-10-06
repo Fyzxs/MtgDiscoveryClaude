@@ -19,6 +19,7 @@ internal static class UserSetCardsSchemaExtensions
             .AddType<UserSetCardOutEntityType>()
             .AddType<UserSetCardGroupOutEntityType>()
             .AddType<UserSetCardFinishGroupOutEntityType>()
+            .AddType<UserSetCardCollectingOutEntityType>()
             // Response union types
             .AddType<UserSetCardResponseModelUnionType>()
             .AddType<UserSetCardSuccessDataResponseModelType>();

@@ -20,6 +20,15 @@ internal sealed class UserSetCardOufToOutMapper : IUserSetCardOufToOutMapper
                     Etched = new UserSetCardFinishGroupOutEntity { Cards = kvp.Value.Etched.Cards }
                 });
 
+        List<UserSetCardCollectingOutEntity> collecting = oufEntity.Collecting
+            .Select(c => new UserSetCardCollectingOutEntity
+            {
+                SetGroupId = c.SetGroupId,
+                Collecting = c.Collecting,
+                Count = c.Count
+            })
+            .ToList();
+
         return Task.FromResult(new UserSetCardOutEntity
         {
             UserId = oufEntity.UserId,
@@ -27,7 +36,7 @@ internal sealed class UserSetCardOufToOutMapper : IUserSetCardOufToOutMapper
             TotalCards = oufEntity.TotalCards,
             UniqueCards = oufEntity.UniqueCards,
             Groups = groups,
-            GroupsCollecting = oufEntity.GroupsCollecting
+            Collecting = collecting
         });
     }
 }
