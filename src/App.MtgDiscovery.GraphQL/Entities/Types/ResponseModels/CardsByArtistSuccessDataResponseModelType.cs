@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using HotChocolate.Types;
@@ -11,8 +11,8 @@ public sealed class CardsByArtistSuccessDataResponseModelType : ObjectType<Succe
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<CardItemOutEntity>>> descriptor)
     {
-        descriptor.Name("SuccessCardsByArtistResponse");
-        descriptor.Description("Response returned when cards by artist are successfully retrieved");
+        descriptor.Name("CardsByArtistSuccessResponse")
+            .Description("Response returned when cards by artist are successfully retrieved");
 
         descriptor.Field(f => f.Data)
             .Type<ListType<ScryfallCardOutEntityType>>()

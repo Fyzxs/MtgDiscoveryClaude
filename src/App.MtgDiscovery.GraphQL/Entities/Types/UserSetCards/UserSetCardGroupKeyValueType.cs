@@ -7,8 +7,8 @@ public sealed class UserSetCardGroupKeyValueType : ObjectType<UserSetCardGroupKe
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserSetCardGroupKeyValue> descriptor)
     {
-        descriptor.Name("UserSetCardGroupKeyValue");
-        descriptor.Description("A key-value pair for card rarity groups");
+        descriptor.Name("UserSetCardGroupKeyValue")
+            .Description("A key-value pair for card rarity groups");
 
         descriptor.Field(f => f.Key)
             .Type<NonNullType<StringType>>()

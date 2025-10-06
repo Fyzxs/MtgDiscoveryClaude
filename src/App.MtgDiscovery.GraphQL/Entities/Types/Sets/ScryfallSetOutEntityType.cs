@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Sets;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
@@ -7,8 +7,8 @@ internal sealed class ScryfallSetOutEntityType : ObjectType<ScryfallSetOutEntity
 {
     protected override void Configure(IObjectTypeDescriptor<ScryfallSetOutEntity> descriptor)
     {
-        descriptor.Name("Set");
-        descriptor.Description("Represents a Magic: The Gathering set from Scryfall");
+        descriptor.Name("Set")
+            .Description("Represents a Magic: The Gathering set from Scryfall");
 
         descriptor.Field(f => f.Id)
             .Type<NonNullType<StringType>>()

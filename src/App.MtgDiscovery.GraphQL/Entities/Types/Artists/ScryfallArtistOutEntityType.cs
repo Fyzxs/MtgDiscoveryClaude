@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Artists;
 
@@ -8,8 +8,8 @@ public sealed class ScryfallArtistOutEntityType : ObjectType<ScryfallArtistOutEn
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<ScryfallArtistOutEntity> descriptor)
     {
-        descriptor.Name("ScryfallArtist");
-        descriptor.Description("Artist data from Scryfall");
+        descriptor.Name("ScryfallArtist")
+            .Description("Artist data from Scryfall");
 
         descriptor.Field(f => f.ArtistId)
             .Type<NonNullType<StringType>>()
