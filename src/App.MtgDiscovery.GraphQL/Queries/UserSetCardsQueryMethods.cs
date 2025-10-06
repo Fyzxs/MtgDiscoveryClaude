@@ -23,7 +23,7 @@ public sealed class UserSetCardsQueryMethods
     private UserSetCardsQueryMethods(IEntryService entryService) => _entryService = entryService;
 
     [GraphQLType(typeof(UserSetCardResponseModelUnionType))]
-    public async Task<ResponseModel> UserSetCard(UserSetCardArgEntity setCardArgs)
+    public async Task<ResponseModel> UserSetCards(UserSetCardArgEntity setCardArgs)
     {
         IOperationResponse<UserSetCardOutEntity> response = await _entryService
             .GetUserSetCardByUserAndSetAsync(setCardArgs)
