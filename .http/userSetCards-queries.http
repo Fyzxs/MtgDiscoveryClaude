@@ -20,7 +20,7 @@ Content-Type: application/json
 query GetUserSetCard($setCardArgs: UserSetCardInput!) {
   userSetCard(setCardArgs: $setCardArgs) {
     __typename
-    ... on UserSetCardResponse {
+    ... on UserSetCardSuccessResponse {
       data {
         userId
         setId

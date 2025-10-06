@@ -23,7 +23,7 @@ mutation AddSingleCard(
     args: $args
   ) {
     __typename
-    ... on CardsResponse {
+    ... on CardsSuccessResponse {
       data {
         id
         name
