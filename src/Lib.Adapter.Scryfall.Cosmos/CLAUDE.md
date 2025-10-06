@@ -24,6 +24,11 @@ This library serves as the primary adapter for Azure Cosmos DB operations, handl
 - `Apis/Entities/ScryfallArtistItem.cs` - Artist document model
 - `Apis/Operators/` - Persistence operators (Scribe, Gopher, Inquisitor)
 
+### User Collection Components
+- `Apis/CosmosItems/UserSetCardExtEntity.cs` - User set card statistics and collecting status
+- `Apis/CosmosItems/Entities/UserSetCardCollectingExtEntity.cs` - Set group collecting details (greenfield schema)
+- `Apis/CosmosItems/Entities/UserSetCardGroupExtEntity.cs` - Card group organization by finish type
+
 ## Container Architecture
 ### User Information Container
 - **Container**: `UserInfoCosmosContainer`
@@ -36,6 +41,16 @@ This library serves as the primary adapter for Azure Cosmos DB operations, handl
 - Trigram containers for search functionality
 - Association containers for relationships
 - Index containers for optimized queries
+
+### User Collection Container
+- **Container**: UserSetCards
+- **Entity**: `UserSetCardExtEntity` - Aggregated user set collection statistics
+- **Partition**: UserId for per-user isolation
+- **Schema**: Greenfield design with no backward compatibility requirements
+- **Structure**:
+  - `collecting`: Array of `UserSetCardCollectingExtEntity` with setGroupId, collecting flag, and count
+  - `groups`: Dictionary of set groups with finish-specific card collections
+  - Aggregated statistics: totalCards, uniqueCards
 
 ## Key Components
 ### User Data Storage

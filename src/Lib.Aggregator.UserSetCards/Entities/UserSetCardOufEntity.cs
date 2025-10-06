@@ -9,5 +9,5 @@ internal sealed class UserSetCardOufEntity : IUserSetCardOufEntity
     public int TotalCards { get; init; }
     public int UniqueCards { get; init; }
     public IReadOnlyDictionary<string, IUserSetCardGroupOufEntity> Groups { get; init; }
-    public IReadOnlyCollection<string> GroupsCollecting { get; init; }
+    public IReadOnlyCollection<IUserSetCardCollectingOufEntity> Collecting { get; init; }
 }

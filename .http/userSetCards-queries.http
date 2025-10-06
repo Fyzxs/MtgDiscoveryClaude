@@ -33,7 +33,11 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
         setId
         totalCards
         uniqueCards
-        groupsCollecting
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
         groups {
           key
           value {
@@ -84,7 +88,18 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
 #         "setId": "neo",
 #         "totalCards": 15,
 #         "uniqueCards": 8,
-#         "groupsCollecting": ["normal", "borderless"],
+#         "collecting": [
+#           {
+#             "setGroupId": "normal",
+#             "collecting": true,
+#             "count": 399
+#           },
+#           {
+#             "setGroupId": "borderless",
+#             "collecting": true,
+#             "count": 50
+#           }
+#         ],
 #         "groups": [
 #           {
 #             "key": "normal",
