@@ -12,7 +12,7 @@ Content-Type: application/json
 query GetCardsBatch($ids: CardIdsArgEntityInput!, $ids2: CardIdsArgEntityInput!) {
   first:cardsById(ids: $ids) {
     __typename
-    ... on SuccessCardsResponse {
+    ... on CardsResponse {
       data {
         id
         setGroupId
@@ -42,7 +42,7 @@ query GetCardsBatch($ids: CardIdsArgEntityInput!, $ids2: CardIdsArgEntityInput!)
   },
   second:cardsById(ids: $ids2) {
     __typename
-    ... on SuccessCardsResponse {
+    ... on CardsResponse {
       data {
         id
         setGroupId
@@ -100,7 +100,7 @@ Authorization: Bearer {{$dotenv JWT_TOKEN}}
 query GetCardsBatch($ids: CardIdsArgEntityInput!) {
   cardsById(ids: $ids) {
     __typename
-    ... on SuccessCardsResponse {
+    ... on CardsResponse {
       data {
         id
         name
@@ -149,7 +149,7 @@ Content-Type: application/json
 query GetCardsBatch($ids: CardIdsArgEntityInput!) {
   cardsById(ids: $ids) {
     __typename
-    ... on SuccessCardsResponse {
+    ... on CardsResponse {
       data {
     id
     oracleId
@@ -353,7 +353,7 @@ Authorization: Bearer {{$dotenv JWT_TOKEN}}
 query GetCardsBatch($ids: CardIdsArgEntityInput!) {
   cardsById(ids: $ids) {
     __typename
-    ... on SuccessCardsResponse {
+    ... on CardsResponse {
       data {
     id
     oracleId

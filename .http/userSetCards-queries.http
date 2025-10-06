@@ -17,10 +17,10 @@
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserSetCard($setCardArgs: UserSetCardArgEntityInput!) {
+query GetUserSetCard($setCardArgs: UserSetCardInput!) {
   userSetCard(setCardArgs: $setCardArgs) {
     __typename
-    ... on SuccessUserSetCardResponse {
+    ... on UserSetCardResponse {
       data {
         userId
         setId
