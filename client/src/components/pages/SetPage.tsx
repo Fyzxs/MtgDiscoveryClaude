@@ -45,7 +45,7 @@ import { SetPageHeader } from '../organisms/SetPageHeader';
 import { SetPageFilters } from '../organisms/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/SetPageCardDisplay';
 
-interface CardsResponse {
+interface CardsSuccessResponse {
   cardsBySetCode: {
     __typename: string;
     data?: Card[];
@@ -114,8 +114,8 @@ export const SetPage: React.FC = () => {
   const { fetchSetCards } = useCardCache();
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<Error | null>(null);
-  const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
-  const cardsDataRef = useRef<CardsResponse | null>(null);
+  const [cardsData, setCardsData] = useState<CardsSuccessResponse | null>(null);
+  const cardsDataRef = useRef<CardsSuccessResponse | null>(null);
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -130,14 +130,14 @@ export const SetPage: React.FC = () => {
       setCardsLoading(true);
       setCardsError(null);
       // Clear stale cards immediately when collectorId changes
-      setCardsData({ cardsBySetCode: { __typename: 'SuccessCardsResponse', data: [] } });
+      setCardsData({ cardsBySetCode: { __typename: 'CardsSuccessResponse', data: [] } });
 
       try {
         const cards = await fetchSetCards(setCode);
 
         setCardsData({
           cardsBySetCode: {
-            __typename: 'SuccessCardsResponse',
+            __typename: 'CardsSuccessResponse',
             data: cards
           }
         });
@@ -214,7 +214,7 @@ export const SetPage: React.FC = () => {
         console.log('[SetPage] Updated cards array, triggering re-render');
         const newState = {
           cardsBySetCode: {
-            __typename: 'SuccessCardsResponse',
+            __typename: 'CardsSuccessResponse',
             data: updatedCards
           }
         };

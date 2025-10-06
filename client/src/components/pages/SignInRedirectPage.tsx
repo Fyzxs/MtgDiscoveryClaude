@@ -70,7 +70,7 @@ export const SignInRedirectPage: React.FC = () => {
         // Call GraphQL mutation to register user - now with token ready
         const result = await registerUser();
 
-        if ((result.data as any)?.registerUserInfo?.__typename === 'SuccessUserRegistrationResponse') {
+        if ((result.data as any)?.registerUserInfo?.__typename === 'UserRegistrationSuccessResponse') {
           // Registration successful
           const registrationData = (result.data as any).registerUserInfo.data;
           

@@ -14,7 +14,7 @@ interface AllPrintingsDisplayProps {
   currentCardId: string;
 }
 
-interface CardsResponse {
+interface CardsSuccessResponse {
   cardsByName: {
     __typename: string;
     data?: Card[];
@@ -35,7 +35,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   const { fetchCardsByName } = useCardCache();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<CardsResponse | null>(null);
+  const [data, setData] = useState<CardsSuccessResponse | null>(null);
 
   useEffect(() => {
     if (!cardName) return;
@@ -47,7 +47,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
         const cards = await fetchCardsByName(cardName);
         setData({
           cardsByName: {
-            __typename: 'SuccessCardsResponse',
+            __typename: 'CardsSuccessResponse',
             data: cards
           }
         });

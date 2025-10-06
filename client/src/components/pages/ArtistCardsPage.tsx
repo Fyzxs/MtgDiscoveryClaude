@@ -72,7 +72,7 @@ export const ArtistCardsPage: React.FC = () => {
         const cards = await fetchCardsByArtist(decodedArtistName);
         setCardsData({
           cardsByArtistName: {
-            __typename: 'SuccessCardsByArtistResponse',
+            __typename: 'CardsByArtistSuccessResponse',
             data: cards
           }
         });
