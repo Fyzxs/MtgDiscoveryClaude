@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.User;
@@ -10,8 +10,8 @@ public sealed class UserRegistrationSuccessDataResponseModelType : ObjectType<Su
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<UserRegistrationOutEntity>> descriptor)
     {
-        descriptor.Name("SuccessUserRegistrationResponse");
-        descriptor.Description("Response returned when user registration is successful");
+        descriptor.Name("UserRegistrationSuccessResponse")
+            .Description("Response returned when user registration is successful");
 
         descriptor.Field(f => f.Data)
             .Type<NonNullType<UserRegistrationOutEntityType>>()

@@ -8,8 +8,8 @@ public class FailureResponseModelType : ObjectType<FailureResponseModel>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<FailureResponseModel> descriptor)
     {
-        descriptor.Name("FailureResponse");
-        descriptor.Description("Response returned when the query fails");
+        descriptor.Name("FailureResponse")
+            .Description("Response returned when the query fails");
 
         descriptor.Field(f => f.Status)
             .Type<StatusDataModelType>()

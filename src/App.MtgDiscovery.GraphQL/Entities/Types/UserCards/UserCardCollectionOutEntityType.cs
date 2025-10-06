@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
 
@@ -8,8 +8,8 @@ public sealed class UserCardCollectionOutEntityType : ObjectType<UserCardOutEnti
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserCardOutEntity> descriptor)
     {
-        descriptor.Name("UserCardCollection");
-        descriptor.Description("A user's card collection entry");
+        descriptor.Name("UserCardCollection")
+            .Description("A user's card collection entry");
 
         descriptor.Field(f => f.UserId)
             .Type<NonNullType<StringType>>()

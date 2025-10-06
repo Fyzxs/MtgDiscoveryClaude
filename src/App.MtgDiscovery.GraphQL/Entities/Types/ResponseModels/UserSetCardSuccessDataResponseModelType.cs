@@ -10,8 +10,8 @@ public sealed class UserSetCardSuccessDataResponseModelType : ObjectType<Success
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<UserSetCardOutEntity>> descriptor)
     {
-        descriptor.Name("SuccessUserSetCardResponse");
-        descriptor.Description("Response returned when querying user set card is successful");
+        descriptor.Name("UserSetCardSuccessResponse")
+            .Description("Response returned when querying user set card is successful");
 
         descriptor.Field(f => f.Data)
             .Type<NonNullType<UserSetCardOutEntityType>>()

@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -7,8 +7,8 @@ internal sealed class ScryfallAllPartsOutEntityType : ObjectType<AllPartsOutEnti
 {
     protected override void Configure(IObjectTypeDescriptor<AllPartsOutEntity> descriptor)
     {
-        descriptor.Name("AllParts");
-        descriptor.Description("Related card parts");
+        descriptor.Name("AllParts")
+            .Description("Related card parts");
 
         descriptor.Field(f => f.ObjectString).Description("The object type");
         descriptor.Field(f => f.Id).Description("The card ID");

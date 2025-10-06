@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -7,8 +7,8 @@ internal sealed class ScryfallCardFaceOutEntityType : ObjectType<CardFaceOutEnti
 {
     protected override void Configure(IObjectTypeDescriptor<CardFaceOutEntity> descriptor)
     {
-        descriptor.Name("CardFace");
-        descriptor.Description("A face of a multi-faced card");
+        descriptor.Name("CardFace")
+            .Description("A face of a multi-faced card");
 
         descriptor.Field(f => f.ObjectString).Description("The object type");
         descriptor.Field(f => f.Name).Description("The face name");

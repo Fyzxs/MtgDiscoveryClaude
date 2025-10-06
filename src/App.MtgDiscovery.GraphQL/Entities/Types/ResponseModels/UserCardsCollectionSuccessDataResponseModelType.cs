@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using HotChocolate.Types;
@@ -11,8 +11,8 @@ public sealed class UserCardsCollectionSuccessDataResponseModelType : ObjectType
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<UserCardOutEntity>>> descriptor)
     {
-        descriptor.Name("SuccessUserCardsCollectionResponse");
-        descriptor.Description("Response returned when querying user cards collection is successful");
+        descriptor.Name("UserCardsCollectionSuccessResponse")
+            .Description("Response returned when querying user cards collection is successful");
 
         descriptor.Field(f => f.Data)
             .Type<NonNullType<ListType<NonNullType<UserCardCollectionOutEntityType>>>>()

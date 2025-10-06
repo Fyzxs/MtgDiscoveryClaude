@@ -8,8 +8,8 @@ public sealed class UserSetCardFinishGroupOutEntityType : ObjectType<UserSetCard
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserSetCardFinishGroupOutEntity> descriptor)
     {
-        descriptor.Name("UserSetCardFinishGroup");
-        descriptor.Description("A collection of card IDs for a specific finish type");
+        descriptor.Name("UserSetCardFinishGroup")
+            .Description("A collection of card IDs for a specific finish type");
 
         descriptor.Field(f => f.Cards)
             .Type<NonNullType<ListType<NonNullType<StringType>>>>()

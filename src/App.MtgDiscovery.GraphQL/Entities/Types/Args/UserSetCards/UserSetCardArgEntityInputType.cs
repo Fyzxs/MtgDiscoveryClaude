@@ -8,8 +8,8 @@ public sealed class UserSetCardArgEntityInputType : InputObjectType<UserSetCardA
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserSetCardArgEntity> descriptor)
     {
-        _ = descriptor.Name("UserSetCardArgEntityInput");
-        _ = descriptor.Description("Input for querying a user's set card collection");
+        _ = descriptor.Name("UserSetCardInput")
+            .Description("Input for querying a user's set card collection");
 
         _ = descriptor.Field(f => f.UserId)
             .Type<NonNullType<StringType>>()

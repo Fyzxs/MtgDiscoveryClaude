@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -7,8 +7,8 @@ internal sealed class ScryfallImageUrisOutEntityType : ObjectType<ImageUrisOutEn
 {
     protected override void Configure(IObjectTypeDescriptor<ImageUrisOutEntity> descriptor)
     {
-        descriptor.Name("ImageUris");
-        descriptor.Description("URIs to various image formats");
+        descriptor.Name("ImageUris")
+            .Description("URIs to various image formats");
 
         descriptor.Field(f => f.Small).Description("Small JPG image");
         descriptor.Field(f => f.Normal).Description("Normal JPG image");

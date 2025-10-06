@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
 
@@ -8,8 +8,8 @@ public sealed class CollectedItemOutEntityType : ObjectType<CollectedItemOutEnti
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<CollectedItemOutEntity> descriptor)
     {
-        descriptor.Name("CollectedItem");
-        descriptor.Description("A collected item variant with finish and special treatment");
+        descriptor.Name("CollectedItem")
+            .Description("A collected item variant with finish and special treatment");
 
         descriptor.Field(f => f.Finish)
             .Type<NonNullType<StringType>>()

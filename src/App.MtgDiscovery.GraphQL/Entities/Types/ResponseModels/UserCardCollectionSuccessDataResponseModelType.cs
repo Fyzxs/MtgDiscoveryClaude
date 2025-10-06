@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
@@ -10,8 +10,8 @@ public sealed class UserCardCollectionSuccessDataResponseModelType : ObjectType<
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<UserCardOutEntity>> descriptor)
     {
-        descriptor.Name("SuccessUserCardCollectionResponse");
-        descriptor.Description("Response returned when adding cards to collection is successful");
+        descriptor.Name("UserCardCollectionSuccessResponse")
+            .Description("Response returned when adding cards to collection is successful");
 
         descriptor.Field(f => f.Data)
             .Type<NonNullType<UserCardCollectionOutEntityType>>()

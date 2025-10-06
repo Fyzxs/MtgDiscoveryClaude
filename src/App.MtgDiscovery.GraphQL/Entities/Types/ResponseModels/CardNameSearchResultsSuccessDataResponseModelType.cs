@@ -10,7 +10,7 @@ public sealed class CardNameSearchResultsSuccessDataResponseModelType : ObjectTy
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<CardNameSearchResultOutEntity>>> descriptor)
     {
-        descriptor.Name("SuccessCardNameSearchResultsResponse");
+        descriptor.Name("CardNameSearchResultsSuccessResponse");
         descriptor.Field(f => f.Data).Type<NonNullType<ListType<NonNullType<ObjectType<CardNameSearchResultOutEntity>>>>>();
     }
 }

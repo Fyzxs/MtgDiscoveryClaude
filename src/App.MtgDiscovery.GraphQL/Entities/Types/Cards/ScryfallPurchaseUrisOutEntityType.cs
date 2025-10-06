@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -7,8 +7,8 @@ internal sealed class ScryfallPurchaseUrisOutEntityType : ObjectType<PurchaseUri
 {
     protected override void Configure(IObjectTypeDescriptor<PurchaseUrisOutEntity> descriptor)
     {
-        descriptor.Name("PurchaseUris");
-        descriptor.Description("URIs for purchasing the card");
+        descriptor.Name("PurchaseUris")
+            .Description("URIs for purchasing the card");
 
         descriptor.Field(f => f.Tcgplayer).Description("TCGPlayer purchase link");
         descriptor.Field(f => f.Cardmarket).Description("Cardmarket purchase link");
