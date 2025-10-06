@@ -11,14 +11,21 @@
 @graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
 @bearerToken = {{$dotenv BEARER_TOKEN}}
 
+
+### SDL
+# @ref variables
+# Get SDL
+GET {{graphqlEndpoint}}?sdl
+Content-Type: application/json
+
 ### Get User Set Card Statistics - Basic Query
 # @ref variables
 # Get aggregated statistics for a user's collection in a specific set
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserSetCard($setCardArgs: UserSetCardInput!) {
-  userSetCard(setCardArgs: $setCardArgs) {
+query GetUserSetCards($setCardArgs: UserSetCardInput!) {
+  userSetCards(setCardArgs: $setCardArgs) {
     __typename
     ... on UserSetCardSuccessResponse {
       data {
@@ -26,6 +33,7 @@ query GetUserSetCard($setCardArgs: UserSetCardInput!) {
         setId
         totalCards
         uniqueCards
+        groupsCollecting
         groups {
           key
           value {
@@ -76,6 +84,7 @@ query GetUserSetCard($setCardArgs: UserSetCardInput!) {
 #         "setId": "neo",
 #         "totalCards": 15,
 #         "uniqueCards": 8,
+#         "groupsCollecting": ["normal", "borderless"],
 #         "groups": [
 #           {
 #             "key": "normal",

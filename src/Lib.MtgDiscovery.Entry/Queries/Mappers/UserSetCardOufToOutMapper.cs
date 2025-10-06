@@ -26,7 +26,8 @@ internal sealed class UserSetCardOufToOutMapper : IUserSetCardOufToOutMapper
             SetId = oufEntity.SetId,
             TotalCards = oufEntity.TotalCards,
             UniqueCards = oufEntity.UniqueCards,
-            Groups = groups
+            Groups = groups,
+            GroupsCollecting = oufEntity.GroupsCollecting
         });
     }
 }
