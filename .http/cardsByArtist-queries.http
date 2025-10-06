@@ -13,7 +13,7 @@ Content-Type: application/json
 query CardsByArtist($artistId: ArtistIdArgEntityInput!) {
   cardsByArtist(artistId: $artistId) {
     __typename
-    ... on SuccessCardsByArtistResponse {
+    ... on CardsByArtistResponse {
       data {
         id
         name
@@ -53,7 +53,7 @@ Content-Type: application/json
 query CardsByArtist($artistId: ArtistIdArgEntityInput!) {
   cardsByArtist(artistId: $artistId) {
     __typename
-    ... on SuccessCardsByArtistResponse {
+    ... on CardsByArtistResponse {
       data {
         id
         name
@@ -93,7 +93,7 @@ Content-Type: application/json
 query CardsByArtist($artistId: ArtistIdArgEntityInput!) {
   cardsByArtist(artistId: $artistId) {
     __typename
-    ... on SuccessCardsByArtistResponse {
+    ... on CardsByArtistResponse {
       data {
         id
         name
@@ -129,7 +129,7 @@ Content-Type: application/json
 query CardsByArtist($artistId: ArtistIdArgEntityInput!) {
   cardsByArtist(artistId: $artistId) {
     __typename
-    ... on SuccessCardsByArtistResponse {
+    ... on CardsByArtistResponse {
       data {
     id
     oracleId
@@ -320,7 +320,7 @@ Content-Type: application/json
 query CardsByArtist($artistId: ArtistIdArgEntityInput!) {
   cardsByArtist(artistId: $artistId) {
     __typename
-    ... on SuccessCardsByArtistResponse {
+    ... on CardsByArtistResponse {
       data {
         id
         name
@@ -350,7 +350,7 @@ Content-Type: application/json
 query CardsByArtist($artistId: ArtistIdArgEntityInput!) {
   cardsByArtist(artistId: $artistId) {
     __typename
-    ... on SuccessCardsByArtistResponse {
+    ... on CardsByArtistResponse {
       data {
         id
         name
