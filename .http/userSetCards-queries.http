@@ -1,0 +1,116 @@
+###
+# User Set Cards Query Tests
+# Queries for aggregated set collection statistics
+# Shows total cards, unique cards, and completion progress for a user's set
+# NOTE: GraphQL implementation not yet complete - requires Entry/Domain/Aggregator layers
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+@bearerToken = {{$dotenv BEARER_TOKEN}}
+
+### Get User Set Card Statistics - Basic Query
+# @ref variables
+# Get aggregated statistics for a user's collection in a specific set
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserSetCard($setCardArgs: UserSetCardArgEntityInput!) {
+  userSetCard(setCardArgs: $setCardArgs) {
+    __typename
+    ... on SuccessUserSetCardResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        groups {
+          key
+          value {
+            nonFoil { cards }
+            foil { cards }
+            etched { cards }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setCardArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "setId": "neo"
+  }
+}
+
+###
+# Implementation Status:
+#
+# ✅ Aggregator Layer (Lib.Aggregator.UserSetCards) - COMPLETED
+# ✅ Domain Layer (Lib.Domain.UserSetCards) - COMPLETED
+# ✅ Entry Layer (Lib.MtgDiscovery.Entry) - COMPLETED
+# ✅ GraphQL Layer (App.MtgDiscovery.GraphQL) - COMPLETED
+# ✅ Shared Data Models - COMPLETED
+#
+# All layers have been implemented following MicroObjects patterns.
+# UserSetCards are updated automatically when cards are added via addCardToCollection.
+# This query retrieves the aggregated statistics.
+
+###
+# Expected Response Structure:
+# {
+#   "data": {
+#     "userSetCard": {
+#       "__typename": "SuccessUserSetCardResponse",
+#       "data": {
+#         "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+#         "setId": "neo",
+#         "totalCards": 15,
+#         "uniqueCards": 8,
+#         "groups": [
+#           {
+#             "key": "normal",
+#             "value": {
+#               "nonFoil": {
+#                 "cards": ["card-id-1", "card-id-3", "card-id-4"]
+#               },
+#               "foil": {
+#                 "cards": ["card-id-1", "card-id-2"]
+#               },
+#               "etched": {
+#                 "cards": []
+#               }
+#             }
+#           },
+#           {
+#             "key": "borderless",
+#             "value": {
+#               "nonFoil": {
+#                 "cards": ["card-id-6"]
+#               },
+#               "foil": {
+#                 "cards": ["card-id-5"]
+#               },
+#               "etched": {
+#                 "cards": []
+#               }
+#             }
+#           }
+#         ]
+#       },
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
