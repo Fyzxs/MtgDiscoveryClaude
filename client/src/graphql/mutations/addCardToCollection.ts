@@ -5,7 +5,7 @@ export const ADD_CARD_TO_COLLECTION = gql`
   mutation AddCardToCollection($args: AddCardToCollectionInput!) {
     addCardToCollection(args: $args) {
       __typename
-      ... on SuccessCardsResponse {
+      ... on CardsSuccessResponse {
         data {
           id
           oracleId

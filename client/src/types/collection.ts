@@ -35,3 +35,39 @@ export const SPECIAL_DISPLAY_NAMES: Record<CardSpecial, string> = {
   'artist-proof': 'Artist Proof',
   'altered': 'Altered'
 };
+
+// UserSetCards types based on GraphQL response
+export interface UserSetCardFinishGroup {
+  cards: string[];
+}
+
+export interface UserSetCardGroupValue {
+  nonFoil: UserSetCardFinishGroup;
+  foil: UserSetCardFinishGroup;
+  etched: UserSetCardFinishGroup;
+}
+
+export interface UserSetCardGroup {
+  key: string;
+  value: UserSetCardGroupValue;
+}
+
+export interface UserSetCard {
+  userId: string;
+  setId: string;
+  totalCards: number;
+  uniqueCards: number;
+  groupsCollecting: string[];
+  groups: UserSetCardGroup[];
+}
+
+export interface UserSetCardResponse {
+  userSetCard: {
+    __typename: string;
+    data?: UserSetCard;
+    status?: {
+      message: string;
+      statusCode: number;
+    };
+  };
+}

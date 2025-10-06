@@ -64,7 +64,7 @@ export const REGISTER_USER = gql`
   mutation RegisterUser {
     registerUserInfo {
       __typename
-      ... on SuccessUserRegistrationResponse {
+      ... on UserRegistrationSuccessResponse {
         data {
           userId
           displayName

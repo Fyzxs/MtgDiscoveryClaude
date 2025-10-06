@@ -13,7 +13,7 @@ interface RelatedCardsDisplayProps {
   currentCardId: string;
 }
 
-interface CardsResponse {
+interface CardsSuccessResponse {
   cardsById: {
     __typename: string;
     data?: Card[];
@@ -40,7 +40,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
   const { fetchCards } = useCardCache();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<CardsResponse | null>(null);
+  const [data, setData] = useState<CardsSuccessResponse | null>(null);
 
   // Use ref to store latest fetchCards function to avoid dependency issues
   const fetchCardsRef = useRef(fetchCards);
@@ -60,7 +60,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
         console.log('[RelatedCards] Cards loaded:', cards.length);
         setData({
           cardsById: {
-            __typename: 'SuccessCardsResponse',
+            __typename: 'CardsSuccessResponse',
             data: cards
           }
         });

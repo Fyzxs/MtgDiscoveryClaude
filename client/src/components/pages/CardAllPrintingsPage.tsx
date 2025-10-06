@@ -26,7 +26,7 @@ import { AppErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 
 
-interface CardsResponse {
+interface CardsSuccessResponse {
   cardsByName: {
     __typename: string;
     data?: Card[];
@@ -50,7 +50,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   const { fetchCardsByName } = useCardCache();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<CardsResponse | null>(null);
+  const [data, setData] = useState<CardsSuccessResponse | null>(null);
 
   const refetch = async () => {
     if (!cardName) return;
@@ -61,7 +61,7 @@ export const CardAllPrintingsPage: React.FC = () => {
       const cards = await fetchCardsByName(decodedCardName);
       setData({
         cardsByName: {
-          __typename: 'SuccessCardsResponse',
+          __typename: 'CardsSuccessResponse',
           data: cards
         }
       });
