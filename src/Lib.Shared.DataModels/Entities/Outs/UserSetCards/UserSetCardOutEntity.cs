@@ -9,4 +9,5 @@ public sealed class UserSetCardOutEntity
     public int TotalCards { get; init; }
     public int UniqueCards { get; init; }
     public IReadOnlyDictionary<string, UserSetCardGroupOutEntity> Groups { get; init; }
+    public IReadOnlyCollection<string> GroupsCollecting { get; init; }
 }
