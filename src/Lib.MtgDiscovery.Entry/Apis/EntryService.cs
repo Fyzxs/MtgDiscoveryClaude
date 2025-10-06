@@ -2,12 +2,14 @@
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands;
 using Lib.MtgDiscovery.Entry.Queries;
+using Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Outs.Artists;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Outs.Sets;
 using Lib.Shared.DataModels.Entities.Outs.User;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
+using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -21,6 +23,7 @@ public sealed class EntryService : IEntryService
     private readonly IUserEntryService _userEntryService;
     private readonly IUserCardsEntryService _userCardsEntryService;
     private readonly IUserCardsQueryEntryService _userCardsQueryEntryService;
+    private readonly IUserSetCardsQueryEntryService _userSetCardsQueryEntryService;
 
     public EntryService(ILogger logger) : this(
         new CardEntryService(logger),
@@ -28,7 +31,8 @@ public sealed class EntryService : IEntryService
         new ArtistEntryService(logger),
         new UserEntryService(logger),
         new UserCardsEntryService(logger),
-        new UserCardsQueryEntryService(logger))
+        new UserCardsQueryEntryService(logger),
+        new UserSetCardsQueryEntryService(logger))
     { }
 
     private EntryService(
@@ -37,7 +41,8 @@ public sealed class EntryService : IEntryService
         IArtistEntryService artistEntryService,
         IUserEntryService userEntryService,
         IUserCardsEntryService userCardsEntryService,
-        IUserCardsQueryEntryService userCardsQueryEntryService)
+        IUserCardsQueryEntryService userCardsQueryEntryService,
+        IUserSetCardsQueryEntryService userSetCardsQueryEntryService)
     {
         _cardEntryService = cardEntryService;
         _setEntryService = setEntryService;
@@ -45,6 +50,7 @@ public sealed class EntryService : IEntryService
         _userEntryService = userEntryService;
         _userCardsEntryService = userCardsEntryService;
         _userCardsQueryEntryService = userCardsQueryEntryService;
+        _userSetCardsQueryEntryService = userSetCardsQueryEntryService;
     }
 
     public Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => _cardEntryService.CardsByIdsAsync(args);
@@ -76,4 +82,6 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => _userCardsQueryEntryService.UserCardsBySetAsync(bySetArgs);
 
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => _userCardsQueryEntryService.UserCardsByIdsAsync(cardsArgs);
+
+    public Task<IOperationResponse<UserSetCardOutEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => _userSetCardsQueryEntryService.GetUserSetCardByUserAndSetAsync(userSetCardArgs);
 }

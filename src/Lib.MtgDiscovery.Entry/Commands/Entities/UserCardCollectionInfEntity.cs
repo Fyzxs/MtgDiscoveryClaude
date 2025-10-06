@@ -1,4 +1,4 @@
-using Lib.Shared.DataModels.Entities.Itrs;
+﻿using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Entities;
 
