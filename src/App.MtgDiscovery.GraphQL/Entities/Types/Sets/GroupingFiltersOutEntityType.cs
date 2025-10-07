@@ -8,7 +8,14 @@ public sealed class GroupingFiltersOutEntityType : ObjectType<GroupingFiltersOut
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<GroupingFiltersOutEntity> descriptor)
     {
-        descriptor.Field(f => f.CollectorNumberRange).Type<CollectorNumberRangeOutEntityType>();
-        descriptor.Field(f => f.Properties).Type<AnyType>();
+        descriptor.Name("GroupingFilters")
+            .Description("Filters for card groupings");
+
+        descriptor.Field(f => f.CollectorNumberRange)
+            .Name("collectorNumberRange")
+            .Type<CollectorNumberRangeOutEntityType>();
+        descriptor.Field(f => f.Properties)
+            .Name("properties")
+            .Type<AnyType>();
     }
 }

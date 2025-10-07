@@ -8,11 +8,26 @@ public sealed class SetGroupingOutEntityType : ObjectType<SetGroupingOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SetGroupingOutEntity> descriptor)
     {
-        descriptor.Field(f => f.Id).Type<NonNullType<StringType>>();
-        descriptor.Field(f => f.DisplayName).Type<NonNullType<StringType>>();
-        descriptor.Field(f => f.Order).Type<NonNullType<IntType>>();
-        descriptor.Field(f => f.CardCount).Type<NonNullType<IntType>>();
-        descriptor.Field(f => f.RawQuery).Type<NonNullType<StringType>>();
-        descriptor.Field(f => f.Filters).Type<GroupingFiltersOutEntityType>();
+        descriptor.Name("SetGrouping")
+            .Description("Card grouping within a set");
+
+        descriptor.Field(f => f.Id)
+            .Name("id")
+            .Type<NonNullType<StringType>>();
+        descriptor.Field(f => f.DisplayName)
+            .Name("displayName")
+            .Type<NonNullType<StringType>>();
+        descriptor.Field(f => f.Order)
+            .Name("order")
+            .Type<NonNullType<IntType>>();
+        descriptor.Field(f => f.CardCount)
+            .Name("cardCount")
+            .Type<NonNullType<IntType>>();
+        descriptor.Field(f => f.RawQuery)
+            .Name("rawQuery")
+            .Type<NonNullType<StringType>>();
+        descriptor.Field(f => f.Filters)
+            .Name("filters")
+            .Type<GroupingFiltersOutEntityType>();
     }
 }

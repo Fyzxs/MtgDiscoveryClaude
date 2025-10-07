@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.Invocation.Response.Models;
 
@@ -12,9 +12,12 @@ public class StatusDataModelType : ObjectType<StatusDataModel>
             .Description("Status information for the response");
 
         descriptor.Field(f => f.StatusCode)
+            .Name("statusCode")
+            .Type<IntType>()
             .Description("HTTP status code");
-
         descriptor.Field(f => f.Message)
+            .Name("message")
+            .Type<StringType>()
             .Description("Status message");
     }
 }

@@ -10,7 +10,10 @@ public sealed class CardNameSearchResultsSuccessDataResponseModelType : ObjectTy
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<CardNameSearchResultOutEntity>>> descriptor)
     {
-        descriptor.Name("CardNameSearchResultsSuccessResponse");
-        descriptor.Field(f => f.Data).Type<NonNullType<ListType<NonNullType<ObjectType<CardNameSearchResultOutEntity>>>>>();
+        descriptor.Name("CardNameSearchResultsSuccessResponse")
+            .Description("Successful response for a card name search");
+
+        descriptor.Field(f => f.Data)
+            .Name("data").Type<NonNullType<ListType<NonNullType<ObjectType<CardNameSearchResultOutEntity>>>>>();
     }
 }

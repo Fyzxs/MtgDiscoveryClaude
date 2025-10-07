@@ -12,10 +12,11 @@ public class FailureResponseModelType : ObjectType<FailureResponseModel>
             .Description("Response returned when the query fails");
 
         descriptor.Field(f => f.Status)
+            .Name("status")
             .Type<StatusDataModelType>()
             .Description("Status information about the failure");
-
         descriptor.Field(f => f.MetaData)
+            .Name("metaData")
             .Type<MetaDataModelType>()
             .Description("Metadata about the response");
     }

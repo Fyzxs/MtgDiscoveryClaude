@@ -12,10 +12,11 @@ public sealed class UserSetCardArgEntityInputType : InputObjectType<UserSetCardA
             .Description("Input for querying a user's set card collection");
 
         _ = descriptor.Field(f => f.UserId)
+            .Name("userId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier for the user");
-
         _ = descriptor.Field(f => f.SetId)
+            .Name("setId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier for the set");
     }

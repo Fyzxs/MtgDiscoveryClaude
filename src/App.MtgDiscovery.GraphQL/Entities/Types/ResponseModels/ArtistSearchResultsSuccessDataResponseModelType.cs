@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.Artists;
 using HotChocolate.Types;
@@ -13,16 +13,16 @@ public sealed class ArtistSearchResultsSuccessDataResponseModelType : ObjectType
     {
         descriptor.Name("ArtistSearchResultsSuccessResponse")
             .Description("Response returned when artist search is successful");
-
         descriptor.Field(f => f.Data)
+            .Name("data")
             .Type<NonNullType<ListType<NonNullType<ArtistSearchResultOutEntityType>>>>()
             .Description("The list of artist search results");
-
         descriptor.Field(f => f.Status)
+            .Name("status")
             .Type<StatusDataModelType>()
             .Description("Status information about the success");
-
         descriptor.Field(f => f.MetaData)
+            .Name("metaData")
             .Type<MetaDataModelType>()
             .Description("Metadata about the response");
     }

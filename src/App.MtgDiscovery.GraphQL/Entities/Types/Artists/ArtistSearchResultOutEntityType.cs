@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Artists;
 
@@ -12,10 +12,11 @@ public sealed class ArtistSearchResultOutEntityType : ObjectType<ArtistSearchRes
             .Description("An artist search result");
 
         descriptor.Field(f => f.ArtistId)
+            .Name("artistId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier for the artist");
-
         descriptor.Field(f => f.Name)
+            .Name("name")
             .Type<NonNullType<StringType>>()
             .Description("The name of the artist");
     }

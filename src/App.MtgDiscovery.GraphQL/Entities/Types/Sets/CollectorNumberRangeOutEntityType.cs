@@ -8,8 +8,17 @@ public sealed class CollectorNumberRangeOutEntityType : ObjectType<CollectorNumb
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<CollectorNumberRangeOutEntity> descriptor)
     {
-        descriptor.Field(f => f.Min).Type<StringType>();
-        descriptor.Field(f => f.Max).Type<StringType>();
-        descriptor.Field(f => f.OrConditions).Type<ListType<StringType>>();
+        descriptor.Name("CollectorNumberRange")
+            .Description("Range of collector numbers");
+
+        descriptor.Field(f => f.Min)
+            .Name("min")
+            .Type<StringType>();
+        descriptor.Field(f => f.Max)
+            .Name("max")
+            .Type<StringType>();
+        descriptor.Field(f => f.OrConditions)
+            .Name("orConditions")
+            .Type<ListType<StringType>>();
     }
 }
