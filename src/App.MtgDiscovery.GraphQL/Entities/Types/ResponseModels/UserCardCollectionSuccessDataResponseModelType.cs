@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
@@ -14,14 +14,15 @@ public sealed class UserCardCollectionSuccessDataResponseModelType : ObjectType<
             .Description("Response returned when adding cards to collection is successful");
 
         descriptor.Field(f => f.Data)
+            .Name("data")
             .Type<NonNullType<UserCardCollectionOutEntityType>>()
             .Description("The user card collection result");
-
         descriptor.Field(f => f.Status)
+            .Name("status")
             .Type<StatusDataModelType>()
             .Description("Status information about the success");
-
         descriptor.Field(f => f.MetaData)
+            .Name("metaData")
             .Type<MetaDataModelType>()
             .Description("Metadata about the response");
     }
