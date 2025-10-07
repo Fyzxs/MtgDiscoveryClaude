@@ -1,4 +1,4 @@
-namespace Lib.Shared.DataModels.Entities.Outs.UserSetCards;
+﻿namespace Lib.Shared.DataModels.Entities.Outs.UserSetCards;
 
 public sealed class UserSetCardCollectingOutEntity
 {

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Aggregator.UserSetCards.Entities;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -16,4 +17,6 @@ public sealed class UserSetCardsDomainService : IUserSetCardsDomainService
     private UserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) => _userSetCardsAggregatorService = userSetCardsAggregatorService;
 
     public async Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _userSetCardsAggregatorService.GetUserSetCardByUserAndSetAsync(userSetCard).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _userSetCardsAggregatorService.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
 }

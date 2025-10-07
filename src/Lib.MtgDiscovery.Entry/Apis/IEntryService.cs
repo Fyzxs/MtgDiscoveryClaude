@@ -7,4 +7,5 @@ public interface IEntryService :
     IUserEntryService,
     IUserCardsEntryService,
     IUserCardsQueryEntryService,
-    IUserSetCardsQueryEntryService;
+    IUserSetCardsQueryEntryService,
+    IUserSetCardsCommandEntryService;

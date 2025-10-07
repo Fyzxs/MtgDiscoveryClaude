@@ -1,4 +1,5 @@
-﻿using HotChocolate.Types;
+﻿using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -354,7 +355,7 @@ internal sealed class ScryfallCardOutEntityType : ObjectType<CardItemOutEntity>
              .Description("Attraction lights");
         descriptor.Field(f => f.UserCollection)
             .Name("userCollection")
-            .Type<AnyType>()
+            .Type<ListType<CollectedItemOutEntityType>>()
             .Description("User's collection information for this card (populated when userId provided)");
     }
 }

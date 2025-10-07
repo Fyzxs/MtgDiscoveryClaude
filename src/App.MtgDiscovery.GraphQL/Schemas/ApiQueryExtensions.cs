@@ -51,7 +51,7 @@ internal static class ApiQueryExtensions
             .AddType<UserSetCardResponseModelUnionType>()
             .AddType<UserSetCardSuccessDataResponseModelType>()
             .AddType<UserSetCardOutEntityType>()
-            .AddType<UserSetCardGroupKeyValueType>()
+            .AddType<UserSetCardRarityGroupOutEntityType>()
             .AddType<UserSetCardGroupOutEntityType>()
             .AddType<UserSetCardFinishGroupOutEntityType>()
             // UserInfo query types
