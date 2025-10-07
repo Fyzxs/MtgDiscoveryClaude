@@ -1,4 +1,4 @@
-using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
+﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
 using App.MtgDiscovery.GraphQL.Queries;
@@ -15,6 +15,7 @@ internal static class UserSetCardsSchemaExtensions
             .AddTypeExtension<UserSetCardsQueryMethods>()
             // Input types
             .AddType<UserSetCardArgEntityInputType>()
+            .AddType<AddSetGroupToUserSetCardArgEntityInputType>()
             // Output types
             .AddType<UserSetCardOutEntityType>()
             .AddType<UserSetCardGroupOutEntityType>()

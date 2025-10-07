@@ -1,10 +1,7 @@
-using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.UserSetCards.Entities;
+using Lib.Shared.Abstractions.Mappers;
 
 namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 
-internal interface IUserSetCardCollectingExtToOufMapper
-{
-    Task<IUserSetCardCollectingOufEntity> Map(UserSetCardCollectingExtEntity source);
-}
+internal interface IUserSetCardCollectingExtToOufMapper : ICreateMapper<UserSetCardCollectingExtEntity, IUserSetCardCollectingOufEntity>;

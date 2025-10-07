@@ -3,6 +3,7 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Commands;
 using Lib.Adapter.UserSetCards.Queries;
+using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -41,4 +42,7 @@ public sealed class UserSetCardsAdapterService : IUserSetCardsAdapterService
 
     public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) =>
         await _commandAdapter.AddCardToSetAsync(entity).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity entity) =>
+        await _commandAdapter.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
 }

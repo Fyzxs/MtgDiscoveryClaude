@@ -1,4 +1,4 @@
-namespace Lib.Aggregator.UserSetCards.Entities;
+﻿namespace Lib.Aggregator.UserSetCards.Entities;
 
 public interface IUserSetCardCollectingOufEntity
 {

@@ -8,6 +8,6 @@ public sealed class UserSetCardOutEntity
     public string SetId { get; init; }
     public int TotalCards { get; init; }
     public int UniqueCards { get; init; }
-    public IReadOnlyDictionary<string, UserSetCardGroupOutEntity> Groups { get; init; }
+    public IReadOnlyCollection<UserSetCardRarityGroupOutEntity> Groups { get; init; }
     public IReadOnlyCollection<UserSetCardCollectingOutEntity> Collecting { get; init; }
 }

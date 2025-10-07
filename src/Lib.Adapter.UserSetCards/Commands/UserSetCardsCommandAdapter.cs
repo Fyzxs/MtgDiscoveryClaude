@@ -8,6 +8,7 @@ using Lib.Adapter.UserSetCards.Commands.Mappers;
 using Lib.Adapter.UserSetCards.Commands.Resolvers;
 using Lib.Adapter.UserSetCards.Exceptions;
 using Lib.Cosmos.Apis.Operators;
+using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -26,13 +27,19 @@ internal sealed class UserSetCardsCommandAdapter : IUserSetCardsCommandAdapter
     private readonly IAddCardToSetXfrToExtMapper _readPointMapper;
     private readonly IUserSetCardIntegrator _integrator;
     private readonly IUserSetCardResolver _resolver;
+    private readonly IAddSetGroupXfrToReadPointMapper _setGroupMapper;
+    private readonly IAddSetGroupResolver _setGroupResolver;
+    private readonly IAddSetGroupIntegrator _setGroupIntegrator;
 
     public UserSetCardsCommandAdapter(ILogger logger) : this(
         new UserSetCardsScribe(logger),
         new UserSetCardsGopher(logger),
         new AddCardToSetXfrToExtMapper(),
         new UserSetCardIntegrator(),
-        new UserSetCardResolver())
+        new UserSetCardResolver(),
+        new AddSetGroupXfrToReadPointMapper(),
+        new AddSetGroupResolver(),
+        new AddSetGroupIntegrator())
     { }
 
     private UserSetCardsCommandAdapter(
@@ -40,13 +47,19 @@ internal sealed class UserSetCardsCommandAdapter : IUserSetCardsCommandAdapter
         ICosmosGopher userSetCardsGopher,
         IAddCardToSetXfrToExtMapper readPointMapper,
         IUserSetCardIntegrator integrator,
-        IUserSetCardResolver resolver)
+        IUserSetCardResolver resolver,
+        IAddSetGroupXfrToReadPointMapper setGroupMapper,
+        IAddSetGroupResolver setGroupResolver,
+        IAddSetGroupIntegrator setGroupIntegrator)
     {
         _userSetCardsScribe = userSetCardsScribe;
         _userSetCardsGopher = userSetCardsGopher;
         _readPointMapper = readPointMapper;
         _integrator = integrator;
         _resolver = resolver;
+        _setGroupMapper = setGroupMapper;
+        _setGroupResolver = setGroupResolver;
+        _setGroupIntegrator = setGroupIntegrator;
     }
 
     public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity)
@@ -63,6 +76,21 @@ internal sealed class UserSetCardsCommandAdapter : IUserSetCardsCommandAdapter
         {
             return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
         }
+
+        return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
+    }
+
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity addSetGroup)
+    {
+        ReadPointItem readPoint = await _setGroupMapper.Map(addSetGroup).ConfigureAwait(false);
+        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+
+        UserSetCardExtEntity existingRecord = _setGroupResolver.Resolve(readResponse, addSetGroup);
+        UserSetCardExtEntity updatedRecord = _setGroupIntegrator.Integrate(existingRecord, addSetGroup);
+
+        OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful()) return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
     }

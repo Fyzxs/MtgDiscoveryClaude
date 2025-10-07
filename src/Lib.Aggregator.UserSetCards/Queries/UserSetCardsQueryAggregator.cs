@@ -5,12 +5,13 @@ using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Aggregator.UserSetCards.Entities;
 using Lib.Aggregator.UserSetCards.Queries.Mappers;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.UserSetCards.Queries;
 
-internal sealed class UserSetCardsQueryAggregator : IUserSetCardsAggregatorService
+internal sealed class UserSetCardsQueryAggregator : IUserSetCardsQueryAggregator
 {
     private readonly IUserSetCardsAdapterService _userSetCardsAdapterService;
     private readonly IUserSetCardItrToXfrMapper _itrToXfrMapper;
