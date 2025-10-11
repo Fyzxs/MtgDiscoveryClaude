@@ -80,6 +80,8 @@ interface CardGroupConfig {
   isPromo: boolean;
 }
 
+// Stable empty array to prevent infinite re-renders
+const EMPTY_CARDS_ARRAY: Card[] = [];
 
 export const SetPage: React.FC = () => {
   console.log('SetPage component rendering');
@@ -180,13 +182,13 @@ export const SetPage: React.FC = () => {
         let foundCard = false;
 
         // Force a completely new array with new card object
-        const updatedCards: any[] = [];
+        const updatedCards: Card[] = [];
 
         for (const card of currentData.cardsBySetCode.data) {
           if (card.id === detail.cardId) {
             foundCard = true;
             console.log('[SetPage] ✅ Found and updating card:', card.name);
-            console.log('[SetPage] Old userCollection:', (card as any).userCollection);
+            console.log('[SetPage] Old userCollection:', card.userCollection);
             console.log('[SetPage] New userCollection:', detail.userCollection);
 
             try {
@@ -364,24 +366,32 @@ export const SetPage: React.FC = () => {
   // Apply optimized sorting to filtered cards
   // Include collectorId in sort key to invalidate cache when collection context changes
   const sortKey = hasCollector ? `${sortBy}-ctor-${collectorId}` : sortBy;
-  const sortFn = (filterConfig.sortOptions as any)[sortBy] || filterConfig.sortOptions['collector-asc'];
+  const sortFn = filterConfig.sortOptions[sortBy as keyof typeof filterConfig.sortOptions] || filterConfig.sortOptions['collector-asc'];
   const sortedCards = useOptimizedSort(filteredCards, sortKey, sortFn);
   
+  // Track if we've normalized artists to avoid infinite loops
+  const hasNormalizedRef = useRef(false);
+
   // Update artist filter to normalize casing when data loads
   useEffect(() => {
+    if (hasNormalizedRef.current) {
+      return; // Already normalized, don't run again
+    }
+
     if (artistMap && artistMap.size > 0 && filters.artists && filters.artists.length > 0) {
       const normalized = filters.artists.map((artist: string) => {
         const normalizedArtist = artistMap.get(artist.toLowerCase());
         return normalizedArtist || artist;
       });
-      
+
       // Only update if the normalized version is different
       const needsUpdate = normalized.some((norm: string, i: number) => norm !== filters.artists[i]);
       if (needsUpdate) {
+        hasNormalizedRef.current = true;
         updateFilter('artists', normalized);
       }
     }
-  }, [artistMap]); // Only run when artistMap changes (when data loads)
+  }, [artistMap, filters.artists, updateFilter]); // Run when artistMap or artists change
 
   // Update URL when filters change
   useEffect(() => {
@@ -455,7 +465,7 @@ export const SetPage: React.FC = () => {
     }
   );
 
-  const cards = cardsData?.cardsBySetCode?.data || [];
+  const cards = cardsData?.cardsBySetCode?.data || EMPTY_CARDS_ARRAY;
 
   // Debug logging for query errors
   if (cardsError) {
@@ -613,6 +623,7 @@ export const SetPage: React.FC = () => {
           setInfo={setInfo}
           setName={setName}
           setCode={setCode}
+          availableGroupIds={allCardGroups.map(g => g.id)}
         />
       }
       filters={

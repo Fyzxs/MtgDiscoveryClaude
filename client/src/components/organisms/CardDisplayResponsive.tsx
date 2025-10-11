@@ -142,16 +142,29 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
     };
   };
 
-  // Combine all event handlers
-  const eventHandlers = {
-    ...(enableLongPress ? longPressHandlers : { onClick: handleCardClick }),
-    ...(enableSwipeGestures ? swipeHandlers : {}),
+  // Handle keyboard navigation
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (onCardClick && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      handleCardClick();
+    }
+  };
+
+  // Combine all event handlers - carefully to avoid type conflicts
+  const baseHandlers = {
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
+    onKeyDown: handleKeyDown,
     tabIndex: onCardClick ? 0 : undefined,
     role: onCardClick ? 'button' : undefined,
     'aria-label': onCardClick ? `View ${card.name} details` : undefined,
   };
+
+  const eventHandlers = enableLongPress
+    ? { ...longPressHandlers, ...baseHandlers }
+    : enableSwipeGestures
+      ? { ...swipeHandlers, onClick: handleCardClick, ...baseHandlers }
+      : { onClick: handleCardClick, ...baseHandlers };
 
   return (
     <Box

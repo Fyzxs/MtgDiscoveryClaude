@@ -1,193 +1,177 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
+import { useApolloClient } from '@apollo/client/react';
+import { GET_USER_SET_CARDS } from '../graphql/queries/userCards';
 import type { MtgSet } from '../types/set';
 import { useCollectorParam } from './useCollectorParam';
 
-interface FinishProgress {
-  finishType: 'non-foil' | 'foil' | 'etched';
-  collectedCards: number;
-  totalCards: number;
+export interface GroupFinishProgress {
+  finishType: 'nonFoil' | 'foil' | 'etched';
+  collected: number;
+  total: number;
   percentage: number;
   emoji: string;
 }
 
-interface GroupProgress {
-  groupId: string;
-  groupName: string;
+export interface CollectionGroup {
+  setGroupId: string;
   displayName: string;
-  isSelected: boolean;
-  finishes: FinishProgress[];
+  isCollecting: boolean;
+  count: number;
+  finishes: GroupFinishProgress[];
 }
 
-interface SetCollectionProgress {
+export interface SetCollectionProgress {
   setId: string;
   setName: string;
   setTotalCards: number;
-  overallUniqueCards: number;
-  overallPercentage: number;
-  overallTotalCards: number;
-  groups: GroupProgress[];
+  uniqueCards: number;
+  totalCards: number;
+  percentage: number;
+  groups: CollectionGroup[];
 }
 
-interface UserSetCards {
-  id: string; // setId
-  partition: string; // userId
-  total_cards: number;
-  unique_cards: number;
+interface UserSetCardData {
+  userId: string;
+  setId: string;
+  totalCards: number;
+  uniqueCards: number;
+  collecting: {
+    setGroupId: string;
+    collecting: boolean;
+    count: number;
+  }[];
   groups: {
-    [groupName: string]: {
-      "non-foil": string[]; // Array of cardIds
-      "foil": string[];
-      "etched": string[];
-    }
-  }
+    rarity: string;
+    group: {
+      nonFoil: { cards: string[] };
+      foil: { cards: string[] };
+      etched: { cards: string[] };
+    };
+  }[];
 }
 
 interface SetCollectionProgressHook {
-  getCollectionProgress: (set: MtgSet) => SetCollectionProgress | undefined;
-  updateGroupSelection: (setId: string, groupId: string, isSelected: boolean) => Promise<void>;
-  refreshCollectionData: (setId: string) => Promise<void>;
+  getCollectionProgress: (set: MtgSet, forceRefresh?: boolean) => Promise<SetCollectionProgress | undefined>;
 }
-
-// Mock data structure - in real implementation this would come from GraphQL/API
-const mockUserSetCards: Record<string, UserSetCards> = {};
-
-// Mock group selections - in real implementation this would be stored in user preferences
-const mockGroupSelections: Record<string, Record<string, boolean>> = {};
 
 export function useSetCollectionProgress(): SetCollectionProgressHook {
   const { hasCollector, collectorId } = useCollectorParam();
-  const [, forceUpdate] = useState({});
+  const client = useApolloClient();
 
-  // Force re-render when state changes
-  const triggerUpdate = useCallback(() => {
-    forceUpdate({});
-  }, []);
-
-  const getCollectionProgress = useCallback((set: MtgSet): SetCollectionProgress | undefined => {
+  const getCollectionProgress = useCallback(async (set: MtgSet, forceRefresh = false): Promise<SetCollectionProgress | undefined> => {
     if (!hasCollector || !collectorId) {
       return undefined;
     }
 
-    // Mock data - in real implementation, fetch from GraphQL/API
-    const userSetData = mockUserSetCards[set.id];
-    const groupSelections = mockGroupSelections[set.id] || {};
+    try {
+      const { data } = await client.query({
+        query: GET_USER_SET_CARDS,
+        variables: {
+          setCardArgs: {
+            userId: collectorId,
+            setId: set.id
+          }
+        },
+        errorPolicy: 'all',
+        fetchPolicy: forceRefresh ? 'network-only' : 'cache-first'
+      });
 
-    if (!userSetData) {
-      // Return default structure if no collection data exists yet
+      if (!data || data.userSetCards.__typename === 'FailureResponse') {
+        return undefined;
+      }
+
+      const userSetData: UserSetCardData = data.userSetCards.data;
+
+      if (!userSetData) {
+        return undefined;
+      }
+
+      // Build detailed group information for ALL groups (not just collecting ones)
+      const groups: CollectionGroup[] = userSetData.collecting.map(collectingGroup => {
+        const groupData = userSetData.groups.find(g => g.rarity === collectingGroup.setGroupId);
+
+        const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
+        const foilCollected = groupData?.group.foil.cards.length || 0;
+        const etchedCollected = groupData?.group.etched.cards.length || 0;
+
+        // TODO: Get actual totals per finish from set metadata
+        // For now, distribute the count evenly across finishes
+        const totalPerFinish = Math.ceil(collectingGroup.count / 3);
+
+        const finishes: GroupFinishProgress[] = [
+          {
+            finishType: 'nonFoil',
+            collected: nonFoilCollected,
+            total: totalPerFinish,
+            percentage: totalPerFinish > 0 ? (nonFoilCollected / totalPerFinish) * 100 : 0,
+            emoji: '🔹'
+          },
+          {
+            finishType: 'foil',
+            collected: foilCollected,
+            total: totalPerFinish,
+            percentage: totalPerFinish > 0 ? (foilCollected / totalPerFinish) * 100 : 0,
+            emoji: '✨'
+          },
+          {
+            finishType: 'etched',
+            collected: etchedCollected,
+            total: totalPerFinish,
+            percentage: totalPerFinish > 0 ? (etchedCollected / totalPerFinish) * 100 : 0,
+            emoji: '⚡'
+          }
+        ];
+
+        return {
+          setGroupId: collectingGroup.setGroupId,
+          displayName: collectingGroup.setGroupId.charAt(0).toUpperCase() + collectingGroup.setGroupId.slice(1),
+          isCollecting: collectingGroup.collecting,
+          count: collectingGroup.count,
+          finishes
+        };
+      });
+
+      // Filter to only groups that are being collected
+      const collectingGroups = userSetData.collecting.filter(g => g.collecting === true);
+
+      // Calculate actual cards collected in tracking groups (only those with collecting: true)
+      const collectedInTrackingGroups = collectingGroups.reduce((sum, collectingGroup) => {
+        const groupData = userSetData.groups.find(g => g.rarity === collectingGroup.setGroupId);
+        if (!groupData) {
+          return sum;
+        }
+
+        const nonFoilCount = groupData.group.nonFoil.cards.length;
+        const foilCount = groupData.group.foil.cards.length;
+        const etchedCount = groupData.group.etched.cards.length;
+
+        return sum + nonFoilCount + foilCount + etchedCount;
+      }, 0);
+
+      // Total available cards in tracking groups (only those with collecting: true)
+      const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+
+      // If no groups are being collected, show 0% but still return the groups
+      const percentage = totalAvailableInTrackingGroups > 0
+        ? (collectedInTrackingGroups / totalAvailableInTrackingGroups) * 100
+        : 0;
+
       return {
         setId: set.id,
         setName: set.name,
-        setTotalCards: set.cardCount || 0,
-        overallUniqueCards: 0,
-        overallPercentage: 0,
-        overallTotalCards: 0,
-        groups: []
+        setTotalCards: totalAvailableInTrackingGroups,
+        uniqueCards: collectedInTrackingGroups,
+        totalCards: userSetData.totalCards,
+        percentage,
+        groups
       };
+    } catch (error) {
+      console.error('Error in getCollectionProgress:', error);
+      return undefined;
     }
-
-    // Process groups and calculate progress
-    const groups: GroupProgress[] = [];
-    let totalSelectedUniqueCards = 0;
-    let totalSelectedTotalCards = 0;
-
-    for (const [groupName, finishData] of Object.entries(userSetData.groups)) {
-      const isSelected = groupSelections[groupName] !== false; // Default to selected
-
-      const finishes: FinishProgress[] = [
-        {
-          finishType: 'non-foil',
-          collectedCards: finishData['non-foil'].length,
-          totalCards: 100, // Mock - should come from set grouping metadata
-          percentage: (finishData['non-foil'].length / 100) * 100,
-          emoji: '🔹'
-        },
-        {
-          finishType: 'foil',
-          collectedCards: finishData['foil'].length,
-          totalCards: 100, // Mock - should come from set grouping metadata
-          percentage: (finishData['foil'].length / 100) * 100,
-          emoji: '✨'
-        },
-        {
-          finishType: 'etched',
-          collectedCards: finishData['etched'].length,
-          totalCards: 50, // Mock - should come from set grouping metadata
-          percentage: (finishData['etched'].length / 50) * 100,
-          emoji: '⚡'
-        }
-      ];
-
-      groups.push({
-        groupId: groupName,
-        groupName,
-        displayName: groupName.charAt(0).toUpperCase() + groupName.slice(1).replace('-', ' '),
-        isSelected,
-        finishes
-      });
-
-      // Add to totals if group is selected
-      if (isSelected) {
-        const groupUniqueCards = finishes.reduce((sum, finish) => sum + finish.collectedCards, 0);
-        const groupTotalCards = finishes.reduce((sum, finish) => sum + finish.totalCards, 0);
-        totalSelectedUniqueCards += groupUniqueCards;
-        totalSelectedTotalCards += groupTotalCards;
-      }
-    }
-
-    return {
-      setId: set.id,
-      setName: set.name,
-      setTotalCards: set.cardCount || 0,
-      overallUniqueCards: totalSelectedUniqueCards,
-      overallPercentage: totalSelectedTotalCards > 0 ? (totalSelectedUniqueCards / totalSelectedTotalCards) * 100 : 0,
-      overallTotalCards: userSetData.total_cards,
-      groups
-    };
-  }, [hasCollector, collectorId]);
-
-  const updateGroupSelection = useCallback(async (setId: string, groupId: string, isSelected: boolean) => {
-    if (!hasCollector || !collectorId) {
-      return;
-    }
-
-    // Mock implementation - in real app, this would call GraphQL mutation
-    if (!mockGroupSelections[setId]) {
-      mockGroupSelections[setId] = {};
-    }
-    mockGroupSelections[setId][groupId] = isSelected;
-
-    // TODO: Implement GraphQL mutation to update user's group preferences
-    // await updateUserSetGroupPreferences({
-    //   variables: {
-    //     userId: collectorId,
-    //     setId,
-    //     groupId,
-    //     isSelected
-    //   }
-    // });
-
-    triggerUpdate();
-  }, [hasCollector, collectorId, triggerUpdate]);
-
-  const refreshCollectionData = useCallback(async (setId: string) => {
-    if (!hasCollector || !collectorId) {
-      return;
-    }
-
-    // TODO: Implement GraphQL query to refresh collection data
-    // const { data } = await refetchUserSetCards({
-    //   variables: {
-    //     userId: collectorId,
-    //     setId
-    //   }
-    // });
-
-    triggerUpdate();
-  }, [hasCollector, collectorId, triggerUpdate]);
+  }, [hasCollector, collectorId, client]);
 
   return {
-    getCollectionProgress,
-    updateGroupSelection,
-    refreshCollectionData
+    getCollectionProgress
   };
 }
