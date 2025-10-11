@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCardCache } from '../../hooks/useCardCache';
 import type { Card } from '../../types/card';
@@ -25,6 +25,8 @@ import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErr
 import { AppErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 
+// Stable empty array to prevent infinite re-renders
+const EMPTY_CARDS_ARRAY: Card[] = [];
 
 interface CardsSuccessResponse {
   cardsByName: {
@@ -106,7 +108,7 @@ export const CardAllPrintingsPage: React.FC = () => {
     }
   }, [error]);
 
-  const cards = data?.cardsByName?.data || [];
+  const cards = data?.cardsByName?.data || EMPTY_CARDS_ARRAY;
   const hasError = userFriendlyError || data?.cardsByName?.__typename === 'FailureResponse';
   const graphQLError = data?.cardsByName?.status?.message;
 
@@ -128,6 +130,13 @@ export const CardAllPrintingsPage: React.FC = () => {
     navigate(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
   };
 
+  // Memoize filtering options to prevent infinite re-renders
+  const filteringOptions = useMemo(() => ({
+    defaultSort: hasCollector ? 'collection-desc' : 'release-desc',
+    includeSets: false,
+    includeCollectorFilters: hasCollector
+  }), [hasCollector]);
+
   // Use the shared card filtering hook (no search or sets filter for card detail page)
   const {
     filteredCards,
@@ -140,11 +149,7 @@ export const CardAllPrintingsPage: React.FC = () => {
     uniqueRarities,
     hasMultipleArtists,
     hasMultipleRarities
-  } = useCardFiltering(cards, {
-    defaultSort: hasCollector ? 'collection-desc' : 'release-desc',
-    includeSets: false,
-    includeCollectorFilters: hasCollector
-  });
+  } = useCardFiltering(cards, filteringOptions);
 
   if (loading) {
     return (

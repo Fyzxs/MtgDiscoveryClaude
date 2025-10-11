@@ -1,14 +1,17 @@
-import React from 'react';
-import { Card, CardContent, Box, CardActionArea } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, Box, CardActionArea, Typography } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import { SetTitle } from '../../atoms/Sets/SetTitle';
 import { CardCountDisplay } from '../../atoms/shared/CardCountDisplay';
+import { CollectionProgressBar } from '../../atoms/shared/CollectionProgressBar';
 import { TopBadges } from './TopBadges';
 import { SetIconDisplay } from './SetIconDisplay';
 import { BottomBadges } from './BottomBadges';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { useSetCollectionProgress, type SetCollectionProgress } from '../../../hooks/useSetCollectionProgress';
 
 interface MtgSetCardProps {
   set: MtgSet;
@@ -22,13 +25,41 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   onSetClick,
   className = ''
 }) => {
-  const [isHovered, setIsHovered] = React.useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [collectionProgress, setCollectionProgress] = useState<SetCollectionProgress | undefined>(undefined);
   const setTypeColor = getSetTypeColor(set.setType);
   const theme = useTheme();
-  const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+  const { buildUrlWithCollector, createCollectorClickHandler} = useCollectorNavigation();
+  const { hasCollector } = useCollectorParam();
+  const { getCollectionProgress } = useSetCollectionProgress();
 
   const setPath = `/set/${set.code}`;
   const setUrl = buildUrlWithCollector(setPath);
+
+  useEffect(() => {
+    if (!hasCollector) {
+      return;
+    }
+
+    let cancelled = false;
+
+    getCollectionProgress(set)
+      .then(progress => {
+        if (!cancelled) {
+          console.log('Collection progress received for', set.code, ':', progress);
+          setCollectionProgress(progress);
+        }
+      })
+      .catch(error => {
+        if (!cancelled) {
+          console.error('Error fetching collection progress:', error);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasCollector, set.id]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only handle click if there's a custom onSetClick handler
@@ -42,6 +73,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     }
     // Allow right-click, middle-click, and normal navigation to work
   };
+
 
   return (
     <Card
@@ -113,8 +145,43 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
             foilOnly={set.foilOnly}
           />
 
-          <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
+          {hasCollector ? (
+            collectionProgress ? (
+              <>
+                <CollectionProgressBar
+                  collected={collectionProgress.uniqueCards}
+                  total={collectionProgress.setTotalCards}
+                  percentage={collectionProgress.percentage}
+                />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: '0.75rem', mt: 0.5 }}
+                >
+                  {collectionProgress.totalCards} cards collected
+                </Typography>
+              </>
+            ) : (
+              <>
+                <CollectionProgressBar
+                  collected={0}
+                  total={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount}
+                  percentage={0}
+                />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: '0.75rem', mt: 0.5 }}
+                >
+                  0 cards collected
+                </Typography>
+              </>
+            )
+          ) : (
+            <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
+          )}
         </Box>
+
       </CardContent>
       </CardActionArea>
     </Card>

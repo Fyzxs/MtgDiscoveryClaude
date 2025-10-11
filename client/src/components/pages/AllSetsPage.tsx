@@ -27,6 +27,9 @@ interface SetsResponse {
   };
 }
 
+// Stable empty array to prevent infinite re-renders
+const EMPTY_SETS_ARRAY: MtgSet[] = [];
+
 export const AllSetsPage: React.FC = () => {
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
   
@@ -93,7 +96,7 @@ export const AllSetsPage: React.FC = () => {
     { value: 'cards-asc', label: 'Card Count (Low-High)' }
   ];
 
-  const sets = data?.allSets?.data || [];
+  const sets = data?.allSets?.data || EMPTY_SETS_ARRAY;
   const setTypes = getUniqueSetTypes(sets);
 
   return (

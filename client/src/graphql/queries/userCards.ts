@@ -96,21 +96,54 @@ export const GET_USER_SET_CARDS = gql`
           setId
           totalCards
           uniqueCards
-          groupsCollecting
+          collecting {
+            setGroupId
+            collecting
+            count
+          }
           groups {
-            key
-            value {
-              nonFoil {
-                cards
-              }
-              foil {
-                cards
-              }
-              etched {
-                cards
-              }
+            rarity
+            group {
+              nonFoil { cards }
+              foil { cards }
+              etched { cards }
             }
           }
+        }
+        status {
+          message
+          statusCode
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;
+
+export const ADD_SET_GROUP_TO_USER_SET_CARD = gql`
+  mutation AddSetGroupToUserSetCard($input: AddSetGroupToUserSetCardInput!) {
+    addSetGroupToUserSetCard(input: $input) {
+      __typename
+      ... on UserSetCardSuccessResponse {
+        data {
+          userId
+          setId
+          totalCards
+          uniqueCards
+          collecting {
+            setGroupId
+            collecting
+            count
+          }
+        }
+        status {
+          message
+          statusCode
         }
       }
       ... on FailureResponse {
