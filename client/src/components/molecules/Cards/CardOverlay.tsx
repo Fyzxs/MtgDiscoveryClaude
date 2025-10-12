@@ -3,26 +3,14 @@ import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
-import { CardName } from '../../atoms/Cards/CardName';
-import { SetLink } from '../../atoms/Cards/SetLink';
-import { PriceDisplay } from '../../atoms/shared/PriceDisplay';
+import { CardName, SetLink, PriceDisplay } from '../../atoms';
 import { CardLinks } from './CardLinks';
+import { CollectionSummary } from './CollectionSummary';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
-import type { CardContext } from '../../../types/card';
+import type { Card, CardContext } from '../../../types/card';
 
 interface CardOverlayProps {
-  cardId?: string;
-  cardName?: string;
-  rarity?: string;
-  collectorNumber?: string;
-  releaseDate?: string;
-  artists: string[];
-  artistIds?: string[];
-  setCode?: string;
-  setName?: string;
-  price?: string | null;
-  scryfallUrl?: string;
-  tcgplayerUrl?: string;
+  card: Card;
   isSelected?: boolean;
   context?: CardContext;
   onCardClick?: (cardId?: string) => void;
@@ -32,18 +20,7 @@ interface CardOverlayProps {
 }
 
 export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
-  cardId,
-  cardName,
-  rarity,
-  collectorNumber,
-  releaseDate,
-  artists,
-  artistIds,
-  setCode,
-  setName,
-  price,
-  scryfallUrl,
-  tcgplayerUrl,
+  card,
   isSelected = false,
   context = {},
   onCardClick,
@@ -52,6 +29,21 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   className
 }) => {
   const theme = useTheme();
+
+  // Extract properties from card object
+  const cardId = card.id;
+  const cardName = card.name;
+  const rarity = card.rarity;
+  const collectorNumber = card.collectorNumber;
+  const releaseDate = card.releasedAt;
+  const artists = card.artist ? card.artist.split(' // ') : [];
+  const artistIds = card.artistIds;
+  const setCode = card.setCode;
+  const setName = card.setName;
+  const price = card.prices?.usd;
+  const scryfallUrl = card.scryfallUri;
+  const tcgplayerUrl = card.purchaseUris?.tcgplayer;
+  const collectionData = (card as any).userCollection;
 
   return (
     <Box
@@ -97,11 +89,19 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         )}
 
         {/* Collector Info Row */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-          <RarityCollectorBadge
-            rarity={rarity}
-            collectorNumber={collectorNumber}
-          />
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <RarityCollectorBadge
+              rarity={rarity}
+              collectorNumber={collectorNumber}
+            />
+          </Box>
+          {context.hasCollector && collectionData && (
+            <CollectionSummary
+              collectionData={collectionData}
+              size="small"
+            />
+          )}
         </Box>
 
         {/* Artist(s) */}

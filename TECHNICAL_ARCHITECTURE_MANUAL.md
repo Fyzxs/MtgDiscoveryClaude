@@ -198,11 +198,11 @@ The architecture enforces strict unidirectional data flow:
 6. **Adapter Layer** → Maps to ExtEntity, calls external systems
 
 **Response Flow (Outbound):**
-1. **Adapter Layer** → Maps ExtEntity back to ItrEntity
+1. **Adapter Layer** → Maps ExtEntity back to OufEntity
 2. **Aggregator Layer** → Aggregates responses
 3. **Domain Layer** → Applies post-processing rules
 4. **Shared Layer** → Applies response filters
-5. **Entry Layer** → Maps ItrEntity to OutEntity
+5. **Entry Layer** → Maps OufEntity to OutEntity
 6. **App Layer** → Returns GraphQL response
 
 ### Layer Responsibilities

@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { Header } from '../organisms/Header';
 import { Footer } from '../organisms/Footer';
 import { SkipNavigation } from '../atoms/shared/SkipNavigation';
+import { QuickEntryKeysFab } from '../molecules/Cards/QuickEntryKeysFab';
 import { pageContainer, mainContent } from '../../styles/layoutStyles';
 
 interface LayoutProps {
@@ -34,6 +35,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </Box>
       <Footer />
+      <QuickEntryKeysFab />
     </Box>
   );
 };

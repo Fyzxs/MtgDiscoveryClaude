@@ -1,5 +1,6 @@
 import { Typography, Box } from '@mui/material';
 import { DarkBadge } from '../shared/DarkBadge';
+import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface CardNameProps extends StyledComponentProps {
@@ -8,19 +9,24 @@ interface CardNameProps extends StyledComponentProps {
   onCardClick?: (cardId?: string) => void;
 }
 
-export const CardName = ({ 
+export const CardName = ({
   cardId,
   cardName,
   onCardClick,
-  className 
+  className
 }: CardNameProps) => {
+  const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+
   if (!cardName) return null;
+
+  const cardPath = `/card/${encodeURIComponent(cardName)}`;
+  const href = buildUrlWithCollector(cardPath);
 
   return (
     <Box className={className}>
       <DarkBadge
         component="a"
-        href={`/card/${encodeURIComponent(cardName)}`}
+        href={href}
         tabIndex={0}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -36,6 +42,9 @@ export const CardName = ({
           if (onCardClick) {
             e.preventDefault();
             onCardClick(cardId);
+          } else {
+            // Use collector navigation for regular clicks
+            createCollectorClickHandler(cardPath)(e);
           }
         }}
         aria-label={`View all versions of ${cardName}`}

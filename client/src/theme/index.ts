@@ -55,6 +55,11 @@ declare module '@mui/material/styles' {
         cardGap: number;
         filterGap: number;
         sectionGap: number;
+        touch: {
+          minTarget: number;
+          comfortable: number;
+          large: number;
+        };
       };
       dimensions: {
         cardWidth: {
@@ -62,24 +67,40 @@ declare module '@mui/material/styles' {
           sm: string;
           md: string;
           lg: string;
+          xl: string;
         };
         cardAspectRatio: string;
+        touch: {
+          minHeight: string;
+          comfortableHeight: string;
+          largeHeight: string;
+        };
+      };
+      breakpoints: {
+        mobile: string;
+        tablet: string;
+        desktop: string;
+        wide: string;
       };
       transitions: {
         card: string;
         filter: string;
+        touch: string;
+        swipe: string;
       };
       gradients: {
         header: string;
         footer: string;
         cardOverlay: string;
         hover: string;
+        mobileOverlay: string;
       };
       shadows: {
         card: {
           normal: string;
           hover: string;
           selected: string;
+          touch: string;
         };
         rarity: {
           common: string;
@@ -87,6 +108,18 @@ declare module '@mui/material/styles' {
           rare: string;
           mythic: string;
         };
+        mobile: {
+          fab: string;
+          sheet: string;
+          card: string;
+        };
+      };
+      zIndex: {
+        fab: number;
+        modal: number;
+        tooltip: number;
+        drawer: number;
+        snackbar: number;
       };
     };
   }
@@ -97,6 +130,11 @@ declare module '@mui/material/styles' {
         cardGap?: number;
         filterGap?: number;
         sectionGap?: number;
+        touch?: {
+          minTarget?: number;
+          comfortable?: number;
+          large?: number;
+        };
       };
       dimensions?: {
         cardWidth?: {
@@ -104,24 +142,40 @@ declare module '@mui/material/styles' {
           sm?: string;
           md?: string;
           lg?: string;
+          xl?: string;
         };
         cardAspectRatio?: string;
+        touch?: {
+          minHeight?: string;
+          comfortableHeight?: string;
+          largeHeight?: string;
+        };
+      };
+      breakpoints?: {
+        mobile?: string;
+        tablet?: string;
+        desktop?: string;
+        wide?: string;
       };
       transitions?: {
         card?: string;
         filter?: string;
+        touch?: string;
+        swipe?: string;
       };
       gradients?: {
         header?: string;
         footer?: string;
         cardOverlay?: string;
         hover?: string;
+        mobileOverlay?: string;
       };
       shadows?: {
         card?: {
           normal?: string;
           hover?: string;
           selected?: string;
+          touch?: string;
         };
         rarity?: {
           common?: string;
@@ -129,6 +183,18 @@ declare module '@mui/material/styles' {
           rare?: string;
           mythic?: string;
         };
+        mobile?: {
+          fab?: string;
+          sheet?: string;
+          card?: string;
+        };
+      };
+      zIndex?: {
+        fab?: number;
+        modal?: number;
+        tooltip?: number;
+        drawer?: number;
+        snackbar?: number;
       };
     };
   }
@@ -268,31 +334,52 @@ export const theme = createTheme({
       cardGap: 1.5,  // 12px
       filterGap: 2,   // 16px
       sectionGap: 4,  // 32px
+      touch: {
+        minTarget: 44,    // 44px minimum touch target (iOS/Android guidelines)
+        comfortable: 48,  // 48px comfortable touch target
+        large: 56,        // 56px large touch target for primary actions
+      },
     },
     dimensions: {
       cardWidth: {
-        xs: '150px',
-        sm: '180px',
-        md: '200px',
-        lg: '250px',
+        xs: '140px',   // Smaller for mobile
+        sm: '180px',   // Small tablet/large mobile
+        md: '200px',   // Medium screens
+        lg: '250px',   // Large screens
+        xl: '280px',   // Extra large screens
       },
       cardAspectRatio: '1.395', // Standard MTG card ratio (2.5" x 3.5")
+      touch: {
+        minHeight: '44px',        // Minimum touch height
+        comfortableHeight: '48px', // Comfortable touch height
+        largeHeight: '56px',       // Large touch height
+      },
+    },
+    breakpoints: {
+      mobile: '0px',     // Mobile first
+      tablet: '768px',   // Tablet breakpoint
+      desktop: '1024px', // Desktop breakpoint
+      wide: '1440px',    // Wide screen breakpoint
     },
     transitions: {
       card: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       filter: 'all 0.2s ease-in-out',
+      touch: 'all 0.15s ease-out',  // Quick touch feedback
+      swipe: 'transform 0.1s ease-out', // Swipe animations
     },
     gradients: {
       header: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
       footer: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
       cardOverlay: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 60%, rgba(0,0,0,0) 100%)',
       hover: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
+      mobileOverlay: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)',
     },
     shadows: {
       card: {
         normal: '0 4px 14px rgba(0, 0, 0, 0.4)',
         hover: '0 12px 24px rgba(0, 0, 0, 0.6)',
         selected: '0 0 60px rgba(25, 118, 210, 1), 0 0 40px rgba(33, 150, 243, 0.8), 0 0 20px rgba(33, 150, 243, 0.6)',
+        touch: '0 2px 8px rgba(0, 0, 0, 0.3)', // Lighter shadow for touch feedback
       },
       rarity: {
         common: `0 0 10px ${alpha('#424242', 0.5)}`,
@@ -300,6 +387,18 @@ export const theme = createTheme({
         rare: `0 0 10px ${alpha('#ffc107', 0.5)}`,
         mythic: `0 0 15px ${alpha('#ff6f00', 0.7)}`,
       },
+      mobile: {
+        fab: '0 8px 24px rgba(0, 0, 0, 0.4)',
+        sheet: '0 -4px 16px rgba(0, 0, 0, 0.3)',
+        card: '0 2px 8px rgba(0, 0, 0, 0.2)',
+      },
+    },
+    zIndex: {
+      fab: 1050,      // Floating action buttons
+      modal: 1300,    // Modals and dialogs
+      tooltip: 1500,  // Tooltips
+      drawer: 1200,   // Navigation drawers
+      snackbar: 1400, // Notifications
     },
   },
 });

@@ -4,7 +4,7 @@ export const GET_ALL_SETS = gql`
   query GetAllSets {
     allSets {
       __typename
-      ... on SuccessSetsResponse {
+      ... on SetsSuccessResponse {
         data {
           id
           code
@@ -38,7 +38,7 @@ export const GET_SETS_BY_CODE = gql`
   query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
     setsByCode(codes: $codes) {
       __typename
-      ... on SuccessSetsResponse {
+      ... on SetsSuccessResponse {
         data {
           id
           code
@@ -72,7 +72,7 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
   query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
     setsByCode(codes: $codes) {
       __typename
-      ... on SuccessSetsResponse {
+      ... on SetsSuccessResponse {
         data {
           id
           code

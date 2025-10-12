@@ -1,0 +1,12 @@
+{
+  "error": "Error",
+  "errorOccurred": "An error occurred",
+  "tryAgain": "Try Again",
+  "somethingWentWrong": "Something went wrong",
+  "networkError": "Network Error",
+  "serverError": "Server Error",
+  "notFound": "Not Found",
+  "unauthorized": "Unauthorized",
+  "forbidden": "Forbidden",
+  "timeout": "Request Timeout"
+}

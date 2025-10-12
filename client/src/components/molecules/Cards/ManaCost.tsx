@@ -1,5 +1,5 @@
 import React from 'react';
-import { ManaSymbol } from '../../atoms/Cards/ManaSymbol';
+import { ManaSymbol } from '../../atoms';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface ManaCostProps extends StyledComponentProps {

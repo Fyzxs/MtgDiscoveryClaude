@@ -38,6 +38,61 @@ export const getUniqueSets = (cards: CardLike[]): { value: string; label: string
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
+/**
+ * Extract unique finish types from cards
+ */
+export const getUniqueFinishes = (cards: CardLike[]): string[] => {
+  const finishSet = new Set<string>();
+  cards.forEach(card => {
+    if (card.userCollection) {
+      const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+      collectionArray.forEach(item => {
+        if (item.finish) {
+          finishSet.add(item.finish);
+        }
+      });
+    }
+  });
+  return Array.from(finishSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+};
+
+/**
+ * Get total collection count for a card
+ */
+export const getCardCollectionCount = (card: CardLike): number => {
+  if (!card.userCollection) return 0;
+  const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+  return collectionArray.reduce((sum, item) => sum + item.count, 0);
+};
+
+/**
+ * Check if a card has any signed copies
+ */
+export const hasSignedCopies = (card: CardLike): boolean => {
+  if (!card.userCollection) return false;
+  const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+  return collectionArray.some(item => item.special === 'signed');
+};
+
+/**
+ * Get collection count options for filtering
+ */
+export const getCollectionCountOptions = () => [
+  { value: '0', label: 'Not Owned (0)' },
+  { value: '1', label: '1 copy' },
+  { value: '2', label: '2 copies' },
+  { value: '3', label: '3 copies' },
+  { value: '4plus', label: '4+ copies' }
+];
+
+/**
+ * Get signed cards options for filtering
+ */
+export const getSignedCardsOptions = () => [
+  { value: 'signed', label: 'Signed' },
+  { value: 'unsigned', label: 'Unsigned' }
+];
+
 export const createCardFilterFunctions = <T extends CardLike>() => ({
   rarities: commonFilters.multiSelect<T>('rarity'),
   sets: commonFilters.multiSelect<T>('setCode'),
@@ -48,5 +103,39 @@ export const createCardFilterFunctions = <T extends CardLike>() => ({
     const normalizedSelected = selectedArtists.map(a => a.toLowerCase());
     return cardArtists.some(artist => normalizedSelected.includes(artist.toLowerCase()));
   },
-  showDigital: (card: T, show: boolean) => show || !card.digital
+  showDigital: (card: T, show: boolean) => show || !card.digital,
+  // Collector-specific filters
+  collectionCounts: (card: T, selectedCounts: string[]) => {
+    if (!selectedCounts || selectedCounts.length === 0) return true;
+    const count = getCardCollectionCount(card);
+    return selectedCounts.some(countOption => {
+      if (countOption === '0') return count === 0;
+      if (countOption === '1') return count === 1;
+      if (countOption === '2') return count === 2;
+      if (countOption === '3') return count === 3;
+      if (countOption === '4plus') return count >= 4;
+      return false;
+    });
+  },
+  signedCards: (card: T, selectedOptions: string[]) => {
+    if (!selectedOptions || selectedOptions.length === 0) return true;
+    // Both signed and unsigned filters only apply to owned cards
+    const count = getCardCollectionCount(card);
+    if (count === 0) return false; // No cards owned = not included in either filter
+
+    const hasSigned = hasSignedCopies(card);
+    return selectedOptions.some(option => {
+      if (option === 'signed') return hasSigned;
+      if (option === 'unsigned') return !hasSigned;
+      return false;
+    });
+  },
+  finishes: (card: T, selectedFinishes: string[]) => {
+    if (!selectedFinishes || selectedFinishes.length === 0) return true;
+    if (!card.userCollection) return false;
+    const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
+    return collectionArray.some(item =>
+      item.finish && selectedFinishes.includes(item.finish)
+    );
+  }
 });
