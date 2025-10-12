@@ -17,10 +17,7 @@ internal sealed class CollectionSetItemExtToItrMapper : ICollectionSetItemExtToI
     public CollectionSetItemExtToItrMapper() : this(new SetItemExtToItrMapper())
     { }
 
-    private CollectionSetItemExtToItrMapper(ISetItemExtToItrMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private CollectionSetItemExtToItrMapper(ISetItemExtToItrMapper mapper) => _mapper = mapper;
 
     public async Task<IEnumerable<ISetItemItrEntity>> Map([NotNull] IEnumerable<ScryfallSetItemExtEntity> source)
     {

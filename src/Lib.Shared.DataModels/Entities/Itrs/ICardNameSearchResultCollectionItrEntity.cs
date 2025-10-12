@@ -2,7 +2,7 @@
 
 namespace Lib.Shared.DataModels.Entities.Itrs;
 
-public interface ICardNameSearchResultCollectionItrEntity
+public interface ICardNameSearchCollectionOufEntity
 {
     ICollection<ICardNameSearchResultItrEntity> Names { get; }
 }

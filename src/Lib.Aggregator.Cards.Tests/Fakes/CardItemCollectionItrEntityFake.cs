@@ -3,7 +3,7 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CardItemCollectionItrEntityFake : ICardItemCollectionItrEntity
+internal sealed class CardItemCollectionItrEntityFake : ICardItemCollectionOufEntity
 {
     public ICollection<ICardItemItrEntity> Data { get; init; } = [];
 }

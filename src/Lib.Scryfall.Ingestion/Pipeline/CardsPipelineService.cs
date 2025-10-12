@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -51,16 +52,28 @@ internal sealed class CardsPipelineService : ICardsPipelineService
         int totalCards = 0;
         int skippedCards = 0;
         bool hasSetFilter = _config.SetCodesToProcess.Count > 0;
+        DateTime? releasedAfter = _config.SetsReleasedAfter;
 
         await foreach (IScryfallCard card in cardStream.ConfigureAwait(false))
         {
             string setCode = card.Set().Code();
 
             // Skip cards from sets not in the filter list if filtering is enabled
-            if (hasSetFilter && !_config.SetCodesToProcess.Contains(setCode))
+            if (hasSetFilter && _config.SetCodesToProcess.Contains(setCode) is false)
             {
                 skippedCards++;
                 continue;
+            }
+
+            // Skip cards from sets released before the date filter if enabled
+            if (releasedAfter.HasValue)
+            {
+                DateTime setReleaseDate = GetSetReleaseDate(card.Set());
+                if (setReleaseDate < releasedAfter.Value)
+                {
+                    skippedCards++;
+                    continue;
+                }
             }
 
             cards.Add(card);
@@ -79,11 +92,26 @@ internal sealed class CardsPipelineService : ICardsPipelineService
         return cards;
     }
 
-    public void ProcessCards(IReadOnlyList<IScryfallCard> cards, IReadOnlyDictionary<string, dynamic> setsByCode)
+    private static DateTime GetSetReleaseDate(IScryfallSet set)
     {
-        _dashboard.LogProcessingCards(cards.Count);
-        // Card processing logic (if any) goes here
+        try
+        {
+            dynamic data = set.Data();
+            string releasedAt = data.released_at;
+            if (string.IsNullOrEmpty(releasedAt) is false && DateTime.TryParse(releasedAt, out DateTime parsedDate))
+            {
+                return parsedDate;
+            }
+        }
+        catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+        {
+            return DateTime.MinValue;
+        }
+
+        return DateTime.MinValue;
     }
+
+    public void ProcessCards(IReadOnlyList<IScryfallCard> cards, IReadOnlyDictionary<string, dynamic> setsByCode) => _dashboard.LogProcessingCards(cards.Count);// Card processing logic (if any) goes here
 
     public async Task WriteCardsAsync(IReadOnlyList<IScryfallCard> cards)
     {

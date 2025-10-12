@@ -9,13 +9,85 @@
 @baseUrl = {{$dotenv BASE_URL}}
 @graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
 
+
+### Get Multiple User Cards
+# @ref variables
+# Get specified cards owned by a specific user
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+query GetUserCardsBatch($cardsArgs: UserCardsByIdsInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs":
+    {
+      "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+      "cardIds": ["02e8e540-8aa3-4e6a-9a11-c3949cab5f0f", "82ae4f7b-8122-4af6-8079-888eabf1a11e"]
+    }
+}
+
+### Get User Cards By Set - Basic Query
+# @ref variables
+# Get all cards in a specific set owned by a specific user
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+query GetUserCard($cardArgs: UserCardInput!) {
+  userCard(cardArgs: $cardArgs) {
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardArgs": {
+    "cardId": "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
 ### Get User Cards By Set - Basic Query
 # @ref variables
 # Get all cards in a specific set owned by a specific user
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsBySet($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsBySet($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on SuccessUserCardsCollectionResponse {
@@ -45,7 +117,7 @@ query GetUserCardsBySet($setArgs: UserCardsSetArgEntityInput!) {
 
 {
   "setArgs": {
-    "setId": "neo",
+    "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
     "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
   }
 }
@@ -56,7 +128,7 @@ query GetUserCardsBySet($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsBySetFull($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsBySetFull($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on SuccessUserCardsCollectionResponse {
@@ -107,7 +179,7 @@ query GetUserCardsBySetFull($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsWAR($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsWAR($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on SuccessUserCardsCollectionResponse {
@@ -150,7 +222,7 @@ query GetUserCardsWAR($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsBRO($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsBRO($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on SuccessUserCardsCollectionResponse {
@@ -193,7 +265,7 @@ query GetUserCardsBRO($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsNoUserId($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsNoUserId($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on FailureResponse {
@@ -219,7 +291,7 @@ query GetUserCardsNoUserId($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsEmptySet($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsEmptySet($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on FailureResponse {
@@ -246,7 +318,7 @@ query GetUserCardsEmptySet($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsEmptyUserId($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsEmptyUserId($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on FailureResponse {
@@ -273,7 +345,7 @@ query GetUserCardsEmptyUserId($setArgs: UserCardsSetArgEntityInput!) {
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 
-query GetUserCardsInvalidSet($setArgs: UserCardsSetArgEntityInput!) {
+query GetUserCardsInvalidSet($setArgs: UserCardsBySetInput!) {
   userCardsBySet(setArgs: $setArgs) {
     __typename
     ... on SuccessUserCardsCollectionResponse {

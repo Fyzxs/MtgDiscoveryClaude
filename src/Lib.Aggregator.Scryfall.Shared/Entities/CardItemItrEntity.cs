@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Scryfall.Shared.Internals;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Newtonsoft.Json.Linq;
@@ -11,7 +10,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 {
     private readonly dynamic _data;
 
-    public CardItemItrEntity(ScryfallCardItemExtEntity scryfallCard) => _data = scryfallCard?.Data;
+    public CardItemItrEntity(dynamic data) => _data = data;
 
     public string Id => _data?.id;
     public string OracleId => _data?.oracle_id;
@@ -52,6 +51,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
     public bool Variation => _data?.variation ?? false;
     public string SetId => _data?.set_id;
     public string SetCode => _data?.set;
+    public string SetGroupId => _data?.set_group_id;
     public string SetName => _data?.set_name;
     public string SetType => _data?.set_type;
     public string SetUri => _data?.set_uri;
@@ -106,6 +106,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
         {
             return [.. jArray.Select(x => (int)x)];
         }
+
         return null;
     }
 
@@ -116,6 +117,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
         {
             return [.. jArray.Select(x => (string)x)];
         }
+
         return null;
     }
 
@@ -129,8 +131,10 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
             {
                 result[i] = new CardFaceItrEntity(jArray[i]);
             }
+
             return result;
         }
+
         return null;
     }
 
@@ -144,8 +148,10 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
             {
                 result[i] = new AllPartsItrEntity(jArray[i]);
             }
+
             return result;
         }
+
         return null;
     }
 }

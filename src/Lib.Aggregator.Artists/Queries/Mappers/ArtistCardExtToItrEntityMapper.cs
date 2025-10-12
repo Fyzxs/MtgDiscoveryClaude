@@ -13,13 +13,7 @@ internal sealed class ArtistCardExtToItrEntityMapper : IArtistCardExtToItrEntity
     public ArtistCardExtToItrEntityMapper() : this(new DynamicToCardItemItrEntityMapper())
     { }
 
-    private ArtistCardExtToItrEntityMapper(IDynamicToCardItemItrEntityMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private ArtistCardExtToItrEntityMapper(IDynamicToCardItemItrEntityMapper mapper) => _mapper = mapper;
 
-    public async Task<ICardItemItrEntity> Map([NotNull] ScryfallArtistCardExtEntity source)
-    {
-        return await _mapper.Map(source.Data).ConfigureAwait(false);
-    }
+    public async Task<ICardItemItrEntity> Map([NotNull] ScryfallArtistCardExtEntity source) => await _mapper.Map(source.Data).ConfigureAwait(false);
 }

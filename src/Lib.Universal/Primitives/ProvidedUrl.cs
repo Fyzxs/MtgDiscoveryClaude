@@ -10,10 +10,7 @@ public sealed class ProvidedUrl : Url
     {
     }
 
-    private ProvidedUrl(Uri value)
-    {
-        _value = value;
-    }
+    private ProvidedUrl(Uri value) => _value = value;
 
     public override Uri AsSystemType() => _value;
 }

@@ -13,14 +13,11 @@ internal sealed class CollectionSetCardItemExtToItrMapper : ICollectionSetCardIt
     public CollectionSetCardItemExtToItrMapper() : this(new SetCardItemExtToItrMapper())
     { }
 
-    private CollectionSetCardItemExtToItrMapper(ISetCardItemExtToItrMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private CollectionSetCardItemExtToItrMapper(ISetCardItemExtToItrMapper mapper) => _mapper = mapper;
 
     public async Task<IEnumerable<ICardItemItrEntity>> Map(IEnumerable<ScryfallSetCardItemExtEntity> source)
     {
-        ICollection<Task<ICardItemItrEntity>> tasks = source.Select(item => _mapper.Map(item)).ToList();
+        ICollection<Task<ICardItemItrEntity>> tasks = [.. source.Select(item => _mapper.Map(item))];
         ICardItemItrEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
         return results;
     }

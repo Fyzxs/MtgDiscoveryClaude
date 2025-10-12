@@ -7,9 +7,9 @@ public sealed class CardsByArtistResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {
-        descriptor.Name("CardsByArtistResponseModel");
-        descriptor.Description("Union type for cards by artist response");
-        descriptor.Type<CardsByArtistSuccessDataResponseModelType>();
-        descriptor.Type<FailureResponseModelType>();
+        descriptor.Name("CardsByArtistResponse")
+            .Description("Union type for cards by artist response")
+            .Type<CardsByArtistSuccessDataResponseModelType>()
+            .Type<FailureResponseModelType>();
     }
 }

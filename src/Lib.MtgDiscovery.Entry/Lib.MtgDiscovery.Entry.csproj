@@ -9,6 +9,12 @@
     <ProjectReference Include="..\Lib.Domain.Artists\Lib.Domain.Artists.csproj" />
     <ProjectReference Include="..\Lib.Domain.User\Lib.Domain.User.csproj" />
     <ProjectReference Include="..\Lib.Domain.UserCards\Lib.Domain.UserCards.csproj" />
+    <ProjectReference Include="..\Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj" />
+    <ProjectReference Include="..\Lib.Aggregator.UserSetCards\Lib.Aggregator.UserSetCards.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\Mappers\ArgToItrs\" />
   </ItemGroup>
 
 </Project>

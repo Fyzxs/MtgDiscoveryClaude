@@ -31,7 +31,6 @@ internal class Program
         logger.LogInformation("Filters applied:");
         logger.LogInformation("  - NonDigitalSetFilter (excluding digital-only sets)");
         logger.LogInformation("  - PreviewSetFilter (excluding unreleased sets)");
-        logger.LogInformation("  - ForeignSetFilter (excluding foreign language sets: 4BB, BCHR, REN, RIN, FBB)");
 
         FilteredScryfallSetCollection filteredSets = new(logger);
 
@@ -64,7 +63,6 @@ internal class Program
         logger.LogInformation("---------------");
         logger.LogInformation("Processed {Count} sets that passed all filters", totalSets);
         logger.LogInformation("\nNote: To see excluded sets, check the logs above");
-        logger.LogInformation("Foreign sets that would be excluded: 4BB, BCHR, REN, RIN, FBB");
         logger.LogInformation("Digital sets are automatically excluded");
         logger.LogInformation("Preview/future sets are automatically excluded");
 

@@ -15,5 +15,5 @@ public sealed class UserDomainService : IUserDomainService
 
     private UserDomainService(IUserAggregatorService userAggregatorService) => _userAggregatorService = userAggregatorService;
 
-    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userAggregatorService.RegisterUserAsync(userInfo).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userAggregatorService.RegisterUserAsync(userInfo).ConfigureAwait(false);
 }

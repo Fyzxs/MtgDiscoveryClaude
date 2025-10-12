@@ -2,20 +2,11 @@
 
 internal sealed class MonoStateSetGroupingsLoader : ISetGroupingsLoader
 {
-    private static readonly ISetGroupingsLoader _instance = CreateLoader();
+    private static readonly ISetGroupingsLoader s_instance = CreateLoader();
 
-    private static ISetGroupingsLoader CreateLoader()
-    {
-        return new SetGroupingsLoader("scryfall_set_groupings.json");
-    }
+    private static ISetGroupingsLoader CreateLoader() => new SetGroupingsLoader("scryfall_set_groupings.json");
 
-    public SetGroupingData GetGroupingsForSet(string setCode)
-    {
-        return _instance.GetGroupingsForSet(setCode);
-    }
+    public SetGroupingData GetGroupingsForSet(string setCode) => s_instance.GetGroupingsForSet(setCode);
 
-    public bool HasGroupingsForSet(string setCode)
-    {
-        return _instance.HasGroupingsForSet(setCode);
-    }
+    public bool HasGroupingsForSet(string setCode) => s_instance.HasGroupingsForSet(setCode);
 }

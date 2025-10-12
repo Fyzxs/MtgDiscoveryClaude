@@ -12,10 +12,7 @@ internal sealed class ScryfallSetDtoFactory : IScryfallDtoFactory<ExtScryfallSet
     {
     }
 
-    private ScryfallSetDtoFactory(ISetGroupingsLoader groupingsLoader)
-    {
-        _groupingsLoader = groupingsLoader;
-    }
+    private ScryfallSetDtoFactory(ISetGroupingsLoader groupingsLoader) => _groupingsLoader = groupingsLoader;
 
     public ExtScryfallSetDto Create(dynamic data)
     {

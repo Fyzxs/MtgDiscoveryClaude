@@ -1,0 +1,24 @@
+###
+# UserInfo Query Tests
+# Auth0 JWT Authentication required - extracts user info from JWT claims
+# Domain: dev-63szoyl0kt0p7e5q.us.auth0.com
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+@bearerToken = {{$dotenv BEARER_TOKEN}}
+
+### Get User Info from JWT
+# Extracts user email and generated userId from JWT claims
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+Authorization: Bearer {{$dotenv BEARER_TOKEN}}
+
+query GetUserInfo {
+  userInfo {
+    userId
+    email
+  }
+}

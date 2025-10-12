@@ -14,7 +14,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
     private readonly Queue<string> _recentLogs = new(3);
     private readonly Dictionary<string, int> _completedCounts = [];
     private readonly Stopwatch _stopwatch = new();
-    private readonly char[] _spinnerChars = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
+    private readonly char[] _spinnerChars = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
     private readonly int _refreshFrequency;
     private readonly bool _enableMemoryThrottling;
     private int _updateCounter;
@@ -51,10 +51,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         _enableMemoryThrottling = enableMemoryThrottling;
     }
 
-    public void SetStartTime()
-    {
-        _stopwatch.Start();
-    }
+    public void SetStartTime() => _stopwatch.Start();
 
     public void UpdateProgress(string type, int current, int total, string action, string item)
     {
@@ -199,6 +196,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
             {
                 Console.WriteLine(new string(' ', clearWidth));
             }
+
             Console.SetCursorPosition(0, Math.Max(0, Console.CursorTop - totalLinesToClear + extraLines));
         }
     }
@@ -267,6 +265,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                     string spinner = GetSpinner();
                     lines.Add($"  Cards:          Processing... {spinner} {_cardCurrent:N0} cards");
                 }
+
                 lines.Add($"  Current Item:   {TruncateString(_cardName, width - 18)}");
             }
             else if (_trigramTotal > 0 || _trigramCurrent > 0)
@@ -282,6 +281,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                     string spinner = GetSpinner();
                     lines.Add($"  Trigrams:       Processing... {spinner} {_trigramCurrent:N0} trigrams");
                 }
+
                 lines.Add($"  Current Item:   {TruncateString(_trigramName, width - 18)}");
             }
             else if (_rulingTotal > 0 || _rulingCurrent > 0)
@@ -297,6 +297,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                     string spinner = GetSpinner();
                     lines.Add($"  Rulings:        Processing... {spinner} {_rulingCurrent:N0} rulings");
                 }
+
                 lines.Add($"  Current Item:   {TruncateString(_rulingName, width - 18)}");
             }
             else
@@ -316,6 +317,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
                 if (completedLine.Length > 2) completedLine += " | ";
                 completedLine += $"{kvp.Key}: {kvp.Value:N0}";
             }
+
             lines.Add(completedLine);
         }
 
@@ -386,6 +388,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         lock (_lock)
         {
             if (_recentLogs.Count >= 3) { _recentLogs.Dequeue(); }
+
             _recentLogs.Enqueue($"[{logLevel}] {message}");
         }
 

@@ -8,10 +8,7 @@ namespace App.MtgDiscovery.GraphQL;
 
 internal static class AppMtgDiscoveryGraphQlProgram
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
+    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
@@ -23,17 +20,11 @@ internal static class AppMtgDiscoveryGraphQlProgram
                 config.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
                 config.AddEnvironmentVariables();
             })
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            })
+            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.AddConsole();
-            }).ConfigureServices((builder, _) =>
-            {
-                MonoStateConfig.SetConfiguration(builder.Configuration);
-            });
+            }).ConfigureServices((builder, _) => MonoStateConfig.SetConfiguration(builder.Configuration));
     }
 }

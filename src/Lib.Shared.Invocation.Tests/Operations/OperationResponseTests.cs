@@ -86,15 +86,9 @@ public sealed class OperationResponseTests
 {
     private sealed class TestOperationResponse : OperationResponse<string>
     {
-        public TestOperationResponse(string responseData) : base(responseData)
-        {
-            IsSuccess = true;
-        }
+        public TestOperationResponse(string responseData) : base(responseData) => IsSuccess = true;
 
-        public TestOperationResponse(OperationException ex) : base(ex)
-        {
-            IsSuccess = false;
-        }
+        public TestOperationResponse(OperationException ex) : base(ex) => IsSuccess = false;
     }
 
     [TestMethod, TestCategory("unit")]

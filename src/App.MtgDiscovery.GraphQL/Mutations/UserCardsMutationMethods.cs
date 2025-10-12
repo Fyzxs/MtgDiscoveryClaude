@@ -1,15 +1,14 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
-using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
-using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -20,41 +19,33 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IUserCardItrToOutMapper _mapper;
 
-    public UserCardsMutationMethods(ILogger logger) : this(
-        new EntryService(logger),
-        new UserCardItrToOutMapper())
+    public UserCardsMutationMethods(ILogger logger) : this(new EntryService(logger))
     {
     }
 
-    private UserCardsMutationMethods(
-        IEntryService entryService,
-        IUserCardItrToOutMapper mapper)
-    {
-        _entryService = entryService;
-        _mapper = mapper;
-    }
+    private UserCardsMutationMethods(IEntryService entryService) => _entryService = entryService;
 
     [Authorize]
-    [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, UserCardArgEntity args)
+    [GraphQLType(typeof(AddCardToCollectionResponseModelUnionType))]
+    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        IOperationResponse<IUserCardItrEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
-        UserCardOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
-
-        return new SuccessDataResponseModel<UserCardOutEntity>() { Data = result };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
 }

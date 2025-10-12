@@ -1,11 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Lib.Domain.User.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.Users;
-using Lib.Shared.Abstractions.Actions;
+using Lib.MtgDiscovery.Entry.Queries.User;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.User;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -13,33 +10,13 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class UserEntryService : IUserEntryService
 {
-    private readonly IUserDomainService _userDomainService;
-    private readonly IAuthUserArgEntityValidator _authUserValidator;
-    private readonly IAuthUserArgsToItrMapper _authUserMapper;
+    private readonly IRegisterUserEntryService _registerUser;
 
     public UserEntryService(ILogger logger) : this(
-        new UserDomainService(logger),
-        new AuthUserArgEntityValidatorContainer(),
-        new AuthUserArgsToItrMapper())
+        new RegisterUserEntryService(logger))
     { }
 
-    private UserEntryService(
-        IUserDomainService userDataService,
-        IAuthUserArgEntityValidator authUserValidator,
-        IAuthUserArgsToItrMapper authUserMapper)
-    {
-        _userDomainService = userDataService;
-        _authUserValidator = authUserValidator;
-        _authUserMapper = authUserMapper;
-    }
+    private UserEntryService(IRegisterUserEntryService registerUser) => _registerUser = registerUser;
 
-    public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser)
-    {
-        IValidatorActionResult<IOperationResponse<IUserRegistrationItrEntity>> result = await _authUserValidator.Validate(authUser).ConfigureAwait(false);
-
-        if (result.IsNotValid()) return new FailureOperationResponse<IUserInfoItrEntity>(result.FailureStatus().OuterException);
-
-        IUserInfoItrEntity mappedArgs = await _authUserMapper.Map(authUser).ConfigureAwait(false);
-        return await _userDomainService.RegisterUserAsync(mappedArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<UserRegistrationOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => await _registerUser.Execute(authUser).ConfigureAwait(false);
 }

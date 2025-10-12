@@ -29,10 +29,7 @@ public sealed class ConfigCosmosConfiguration : ICosmosConfiguration
     /// with the specified configuration provider.
     /// </summary>
     /// <param name="config">The configuration provider to use for retrieving Cosmos DB settings.</param>
-    private ConfigCosmosConfiguration(IConfig config)
-    {
-        _config = config;
-    }
+    private ConfigCosmosConfiguration(IConfig config) => _config = config;
 
     /// <summary>
     /// Gets the account configuration for the specified container definition.
