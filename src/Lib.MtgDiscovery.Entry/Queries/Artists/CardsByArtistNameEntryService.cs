@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Enrichments;
@@ -54,8 +55,33 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        await _userCardEnrichment.Enrich(outEntities, artistName).ConfigureAwait(false);
+        // Use efficient query by artist ID if userId is present
+        if (string.IsNullOrEmpty(artistName.UserId) is false)
+        {
+            // Extract all unique artist IDs from the returned cards
+            IEnumerable<string> artistIds = outEntities
+                .Where(card => card.ArtistIds is not null)
+                .SelectMany(card => card.ArtistIds)
+                .Distinct();
+
+            // Enrich by each artist ID to collect all user cards for these artists
+            foreach (string artistId in artistIds)
+            {
+                IUserCardsArtistItrEntity artistContext = new UserCardsArtistItrEntity
+                {
+                    UserId = artistName.UserId,
+                    ArtistId = artistId
+                };
+                await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
+            }
+        }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
+    }
+
+    private sealed class UserCardsArtistItrEntity : IUserCardsArtistItrEntity
+    {
+        public string UserId { get; init; }
+        public string ArtistId { get; init; }
     }
 }
