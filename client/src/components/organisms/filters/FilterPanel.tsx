@@ -5,7 +5,9 @@ import {
   TextField,
   Chip,
   Autocomplete,
-  Grid
+  Grid,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { DebouncedSearchInput } from '../../atoms/shared/DebouncedSearchInput';
 import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
@@ -18,7 +20,7 @@ import type {
 import type { StyledComponentProps } from '../../../types/components';
 
 // Re-export for backward compatibility
-export type { FilterPanelConfig as FilterConfig } from '../../../types/filters';
+export type { FilterPanelConfig as FilterConfig, ToggleConfig } from '../../../types/filters';
 
 interface FilterPanelProps extends StyledComponentProps {
   config: FilterPanelConfig;
@@ -36,6 +38,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
     search,
     multiSelects = [],
     autocompletes = [],
+    toggles = [],
     sort,
     customFilters = [],
     collectorFilters
@@ -100,12 +103,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
           {/* Autocomplete Filters */}
           {autocompletes.map((auto) => (
-            <Grid 
-              key={auto.key} 
-              size={{ 
-                xs: 12, 
-                sm: 6, 
-                md: 3 
+            <Grid
+              key={auto.key}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
               }}
             >
               <Autocomplete
@@ -148,10 +151,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
           {/* Sort Dropdown */}
           {sort && (
-            <Grid 
-              size={{ 
-                xs: 12, 
-                sm: 'auto' 
+            <Grid
+              size={{
+                xs: 12,
+                sm: 'auto'
               }}
               role="group"
               aria-label="Sort options"
@@ -168,6 +171,28 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               />
             </Grid>
           )}
+
+          {/* Toggle Switches */}
+          {toggles.map((toggle, index) => (
+            <Grid
+              key={`toggle-${index}`}
+              size={{
+                xs: 12,
+                sm: 'auto'
+              }}
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={toggle.value}
+                    onChange={(e) => toggle.onChange(e.target.checked)}
+                  />
+                }
+                label={toggle.label}
+              />
+            </Grid>
+          ))}
 
           {/* Custom Filter Components */}
           {customFilters.map((filter, index) => (
@@ -286,6 +311,20 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               disabled={sort.disabled}
             />
           )}
+
+          {/* Toggle Switches */}
+          {toggles.map((toggle, index) => (
+            <FormControlLabel
+              key={`toggle-${index}`}
+              control={
+                <Switch
+                  checked={toggle.value}
+                  onChange={(e) => toggle.onChange(e.target.checked)}
+                />
+              }
+              label={toggle.label}
+            />
+          ))}
 
           {/* Custom Filter Components */}
           {customFilters}

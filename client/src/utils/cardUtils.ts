@@ -93,6 +93,14 @@ export const getSignedCardsOptions = () => [
   { value: 'unsigned', label: 'Unsigned' }
 ];
 
+/**
+ * Get format options for filtering (Digital/Paper)
+ */
+export const getFormatOptions = () => [
+  { value: 'paper', label: 'Paper' },
+  { value: 'digital', label: 'Digital' }
+];
+
 export const createCardFilterFunctions = <T extends CardLike>() => ({
   rarities: commonFilters.multiSelect<T>('rarity'),
   sets: commonFilters.multiSelect<T>('setCode'),
@@ -103,7 +111,25 @@ export const createCardFilterFunctions = <T extends CardLike>() => ({
     const normalizedSelected = selectedArtists.map(a => a.toLowerCase());
     return cardArtists.some(artist => normalizedSelected.includes(artist.toLowerCase()));
   },
-  showDigital: (card: T, show: boolean) => show || !card.digital,
+  formats: (card: T, selectedFormats: string[]) => {
+    // If no formats selected, show all cards
+    if (!selectedFormats || selectedFormats.length === 0) return true;
+
+    // If both formats selected, show all cards
+    if (selectedFormats.includes('paper') && selectedFormats.includes('digital')) return true;
+
+    // If only digital selected, show only digital cards
+    if (selectedFormats.includes('digital') && !selectedFormats.includes('paper')) {
+      return card.digital === true;
+    }
+
+    // If only paper selected, show only non-digital cards
+    if (selectedFormats.includes('paper') && !selectedFormats.includes('digital')) {
+      return card.digital === false || card.digital === undefined || card.digital === null;
+    }
+
+    return true;
+  },
   // Collector-specific filters
   collectionCounts: (card: T, selectedCounts: string[]) => {
     if (!selectedCounts || selectedCounts.length === 0) return true;

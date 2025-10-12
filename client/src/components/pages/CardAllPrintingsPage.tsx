@@ -234,7 +234,7 @@ export const CardAllPrintingsPage: React.FC = () => {
           config={{
             collectionCounts: {
               key: 'collectionCounts',
-              value: filters.collectionCounts || [],
+              value: (filters.collectionCounts as string[]) || [],
               onChange: (value: string[]) => updateFilter('collectionCounts', value),
               options: getCollectionCountOptions(),
               label: 'Collection Count',
@@ -243,7 +243,7 @@ export const CardAllPrintingsPage: React.FC = () => {
             },
             signedCards: {
               key: 'signedCards',
-              value: filters.signedCards || [],
+              value: (filters.signedCards as string[]) || [],
               onChange: (value: string[]) => updateFilter('signedCards', value),
               options: getSignedCardsOptions(),
               label: 'Signed Cards',
@@ -256,7 +256,7 @@ export const CardAllPrintingsPage: React.FC = () => {
       )}
 
       {/* Results Summary */}
-      <ResultsSummary 
+      <ResultsSummary
         current={filteredCards.length}
         total={totalCards}
         label="printings"
