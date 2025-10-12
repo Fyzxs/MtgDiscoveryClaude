@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Entities;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Actions.Validators;

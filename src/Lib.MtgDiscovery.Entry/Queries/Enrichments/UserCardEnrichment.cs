@@ -1,56 +1,48 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Lib.Domain.UserCards.Apis;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
-using Lib.Shared.DataModels.Entities.Outs.UserCards;
-using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Enrichments;
 
 internal sealed class UserCardEnrichment : IUserCardEnrichment
 {
-    private readonly IUserCardsDomainService _userCardsDomainService;
-    private readonly ICollectionCardItemToByIdsItrMapper _collectionCardItemToByIdsItrMapper;
-    private readonly ICollectionUserCardDetailsOufToOutMapper _cardDetailsOufToOutMapper;
+    private readonly IUserCardByIdsEnrichment _byIdsEnrichment;
+    private readonly IUserCardBySetEnrichment _bySetEnrichment;
+    private readonly IUserCardByArtistEnrichment _byArtistEnrichment;
+    private readonly IUserCardByNameEnrichment _byNameEnrichment;
 
     public UserCardEnrichment(ILogger logger) : this(
-        new UserCardsDomainService(logger),
-        new CollectionCardItemToByIdsItrMapper(),
-        new CollectionUserCardDetailsOufToOutMapper())
+        new UserCardByIdsEnrichment(logger),
+        new UserCardBySetEnrichment(logger),
+        new UserCardByArtistEnrichment(logger),
+        new UserCardByNameEnrichment(logger))
     {
-
     }
 
-    private UserCardEnrichment(IUserCardsDomainService userCardsDomainService, ICollectionCardItemToByIdsItrMapper collectionCardItemToByIdsItrMapper, ICollectionUserCardDetailsOufToOutMapper collectionUserCardDetailsOufToOutMapper)
+    private UserCardEnrichment(
+        IUserCardByIdsEnrichment byIdsEnrichment,
+        IUserCardBySetEnrichment bySetEnrichment,
+        IUserCardByArtistEnrichment byArtistEnrichment,
+        IUserCardByNameEnrichment byNameEnrichment)
     {
-        _userCardsDomainService = userCardsDomainService;
-        _collectionCardItemToByIdsItrMapper = collectionCardItemToByIdsItrMapper;
-        _cardDetailsOufToOutMapper = collectionUserCardDetailsOufToOutMapper;
+        _byIdsEnrichment = byIdsEnrichment;
+        _bySetEnrichment = bySetEnrichment;
+        _byArtistEnrichment = byArtistEnrichment;
+        _byNameEnrichment = byNameEnrichment;
     }
 
-    public async Task Enrich(List<CardItemOutEntity> outEntities, IUserIdArgEntity args)
-    {
-        if (args.DoesNotHaveUserId) return;
+    public async Task Enrich(List<CardItemOutEntity> outEntities, IUserIdArgEntity args) =>
+        await _byIdsEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
 
-        IUserCardsByIdsItrEntity userCardsByIdsItrEntity = await _collectionCardItemToByIdsItrMapper.Map(outEntities, args).ConfigureAwait(false);
+    public async Task EnrichBySet(List<CardItemOutEntity> outEntities, IUserCardsSetItrEntity context) =>
+        await _bySetEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
 
-        IOperationResponse<IEnumerable<IUserCardOufEntity>> userCardResponse = await _userCardsDomainService.UserCardsByIdsAsync(userCardsByIdsItrEntity).ConfigureAwait(false);
-        if (userCardResponse.IsFailure) return;
+    public async Task EnrichByArtist(List<CardItemOutEntity> outEntities, IUserCardsArtistItrEntity context) =>
+        await _byArtistEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
 
-        Dictionary<string, Task<ICollection<CollectedItemOutEntity>>> dictionary = userCardResponse.ResponseData.ToDictionary(
-            uc => uc.CardId,
-            uc => _cardDetailsOufToOutMapper.Map(uc.CollectedList)
-        );
-
-        foreach (CardItemOutEntity card in outEntities)
-        {
-            if (dictionary.TryGetValue(card.Id, out Task<ICollection<CollectedItemOutEntity>> collectedItems) is false) continue;
-            card.UserCollection = await collectedItems.ConfigureAwait(false);
-        }
-    }
+    public async Task EnrichByName(List<CardItemOutEntity> outEntities, IUserCardsNameItrEntity context) =>
+        await _byNameEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
 }

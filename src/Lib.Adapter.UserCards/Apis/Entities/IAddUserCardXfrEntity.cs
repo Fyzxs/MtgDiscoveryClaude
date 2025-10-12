@@ -1,4 +1,6 @@
-﻿namespace Lib.Adapter.UserCards.Apis.Entities;
+﻿using System.Collections.Generic;
+
+namespace Lib.Adapter.UserCards.Apis.Entities;
 
 /// <summary>
 /// Transfer representation of a user card used by the adapter layer.
@@ -21,6 +23,16 @@ public interface IAddUserCardXfrEntity
     /// The identifier of the set this card belongs to.
     /// </summary>
     string SetId { get; }
+
+    /// <summary>
+    /// The artist IDs for this card (used for efficient querying by artist).
+    /// </summary>
+    IEnumerable<string> ArtistIds { get; }
+
+    /// <summary>
+    /// The name of the card (used for efficient querying by name).
+    /// </summary>
+    string CardName { get; }
 
     /// <summary>
     /// The details of this specific collected card version with finish, quantity, and set grouping.

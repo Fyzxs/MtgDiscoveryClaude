@@ -15,6 +15,10 @@ internal sealed class UserCardsQueryAdapterFake : IUserCardsQueryAdapter
     public int UserCardAsyncInvokeCount { get; private set; }
     public IOperationResponse<IEnumerable<UserCardExtEntity>> UserCardsByIdsAsyncResult { get; init; }
     public int UserCardsByIdsAsyncInvokeCount { get; private set; }
+    public IOperationResponse<IEnumerable<UserCardExtEntity>> UserCardsByArtistAsyncResult { get; init; }
+    public int UserCardsByArtistAsyncInvokeCount { get; private set; }
+    public IOperationResponse<IEnumerable<UserCardExtEntity>> UserCardsByNameAsyncResult { get; init; }
+    public int UserCardsByNameAsyncInvokeCount { get; private set; }
 
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet)
     {
@@ -32,5 +36,17 @@ internal sealed class UserCardsQueryAdapterFake : IUserCardsQueryAdapter
     {
         UserCardsByIdsAsyncInvokeCount++;
         return await Task.FromResult(UserCardsByIdsAsyncResult).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist)
+    {
+        UserCardsByArtistAsyncInvokeCount++;
+        return await Task.FromResult(UserCardsByArtistAsyncResult).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName)
+    {
+        UserCardsByNameAsyncInvokeCount++;
+        return await Task.FromResult(UserCardsByNameAsyncResult).ConfigureAwait(false);
     }
 }
