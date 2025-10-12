@@ -1,0 +1,17 @@
+{
+  "finish": {
+    "nonfoil": "🔹",
+    "foil": "✨",
+    "etched": "⚡"
+  },
+  "special": {
+    "artistProof": "📜",
+    "signed": "✍️",
+    "altered": "🎨"
+  },
+  "status": {
+    "collected": "✅",
+    "notCollected": "⭕",
+    "partial": "🔄"
+  }
+}

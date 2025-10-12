@@ -4,7 +4,7 @@ export const GET_CARDS_BY_NAME = gql`
   query GetCardsByName($cardName: CardNameArgEntityInput!) {
     cardsByName(cardName: $cardName) {
       __typename
-      ... on SuccessCardsResponse {
+      ... on CardsSuccessResponse {
         data {
           id
           oracleId
@@ -172,6 +172,12 @@ export const GET_CARDS_BY_NAME = gql`
           }
           producedMana
           attractions
+          setGroupId
+          userCollection {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
@@ -187,7 +193,7 @@ export const GET_CARDS_BY_SET_CODE = gql`
   query GetCardsBySetCode($setCode: SetCodeArgEntityInput!) {
     cardsBySetCode(setCode: $setCode) {
       __typename
-      ... on SuccessCardsResponse {
+      ... on CardsSuccessResponse {
         data {
           id
           oracleId
@@ -355,6 +361,12 @@ export const GET_CARDS_BY_SET_CODE = gql`
           }
           producedMana
           attractions
+          setGroupId
+          userCollection {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
@@ -370,7 +382,7 @@ export const GET_CARDS_BY_IDS = gql`
   query GetCardsBatch($ids: CardIdsArgEntityInput!) {
     cardsById(ids: $ids) {
       __typename
-      ... on SuccessCardsResponse {
+      ... on CardsSuccessResponse {
         data {
           id
           oracleId
@@ -429,6 +441,11 @@ export const GET_CARDS_BY_IDS = gql`
             tcgplayer
             cardmarket
             cardhoarder
+          }
+          userCollection {
+            finish
+            special
+            count
           }
         }
       }
@@ -445,7 +462,7 @@ export const GET_CARDS_BY_ARTIST = gql`
   query CardsByArtistName($artistName: ArtistNameArgEntityInput!) {
     cardsByArtistName(artistName: $artistName) {
       __typename
-      ... on SuccessCardsByArtistResponse {
+      ... on CardsByArtistSuccessResponse {
         data {
           id
           oracleId
@@ -613,6 +630,12 @@ export const GET_CARDS_BY_ARTIST = gql`
           }
           producedMana
           attractions
+          setGroupId
+          userCollection {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {

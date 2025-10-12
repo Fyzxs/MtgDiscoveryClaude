@@ -1,9 +1,14 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import type { GridLayoutProps } from '../../../types/components';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 export interface ResponsiveGridProps extends GridLayoutProps {
   minItemWidth?: number | string;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
+  tabIndex?: number;
+  'data-grid-container'?: string;
 }
 
 /**
@@ -18,7 +23,10 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   alignItems = 'start',
   sx = {},
   className,
-  component = 'div'
+  component = 'div',
+  onKeyDown,
+  tabIndex,
+  'data-grid-container': dataGridContainer
 }) => {
   const theme = useTheme();
   // Use theme spacing or direct value
@@ -31,6 +39,9 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     <Box
       component={component}
       className={className}
+      onKeyDown={onKeyDown}
+      tabIndex={tabIndex}
+      data-grid-container={dataGridContainer}
       sx={{
         display: 'grid',
         gridTemplateColumns: `repeat(auto-fill, ${itemWidth})`,
@@ -52,16 +63,16 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
  * but limits the max width to prevent excessive stretching
  */
 export const ResponsiveGridAutoFit: React.FC<ResponsiveGridProps> = (props) => {
-  const { 
-    sx = {}, 
-    minItemWidth = 250, 
+  const {
+    sx = {},
+    minItemWidth = 250,
     spacing = 3,
     justifyContent = 'center',
-    ...rest 
+    ...rest
   } = props;
-  
+
   const itemWidth = typeof minItemWidth === 'number' ? `${minItemWidth}px` : minItemWidth;
-  
+
   return (
     <ResponsiveGrid
       {...rest}

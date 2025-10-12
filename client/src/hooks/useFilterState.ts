@@ -13,6 +13,12 @@ export interface FilterState {
   filters: Record<string, any>;
 }
 
+// Default empty objects to prevent new references on every render
+const EMPTY_FILTERS: Readonly<Record<string, unknown>> = {};
+const EMPTY_ARRAY: readonly unknown[] = [];
+const EMPTY_FUNCTIONS: Readonly<Record<string, (item: unknown, value: unknown) => boolean>> = {};
+const EMPTY_SORT_OPTIONS: Readonly<Record<string, (a: unknown, b: unknown) => number>> = {};
+
 /**
  * Hook to manage filtering, searching, and sorting of data
  */
@@ -24,22 +30,22 @@ export function useFilterState<T>(
   // Use refs to store config to avoid dependency issues
   const configRef = useRef(config);
   configRef.current = config;
-  
+
   const {
-    searchFields = [],
-    sortOptions = {},
-    filterFunctions = {},
+    searchFields = EMPTY_ARRAY,
+    sortOptions = EMPTY_SORT_OPTIONS,
+    filterFunctions = EMPTY_FUNCTIONS,
     defaultSort = ''
   } = configRef.current;
 
-  // Initialize state
+  // Initialize state - use memoized defaults to prevent infinite loops
   const [searchTerm, setSearchTerm] = useState(initialState?.search || '');
   const [sortBy, setSortBy] = useState(initialState?.sort || defaultSort);
-  const [filters, setFilters] = useState<Record<string, any>>(initialState?.filters || {});
+  const [filters, setFilters] = useState<Record<string, unknown>>(initialState?.filters || EMPTY_FILTERS);
   const [filteredData, setFilteredData] = useState<T[]>([]);
 
   // Generic filter update function
-  const updateFilter = useCallback((filterName: string, value: any) => {
+  const updateFilter = useCallback((filterName: string, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value

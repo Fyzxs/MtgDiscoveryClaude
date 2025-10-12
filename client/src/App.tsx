@@ -1,28 +1,40 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
 import { Container, Typography, Box } from '@mui/material'
-import { AllSetsPage } from './pages/AllSetsPage'
-import { SetPage } from './pages/SetPage'
-import { CardSearchPage } from './pages/CardSearchPage'
-import { ArtistSearchPage } from './pages/ArtistSearchPage'
-import { ArtistCardsPage } from './pages/ArtistCardsPage'
-import { CardAllPrintingsPage } from './pages/CardAllPrintingsPage'
-import { SignInRedirectPage } from './pages/SignInRedirectPage'
+import {
+  AllSetsPage,
+  SetPage,
+  CardSearchPage,
+  ArtistSearchPage,
+  ArtistCardsPage,
+  CardAllPrintingsPage,
+  SignInRedirectPage
+} from './components/pages'
 import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/ErrorBoundaries'
+import { CollectionProvider } from './contexts/CollectionContext'
+import { UserProvider } from './contexts/UserContext'
+import { I18nProvider } from './components/providers/I18nProvider'
 function HomePage() {
   const navigate = useNavigate();
-  
+
   return (
-    <Container maxWidth="lg" sx={{ py: 12 }}>        
-      <Card 
-        elevation={6} 
-        sx={{ 
-          textAlign: 'center', 
-          maxWidth: 600, 
-          mx: 'auto',
+    <Container
+      maxWidth="lg"
+      sx={{
+        py: 12,
+        display: 'flex',
+        justifyContent: 'center'
+      }}
+    >
+      <Card
+        elevation={6}
+        sx={{
+          textAlign: 'center',
+          maxWidth: 600,
+          width: '100%',
           p: 4
         }}
       >
@@ -54,54 +66,60 @@ function HomePage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={
-            <PageErrorBoundary name="HomePage">
-              <HomePage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/sets" element={
-            <PageErrorBoundary name="AllSetsPage">
-              <AllSetsPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/set/:setCode" element={
-            <PageErrorBoundary name="SetPage">
-              <SetPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/search/cards" element={
-            <PageErrorBoundary name="CardSearchPage">
-              <CardSearchPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/search/artists" element={
-            <PageErrorBoundary name="ArtistSearchPage">
-              <ArtistSearchPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/artists/:artistName" element={
-            <PageErrorBoundary name="ArtistCardsPage">
-              <ArtistCardsPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/card/:cardName" element={
-            <PageErrorBoundary name="CardAllPrintingsPage">
-              <CardAllPrintingsPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/signin-redirect" element={
-            <PageErrorBoundary name="SignInRedirectPage">
-              <SignInRedirectPage />
-            </PageErrorBoundary>
-          } />
-          {/* Handle old query param URLs for backwards compatibility */}
-          <Route path="*" element={<LegacyRedirect />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <I18nProvider>
+      <UserProvider>
+        <CollectionProvider>
+          <BrowserRouter>
+          <Layout>
+            <Routes>
+            <Route path="/" element={
+              <PageErrorBoundary name="HomePage">
+                <HomePage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/sets" element={
+              <PageErrorBoundary name="AllSetsPage">
+                <AllSetsPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/set/:setCode" element={
+              <PageErrorBoundary name="SetPage">
+                <SetPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/search/cards" element={
+              <PageErrorBoundary name="CardSearchPage">
+                <CardSearchPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/search/artists" element={
+              <PageErrorBoundary name="ArtistSearchPage">
+                <ArtistSearchPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/artists/:artistName" element={
+              <PageErrorBoundary name="ArtistCardsPage">
+                <ArtistCardsPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/card/:cardName" element={
+              <PageErrorBoundary name="CardAllPrintingsPage">
+                <CardAllPrintingsPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/signin-redirect" element={
+              <PageErrorBoundary name="SignInRedirectPage">
+                <SignInRedirectPage />
+              </PageErrorBoundary>
+            } />
+            {/* Handle old query param URLs for backwards compatibility */}
+            <Route path="*" element={<LegacyRedirect />} />
+          </Routes>
+        </Layout>
+          </BrowserRouter>
+        </CollectionProvider>
+      </UserProvider>
+    </I18nProvider>
   )
 }
 

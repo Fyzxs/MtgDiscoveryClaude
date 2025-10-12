@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Box, 
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
   Button,
   Menu,
   MenuItem
@@ -13,16 +13,19 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { SearchInput } from '../atoms/shared/SearchInput';
 import { AuthButton } from '../auth/AuthButton';
+import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+// import { LanguageSwitcher } from '../atoms/shared/LanguageSwitcher'; // Disabled until translations are available
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
   const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
+  const { buildUrlWithCollector, navigateWithCollector } = useCollectorNavigation();
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
-      // Force complete URL change to clear all parameters
-      window.location.href = `/set/${setCode.trim().toLowerCase()}`;
+      // Navigate to set page while preserving collector parameter
+      navigateWithCollector(`/set/${setCode.trim().toLowerCase()}`);
       setSetCode('');
     }
   };
@@ -60,10 +63,10 @@ export const Header: React.FC = () => {
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              window.location.href = '/';
+              navigateWithCollector('/');
             }
           }}
-          sx={{ 
+          sx={{
             fontWeight: 'bold',
             background: theme.mtg.gradients.header,
             backgroundClip: 'text',
@@ -86,7 +89,7 @@ export const Header: React.FC = () => {
               borderRadius: 1
             }
           }}
-          onClick={() => window.location.href = '/'}
+          onClick={() => navigateWithCollector('/')}
         >
           MtgDiscovery
         </Typography>
@@ -108,13 +111,17 @@ export const Header: React.FC = () => {
             />
           </Box>
 
-          <Button 
-            color="primary" 
+          <Button
+            color="primary"
             component="a"
-            href="/sets"
+            href={buildUrlWithCollector('/sets')}
             role="menuitem"
             aria-label="Browse all Magic sets"
-            sx={{ 
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithCollector('/sets');
+            }}
+            sx={{
               textTransform: 'none',
               fontWeight: 500,
               textDecoration: 'none'
@@ -155,20 +162,28 @@ export const Header: React.FC = () => {
               horizontal: 'left',
             }}
           >
-            <MenuItem 
+            <MenuItem
               component="a"
-              href="/search/cards"
-              onClick={handleSearchMenuClose}
+              href={buildUrlWithCollector('/search/cards')}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSearchMenuClose();
+                navigateWithCollector('/search/cards');
+              }}
               role="menuitem"
               aria-label="Search for Magic cards"
               sx={{ textDecoration: 'none', color: 'inherit' }}
             >
               Cards
             </MenuItem>
-            <MenuItem 
+            <MenuItem
               component="a"
-              href="/search/artists"
-              onClick={handleSearchMenuClose}
+              href={buildUrlWithCollector('/search/artists')}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSearchMenuClose();
+                navigateWithCollector('/search/artists');
+              }}
               role="menuitem"
               aria-label="Search for Magic artists"
               sx={{ textDecoration: 'none', color: 'inherit' }}
@@ -183,6 +198,11 @@ export const Header: React.FC = () => {
 
         {/* Authentication Button */}
         <AuthButton />
+
+        {/* Language Switcher - Far Right (Disabled until translations are available) */}
+        {/* <Box sx={{ ml: 2 }}>
+          <LanguageSwitcher compact={true} />
+        </Box> */}
       </Toolbar>
     </AppBar>
   );

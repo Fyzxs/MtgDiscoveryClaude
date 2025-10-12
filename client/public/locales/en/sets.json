@@ -1,0 +1,12 @@
+{
+  "set": "Set",
+  "sets": "Sets",
+  "setName": "Set Name",
+  "setCode": "Set Code",
+  "releaseDate": "Release Date",
+  "cardCount": "Card Count",
+  "collectedCount": "Collected",
+  "completion": "Completion",
+  "browse": "Browse",
+  "viewAllCards": "View All Cards"
+}

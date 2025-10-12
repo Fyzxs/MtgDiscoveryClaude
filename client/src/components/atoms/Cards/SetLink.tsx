@@ -1,5 +1,6 @@
 import { Link, Typography, Box } from '@mui/material';
 import { SetIcon } from '../Sets/SetIcon';
+import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface SetLinkProps extends StyledComponentProps {
@@ -9,19 +10,24 @@ interface SetLinkProps extends StyledComponentProps {
   onSetClick?: (setCode?: string) => void;
 }
 
-export const SetLink = ({ 
+export const SetLink = ({
   setCode,
   setName,
   rarity,
   onSetClick,
-  className 
+  className
 }: SetLinkProps) => {
+  const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+
   if (!setName) return null;
+
+  const setPath = `/set/${setCode?.toLowerCase()}`;
+  const href = buildUrlWithCollector(setPath);
 
   return (
     <Box className={className}>
       <Link
-        href={`/set/${setCode?.toLowerCase()}`}
+        href={href}
         tabIndex={0}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -37,6 +43,9 @@ export const SetLink = ({
           if (onSetClick) {
             e.preventDefault();
             onSetClick(setCode);
+          } else {
+            // Use collector navigation for regular clicks
+            createCollectorClickHandler(setPath)(e);
           }
         }}
         sx={{

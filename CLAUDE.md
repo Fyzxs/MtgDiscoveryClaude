@@ -115,18 +115,18 @@ The .NET solution implements a layered architecture following the intended data 
 
 **Data Flow (Request → Response):**
 1. **App Layer** (`App.MtgDiscovery.GraphQL`): Translate request into ArgEntity
-2. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Validates ArgEntity and maps to ItrEntity  
+2. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Validates ArgEntity and maps to ItrEntity (In-Flow Internal)  
 3. **Shared Layer** (`Lib.Shared.*`): Applies rules on the data (validation, filtering, transformation)
 4. **Domain Layer** (`Lib.Domain.*`): Applies ALWAYS rules on the data (business logic)
 5. **Aggregator Layer** (`Lib.Aggregator.*`): Knows what adapters to talk to, orchestrates data retrieval
-6. **Adapter Layer** (`Lib.Adapter.*`): Maps ItrEntity to ExtEntity, calls external world, maps ExtEntity back to ItrEntity
+6. **Adapter Layer** (`Lib.Adapter.*`): Maps ItrEntity to ExtEntity, calls external world, maps ExtEntity back to OufEntity (Out-Flow Internal)
 7. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.Universal`): Core infrastructure components
 
 **Return Flow (Response ← Request):**
 - Aggregator aggregates adapter responses
 - Domain applies always rules  
 - Shared applies rules
-- Entry maps ItrEntity to OutEntity
+- Entry maps OufEntity to OutEntity
 - App translates OutEntity to response
 
 **Layer Details:**
@@ -326,9 +326,9 @@ Registration follows the standard layer pattern:
 6. **Adapter Layer**: `UserInfoItem` and `UserInfoScribe` for Cosmos DB storage
 
 ### User Information Types
-- `Lib.Shared.DataModels/Entities/IUserInfoItrEntity.cs:5-10` - User info interface with string properties
+- `Lib.Shared.DataModels/Entities/IUserInfoItrEntity.cs:5-10` - User info interface with string properties (In-Flow Internal)
   - Properties: `string UserId`, `string UserSourceId`, `string UserNickname`
-- `Lib.Shared.DataModels/Entities/IUserRegistrationItrEntity.cs:5-7` - Registration response
+- `Lib.Shared.DataModels/Entities/IUserRegistrationOufEntity.cs:5-7` - Registration response (Out-Flow Internal)
   - Property: `string UserId`
 - `Lib.Shared.DataModels/Entities/IAuthUserArgEntity.cs:3-8` - JWT authentication argument interface
 
@@ -412,3 +412,4 @@ Components follow atomic design principles with clear separation:
 ## Sessions System Behaviors
 
 @CLAUDE.sessions.md
+- Never run the systems being built.
