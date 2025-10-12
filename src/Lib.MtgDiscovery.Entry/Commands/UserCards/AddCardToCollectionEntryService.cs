@@ -9,6 +9,7 @@ using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.Shared.Abstractions.Actions.Validators;
+using Lib.Shared.Abstractions.Identifiers;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Outs.UserCards;
@@ -25,6 +26,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
     private readonly IAddUserCardArgToItrMapper _addUserCardArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardOufToOutMapper _userCardOufToOutMapper;
+    private readonly ICardNameGuidGenerator _cardNameGuidGenerator;
 
     public AddCardToCollectionEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
@@ -32,7 +34,8 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         new AddCardToCollectionArgEntityValidatorContainer(),
         new AddUserCardArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
-        new UserCardOufToOutMapper())
+        new UserCardOufToOutMapper(),
+        new CardNameGuidGenerator())
     { }
 
     private AddCardToCollectionEntryService(
@@ -41,7 +44,8 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         IAddCardToCollectionArgEntityValidator addCardToCollectionArgEntityValidator,
         IAddUserCardArgToItrMapper addUserCardArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
-        IUserCardOufToOutMapper userCardOufToOutMapper)
+        IUserCardOufToOutMapper userCardOufToOutMapper,
+        ICardNameGuidGenerator cardNameGuidGenerator)
     {
         _userCardsDomainService = userCardsDomainService;
         _cardDomainService = cardDomainService;
@@ -49,6 +53,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         _addUserCardArgToItrMapper = addUserCardArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardOufToOutMapper = userCardOufToOutMapper;
+        _cardNameGuidGenerator = cardNameGuidGenerator;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity input)
@@ -56,7 +61,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        // Fetch card details first to extract artist_ids and card_name
+        // Fetch card details first to extract artist_ids and generate card_name_guid
         ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [input.AddUserCard.CardId] };
         IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
         if (cardResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
@@ -67,19 +72,22 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         // Extract card metadata
         CardItemOutEntity cardItem = cards[0];
         IEnumerable<string> artistIds = cardItem.ArtistIds ?? [];
-        string cardName = cardItem.Name;
+
+        // Generate deterministic GUID from card name (matches CardsByName collection)
+        CardNameGuid nameGuid = _cardNameGuidGenerator.GenerateGuid(cardItem.Name);
+        string cardNameGuid = nameGuid.AsSystemType().ToString();
 
         // Map user card args to ITR entity with card metadata
         IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);
 
-        // Create updated entity with artist metadata
+        // Create updated entity with artist metadata and card name GUID
         UserCardCollectionItrEntity enrichedEntity = new()
         {
             UserId = itrEntity.UserId,
             CardId = itrEntity.CardId,
             SetId = itrEntity.SetId,
             ArtistIds = artistIds,
-            CardName = cardName,
+            CardNameGuid = cardNameGuid,
             Details = itrEntity.Details
         };
 

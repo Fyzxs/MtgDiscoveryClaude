@@ -85,7 +85,7 @@ internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
             CardId = original.CardId,
             SetId = original.SetId,
             ArtistIds = original.ArtistIds,
-            CardName = original.CardName,
+            CardNameGuid = original.CardNameGuid,
             Details = negatedDetails
         };
     }
@@ -96,7 +96,7 @@ internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
         public required string CardId { get; init; }
         public required string SetId { get; init; }
         public required IEnumerable<string> ArtistIds { get; init; }
-        public required string CardName { get; init; }
+        public required string CardNameGuid { get; init; }
         public required IUserCardDetailsXfrEntity Details { get; init; }
     }
 

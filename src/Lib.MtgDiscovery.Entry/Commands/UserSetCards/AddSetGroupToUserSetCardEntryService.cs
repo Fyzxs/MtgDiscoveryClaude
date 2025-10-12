@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Entities;
 using Lib.Domain.UserSetCards.Apis;
-using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards.Validators;
 using Lib.MtgDiscovery.Entry.Entities;
@@ -13,10 +12,6 @@ using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.MtgDiscovery.Entry.Commands.UserSetCards;
-
-internal interface IAddSetGroupToUserSetCardEntryService : IOperationResponseService<IAddSetGroupToUserSetCardArgsEntity, UserSetCardOutEntity>
-{
-}
 
 internal sealed class AddSetGroupToUserSetCardEntryService : IAddSetGroupToUserSetCardEntryService
 {
