@@ -23,4 +23,8 @@ public sealed class UserCardsDomainService : IUserCardsDomainService
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => await _userCardsAggregatorService.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
 
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => await _userCardsAggregatorService.UserCardsByIdsAsync(userCards).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => await _userCardsAggregatorService.UserCardsByArtistAsync(userCardsArtist).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => await _userCardsAggregatorService.UserCardsByNameAsync(userCardsName).ConfigureAwait(false);
 }

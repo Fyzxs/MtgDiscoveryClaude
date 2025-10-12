@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;

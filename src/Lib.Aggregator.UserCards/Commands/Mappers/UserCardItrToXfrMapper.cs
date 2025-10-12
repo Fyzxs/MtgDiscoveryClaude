@@ -23,6 +23,8 @@ internal sealed class AddUserCardItrToXfrMapper : IAddUserCardItrToXfrMapper
             UserId = source.UserId,
             CardId = source.CardId,
             SetId = source.SetId,
+            ArtistIds = source.ArtistIds,
+            CardName = source.CardName,
             Details = details
         };
     }

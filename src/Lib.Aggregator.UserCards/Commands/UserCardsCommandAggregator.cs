@@ -84,6 +84,8 @@ internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
             UserId = original.UserId,
             CardId = original.CardId,
             SetId = original.SetId,
+            ArtistIds = original.ArtistIds,
+            CardName = original.CardName,
             Details = negatedDetails
         };
     }
@@ -93,6 +95,8 @@ internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
         public required string UserId { get; init; }
         public required string CardId { get; init; }
         public required string SetId { get; init; }
+        public required IEnumerable<string> ArtistIds { get; init; }
+        public required string CardName { get; init; }
         public required IUserCardDetailsXfrEntity Details { get; init; }
     }
 
@@ -109,4 +113,8 @@ internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => throw new System.NotImplementedException();
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => throw new System.NotImplementedException();
+
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => throw new System.NotImplementedException();
+
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => throw new System.NotImplementedException();
 }

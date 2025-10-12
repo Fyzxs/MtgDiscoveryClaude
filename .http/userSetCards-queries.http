@@ -2,7 +2,6 @@
 # User Set Cards Query Tests
 # Queries for aggregated set collection statistics
 # Shows total cards, unique cards, and completion progress for a user's set
-# NOTE: GraphQL implementation not yet complete - requires Entry/Domain/Aggregator layers
 
 ###
 # Variables
@@ -11,10 +10,8 @@
 @graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
 @bearerToken = {{$dotenv BEARER_TOKEN}}
 
-
 ### SDL
-# @ref variables
-# Get SDL
+# Get GraphQL schema definition
 GET {{graphqlEndpoint}}?sdl
 Content-Type: application/json
 
@@ -39,13 +36,70 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
           count
         }
         groups {
-          key
-          value {
+          rarity
+          group {
             nonFoil { cards }
             foil { cards }
             etched { cards }
           }
         }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setCardArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "setId": "452951cf-378b-4472-b7fe-572fe2af2ac"
+  }
+}
+
+### Get User Set Card Statistics - With Metadata
+# Get full response including metadata
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserSetCardsWithMetadata($setCardArgs: UserSetCardInput!) {
+  userSetCards(setCardArgs: $setCardArgs) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+        groups {
+          rarity
+          group {
+            nonFoil { cards }
+            foil { cards }
+            etched { cards }
+          }
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
       }
     }
     ... on FailureResponse {
@@ -61,6 +115,47 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
   "setCardArgs": {
     "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
     "setId": "neo"
+  }
+}
+
+### Get User Set Card Statistics - Another Set
+# Query statistics for a different set
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query GetUserSetCardsMID($setCardArgs: UserSetCardInput!) {
+  userSetCards(setCardArgs: $setCardArgs) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setCardArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "setId": "mid"
   }
 }
 
@@ -81,8 +176,8 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
 # Expected Response Structure:
 # {
 #   "data": {
-#     "userSetCard": {
-#       "__typename": "SuccessUserSetCardResponse",
+#     "userSetCards": {
+#       "__typename": "UserSetCardSuccessResponse",
 #       "data": {
 #         "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
 #         "setId": "neo",
@@ -102,8 +197,8 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
 #         ],
 #         "groups": [
 #           {
-#             "key": "normal",
-#             "value": {
+#             "rarity": "common",
+#             "group": {
 #               "nonFoil": {
 #                 "cards": ["card-id-1", "card-id-3", "card-id-4"]
 #               },
@@ -116,8 +211,8 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
 #             }
 #           },
 #           {
-#             "key": "borderless",
-#             "value": {
+#             "rarity": "mythic",
+#             "group": {
 #               "nonFoil": {
 #                 "cards": ["card-id-6"]
 #               },
@@ -138,3 +233,16 @@ query GetUserSetCards($setCardArgs: UserSetCardInput!) {
 #     }
 #   }
 # }
+
+###
+# How to Test:
+# 1. Ensure GraphQL API is running: dotnet run --project src/App.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL.csproj
+# 2. First, add some cards to a set using addCardToCollection mutation
+# 3. Use the query to see aggregated statistics for that set
+# 4. The userId should match your authenticated user or use a specific test user ID
+#
+# Notes:
+# - The query returns aggregated statistics across all cards in a set
+# - Groups are organized by rarity (common, uncommon, rare, mythic)
+# - Each group shows cards organized by finish (nonFoil, foil, etched)
+# - The collecting array shows which set groups the user is actively collecting

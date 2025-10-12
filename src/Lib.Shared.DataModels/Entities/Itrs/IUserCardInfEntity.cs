@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
+
 namespace Lib.Shared.DataModels.Entities.Itrs;
 
 /// <summary>
@@ -24,6 +26,16 @@ public interface IUserCardItrEntity
     /// The identifier of the set this card belongs to.
     /// </summary>
     string SetId { get; }
+
+    /// <summary>
+    /// The artist IDs for this card (used for efficient querying by artist).
+    /// </summary>
+    IEnumerable<string> ArtistIds { get; }
+
+    /// <summary>
+    /// The name of the card (used for efficient querying by name).
+    /// </summary>
+    string CardName { get; }
 
     /// <summary>
     /// The details of this specific collected card version with finish, quantity, and set grouping.

@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
 

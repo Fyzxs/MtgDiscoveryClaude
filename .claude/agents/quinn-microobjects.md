@@ -1,7 +1,7 @@
 ---
 name: quinn-microobjects
 description: Write code the microobjects way.
-model: opus
+model: sonnet
 ---
 
 

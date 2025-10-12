@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Enrichments;
+using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -54,7 +56,20 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        await _userCardEnrichment.Enrich(outEntities, setCode).ConfigureAwait(false);
+        if (setCode.HasUserId)
+        {
+            // All cards in outEntities are from the same set, extract SetId UUID from first card
+            CardItemOutEntity firstCard = outEntities.FirstOrDefault();
+            if (firstCard != null && string.IsNullOrEmpty(firstCard.SetId) is false)
+            {
+                IUserCardsSetItrEntity userCardsSetContext = new UserCardsSetItrEntity
+                {
+                    UserId = setCode.UserId,
+                    SetId = firstCard.SetId
+                };
+                await _userCardEnrichment.EnrichBySet(outEntities, userCardsSetContext).ConfigureAwait(false);
+            }
+        }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }
