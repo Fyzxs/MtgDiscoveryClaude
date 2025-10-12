@@ -8,13 +8,16 @@ public class StatusDataModelType : ObjectType<StatusDataModel>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<StatusDataModel> descriptor)
     {
-        descriptor.Name("StatusData");
-        descriptor.Description("Status information for the response");
+        descriptor.Name("StatusData")
+            .Description("Status information for the response");
 
         descriptor.Field(f => f.StatusCode)
+            .Name("statusCode")
+            .Type<IntType>()
             .Description("HTTP status code");
-
         descriptor.Field(f => f.Message)
+            .Name("message")
+            .Type<StringType>()
             .Description("Status message");
     }
 }

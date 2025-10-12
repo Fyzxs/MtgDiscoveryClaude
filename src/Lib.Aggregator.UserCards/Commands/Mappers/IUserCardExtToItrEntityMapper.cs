@@ -9,5 +9,5 @@ namespace Lib.Aggregator.UserCards.Commands.Mappers;
 /// </summary>
 internal interface IUserCardExtToItrEntityMapper
 {
-    Task<IUserCardItrEntity> Map(UserCardExtEntity source);
+    Task<IUserCardOufEntity> Map(UserCardExtEntity source);
 }

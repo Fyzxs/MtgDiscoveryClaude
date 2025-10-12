@@ -7,9 +7,9 @@ public sealed class ArtistSearchResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {
-        descriptor.Name("ArtistSearchResponseModel");
-        descriptor.Description("Union type for artist search response");
-        descriptor.Type<ArtistSearchResultsSuccessDataResponseModelType>();
-        descriptor.Type<FailureResponseModelType>();
+        descriptor.Name("ArtistSearchResponse")
+            .Description("Union type for artist search response")
+            .Type<ArtistSearchResultsSuccessDataResponseModelType>()
+            .Type<FailureResponseModelType>();
     }
 }

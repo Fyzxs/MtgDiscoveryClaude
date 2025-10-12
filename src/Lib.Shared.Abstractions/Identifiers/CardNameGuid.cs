@@ -7,10 +7,7 @@ public sealed class CardNameGuid : ToSystemType<Guid>
 {
     private readonly Guid _origin;
 
-    public CardNameGuid(Guid origin)
-    {
-        _origin = origin;
-    }
+    public CardNameGuid(Guid origin) => _origin = origin;
 
     public override Guid AsSystemType() => _origin;
 }

@@ -4,8 +4,5 @@ namespace Lib.Scryfall.Ingestion.Factories;
 
 internal sealed class ScryfallCardDtoFactory : IScryfallDtoFactory<ExtScryfallCardDto>
 {
-    public ExtScryfallCardDto Create(dynamic data)
-    {
-        return new ExtScryfallCardDto(data);
-    }
+    public ExtScryfallCardDto Create(dynamic data) => new(data);
 }

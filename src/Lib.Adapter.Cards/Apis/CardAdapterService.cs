@@ -28,31 +28,16 @@ public sealed class CardAdapterService : ICardAdapterService
 {
     private readonly ICardQueryAdapter _cardQueryAdapter;
 
-    public CardAdapterService(ILogger logger) : this(new CardCosmosQueryAdapter(logger))
+    public CardAdapterService(ILogger logger) : this(new CardsQueryAdapter(logger))
     { }
 
-    private CardAdapterService(ICardQueryAdapter cardQueryAdapter)
-    {
-        _cardQueryAdapter = cardQueryAdapter;
-    }
+    private CardAdapterService(ICardQueryAdapter cardQueryAdapter) => _cardQueryAdapter = cardQueryAdapter;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds)
-    {
-        return await _cardQueryAdapter.GetCardsByIdsAsync(cardIds).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds) => await _cardQueryAdapter.GetCardsByIdsAsync(cardIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode)
-    {
-        return await _cardQueryAdapter.GetCardsBySetCodeAsync(setCode).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode) => await _cardQueryAdapter.GetCardsBySetCodeAsync(setCode).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName)
-    {
-        return await _cardQueryAdapter.GetCardsByNameAsync(cardName).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName) => await _cardQueryAdapter.GetCardsByNameAsync(cardName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm)
-    {
-        return await _cardQueryAdapter.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm) => await _cardQueryAdapter.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
 }

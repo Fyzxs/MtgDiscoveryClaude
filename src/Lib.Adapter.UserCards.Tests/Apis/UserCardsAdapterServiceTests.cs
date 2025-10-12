@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Tests.Fakes;
@@ -36,7 +35,7 @@ public sealed class UserCardsAdapterServiceTests
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new List<UserCardDetailsExtEntity>()
+            CollectedList = []
         };
 
         IOperationResponse<UserCardExtEntity> operationResponse = new OperationResponseFake<UserCardExtEntity> { IsSuccess = true, ResponseData = expectedResult };
@@ -51,16 +50,16 @@ public sealed class UserCardsAdapterServiceTests
             Count = 1
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            Details = collectedCard
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await subject.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await subject.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(operationResponse);
@@ -72,16 +71,16 @@ public sealed class UserCardsAdapterServiceTests
     public async Task UserCardsBySetAsync_WithValidInput_DelegatesToQueryAdapter()
     {
         // Arrange
-        IEnumerable<UserCardExtEntity> expectedResults = new List<UserCardExtEntity>
-        {
+        IEnumerable<UserCardExtEntity> expectedResults =
+        [
             new()
             {
                 UserId = "user123",
                 CardId = "card456",
                 SetId = "set789",
-                CollectedList = new List<UserCardDetailsExtEntity>()
+                CollectedList = []
             }
-        };
+        ];
 
         IOperationResponse<IEnumerable<UserCardExtEntity>> operationResponse = new OperationResponseFake<IEnumerable<UserCardExtEntity>> { IsSuccess = true, ResponseData = expectedResults };
         UserCardsCommandAdapterFake commandAdapterFake = new();

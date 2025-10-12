@@ -28,26 +28,14 @@ public sealed class SetAdapterService : ISetAdapterService
 {
     private readonly ISetQueryAdapter _setQueryAdapter;
 
-    public SetAdapterService(ILogger logger) : this(new SetCosmosQueryAdapter(logger))
+    public SetAdapterService(ILogger logger) : this(new SetsQueryAdapter(logger))
     { }
 
-    private SetAdapterService(ISetQueryAdapter setQueryAdapter)
-    {
-        _setQueryAdapter = setQueryAdapter;
-    }
+    private SetAdapterService(ISetQueryAdapter setQueryAdapter) => _setQueryAdapter = setQueryAdapter;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync(ISetIdsXfrEntity setIds)
-    {
-        return await _setQueryAdapter.GetSetsByIdsAsync(setIds).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setQueryAdapter.GetSetsByIdsAsync(setIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync(ISetCodesXfrEntity setCodes)
-    {
-        return await _setQueryAdapter.GetSetsByCodesAsync(setCodes).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setQueryAdapter.GetSetsByCodesAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync()
-    {
-        return await _setQueryAdapter.GetAllSetsAsync().ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync() => await _setQueryAdapter.GetAllSetsAsync().ConfigureAwait(false);
 }

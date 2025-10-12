@@ -1,20 +1,38 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Outs.Cards;
-using HotChocolate.Types;
+﻿using HotChocolate.Types;
+using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 
-internal class ScryfallPricesOutEntityType : ObjectType<PricesOutEntity>
+internal sealed class ScryfallPricesOutEntityType : ObjectType<PricesOutEntity>
 {
     protected override void Configure(IObjectTypeDescriptor<PricesOutEntity> descriptor)
     {
-        descriptor.Name("Prices");
-        descriptor.Description("Price information in various currencies");
+        descriptor.Name("Prices")
+            .Description("Price information in various currencies");
 
-        descriptor.Field(f => f.Usd).Description("USD price");
-        descriptor.Field(f => f.UsdFoil).Description("USD foil price");
-        descriptor.Field(f => f.UsdEtched).Description("USD etched price");
-        descriptor.Field(f => f.Eur).Description("EUR price");
-        descriptor.Field(f => f.EurFoil).Description("EUR foil price");
-        descriptor.Field(f => f.Tix).Description("MTGO Tix price");
+        descriptor.Field(f => f.Usd)
+            .Name("usd")
+            .Type<StringType>()
+            .Description("USD price");
+        descriptor.Field(f => f.UsdFoil)
+            .Name("usdFoil")
+            .Type<StringType>()
+            .Description("USD foil price");
+        descriptor.Field(f => f.UsdEtched)
+            .Name("usdEtched")
+            .Type<StringType>()
+            .Description("USD etched price");
+        descriptor.Field(f => f.Eur)
+            .Name("eur")
+            .Type<StringType>()
+            .Description("EUR price");
+        descriptor.Field(f => f.EurFoil)
+            .Name("eurFoil")
+            .Type<StringType>()
+            .Description("EUR foil price");
+        descriptor.Field(f => f.Tix)
+            .Name("tix")
+            .Type<StringType>()
+            .Description("MTGO Tix price");
     }
 }

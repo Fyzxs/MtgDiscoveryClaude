@@ -29,13 +29,10 @@ public sealed class ArtistAdapterService : IArtistAdapterService
 {
     private readonly IArtistQueryAdapter _artistQueryAdapter;
 
-    public ArtistAdapterService(ILogger logger) : this(new ArtistCosmosQueryAdapter(logger))
+    public ArtistAdapterService(ILogger logger) : this(new ArtistsQueryAdapter(logger))
     { }
 
-    private ArtistAdapterService(IArtistQueryAdapter artistQueryAdapter)
-    {
-        _artistQueryAdapter = artistQueryAdapter;
-    }
+    private ArtistAdapterService(IArtistQueryAdapter artistQueryAdapter) => _artistQueryAdapter = artistQueryAdapter;
 
     /// <summary>
     /// Searches for artists using trigram-based matching on artist names.
@@ -43,10 +40,7 @@ public sealed class ArtistAdapterService : IArtistAdapterService
     /// </summary>
     /// <param name="searchTerm">The search term containing trigrams and normalized form for matching</param>
     /// <returns>Collection of artist trigram data entities that match the search criteria</returns>
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm)
-    {
-        return await _artistQueryAdapter.SearchArtistsAsync(searchTerm).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm) => await _artistQueryAdapter.SearchArtistsAsync(searchTerm).ConfigureAwait(false);
 
     /// <summary>
     /// Retrieves all cards associated with a specific artist using their unique identifier.
@@ -54,10 +48,7 @@ public sealed class ArtistAdapterService : IArtistAdapterService
     /// </summary>
     /// <param name="artistId">The artist identifier transfer entity containing the artist's unique ID</param>
     /// <returns>Collection of Scryfall artist card entities for the specified artist</returns>
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(IArtistIdXfrEntity artistId)
-    {
-        return await _artistQueryAdapter.CardsByArtistIdAsync(artistId).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(IArtistIdXfrEntity artistId) => await _artistQueryAdapter.CardsByArtistIdAsync(artistId).ConfigureAwait(false);
 
     /// <summary>
     /// Retrieves all cards associated with an artist using their name with intelligent disambiguation.
@@ -66,8 +57,5 @@ public sealed class ArtistAdapterService : IArtistAdapterService
     /// </summary>
     /// <param name="artistName">The artist name transfer entity containing name, normalized form, and trigrams</param>
     /// <returns>Collection of Scryfall artist card entities for the best-matched artist</returns>
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(IArtistNameXfrEntity artistName)
-    {
-        return await _artistQueryAdapter.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(IArtistNameXfrEntity artistName) => await _artistQueryAdapter.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
 }

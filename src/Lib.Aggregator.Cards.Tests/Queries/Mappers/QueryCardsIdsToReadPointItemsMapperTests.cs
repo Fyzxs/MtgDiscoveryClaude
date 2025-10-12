@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Cosmos.Apis.Operators;
@@ -20,7 +19,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] actual = (await subject.Map(args).ConfigureAwait(false)).ToArray();
+        ReadPointItem[] actual = [.. await subject.Map(args).ConfigureAwait(false)];
 
         // Assert
         actual.Should().BeEmpty();
@@ -38,7 +37,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] actual = (await subject.Map(args).ConfigureAwait(false)).ToArray();
+        ReadPointItem[] actual = [.. await subject.Map(args).ConfigureAwait(false)];
 
         // Assert
         actual.Should().HaveCount(1);
@@ -58,7 +57,7 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] actual = (await subject.Map(args).ConfigureAwait(false)).ToArray();
+        ReadPointItem[] actual = [.. await subject.Map(args).ConfigureAwait(false)];
 
         // Assert
         actual.Should().HaveCount(3);
@@ -80,8 +79,8 @@ public sealed class QueryCardsIdsToReadPointItemsMapperTests
         QueryCardsIdsToReadPointItemsMapper subject = new();
 
         // Act
-        ReadPointItem[] firstCall = (await subject.Map(args).ConfigureAwait(false)).ToArray();
-        ReadPointItem[] secondCall = (await subject.Map(args).ConfigureAwait(false)).ToArray();
+        ReadPointItem[] firstCall = [.. await subject.Map(args).ConfigureAwait(false)];
+        ReadPointItem[] secondCall = [.. await subject.Map(args).ConfigureAwait(false)];
 
         // Assert
         firstCall.Should().NotBeSameAs(secondCall);

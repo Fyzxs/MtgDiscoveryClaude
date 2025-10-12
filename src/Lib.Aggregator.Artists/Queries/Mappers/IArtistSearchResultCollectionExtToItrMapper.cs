@@ -5,4 +5,4 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 
-internal interface IArtistSearchExtToItrMapper : ICreateMapper<IEnumerable<ArtistNameTrigramDataExtEntity>, IArtistSearchResultCollectionItrEntity>;
+internal interface IArtistSearchExtToItrMapper : ICreateMapper<IEnumerable<ArtistNameTrigramDataExtEntity>, IArtistSearchResultCollectionOufEntity>;

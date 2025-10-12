@@ -7,9 +7,9 @@ public class CardResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {
-        descriptor.Name("CardsByIdResponse");
-        descriptor.Description("Union type for different response types from CardsById query");
-        descriptor.Type<CardsSuccessDataResponseModelType>();
-        descriptor.Type<FailureResponseModelType>();
+        descriptor.Name("CardResponse")
+            .Description("Union type for different response types from CardsById query")
+            .Type<CardsSuccessDataResponseModelType>()
+            .Type<FailureResponseModelType>();
     }
 }
