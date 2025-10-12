@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using Lib.Domain.UserCards.Apis;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Commands.Mappers;
-using Lib.MtgDiscovery.Entry.Commands.Validators;
-using Lib.Shared.Abstractions.Actions;
+using Lib.MtgDiscovery.Entry.Commands.UserCards;
+using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -13,33 +12,13 @@ namespace Lib.MtgDiscovery.Entry.Commands;
 
 internal sealed class UserCardsEntryService : IUserCardsEntryService
 {
-    private readonly IUserCardsDomainService _userCardsDomainService;
-    private readonly IAddCardToCollectionArgEntityValidator _validator;
-    private readonly IUserCardArgsToItrMapper _mapper;
+    private readonly IAddCardToCollectionEntryService _addCardToCollection;
 
     public UserCardsEntryService(ILogger logger) : this(
-        new UserCardsDomainService(logger),
-        new AddCardToCollectionArgEntityValidatorContainer(),
-        new UserCardArgsToItrMapper())
+        new AddCardToCollectionEntryService(logger))
     { }
 
-    private UserCardsEntryService(
-        IUserCardsDomainService userCardsDomainService,
-        IAddCardToCollectionArgEntityValidator validator,
-        IUserCardArgsToItrMapper mapper)
-    {
-        _userCardsDomainService = userCardsDomainService;
-        _validator = validator;
-        _mapper = mapper;
-    }
+    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection) => _addCardToCollection = addCardToCollection;
 
-    public async Task<IOperationResponse<IUserCardItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IUserCardArgEntity args)
-    {
-        IValidatorActionResult<IOperationResponse<IUserCardItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
-
-        if (result.IsNotValid()) return result.FailureStatus();
-
-        IUserCardItrEntity mappedArgs = await _mapper.Map(authUser, args).ConfigureAwait(false);
-        return await _userCardsDomainService.AddUserCardAsync(mappedArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => await _addCardToCollection.Execute(new AddCardToCollectionArgsEntity { AuthUser = authUser, AddUserCard = args }).ConfigureAwait(false);
 }

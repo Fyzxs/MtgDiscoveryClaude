@@ -17,7 +17,7 @@ namespace Lib.Aggregator.Cards.Tests.Queries;
 [TestClass]
 public sealed class CardAggregatorOperationsTests
 {
-    private sealed class TestableCardAggregatorOperations : TypeWrapper<QueryCardAggregatorService>
+    private sealed class TestableCardAggregatorOperations : TypeWrapper<CardsQueryAggregator>
     {
         public TestableCardAggregatorOperations(
             ICardAdapterService cardAdapterService,
@@ -40,7 +40,7 @@ public sealed class CardAggregatorOperationsTests
         LoggerFake logger = new();
 
         // Act
-        QueryCardAggregatorService _ = new(logger);
+        CardsQueryAggregator _ = new(logger);
 
         // Assert
         // Constructor should create instance without throwing
@@ -60,12 +60,12 @@ public sealed class CardAggregatorOperationsTests
         CardNameItrToXfrMapperFake fakeCardNameMapper = new();
         CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
 
-        QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
+        CardsQueryAggregator subject = new TestableCardAggregatorOperations(
             fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
             fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual =
+        IOperationResponse<ICardItemCollectionOufEntity> actual =
             await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert
@@ -101,12 +101,12 @@ public sealed class CardAggregatorOperationsTests
         CardNameItrToXfrMapperFake fakeCardNameMapper = new();
         CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
 
-        QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
+        CardsQueryAggregator subject = new TestableCardAggregatorOperations(
             fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
             fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual =
+        IOperationResponse<ICardItemCollectionOufEntity> actual =
             await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert
@@ -134,12 +134,12 @@ public sealed class CardAggregatorOperationsTests
         CardNameItrToXfrMapperFake fakeCardNameMapper = new();
         CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
 
-        QueryCardAggregatorService subject = new TestableCardAggregatorOperations(
+        CardsQueryAggregator subject = new TestableCardAggregatorOperations(
             fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
             fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual =
+        IOperationResponse<ICardItemCollectionOufEntity> actual =
             await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert

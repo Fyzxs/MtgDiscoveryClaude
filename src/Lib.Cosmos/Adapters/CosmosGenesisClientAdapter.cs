@@ -10,10 +10,7 @@ internal abstract class CosmosGenesisClientAdapter : ICosmosGenesisClientAdapter
 {
     private readonly CosmosClient _cosmosClient;
 
-    protected CosmosGenesisClientAdapter(CosmosClient cosmosClient)
-    {
-        _cosmosClient = cosmosClient;
-    }
+    protected CosmosGenesisClientAdapter(CosmosClient cosmosClient) => _cosmosClient = cosmosClient;
 
     protected static CosmosClientOptions Options(ICosmosConnectionOptionsConfig config)
         => new()

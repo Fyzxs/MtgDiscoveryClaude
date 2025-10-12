@@ -43,6 +43,7 @@ public interface ICardItemItrEntity
     bool Variation { get; }
     string SetId { get; }
     string SetCode { get; }
+    string SetGroupId { get; }
     string SetName { get; }
     string SetType { get; }
     string SetUri { get; }

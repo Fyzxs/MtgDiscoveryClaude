@@ -25,6 +25,7 @@ internal sealed class CardNameTrigramAggregate : ICardNameTrigramAggregate
             entry = new CardNameTrigramEntryImpl(name, normalized);
             _entries[name] = entry;
         }
+
         entry.AddPosition(position);
     }
 

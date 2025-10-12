@@ -43,13 +43,15 @@ public sealed class UserCardsAdapterService : IUserCardsAdapterService
         _userCardsQueryAdapter = userCardsQueryAdapter;
     }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardXfrEntity userCard)
-    {
-        return await _userCardsCommandAdapter.AddUserCardAsync(userCard).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard) => await _userCardsCommandAdapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet)
-    {
-        return await _userCardsQueryAdapter.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet) => await _userCardsQueryAdapter.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(IUserCardXfrEntity userCard) => await _userCardsQueryAdapter.UserCardAsync(userCard).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards) => await _userCardsQueryAdapter.UserCardsByIdsAsync(userCards).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist) => await _userCardsQueryAdapter.UserCardsByArtistAsync(userCardsArtist).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName) => await _userCardsQueryAdapter.UserCardsByNameAsync(userCardsName).ConfigureAwait(false);
 }

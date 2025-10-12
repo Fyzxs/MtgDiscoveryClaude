@@ -2,7 +2,7 @@
 
 namespace Lib.Shared.DataModels.Entities.Itrs;
 
-public interface ICardItemCollectionItrEntity
+public interface ICardItemCollectionOufEntity
 {
     ICollection<ICardItemItrEntity> Data { get; }
 }

@@ -5,11 +5,11 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
 
-internal sealed class UserCardDetailsExtToItrMapper : IUserCardDetailsExtToItrMapper
+internal sealed class UserCardDetailsExtToOufMapper : IUserCardDetailsExtToOufMapper
 {
-    public Task<IUserCardDetailsItrEntity> Map(UserCardDetailsExtEntity source)
+    public Task<IUserCardDetailsOufEntity> Map(UserCardDetailsExtEntity source)
     {
-        IUserCardDetailsItrEntity result = new UserCardDetailsItrEntity
+        IUserCardDetailsOufEntity result = new UserCardDetailsOufEntity
         {
             Finish = source.Finish,
             Special = source.Special,
