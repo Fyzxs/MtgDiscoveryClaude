@@ -9,6 +9,6 @@ internal sealed class AddUserCardXfrEntityFake : IAddUserCardXfrEntity
     public string CardId { get; init; }
     public string SetId { get; init; }
     public IEnumerable<string> ArtistIds { get; init; }
-    public string CardName { get; init; }
+    public string CardNameGuid { get; init; }
     public IUserCardDetailsXfrEntity Details { get; init; }
 }

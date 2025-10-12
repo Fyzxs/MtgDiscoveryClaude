@@ -54,8 +54,23 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        await _userCardEnrichment.Enrich(outEntities, cardName).ConfigureAwait(false);
+        // Use efficient query by card name if userId is present
+        if (string.IsNullOrEmpty(cardName.UserId) is false)
+        {
+            IUserCardsNameItrEntity nameContext = new UserCardsNameItrEntity
+            {
+                UserId = cardName.UserId,
+                CardName = cardName.CardName
+            };
+            await _userCardEnrichment.EnrichByName(outEntities, nameContext).ConfigureAwait(false);
+        }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
+    }
+
+    private sealed class UserCardsNameItrEntity : IUserCardsNameItrEntity
+    {
+        public string UserId { get; init; }
+        public string CardName { get; init; }
     }
 }

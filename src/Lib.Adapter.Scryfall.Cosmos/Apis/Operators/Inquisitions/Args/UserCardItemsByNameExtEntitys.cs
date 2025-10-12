@@ -3,5 +3,5 @@
 public sealed class UserCardItemsByNameExtEntitys
 {
     public string UserId { get; init; }
-    public string CardName { get; init; }
+    public string CardNameGuid { get; init; }
 }

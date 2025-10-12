@@ -27,7 +27,7 @@ internal sealed class AddUserCardXfrToExtMapper : IAddUserCardXfrToExtMapper
             CardId = source.CardId,
             SetId = source.SetId,
             ArtistIds = source.ArtistIds,
-            CardName = source.CardName,
+            CardNameGuid = source.CardNameGuid,
             CollectedList = [collectedItem]
         };
 

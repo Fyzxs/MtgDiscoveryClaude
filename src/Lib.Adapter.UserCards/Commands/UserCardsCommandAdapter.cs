@@ -117,14 +117,14 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             };
         }
 
-        // Return updated item - preserve existing metadata or use new data if metadata missing
+        // Return updated item with fresh metadata from newData
         return new UserCardExtEntity
         {
             UserId = existing.UserId,
             CardId = existing.CardId,
             SetId = existing.SetId,
-            ArtistIds = existing.ArtistIds?.Any() == true ? existing.ArtistIds : newData.ArtistIds,
-            CardName = string.IsNullOrEmpty(existing.CardName) is false ? existing.CardName : newData.CardName,
+            ArtistIds = newData.ArtistIds,
+            CardNameGuid = newData.CardNameGuid,
             CollectedList = [.. mergedItems.Values]
         };
     }

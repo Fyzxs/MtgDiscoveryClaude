@@ -28,7 +28,7 @@ public sealed class UserCardItemsByNameInquisition : ICosmosInquisition<UserCard
     {
         QueryDefinition query = _inquiry.AsSystemType()
             .WithParameter("@userId", args.UserId)
-            .WithParameter("@cardName", args.CardName);
+            .WithParameter("@cardNameGuid", args.CardNameGuid);
 
         PartitionKey partitionKey = new(args.UserId);
 
