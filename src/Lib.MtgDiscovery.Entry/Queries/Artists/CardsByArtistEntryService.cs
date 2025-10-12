@@ -54,8 +54,23 @@ internal sealed class CardsByArtistEntryService : ICardsByArtistEntryService
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        await _userCardEnrichment.Enrich(outEntities, artistId).ConfigureAwait(false);
+        // Use efficient query by artist ID if userId is present
+        if (string.IsNullOrEmpty(artistId.UserId) is false)
+        {
+            IUserCardsArtistItrEntity artistContext = new UserCardsArtistItrEntity
+            {
+                UserId = artistId.UserId,
+                ArtistId = artistId.ArtistId
+            };
+            await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
+        }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
+    }
+
+    private sealed class UserCardsArtistItrEntity : IUserCardsArtistItrEntity
+    {
+        public string UserId { get; init; }
+        public string ArtistId { get; init; }
     }
 }
