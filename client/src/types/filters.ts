@@ -87,6 +87,15 @@ export interface SortConfig {
 }
 
 /**
+ * Toggle switch configuration
+ */
+export interface ToggleConfig {
+  label: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
+}
+
+/**
  * Collector-specific filter section configuration
  */
 export interface CollectorFiltersConfig {
@@ -102,6 +111,7 @@ export interface FilterPanelConfig {
   search?: SearchConfig;
   multiSelects?: MultiSelectConfig[];
   autocompletes?: AutocompleteConfig[];
+  toggles?: ToggleConfig[];
   sort?: SortConfig;
   customFilters?: React.ReactNode[];
   collectorFilters?: CollectorFiltersConfig;

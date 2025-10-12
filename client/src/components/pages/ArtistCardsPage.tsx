@@ -180,7 +180,7 @@ export const ArtistCardsPage: React.FC = () => {
       filters: {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         sets: Array.isArray(initialValues.sets) ? initialValues.sets : (initialValues.sets ? [initialValues.sets] : []),
-        showDigital: false,
+        formats: [], // Empty means show all (both paper and digital)
         collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
         signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
       }
@@ -320,7 +320,11 @@ export const ArtistCardsPage: React.FC = () => {
               signedCards: hasCollector ? {
                 value: filters.signedCards || [],
                 onChange: (value: string[]) => updateFilter('signedCards', value)
-              } : undefined
+              } : undefined,
+              formats: {
+                value: filters.formats || [],
+                onChange: (value: string[]) => updateFilter('formats', value)
+              }
             }}
           />
         }

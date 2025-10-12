@@ -2,6 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { FilterPanel } from './filters/FilterPanel';
 import { MultiSelectDropdown, SortDropdown } from '../atoms';
+import { getFormatOptions } from '../../utils/cardUtils';
 
 interface SortOption {
   value: string;
@@ -16,7 +17,7 @@ interface CardFilterPanelProps {
     rarities?: string[];
     artists?: string[];
     sets?: string[];
-    showDigital?: boolean;
+    formats?: string[];
   };
   
   // State setters
@@ -126,24 +127,29 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
       }
     } : {}),
     multiSelects,
-    toggles: [
-      {
-        label: 'Show Digital',
-        value: filters.showDigital || false,
-        onChange: (value: boolean) => onFilterChange('showDigital', value)
-      }
-    ],
     sort: {
       value: sortBy,
       onChange: onSortChange,
       options: sortOptions
-    }
+    },
+    customFilters: [
+      <MultiSelectDropdown
+        key="formats"
+        value={filters.formats || []}
+        onChange={(value: string[]) => onFilterChange('formats', value)}
+        options={getFormatOptions()}
+        label="Format"
+        placeholder="All Formats"
+        minWidth={150}
+        fullWidth={false}
+      />
+    ]
   };
 
   // If centering, use a flex layout with individual components
   if (centerControls) {
     return (
-      <Box sx={{ 
+      <Box sx={{
         mb: 3,
         display: 'flex',
         justifyContent: 'center',
@@ -164,7 +170,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
             fullWidth={false}
           />
         ))}
-        
+
         {/* Sort Dropdown */}
         <SortDropdown
           value={filterConfig.sort.value}
@@ -172,6 +178,17 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
           options={filterConfig.sort.options}
           label="Sort by"
           minWidth={200}
+          fullWidth={false}
+        />
+
+        {/* Format Filter */}
+        <MultiSelectDropdown
+          value={filters.formats || []}
+          onChange={(value: string[]) => onFilterChange('formats', value)}
+          options={getFormatOptions()}
+          label="Format"
+          placeholder="All Formats"
+          minWidth={150}
           fullWidth={false}
         />
       </Box>
