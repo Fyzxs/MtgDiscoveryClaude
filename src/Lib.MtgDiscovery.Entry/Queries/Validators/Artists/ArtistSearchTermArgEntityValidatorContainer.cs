@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Lib.Shared.Abstractions.Actions;
+using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
@@ -8,7 +8,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 
-internal sealed class ArtistSearchTermArgEntityValidatorContainer : ValidatorActionContainer<IArtistSearchTermArgEntity, IOperationResponse<IArtistSearchResultCollectionItrEntity>>, IArtistSearchTermArgEntityValidator
+internal sealed class ArtistSearchTermArgEntityValidatorContainer : ValidatorActionContainer<IArtistSearchTermArgEntity, IOperationResponse<IArtistSearchResultCollectionOufEntity>>, IArtistSearchTermArgEntityValidator
 {
     public ArtistSearchTermArgEntityValidatorContainer() : base([
             new IsNotNullArtistSearchTermArgEntityValidator(),
@@ -17,7 +17,7 @@ internal sealed class ArtistSearchTermArgEntityValidatorContainer : ValidatorAct
         ])
     { }
 }
-internal sealed class IsNotNullArtistSearchTermArgEntityValidator : OperationResponseValidator<IArtistSearchTermArgEntity, IArtistSearchResultCollectionItrEntity>
+internal sealed class IsNotNullArtistSearchTermArgEntityValidator : OperationResponseValidator<IArtistSearchTermArgEntity, IArtistSearchResultCollectionOufEntity>
 {
     public IsNotNullArtistSearchTermArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -33,7 +33,7 @@ internal sealed class IsNotNullArtistSearchTermArgEntityValidator : OperationRes
     }
 }
 
-internal sealed class HasValidArtistSearchTermArgEntityValidator : OperationResponseValidator<IArtistSearchTermArgEntity, IArtistSearchResultCollectionItrEntity>
+internal sealed class HasValidArtistSearchTermArgEntityValidator : OperationResponseValidator<IArtistSearchTermArgEntity, IArtistSearchResultCollectionOufEntity>
 {
     public HasValidArtistSearchTermArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -49,7 +49,7 @@ internal sealed class HasValidArtistSearchTermArgEntityValidator : OperationResp
     }
 }
 
-internal sealed class HasMinimumLengthArtistSearchTermArgEntityValidator : OperationResponseValidator<IArtistSearchTermArgEntity, IArtistSearchResultCollectionItrEntity>
+internal sealed class HasMinimumLengthArtistSearchTermArgEntityValidator : OperationResponseValidator<IArtistSearchTermArgEntity, IArtistSearchResultCollectionOufEntity>
 {
     public HasMinimumLengthArtistSearchTermArgEntityValidator() : base(new Validator(), new Message())
     { }

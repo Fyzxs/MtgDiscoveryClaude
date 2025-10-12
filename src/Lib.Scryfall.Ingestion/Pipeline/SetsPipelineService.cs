@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -42,16 +43,29 @@ internal sealed class SetsPipelineService : ISetsPipelineService
 
         Dictionary<string, IScryfallSet> sets = [];
         bool hasSetFilter = _config.SetCodesToProcess.Count > 0;
+        System.DateTime? releasedAfter = _config.SetsReleasedAfter;
         int skippedCount = 0;
 
         await foreach (IScryfallSet set in _sets.ConfigureAwait(false))
         {
             // Skip sets not in the filter list if filtering is enabled
-            if (hasSetFilter && !_config.SetCodesToProcess.Contains(set.Code()))
+            if (hasSetFilter && _config.SetCodesToProcess.Contains(set.Code()) is false)
             {
                 skippedCount++;
                 _dashboard.LogSetSkipped(set.Code(), set.Name());
                 continue;
+            }
+
+            // Skip sets released before the date filter if enabled
+            if (releasedAfter.HasValue)
+            {
+                System.DateTime setReleaseDate = GetSetReleaseDate(set);
+                if (setReleaseDate < releasedAfter.Value)
+                {
+                    skippedCount++;
+                    _dashboard.LogSetSkipped(set.Code(), set.Name());
+                    continue;
+                }
             }
 
             sets[set.Id()] = set;
@@ -65,6 +79,25 @@ internal sealed class SetsPipelineService : ISetsPipelineService
 
         _dashboard.LogSetsFetched(sets.Count);
         return sets;
+    }
+
+    private static System.DateTime GetSetReleaseDate(IScryfallSet set)
+    {
+        try
+        {
+            dynamic data = set.Data();
+            string releasedAt = data.released_at;
+            if (string.IsNullOrEmpty(releasedAt) is false && System.DateTime.TryParse(releasedAt, out System.DateTime parsedDate))
+            {
+                return parsedDate;
+            }
+        }
+        catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+        {
+            return System.DateTime.MinValue;
+        }
+
+        return System.DateTime.MinValue;
     }
 
     public async Task WriteSetsAsync(Dictionary<string, IScryfallSet> sets)

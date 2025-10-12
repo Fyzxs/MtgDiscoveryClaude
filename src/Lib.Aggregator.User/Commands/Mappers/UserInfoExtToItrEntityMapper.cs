@@ -12,10 +12,10 @@ namespace Lib.Aggregator.User.Commands.Mappers;
 internal sealed class UserInfoExtToItrEntityMapper : IUserInfoExtToItrEntityMapper
 {
 
-    public Task<IUserInfoItrEntity> Map([NotNull] UserInfoExtEntity source)
+    public Task<IUserInfoOufEntity> Map([NotNull] UserInfoExtEntity source)
     {
 
-        return Task.FromResult<IUserInfoItrEntity>(new UserInfoItrEntity
+        return Task.FromResult<IUserInfoOufEntity>(new UserInfoOufEntity
         {
             UserId = source.UserId,
             UserNickname = source.DisplayName,

@@ -4,22 +4,27 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 
-public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<UserCardArgEntity>
+public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<AddUserCardArgEntity>
 {
-    protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardArgEntity> descriptor)
+    protected override void Configure([NotNull] IInputObjectTypeDescriptor<AddUserCardArgEntity> descriptor)
     {
-        descriptor.Name("AddCardToCollectionInput");
-        descriptor.Description("Input for adding cards to a user's collection");
+        _ = descriptor.Name("AddCardToCollectionInput")
+            .Description("Input for adding cards to a user's collection");
 
-        descriptor.Field(x => x.CardId)
+        _ = descriptor.Field(x => x.CardId)
+            .Name("cardId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the card");
-
-        descriptor.Field(x => x.SetId)
+        _ = descriptor.Field(x => x.SetId)
+            .Name("setId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the set");
-
-        descriptor.Field(x => x.UserCardDetails)
+        _ = descriptor.Field(x => x.UserId)
+            .Name("userId")
+            .Type<NonNullType<StringType>>()
+            .Description("The user Id of the user adding the card");
+        _ = descriptor.Field(x => x.UserCardDetails)
+            .Name("userCardDetails")
             .Type<NonNullType<CollectedItemArgEntityInputType>>()
             .Description("The collected item with its finish and count");
     }

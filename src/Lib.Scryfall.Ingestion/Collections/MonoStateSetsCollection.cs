@@ -22,10 +22,7 @@ internal sealed class MonoStateSetsCollection : IMonoStateSetsCollection
     private static bool s_initialized;
     private readonly ILogger _logger;
 
-    public MonoStateSetsCollection(ILogger logger)
-    {
-        _logger = logger;
-    }
+    public MonoStateSetsCollection(ILogger logger) => _logger = logger;
 
     public async Task<IScryfallSet> GetSetAsync(string code)
     {

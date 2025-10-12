@@ -27,16 +27,10 @@ public sealed class UserAdapterService : IUserAdapterService
 {
     private readonly IUserCommandAdapter _userCommandAdapter;
 
-    public UserAdapterService(ILogger logger) : this(new UserCosmosCommandAdapter(logger))
+    public UserAdapterService(ILogger logger) : this(new UserCommandAdapter(logger))
     { }
 
-    private UserAdapterService(IUserCommandAdapter userCommandAdapter)
-    {
-        _userCommandAdapter = userCommandAdapter;
-    }
+    private UserAdapterService(IUserCommandAdapter userCommandAdapter) => _userCommandAdapter = userCommandAdapter;
 
-    public async Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
-    {
-        return await _userCommandAdapter.RegisterUserAsync(userInfo).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<UserInfoExtEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userCommandAdapter.RegisterUserAsync(userInfo).ConfigureAwait(false);
 }

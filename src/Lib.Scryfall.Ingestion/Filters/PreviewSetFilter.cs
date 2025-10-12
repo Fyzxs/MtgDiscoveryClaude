@@ -8,10 +8,7 @@ internal sealed class PreviewSetFilter : IScryfallSetFilter
 {
     private readonly ILogger _logger;
 
-    public PreviewSetFilter(ILogger logger)
-    {
-        _logger = logger;
-    }
+    public PreviewSetFilter(ILogger logger) => _logger = logger;
 
     public bool ShouldInclude(IScryfallSet set)
     {

@@ -40,16 +40,16 @@ public sealed class UserCardsCommandAdapterTests
         // Use TypeWrapper to access internal constructor
         UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { new UserCardDetailsXfrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 } }
+            Details = new UserCardDetailsXfrEntityFake { Finish = "nonfoil", Special = "none", Count = 1 }
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -75,16 +75,16 @@ public sealed class UserCardsCommandAdapterTests
             Count = 1
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            Details = collectedCard
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -110,16 +110,16 @@ public sealed class UserCardsCommandAdapterTests
             Count = 2
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            Details = collectedCard
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -152,16 +152,16 @@ public sealed class UserCardsCommandAdapterTests
             Count = 2
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { newCollectedCard }
+            Details = newCollectedCard
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -186,16 +186,16 @@ public sealed class UserCardsCommandAdapterTests
             Count = 3
         };
 
-        IUserCardXfrEntity userCard = new UserCardXfrEntityFake
+        IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
             UserId = "user123",
             CardId = "card456",
             SetId = "set789",
-            CollectedList = new[] { collectedCard }
+            Details = collectedCard
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(userCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await adapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();

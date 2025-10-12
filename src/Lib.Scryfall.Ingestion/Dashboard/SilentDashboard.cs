@@ -11,15 +11,9 @@ internal sealed class SilentDashboard : IIngestionDashboard
     private int _lastCardMilestone;
     private int _lastTrigramMilestone;
 
-    public SilentDashboard(ILogger logger)
-    {
-        _logger = logger;
-    }
+    public SilentDashboard(ILogger logger) => _logger = logger;
 
-    public void SetStartTime()
-    {
-        _logger.LogBulkIngestionStarted();
-    }
+    public void SetStartTime() => _logger.LogBulkIngestionStarted();
 
     public void UpdateProgress(string type, int current, int total, string action, string item)
     {
@@ -81,10 +75,7 @@ internal sealed class SilentDashboard : IIngestionDashboard
         }
     }
 
-    public void AddCompletedSet(string name)
-    {
-        _logger.LogSetCompleted(name);
-    }
+    public void AddCompletedSet(string name) => _logger.LogSetCompleted(name);
 
     public void UpdateMemoryUsage()
     {
@@ -96,10 +87,7 @@ internal sealed class SilentDashboard : IIngestionDashboard
         // No-op in silent mode
     }
 
-    public void Complete(string message)
-    {
-        _logger.LogIngestionComplete(message);
-    }
+    public void Complete(string message) => _logger.LogIngestionComplete(message);
 
     public void UpdateCompletedCount(string type, int count)
     {
@@ -115,10 +103,7 @@ internal sealed class SilentDashboard : IIngestionDashboard
 
     public bool IsEnabled(LogLevel logLevel) => _logger.IsEnabled(logLevel);
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-    {
-        _logger.Log(logLevel, eventId, state, exception, formatter);
-    }
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) => _logger.Log(logLevel, eventId, state, exception, formatter);
 }
 
 internal static partial class SilentDashboardLoggerExtensions

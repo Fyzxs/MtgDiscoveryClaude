@@ -43,6 +43,37 @@ See [TESTING_GUIDELINES.md](TESTING_GUIDELINES.md) for specific unit testing pat
 - No primitives, no nulls, no enums (except at boundaries)
 - `init` setters for DTO-style classes like `PointItem`
 - Use `ConfigureAwait(false)` on all async calls in non-UI projects
+- No public statics except:
+  - MonoState pattern implementations (e.g., `MonoStateConfig`)
+  - `LoggerMessage` source-generated partial methods (structured logging)
+  - Framework-required patterns (e.g., factory methods required by libraries)
+
+### Null Handling and Validators
+**Validators are Null Boundary Guards:**
+- Validators **must** check for null at system boundaries (GraphQL input, external data, etc.)
+- Validators return **boolean** results (`Task<bool> IsValid(...)`) indicating validity
+- Null checks in validators are **correct and necessary** - they protect the system interior
+- Once past validation, code inside the system can assume non-null
+- For optional behavior after validation, use Null Object pattern (not null references)
+
+**Example: Correct Validator Pattern**
+```csharp
+// This is CORRECT - validators check for null at boundaries
+public sealed class CollectedItemNotNullValidator : OperationResponseValidator<TArg, TOut>
+{
+    public sealed class Validator : IValidator<TArg>
+    {
+        // Checking for null here is correct and expected
+        public Task<bool> IsValid(TArg arg) =>
+            Task.FromResult(arg.SomeProperty is not null);
+    }
+}
+```
+
+**Null Object Pattern for Interior Code:**
+- After validation passes, use Null Object pattern for optional behavior
+- Example: `EmptyCollection` instead of `null`, `NoOpLogger` instead of `null`
+- Never pass null through validated code paths
 
 ### Naming Conventions
 - Remove redundant terms from names (e.g., `ICosmosContainerReadOperator` not `ICosmosContainerReadItemOperator`)

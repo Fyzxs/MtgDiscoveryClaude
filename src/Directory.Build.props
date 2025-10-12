@@ -151,8 +151,6 @@
   <PropertyGroup Condition="$(IsUnitTestBuild)">
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
     <!-- CA1707 - underscores in test names -->
     <!-- CA1515 - test classes must be public for MSTest -->
     <NoWarn>$(NoWarn);CA1707;CA1515</NoWarn>

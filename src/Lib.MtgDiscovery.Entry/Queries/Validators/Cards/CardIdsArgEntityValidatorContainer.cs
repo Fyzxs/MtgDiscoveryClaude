@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.Abstractions.Actions;
+using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;
@@ -11,7 +11,7 @@ namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 /// <summary>
 /// Validator interface for CardIds argument entities.
 /// </summary>
-internal interface ICardIdsArgEntityValidator : IValidatorAction<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>;
+internal interface ICardIdsArgEntityValidator : IValidatorAction<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>;
 
 /// <summary>
 /// Container composing multiple validation rules for CardIds arguments.
@@ -37,7 +37,7 @@ internal interface ICardIdsArgEntityValidator : IValidatorAction<ICardIdsArgEnti
 /// Pattern Validated: 2025-01-08
 /// Next Review: When adding new validation requirements
 /// </summary>
-internal sealed class CardIdsArgEntityValidatorContainer : ValidatorActionContainer<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>, ICardIdsArgEntityValidator
+internal sealed class CardIdsArgEntityValidatorContainer : ValidatorActionContainer<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>, ICardIdsArgEntityValidator
 {
     public CardIdsArgEntityValidatorContainer() : base([
             new IsNotNullCardIdsArgEntityValidator(),
@@ -58,7 +58,7 @@ internal sealed class CardIdsArgEntityValidatorContainer : ValidatorActionContai
 /// 
 /// This class should NEVER change. If different validation is needed, create a new class.
 /// </summary>
-internal sealed class IsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionItrEntity>
+internal sealed class IsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
 {
     public IsNotNullCardIdsArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -74,7 +74,7 @@ internal sealed class IsNotNullCardIdsArgEntityValidator : OperationResponseVali
     }
 }
 
-internal sealed class IdsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionItrEntity>
+internal sealed class IdsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
 {
     public IdsNotNullCardIdsArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -90,7 +90,7 @@ internal sealed class IdsNotNullCardIdsArgEntityValidator : OperationResponseVal
     }
 }
 
-internal sealed class HasIdsCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionItrEntity>
+internal sealed class HasIdsCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
 {
     public HasIdsCardIdsArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -106,7 +106,7 @@ internal sealed class HasIdsCardIdsArgEntityValidator : OperationResponseValidat
     }
 }
 
-internal sealed class ValidCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionItrEntity>
+internal sealed class ValidCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
 {
     public ValidCardIdsArgEntityValidator() : base(new Validator(), new Message())
     { }

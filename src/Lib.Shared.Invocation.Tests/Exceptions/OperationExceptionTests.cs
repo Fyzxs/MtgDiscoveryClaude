@@ -6,7 +6,9 @@ namespace Lib.Shared.Invocation.Tests.Exceptions;
 [TestClass]
 public sealed class OperationExceptionTests
 {
+#pragma warning disable CA1032 // Implement standard exception constructors
     private sealed class TestOperationException : OperationException
+#pragma warning restore CA1032 // Implement standard exception constructors
     {
         public TestOperationException(HttpStatusCode statusCode, string statusMessage, Exception? innerException = null)
             : base(statusCode, statusMessage, innerException)

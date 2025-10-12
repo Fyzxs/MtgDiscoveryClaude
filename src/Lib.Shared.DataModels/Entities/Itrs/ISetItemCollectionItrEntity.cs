@@ -2,7 +2,7 @@
 
 namespace Lib.Shared.DataModels.Entities.Itrs;
 
-public interface ISetItemCollectionItrEntity
+public interface ISetItemCollectionOufEntity
 {
     ICollection<ISetItemItrEntity> Data { get; }
 }

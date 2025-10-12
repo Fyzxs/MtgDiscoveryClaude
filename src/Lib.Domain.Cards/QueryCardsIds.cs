@@ -5,12 +5,7 @@ namespace Lib.Domain.Cards;
 
 internal sealed class QueryCardsIds : ICardIdsItrEntity
 {
-    private readonly ICollection<string> _cardIds;
+    public QueryCardsIds(ICollection<string> cardIds) => CardIds = cardIds;
 
-    public QueryCardsIds(ICollection<string> cardIds)
-    {
-        _cardIds = cardIds;
-    }
-
-    public ICollection<string> CardIds => _cardIds;
+    public ICollection<string> CardIds { get; }
 }

@@ -1,6 +1,10 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
+﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
 using App.MtgDiscovery.GraphQL.Queries;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +21,12 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
             .AddTypeExtension<UserCardsQueryMethods>()
+            .AddTypeExtension<UserSetCardsQueryMethods>()
+            .AddTypeExtension<UserInfoQueryMethods>()
+            // Input types for queries
+            .AddType<UserCardsBySetArgEntityInputType>()
+            .AddType<UserCardsByIdsArgEntityInputType>()
+            .AddType<UserCardArgEntityInputType>()
             .AddType<CardResponseModelUnionType>()
             .AddType<FailureResponseModelType>()
             .AddType<CardsSuccessDataResponseModelType>()
@@ -36,6 +46,16 @@ internal static class ApiQueryExtensions
             .AddType<UserCardsCollectionSuccessDataResponseModelType>()
             .AddType<UserCardCollectionOutEntityType>()
             .AddType<CollectedItemOutEntityType>()
+            // UserSetCards query types
+            .AddType<UserSetCardArgEntityInputType>()
+            .AddType<UserSetCardResponseModelUnionType>()
+            .AddType<UserSetCardSuccessDataResponseModelType>()
+            .AddType<UserSetCardOutEntityType>()
+            .AddType<UserSetCardRarityGroupOutEntityType>()
+            .AddType<UserSetCardGroupOutEntityType>()
+            .AddType<UserSetCardFinishGroupOutEntityType>()
+            // UserInfo query types
+            .AddType<UserInfoOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

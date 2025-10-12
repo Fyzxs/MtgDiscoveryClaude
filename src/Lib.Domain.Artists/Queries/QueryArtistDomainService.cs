@@ -16,9 +16,9 @@ internal sealed class QueryArtistDomainService : IArtistDomainService
 
     private QueryArtistDomainService(IArtistAggregatorService artistAggregatorService) => _artistAggregatorService = artistAggregatorService;
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => await _artistAggregatorService.ArtistSearchAsync(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => await _artistAggregatorService.ArtistSearchAsync(searchTerm).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => await _artistAggregatorService.CardsByArtistAsync(artistId).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => await _artistAggregatorService.CardsByArtistAsync(artistId).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => await _artistAggregatorService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => await _artistAggregatorService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
 }

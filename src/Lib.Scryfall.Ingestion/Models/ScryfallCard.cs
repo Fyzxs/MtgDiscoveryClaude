@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Lib.Scryfall.Ingestion.Dtos;
+using Lib.Scryfall.Ingestion.Services;
 using Lib.Scryfall.Shared.Apis.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Lib.Scryfall.Ingestion.Models;
 
@@ -9,11 +11,20 @@ internal sealed class ScryfallCard : IScryfallCard
 {
     private readonly ExtScryfallCardDto _dto;
     private readonly IScryfallSet _set;
+    private readonly ICardGroupingMatcher _groupingMatcher;
+    private bool _isEnriched;
 
     public ScryfallCard(ExtScryfallCardDto dto, IScryfallSet set)
+        : this(dto, set, new CardGroupingMatcher())
+    {
+    }
+
+    internal ScryfallCard(ExtScryfallCardDto dto, IScryfallSet set, ICardGroupingMatcher groupingMatcher)
     {
         _dto = dto;
         _set = set;
+        _groupingMatcher = groupingMatcher;
+        _isEnriched = false;
     }
 
     public string Id() => _dto.Data.id;
@@ -31,7 +42,26 @@ internal sealed class ScryfallCard : IScryfallCard
         }
     }
 
-    public dynamic Data() => _dto.Data;
+    public dynamic Data()
+    {
+        if (_isEnriched)
+        {
+            return _dto.Data;
+        }
+
+        string setCode = GetSetCode(_dto.Data);
+        string groupId = _groupingMatcher.GetGroupIdForCard(_dto.Data, setCode);
+
+        if (string.IsNullOrEmpty(groupId) is false)
+        {
+            _dto.Data.set_group_id = groupId;
+        }
+
+        _isEnriched = true;
+        return _dto.Data;
+    }
+
+    private static string GetSetCode(dynamic data) => data.set;
 
     public IScryfallSet Set() => _set;
 
@@ -157,7 +187,7 @@ internal sealed class ScryfallCard : IScryfallCard
             string artistString = (string)artistField;
 
             // Handle multiple artists separated by " & " or " and "
-            string[] separators = { " & ", " and " };
+            string[] separators = [" & ", " and "];
             string[] artistNames = artistString.Split(separators, System.StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string name in artistNames)

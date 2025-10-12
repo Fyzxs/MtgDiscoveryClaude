@@ -7,9 +7,9 @@ public sealed class UserCardCollectionResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {
-        descriptor.Name("UserCardCollectionResponseModel");
-        descriptor.Description("Union type for user card collection response");
-        descriptor.Type<UserCardCollectionSuccessDataResponseModelType>();
-        descriptor.Type<FailureResponseModelType>();
+        _ = descriptor.Name("UserCardCollectionResponse")
+            .Description("Union type for user card collection response")
+            .Type<UserCardCollectionSuccessDataResponseModelType>()
+            .Type<FailureResponseModelType>();
     }
 }

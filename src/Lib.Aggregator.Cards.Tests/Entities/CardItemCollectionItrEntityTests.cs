@@ -6,7 +6,7 @@ using Lib.Shared.DataModels.Entities.Itrs;
 namespace Lib.Aggregator.Cards.Tests.Entities;
 
 [TestClass]
-public sealed class CardItemCollectionItrEntityTests
+public sealed class CardItemCollectionOufEntityTests
 {
     [TestMethod, TestCategory("unit")]
     public void Data_WhenSet_ReturnsCorrectValue()
@@ -18,7 +18,7 @@ public sealed class CardItemCollectionItrEntityTests
         ];
 
         // Act
-        CardItemCollectionItrEntity subject = new()
+        CardItemCollectionOufEntity subject = new()
         {
             Data = expected
         };
@@ -32,20 +32,20 @@ public sealed class CardItemCollectionItrEntityTests
     public void Constructor_CreatesInstanceWithNullData()
     {
         // Arrange & Act
-        CardItemCollectionItrEntity subject = new();
+        CardItemCollectionOufEntity subject = new();
 
         // Assert
         subject.Data.Should().BeNull();
     }
 
     [TestMethod, TestCategory("unit")]
-    public void ImplementsICardItemCollectionItrEntity()
+    public void ImplementsICardItemCollectionOufEntity()
     {
         // Arrange
-        CardItemCollectionItrEntity subject = new();
+        CardItemCollectionOufEntity subject = new();
 
         // Act
-        bool actual = subject is ICardItemCollectionItrEntity;
+        bool actual = subject is ICardItemCollectionOufEntity;
 
         // Assert
         actual.Should().BeTrue();

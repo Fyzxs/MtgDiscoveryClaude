@@ -40,7 +40,7 @@ public sealed class CardAggregatorServiceTests
         };
 
         CardItemCollectionItrEntityFake expectedCollection = new();
-        OperationResponseFake<ICardItemCollectionItrEntity> expectedResponse = new()
+        OperationResponseFake<ICardItemCollectionOufEntity> expectedResponse = new()
         {
             IsSuccess = true,
             ResponseData = expectedCollection
@@ -54,7 +54,7 @@ public sealed class CardAggregatorServiceTests
         CardAggregatorService subject = new TestableCardAggregatorService(fakeOperations);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert
         actual.Should().BeSameAs(expectedResponse);

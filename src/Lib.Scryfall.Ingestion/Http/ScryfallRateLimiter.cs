@@ -29,8 +29,5 @@ internal sealed class ScryfallRateLimiter : IScryfallRateLimiter, IDisposable
         await Task.Delay(remainingDelay).ConfigureAwait(false);
     }
 
-    public void Dispose()
-    {
-        _semaphore?.Dispose();
-    }
+    public void Dispose() => _semaphore?.Dispose();
 }

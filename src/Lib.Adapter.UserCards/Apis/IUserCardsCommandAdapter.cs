@@ -29,7 +29,7 @@ public interface IUserCardsCommandAdapter
     /// <summary>
     /// Adds a card to a user's collection with the specified collection details.
     /// </summary>
-    /// <param name="userCard">The user card collection information to add</param>
+    /// <param name="addUserCard">The user card collection information to add</param>
     /// <returns>The added user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardXfrEntity userCard);
+    Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard);
 }

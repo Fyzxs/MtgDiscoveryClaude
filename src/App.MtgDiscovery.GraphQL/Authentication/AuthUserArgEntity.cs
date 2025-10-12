@@ -13,23 +13,29 @@ public sealed class AuthUserArgEntity : IAuthUserArgEntity
 
     private readonly ClaimsPrincipal _claimsPrincipal;
 
-    public AuthUserArgEntity(ClaimsPrincipal claimsPrincipal)
-    {
-        _claimsPrincipal = claimsPrincipal;
-    }
+    public AuthUserArgEntity(ClaimsPrincipal claimsPrincipal) => _claimsPrincipal = claimsPrincipal;
 
     // IAuthUserArgEntity implementation - extract values from JWT on demand
     public string UserId
     {
         get
         {
-            string subject = _claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            Guid guid = GuidUtility.Create(s_userSubjectNamespace, subject);
+            Guid guid = GuidUtility.Create(s_userSubjectNamespace, SourceId);
             return guid.ToString();
         }
     }
 
-    public string SourceId => _claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+    public string SourceId => _claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value
+        ?? _claimsPrincipal.FindFirst("sub")?.Value
+        ?? throw new InvalidOperationException("No subject claim found in token");
 
-    public string DisplayName => _claimsPrincipal.FindFirst("nickname")!.Value;
+    public string DisplayName => _claimsPrincipal.FindFirst("https://mtg-discovery-api/nickname")?.Value
+        ?? _claimsPrincipal.FindFirst("nickname")?.Value
+        ?? _claimsPrincipal.FindFirst("name")?.Value
+        ?? "Unknown";
+
+    public string Email => _claimsPrincipal.FindFirst("https://mtg-discovery-api/email")?.Value
+        ?? _claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value
+        ?? _claimsPrincipal.FindFirst("email")?.Value
+        ?? "unknown@example.com";
 }

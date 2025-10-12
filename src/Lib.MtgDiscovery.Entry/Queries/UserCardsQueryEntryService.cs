@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.UserCards;
-using Lib.Shared.Abstractions.Actions;
+using Lib.MtgDiscovery.Entry.Queries.UserCards;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -14,34 +11,29 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
 {
-    private readonly IUserCardsDomainService _userCardsDomainService;
-    private readonly IUserCardsSetArgEntityValidator _validator;
-    private readonly IUserCardsSetArgToItrMapper _mapper;
+    private readonly IUserCardEntryService _userCard;
+    private readonly IUserCardsBySetEntryService _userCardsBySet;
+    private readonly IUserCardsByIdsEntryService _userCardsByIds;
 
     public UserCardsQueryEntryService(ILogger logger) : this(
-        new UserCardsDomainService(logger),
-        new UserCardsSetArgEntityValidatorContainer(),
-        new UserCardsSetArgToItrMapper())
+        new UserCardEntryService(logger),
+        new UserCardsBySetEntryService(logger),
+        new UserCardsByIdsEntryService(logger))
     { }
 
     private UserCardsQueryEntryService(
-        IUserCardsDomainService userCardsDomainService,
-        IUserCardsSetArgEntityValidator validator,
-        IUserCardsSetArgToItrMapper mapper)
+        IUserCardEntryService userCard,
+        IUserCardsBySetEntryService userCardsBySet,
+        IUserCardsByIdsEntryService userCardsByIds)
     {
-        _userCardsDomainService = userCardsDomainService;
-        _validator = validator;
-        _mapper = mapper;
+        _userCard = userCard;
+        _userCardsBySet = userCardsBySet;
+        _userCardsByIds = userCardsByIds;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs)
-    {
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardItrEntity>>> result = await _validator.Validate(setArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => await _userCard.Execute(cardArgs).ConfigureAwait(false);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => await _userCardsBySet.Execute(bySetArgs).ConfigureAwait(false);
 
-        IUserCardsSetItrEntity itrEntity = await _mapper.Map(setArgs).ConfigureAwait(false);
-
-        return await _userCardsDomainService.UserCardsBySetAsync(itrEntity).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => await _userCardsByIds.Execute(cardsArgs).ConfigureAwait(false);
 }

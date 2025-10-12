@@ -44,6 +44,7 @@ internal sealed class ReversibleScryfallSetCollection : IAsyncEnumerable<IScryfa
             {
                 yield return set;
             }
+
             yield break;
         }
 

@@ -37,8 +37,8 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
             [
                 new NonDigitalSetFilter(),
                 new PreviewSetFilter(logger),
-                new ForeignSetFilter(logger),
                 new SpecificSetsFilter(ingestionConfiguration),
+                new ReleasedAfterDateFilter(ingestionConfiguration),
                 new MaxSetsFilter(ingestionConfiguration)
             ])
     {
@@ -60,8 +60,5 @@ public sealed class FilteredScryfallSetCollection : IAsyncEnumerable<IScryfallSe
         }
     }
 
-    private bool ShouldNotInclude(IScryfallSet set)
-    {
-        return _filters.Any(filter => filter.ShouldNotInclude(set));
-    }
+    private bool ShouldNotInclude(IScryfallSet set) => _filters.Any(filter => filter.ShouldNotInclude(set));
 }

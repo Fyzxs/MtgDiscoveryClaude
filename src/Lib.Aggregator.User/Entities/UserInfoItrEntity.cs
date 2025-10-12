@@ -2,7 +2,7 @@
 
 namespace Lib.Aggregator.User.Entities;
 
-internal sealed class UserInfoItrEntity : IUserInfoItrEntity
+internal sealed class UserInfoOufEntity : IUserInfoOufEntity
 {
     public string UserId { get; init; }
     public string UserSourceId { get; init; }
