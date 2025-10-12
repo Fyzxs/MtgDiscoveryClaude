@@ -99,23 +99,21 @@ export function useFilterState<T>(
     // Apply custom filters
     Object.entries(filters).forEach(([filterName, filterValue]) => {
       if (filterValue === undefined || filterValue === null) return;
-      
+
       // Handle array filters (like multi-select)
       if (Array.isArray(filterValue) && filterValue.length === 0) return;
-      
+
       const filterFunction = filterFunctions[filterName];
       if (filterFunction) {
         filtered = filtered.filter(item => filterFunction(item, filterValue));
       }
     });
 
-    // Apply sorting
-    if (sortBy && sortOptions[sortBy]) {
-      filtered.sort(sortOptions[sortBy]);
-    }
+    // NOTE: Sorting removed from here to avoid double-sorting
+    // Parent components should use useOptimizedSort for sorting the filtered results
 
     setFilteredData(filtered);
-  }, [data, searchTerm, filters, sortBy]); // Config is accessed via ref, not dependencies
+  }, [data, searchTerm, filters]); // sortBy removed - no longer used here, sorting happens in parent
 
   return {
     // State values
