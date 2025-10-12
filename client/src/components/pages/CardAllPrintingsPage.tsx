@@ -132,7 +132,7 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   // Memoize filtering options to prevent infinite re-renders
   const filteringOptions = useMemo(() => ({
-    defaultSort: hasCollector ? 'collection-desc' : 'release-desc',
+    defaultSort: 'release-desc', // Always default to newest first
     includeSets: false,
     includeCollectorFilters: hasCollector
   }), [hasCollector]);

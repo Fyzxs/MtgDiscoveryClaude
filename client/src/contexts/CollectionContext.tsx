@@ -5,6 +5,7 @@ import type { CardCollectionUpdate } from '../types/collection';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { ADD_CARD_TO_COLLECTION } from '../graphql/mutations/addCardToCollection';
 import { useUser } from './UserContext';
+import { useCollectorParam } from '../hooks/useCollectorParam';
 import { cardCacheManager } from '../services/CardCacheManager';
 import { perfMonitor } from '../utils/performanceMonitor';
 
@@ -47,6 +48,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
   const toastStackRef = useRef<NotificationToastStackRef>(null);
   const [isAnyCardEntering, setIsAnyCardEntering] = useState(false);
   const { userProfile } = useUser();
+  const { hasCollector, collectorId } = useCollectorParam();
   const [addCardToCollection] = useMutation(ADD_CARD_TO_COLLECTION);
 
   // REMOVED: Flash animation - now handled directly in MtgCard via DOM for performance
@@ -157,7 +159,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       });
       throw error;
     }
-  }, [addCardToCollection, userProfile, apolloClient.cache]);
+  }, [addCardToCollection, userProfile, apolloClient.cache, hasCollector, collectorId]);
 
   const value: CollectionContextValue = {
     submitCollectionUpdate,

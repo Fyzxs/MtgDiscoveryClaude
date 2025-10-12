@@ -68,10 +68,10 @@ function App() {
   return (
     <I18nProvider>
       <UserProvider>
-        <CollectionProvider>
-          <BrowserRouter>
-          <Layout>
-            <Routes>
+        <BrowserRouter>
+          <CollectionProvider>
+            <Layout>
+              <Routes>
             <Route path="/" element={
               <PageErrorBoundary name="HomePage">
                 <HomePage />
@@ -112,12 +112,12 @@ function App() {
                 <SignInRedirectPage />
               </PageErrorBoundary>
             } />
-            {/* Handle old query param URLs for backwards compatibility */}
-            <Route path="*" element={<LegacyRedirect />} />
-          </Routes>
-        </Layout>
-          </BrowserRouter>
-        </CollectionProvider>
+              {/* Handle old query param URLs for backwards compatibility */}
+              <Route path="*" element={<LegacyRedirect />} />
+            </Routes>
+          </Layout>
+          </CollectionProvider>
+        </BrowserRouter>
       </UserProvider>
     </I18nProvider>
   )
