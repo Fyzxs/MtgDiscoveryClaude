@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useDeferredValue, useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../hooks/useGridNavigation';
@@ -47,11 +47,49 @@ export const CardGrid: React.FC<CardGridProps> = ({
   onArtistClick,
   onSetClick
 }) => {
+  // Defer card rendering to keep UI responsive during filter changes
+  // When showing MORE cards (filter removal), React can render them in background
+  const deferredCards = useDeferredValue(cards);
+
+  // Progressive rendering: render cards in batches for better performance
+  const [visibleCount, setVisibleCount] = useState(0);
+
+  useEffect(() => {
+    // Reset when cards change
+    setVisibleCount(0);
+
+    // Render in batches to keep UI responsive
+    const batchSize = 50;
+    const totalCards = deferredCards.length;
+
+    if (totalCards === 0) return;
+
+    // First batch immediately
+    setVisibleCount(Math.min(batchSize, totalCards));
+
+    // Remaining batches progressively
+    if (totalCards > batchSize) {
+      const timeoutIds: NodeJS.Timeout[] = [];
+
+      for (let i = batchSize; i < totalCards; i += batchSize) {
+        const timeout = setTimeout(() => {
+          setVisibleCount(Math.min(i + batchSize, totalCards));
+        }, ((i / batchSize) - 1) * 50); // 50ms between batches
+        timeoutIds.push(timeout);
+      }
+
+      return () => timeoutIds.forEach(clearTimeout);
+    }
+  }, [deferredCards]);
+
+  // Use visible cards for rendering
+  const cardsToRender = deferredCards.slice(0, visibleCount);
+
   // Grid navigation hook
   const { handleKeyDown } = useGridNavigation({
-    totalItems: cards.length,
+    totalItems: cardsToRender.length,
     groupId,
-    enabled: enableNavigation && !isLoading && cards.length > 0
+    enabled: enableNavigation && !isLoading && cardsToRender.length > 0
   });
 
   // Loading state with skeletons
@@ -83,7 +121,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
   }
 
   // Empty state
-  if (cards.length === 0) {
+  if (deferredCards.length === 0) {
     return null;
   }
 
@@ -102,7 +140,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
         onKeyDown={enableNavigation ? handleKeyDown : undefined}
         tabIndex={enableNavigation ? 0 : -1}
       >
-        {cards.map((card, index) => (
+        {cardsToRender.map((card, index) => (
           <MtgCard
             key={card.id}
             card={card}
