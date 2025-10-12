@@ -49,9 +49,6 @@ interface SetPageFiltersProps {
   onCollectionCountsChange?: (value: string[]) => void;
   onSignedCardsChange?: (value: string[]) => void;
   onFinishesChange?: (value: string[]) => void;
-
-  // Initial values for form
-  initialSearch: string;
 }
 
 export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
@@ -78,8 +75,7 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
   finishes = [],
   onCollectionCountsChange,
   onSignedCardsChange,
-  onFinishesChange,
-  initialSearch
+  onFinishesChange
 }) => {
   // Only show filters if there are multiple cards
   if (cards.length <= 1) {
@@ -91,7 +87,7 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
       <FilterPanel
         config={{
           search: {
-            value: initialSearch,
+            value: searchTerm,
             onChange: onSearchChange,
             placeholder: 'Search cards...',
             debounceMs: 300,

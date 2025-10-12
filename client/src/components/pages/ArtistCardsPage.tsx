@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, startTransition } from 'react';
 import { useParams } from 'react-router-dom';
 import { Alert } from '@mui/material';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
@@ -239,13 +239,15 @@ export const ArtistCardsPage: React.FC = () => {
   );
 
   const handleClearFilters = () => {
-    setSearchTerm('');
-    updateFilter('rarities', []);
-    updateFilter('sets', []);
-    if (hasCollector) {
-      updateFilter('collectionCounts', []);
-      updateFilter('signedCards', []);
-    }
+    startTransition(() => {
+      setSearchTerm('');
+      updateFilter('rarities', []);
+      updateFilter('sets', []);
+      if (hasCollector) {
+        updateFilter('collectionCounts', []);
+        updateFilter('signedCards', []);
+      }
+    });
   };
 
   // Early returns for error states
@@ -287,8 +289,12 @@ export const ArtistCardsPage: React.FC = () => {
             hasCollector={hasCollector}
             filters={{
               search: {
-                value: initialValues.search || '',
-                onChange: setSearchTerm
+                value: searchTerm,
+                onChange: (value: string) => {
+                  startTransition(() => {
+                    setSearchTerm(value);
+                  });
+                }
               },
               rarities: {
                 value: selectedRarities,

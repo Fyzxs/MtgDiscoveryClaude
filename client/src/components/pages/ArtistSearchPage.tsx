@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, startTransition } from 'react';
 import { useLazyQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Box, CircularProgress } from '@mui/material';
@@ -39,16 +39,18 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   }, [navigate]);
 
   const handleSearchChange = useCallback((value: string) => {
-    setSearchTerm(value);
-    if (value.length >= 3) {
-      searchArtists({
-        variables: {
-          searchTerm: {
-            searchTerm: value
+    startTransition(() => {
+      setSearchTerm(value);
+      if (value.length >= 3) {
+        searchArtists({
+          variables: {
+            searchTerm: {
+              searchTerm: value
+            }
           }
-        }
-      });
-    }
+        });
+      }
+    });
   }, [searchArtists]);
 
   // Determine display states
