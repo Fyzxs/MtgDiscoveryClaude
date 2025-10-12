@@ -54,7 +54,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        // Use efficient query by card name if userId is present
+        // TODO: This needs extraction
         if (string.IsNullOrEmpty(cardName.UserId) is false)
         {
             IUserCardsNameItrEntity nameContext = new UserCardsNameItrEntity

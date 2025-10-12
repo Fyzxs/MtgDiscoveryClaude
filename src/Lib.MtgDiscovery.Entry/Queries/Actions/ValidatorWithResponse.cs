@@ -16,8 +16,7 @@ internal sealed class ValidatorWithResponse<TToValidate, TResponseType> : IValid
 
     public async Task<AsyncTryOut<IOperationResponse<TResponseType>>> TryValidate(TToValidate toValidate)
     {
-        IValidatorActionResult<IOperationResponse<TResponseType>> validatorResult =
-            await _validator.Validate(toValidate).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<TResponseType>> validatorResult = await _validator.Validate(toValidate).ConfigureAwait(false);
 
         if (validatorResult.IsValid()) return new SuccessAsyncTryOut<IOperationResponse<TResponseType>>();
 

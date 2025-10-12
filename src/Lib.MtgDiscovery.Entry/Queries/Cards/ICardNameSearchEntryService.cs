@@ -5,6 +5,6 @@ using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Cards;
 
-internal interface ICardNameSearchEntryService : IOperationResponseService<ICardSearchTermArgEntity, List<CardNameSearchResultOutEntity>>
-{
-}
+internal interface
+    ICardNameSearchEntryService : IOperationResponseService<ICardSearchTermArgEntity,
+    List<CardNameSearchResultOutEntity>>;

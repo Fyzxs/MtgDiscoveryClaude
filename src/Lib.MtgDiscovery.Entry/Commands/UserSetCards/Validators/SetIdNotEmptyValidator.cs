@@ -14,7 +14,7 @@ internal sealed class SetIdNotEmptyValidator : OperationResponseValidator<IAddSe
 
     public sealed class Validator : IValidator<IAddSetGroupToUserSetCardArgsEntity>
     {
-        public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg) => Task.FromResult(arg.AddSetGroupToUserSetCard?.SetId.IzNotNullOrWhiteSpace() ?? false);
+        public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg) => Task.FromResult(arg.AddSetGroupToUserSetCard.SetId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage

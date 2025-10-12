@@ -56,6 +56,7 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
+        //TODO: This should be extracted
         if (setCode.HasUserId)
         {
             // All cards in outEntities are from the same set, extract SetId UUID from first card

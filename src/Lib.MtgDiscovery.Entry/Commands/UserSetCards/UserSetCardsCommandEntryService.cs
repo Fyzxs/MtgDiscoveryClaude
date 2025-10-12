@@ -19,5 +19,6 @@ internal sealed class UserSetCardsCommandEntryService : IUserSetCardsCommandEntr
 
     private UserSetCardsCommandEntryService(IAddSetGroupToUserSetCardEntryService addSetGroupToUserSetCard) => _addSetGroupToUserSetCard = addSetGroupToUserSetCard;
 
+    //TODO: This needs to be mapped in the AddSetGroupToUserSetCardEntryService
     public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAuthUserArgEntity authUser, IAddSetGroupToUserSetCardArgEntity argEntity) => await _addSetGroupToUserSetCard.Execute(new AddSetGroupToUserSetCardArgsEntity { AuthUser = authUser, AddSetGroupToUserSetCard = argEntity }).ConfigureAwait(false);
 }
