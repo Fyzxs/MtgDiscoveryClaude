@@ -29,11 +29,13 @@ interface CardFilterPanelProps {
   uniqueArtists: string[];
   uniqueRarities: string[];
   uniqueSets?: { value: string; label: string }[];
-  
+  uniqueFormats?: string[];
+
   // Control flags
   hasMultipleArtists: boolean;
   hasMultipleRarities: boolean;
   hasMultipleSets?: boolean;
+  hasMultipleFormats?: boolean;
   
   // Counts
   filteredCount: number;
@@ -57,9 +59,11 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   uniqueArtists,
   uniqueRarities,
   uniqueSets,
+  uniqueFormats,
   hasMultipleArtists,
   hasMultipleRarities,
   hasMultipleSets,
+  hasMultipleFormats = true,
   filteredCount: _filteredCount,
   totalCount,
   showSearch = false,
@@ -132,7 +136,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
       onChange: onSortChange,
       options: sortOptions
     },
-    customFilters: [
+    customFilters: hasMultipleFormats ? [
       <MultiSelectDropdown
         key="formats"
         value={filters.formats || []}
@@ -143,7 +147,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
         minWidth={150}
         fullWidth={false}
       />
-    ]
+    ] : []
   };
 
   // If centering, use a flex layout with individual components
@@ -182,15 +186,17 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
         />
 
         {/* Format Filter */}
-        <MultiSelectDropdown
-          value={filters.formats || []}
-          onChange={(value: string[]) => onFilterChange('formats', value)}
-          options={getFormatOptions()}
-          label="Format"
-          placeholder="All Formats"
-          minWidth={150}
-          fullWidth={false}
-        />
+        {hasMultipleFormats && (
+          <MultiSelectDropdown
+            value={filters.formats || []}
+            onChange={(value: string[]) => onFilterChange('formats', value)}
+            options={getFormatOptions()}
+            label="Format"
+            placeholder="All Formats"
+            minWidth={150}
+            fullWidth={false}
+          />
+        )}
       </Box>
     );
   }

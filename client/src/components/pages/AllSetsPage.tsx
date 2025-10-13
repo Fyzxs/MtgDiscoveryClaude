@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import { GET_ALL_SETS } from '../../graphql/queries/sets';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
@@ -72,10 +72,12 @@ export const AllSetsPage: React.FC = () => {
   // URL synchronization is handled automatically by useUrlFilterState
 
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   const handleSetClick = (setCode?: string) => {
     if (setCode) {
-      navigate(`/set/${setCode}`);
+      // Preserve existing query parameters (like ctor) when navigating
+      navigate(`/set/${setCode}${location.search}`);
     }
   };
 

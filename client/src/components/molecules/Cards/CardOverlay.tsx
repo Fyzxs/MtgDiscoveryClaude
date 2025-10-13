@@ -109,6 +109,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           <ArtistLinks
             artists={artists}
             artistIds={artistIds}
+            context={context}
             onArtistClick={onArtistClick}
           />
         )}

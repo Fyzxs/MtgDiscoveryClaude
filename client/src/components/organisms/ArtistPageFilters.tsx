@@ -68,6 +68,7 @@ interface ArtistPageFiltersProps {
     formats?: {
       value: string[];
       onChange: (value: string[]) => void;
+      shouldShow: boolean;
     };
   };
 }
@@ -129,7 +130,7 @@ export const ArtistPageFilters: React.FC<ArtistPageFiltersProps> = ({
               options: hasCollector ? ARTIST_PAGE_COLLECTOR_SORT_OPTIONS : ARTIST_PAGE_SORT_OPTIONS,
               minWidth: 180
             },
-            customFilters: filters.formats ? [
+            customFilters: (filters.formats && filters.formats.shouldShow) ? [
               <MultiSelectDropdown
                 key="formats"
                 value={filters.formats.value}

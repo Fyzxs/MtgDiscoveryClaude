@@ -1,11 +1,11 @@
 import React, { useState, useCallback, startTransition } from 'react';
 import { useLazyQuery } from '@apollo/client/react';
-import { useNavigate } from 'react-router-dom';
 import { Typography, Box, CircularProgress } from '@mui/material';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
 import { DebouncedSearchInput } from '../atoms/shared/DebouncedSearchInput';
 import { CardSearchResults } from '../organisms/CardSearchResults';
 import { CARD_NAME_SEARCH } from '../../graphql/queries/cardNameSearch';
+import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 
 interface CardNameResult {
   name: string;
@@ -22,7 +22,7 @@ interface CardNameSearchResponse {
 }
 
 export const CardSearchPage: React.FC = React.memo(() => {
-  const navigate = useNavigate();
+  const { navigateWithCollector } = useCollectorNavigation();
   const [searchTerm, setSearchTerm] = useState('');
 
   const [searchCards, { loading, data }] = useLazyQuery<CardNameSearchResponse>(
@@ -33,8 +33,8 @@ export const CardSearchPage: React.FC = React.memo(() => {
   );
 
   const handleCardClick = useCallback((cardName: string) => {
-    navigate(`/card/${encodeURIComponent(cardName)}`);
-  }, [navigate]);
+    navigateWithCollector(`/card/${encodeURIComponent(cardName)}`);
+  }, [navigateWithCollector]);
 
   const handleSearchChange = useCallback((value: string) => {
     startTransition(() => {

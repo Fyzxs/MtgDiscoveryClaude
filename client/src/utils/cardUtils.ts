@@ -101,6 +101,21 @@ export const getFormatOptions = () => [
   { value: 'digital', label: 'Digital' }
 ];
 
+/**
+ * Extract unique formats from cards (Digital/Paper)
+ * Returns array of format types present in the card collection
+ */
+export const getUniqueFormats = (cards: CardLike[]): string[] => {
+  const hasDigital = cards.some(card => card.digital === true);
+  const hasPaper = cards.some(card => card.digital === false || card.digital === undefined || card.digital === null);
+
+  const formats: string[] = [];
+  if (hasPaper) formats.push('paper');
+  if (hasDigital) formats.push('digital');
+
+  return formats;
+};
+
 export const createCardFilterFunctions = <T extends CardLike>() => ({
   rarities: commonFilters.multiSelect<T>('rarity'),
   sets: commonFilters.multiSelect<T>('setCode'),

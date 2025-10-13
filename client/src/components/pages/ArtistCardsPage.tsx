@@ -13,6 +13,7 @@ import { RARITY_ORDER } from '../../config/cardSortOptions';
 import {
   getUniqueRarities,
   getUniqueSets,
+  getUniqueFormats,
   createCardFilterFunctions
 } from '../../utils/cardUtils';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
@@ -94,10 +95,11 @@ export const ArtistCardsPage: React.FC = () => {
     loadCards();
   }, [artistName, decodedArtistName, fetchCardsByArtist]);
 
-  // Get unique rarities and sets from data
+  // Get unique rarities, sets, and formats from data
   const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsByArtistName?.data || []), [cardsData]);
   const allSetObjects = useMemo(() => getUniqueSets(cardsData?.cardsByArtistName?.data || []), [cardsData]);
   const allSets = useMemo(() => allSetObjects.map(set => set.value), [allSetObjects]);
+  const allFormats = useMemo(() => getUniqueFormats(cardsData?.cardsByArtistName?.data || []), [cardsData]);
 
   // Create a map for set code to display label
   const setLabelMap = useMemo(() => {
@@ -323,7 +325,8 @@ export const ArtistCardsPage: React.FC = () => {
               } : undefined,
               formats: {
                 value: filters.formats || [],
-                onChange: (value: string[]) => updateFilter('formats', value)
+                onChange: (value: string[]) => updateFilter('formats', value),
+                shouldShow: allFormats.length > 1
               }
             }}
           />
