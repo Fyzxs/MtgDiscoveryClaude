@@ -142,7 +142,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
       disabled={disabled || isLoading}
       startIcon={isLoading ? <CircularProgress size={size === 'small' ? 14 : size === 'large' ? 20 : 16} /> : undefined}
       sx={combinedSx}
-      {...(eventHandlers as any)}
+      {...(eventHandlers as Partial<React.DOMAttributes<HTMLButtonElement>>)}
       {...props}
     >
       {isLoading ? 'Loading...' : children}

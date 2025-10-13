@@ -168,7 +168,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
     <Box
       component="div"
       sx={getContainerSx()}
-      {...(eventHandlers as any)}
+      {...(eventHandlers as Partial<React.DOMAttributes<HTMLDivElement>>)}
     >
       {/* Mobile Layout - Horizontal */}
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
