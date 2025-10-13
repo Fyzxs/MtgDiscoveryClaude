@@ -142,4 +142,4 @@ const CharacterCountMessage = React.memo<{ remainingChars: number }>(({ remainin
   </>
 ));
 
-CharacterCountMessage.displayName = 'CharacterCountMessage';
+CharacterCountMessage.displayName = 'CharacterCountMessage';export default CardSearchPage;

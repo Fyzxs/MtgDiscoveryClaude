@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { logger } from '../utils/logger';
 
 export type HapticFeedbackType =
   | 'light'
@@ -108,7 +109,7 @@ export const useHapticFeedback = ({
       }
       return true;
     } catch (error) {
-      console.warn('Haptic feedback failed:', error);
+      logger.warn('Haptic feedback failed:', error);
       return false;
     }
   }, []);
@@ -123,7 +124,7 @@ export const useHapticFeedback = ({
         return true;
       }
     } catch (error) {
-      console.warn('Vibration failed:', error);
+      logger.warn('Vibration failed:', error);
     }
 
     return false;
