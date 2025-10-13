@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Link, Stack } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { SetIcon } from '../../atoms/Sets/SetIcon';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
 import type { CardContext } from '../../../types/card';
@@ -16,9 +17,10 @@ interface CardMetadataProps {
   onCardClick?: (cardId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const CardMetadata: React.FC<CardMetadataProps> = ({ 
+export const CardMetadata: React.FC<CardMetadataProps> = ({
   name,
   cardId,
   typeLine,
@@ -29,7 +31,8 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   context = {},
   onCardClick,
   onSetClick,
-  className = ''
+  className = '',
+  sx
 }) => {
   // Don't show card name on card page
   const showName = !context.isOnCardPage && name;
@@ -57,7 +60,7 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   };
 
   return (
-    <Stack spacing={1} className={className}>
+    <Stack spacing={1} className={className} sx={sx}>
       {showName && (
         <Typography 
           variant="subtitle2" 

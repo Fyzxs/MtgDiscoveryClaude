@@ -49,7 +49,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
 
   const longPressHandlers = useLongPress({
     onLongPress: handleLongPress,
-    onClick: (event) => handleClick(event as React.MouseEvent<HTMLButtonElement>),
+    onClick: (event) => handleClick(event as unknown as React.MouseEvent<HTMLButtonElement>),
     threshold: 500,
     onStart: () => enableHaptic && triggerHaptic('selection'),
   });
@@ -116,10 +116,10 @@ export const AppButton: React.FC<AppButtonProps> = ({
     };
   };
 
-  const combinedSx: SxProps<Theme> = {
+  const combinedSx = {
     ...getTouchOptimizedSx(),
     ...sx,
-  };
+  } as SxProps<Theme>;
 
   // Use long press handlers if enabled, otherwise use regular click
   const eventHandlers = enableLongPress && onLongPress && !disabled && !isLoading
@@ -142,7 +142,7 @@ export const AppButton: React.FC<AppButtonProps> = ({
       disabled={disabled || isLoading}
       startIcon={isLoading ? <CircularProgress size={size === 'small' ? 14 : size === 'large' ? 20 : 16} /> : undefined}
       sx={combinedSx}
-      {...eventHandlers}
+      {...(eventHandlers as any)}
       {...props}
     >
       {isLoading ? 'Loading...' : children}

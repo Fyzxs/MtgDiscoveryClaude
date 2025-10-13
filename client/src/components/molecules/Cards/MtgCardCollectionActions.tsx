@@ -3,13 +3,13 @@ import type { RefObject } from 'react';
 import { useCollection } from '../../../contexts/CollectionContext';
 import { useCardCollectionEntry } from '../../../hooks/useCardCollectionEntry3';
 import type { Card } from '../../../types/card';
-import type { CardFinish } from '../../../types/collection';
+import type { CardFinish, CardSpecial } from '../../../types/collection';
 
 interface CollectionUpdate {
   cardId: string;
   count: number;
   finish: CardFinish;
-  special: string;
+  special: CardSpecial;
 }
 
 interface MtgCardCollectionActionsProps {
