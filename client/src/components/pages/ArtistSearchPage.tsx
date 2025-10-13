@@ -1,11 +1,11 @@
 import React, { useState, useCallback, startTransition } from 'react';
 import { useLazyQuery } from '@apollo/client/react';
-import { useNavigate } from 'react-router-dom';
 import { Typography, Box, CircularProgress } from '@mui/material';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
 import { DebouncedSearchInput } from '../atoms/shared/DebouncedSearchInput';
 import { ArtistSearchResults } from '../organisms/ArtistSearchResults';
 import { ARTIST_NAME_SEARCH } from '../../graphql/queries/artistSearch';
+import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 
 interface ArtistNameResult {
   artistId: string;
@@ -24,7 +24,7 @@ interface ArtistNameSearchResponse {
 }
 
 export const ArtistSearchPage: React.FC = React.memo(() => {
-  const navigate = useNavigate();
+  const { navigateWithCollector } = useCollectorNavigation();
   const [searchTerm, setSearchTerm] = useState('');
 
   const [searchArtists, { loading, data }] = useLazyQuery<ArtistNameSearchResponse>(
@@ -35,8 +35,8 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   );
 
   const handleArtistClick = useCallback((artistName: string) => {
-    navigate(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
-  }, [navigate]);
+    navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
+  }, [navigateWithCollector]);
 
   const handleSearchChange = useCallback((value: string) => {
     startTransition(() => {
