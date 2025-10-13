@@ -147,7 +147,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
   return (
     <Box
       sx={getContainerSx()}
-      {...(eventHandlers as any)}
+      {...(eventHandlers as Partial<React.DOMAttributes<HTMLDivElement>>)}
     >
       {/* Card Image */}
       <Box sx={{ position: 'relative' }}>
