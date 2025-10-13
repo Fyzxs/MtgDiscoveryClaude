@@ -6,7 +6,6 @@ import { useMutation, useApolloClient } from '@apollo/client/react';
 import { gql } from '@apollo/client';
 import { ADD_CARD_TO_COLLECTION } from '../graphql/mutations/addCardToCollection';
 import { useUser } from './UserContext';
-import { useCollectorParam } from '../hooks/useCollectorParam';
 import { perfMonitor } from '../utils/performanceMonitor';
 
 interface CollectionContextValue {
@@ -15,8 +14,31 @@ interface CollectionContextValue {
   setIsAnyCardEntering: (isEntering: boolean) => void;
 }
 
+interface UserCollectionItem {
+  finish: string;
+  special: string;
+  count: number;
+}
+
+interface CachedCard {
+  userCollection?: UserCollectionItem[];
+}
+
+interface AddCardMutationResponse {
+  addCardToCollection?: {
+    __typename: string;
+    data?: Array<{
+      userCollection: UserCollectionItem[];
+    }>;
+    status?: {
+      message: string;
+    };
+  };
+}
+
 const CollectionContext = createContext<CollectionContextValue | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
 export const useCollection = () => {
   const context = useContext(CollectionContext);
   if (!context) {
@@ -48,7 +70,6 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
   const toastStackRef = useRef<NotificationToastStackRef>(null);
   const [isAnyCardEntering, setIsAnyCardEntering] = useState(false);
   const { userProfile } = useUser();
-  const { hasCollector, collectorId } = useCollectorParam();
   const [addCardToCollection] = useMutation(ADD_CARD_TO_COLLECTION);
 
   // REMOVED: Flash animation - now handled directly in MtgCard via DOM for performance
@@ -93,13 +114,13 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
         `
       }) : null;
 
-      const currentCollection = (cachedCard as any)?.userCollection || [];
+      const currentCollection = (cachedCard as CachedCard)?.userCollection || [];
       const targetFinish = FINISH_MAP[update.finish] || 'nonfoil';
       const targetSpecial = SPECIAL_MAP[update.special] || 'none';
 
       // Find existing entry and ADD to its count (update.count is a delta, not absolute)
       let updated = false;
-      const optimisticUserCollection = currentCollection.map((item: any) => {
+      const optimisticUserCollection = currentCollection.map((item: UserCollectionItem) => {
         if (item.finish === targetFinish && item.special === targetSpecial) {
           updated = true;
           // Add the delta to the existing count
@@ -138,8 +159,8 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       perfMonitor.end('collection-update-total');
 
       // Check if mutation was successful
-      if ((result.data as any)?.addCardToCollection?.__typename === 'CardsSuccessResponse') {
-        const updatedCard = (result.data as any).addCardToCollection.data?.[0];
+      if ((result.data as AddCardMutationResponse)?.addCardToCollection?.__typename === 'CardsSuccessResponse') {
+        const updatedCard = (result.data as AddCardMutationResponse).addCardToCollection?.data?.[0];
 
         if (updatedCard) {
           // Dispatch again with real data from server (in case it differs from optimistic)
@@ -165,8 +186,8 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
           });
         });
       } else {
-        const errorMessage = (result.data as any)?.addCardToCollection?.__typename === 'FailureResponse'
-          ? (result.data as any).addCardToCollection.status?.message || 'Failed to update collection'
+        const errorMessage = (result.data as AddCardMutationResponse)?.addCardToCollection?.__typename === 'FailureResponse'
+          ? (result.data as AddCardMutationResponse).addCardToCollection?.status?.message || 'Failed to update collection'
           : 'Failed to update collection';
         throw new Error(errorMessage);
       }
@@ -198,7 +219,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       });
       throw error;
     }
-  }, [addCardToCollection, userProfile, apolloClient.cache, hasCollector, collectorId]);
+  }, [addCardToCollection, userProfile, apolloClient.cache]);
 
   const value: CollectionContextValue = {
     submitCollectionUpdate,

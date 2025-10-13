@@ -59,7 +59,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [hasCollector, set.id]);
+  }, [hasCollector, set, getCollectionProgress]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only handle click if there's a custom onSetClick handler

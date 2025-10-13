@@ -5,6 +5,13 @@ import { useCardCollectionEntry } from '../../../hooks/useCardCollectionEntry3';
 import type { Card } from '../../../types/card';
 import type { CardFinish } from '../../../types/collection';
 
+interface CollectionUpdate {
+  cardId: string;
+  count: number;
+  finish: CardFinish;
+  special: string;
+}
+
 interface MtgCardCollectionActionsProps {
   card: Card;
   isSelected: boolean;
@@ -28,7 +35,7 @@ export const useMtgCardCollectionActions = ({
   }, [card.nonFoil, card.foil, card.finishes]);
 
   // Handle collection update submission
-  const handleCollectionSubmit = useCallback(async (update: any) => {
+  const handleCollectionSubmit = useCallback(async (update: CollectionUpdate) => {
     const cardElement = cardRef.current;
     if (!cardElement) return;
 
@@ -46,13 +53,14 @@ export const useMtgCardCollectionActions = ({
       cardElement.removeAttribute('data-submitting');
       cardElement.setAttribute('data-flash', 'success');
       setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
-    } catch (error) {
+    } catch {
       // Error flash via DOM
       cardElement.removeAttribute('data-submitting');
       cardElement.setAttribute('data-flash', 'error');
       setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
     }
-  }, [submitCollectionUpdate, card.name, card.setId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- cardRef is a ref and doesn't need to be in dependencies
+  }, [submitCollectionUpdate, card.name, card.setId, card.setGroupId]);
 
   // Collection entry hook
   useCardCollectionEntry({

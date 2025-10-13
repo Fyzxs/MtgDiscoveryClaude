@@ -25,7 +25,6 @@ interface SetPageCardDisplayProps {
   cardsLoading: boolean;
 
   // Data
-  cards: Card[];
   sortedCards: Card[];
   filteredCards: Card[];
   cardGroups: CardGroupConfig[];
@@ -46,7 +45,6 @@ interface SetPageCardDisplayProps {
 
 export const SetPageCardDisplay: React.FC<SetPageCardDisplayProps> = ({
   cardsLoading,
-  cards,
   sortedCards,
   filteredCards,
   cardGroups,

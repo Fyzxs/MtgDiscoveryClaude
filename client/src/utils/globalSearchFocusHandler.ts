@@ -3,6 +3,11 @@
  *
  * Pattern: Press Shift twice quickly (within 400ms) to focus the search box and clear it
  */
+
+interface HTMLInputElementWithClear extends HTMLInputElement {
+  __clearSearch?: () => void;
+}
+
 class GlobalSearchFocusHandler {
   private lastShiftTime: number = 0;
   private readonly DOUBLE_TAP_THRESHOLD_MS = 400;
@@ -61,7 +66,7 @@ class GlobalSearchFocusHandler {
 
       // Call the clear function which will defer the state update
       // If user starts typing within 200ms, the state update will be cancelled
-      const clearFn = (searchInput as any).__clearSearch;
+      const clearFn = (searchInput as HTMLInputElementWithClear).__clearSearch;
       if (clearFn && typeof clearFn === 'function') {
         clearFn();
       }

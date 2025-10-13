@@ -46,7 +46,8 @@ export function useCardFiltering<T extends CardLike>(
     includeCollectorFilters = false
   } = options;
 
-  const data = cards || [];
+  // Wrap data initialization in useMemo to prevent recreation on every render
+  const data = useMemo(() => cards || [], [cards]);
 
   // Get unique values for filters
   const uniqueArtists = useMemo(() => getUniqueArtists(data), [data]);

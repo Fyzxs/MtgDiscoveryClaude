@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, type SxProps, type Theme } from '@mui/material';
 
 interface SearchTemplateProps {
   /** Search input component - the primary interaction */
@@ -37,7 +37,7 @@ interface SearchTemplateProps {
   };
 
   /** Additional container styles */
-  containerSx?: any;
+  containerSx?: SxProps<Theme>;
 
   /** Whether to show loading state (controls which content is displayed) */
   isLoading?: boolean;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tooltip, Skeleton } from '@mui/material';
+import { Box, IconButton, Tooltip, Skeleton, type SxProps, type Theme } from '@mui/material';
 import FlipIcon from '@mui/icons-material/Flip';
 import type { Card } from '../../../types/card';
 import { imageCache } from '../../../utils/imageCache';
@@ -14,7 +14,7 @@ interface CardImageDisplayProps {
   maxHeight?: string | number;
   className?: string;
   onClick?: () => void;
-  sx?: any;
+  sx?: SxProps<Theme>;
 }
 
 // Default Magic card back image URL - using local image

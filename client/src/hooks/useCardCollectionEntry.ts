@@ -85,7 +85,7 @@ export function useCardCollectionEntry({
   // Process key input and update DOM immediately
   const processKey = useCallback((key: string, isShift: boolean) => {
     // Use ref state for instant access
-    let newState = { ...entryStateRef.current };
+    const newState = { ...entryStateRef.current };
 
     // Number keys (0-9)
     if (key >= '0' && key <= '9') {
@@ -183,20 +183,16 @@ export function useCardCollectionEntry({
     const count = parseInt(entryStateRef.current.count || '0');
     const finalCount = entryStateRef.current.isNegative ? -count : count;
 
-    try {
-      await onSubmit({
-        cardId,
-        count: finalCount,
-        finish: entryStateRef.current.finish,
-        special: entryStateRef.current.special
-      });
+    await onSubmit({
+      cardId,
+      count: finalCount,
+      finish: entryStateRef.current.finish,
+      special: entryStateRef.current.special
+    });
 
-      // Reset state after successful submission
-      cancelEntry();
-    } catch (error) {
-      // Don't reset on error - let user retry or cancel manually
-      throw error;
-    }
+    // Reset state after successful submission
+    // Note: Don't reset on error - let user retry or cancel manually
+    cancelEntry();
   }, [cardId, onSubmit, cancelEntry]);
 
   // Global keyboard handler
