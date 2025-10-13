@@ -9,12 +9,12 @@ using Lib.Adapter.Cards.Queries.Mappers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Identifiers;
 using Lib.Shared.Invocation.Operations;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Cards.Queries;
@@ -28,36 +28,35 @@ namespace Lib.Adapter.Cards.Queries;
 /// </summary>
 internal sealed class CardsQueryAdapter : ICardQueryAdapter
 {
-    //TODO: This class is missing mappers; but it's needs an Inquisitor touch first
     private readonly ICosmosGopher _cardGopher;
     private readonly ICosmosGopher _setCodeIndexGopher;
-    private readonly ICosmosInquisitor _setCardsInquisitor;
-    private readonly ICosmosInquisitor _cardsByNameInquisitor;
-    private readonly ICosmosInquisitor _cardNameTrigramsInquisitor;
+    private readonly ICosmosInquisition<CardsBySetIdInquisitionArgs> _cardsBySetIdInquisition;
+    private readonly ICosmosInquisition<CardsByNameGuidInquisitionArgs> _cardsByNameGuidInquisition;
+    private readonly ICosmosInquisition<CardNameTrigramSearchInquisitionArgs> _cardNameTrigramSearchInquisition;
     private readonly ICollectionCardIdToReadPointItemMapper _cardIdsToReadPointMapper;
 
     public CardsQueryAdapter(ILogger logger) : this(
         new ScryfallCardItemsGopher(logger),
         new ScryfallSetCodeIndexGopher(logger),
-        new ScryfallSetCardsInquisitor(logger),
-        new ScryfallCardsByNameInquisitor(logger),
-        new CardNameTrigramsInquisitor(logger),
+        new CardsBySetIdInquisition(logger),
+        new CardsByNameGuidInquisition(logger),
+        new CardNameTrigramSearchInquisition(logger),
         new CollectionCardIdToReadPointItemMapper())
     { }
 
     private CardsQueryAdapter(
         ICosmosGopher cardGopher,
         ICosmosGopher setCodeIndexGopher,
-        ICosmosInquisitor setCardsInquisitor,
-        ICosmosInquisitor cardsByNameInquisitor,
-        ICosmosInquisitor cardNameTrigramsInquisitor,
+        ICosmosInquisition<CardsBySetIdInquisitionArgs> cardsBySetIdInquisition,
+        ICosmosInquisition<CardsByNameGuidInquisitionArgs> cardsByNameGuidInquisition,
+        ICosmosInquisition<CardNameTrigramSearchInquisitionArgs> cardNameTrigramSearchInquisition,
         ICollectionCardIdToReadPointItemMapper cardIdsToReadPointMapper)
     {
         _cardGopher = cardGopher;
         _setCodeIndexGopher = setCodeIndexGopher;
-        _setCardsInquisitor = setCardsInquisitor;
-        _cardsByNameInquisitor = cardsByNameInquisitor;
-        _cardNameTrigramsInquisitor = cardNameTrigramsInquisitor;
+        _cardsBySetIdInquisition = cardsBySetIdInquisition;
+        _cardsByNameGuidInquisition = cardsByNameGuidInquisition;
+        _cardNameTrigramSearchInquisition = cardNameTrigramSearchInquisition;
         _cardIdsToReadPointMapper = cardIdsToReadPointMapper;
     }
 
@@ -97,11 +96,10 @@ internal sealed class CardsQueryAdapter : ICardQueryAdapter
 
         string setId = indexResponse.Value.SetId;
 
-        QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @setId")
-            .WithParameter("@setId", setId);
+        CardsBySetIdInquisitionArgs args = new() { SetId = setId };
 
-        OpResponse<IEnumerable<ScryfallSetCardItemExtEntity>> cardsResponse = await _setCardsInquisitor
-            .QueryAsync<ScryfallSetCardItemExtEntity>(queryDefinition, new PartitionKey(setId))
+        OpResponse<IEnumerable<ScryfallSetCardItemExtEntity>> cardsResponse = await _cardsBySetIdInquisition
+            .QueryAsync<ScryfallSetCardItemExtEntity>(args)
             .ConfigureAwait(false);
 
         if (cardsResponse.IsSuccessful() is false)
@@ -119,11 +117,10 @@ internal sealed class CardsQueryAdapter : ICardQueryAdapter
         ICardNameGuidGenerator guidGenerator = new CardNameGuidGenerator();
         CardNameGuid nameGuid = guidGenerator.GenerateGuid(cardNameValue);
 
-        QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @nameGuid")
-            .WithParameter("@nameGuid", nameGuid.AsSystemType().ToString());
+        CardsByNameGuidInquisitionArgs args = new() { NameGuid = nameGuid.AsSystemType().ToString() };
 
-        OpResponse<IEnumerable<ScryfallCardByNameExtEntity>> cardsResponse = await _cardsByNameInquisitor
-            .QueryAsync<ScryfallCardByNameExtEntity>(queryDefinition, new PartitionKey(nameGuid.AsSystemType().ToString()))
+        OpResponse<IEnumerable<ScryfallCardByNameExtEntity>> cardsResponse = await _cardsByNameGuidInquisition
+            .QueryAsync<ScryfallCardByNameExtEntity>(args)
             .ConfigureAwait(false);
 
         if (cardsResponse.IsSuccessful() is false)
@@ -161,14 +158,15 @@ internal sealed class CardsQueryAdapter : ICardQueryAdapter
         foreach (string trigram in trigrams)
         {
             string firstChar = trigram[..1];
-            QueryDefinition queryDefinition = new QueryDefinition(
-                "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE card FROM card IN c.cards WHERE CONTAINS(card.norm, @normalized))")
-                .WithParameter("@trigram", trigram)
-                .WithParameter("@partition", firstChar)
-                .WithParameter("@normalized", normalized);
+            CardNameTrigramSearchInquisitionArgs args = new()
+            {
+                Trigram = trigram,
+                Partition = firstChar,
+                Normalized = normalized
+            };
 
-            OpResponse<IEnumerable<CardNameTrigramExtEntity>> trigramResponse = await _cardNameTrigramsInquisitor
-                .QueryAsync<CardNameTrigramExtEntity>(queryDefinition, new PartitionKey(firstChar))
+            OpResponse<IEnumerable<CardNameTrigramExtEntity>> trigramResponse = await _cardNameTrigramSearchInquisition
+                .QueryAsync<CardNameTrigramExtEntity>(args)
                 .ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Enrichments;
+using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -66,11 +67,5 @@ internal sealed class CardsByArtistEntryService : ICardsByArtistEntryService
         }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
-    }
-
-    private sealed class UserCardsArtistItrEntity : IUserCardsArtistItrEntity
-    {
-        public string UserId { get; init; }
-        public string ArtistId { get; init; }
     }
 }

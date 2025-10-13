@@ -27,7 +27,7 @@ namespace Lib.Adapter.Sets.Apis;
 /// </summary>
 public interface ISetQueryAdapter
 {
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync(ISetIdsXfrEntity setIds);
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync(ISetCodesXfrEntity setCodes);
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync();
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds);
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes);
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync();
 }

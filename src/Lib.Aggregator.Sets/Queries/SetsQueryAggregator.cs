@@ -42,7 +42,7 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args)
     {
         ISetIdsXfrEntity xfrEntity = await _setIdsItrToXfrMapper.Map(args).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetSetsByIdsAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByIdsAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -57,7 +57,7 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args)
     {
         ISetCodesXfrEntity xfrEntity = await _setCodesItrToXfrMapper.Map(args).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetSetsByCodesAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByCodesAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -71,7 +71,7 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync()
     {
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetAllSetsAsync().ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.AllSetsAsync().ConfigureAwait(false);
 
         if (response.IsFailure)
         {

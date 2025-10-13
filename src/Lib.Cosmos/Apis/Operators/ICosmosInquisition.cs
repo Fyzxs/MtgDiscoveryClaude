@@ -10,7 +10,10 @@ namespace Lib.Cosmos.Apis.Operators;
 /// </summary>
 /// <remarks>
 /// Implementations of this interface are expected to perform read/query operations and return
-/// an <see cref="OpResponse{IEnumerable{T}}"/> that encapsulates the returned items, the HTTP
+/// an <see>
+///     <cref>OpResponse{IEnumerable{T}}</cref>
+/// </see>
+/// that encapsulates the returned items, the HTTP
 /// status code, and any exception information. Normal failure scenarios (for example, a non-success
 /// HTTP status or a transient error) should be represented by a non-successful <see cref="OpResponse{T}"/>
 /// rather than by throwing exceptions, so callers can inspect the response and handle errors deterministically.
@@ -26,7 +29,10 @@ public interface ICosmosInquisition
     /// If not provided, the operation is unbounded by caller-supplied cancellation.
     /// </param>
     /// <returns>
-    /// A <see cref="Task{TResult}"/> that, when completed, yields an <see cref="OpResponse{IEnumerable{T}}"/>.
+    /// A <see cref="Task{TResult}"/> that, when completed, yields an <see>
+    ///     <cref>OpResponse{IEnumerable{T}}</cref>
+    /// </see>
+    /// .
     /// The response's <see cref="OpResponse{T}.StatusCode"/> indicates the HTTP level outcome, <see cref="OpResponse{T}.Value"/>
     /// provides the returned items when successful, and <see cref="OpResponse{T}.Exception()"/> can be used to retrieve
     /// an underlying exception if one was captured.
@@ -63,7 +69,10 @@ public interface ICosmosInquisition<in TParameters>
     /// If not provided, the operation is unbounded by caller-supplied cancellation.
     /// </param>
     /// <returns>
-    /// A <see cref="Task{TResult}"/> that, when completed, yields an <see cref="OpResponse{IEnumerable{T}}"/>.
+    /// A <see cref="Task{TResult}"/> that, when completed, yields an <see>
+    ///     <cref>OpResponse{IEnumerable{T}}</cref>
+    /// </see>
+    /// .
     /// The response's <see cref="OpResponse{T}.StatusCode"/> indicates the HTTP level outcome, <see cref="OpResponse{T}.Value"/>
     /// provides the returned items when successful, and <see cref="OpResponse{T}.Exception()"/> can be used to retrieve
     /// an underlying exception if one was captured.
