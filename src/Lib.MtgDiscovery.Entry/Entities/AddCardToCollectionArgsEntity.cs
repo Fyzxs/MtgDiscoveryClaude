@@ -2,7 +2,7 @@
 
 namespace Lib.MtgDiscovery.Entry.Entities;
 
-internal sealed class AddCardToCollectionArgsEntity : IAddCardToCollectionArgsEntity
+public sealed class AddCardToCollectionArgsEntity : IAddCardToCollectionArgsEntity
 {
     public IAuthUserArgEntity AuthUser { get; init; }
     public IAddUserCardArgEntity AddUserCard { get; init; }

@@ -17,14 +17,12 @@ namespace Lib.MtgDiscovery.Entry.Commands.UserSetCards;
 internal sealed class AddSetGroupToUserSetCardEntryService : IAddSetGroupToUserSetCardEntryService
 {
     private readonly IUserSetCardsDomainService _userSetCardsDomainService;
-    private readonly IAddSetGroupToUserSetCardArgsMapper _argsMapper;
     private readonly IAddSetGroupCombinedArgToItrMapper _argToItrMapper;
     private readonly IUserSetCardOufToOutMapper _oufToOutMapper;
     private readonly IAddSetGroupToUserSetCardArgsValidator _validator;
 
     public AddSetGroupToUserSetCardEntryService(ILogger logger) : this(
         new UserSetCardsDomainService(logger),
-        new AddSetGroupToUserSetCardArgsMapper(),
         new AddSetGroupCombinedArgToItrMapper(),
         new UserSetCardOufToOutMapper(),
         new AddSetGroupToUserSetCardArgsValidatorContainer())
@@ -32,21 +30,18 @@ internal sealed class AddSetGroupToUserSetCardEntryService : IAddSetGroupToUserS
 
     private AddSetGroupToUserSetCardEntryService(
         IUserSetCardsDomainService userSetCardsDomainService,
-        IAddSetGroupToUserSetCardArgsMapper argsMapper,
         IAddSetGroupCombinedArgToItrMapper argToItrMapper,
         IUserSetCardOufToOutMapper oufToOutMapper,
         IAddSetGroupToUserSetCardArgsValidator validator)
     {
         _userSetCardsDomainService = userSetCardsDomainService;
-        _argsMapper = argsMapper;
         _argToItrMapper = argToItrMapper;
         _oufToOutMapper = oufToOutMapper;
         _validator = validator;
     }
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> Execute(IAuthUserArgEntity authUser, IAddSetGroupToUserSetCardArgEntity args)
+    public async Task<IOperationResponse<UserSetCardOutEntity>> Execute(IAddSetGroupToUserSetCardArgsEntity argsEntity)
     {
-        IAddSetGroupToUserSetCardArgsEntity argsEntity = await _argsMapper.Map(authUser, args).ConfigureAwait(false);
 
         IValidatorActionResult<IOperationResponse<IUserSetCardOufEntity>> validationResult = await _validator.Validate(argsEntity).ConfigureAwait(false);
         if (validationResult.IsNotValid()) return new FailureOperationResponse<UserSetCardOutEntity>(validationResult.FailureStatus().OuterException);
