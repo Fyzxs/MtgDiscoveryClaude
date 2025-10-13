@@ -28,7 +28,10 @@ export const getTokenReadyState = (): boolean => {
 const authLink = setContext(async (_, { headers }) => {
   if (getAuth0Token) {
     try {
+      const tokenStart = performance.now();
       const idToken = await getAuth0Token();
+      const tokenEnd = performance.now();
+      console.log(`[AUTH] Token acquisition took ${tokenEnd - tokenStart}ms`);
       if (idToken) {
         return {
           headers: {
@@ -68,6 +71,16 @@ export const apolloClient = new ApolloClient({
           },
         },
       },
+      Card: {
+        fields: {
+          userCollection: {
+            // Replace the entire array when mutation returns new collection data
+            merge(_existing, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
     },
   }),
   defaultOptions: {
@@ -77,6 +90,11 @@ export const apolloClient = new ApolloClient({
     },
     query: {
       errorPolicy: 'all'
+    },
+    mutate: {
+      errorPolicy: 'all',
+      awaitRefetchQueries: false,  // Don't wait for queries to refetch
+      refetchQueries: []  // Don't automatically refetch any queries
     }
   },
 });
