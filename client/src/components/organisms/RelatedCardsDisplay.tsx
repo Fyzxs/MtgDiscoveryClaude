@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { logger } from '../../utils/logger';
 import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../atoms';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
-import { useCardCache } from '../../hooks/useCardCache';
+import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';
 
 interface RelatedCardsDisplayProps {
@@ -37,7 +38,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
   );
 
   // Use card cache for fetching cards by IDs
-  const { fetchCards } = useCardCache();
+  const { fetchCards } = useCardQueries();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<CardsSuccessResponse | null>(null);
@@ -47,17 +48,17 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
   fetchCardsRef.current = fetchCards;
 
   useEffect(() => {
-    console.log('[RelatedCards] useEffect triggered:', { expanded, filteredIdsLength: filteredIds.length });
+    logger.debug('[RelatedCards] useEffect triggered:', { expanded, filteredIdsLength: filteredIds.length });
 
     if (!expanded || filteredIds.length === 0) return;
 
     const loadCards = async () => {
-      console.log('[RelatedCards] Loading cards:', filteredIds);
+      logger.debug('[RelatedCards] Loading cards:', filteredIds);
       setLoading(true);
       setError(null);
       try {
         const cards = await fetchCardsRef.current(filteredIds);
-        console.log('[RelatedCards] Cards loaded:', cards.length);
+        logger.debug('[RelatedCards] Cards loaded:', cards.length);
         setData({
           cardsById: {
             __typename: 'CardsSuccessResponse',
@@ -65,7 +66,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
           }
         });
       } catch (err) {
-        console.error('[RelatedCards] Error loading cards:', err);
+        logger.error('[RelatedCards] Error loading cards:', err);
         setError(err as Error);
         setData({
           cardsById: {

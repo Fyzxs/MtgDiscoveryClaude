@@ -19,7 +19,7 @@ import {
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { SectionErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { useCardCache } from '../../hooks/useCardCache';
+import { useCardQueries } from '../../hooks/useCardQueries';
 import { toPascalCase, getArtistNameInfo } from '../../utils/artistUtils';
 import type { Card } from '../../types/card';
 
@@ -58,7 +58,7 @@ export const ArtistCardsPage: React.FC = () => {
   const [initialValues] = useState(() => getInitialValues());
 
   // Use card cache for fetching cards by artist
-  const { fetchCardsByArtist } = useCardCache();
+  const { fetchCardsByArtist } = useCardQueries();
   const [cardsLoading, setCardsLoading] = useState(true);
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
@@ -352,4 +352,4 @@ export const ArtistCardsPage: React.FC = () => {
       <BackToTopFab />
     </QueryStateContainer>
   );
-};
+};export default ArtistCardsPage;

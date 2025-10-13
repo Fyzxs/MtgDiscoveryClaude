@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client';
+import { logger } from '../utils/logger';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
@@ -17,7 +18,7 @@ export const setAuth0TokenGetter = (tokenGetter: () => Promise<string | null>) =
 // Function to set the token ready state
 export const setTokenReadyState = (ready: boolean) => {
   isTokenReady = ready;
-  console.log('Apollo Client - Token ready state:', ready);
+  logger.debug('Apollo Client - Token ready state:', ready);
 };
 
 // Function to check if token is ready
@@ -31,7 +32,7 @@ const authLink = setContext(async (_, { headers }) => {
       const tokenStart = performance.now();
       const idToken = await getAuth0Token();
       const tokenEnd = performance.now();
-      console.log(`[AUTH] Token acquisition took ${tokenEnd - tokenStart}ms`);
+      logger.debug(`[AUTH] Token acquisition took ${tokenEnd - tokenStart}ms`);
       if (idToken) {
         return {
           headers: {
@@ -41,7 +42,7 @@ const authLink = setContext(async (_, { headers }) => {
         };
       }
     } catch (error) {
-      console.error('Auth0 ID token acquisition failed:', error);
+      logger.error('Auth0 ID token acquisition failed:', error);
     }
   }
 

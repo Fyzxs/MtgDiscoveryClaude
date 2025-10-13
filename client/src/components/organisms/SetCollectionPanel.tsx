@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '../../utils/logger';
 import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { ChevronLeft as ChevronLeftIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
@@ -48,7 +49,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       })
       .catch(error => {
         if (cancelled === false) {
-          console.error('Error fetching collection progress:', error);
+          logger.error('Error fetching collection progress:', error);
         }
       });
 
@@ -127,10 +128,10 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       return a.originalIndex - b.originalIndex;
     });
   } catch (error) {
-    console.error('[SetCollectionPanel] Error building display groups:', error);
-    console.error('[SetCollectionPanel] availableGroupIds:', availableGroupIds);
-    console.error('[SetCollectionPanel] collectionProgress:', collectionProgress);
-    console.error('[SetCollectionPanel] set.groupings:', set.groupings);
+    logger.error('[SetCollectionPanel] Error building display groups:', error);
+    logger.error('[SetCollectionPanel] availableGroupIds:', availableGroupIds);
+    logger.error('[SetCollectionPanel] collectionProgress:', collectionProgress);
+    logger.error('[SetCollectionPanel] set.groupings:', set.groupings);
     return null;
   }
 

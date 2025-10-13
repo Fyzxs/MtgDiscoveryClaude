@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '../../../utils/logger';
 import { Card, CardContent, Box, CardActionArea, Typography } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import type { MtgSet, SetContext } from '../../../types/set';
@@ -46,13 +47,13 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     getCollectionProgress(set)
       .then(progress => {
         if (!cancelled) {
-          console.log('Collection progress received for', set.code, ':', progress);
+          logger.debug('Collection progress received for', set.code, ':', progress);
           setCollectionProgress(progress);
         }
       })
       .catch(error => {
         if (!cancelled) {
-          console.error('Error fetching collection progress:', error);
+          logger.error('Error fetching collection progress:', error);
         }
       });
 

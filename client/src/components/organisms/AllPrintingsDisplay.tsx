@@ -6,7 +6,7 @@ import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../atoms';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { useCardCache } from '../../hooks/useCardCache';
+import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';
 
 interface AllPrintingsDisplayProps {
@@ -32,7 +32,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
   const { hasCollector } = useCollectorParam();
 
   // Use card cache for fetching cards by name
-  const { fetchCardsByName } = useCardCache();
+  const { fetchCardsByName } = useCardQueries();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<CardsSuccessResponse | null>(null);

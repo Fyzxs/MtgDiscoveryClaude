@@ -9,7 +9,6 @@ import {
   Button,
   Tooltip
 } from '@mui/material';
-// import { useQuery } from '@apollo/client'; // TODO: Uncomment after types generated
 import { getLegalityColor } from '../../theme';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
@@ -24,7 +23,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-// import { GET_USER_CARD_BY_ID } from '../../graphql/queries/userCards'; // TODO: Uncomment after types generated
 import { CollectionSummary, ModalContainer, ManaCost } from '../molecules';
 import { RarityBadge, PriceDisplay } from '../atoms';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';

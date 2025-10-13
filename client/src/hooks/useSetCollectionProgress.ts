@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { logger } from '../utils/logger';
 import { useApolloClient } from '@apollo/client/react';
 import { GET_USER_SET_CARDS } from '../graphql/queries/userCards';
 import type { MtgSet } from '../types/set';
@@ -177,7 +178,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
         groups
       };
     } catch (error) {
-      console.error('Error in getCollectionProgress:', error);
+      logger.error('Error in getCollectionProgress:', error);
       return undefined;
     }
   }, [hasCollector, collectorId, client]);

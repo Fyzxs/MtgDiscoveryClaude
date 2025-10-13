@@ -183,4 +183,4 @@ export const AllSetsPage: React.FC = () => {
       <BackToTopFab />
     </GraphQLQueryStateContainer>
   );
-};
+};export default AllSetsPage;

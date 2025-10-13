@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react';
 import type { Card } from '../types/card';
+import { logger } from '../utils/logger';
 
 interface SortCache {
   [key: string]: {
@@ -59,28 +60,28 @@ export function useOptimizedSort(
         cached.dataHash === dataHash &&
         !dataRefChanged &&
         (Date.now() - cached.timestamp) < 300000) {
-      console.log(`[useOptimizedSort] Cache HIT for key: ${cacheKey}`);
-      console.log('[useOptimizedSort] Returning cached cards - first card:', cached.result[0]);
-      console.log('[useOptimizedSort] Cached card userCollection:', cached.result[0]?.userCollection);
+      logger.debug(`[useOptimizedSort] Cache HIT for key: ${cacheKey}`);
+      logger.debug('[useOptimizedSort] Returning cached cards - first card:', cached.result[0]);
+      logger.debug('[useOptimizedSort] Cached card userCollection:', cached.result[0]?.userCollection);
       return cached.result;
     }
 
     if (dataRefChanged) {
-      console.log(`[useOptimizedSort] Cache MISS - data reference changed`);
+      logger.debug(`[useOptimizedSort] Cache MISS - data reference changed`);
     } else {
-      console.log(`[useOptimizedSort] Cache MISS for key: ${cacheKey}`);
+      logger.debug(`[useOptimizedSort] Cache MISS for key: ${cacheKey}`);
     }
-    console.log('[useOptimizedSort] Input data - first card:', data[0]);
-    console.log('[useOptimizedSort] Input card userCollection:', data[0]?.userCollection);
+    logger.debug('[useOptimizedSort] Input data - first card:', data[0]);
+    logger.debug('[useOptimizedSort] Input card userCollection:', data[0]?.userCollection);
 
     // Perform sort operation
-    console.log(`Sorting ${data.length} cards with key: ${sortKey}`);
+    logger.debug(`Sorting ${data.length} cards with key: ${sortKey}`);
     const startTime = performance.now();
 
     const sorted = [...data].sort(sortFn);
 
     const endTime = performance.now();
-    console.log(`Sort completed in ${(endTime - startTime).toFixed(2)}ms`);
+    logger.debug(`Sort completed in ${(endTime - startTime).toFixed(2)}ms`);
 
     // Cache the result
     cacheRef.current[cacheKey] = {
