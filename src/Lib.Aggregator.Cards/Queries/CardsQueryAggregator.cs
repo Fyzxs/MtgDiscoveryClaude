@@ -25,6 +25,8 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
     private readonly ISetCodeItrToXfrMapper _setCodeItrToXfrMapper;
     private readonly ICardNameItrToXfrMapper _cardNameItrToXfrMapper;
     private readonly ICardSearchTermItrToXfrMapper _cardSearchTermItrToXfrMapper;
+    private readonly ICollectionStringToCardNameSearchResultMapper _stringToSearchResultMapper;
+    private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
 
     public CardsQueryAggregator(ILogger logger) : this(
         new CardAdapterService(logger),
@@ -34,7 +36,9 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         new CardIdsItrToXfrMapper(),
         new SetCodeItrToXfrMapper(),
         new CardNameItrToXfrMapper(),
-        new CardSearchTermItrToXfrMapper())
+        new CardSearchTermItrToXfrMapper(),
+        new CollectionStringToCardNameSearchResultMapper(),
+        new CollectionCardItemItrToOufMapper())
     { }
 
     private CardsQueryAggregator(
@@ -45,7 +49,9 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         ICardIdsItrToXfrMapper cardIdsItrToXfrMapper,
         ISetCodeItrToXfrMapper setCodeItrToXfrMapper,
         ICardNameItrToXfrMapper cardNameItrToXfrMapper,
-        ICardSearchTermItrToXfrMapper cardSearchTermItrToXfrMapper)
+        ICardSearchTermItrToXfrMapper cardSearchTermItrToXfrMapper,
+        ICollectionStringToCardNameSearchResultMapper stringToSearchResultMapper,
+        ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
     {
         _cardAdapterService = cardAdapterService;
         _cardItemMapper = cardItemMapper;
@@ -55,6 +61,8 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         _setCodeItrToXfrMapper = setCodeItrToXfrMapper;
         _cardNameItrToXfrMapper = cardNameItrToXfrMapper;
         _cardSearchTermItrToXfrMapper = cardSearchTermItrToXfrMapper;
+        _stringToSearchResultMapper = stringToSearchResultMapper;
+        _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
@@ -68,8 +76,8 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _cardItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICollection<ICardItemItrEntity> cards = [.. mappedCards];
-        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntity { Data = cards });
+        ICardItemCollectionOufEntity oufEntity = await _cardItemItrToOufMapper.Map(mappedCards).ConfigureAwait(false);
+        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
@@ -83,8 +91,8 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _setCardItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICollection<ICardItemItrEntity> cards = [.. mappedCards];
-        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntity { Data = cards });
+        ICardItemCollectionOufEntity oufEntity = await _cardItemItrToOufMapper.Map(mappedCards).ConfigureAwait(false);
+        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
@@ -98,8 +106,8 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _cardByNameMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICollection<ICardItemItrEntity> cards = [.. mappedCards];
-        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntity { Data = cards });
+        ICardItemCollectionOufEntity oufEntity = await _cardItemItrToOufMapper.Map(mappedCards).ConfigureAwait(false);
+        return new SuccessOperationResponse<ICardItemCollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
@@ -112,7 +120,7 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
             return new FailureOperationResponse<ICardNameSearchCollectionOufEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{searchTerm.SearchTerm}'", response.OuterException));
         }
 
-        List<ICardNameSearchResultItrEntity> results = [.. response.ResponseData.Select(x => new CardNameSearchResultItrEntity { Name = x }).Cast<ICardNameSearchResultItrEntity>()];
+        ICollection<ICardNameSearchResultItrEntity> results = await _stringToSearchResultMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<ICardNameSearchCollectionOufEntity>(new CardNameSearchCollectionOufEntity { Names = results });
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
@@ -7,7 +7,6 @@ namespace Lib.Aggregator.UserCards.Commands.Mappers;
 /// <summary>
 /// Maps UserCardExtEntity to IUserCardItrEntity.
 /// </summary>
-internal interface IUserCardExtToItrEntityMapper
+internal interface IUserCardExtToItrEntityMapper : ICreateMapper<UserCardExtEntity, IUserCardOufEntity>
 {
-    Task<IUserCardOufEntity> Map(UserCardExtEntity source);
 }

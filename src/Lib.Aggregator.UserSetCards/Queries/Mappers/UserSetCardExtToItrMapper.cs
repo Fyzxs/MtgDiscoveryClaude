@@ -3,7 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
-using Lib.Aggregator.UserSetCards.Entities;
+using Lib.Aggregator.UserSetCards.Queries.Entities;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 

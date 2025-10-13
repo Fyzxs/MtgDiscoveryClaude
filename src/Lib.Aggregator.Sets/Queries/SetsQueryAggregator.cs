@@ -19,24 +19,28 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
     private readonly ICollectionSetItemExtToItrMapper _setItemMapper;
     private readonly ISetIdsItrToXfrMapper _setIdsItrToXfrMapper;
     private readonly ISetCodesItrToXfrMapper _setCodesItrToXfrMapper;
+    private readonly ICollectionSetItemItrToOufMapper _setItemItrToOufMapper;
 
     public SetsQueryAggregator(ILogger logger) : this(
         new SetAdapterService(logger),
         new CollectionSetItemExtToItrMapper(),
         new SetIdsItrToXfrMapper(),
-        new SetCodesItrToXfrMapper())
+        new SetCodesItrToXfrMapper(),
+        new CollectionSetItemItrToOufMapper())
     { }
 
     private SetsQueryAggregator(
         ISetAdapterService setAdapterService,
         ICollectionSetItemExtToItrMapper setItemMapper,
         ISetIdsItrToXfrMapper setIdsItrToXfrMapper,
-        ISetCodesItrToXfrMapper setCodesItrToXfrMapper)
+        ISetCodesItrToXfrMapper setCodesItrToXfrMapper,
+        ICollectionSetItemItrToOufMapper setItemItrToOufMapper)
     {
         _setAdapterService = setAdapterService;
         _setItemMapper = setItemMapper;
         _setIdsItrToXfrMapper = setIdsItrToXfrMapper;
         _setCodesItrToXfrMapper = setCodesItrToXfrMapper;
+        _setItemItrToOufMapper = setItemItrToOufMapper;
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args)
@@ -50,8 +54,8 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
         }
 
         IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICollection<ISetItemItrEntity> sets = [.. mappedSets];
-        return new SuccessOperationResponse<ISetItemCollectionOufEntity>(new SetItemCollectionOufEntity { Data = sets });
+        ISetItemCollectionOufEntity oufEntity = await _setItemItrToOufMapper.Map(mappedSets).ConfigureAwait(false);
+        return new SuccessOperationResponse<ISetItemCollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args)
@@ -65,8 +69,8 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
         }
 
         IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICollection<ISetItemItrEntity> sets = [.. mappedSets];
-        return new SuccessOperationResponse<ISetItemCollectionOufEntity>(new SetItemCollectionOufEntity { Data = sets });
+        ISetItemCollectionOufEntity oufEntity = await _setItemItrToOufMapper.Map(mappedSets).ConfigureAwait(false);
+        return new SuccessOperationResponse<ISetItemCollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync()
@@ -79,7 +83,7 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
         }
 
         IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICollection<ISetItemItrEntity> sets = [.. mappedSets];
-        return new SuccessOperationResponse<ISetItemCollectionOufEntity>(new SetItemCollectionOufEntity { Data = sets });
+        ISetItemCollectionOufEntity oufEntity = await _setItemItrToOufMapper.Map(mappedSets).ConfigureAwait(false);
+        return new SuccessOperationResponse<ISetItemCollectionOufEntity>(oufEntity);
     }
 }

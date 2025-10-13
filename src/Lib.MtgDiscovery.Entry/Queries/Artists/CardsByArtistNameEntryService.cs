@@ -9,7 +9,7 @@ using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -22,13 +22,15 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
     private readonly IArtistNameArgToItrMapper _artistNameArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly IArtistNameArgToUserCardsArtistContextCollectionMapper _artistContextCollectionMapper;
 
     public CardsByArtistNameEntryService(ILogger logger) : this(
         new ArtistDomainService(logger),
         new ArtistNameArgEntityValidatorContainer(),
         new ArtistNameArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
-        new UserCardEnrichment(logger))
+        new UserCardEnrichment(logger),
+        new ArtistNameArgToUserCardsArtistContextCollectionMapper())
     { }
 
     private CardsByArtistNameEntryService(
@@ -36,13 +38,15 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         IArtistNameArgEntityValidator artistNameArgEntityValidator,
         IArtistNameArgToItrMapper artistNameArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
-        IUserCardEnrichment userCardEnrichment)
+        IUserCardEnrichment userCardEnrichment,
+        IArtistNameArgToUserCardsArtistContextCollectionMapper artistContextCollectionMapper)
     {
         _artistDomainService = artistDomainService;
         _artistNameArgEntityValidator = artistNameArgEntityValidator;
         _artistNameArgToItrMapper = artistNameArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardEnrichment = userCardEnrichment;
+        _artistContextCollectionMapper = artistContextCollectionMapper;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IArtistNameArgEntity artistName)
@@ -59,20 +63,12 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         // Use efficient query by artist ID if userId is present
         if (string.IsNullOrEmpty(artistName.UserId) is false)
         {
-            // Extract all unique artist IDs from the returned cards
-            IEnumerable<string> artistIds = outEntities
-                .Where(card => card.ArtistIds is not null)
-                .SelectMany(card => card.ArtistIds)
-                .Distinct();
+            // Extract all unique artist IDs from the returned cards and create contexts
+            IEnumerable<IUserCardsArtistItrEntity> artistContexts = await _artistContextCollectionMapper.Map(artistName, outEntities).ConfigureAwait(false);
 
             // Enrich by each artist ID to collect all user cards for these artists
-            foreach (string artistId in artistIds)
+            foreach (IUserCardsArtistItrEntity artistContext in artistContexts)
             {
-                IUserCardsArtistItrEntity artistContext = new UserCardsArtistItrEntity
-                {
-                    UserId = artistName.UserId,
-                    ArtistId = artistId
-                };
                 await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
             }
         }

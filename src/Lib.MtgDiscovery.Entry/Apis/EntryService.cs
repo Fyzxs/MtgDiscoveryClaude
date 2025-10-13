@@ -6,12 +6,12 @@ using Lib.MtgDiscovery.Entry.Queries;
 using Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
-using Lib.Shared.DataModels.Entities.Outs.Artists;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
-using Lib.Shared.DataModels.Entities.Outs.Sets;
-using Lib.Shared.DataModels.Entities.Outs.User;
-using Lib.Shared.DataModels.Entities.Outs.UserCards;
-using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

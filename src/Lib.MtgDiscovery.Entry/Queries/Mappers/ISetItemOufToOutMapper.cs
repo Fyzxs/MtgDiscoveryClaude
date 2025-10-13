@@ -1,6 +1,6 @@
 ﻿using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 

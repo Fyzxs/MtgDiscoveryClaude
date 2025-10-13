@@ -88,7 +88,7 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
 
             if (_config.ProcessRulings)
             {
-                await _rulingsPipeline.WriteRulingsAsync(rulings).ConfigureAwait(false);
+                await _rulingsPipeline.WriteRulingsAsync(rulings.Values).ConfigureAwait(false);
             }
 
             if (!_config.SetsOnly)

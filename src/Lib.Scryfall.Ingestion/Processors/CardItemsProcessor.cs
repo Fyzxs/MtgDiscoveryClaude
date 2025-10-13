@@ -32,7 +32,7 @@ internal sealed class CardItemsProcessor : ICardProcessor
 
     public async Task ProcessAsync(IScryfallCard card)
     {
-        ScryfallCardItemExtEntity cardItem = _mapper.Map(card.Data());
+        ScryfallCardItemExtEntity cardItem = await _mapper.Map(card.Data()).ConfigureAwait(false);
         OpResponse<ScryfallCardItemExtEntity> response = await _scribe.UpsertAsync(cardItem).ConfigureAwait(false);
 
         LogSuccess(card, response);

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 using HotChocolate.Types;
-using Lib.Shared.DataModels.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;

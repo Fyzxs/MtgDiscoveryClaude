@@ -6,7 +6,7 @@ using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Outs.User;
+using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
