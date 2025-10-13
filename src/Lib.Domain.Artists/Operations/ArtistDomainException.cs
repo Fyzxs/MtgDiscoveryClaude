@@ -4,11 +4,17 @@ using Lib.Shared.Invocation.Exceptions;
 
 namespace Lib.Domain.Artists.Operations;
 
-#pragma warning disable CA1032
 internal sealed class ArtistDomainException : OperationException
-#pragma warning restore CA1032
 {
-    public ArtistDomainException(string message, Exception innerException = null)
+    public ArtistDomainException()
+        : base(HttpStatusCode.InternalServerError, "Artist domain operation failed")
+    { }
+
+    public ArtistDomainException(string message)
+        : base(HttpStatusCode.InternalServerError, message)
+    { }
+
+    public ArtistDomainException(string message, Exception innerException)
         : base(HttpStatusCode.InternalServerError, message, innerException)
     { }
 }

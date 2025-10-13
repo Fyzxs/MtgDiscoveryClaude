@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Enrichments;
+using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -54,7 +55,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        // TODO: This needs extraction
+        // Use efficient query by card name if userId is present
         if (string.IsNullOrEmpty(cardName.UserId) is false)
         {
             IUserCardsNameItrEntity nameContext = new UserCardsNameItrEntity
@@ -66,11 +67,5 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
-    }
-
-    private sealed class UserCardsNameItrEntity : IUserCardsNameItrEntity
-    {
-        public string UserId { get; init; }
-        public string CardName { get; init; }
     }
 }
