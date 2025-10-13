@@ -1,6 +1,6 @@
-﻿using Lib.Aggregator.UserSetCards.Entities;
+﻿using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Abstractions.Mappers;
-using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 

@@ -9,7 +9,7 @@ using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -22,13 +22,15 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
     private readonly ISetCodeArgToItrMapper _setCodeArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly ISetCodeArgToUserCardsSetContextMapper _setContextMapper;
 
     public CardsBySetCodeEntryService(ILogger logger) : this(
         new CardDomainService(logger),
         new SetCodeArgEntityValidatorContainer(),
         new SetCodeArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
-        new UserCardEnrichment(logger))
+        new UserCardEnrichment(logger),
+        new SetCodeArgToUserCardsSetContextMapper())
     { }
 
     private CardsBySetCodeEntryService(
@@ -36,13 +38,15 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         ISetCodeArgEntityValidator setCodeArgEntityValidator,
         ISetCodeArgToItrMapper setCodeArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
-        IUserCardEnrichment userCardEnrichment)
+        IUserCardEnrichment userCardEnrichment,
+        ISetCodeArgToUserCardsSetContextMapper setContextMapper)
     {
         _cardDomainService = cardDomainService;
         _setCodeArgEntityValidator = setCodeArgEntityValidator;
         _setCodeArgToItrMapper = setCodeArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardEnrichment = userCardEnrichment;
+        _setContextMapper = setContextMapper;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ISetCodeArgEntity setCode)
@@ -59,15 +63,9 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         // Use efficient query by set if userId is present
         if (setCode.HasUserId)
         {
-            // All cards in outEntities are from the same set, extract SetId UUID from first card
-            CardItemOutEntity firstCard = outEntities.FirstOrDefault();
-            if (firstCard != null && string.IsNullOrEmpty(firstCard.SetId) is false)
+            IUserCardsSetItrEntity userCardsSetContext = await _setContextMapper.Map(setCode, outEntities).ConfigureAwait(false);
+            if (userCardsSetContext is not null)
             {
-                IUserCardsSetItrEntity userCardsSetContext = new UserCardsSetItrEntity
-                {
-                    UserId = setCode.UserId,
-                    SetId = firstCard.SetId
-                };
                 await _userCardEnrichment.EnrichBySet(outEntities, userCardsSetContext).ConfigureAwait(false);
             }
         }

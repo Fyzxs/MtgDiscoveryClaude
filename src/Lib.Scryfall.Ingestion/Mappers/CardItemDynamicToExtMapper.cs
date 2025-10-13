@@ -1,8 +1,13 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
 namespace Lib.Scryfall.Ingestion.Mappers;
 
 internal sealed class CardItemDynamicToExtMapper : ICardItemDynamicToExtMapper
 {
-    public ScryfallCardItemExtEntity Map(dynamic scryfallCard) => new() { Data = scryfallCard };
+    public Task<ScryfallCardItemExtEntity> Map(dynamic scryfallCard)
+    {
+        ScryfallCardItemExtEntity result = new() { Data = scryfallCard };
+        return Task.FromResult(result);
+    }
 }

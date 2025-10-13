@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
-using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -17,8 +16,9 @@ internal sealed class UserSetCardsCommandEntryService : IUserSetCardsCommandEntr
         new AddSetGroupToUserSetCardEntryService(logger))
     { }
 
-    private UserSetCardsCommandEntryService(IAddSetGroupToUserSetCardEntryService addSetGroupToUserSetCard) => _addSetGroupToUserSetCard = addSetGroupToUserSetCard;
+    private UserSetCardsCommandEntryService(IAddSetGroupToUserSetCardEntryService addSetGroupToUserSetCard)
+        => _addSetGroupToUserSetCard = addSetGroupToUserSetCard;
 
-    //TODO: This needs to be mapped in the AddSetGroupToUserSetCardEntryService
-    public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAuthUserArgEntity authUser, IAddSetGroupToUserSetCardArgEntity argEntity) => await _addSetGroupToUserSetCard.Execute(new AddSetGroupToUserSetCardArgsEntity { AuthUser = authUser, AddSetGroupToUserSetCard = argEntity }).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAuthUserArgEntity authUser, IAddSetGroupToUserSetCardArgEntity argEntity)
+        => await _addSetGroupToUserSetCard.Execute(authUser, argEntity).ConfigureAwait(false);
 }

@@ -75,6 +75,137 @@ public sealed class CollectedItemNotNullValidator : OperationResponseValidator<T
 - Example: `EmptyCollection` instead of `null`, `NoOpLogger` instead of `null`
 - Never pass null through validated code paths
 
+### Validation Architecture Pattern
+
+The codebase uses a sophisticated multi-class validation pattern that follows extreme MicroObjects principles. While this may appear verbose at first, it provides significant benefits for testing, maintainability, and type safety.
+
+**Pattern Structure:**
+
+Each validator container consists of multiple small, focused classes:
+- **Container Class** (1): Composes multiple validators in sequence
+- **Validator Classes** (N): Each implements specific validation logic (NOT Func delegates - maintains OOP)
+- **Nested Validator** (1 per validator): Typed behavior for testability
+- **Nested Message** (1 per validator): Typed error message (not string - No Primitives principle)
+
+**Example Structure:**
+```
+CardIdsArgEntityValidatorContainer (1 class)
+├── IsNotNullCardIdsArgEntityValidator (3 classes: main + nested validator + nested message)
+├── IdsNotNullCardIdsArgEntityValidator (3 classes: main + nested validator + nested message)
+├── HasIdsCardIdsArgEntityValidator (3 classes: main + nested validator + nested message)
+└── ValidCardIdsArgEntityValidator (3 classes: main + nested validator + nested message)
+
+Total: 13 classes for complete validation
+```
+
+**Why This Pattern:**
+
+1. **Test Isolation**: Each validator is independently testable with a single failure reason
+2. **Compile-Time Safety**: Error messages are typed classes, not magic strings
+3. **Open/Closed Principle**: New validations are new classes; existing code never changes
+4. **Simple Tests**: No complex test configuration or string matching required
+5. **Clear Failures**: Tests fail for exactly one reason, making debugging straightforward
+
+**Tradeoffs Accepted:**
+
+- More files (appears verbose to newcomers)
+- Learning curve for the pattern
+- Many small classes instead of few large ones
+- File count may seem high
+
+**Alternatives Rejected:**
+
+- **Func delegates**: Would lose type safety and testability
+- **Consolidated validator**: Moves complexity to test configuration
+- **String messages**: Violates No Primitives principle
+- **Inheritance hierarchies**: Adds unnecessary complexity
+
+**Key Insight:**
+
+The "class explosion" is precision, not complexity. Each class does ONE thing, tests ONE thing, and fails for ONE reason. This makes the codebase more maintainable and testable, even though it requires more files.
+
+**When Creating New Validators:**
+
+1. Create a container class that composes validators
+2. Each validator should have its own class (not inline Func)
+3. Each validator should have a nested Validator class for the logic
+4. Each validator should have a nested Message class for the error message
+5. Tests should verify each validator independently
+
+**Reference Implementation:**
+
+See `Lib.MtgDiscovery.Entry/Commands/Validators/` for complete examples of this pattern in action.
+
+### NoArgsEntity Pattern
+
+For operations that require no input arguments, use `NoArgsEntity` instead of `void`, `null`, or omitting parameters entirely. This maintains consistency with the `IOperationResponseService<TInput, TOutput>` pattern and follows MicroObjects principles.
+
+**Pattern Definition:**
+
+```csharp
+// Lib.MtgDiscovery.Entry/Entities/NoArgsEntity.cs
+internal sealed class NoArgsEntity;
+```
+
+**When to Use NoArgsEntity:**
+
+Use `NoArgsEntity` as the input parameter type when:
+1. An operation retrieves all items without filtering (e.g., `AllSetsAsync()`)
+2. An operation requires no input parameters to execute
+3. You want to maintain consistency with `IOperationResponseService<TInput, TOutput>`
+4. You want to avoid `void` or `null` parameter patterns
+
+**Example Implementation:**
+
+```csharp
+// Interface definition
+internal interface IAllSetsEntryService : IOperationResponseService<NoArgsEntity, List<ScryfallSetOutEntity>>
+{
+}
+
+// Service implementation
+internal sealed class AllSetsEntryService : IAllSetsEntryService
+{
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> Execute(NoArgsEntity input)
+    {
+        // No validation or mapping needed for NoArgsEntity
+        IOperationResponse<ISetItemCollectionOufEntity> opResponse =
+            await _setDomainService.AllSetsAsync().ConfigureAwait(false);
+
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<ScryfallSetOutEntity>>(opResponse.OuterException);
+
+        List<ScryfallSetOutEntity> outEntities =
+            await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<List<ScryfallSetOutEntity>>(outEntities);
+    }
+}
+```
+
+**Validation and Mapping with NoArgsEntity:**
+
+When using `NoArgsEntity`:
+- **Skip Validation**: There are no properties to validate, so validation step is unnecessary
+- **Skip Mapping**: There is nothing to map or transform
+- **Direct Execution**: Proceed directly to domain service call
+- This is the ONLY case where skipping validation/mapping is acceptable
+
+**Why Not Use Other Approaches:**
+
+- **void**: Cannot be used as a type parameter in generic interfaces
+- **null**: Violates No Nulls principle; lacks type safety
+- **Optional Parameters**: Doesn't work with interface contracts
+- **Empty Object with Properties**: Adds unnecessary complexity
+
+**Key Insight:**
+
+`NoArgsEntity` is a type-safe way to express "this operation needs no input" while maintaining architectural consistency. It's a marker type that enables uniform service interfaces without compromising MicroObjects principles.
+
+**Reference Implementation:**
+
+See `Lib.MtgDiscovery.Entry/Queries/Sets/AllSetsEntryService.cs` for a complete example.
+
 ### Naming Conventions
 - Remove redundant terms from names (e.g., `ICosmosContainerReadOperator` not `ICosmosContainerReadItemOperator`)
 - Method names should also avoid redundancy (e.g., `ReadAsync` not `ReadItemAsync`)

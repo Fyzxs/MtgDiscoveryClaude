@@ -1,29 +1,32 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Aggregator.Artists.Queries.Entities;
+using Lib.Scryfall.Shared.Entities;
+using Lib.Scryfall.Shared.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 
 internal sealed class ArtistSearchTermItrToXfrMapper : IArtistSearchTermItrToXfrMapper
 {
-    public Task<IArtistSearchTermXfrEntity> Map(IArtistSearchTermItrEntity source)
-    {
-        string normalized = source.SearchTerm;
+    private readonly ISearchTermToTrigramsMapper _trigramMapper;
 
-        List<string> trigrams = [];
-        for (int i = 0; i <= normalized.Length - 3; i++)
-        {
-            trigrams.Add(normalized.Substring(i, 3));
-        }
+    public ArtistSearchTermItrToXfrMapper() : this(new SearchTermToTrigramsMapper())
+    {
+    }
+
+    private ArtistSearchTermItrToXfrMapper(ISearchTermToTrigramsMapper trigramMapper) => _trigramMapper = trigramMapper;
+
+    public async Task<IArtistSearchTermXfrEntity> Map(IArtistSearchTermItrEntity source)
+    {
+        ITrigramCollectionEntity trigramCollection = await _trigramMapper.Map(source.SearchTerm).ConfigureAwait(false);
 
         ArtistSearchTermXfrEntity mapped = new()
         {
-            Normalized = normalized,
-            SearchTerms = trigrams
+            Normalized = trigramCollection.Normalized,
+            SearchTerms = [.. trigramCollection.Trigrams]
         };
 
-        return Task.FromResult<IArtistSearchTermXfrEntity>(mapped);
+        return mapped;
     }
 }

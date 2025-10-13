@@ -8,7 +8,7 @@ using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -21,13 +21,15 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
     private readonly ICardNameArgToItrMapper _cardNameArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly ICardNameArgToUserCardsNameContextMapper _nameContextMapper;
 
     public CardsByNameEntryService(ILogger logger) : this(
         new CardDomainService(logger),
         new CardNameArgEntityValidatorContainer(),
         new CardNameArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
-        new UserCardEnrichment(logger))
+        new UserCardEnrichment(logger),
+        new CardNameArgToUserCardsNameContextMapper())
     { }
 
     private CardsByNameEntryService(
@@ -35,13 +37,15 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         ICardNameArgEntityValidator cardNameArgEntityValidator,
         ICardNameArgToItrMapper cardNameArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
-        IUserCardEnrichment userCardEnrichment)
+        IUserCardEnrichment userCardEnrichment,
+        ICardNameArgToUserCardsNameContextMapper nameContextMapper)
     {
         _cardDomainService = cardDomainService;
         _cardNameArgEntityValidator = cardNameArgEntityValidator;
         _cardNameArgToItrMapper = cardNameArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardEnrichment = userCardEnrichment;
+        _nameContextMapper = nameContextMapper;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ICardNameArgEntity cardName)
@@ -58,11 +62,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         // Use efficient query by card name if userId is present
         if (string.IsNullOrEmpty(cardName.UserId) is false)
         {
-            IUserCardsNameItrEntity nameContext = new UserCardsNameItrEntity
-            {
-                UserId = cardName.UserId,
-                CardName = cardName.CardName
-            };
+            IUserCardsNameItrEntity nameContext = await _nameContextMapper.Map(cardName).ConfigureAwait(false);
             await _userCardEnrichment.EnrichByName(outEntities, nameContext).ConfigureAwait(false);
         }
 

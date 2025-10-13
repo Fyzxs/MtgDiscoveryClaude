@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
@@ -56,18 +57,18 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
         return aggregatedRulings;
     }
 
-    public async Task WriteRulingsAsync(Dictionary<string, IScryfallRuling> rulings)
+    public async Task WriteRulingsAsync(IEnumerable<IScryfallRuling> rulings)
     {
-        //TODO: qgil; 20250907 - I don't think we need a dictionary here, just a list.
-        _dashboard.LogWritingRulings(rulings.Count);
+        List<IScryfallRuling> rulingList = rulings.ToList();
+        int total = rulingList.Count;
+
+        _dashboard.LogWritingRulings(total);
 
         int current = 0;
-        int total = rulings.Count;
 
-        foreach (KeyValuePair<string, IScryfallRuling> kvp in rulings)
+        foreach (IScryfallRuling ruling in rulingList)
         {
             current++;
-            IScryfallRuling ruling = kvp.Value;
 
             _dashboard.UpdateProgress("Rulings:", current, total, "Writing", ruling.OracleId);
 
@@ -80,8 +81,8 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
             await _rulingScribe.UpsertAsync(entity).ConfigureAwait(false);
         }
 
-        _dashboard.LogRulingsWritten(rulings.Count);
-        _dashboard.UpdateCompletedCount("Rulings", rulings.Count);
+        _dashboard.LogRulingsWritten(total);
+        _dashboard.UpdateCompletedCount("Rulings", total);
     }
 }
 
