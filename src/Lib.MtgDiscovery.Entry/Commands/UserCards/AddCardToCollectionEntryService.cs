@@ -4,7 +4,6 @@ using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Entities;
 using Lib.MtgDiscovery.Entry.Commands.Mappers;
-using Lib.MtgDiscovery.Entry.Commands.UserCards.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.Validators;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Entities;
@@ -24,7 +23,6 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
 {
     private readonly IUserCardsDomainService _userCardsDomainService;
     private readonly ICardDomainService _cardDomainService;
-    private readonly IAddCardToCollectionArgsMapper _argsMapper;
     private readonly IAddCardToCollectionArgEntityValidator _addCardToCollectionArgEntityValidator;
     private readonly IAddUserCardArgToItrMapper _addUserCardArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
@@ -34,7 +32,6 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
     public AddCardToCollectionEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
         new CardDomainService(logger),
-        new AddCardToCollectionArgsMapper(),
         new AddCardToCollectionArgEntityValidatorContainer(),
         new AddUserCardArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
@@ -45,7 +42,6 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
     private AddCardToCollectionEntryService(
         IUserCardsDomainService userCardsDomainService,
         ICardDomainService cardDomainService,
-        IAddCardToCollectionArgsMapper argsMapper,
         IAddCardToCollectionArgEntityValidator addCardToCollectionArgEntityValidator,
         IAddUserCardArgToItrMapper addUserCardArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
@@ -54,7 +50,6 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
     {
         _userCardsDomainService = userCardsDomainService;
         _cardDomainService = cardDomainService;
-        _argsMapper = argsMapper;
         _addCardToCollectionArgEntityValidator = addCardToCollectionArgEntityValidator;
         _addUserCardArgToItrMapper = addUserCardArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
@@ -62,9 +57,8 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         _cardNameGuidGenerator = cardNameGuidGenerator;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAuthUserArgEntity authUser, IAddUserCardArgEntity args)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity input)
     {
-        IAddCardToCollectionArgsEntity input = await _argsMapper.Map(authUser, args).ConfigureAwait(false);
 
         IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
