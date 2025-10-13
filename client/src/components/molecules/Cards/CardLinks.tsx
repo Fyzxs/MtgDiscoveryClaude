@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import { ExternalLinkIcon } from '../../atoms';
 
 interface CardLinksProps {
@@ -7,13 +8,15 @@ interface CardLinksProps {
   tcgplayerUrl?: string;
   cardName?: string;
   className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const CardLinks: React.FC<CardLinksProps> = ({ 
+export const CardLinks: React.FC<CardLinksProps> = ({
   scryfallUrl,
   tcgplayerUrl,
   cardName,
-  className 
+  className,
+  sx
 }) => {
   const fallbackTcgplayerUrl = cardName 
     ? `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(cardName)}`
@@ -33,7 +36,7 @@ export const CardLinks: React.FC<CardLinksProps> = ({
   const cardKingdomUrl = cardName ? generateCardKingdomUrl(cardName) : undefined;
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} className={className}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ...sx }} className={className}>
       <ExternalLinkIcon 
         type="scryfall" 
         url={scryfallUrl} 

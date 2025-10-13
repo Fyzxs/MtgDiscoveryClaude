@@ -50,6 +50,17 @@ interface UserSetCardData {
   }[];
 }
 
+interface UserSetCardResponse {
+  userSetCards: {
+    __typename: string;
+    data?: UserSetCardData;
+    status?: {
+      message: string;
+      statusCode: number;
+    };
+  };
+}
+
 interface SetCollectionProgressHook {
   getCollectionProgress: (set: MtgSet, forceRefresh?: boolean) => Promise<SetCollectionProgress | undefined>;
 }
@@ -64,7 +75,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
     }
 
     try {
-      const { data } = await client.query({
+      const { data } = await client.query<UserSetCardResponse>({
         query: GET_USER_SET_CARDS,
         variables: {
           setCardArgs: {
@@ -76,11 +87,11 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
         fetchPolicy: forceRefresh ? 'network-only' : 'cache-first'
       });
 
-      if (!data || data.userSetCards.__typename === 'FailureResponse') {
+      if (!data || !data.userSetCards || data.userSetCards.__typename === 'FailureResponse') {
         return undefined;
       }
 
-      const userSetData: UserSetCardData = data.userSetCards.data;
+      const userSetData = data.userSetCards.data;
 
       if (!userSetData) {
         return undefined;

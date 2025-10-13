@@ -58,8 +58,8 @@ export function useUrlFilterState<T>(
     data,
     filterConfig,
     {
-      search: initialValues[urlParams.search || 'search'] || defaults.search || '',
-      sort: initialValues[urlParams.sort || 'sort'] || defaults.sort || filterConfig.defaultSort || '',
+      search: (typeof initialValues[urlParams.search || 'search'] === 'string' ? initialValues[urlParams.search || 'search'] : (defaults.search || '')) as string,
+      sort: (typeof initialValues[urlParams.sort || 'sort'] === 'string' ? initialValues[urlParams.sort || 'sort'] : (defaults.sort || filterConfig.defaultSort || '')) as string,
       filters: Object.fromEntries(
         Object.entries(defaults.filters || {}).map(([key, defaultValue]) => [
           key,

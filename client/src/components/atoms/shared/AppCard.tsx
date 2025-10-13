@@ -4,7 +4,7 @@ import type { CardProps, SxProps, Theme } from '@mui/material';
 import type { StyledComponentProps } from '../../../types/components';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
-interface AppCardProps extends CardProps, StyledComponentProps {
+interface AppCardProps extends Omit<CardProps, 'variant'>, StyledComponentProps {
   children: React.ReactNode;
   padding?: boolean | 'responsive' | 'none' | 'compact' | 'comfortable';
   responsiveElevation?: boolean; // Different elevation on mobile vs desktop
@@ -133,11 +133,11 @@ export const AppCard: React.FC<AppCardProps> = ({
   };
 
   // Combine all styling
-  const combinedSx: SxProps<Theme> = {
+  const combinedSx = {
     ...getVariantSx(),
     ...getTouchOptimizedSx(),
     ...sx,
-  };
+  } as SxProps<Theme>;
 
   const paddingConfig = getPaddingConfig();
 

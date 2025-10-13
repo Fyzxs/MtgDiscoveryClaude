@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
 import type { Card, CardContext } from '../../../types/card';
 
-interface CardWithCollection extends Card {
-  userCollection?: unknown;
-}
-
 interface MtgCardMemoProps {
   card: Card;
   context?: CardContext;
@@ -74,7 +70,7 @@ export const mtgCardPropsComparison = (
   if (prevProps.card.purchaseUris?.tcgplayer !== nextProps.card.purchaseUris?.tcgplayer) return false;
 
   // Collection data changes (critical for collector view)
-  if ((prevProps.card as CardWithCollection).userCollection !== (nextProps.card as CardWithCollection).userCollection) return false;
+  if (prevProps.card.userCollection !== nextProps.card.userCollection) return false;
 
   // If we get here, props are effectively the same
   return true;
