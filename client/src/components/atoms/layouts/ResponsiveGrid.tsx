@@ -1,8 +1,6 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
 import type { GridLayoutProps } from '../../../types/components';
-import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 export interface ResponsiveGridProps extends GridLayoutProps {
   minItemWidth?: number | string;

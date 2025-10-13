@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   FormControl,
   Select,
@@ -6,7 +6,8 @@ import {
   Box,
   Typography,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  type SelectChangeEvent
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '../../../i18n/config';
@@ -25,11 +26,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   compact = false
 }) => {
   const { i18n } = useTranslation();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.code === i18n.language);
-
-  const handleLanguageChange = (event: any) => {
+  const handleLanguageChange = (event: SelectChangeEvent<string>) => {
     const newLanguage = event.target.value as LanguageCode;
     i18n.changeLanguage(newLanguage);
   };

@@ -71,7 +71,7 @@ export interface StateContainerProps {
   children: ReactNode;
   loadingComponent?: ReactNode;
   errorComponent?: ReactNode;
-  containerProps?: any;
+  containerProps?: Record<string, unknown>;
   showContainer?: boolean;
 }
 

@@ -11,7 +11,7 @@ const CacheType = {
 type CacheType = typeof CacheType[keyof typeof CacheType];
 
 // Cache entry structure with metadata
-interface CacheEntry<T = any> {
+interface CacheEntry<T = unknown> {
   data: T;
   timestamp: number;
   expiresAt: number;

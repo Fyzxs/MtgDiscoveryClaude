@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, type SxProps, type Theme } from '@mui/material';
 
 interface BrowseTemplateProps {
   /** Page header content (title, hero section, etc.) */
@@ -31,7 +31,7 @@ interface BrowseTemplateProps {
   };
 
   /** Additional container styles */
-  containerSx?: any;
+  containerSx?: SxProps<Theme>;
 }
 
 /**

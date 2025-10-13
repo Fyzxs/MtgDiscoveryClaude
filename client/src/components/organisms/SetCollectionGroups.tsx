@@ -22,12 +22,6 @@ interface SetCollectionGroupsProps {
   onGroupToggle: (groupId: string, isCollecting: boolean) => void;
 }
 
-const FINISH_EMOJIS: Record<string, string> = {
-  nonFoil: '🔹',
-  foil: '✨',
-  etched: '⚡'
-};
-
 export const SetCollectionGroups: React.FC<SetCollectionGroupsProps> = ({
   groups,
   onGroupToggle

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, type SxProps, type Theme } from '@mui/material';
 
 interface DetailTemplateProps {
   /** Breadcrumb navigation for context and back navigation */
@@ -34,7 +34,7 @@ interface DetailTemplateProps {
   };
 
   /** Additional container styles */
-  containerSx?: any;
+  containerSx?: SxProps<Theme>;
 
   /** Layout mode - single column or with sidebar */
   layout?: 'single' | 'sidebar';

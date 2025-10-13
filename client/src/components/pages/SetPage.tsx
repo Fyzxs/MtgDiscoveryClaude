@@ -4,38 +4,20 @@ import { useParams } from 'react-router-dom';
 import { useCardCache } from '../../hooks/useCardCache';
 import {
   Container,
-  Typography,
-  Box,
-  Alert,
-  FormControlLabel,
-  Switch
+  Alert
 } from '@mui/material';
-// import { GET_CARDS_BY_SET_CODE } from '../../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../../graphql/queries/sets';
-import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
-import { CardGroup } from '../organisms/CardGroup';
-import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import { SearchEmptyState } from '../atoms/shared/EmptyState';
 import { useUrlState } from '../../hooks/useUrlState';
 import { useFilterState } from '../../hooks/useFilterState';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { QueryStateContainer, useQueryStates } from '../molecules/shared/QueryStateContainer';
-import { FilterPanel } from '../organisms/filters/FilterPanel';
-import { RARITY_ORDER, parseCollectorNumber, SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
+import { useQueryStates } from '../molecules/shared/QueryStateContainer';
+import { RARITY_ORDER, parseCollectorNumber } from '../../config/cardSortOptions';
 import {
   getUniqueArtists,
   getUniqueRarities,
   getUniqueFinishes,
-  getCollectionCountOptions,
-  getSignedCardsOptions,
   createCardFilterFunctions
 } from '../../utils/cardUtils';
-import { BackToTopFab } from '../molecules/shared/BackToTopFab';
-import { 
-  SectionErrorBoundary, 
-  FilterErrorBoundary, 
-  CardGridErrorBoundary 
-} from '../ErrorBoundaries';
 import type { Card } from '../../types/card';
 import type { MtgSet } from '../../types/set';
 import { groupCardsOptimized, getGroupDisplayName, getGroupOrder } from '../../utils/optimizedCardGrouping';
@@ -361,7 +343,7 @@ export const SetPage: React.FC = () => {
   );
 
   const selectedRarities = filters.rarities || [];
-  const selectedGroupIds = filters.groups || [];
+  const selectedGroupIds = useMemo(() => filters.groups || [], [filters.groups]);
 
   // Apply optimized sorting to filtered cards
   // Include collectorId in sort key to invalidate cache when collection context changes
@@ -395,7 +377,7 @@ export const SetPage: React.FC = () => {
 
   // Update URL when filters change
   useEffect(() => {
-    const urlUpdates: Record<string, any> = {
+    const urlUpdates: Record<string, string | string[] | null> = {
       search: searchTerm || null,
       sort: sortBy !== 'collector-asc' ? sortBy : null,
       rarities: filters.rarities?.length > 0 ? filters.rarities : null,
@@ -539,7 +521,7 @@ export const SetPage: React.FC = () => {
       ...group,
       cards: groupedSortedCards.get(group.id) || []
     }));
-  }, [allCardGroups, sortedCards, setInfo?.groupings, cards.length]);
+  }, [allCardGroups, sortedCards, setInfo?.groupings]);
 
   // Compute visible groups: if no groups selected, show all; otherwise show only selected
   // Only include groups that have cards

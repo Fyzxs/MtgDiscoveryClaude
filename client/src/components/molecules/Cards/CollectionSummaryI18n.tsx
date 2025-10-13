@@ -16,7 +16,7 @@ const SymbolWithTooltip: React.FC<{
   symbol: string;
   label: string;
   children: React.ReactNode
-}> = ({ symbol, label, children }) => (
+}> = ({ label, children }) => (
   <Tooltip title={label} arrow placement="top">
     <span role="img" aria-label={label} style={{ cursor: 'help' }}>
       {children}
@@ -40,7 +40,6 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
 
   // Translation hooks
   const { t: tCollection } = useTranslation('collection');
-  const { t: tCards } = useTranslation('cards');
   const { getStatusSymbol } = useSymbols();
   const finishDisplay = useFinishDisplay();
   const specialDisplay = useSpecialDisplay();
@@ -384,13 +383,13 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
 
           {/* Group by finish type */}
           {finishTypes.sort((a, b) => {
-            const order = { nonfoil: 0, foil: 1, etched: 2 };
-            return (order as any)[a] - (order as any)[b];
+            const order: Record<string, number> = { nonfoil: 0, foil: 1, etched: 2 };
+            return (order[a] ?? 999) - (order[b] ?? 999);
           }).map((finish) => {
             const finishCards = finishGroups[finish];
             const finishTotal = finishCards.reduce((sum, item) => sum + item.count, 0);
-            const finishSymbol = finishDisplay.getSymbol(finish as any);
-            const finishLabel = finishDisplay.getLabel(finish as any);
+            const finishSymbol = finishDisplay.getSymbol(finish);
+            const finishLabel = finishDisplay.getLabel(finish);
 
             // Group by special type within finish
             const regularCount = finishCards.filter(item => item.special === 'none').reduce((sum, item) => sum + item.count, 0);
@@ -404,8 +403,8 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
                 {regularCount > 0 && <>{regularCount}</>}
                 {regularCount > 0 && specialCards.length > 0 && <>, </>}
                 {specialCards.map((card, idx) => {
-                  const specialSymbol = specialDisplay.getSymbol(card.special as any);
-                  const specialLabel = specialDisplay.getLabel(card.special as any);
+                  const specialSymbol = specialDisplay.getSymbol(card.special);
+                  const specialLabel = specialDisplay.getLabel(card.special);
                   return (
                     <React.Fragment key={idx}>
                       {idx > 0 && ', '}
@@ -431,8 +430,8 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
                 const totalCount = collection
                   .filter(item => item.special === special)
                   .reduce((sum, item) => sum + item.count, 0);
-                const specialSymbol = specialDisplay.getSymbol(special as any);
-                const specialLabel = specialDisplay.getLabel(special as any);
+                const specialSymbol = specialDisplay.getSymbol(special);
+                const specialLabel = specialDisplay.getLabel(special);
 
                 return (
                   <Typography key={special} variant="body2" sx={{ mb: 1 }}>

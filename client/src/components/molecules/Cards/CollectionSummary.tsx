@@ -298,8 +298,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
           {/* Group by finish type */}
           {finishTypes.sort((a, b) => {
-            const order = { nonfoil: 0, foil: 1, etched: 2 };
-            return (order as any)[a] - (order as any)[b];
+            const order: Record<string, number> = { nonfoil: 0, foil: 1, etched: 2 };
+            return (order[a] || 999) - (order[b] || 999);
           }).map((finish) => {
             const finishCards = finishGroups[finish];
             const finishTotal = finishCards.reduce((sum, item) => sum + item.count, 0);

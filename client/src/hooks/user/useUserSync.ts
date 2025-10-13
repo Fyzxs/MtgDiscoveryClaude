@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useQuery } from '@apollo/client/react';
+import { useQuery, type ApolloError } from '@apollo/client/react';
 import { GET_USER_INFO } from '../../graphql/mutations/user';
 import { getTokenReadyState } from '../../graphql/apollo-client';
 
@@ -25,6 +25,20 @@ export interface CollectorProfile {
   uniqueCards: number;
   favoriteSet?: string;
   collectionValue?: number;
+}
+
+interface UserInfoQueryData {
+  userInfo?: {
+    userId: string;
+    email: string;
+  };
+}
+
+interface UserInfoQueryResult {
+  loading: boolean;
+  data?: UserInfoQueryData;
+  error?: ApolloError;
+  refetch: () => Promise<unknown>;
 }
 
 export interface UserSyncState {
@@ -59,10 +73,10 @@ export const useUserSync = (): UserSyncState => {
   }, [isAuthenticated, auth0Loading, tokenReady]);
 
   // Use GET_USER_INFO authenticated query
-  const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery(GET_USER_INFO, {
+  const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery<UserInfoQueryData>(GET_USER_INFO, {
     skip: tokenReady === false,
     errorPolicy: 'all'
-  }) as any;
+  }) as UserInfoQueryResult;
 
   // Handle user info query results
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCardCache } from '../../hooks/useCardCache';
 import type { Card } from '../../types/card';
@@ -55,7 +55,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<CardsSuccessResponse | null>(null);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     if (!cardName) return;
 
     setLoading(true);
@@ -81,11 +81,11 @@ export const CardAllPrintingsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cardName, decodedCardName, fetchCardsByName]);
 
   useEffect(() => {
     refetch();
-  }, [cardName, decodedCardName]);
+  }, [refetch]);
 
   useEffect(() => {
     const loadingKey = `card-detail-${decodedCardName}`;

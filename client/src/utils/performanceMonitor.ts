@@ -124,9 +124,13 @@ class PerformanceMonitor {
 
 export const perfMonitor = new PerformanceMonitor();
 
+interface WindowWithPerfMonitor extends Window {
+  __perfMonitor?: PerformanceMonitor;
+}
+
 // Expose to window for debugging in development
 if (import.meta.env.DEV) {
-  (window as any).__perfMonitor = perfMonitor;
+  (window as WindowWithPerfMonitor).__perfMonitor = perfMonitor;
   console.log('[PerformanceMonitor] Available at window.__perfMonitor');
   console.log('Commands: __perfMonitor.getSummary(), __perfMonitor.logSummary()');
 }

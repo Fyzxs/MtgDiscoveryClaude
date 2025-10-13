@@ -19,11 +19,11 @@ interface CardFilterPanelProps {
     sets?: string[];
     formats?: string[];
   };
-  
+
   // State setters
   onSearchChange?: (value: string) => void;
   onSortChange: (value: string) => void;
-  onFilterChange: (filterName: string, value: any) => void;
+  onFilterChange: (filterName: string, value: string[]) => void;
   
   // Available options
   uniqueArtists: string[];
@@ -59,12 +59,10 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   uniqueArtists,
   uniqueRarities,
   uniqueSets,
-  uniqueFormats,
   hasMultipleArtists,
   hasMultipleRarities,
   hasMultipleSets,
   hasMultipleFormats = true,
-  filteredCount: _filteredCount,
   totalCount,
   showSearch = false,
   searchPlaceholder = 'Search cards...',

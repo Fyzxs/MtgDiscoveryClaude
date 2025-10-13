@@ -9,6 +9,10 @@ interface DebouncedSearchInputProps extends SearchInputProps {
   disabled?: boolean;
 }
 
+interface HTMLInputElementWithClear extends HTMLInputElement {
+  __clearSearch?: () => void;
+}
+
 const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
   value = '',
   onChange,
@@ -124,12 +128,13 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
 
   // Expose clear function for the X button
   useEffect(() => {
-    if (searchInputRef.current) {
-      (searchInputRef.current as any).__clearSearch = handleClear;
+    const currentRef = searchInputRef.current;
+    if (currentRef) {
+      (currentRef as HTMLInputElementWithClear).__clearSearch = handleClear;
     }
     return () => {
-      if (searchInputRef.current) {
-        delete (searchInputRef.current as any).__clearSearch;
+      if (currentRef) {
+        delete (currentRef as HTMLInputElementWithClear).__clearSearch;
       }
     };
   }, [handleClear]);

@@ -2,15 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
-import { 
-  Container, 
-  Typography, 
+import {
+  Container,
+  Typography,
   Box,
   CircularProgress,
   Alert
 } from '@mui/material';
 import { REGISTER_USER } from '../../graphql/mutations/user';
 import { getTokenReadyState } from '../../graphql/apollo-client';
+
+interface RegistrationData {
+  userId: string;
+  displayName: string;
+}
+
+interface RegisterUserResponse {
+  registerUserInfo?: {
+    __typename: string;
+    data?: RegistrationData;
+    status?: {
+      message: string;
+    };
+  };
+}
 
 export const SignInRedirectPage: React.FC = () => {
   const { isLoading, isAuthenticated, user, error } = useAuth0();
@@ -70,9 +85,9 @@ export const SignInRedirectPage: React.FC = () => {
         // Call GraphQL mutation to register user - now with token ready
         const result = await registerUser();
 
-        if ((result.data as any)?.registerUserInfo?.__typename === 'UserRegistrationSuccessResponse') {
+        if ((result.data as RegisterUserResponse)?.registerUserInfo?.__typename === 'UserRegistrationSuccessResponse') {
           // Registration successful
-          const registrationData = (result.data as any).registerUserInfo.data;
+          const registrationData = (result.data as RegisterUserResponse).registerUserInfo?.data;
           
           // Store user information locally for quick access
           const userData = {
@@ -80,8 +95,8 @@ export const SignInRedirectPage: React.FC = () => {
             email: user.email,
             name: user.name || user.email,
             picture: user.picture,
-            userId: registrationData.userId,
-            displayName: registrationData.displayName,
+            userId: registrationData?.userId,
+            displayName: registrationData?.displayName,
             lastLoginAt: new Date().toISOString(),
           };
 
@@ -94,10 +109,10 @@ export const SignInRedirectPage: React.FC = () => {
           setTimeout(() => {
             navigate('/', { replace: true });
           }, 1500);
-          
+
         } else {
           // Registration failed
-          const errorMsg = (result.data as any)?.registerUserInfo?.status?.message || 'Unknown registration error';
+          const errorMsg = (result.data as RegisterUserResponse)?.registerUserInfo?.status?.message || 'Unknown registration error';
           setSetupStatus('error');
           setStatusMessage(`Registration failed: ${errorMsg}`);
         }

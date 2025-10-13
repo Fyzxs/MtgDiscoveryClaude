@@ -1,11 +1,11 @@
 import React from 'react';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, type SxProps, type Theme } from '@mui/material';
 
 interface ResultsSummaryProps {
   current: number;
   total: number;
   label: string;
-  sx?: any;
+  sx?: SxProps<Theme>;
   textAlign?: 'left' | 'center' | 'right';
   variant?: 'body1' | 'body2' | 'subtitle1' | 'subtitle2' | 'caption';
   color?: string;

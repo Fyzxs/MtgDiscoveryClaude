@@ -10,7 +10,7 @@ export type FilterConfig<T> = UseFilterStateConfig<T>;
 export interface FilterState {
   search: string;
   sort: string;
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
 }
 
 // Default empty objects to prevent new references on every render
@@ -33,7 +33,7 @@ export function useFilterState<T>(
 
   const {
     searchFields = EMPTY_ARRAY,
-    sortOptions = EMPTY_SORT_OPTIONS,
+    sortOptions = EMPTY_SORT_OPTIONS, // eslint-disable-line @typescript-eslint/no-unused-vars
     filterFunctions = EMPTY_FUNCTIONS,
     defaultSort = ''
   } = configRef.current;
@@ -113,7 +113,7 @@ export function useFilterState<T>(
     // Parent components should use useOptimizedSort for sorting the filtered results
 
     setFilteredData(filtered);
-  }, [data, searchTerm, filters]); // sortBy removed - no longer used here, sorting happens in parent
+  }, [data, searchTerm, filters, searchFields, filterFunctions]); // sortBy removed - no longer used here, sorting happens in parent
 
   return {
     // State values

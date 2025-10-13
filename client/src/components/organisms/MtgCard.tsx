@@ -28,9 +28,11 @@ interface MtgCardProps extends StyledComponentProps {
 const MtgCardComponent: React.FC<MtgCardProps> = ({
   card,
   context = {},
-  collectionData: _collectionData,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  collectionData: _collectionData, // Used for memoization comparison
   index,
-  groupId: _groupId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  groupId: _groupId, // Used for memoization comparison
   onSetClick,
   onArtistClick,
   className = ''

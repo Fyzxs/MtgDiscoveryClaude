@@ -9,6 +9,21 @@ import {
 } from '../graphql/queries/cards';
 import type { Card } from '../types/card';
 
+interface CardQueryResponse {
+  cardsById?: {
+    data?: Card[];
+  };
+  cardsBySetCode?: {
+    data?: Card[];
+  };
+  cardsByName?: {
+    data?: Card[];
+  };
+  cardsByArtistName?: {
+    data?: Card[];
+  };
+}
+
 /**
  * Collection card data interface for updates
  */
@@ -42,7 +57,7 @@ export function useCardCache() {
       fetchPolicy: 'cache-first'
     });
 
-    const data = (response.data as any)?.cardsById?.data;
+    const data = (response.data as CardQueryResponse)?.cardsById?.data;
     if (data?.[0]) {
       return data[0];
     }
@@ -64,7 +79,7 @@ export function useCardCache() {
       fetchPolicy: 'cache-first'
     });
 
-    return (response.data as any)?.cardsById?.data || [];
+    return (response.data as CardQueryResponse)?.cardsById?.data || [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
@@ -82,7 +97,7 @@ export function useCardCache() {
       fetchPolicy: 'cache-first'
     });
 
-    const data = (response.data as any)?.cardsBySetCode?.data;
+    const data = (response.data as CardQueryResponse)?.cardsBySetCode?.data;
     if (data) {
       return data;
     }
@@ -104,7 +119,7 @@ export function useCardCache() {
       fetchPolicy: 'cache-first'
     });
 
-    return (response.data as any)?.cardsByName?.data || [];
+    return (response.data as CardQueryResponse)?.cardsByName?.data || [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
@@ -122,7 +137,7 @@ export function useCardCache() {
       fetchPolicy: 'cache-first'
     });
 
-    return (response.data as any)?.cardsByArtistName?.data || [];
+    return (response.data as CardQueryResponse)?.cardsByArtistName?.data || [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
@@ -130,6 +145,7 @@ export function useCardCache() {
    * TODO: Implement when UPDATE_COLLECTION mutation is available
    */
   const updateCollectorCard = useCallback(async (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _collectorData: CollectorCardData
   ): Promise<Card> => {
     if (!hasCollector || !collectorId) {

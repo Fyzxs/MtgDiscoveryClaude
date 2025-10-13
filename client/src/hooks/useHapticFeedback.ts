@@ -11,6 +11,16 @@ export type HapticFeedbackType =
   | 'warning'
   | 'error';
 
+interface HapticEngine {
+  impactOccurred?: (intensity: number) => void;
+  selectionChanged?: () => void;
+  notificationOccurred?: (type: number) => void;
+}
+
+interface WindowWithHaptics extends Window {
+  hapticFeedback?: HapticEngine;
+}
+
 interface UseHapticFeedbackOptions {
   enabled?: boolean;
   // Fallback vibration patterns for devices that don't support advanced haptics
@@ -63,7 +73,7 @@ export const useHapticFeedback = ({
 
   const triggerModernHaptic = useCallback((type: HapticFeedbackType) => {
     // Modern Haptic API (primarily iOS Safari)
-    const hapticEngine = (window as any).hapticFeedback;
+    const hapticEngine = (window as WindowWithHaptics).hapticFeedback;
 
     if (!hapticEngine) return false;
 

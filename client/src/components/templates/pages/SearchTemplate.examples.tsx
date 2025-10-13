@@ -33,6 +33,7 @@ import { SearchTemplate } from './SearchTemplate';
  */
 export const CardSearchExample: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
@@ -225,6 +226,7 @@ export const CardSearchExample: React.FC = () => {
  */
 export const ArtistSearchExample: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
   const [results] = useState([
     { id: '1', name: 'Rebecca Guay' },
@@ -232,6 +234,7 @@ export const ArtistSearchExample: React.FC = () => {
     { id: '3', name: 'Terese Nielsen' }
   ]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasResults = results.length > 0;
   const hasSearchTerm = searchTerm.length >= 3;
 
@@ -341,6 +344,7 @@ export const ArtistSearchExample: React.FC = () => {
  */
 export const MinimalSearchExample: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
 
   return (

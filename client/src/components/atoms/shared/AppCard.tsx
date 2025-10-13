@@ -23,7 +23,7 @@ export const AppCard: React.FC<AppCardProps> = ({
   ...props
 }) => {
   const theme = useTheme();
-  const { isMobile, isTablet } = useResponsiveBreakpoints();
+  const { isMobile } = useResponsiveBreakpoints();
 
   // Calculate responsive elevation
   const getElevation = () => {
