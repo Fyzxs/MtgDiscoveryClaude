@@ -11,10 +11,10 @@ import {
 import { useTheme } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { SearchInput } from '../atoms/shared/SearchInput';
+import { SearchInput } from '../molecules/shared/SearchInput';
 import { AuthButton } from '../auth/AuthButton';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
-// import { LanguageSwitcher } from '../atoms/shared/LanguageSwitcher'; // Disabled until translations are available
+// import { LanguageSwitcher } from '../molecules/shared/LanguageSwitcher'; // Disabled until translations are available
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');

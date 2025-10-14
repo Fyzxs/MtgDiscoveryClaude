@@ -9,7 +9,7 @@ import {
   getSignedCardsOptions,
   getFormatOptions
 } from '../../utils/cardUtils';
-import { MultiSelectDropdown } from '../atoms/shared/MultiSelectDropdown';
+import { MultiSelectDropdown } from '../molecules/shared/MultiSelectDropdown';
 
 interface ArtistPageFiltersProps {
   /** Total number of cards to determine if filters should show */

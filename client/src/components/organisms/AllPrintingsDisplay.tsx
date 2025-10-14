@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { ExpandableSection } from '../molecules';
 import { LoadingContainer, ErrorAlert } from '../atoms';
 import { MtgCard } from './MtgCard';
-import { ResponsiveGridAutoFit } from '../atoms';
+import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { useCardQueries } from '../../hooks/useCardQueries';
