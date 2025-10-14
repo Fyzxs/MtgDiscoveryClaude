@@ -38,7 +38,7 @@ internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ISetItemCollectionOufEntity>(new AggregatorOperationException(System.Net.HttpStatusCode.InternalServerError, "Failed to retrieve all sets", response.OuterException));
+            return new FailureOperationResponse<ISetItemCollectionOufEntity>(new SetsAggregatorOperationException("Failed to retrieve all sets", response.OuterException));
         }
 
         IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
