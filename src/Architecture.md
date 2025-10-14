@@ -55,13 +55,13 @@ The MTG Discovery platform implements a specific layered architecture following 
 3. Shared → applies rules on the data
 4. Domain → applies ALWAYS rules on the data
 5. Aggregator → knows what adapters to talk to
-6. Adapter → maps from ItrEntity to ExtEntity, calls external world, maps ExtEntity back to ItrEntity
+6. Adapter → maps from ItrEntity to ExtEntity, calls external world, maps ExtEntity back to OufEntity
 
 **Response Flow (Outbound):**
 7. Aggregator → aggregates adapter responses
 8. Domain → applies always rules
 9. Shared → applies rules
-10. Entry → maps ItrEntity to OutEntity
+10. Entry → maps OufEntity to OutEntity
 11. App → translates OutEntity to response
 
 ### Layer Definitions
@@ -93,7 +93,7 @@ public async Task<CardSearchResponse> SearchCards(string searchTerm, ClaimsPrinc
 **Responsibilities**:
 - Validate ArgEntity from App layer
 - Map ArgEntity to ItrEntity for internal processing
-- Map ItrEntity to OutEntity for response
+- Map OufEntity to OutEntity for response
 - Request validation and business rule enforcement
 - Response formatting and error handling
 
@@ -147,7 +147,7 @@ public async Task<CardSearchResponse> SearchCards(string searchTerm, ClaimsPrinc
 **Responsibilities**:
 - Map ItrEntity to ExtEntity for external system calls
 - Communicate with external services (Scryfall API, Cosmos DB, Blob Storage)
-- Map ExtEntity responses back to ItrEntity
+- Map ExtEntity responses back to OufEntity
 - Handle external system protocols and error conditions
 - Isolate external system specifics from internal layers
 

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, type SxProps, type Theme } from '../../atoms';
 
 interface ResultsSummaryProps {
   current: number;
   total: number;
   label: string;
-  sx?: any;
+  sx?: SxProps<Theme>;
   textAlign?: 'left' | 'center' | 'right';
   variant?: 'body1' | 'body2' | 'subtitle1' | 'subtitle2' | 'caption';
   color?: string;
@@ -34,7 +34,7 @@ const ResultsSummaryComponent: React.FC<ResultsSummaryProps> = ({
     if (customFormat) {
       return customFormat(current, total, label);
     }
-    
+
     // Default format: "Showing X of Y label"
     if (current === total) {
       return `${total} ${label}`;
@@ -44,10 +44,10 @@ const ResultsSummaryComponent: React.FC<ResultsSummaryProps> = ({
 
   return (
     <Box sx={{ mb: 3, textAlign, ...sx }}>
-      <Typography 
-        variant={variant} 
+      <Typography
+        variant={variant}
         color={color}
-        sx={{ 
+        sx={{
           ...(variant === 'caption' && {
             letterSpacing: 2,
             fontSize: '0.875rem',

@@ -10,8 +10,13 @@ export type FilterConfig<T> = UseFilterStateConfig<T>;
 export interface FilterState {
   search: string;
   sort: string;
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
 }
+
+// Default empty objects to prevent new references on every render
+const EMPTY_FILTERS: Readonly<Record<string, unknown>> = {};
+const EMPTY_ARRAY: readonly unknown[] = [];
+const EMPTY_FUNCTIONS: Readonly<Record<string, (item: unknown, value: unknown) => boolean>> = {};
 
 /**
  * Hook to manage filtering, searching, and sorting of data
@@ -24,22 +29,21 @@ export function useFilterState<T>(
   // Use refs to store config to avoid dependency issues
   const configRef = useRef(config);
   configRef.current = config;
-  
+
   const {
-    searchFields = [],
-    sortOptions = {},
-    filterFunctions = {},
+    searchFields = EMPTY_ARRAY as readonly (keyof T)[],
+    filterFunctions = EMPTY_FUNCTIONS,
     defaultSort = ''
   } = configRef.current;
 
-  // Initialize state
+  // Initialize state - use memoized defaults to prevent infinite loops
   const [searchTerm, setSearchTerm] = useState(initialState?.search || '');
   const [sortBy, setSortBy] = useState(initialState?.sort || defaultSort);
-  const [filters, setFilters] = useState<Record<string, any>>(initialState?.filters || {});
+  const [filters, setFilters] = useState<Record<string, unknown>>(initialState?.filters || EMPTY_FILTERS);
   const [filteredData, setFilteredData] = useState<T[]>([]);
 
   // Generic filter update function
-  const updateFilter = useCallback((filterName: string, value: any) => {
+  const updateFilter = useCallback((filterName: string, value: unknown) => {
     setFilters(prev => ({
       ...prev,
       [filterName]: value
@@ -93,23 +97,21 @@ export function useFilterState<T>(
     // Apply custom filters
     Object.entries(filters).forEach(([filterName, filterValue]) => {
       if (filterValue === undefined || filterValue === null) return;
-      
+
       // Handle array filters (like multi-select)
       if (Array.isArray(filterValue) && filterValue.length === 0) return;
-      
+
       const filterFunction = filterFunctions[filterName];
       if (filterFunction) {
         filtered = filtered.filter(item => filterFunction(item, filterValue));
       }
     });
 
-    // Apply sorting
-    if (sortBy && sortOptions[sortBy]) {
-      filtered.sort(sortOptions[sortBy]);
-    }
+    // NOTE: Sorting removed from here to avoid double-sorting
+    // Parent components should use useOptimizedSort for sorting the filtered results
 
     setFilteredData(filtered);
-  }, [data, searchTerm, filters, sortBy]); // Config is accessed via ref, not dependencies
+  }, [data, searchTerm, filters, searchFields, filterFunctions]); // sortBy removed - no longer used here, sorting happens in parent
 
   return {
     // State values
@@ -137,11 +139,12 @@ export function useFilterState<T>(
  */
 export const commonFilters = {
   // Multi-select filter (item value must be in selected array)
-  multiSelect: <T>(field: keyof T) => (item: T, selectedValues: string[]) => {
+  multiSelect: <T>(field: keyof T) => (item: T, value: unknown) => {
+    const selectedValues = Array.isArray(value) ? value as string[] : [];
     if (!selectedValues || selectedValues.length === 0) return true;
     return selectedValues.includes(String(item[field]));
   },
-  
+
   // Range filter
   range: <T>(field: keyof T, min?: number, max?: number) => (item: T) => {
     const value = Number(item[field]);
@@ -150,18 +153,19 @@ export const commonFilters = {
     if (max !== undefined && value > max) return false;
     return true;
   },
-  
+
   // Boolean filter
-  boolean: <T>(field: keyof T) => (item: T, value: boolean) => {
-    return Boolean(item[field]) === value;
+  boolean: <T>(field: keyof T) => (item: T, value: unknown) => {
+    return Boolean(item[field]) === Boolean(value);
   },
-  
+
   // Contains filter for arrays
-  contains: <T>(field: keyof T) => (item: T, searchValue: string) => {
+  contains: <T>(field: keyof T) => (item: T, value: unknown) => {
+    const searchValue = String(value);
     const fieldValue = item[field];
     if (!fieldValue) return false;
     if (Array.isArray(fieldValue)) {
-      return fieldValue.some(v => 
+      return fieldValue.some(v =>
         String(v).toLowerCase().includes(searchValue.toLowerCase())
       );
     }

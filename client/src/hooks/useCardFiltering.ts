@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import { useFilterState } from './useFilterState';
 import type { CardLike } from '../config/cardSortOptions';
 import { createCardSortOptions } from '../config/cardSortOptions';
-import { 
-  getUniqueArtists, 
-  getUniqueRarities, 
+import {
+  getUniqueArtists,
+  getUniqueRarities,
   getUniqueSets,
-  createCardFilterFunctions 
+  getUniqueFormats,
+  createCardFilterFunctions
 } from '../utils/cardUtils';
 
 interface CardFilterOptions {
@@ -16,32 +17,50 @@ interface CardFilterOptions {
     rarities?: string[];
     artists?: string[];
     sets?: string[];
-    showDigital?: boolean;
+    formats?: string[];
+    collectionCounts?: string[];
+    signedCards?: string[];
   };
   initialSearch?: string;
   initialSort?: string;
   includeSets?: boolean; // Whether to include set filtering
+  includeCollectorFilters?: boolean; // Whether to include collector-specific filters
 }
+
+// Define defaults outside to prevent recreating on every render
+const DEFAULT_SEARCH_FIELDS: (keyof CardLike)[] = ['name'];
+const DEFAULT_INITIAL_FILTERS: {
+  rarities?: string[];
+  artists?: string[];
+  sets?: string[];
+  formats?: string[];
+  collectionCounts?: string[];
+  signedCards?: string[];
+} = {};
+const EMPTY_ARRAY: string[] = [];
 
 export function useCardFiltering<T extends CardLike>(
   cards: T[] | undefined,
   options: CardFilterOptions = {}
 ) {
   const {
-    searchFields = ['name'],
+    searchFields = DEFAULT_SEARCH_FIELDS,
     defaultSort = 'collector-asc',
-    initialFilters = {},
+    initialFilters = DEFAULT_INITIAL_FILTERS,
     initialSearch = '',
     initialSort,
-    includeSets = false
+    includeSets = false,
+    includeCollectorFilters = false
   } = options;
 
-  const data = cards || [];
+  // Wrap data initialization in useMemo to prevent recreation on every render
+  const data = useMemo(() => cards || [], [cards]);
 
   // Get unique values for filters
   const uniqueArtists = useMemo(() => getUniqueArtists(data), [data]);
   const uniqueRarities = useMemo(() => getUniqueRarities(data), [data]);
-  const uniqueSets = useMemo(() => includeSets ? getUniqueSets(data) : [], [data, includeSets]);
+  const uniqueSets = useMemo(() => includeSets ? getUniqueSets(data) : EMPTY_ARRAY, [data, includeSets]);
+  const uniqueFormats = useMemo(() => getUniqueFormats(data), [data]);
 
   // Create filter configuration
   const filterConfig = useMemo(() => ({
@@ -50,6 +69,33 @@ export function useCardFiltering<T extends CardLike>(
     filterFunctions: createCardFilterFunctions<T>(),
     defaultSort
   }), [searchFields, defaultSort]);
+
+  // Memoize initial state to prevent infinite re-renders
+  const initialState = useMemo(() => ({
+    search: initialSearch,
+    sort: initialSort || defaultSort,
+    filters: {
+      rarities: initialFilters.rarities || EMPTY_ARRAY,
+      artists: initialFilters.artists || EMPTY_ARRAY,
+      sets: initialFilters.sets || EMPTY_ARRAY,
+      formats: initialFilters.formats || EMPTY_ARRAY, // Empty means show all (both paper and digital)
+      ...(includeCollectorFilters ? {
+        collectionCounts: initialFilters.collectionCounts || EMPTY_ARRAY,
+        signedCards: initialFilters.signedCards || EMPTY_ARRAY
+      } : {})
+    }
+  }), [
+    initialSearch,
+    initialSort,
+    defaultSort,
+    initialFilters.rarities,
+    initialFilters.artists,
+    initialFilters.sets,
+    initialFilters.formats,
+    initialFilters.collectionCounts,
+    initialFilters.signedCards,
+    includeCollectorFilters
+  ]);
 
   // Use the filter state hook
   const {
@@ -63,16 +109,7 @@ export function useCardFiltering<T extends CardLike>(
   } = useFilterState(
     data,
     filterConfig,
-    {
-      search: initialSearch,
-      sort: initialSort || defaultSort,
-      filters: {
-        rarities: initialFilters.rarities || [],
-        artists: initialFilters.artists || [],
-        sets: initialFilters.sets || [],
-        showDigital: initialFilters.showDigital || false
-      }
-    }
+    initialState
   );
 
   return {
@@ -94,10 +131,12 @@ export function useCardFiltering<T extends CardLike>(
     uniqueArtists,
     uniqueRarities,
     uniqueSets,
-    
+    uniqueFormats,
+
     // Helpers
     hasMultipleArtists: uniqueArtists.length > 1,
     hasMultipleRarities: uniqueRarities.length > 1,
-    hasMultipleSets: uniqueSets.length > 1
+    hasMultipleSets: uniqueSets.length > 1,
+    hasMultipleFormats: uniqueFormats.length > 1
   };
 }

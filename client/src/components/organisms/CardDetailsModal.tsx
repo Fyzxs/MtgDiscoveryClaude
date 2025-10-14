@@ -4,34 +4,25 @@ import {
   Typography,
   IconButton,
   Divider,
-  Link,
   Grid,
   Stack,
   Button,
   Tooltip
-} from '@mui/material';
+} from '../atoms';
 import { getLegalityColor } from '../../theme';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import CircleIcon from '@mui/icons-material/Circle';
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import WarningIcon from '@mui/icons-material/Warning';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
-import { ModalContainer } from '../molecules/shared/ModalContainer';
-import { ManaCost } from '../molecules/Cards/ManaCost';
-import { RarityBadge } from '../atoms/Cards/RarityBadge';
-import { PriceDisplay } from '../atoms/shared/PriceDisplay';
-import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
-import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
-import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
-import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
-import { CardBadges } from '../atoms/Cards/CardBadges';
+import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { CollectionSummary, ModalContainer, ManaCost } from '../molecules';
+import { RarityBadge, PriceDisplay } from '../atoms';
+import { RelatedCardsDisplay } from './RelatedCardsDisplay';
+import { AllPrintingsDisplay } from './AllPrintingsDisplay';
+import { RulingsDisplay, CardImageDisplay } from '../molecules';
+import { CardBadges } from '../molecules/Cards/CardBadges';
+import { SetLink } from '../atoms';
+import { ArtistLinks } from '../molecules';
+import { CardName } from '../atoms';
+import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../atoms/Icons';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -104,6 +95,9 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   hasPrevious,
   hasNext
 }) => {
+  const { hasCollector } = useCollectorParam();
+
+
   if (!card) return null;
 
   const formatOracleText = (text?: string) => {
@@ -163,20 +157,26 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 </IconButton>
               </Box>
             )}
-            <Link 
-              href={`/card/${encodeURIComponent(card.name)}`}
-              variant="h5"
-              component="a"
-              sx={{ 
-                color: 'text.primary',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'underline'
+            <CardName
+              cardId={card.id}
+              cardName={card.name}
+              sx={{
+                '& .MuiBadge-root': {
+                  bgcolor: 'transparent',
+                  px: 0,
+                  py: 0
+                },
+                '& .MuiBadge-root:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.05)'
+                },
+                '& .MuiTypography-root': {
+                  fontSize: '3rem !important',
+                  fontWeight: 'bold !important',
+                  lineHeight: '1.1 !important',
+                  color: 'text.primary !important'
                 }
               }}
-            >
-              {card.name}
-            </Link>
+            />
             {card.manaCost && <ManaCost manaCost={card.manaCost} />}
           </Box>
           <IconButton onClick={onClose}>
@@ -261,20 +261,13 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
                   {card.rarity && <RarityBadge rarity={card.rarity} />}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Link 
-                      href={`/set/${card.setCode}`}
-                      sx={{ 
-                        color: 'text.secondary',
-                        textDecoration: 'none',
-                        '&:hover': {
-                          textDecoration: 'underline'
-                        }
-                      }}
-                    >
-                      {card.setName}
-                    </Link>
+                    <SetLink
+                      setCode={card.setCode}
+                      setName={card.setName}
+                      rarity={card.rarity}
+                    />
                     <Typography variant="body2" color="text.secondary">
-                      ({card.setCode?.toUpperCase()}) · #{card.collectorNumber}
+                      · #{card.collectorNumber}
                     </Typography>
                   </Box>
                 </Box>
@@ -327,49 +320,48 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
               <Divider />
 
+              {/* Collection */}
+              {hasCollector && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Collection:
+                  </Typography>
+                  <CollectionSummary
+                    collectionData={card?.userCollection}
+                    size="medium"
+                  />
+                </Box>
+              )}
+
               {/* Treatments */}
               {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo || card.digital) && (
-                <Box>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Treatments
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Treatments:
                   </Typography>
-                  <Box sx={{ pl: 2 }}>
-                    <CardBadges 
-                      foil={card.foil}
-                      nonfoil={card.nonFoil}
-                      promoTypes={card.promoTypes}
-                      frameEffects={card.frameEffects}
-                      isPromo={card.promo}
-                      digital={card.digital}
-                      inline={true}
-                    />
-                  </Box>
+                  <CardBadges
+                    foil={card.foil}
+                    nonfoil={card.nonFoil}
+                    etched={card.finishes?.includes('etched')}
+                    promoTypes={card.promoTypes}
+                    frameEffects={card.frameEffects}
+                    isPromo={card.promo}
+                    digital={card.digital}
+                    inline={true}
+                  />
                 </Box>
               )}
 
               {/* Artist */}
               {card.artist && (
-                <Box>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Artist
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Artist:
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {card.artist.split(/\s+(?:&|and)\s+/i).map((artistName, index) => (
-                      <Link
-                        key={index}
-                        href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
-                        sx={{
-                          color: 'text.primary',
-                          textDecoration: 'none',
-                          '&:hover': {
-                            textDecoration: 'underline'
-                          }
-                        }}
-                      >
-                        {artistName}
-                      </Link>
-                    ))}
-                  </Box>
+                  <ArtistLinks
+                    artists={card.artist.split(/\s+(?:&|and)\s+/i)}
+                    artistIds={card.artistIds}
+                  />
                 </Box>
               )}
 

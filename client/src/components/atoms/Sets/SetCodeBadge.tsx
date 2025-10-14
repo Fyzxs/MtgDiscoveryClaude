@@ -1,4 +1,4 @@
-import { Chip } from '@mui/material';
+import Chip from '../Chip';
 
 interface SetCodeBadgeProps {
   code: string;

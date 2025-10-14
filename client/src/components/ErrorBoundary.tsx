@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
-import { Box, Alert, Button, Typography, Stack } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Box, Alert, Button, Typography, Stack } from './atoms';
+import { logger, errorTracking } from '../utils/logger';
+import { RefreshIcon, ErrorOutlineIcon } from './atoms/Icons';
 
 interface Props {
   children: ReactNode;
@@ -40,10 +40,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    const { onError, name } = this.props;
-    
+    const { onError, name, level } = this.props;
+
     // Enhanced logging with context
-    console.error(`[ErrorBoundary${name ? ` - ${name}` : ''}]:`, error, errorInfo);
+    logger.error(`[ErrorBoundary${name ? ` - ${name}` : ''}]:`, error, errorInfo);
     
     // Store error info and increment count
     this.setState((prevState) => ({ 
@@ -55,11 +55,14 @@ export class ErrorBoundary extends Component<Props, State> {
     if (onError) {
       onError(error, errorInfo);
     }
-    
-    // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Send to error tracking service (e.g., Sentry)
-    }
+
+    // Send to error tracking service
+    errorTracking.captureException(error, {
+      errorBoundary: name || 'unknown',
+      level,
+      componentStack: errorInfo.componentStack,
+      errorCount: this.state.errorCount + 1
+    });
     
     // Auto-retry for network errors after delay
     if (error.message?.includes('fetch') || error.message?.includes('network')) {

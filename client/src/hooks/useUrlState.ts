@@ -2,9 +2,9 @@ import { useEffect, useCallback, useRef } from 'react';
 
 export interface UrlStateConfig {
   [key: string]: {
-    default?: any;
-    serialize?: (value: any) => string | null;
-    deserialize?: (value: string) => any;
+    default?: unknown;
+    serialize?: (value: unknown) => string | null;
+    deserialize?: (value: string) => unknown;
   };
 }
 
@@ -16,7 +16,7 @@ export interface UrlStateConfig {
  * @param options - Additional options for URL handling
  */
 export function useUrlState(
-  state: Record<string, any>,
+  state: Record<string, unknown>,
   config: UrlStateConfig,
   options: {
     replace?: boolean; // Use replaceState instead of pushState
@@ -30,7 +30,7 @@ export function useUrlState(
   // Get initial values from URL
   const getInitialValues = useCallback(() => {
     const params = new URLSearchParams(window.location.search);
-    const initialValues: Record<string, any> = {};
+    const initialValues: Record<string, unknown> = {};
 
     Object.entries(config).forEach(([key, keyConfig]) => {
       const urlValue = params.get(key);
@@ -129,7 +129,7 @@ export function useUrlState(
     // Expose current URL params for reading
     getUrlParams: () => new URLSearchParams(window.location.search),
     // Manual URL update if needed
-    updateUrl: (updates: Record<string, any>) => {
+    updateUrl: (updates: Record<string, unknown>) => {
       const params = new URLSearchParams(window.location.search);
       Object.entries(updates).forEach(([key, value]) => {
         if (value) {
@@ -151,7 +151,7 @@ export function useUrlState(
 /**
  * Simplified hook for common use cases
  */
-export function useSimpleUrlState<T extends Record<string, any>>(
+export function useSimpleUrlState<T extends Record<string, unknown>>(
   state: T,
   defaults: Partial<T> = {},
   options: { replace?: boolean; debounceMs?: number } = {}

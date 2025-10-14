@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography, Link, Stack } from '@mui/material';
+import { Box, Typography, Link, Stack } from '../../atoms';
+import type { SxProps, Theme } from '../at../atomsoms';
 import { SetIcon } from '../../atoms/Sets/SetIcon';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
 import type { CardContext } from '../../../types/card';
@@ -16,9 +17,10 @@ interface CardMetadataProps {
   onCardClick?: (cardId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const CardMetadata: React.FC<CardMetadataProps> = ({ 
+export const CardMetadata: React.FC<CardMetadataProps> = ({
   name,
   cardId,
   typeLine,
@@ -29,11 +31,12 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   context = {},
   onCardClick,
   onSetClick,
-  className = ''
+  className = '',
+  sx
 }) => {
   // Don't show card name on card page
   const showName = !context.isOnCardPage && name;
-  
+
   // Don't show set name on set page
   const showSetName = !context.isOnSetPage && setName;
 
@@ -57,12 +60,12 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   };
 
   return (
-    <Stack spacing={1} className={className}>
+    <Stack spacing={1} className={className} sx={sx}>
       {showName && (
-        <Typography 
-          variant="subtitle2" 
+        <Typography
+          variant="subtitle2"
           component="h3"
-          sx={{ 
+          sx={{
             fontWeight: 'bold',
             color: 'white',
             fontSize: { xs: '0.875rem', sm: '1rem', lg: '1.125rem' }
@@ -85,9 +88,9 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
         </Typography>
       )}
       {typeLine && (
-        <Typography 
-          variant="caption" 
-          sx={{ 
+        <Typography
+          variant="caption"
+          sx={{
             color: 'text.secondary',
             fontSize: { xs: '0.75rem', sm: '0.875rem' },
             overflow: 'hidden',
@@ -98,9 +101,9 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
           {typeLine}
         </Typography>
       )}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         gap: { xs: 1, sm: 2 },
         flexWrap: 'wrap'
       }}>
@@ -122,17 +125,17 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
               }}
             >
               {setCode && (
-                <SetIcon 
-                  setCode={setCode} 
+                <SetIcon
+                  setCode={setCode}
                   rarity={rarity}
                   size="small"
                   className="inline-block"
                 />
               )}
-              <Typography 
+              <Typography
                 variant="caption"
                 component="span"
-                sx={{ 
+                sx={{
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   maxWidth: { xs: '150px', sm: 'none' }
@@ -142,10 +145,10 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
               </Typography>
             </Link>
             {(showDate && formattedDate) && (
-              <Typography 
-                variant="caption" 
+              <Typography
+                variant="caption"
                 component="span"
-                sx={{ 
+                sx={{
                   color: 'text.disabled',
                   display: { xs: 'none', sm: 'inline' }
                 }}
@@ -156,9 +159,9 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
           </>
         )}
         {showDate && formattedDate && (
-          <Typography 
+          <Typography
             variant="caption"
-            sx={{ 
+            sx={{
               color: 'text.disabled',
               fontSize: { xs: '0.625rem', sm: '0.75rem' }
             }}

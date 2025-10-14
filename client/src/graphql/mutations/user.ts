@@ -1,40 +1,5 @@
 import { gql } from '@apollo/client';
 
-export const SYNC_USER_PROFILE = gql`
-  mutation SyncUserProfile($userProfile: UserProfileInput!) {
-    syncUserProfile(userProfile: $userProfile) {
-      __typename
-      ... on SuccessUserProfileResponse {
-        data {
-          id
-          auth0UserId
-          email
-          name
-          nickname
-          picture
-          isEmailVerified
-          createdAt
-          updatedAt
-          collectorProfile {
-            id
-            displayName
-            isPublic
-            totalCards
-            uniqueCards
-            favoriteSet
-            collectionValue
-          }
-        }
-      }
-      ... on FailureResponse {
-        status {
-          message
-        }
-      }
-    }
-  }
-`;
-
 export const CREATE_USER_PROFILE = gql`
   mutation CreateUserProfile($userProfile: CreateUserProfileInput!) {
     createUserProfile(userProfile: $userProfile) {
@@ -99,7 +64,7 @@ export const REGISTER_USER = gql`
   mutation RegisterUser {
     registerUserInfo {
       __typename
-      ... on SuccessUserRegistrationResponse {
+      ... on UserRegistrationSuccessResponse {
         data {
           userId
           displayName
@@ -119,37 +84,11 @@ export const REGISTER_USER = gql`
   }
 `;
 
-export const GET_USER_PROFILE = gql`
-  query GetUserProfile {
-    userProfile {
-      __typename
-      ... on SuccessUserProfileResponse {
-        data {
-          id
-          auth0UserId
-          email
-          name
-          nickname
-          picture
-          isEmailVerified
-          createdAt
-          updatedAt
-          collectorProfile {
-            id
-            displayName
-            isPublic
-            totalCards
-            uniqueCards
-            favoriteSet
-            collectionValue
-          }
-        }
-      }
-      ... on FailureResponse {
-        status {
-          message
-        }
-      }
+export const GET_USER_INFO = gql`
+  query GetUserInfo {
+    userInfo {
+      userId
+      email
     }
   }
 `;

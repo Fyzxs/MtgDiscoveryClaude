@@ -4,7 +4,7 @@ export const ARTIST_NAME_SEARCH = gql`
   query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
     artistSearch(searchTerm: $searchTerm) {
       __typename
-      ... on SuccessArtistSearchResultsResponse {
+      ... on ArtistSearchResultsSuccessResponse {
         data {
           artistId
           name

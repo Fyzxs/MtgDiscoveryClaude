@@ -1,0 +1,34 @@
+{
+  "card": "Card",
+  "cards": "Cards",
+  "name": "Name",
+  "type": "Type",
+  "manaCost": "Mana Cost",
+  "collectorNumber": "Collector Number",
+  "artist": "Artist",
+  "rarity": {
+    "common": "Common",
+    "uncommon": "Uncommon",
+    "rare": "Rare",
+    "mythic": "Mythic Rare",
+    "special": "Special",
+    "bonus": "Bonus"
+  },
+  "finish": {
+    "nonfoil": "Nonfoil",
+    "foil": "Foil",
+    "etched": "Etched"
+  },
+  "special": {
+    "none": "None",
+    "artistProof": "Artist Proof",
+    "signed": "Signed",
+    "altered": "Altered"
+  },
+  "legality": {
+    "legal": "Legal",
+    "notLegal": "Not Legal",
+    "banned": "Banned",
+    "restricted": "Restricted"
+  }
+}

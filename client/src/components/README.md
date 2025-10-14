@@ -26,10 +26,10 @@ This is a comprehensive component library for displaying Magic: The Gathering ca
 - **CollectorInfo** - Collector number + rarity badge combination
 - **CardMetadata** - Card name, type, set, and date information
 - **CardImageDisplay** - Enhanced card image with flip functionality
+- **CardCompact** - Compact card view optimized for grid layouts (converted to MUI sx props)
 
 ### Organisms (Complex Components)
 - **CardDisplayResponsive** - Full card display with responsive mobile/desktop layouts
-- **CardCompact** - Compact card view optimized for grid layouts (converted to MUI sx props)
 - **MtgCard** - Alternative card display component
 - **CardDetailsModal** - Modal for detailed card information
 
@@ -39,13 +39,13 @@ This is a comprehensive component library for displaying Magic: The Gathering ca
 Reference: `organisms/CardDisplayResponsive.tsx:21-28`
 
 ### Compact Grid View  
-Reference: `organisms/CardCompact.tsx:11-16`
+Reference: `molecules/Cards/CardCompact.tsx:11-16`
 
 ### App Components
 Reference: `atoms/shared/AppButton.tsx:5-8` for props interface pattern
 
 ### MUI Styling Pattern
-Reference: `organisms/CardCompact.tsx:44-58` for sx props usage
+Reference: `molecules/Cards/CardCompact.tsx:44-58` for sx props usage
 
 ## Context-Aware Display
 

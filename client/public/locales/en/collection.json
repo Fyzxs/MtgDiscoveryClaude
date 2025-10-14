@@ -1,0 +1,15 @@
+{
+  "collection": "Collection",
+  "addToCollection": "Add to Collection",
+  "removeFromCollection": "Remove from Collection",
+  "collectionCount": "Collection Count",
+  "totalCards": "Total Cards",
+  "uniqueCards": "Unique Cards",
+  "progress": "Progress",
+  "completion": "Completion",
+  "collected": "Collected",
+  "notCollected": "Not Collected",
+  "showGroups": "Show Card Groups",
+  "cardGroups": "Card Groups",
+  "groupSelection": "Group Selection"
+}
