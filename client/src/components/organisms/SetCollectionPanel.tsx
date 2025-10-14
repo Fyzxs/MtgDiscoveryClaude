@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { logger } from '../../utils/logger';
-import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../../atoms';
-import { useTheme } from '../../atoms';
+import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../atoms';
+import { useTheme } from '../atoms';
 import type { MtgSet } from '../../types/set';
 import { useSetCollectionProgress, type SetCollectionProgress, type CollectionGroup } from '../../hooks/useSetCollectionProgress';
 import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { ChevronLeftIcon } from '../../atoms/Icons';
+import { ChevronLeftIcon } from '../atoms';
 
 // Extended type for display groups with sorting index
 interface DisplayCollectionGroup extends CollectionGroup {
@@ -191,7 +191,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
                 control={
                   <Checkbox
                     checked={group.isCollecting}
-                    onChange={(e) => handleGroupToggle(e, group.setGroupId)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleGroupToggle(e, group.setGroupId)}
                     size="small"
                   />
                 }

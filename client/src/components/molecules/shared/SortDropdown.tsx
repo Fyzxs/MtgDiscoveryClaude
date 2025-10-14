@@ -35,8 +35,8 @@ const SortDropdownComponent: React.FC<SortDropdownProps> = ({
   // Show skeleton when loading
   if (loading) {
     return (
-      <FormControl 
-        fullWidth={fullWidth} 
+      <FormControl
+        fullWidth={fullWidth}
         sx={{ minWidth, ...sx }}
       >
         <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
@@ -45,8 +45,8 @@ const SortDropdownComponent: React.FC<SortDropdownProps> = ({
   }
 
   return (
-    <FormControl 
-      fullWidth={fullWidth} 
+    <FormControl
+      fullWidth={fullWidth}
       sx={{ minWidth, ...sx }}
       disabled={disabled}
     >
@@ -62,7 +62,7 @@ const SortDropdownComponent: React.FC<SortDropdownProps> = ({
           if (option.condition === false) {
             return null;
           }
-          
+
           return (
             <MenuItem key={option.value} value={option.value}>
               {option.label}

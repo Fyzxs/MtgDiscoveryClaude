@@ -30,7 +30,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   const [collectionProgress, setCollectionProgress] = useState<SetCollectionProgress | undefined>(undefined);
   const setTypeColor = getSetTypeColor(set.setType);
   const theme = useTheme();
-  const { buildUrlWithCollector, createCollectorClickHandler} = useCollectorNavigation();
+  const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
   const { hasCollector } = useCollectorParam();
   const { getCollectionProgress } = useSetCollectionProgress();
 
@@ -114,76 +114,76 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           }
         }}
       >
-      <CardContent sx={{ 
-        p: 2, 
-        height: '100%',
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        textAlign: 'center',
-        justifyContent: 'center',
-        gap: 0.25
-      }}>
-        <Box sx={{ width: '100%' }}>
-          <SetTitle name={set.name} />
-          
-          <TopBadges 
-            setCode={set.code} 
-            releaseDate={set.releasedAt} 
-          />
-        </Box>
+        <CardContent sx={{
+          p: 2,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          justifyContent: 'center',
+          gap: 0.25
+        }}>
+          <Box sx={{ width: '100%' }}>
+            <SetTitle name={set.name} />
 
-        <SetIconDisplay
-          iconSvgUri={set.iconSvgUri}
-          setName={set.name}
-          borderColor={isHovered ? '#1976d2' : setTypeColor}
-        />
+            <TopBadges
+              setCode={set.code}
+              releaseDate={set.releasedAt}
+            />
+          </Box>
 
-        <Box sx={{ width: '100%' }}>
-          <BottomBadges
-            setType={set.setType}
-            digital={set.digital}
-            foilOnly={set.foilOnly}
+          <SetIconDisplay
+            iconSvgUri={set.iconSvgUri}
+            setName={set.name}
+            borderColor={isHovered ? '#1976d2' : setTypeColor}
           />
 
-          {hasCollector ? (
-            collectionProgress ? (
-              <>
-                <CollectionProgressBar
-                  collected={collectionProgress.uniqueCards}
-                  total={collectionProgress.setTotalCards}
-                  percentage={collectionProgress.percentage}
-                />
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ fontSize: '0.75rem', mt: 0.5 }}
-                >
-                  {collectionProgress.totalCards} cards collected
-                </Typography>
-              </>
+          <Box sx={{ width: '100%' }}>
+            <BottomBadges
+              setType={set.setType}
+              digital={set.digital}
+              foilOnly={set.foilOnly}
+            />
+
+            {hasCollector ? (
+              collectionProgress ? (
+                <>
+                  <CollectionProgressBar
+                    collected={collectionProgress.uniqueCards}
+                    total={collectionProgress.setTotalCards}
+                    percentage={collectionProgress.percentage}
+                  />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: '0.75rem', mt: 0.5 }}
+                  >
+                    {collectionProgress.totalCards} cards collected
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <CollectionProgressBar
+                    collected={0}
+                    total={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount}
+                    percentage={0}
+                  />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: '0.75rem', mt: 0.5 }}
+                  >
+                    0 cards collected
+                  </Typography>
+                </>
+              )
             ) : (
-              <>
-                <CollectionProgressBar
-                  collected={0}
-                  total={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount}
-                  percentage={0}
-                />
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ fontSize: '0.75rem', mt: 0.5 }}
-                >
-                  0 cards collected
-                </Typography>
-              </>
-            )
-          ) : (
-            <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
-          )}
-        </Box>
+              <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
+            )}
+          </Box>
 
-      </CardContent>
+        </CardContent>
       </CardActionArea>
     </Card>
   );

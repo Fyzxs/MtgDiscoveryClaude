@@ -52,9 +52,9 @@ export const ArtistInfo: React.FC<ArtistInfoProps> = ({
 
   return (
     <Box className={className} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', ...sx }}>
-      <Typography 
-        variant="caption" 
-        sx={{ 
+      <Typography
+        variant="caption"
+        sx={{
           color: 'text.secondary',
           fontSize: { xs: '0.75rem', sm: '0.875rem' },
           mr: 0.5
@@ -65,10 +65,10 @@ export const ArtistInfo: React.FC<ArtistInfoProps> = ({
       {displayArtists.map((artistName, index) => (
         <React.Fragment key={index}>
           {index > 0 && (
-            <Typography 
-              variant="caption" 
+            <Typography
+              variant="caption"
               component="span"
-              sx={{ 
+              sx={{
                 color: 'text.secondary',
                 mx: 0.5,
                 fontSize: { xs: '0.75rem', sm: '0.875rem' }

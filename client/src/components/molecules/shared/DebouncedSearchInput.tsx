@@ -141,15 +141,15 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
   // Show skeleton when loading
   if (loading) {
     return (
-      <Skeleton 
-        variant="rectangular" 
-        height={56} 
-        sx={{ 
-          minWidth: fullWidth ? undefined : minWidth, 
+      <Skeleton
+        variant="rectangular"
+        height={56}
+        sx={{
+          minWidth: fullWidth ? undefined : minWidth,
           width: fullWidth ? '100%' : minWidth,
           borderRadius: 1,
-          ...sx 
-        }} 
+          ...sx
+        }}
       />
     );
   }

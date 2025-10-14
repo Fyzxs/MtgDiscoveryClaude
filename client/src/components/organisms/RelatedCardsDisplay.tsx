@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { logger } from '../../utils/logger';
-import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '../../atoms';
+import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '../atoms';
 import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';

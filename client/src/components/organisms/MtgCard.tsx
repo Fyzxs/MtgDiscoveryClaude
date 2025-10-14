@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Card as MuiCard, Box } from '../../atoms';
+import { Card as MuiCard, Box } from '../atoms';
 import type { Card, CardContext, UserCardData } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';

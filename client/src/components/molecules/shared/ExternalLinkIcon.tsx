@@ -10,14 +10,14 @@ interface ExternalLinkIconProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({ 
-  type, 
+export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
+  type,
   url,
   className = '',
   size = 'medium'
 }) => {
   const [imageError, setImageError] = useState(false);
-  
+
   if (!url) return null;
 
   const getSizeValue = () => {
@@ -56,7 +56,7 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
 
   const getIcon = () => {
     const imageUrl = getSiteImage(type);
-    
+
     if (imageUrl && !imageError) {
       return (
         <Box
@@ -87,7 +87,7 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
         </Box>
       );
     }
-    
+
     return getTextFallback();
   };
 
@@ -102,8 +102,8 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       cardkingdom: { bg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', text: 'CK' }
     };
 
-    const config = configs[type as keyof typeof configs] || 
-                  { bg: 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)', text: '?' };
+    const config = configs[type as keyof typeof configs] ||
+      { bg: 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)', text: '?' };
 
     return (
       <Box

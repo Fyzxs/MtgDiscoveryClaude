@@ -13,13 +13,13 @@ const EmptyStateComponent: React.FC<EmptyStateProps> = ({
   sx = {}
 }) => {
   return (
-    <Box 
-      sx={{ 
-        mt: 4, 
+    <Box
+      sx={{
+        mt: 4,
         mb: 4,
         textAlign: 'center',
         py: 6,
-        ...sx 
+        ...sx
       }}
     >
       {icon && (
@@ -27,20 +27,20 @@ const EmptyStateComponent: React.FC<EmptyStateProps> = ({
           {icon}
         </Box>
       )}
-      
+
       <Typography variant="h6" color="text.secondary" gutterBottom>
         {message}
       </Typography>
-      
+
       {description && (
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 3 }}>
           {description}
         </Typography>
       )}
-      
+
       {action && (
-        <Button 
-          variant="outlined" 
+        <Button
+          variant="outlined"
           onClick={action.onClick}
           sx={{ mt: 2 }}
         >
@@ -58,7 +58,7 @@ const EmptyStateComponent: React.FC<EmptyStateProps> = ({
 export const EmptyState = React.memo(EmptyStateComponent);
 
 // Pre-configured empty state for search results
-const SearchEmptyStateComponent: React.FC<{ 
+const SearchEmptyStateComponent: React.FC<{
   itemType?: string;
   onClear?: () => void;
 }> = ({ itemType = 'results', onClear }) => {

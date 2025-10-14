@@ -8,7 +8,7 @@ import {
   Stack,
   Button,
   Tooltip
-} from '../../atoms';
+} from '../atoms';
 import { getLegalityColor } from '../../theme';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
 import type { Card } from '../../types/card';

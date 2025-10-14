@@ -15,6 +15,11 @@ export { default as Grid } from './Grid';
 // Typography
 export { default as Typography } from './Typography';
 
+// Navigation
+export { default as AppBar } from './AppBar';
+export { default as Toolbar } from './Toolbar';
+export { default as Menu } from './Menu';
+
 // Buttons
 export { default as Button } from './Button';
 export { default as IconButton } from './IconButton';
@@ -38,6 +43,19 @@ export { default as CircularProgress } from './CircularProgress';
 export { default as LinearProgress } from './LinearProgress';
 export { default as Skeleton } from './Skeleton';
 
+// Dialog Components
+export { default as Dialog } from './Dialog';
+export { default as DialogTitle } from './DialogTitle';
+export { default as DialogContent } from './DialogContent';
+export { default as DialogActions } from './DialogActions';
+
+// List Components
+export { default as List } from './List';
+export { default as ListItem } from './ListItem';
+export { default as ListItemButton } from './ListItemButton';
+export { default as ListItemIcon } from './ListItemIcon';
+export { default as ListItemText } from './ListItemText';
+
 // Card Components
 export { default as Card } from './Card';
 export { default as CardMedia } from './CardMedia';
@@ -53,8 +71,6 @@ export { default as Collapse } from './Collapse';
 export { default as Icon } from './Icon';
 export { default as Zoom } from './Zoom';
 export { default as Popover } from './Popover';
-export { default as ListItemIcon } from './ListItemIcon';
-export { default as ListItemText } from './ListItemText';
 
 // Icons
 export * from './Icons';
@@ -71,6 +87,11 @@ export type {
 
   // Typography
   TypographyProps,
+
+  // Navigation
+  AppBarProps,
+  ToolbarProps,
+  MenuProps,
 
   // Buttons
   ButtonProps,
@@ -95,6 +116,19 @@ export type {
   LinearProgressProps,
   SkeletonProps,
 
+  // Dialog
+  DialogProps,
+  DialogTitleProps,
+  DialogContentProps,
+  DialogActionsProps,
+
+  // List
+  ListProps,
+  ListItemProps,
+  ListItemButtonProps,
+  ListItemIconProps,
+  ListItemTextProps,
+
   // Card
   CardProps,
   CardMediaProps,
@@ -110,8 +144,6 @@ export type {
   IconProps,
   ZoomProps,
   PopoverProps,
-  ListItemIconProps,
-  ListItemTextProps,
 } from './types';
 
 // Re-export utilities and types that are commonly used

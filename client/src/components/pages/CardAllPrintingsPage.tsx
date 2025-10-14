@@ -10,7 +10,7 @@ import {
   Button,
   CircularProgress,
   Alert
-} from '../../atoms';
+} from '../atoms';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { CardGrid } from '../organisms/CardGrid';
 import { useCardFiltering } from '../../hooks/useCardFiltering';

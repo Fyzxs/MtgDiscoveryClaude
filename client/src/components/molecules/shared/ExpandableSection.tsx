@@ -25,7 +25,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
   expanded,
   onExpandedChange,
 }) => {
-  
+
   const getBadgeContent = () => {
     if (isLoading) return 'Loading...';
     if (isError) return 'Error';
@@ -41,9 +41,9 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
 
   return (
     <Box>
-      <Box 
-        sx={{ 
-          display: 'flex', 
+      <Box
+        sx={{
+          display: 'flex',
           alignItems: 'center',
           cursor: 'pointer',
           '&:hover': {
@@ -58,10 +58,10 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
           {title}
         </Typography>
         {badgeContent && (
-          <Chip 
+          <Chip
             label={badgeContent}
             size="small"
-            sx={{ 
+            sx={{
               ml: 1,
               height: 22,
               fontSize: '0.8rem',

@@ -9,7 +9,7 @@ interface CollectorInfoProps {
   className?: string;
 }
 
-export const CollectorInfo: React.FC<CollectorInfoProps> = ({ 
+export const CollectorInfo: React.FC<CollectorInfoProps> = ({
   collectorNumber,
   setCode,
   rarity,

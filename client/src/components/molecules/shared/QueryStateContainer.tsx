@@ -32,7 +32,7 @@ export const QueryStateContainer: React.FC<QueryStateContainerProps> = ({
     if (loadingComponent) {
       return <>{loadingComponent}</>;
     }
-    
+
     const loadingContent = (
       <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
@@ -109,9 +109,9 @@ export function GraphQLQueryStateContainer<T>({
 }: GraphQLQueryStateContainerProps<T>) {
   // Check for GraphQL failure response
   let errorMsg: string | undefined;
-  
+
   if (data?.__typename === failureTypeName) {
-    errorMsg = getErrorMessage 
+    errorMsg = getErrorMessage
       ? getErrorMessage(data)
       : data.status?.message || 'Request failed';
   }
@@ -136,7 +136,7 @@ export function useQueryStates(queries: Array<{ loading?: boolean; error?: Error
   const isLoading = queries.some(q => q.loading);
   const errors = queries.filter(q => q.error).map(q => q.error);
   const firstError = errors[0] || null;
-  
+
   return {
     isLoading,
     hasError: errors.length > 0,

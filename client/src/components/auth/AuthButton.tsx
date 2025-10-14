@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Box, Typography, CircularProgress } from '../../atoms';
+import { Button, Box, Typography, CircularProgress } from '../atoms';
 import { useAuth0 } from '@auth0/auth0-react';
 import { MyCollectionButton } from '../molecules/ui/MyCollectionButton';
 import { logger } from '../../utils/logger';

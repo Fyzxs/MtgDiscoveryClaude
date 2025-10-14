@@ -34,7 +34,7 @@ const ResultsSummaryComponent: React.FC<ResultsSummaryProps> = ({
     if (customFormat) {
       return customFormat(current, total, label);
     }
-    
+
     // Default format: "Showing X of Y label"
     if (current === total) {
       return `${total} ${label}`;
@@ -44,10 +44,10 @@ const ResultsSummaryComponent: React.FC<ResultsSummaryProps> = ({
 
   return (
     <Box sx={{ mb: 3, textAlign, ...sx }}>
-      <Typography 
-        variant={variant} 
+      <Typography
+        variant={variant}
         color={color}
-        sx={{ 
+        sx={{
           ...(variant === 'caption' && {
             letterSpacing: 2,
             fontSize: '0.875rem',

@@ -29,7 +29,7 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   const theme = useTheme();
   // Use theme spacing or direct value
   const gridGap = typeof spacing === 'number' ? theme.spacing(spacing) : spacing;
-  
+
   // Handle minItemWidth - if it's a number, add px
   const itemWidth = typeof minItemWidth === 'number' ? `${minItemWidth}px` : minItemWidth;
 

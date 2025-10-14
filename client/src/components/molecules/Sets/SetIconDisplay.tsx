@@ -7,10 +7,10 @@ interface SetIconDisplayProps {
   borderColor: string;
 }
 
-export const SetIconDisplay: React.FC<SetIconDisplayProps> = ({ 
-  iconSvgUri, 
-  setName, 
-  borderColor 
+export const SetIconDisplay: React.FC<SetIconDisplayProps> = ({
+  iconSvgUri,
+  setName,
+  borderColor
 }) => {
   if (!iconSvgUri) {
     return null;

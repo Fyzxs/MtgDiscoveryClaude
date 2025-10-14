@@ -124,16 +124,16 @@ export const AppButton: React.FC<AppButtonProps> = ({
   // Use long press handlers if enabled, otherwise use regular click
   const eventHandlers = enableLongPress && onLongPress && !disabled && !isLoading
     ? {
-        onTouchStart: longPressHandlers.onTouchStart,
-        onTouchEnd: longPressHandlers.onTouchEnd,
-        onTouchCancel: longPressHandlers.onTouchCancel,
-        onMouseDown: longPressHandlers.onMouseDown,
-        onMouseUp: longPressHandlers.onMouseUp,
-        onMouseLeave: longPressHandlers.onMouseLeave,
-      }
+      onTouchStart: longPressHandlers.onTouchStart,
+      onTouchEnd: longPressHandlers.onTouchEnd,
+      onTouchCancel: longPressHandlers.onTouchCancel,
+      onMouseDown: longPressHandlers.onMouseDown,
+      onMouseUp: longPressHandlers.onMouseUp,
+      onMouseLeave: longPressHandlers.onMouseLeave,
+    }
     : {
-        onClick: handleClick,
-      };
+      onClick: handleClick,
+    };
 
   return (
     <MuiButtonBase

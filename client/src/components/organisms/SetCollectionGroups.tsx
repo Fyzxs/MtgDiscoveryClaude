@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '../../atoms';
-import { useTheme } from '../../atoms';
+import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '../atoms';
+import { useTheme } from '../atoms';
 
 interface GroupFinishProgress {
   finishType: 'nonFoil' | 'foil' | 'etched';

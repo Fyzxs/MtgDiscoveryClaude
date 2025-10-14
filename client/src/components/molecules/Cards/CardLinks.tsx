@@ -18,7 +18,7 @@ export const CardLinks: React.FC<CardLinksProps> = ({
   className,
   sx
 }) => {
-  const fallbackTcgplayerUrl = cardName 
+  const fallbackTcgplayerUrl = cardName
     ? `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(cardName)}`
     : undefined;
 
@@ -37,18 +37,18 @@ export const CardLinks: React.FC<CardLinksProps> = ({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ...sx }} className={className}>
-      <ExternalLinkIcon 
-        type="scryfall" 
-        url={scryfallUrl} 
+      <ExternalLinkIcon
+        type="scryfall"
+        url={scryfallUrl}
         size="small"
       />
-      <ExternalLinkIcon 
-        type="tcgplayer" 
+      <ExternalLinkIcon
+        type="tcgplayer"
         url={tcgplayerUrl || fallbackTcgplayerUrl}
         size="small"
       />
-      <ExternalLinkIcon 
-        type="cardkingdom" 
+      <ExternalLinkIcon
+        type="cardkingdom"
         url={cardKingdomUrl}
         size="small"
       />
