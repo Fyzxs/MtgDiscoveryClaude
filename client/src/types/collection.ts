@@ -19,7 +19,7 @@ export interface CardCollectionUpdate {
 
 export interface CollectionUpdateResult {
   success: boolean;
-  card?: any; // Will be replaced with proper Card type
+  card?: unknown;
   error?: string;
 }
 

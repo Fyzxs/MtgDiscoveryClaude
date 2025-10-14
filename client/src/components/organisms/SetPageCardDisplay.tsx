@@ -1,6 +1,6 @@
 import React from 'react';
 import { CardGroup } from './CardGroup';
-import { SearchEmptyState } from '../atoms/shared/EmptyState';
+import { SearchEmptyState } from '../molecules/shared/EmptyState';
 import { CardGridErrorBoundary } from '../ErrorBoundaries';
 import type { Card } from '../../types/card';
 import type { MtgSet } from '../../types/set';
@@ -25,7 +25,6 @@ interface SetPageCardDisplayProps {
   cardsLoading: boolean;
 
   // Data
-  cards: Card[];
   sortedCards: Card[];
   filteredCards: Card[];
   cardGroups: CardGroupConfig[];
@@ -46,7 +45,6 @@ interface SetPageCardDisplayProps {
 
 export const SetPageCardDisplay: React.FC<SetPageCardDisplayProps> = ({
   cardsLoading,
-  cards,
   sortedCards,
   filteredCards,
   cardGroups,

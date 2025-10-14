@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Box, CardActionArea, Collapse } from '@mui/material';
-import { useTheme, alpha } from '@mui/material/styles';
+import { Card, CardContent, Box, CardActionArea, Collapse } from '../../atoms';
+import { useTheme, alpha } from '../../atoms';
 import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import { SetTitle } from '../../atoms/Sets/SetTitle';

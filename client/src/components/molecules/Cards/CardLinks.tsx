@@ -1,21 +1,24 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { ExternalLinkIcon } from '../../atoms';
+import { Box } from '../../atoms';
+import type { SxProps, Theme } from '../../atoms';
+import { ExternalLinkIcon } from '../shared/ExternalLinkIcon';
 
 interface CardLinksProps {
   scryfallUrl?: string;
   tcgplayerUrl?: string;
   cardName?: string;
   className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const CardLinks: React.FC<CardLinksProps> = ({ 
+export const CardLinks: React.FC<CardLinksProps> = ({
   scryfallUrl,
   tcgplayerUrl,
   cardName,
-  className 
+  className,
+  sx
 }) => {
-  const fallbackTcgplayerUrl = cardName 
+  const fallbackTcgplayerUrl = cardName
     ? `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(cardName)}`
     : undefined;
 
@@ -33,19 +36,19 @@ export const CardLinks: React.FC<CardLinksProps> = ({
   const cardKingdomUrl = cardName ? generateCardKingdomUrl(cardName) : undefined;
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }} className={className}>
-      <ExternalLinkIcon 
-        type="scryfall" 
-        url={scryfallUrl} 
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ...sx }} className={className}>
+      <ExternalLinkIcon
+        type="scryfall"
+        url={scryfallUrl}
         size="small"
       />
-      <ExternalLinkIcon 
-        type="tcgplayer" 
+      <ExternalLinkIcon
+        type="tcgplayer"
         url={tcgplayerUrl || fallbackTcgplayerUrl}
         size="small"
       />
-      <ExternalLinkIcon 
-        type="cardkingdom" 
+      <ExternalLinkIcon
+        type="cardkingdom"
         url={cardKingdomUrl}
         size="small"
       />

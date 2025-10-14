@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useCardCache } from '../../hooks/useCardCache';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { logger } from '../../utils/logger';
+import { useParams } from 'react-router-dom';
+import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';
 import {
   Container,
@@ -9,8 +10,7 @@ import {
   Button,
   CircularProgress,
   Alert
-} from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
+} from '../atoms';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { CardGrid } from '../organisms/CardGrid';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
@@ -24,6 +24,8 @@ import {
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+import { RefreshIcon } from '../atoms/Icons';
 
 // Stable empty array to prevent infinite re-renders
 const EMPTY_CARDS_ARRAY: Card[] = [];
@@ -40,7 +42,7 @@ interface CardsSuccessResponse {
 
 export const CardAllPrintingsPage: React.FC = () => {
   const { cardName } = useParams<{ cardName: string }>();
-  const navigate = useNavigate();
+  const { navigateWithCollector } = useCollectorNavigation();
   const decodedCardName = decodeURIComponent(cardName || '');
   const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -49,12 +51,12 @@ export const CardAllPrintingsPage: React.FC = () => {
   const { hasCollector } = useCollectorParam();
 
   // Use card cache for fetching cards by name
-  const { fetchCardsByName } = useCardCache();
+  const { fetchCardsByName } = useCardQueries();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<CardsSuccessResponse | null>(null);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     if (!cardName) return;
 
     setLoading(true);
@@ -80,11 +82,11 @@ export const CardAllPrintingsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cardName, decodedCardName, fetchCardsByName]);
 
   useEffect(() => {
     refetch();
-  }, [cardName, decodedCardName]);
+  }, [refetch]);
 
   useEffect(() => {
     const loadingKey = `card-detail-${decodedCardName}`;
@@ -122,17 +124,17 @@ export const CardAllPrintingsPage: React.FC = () => {
     try {
       await refetch();
     } catch (retryError) {
-      console.error('Retry failed:', retryError);
+      logger.error('Retry failed:', retryError);
     }
   };
 
   const handleArtistClick = (artistName: string) => {
-    navigate(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
+    navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
   };
 
   // Memoize filtering options to prevent infinite re-renders
   const filteringOptions = useMemo(() => ({
-    defaultSort: hasCollector ? 'collection-desc' : 'release-desc',
+    defaultSort: 'release-desc', // Always default to newest first
     includeSets: false,
     includeCollectorFilters: hasCollector
   }), [hasCollector]);
@@ -147,8 +149,10 @@ export const CardAllPrintingsPage: React.FC = () => {
     updateFilter,
     uniqueArtists,
     uniqueRarities,
+    uniqueFormats,
     hasMultipleArtists,
-    hasMultipleRarities
+    hasMultipleRarities,
+    hasMultipleFormats
   } = useCardFiltering(cards, filteringOptions);
 
   if (loading) {
@@ -219,8 +223,10 @@ export const CardAllPrintingsPage: React.FC = () => {
         onFilterChange={updateFilter}
         uniqueArtists={uniqueArtists}
         uniqueRarities={uniqueRarities}
+        uniqueFormats={uniqueFormats}
         hasMultipleArtists={hasMultipleArtists}
         hasMultipleRarities={hasMultipleRarities}
+        hasMultipleFormats={hasMultipleFormats}
         filteredCount={filteredCards.length}
         totalCount={totalCards}
         showSearch={false}
@@ -234,7 +240,7 @@ export const CardAllPrintingsPage: React.FC = () => {
           config={{
             collectionCounts: {
               key: 'collectionCounts',
-              value: filters.collectionCounts || [],
+              value: (filters.collectionCounts as string[]) || [],
               onChange: (value: string[]) => updateFilter('collectionCounts', value),
               options: getCollectionCountOptions(),
               label: 'Collection Count',
@@ -243,7 +249,7 @@ export const CardAllPrintingsPage: React.FC = () => {
             },
             signedCards: {
               key: 'signedCards',
-              value: filters.signedCards || [],
+              value: (filters.signedCards as string[]) || [],
               onChange: (value: string[]) => updateFilter('signedCards', value),
               options: getSignedCardsOptions(),
               label: 'Signed Cards',
@@ -256,7 +262,7 @@ export const CardAllPrintingsPage: React.FC = () => {
       )}
 
       {/* Results Summary */}
-      <ResultsSummary 
+      <ResultsSummary
         current={filteredCards.length}
         total={totalCards}
         label="printings"
@@ -279,4 +285,4 @@ export const CardAllPrintingsPage: React.FC = () => {
       </AppErrorBoundary>
     </Container>
   );
-};
+};export default CardAllPrintingsPage;

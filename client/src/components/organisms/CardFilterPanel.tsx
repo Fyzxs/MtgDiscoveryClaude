@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '../atoms';
 import { FilterPanel } from './filters/FilterPanel';
-import { MultiSelectDropdown, SortDropdown } from '../atoms';
+import { MultiSelectDropdown, SortDropdown } from '../molecules';
+import { getFormatOptions } from '../../utils/cardUtils';
 
 interface SortOption {
   value: string;
@@ -16,23 +17,25 @@ interface CardFilterPanelProps {
     rarities?: string[];
     artists?: string[];
     sets?: string[];
-    showDigital?: boolean;
+    formats?: string[];
   };
-  
+
   // State setters
   onSearchChange?: (value: string) => void;
   onSortChange: (value: string) => void;
-  onFilterChange: (filterName: string, value: any) => void;
+  onFilterChange: (filterName: string, value: string[]) => void;
   
   // Available options
   uniqueArtists: string[];
   uniqueRarities: string[];
   uniqueSets?: { value: string; label: string }[];
-  
+  uniqueFormats?: string[];
+
   // Control flags
   hasMultipleArtists: boolean;
   hasMultipleRarities: boolean;
   hasMultipleSets?: boolean;
+  hasMultipleFormats?: boolean;
   
   // Counts
   filteredCount: number;
@@ -59,7 +62,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
   hasMultipleArtists,
   hasMultipleRarities,
   hasMultipleSets,
-  filteredCount: _filteredCount,
+  hasMultipleFormats = true,
   totalCount,
   showSearch = false,
   searchPlaceholder = 'Search cards...',
@@ -126,24 +129,29 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
       }
     } : {}),
     multiSelects,
-    toggles: [
-      {
-        label: 'Show Digital',
-        value: filters.showDigital || false,
-        onChange: (value: boolean) => onFilterChange('showDigital', value)
-      }
-    ],
     sort: {
       value: sortBy,
       onChange: onSortChange,
       options: sortOptions
-    }
+    },
+    customFilters: hasMultipleFormats ? [
+      <MultiSelectDropdown
+        key="formats"
+        value={filters.formats || []}
+        onChange={(value: string[]) => onFilterChange('formats', value)}
+        options={getFormatOptions()}
+        label="Format"
+        placeholder="All Formats"
+        minWidth={150}
+        fullWidth={false}
+      />
+    ] : []
   };
 
   // If centering, use a flex layout with individual components
   if (centerControls) {
     return (
-      <Box sx={{ 
+      <Box sx={{
         mb: 3,
         display: 'flex',
         justifyContent: 'center',
@@ -164,7 +172,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
             fullWidth={false}
           />
         ))}
-        
+
         {/* Sort Dropdown */}
         <SortDropdown
           value={filterConfig.sort.value}
@@ -174,6 +182,19 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
           minWidth={200}
           fullWidth={false}
         />
+
+        {/* Format Filter */}
+        {hasMultipleFormats && (
+          <MultiSelectDropdown
+            value={filters.formats || []}
+            onChange={(value: string[]) => onFilterChange('formats', value)}
+            options={getFormatOptions()}
+            label="Format"
+            placeholder="All Formats"
+            minWidth={150}
+            fullWidth={false}
+          />
+        )}
       </Box>
     );
   }

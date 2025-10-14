@@ -54,11 +54,11 @@ export interface Spacing {
  * Breakpoint values for responsive design
  */
 export interface Breakpoints {
-  xs?: any;
-  sm?: any;
-  md?: any;
-  lg?: any;
-  xl?: any;
+  xs?: unknown;
+  sm?: unknown;
+  md?: unknown;
+  lg?: unknown;
+  xl?: unknown;
 }
 
 /**
@@ -133,7 +133,7 @@ export interface TabConfig {
 /**
  * Common list item configuration
  */
-export interface ListItemConfig<T = any> {
+export interface ListItemConfig<T = unknown> {
   id: string | number;
   label: string;
   value: T;

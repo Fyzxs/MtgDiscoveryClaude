@@ -15,11 +15,10 @@ export type ResponsiveValue<T> = T | Partial<Record<Breakpoint, T>>;
  * Creates a responsive spacing object using theme spacing units
  */
 export const createResponsiveSpacing = (
-  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>,
-  theme: Theme
-): SxProps<Theme> => {
+  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>
+): number | Record<string, number> => {
   if (typeof values === 'string') {
-    return theme.spacing(responsiveSpacing.md[values] || 2);
+    return responsiveSpacing.md[values] || 2;
   }
 
   const responsiveValues: Record<string, number> = {};
@@ -27,7 +26,7 @@ export const createResponsiveSpacing = (
   Object.entries(values).forEach(([breakpoint, value]) => {
     if (value && breakpoint in responsiveSpacing) {
       const bp = breakpoint as keyof typeof responsiveSpacing;
-      responsiveValues[breakpoint] = theme.spacing(responsiveSpacing[bp][value] || 2);
+      responsiveValues[breakpoint] = responsiveSpacing[bp][value] || 2;
     }
   });
 
@@ -38,30 +37,27 @@ export const createResponsiveSpacing = (
  * Creates responsive padding using the spacing scale
  */
 export const createResponsivePadding = (
-  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>,
-  theme: Theme
+  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>
 ) => ({
-  padding: createResponsiveSpacing(values, theme),
+  padding: createResponsiveSpacing(values),
 });
 
 /**
  * Creates responsive margin using the spacing scale
  */
 export const createResponsiveMargin = (
-  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>,
-  theme: Theme
+  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>
 ) => ({
-  margin: createResponsiveSpacing(values, theme),
+  margin: createResponsiveSpacing(values),
 });
 
 /**
  * Creates responsive gap for flex/grid layouts
  */
 export const createResponsiveGap = (
-  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>,
-  theme: Theme
+  values: ResponsiveValue<keyof typeof responsiveSpacing.xs>
 ) => ({
-  gap: createResponsiveSpacing(values, theme),
+  gap: createResponsiveSpacing(values),
 });
 
 /**
@@ -83,7 +79,10 @@ export const createResponsiveCardSize = (
   return {
     width: dimensions,
     height: Object.keys(dimensions).reduce((acc, breakpoint) => {
-      acc[breakpoint] = dimensions[breakpoint as Breakpoint].height;
+      const bp = breakpoint as keyof typeof dimensions;
+      if (bp in dimensions) {
+        acc[breakpoint] = dimensions[bp].height;
+      }
       return acc;
     }, {} as Record<string, string>),
   };
@@ -237,33 +236,36 @@ export const getResponsiveProps = <T>(
     return values as T;
   }
 
+  // Type guard to check if values is a Record<Breakpoint, T>
+  const breakpointValues = values as Partial<Record<Breakpoint, T>>;
+
   // Find the best matching breakpoint value
   const breakpointOrder: Breakpoint[] = ['xs', 'sm', 'md', 'lg', 'xl'];
   const currentIndex = breakpointOrder.indexOf(currentBreakpoint);
 
   // Look for exact match first
-  if (values[currentBreakpoint] !== undefined) {
-    return values[currentBreakpoint] as T;
+  if (breakpointValues[currentBreakpoint] !== undefined) {
+    return breakpointValues[currentBreakpoint] as T;
   }
 
   // Fall back to previous breakpoints
   for (let i = currentIndex - 1; i >= 0; i--) {
     const bp = breakpointOrder[i];
-    if (values[bp] !== undefined) {
-      return values[bp] as T;
+    if (breakpointValues[bp] !== undefined) {
+      return breakpointValues[bp] as T;
     }
   }
 
   // Fall back to next breakpoints
   for (let i = currentIndex + 1; i < breakpointOrder.length; i++) {
     const bp = breakpointOrder[i];
-    if (values[bp] !== undefined) {
-      return values[bp] as T;
+    if (breakpointValues[bp] !== undefined) {
+      return breakpointValues[bp] as T;
     }
   }
 
   // Return first available value
-  return Object.values(values)[0] as T;
+  return Object.values(breakpointValues)[0] as T;
 };
 
 export default {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '../atoms';
+import { useTheme } from '../atoms';
 
 interface GroupFinishProgress {
   finishType: 'nonFoil' | 'foil' | 'etched';
@@ -21,12 +21,6 @@ interface SetCollectionGroupsProps {
   groups: CollectionGroup[];
   onGroupToggle: (groupId: string, isCollecting: boolean) => void;
 }
-
-const FINISH_EMOJIS: Record<string, string> = {
-  nonFoil: '🔹',
-  foil: '✨',
-  etched: '⚡'
-};
 
 export const SetCollectionGroups: React.FC<SetCollectionGroupsProps> = ({
   groups,
@@ -59,7 +53,7 @@ export const SetCollectionGroups: React.FC<SetCollectionGroupsProps> = ({
             control={
               <Checkbox
                 checked={group.isCollecting}
-                onChange={(e) => onGroupToggle(group.setGroupId, e.target.checked)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onGroupToggle(group.setGroupId, e.target.checked)}
                 sx={{ mr: 1 }}
               />
             }
