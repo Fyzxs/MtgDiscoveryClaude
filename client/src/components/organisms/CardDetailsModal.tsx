@@ -28,7 +28,8 @@ import { RarityBadge, PriceDisplay } from '../atoms';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
 import { AllPrintingsDisplay } from './AllPrintingsDisplay';
 import { RulingsDisplay, CardImageDisplay } from '../molecules';
-import { CardBadges, SetLink } from '../atoms';
+import { CardBadges } from '../molecules/Cards/CardBadges';
+import { SetLink } from '../atoms';
 import { ArtistLinks } from '../molecules';
 import { CardName } from '../atoms';
 

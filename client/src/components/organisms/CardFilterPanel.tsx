@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { FilterPanel } from './filters/FilterPanel';
-import { MultiSelectDropdown, SortDropdown } from '../atoms';
+import { MultiSelectDropdown, SortDropdown } from '../molecules';
 import { getFormatOptions } from '../../utils/cardUtils';
 
 interface SortOption {

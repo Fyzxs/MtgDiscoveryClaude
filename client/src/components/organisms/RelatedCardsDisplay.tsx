@@ -4,7 +4,7 @@ import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { MtgCard } from './MtgCard';
-import { ResponsiveGridAutoFit } from '../atoms';
+import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';

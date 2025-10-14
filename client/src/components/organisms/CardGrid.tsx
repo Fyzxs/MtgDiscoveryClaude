@@ -1,6 +1,6 @@
 import React, { useDeferredValue, useState, useEffect } from 'react';
 import { Box, type SxProps, type Theme } from '@mui/material';
-import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
+import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';
 import type { Card, CardContext } from '../../types/card';

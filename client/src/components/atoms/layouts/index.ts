@@ -1,1 +1,1 @@
-export { ResponsiveGrid, ResponsiveGridAutoFit } from './ResponsiveGrid';
+// All layout atoms have been moved to molecules/layouts/

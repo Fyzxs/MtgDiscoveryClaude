@@ -4,7 +4,7 @@ import {
   Typography,
   Grid
 } from '@mui/material';
-import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
+import { MultiSelectDropdown } from './MultiSelectDropdown';
 import type { CollectorFiltersConfig } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';
 

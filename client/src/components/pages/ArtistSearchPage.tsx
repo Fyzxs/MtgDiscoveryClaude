@@ -2,7 +2,7 @@ import React, { useState, useCallback, startTransition } from 'react';
 import { useLazyQuery } from '@apollo/client/react';
 import { Typography, Box, CircularProgress } from '@mui/material';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
-import { DebouncedSearchInput } from '../atoms/shared/DebouncedSearchInput';
+import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
 import { ArtistSearchResults } from '../organisms/ArtistSearchResults';
 import { ARTIST_NAME_SEARCH } from '../../graphql/queries/artistSearch';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';

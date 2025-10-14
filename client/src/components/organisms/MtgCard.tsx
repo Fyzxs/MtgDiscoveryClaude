@@ -5,7 +5,7 @@ import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
-import { CardBadges } from '../atoms/Cards/CardBadges';
+import { CardBadges } from '../molecules/Cards/CardBadges';
 import { srOnly } from '../../styles/cardStyles';
 import type { StyledComponentProps } from '../../types/components';
 // Extracted molecules
