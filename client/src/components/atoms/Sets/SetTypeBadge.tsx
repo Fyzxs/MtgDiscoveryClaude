@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip } from '@mui/material';
+import Chip from '../Chip';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import type { BadgeProps } from '../../../types/components';
 

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { logger } from '../../utils/logger';
-import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '../../atoms';
 import { MtgCard } from './MtgCard';
 import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';
+import { ExpandMoreIcon, ExpandLessIcon } from '../atoms/Icons';
 
 interface RelatedCardsDisplayProps {
   relatedCardIds: string[];

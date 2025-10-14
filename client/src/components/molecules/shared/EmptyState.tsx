@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import SearchOffIcon from '@mui/icons-material/SearchOff';
+import { Box, Typography, Button } from '../../atoms';
 import type { EmptyStateProps as StandardEmptyStateProps } from '../../../types/components';
+import { SearchOffIcon } from '../../atoms/Icons';
 
 type EmptyStateProps = StandardEmptyStateProps;
 

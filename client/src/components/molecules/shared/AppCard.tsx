@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, useTheme } from '@mui/material';
-import type { CardProps, SxProps, Theme } from '@mui/material';
+import { Card, CardContent, useTheme } from '../../atoms';
+import type { CardProps, SxProps, Theme } from '../../atoms';
 import type { StyledComponentProps } from '../../../types/components';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 

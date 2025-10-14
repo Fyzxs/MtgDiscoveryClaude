@@ -6,7 +6,7 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery
-} from '@mui/material';
+} from '../../atoms';
 import { useTranslation } from 'react-i18next';
 import type { UserCardData } from '../../../types/card';
 import type { CardFinish, CardSpecial } from '../../../types/collection';

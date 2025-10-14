@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button as MuiButtonBase, CircularProgress, useTheme } from '@mui/material';
-import type { ButtonProps as MuiButtonProps, SxProps, Theme } from '@mui/material';
+import { Button as MuiButtonBase, CircularProgress, useTheme } from '../../atoms';
+import type { ButtonProps as MuiButtonProps, SxProps, Theme } from '../../atoms';
 import type { StyledComponentProps } from '../../../types/components';
 import { useLongPress } from '../../../hooks/useLongPress';
 import { useHapticFeedback } from '../../../hooks/useHapticFeedback';

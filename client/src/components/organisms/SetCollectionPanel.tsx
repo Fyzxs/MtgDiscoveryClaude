@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { logger } from '../../utils/logger';
-import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '@mui/material';
-import { ChevronLeft as ChevronLeftIcon } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
+import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../../atoms';
+import { useTheme } from '../../atoms';
 import type { MtgSet } from '../../types/set';
 import { useSetCollectionProgress, type SetCollectionProgress, type CollectionGroup } from '../../hooks/useSetCollectionProgress';
 import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { ChevronLeftIcon } from '../../atoms/Icons';
 
 // Extended type for display groups with sorting index
 interface DisplayCollectionGroup extends CollectionGroup {

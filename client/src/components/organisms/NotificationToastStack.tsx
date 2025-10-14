@@ -1,7 +1,8 @@
 import { useState, useCallback, useImperativeHandle, forwardRef } from 'react';
-import { Box, Button, Collapse } from '@mui/material';
+import { Box, Button, Collapse } from '../../atoms';
 import { CollectionToast } from '../atoms/Cards/CollectionToast';
 import type { ToastMessage } from '../atoms/Cards/CollectionToast';
+import type { Theme } from '@mui/material';
 
 export interface NotificationToastStackRef {
   addToast: (toast: Omit<ToastMessage, 'id'>) => void;
@@ -39,8 +40,8 @@ export const NotificationToastStack = forwardRef<NotificationToastStackRef>((_, 
     <Box
       sx={{
         position: 'fixed',
-        top: theme => theme.spacing(2),
-        right: theme => theme.spacing(2),
+        top: (theme: Theme) => theme.spacing(2),
+        right: (theme: Theme) => theme.spacing(2),
         zIndex: 1400,
         maxWidth: 400,
         display: 'flex',

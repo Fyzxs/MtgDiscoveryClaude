@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box, type SxProps, type Theme } from '@mui/material';
+import { Container, Box, type SxProps, type Theme } from '../../atoms';
 
 interface DetailTemplateProps {
   /** Breadcrumb navigation for context and back navigation */

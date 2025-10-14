@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Link } from '@mui/material';
+import { Box, Link } from '../../atoms';
 
 type LinkType = 'scryfall' | 'tcgplayer' | 'cardmarket' | 'cardhoarder' | 'edhrec' | 'gatherer' | 'cardkingdom';
 

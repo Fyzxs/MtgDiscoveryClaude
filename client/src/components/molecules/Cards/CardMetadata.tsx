@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography, Link, Stack } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box, Typography, Link, Stack } from '../../atoms';
+import type { SxProps, Theme } from '../../atoms';
 import { SetIcon } from '../../atoms/Sets/SetIcon';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
 import type { CardContext } from '../../../types/card';

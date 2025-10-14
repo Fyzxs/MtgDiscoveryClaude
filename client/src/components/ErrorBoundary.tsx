@@ -1,9 +1,8 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
-import { Box, Alert, Button, Typography, Stack } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Box, Alert, Button, Typography, Stack } from './atoms';
 import { logger, errorTracking } from '../utils/logger';
+import { RefreshIcon, ErrorOutlineIcon } from './atoms/Icons';
 
 interface Props {
   children: ReactNode;

@@ -7,13 +7,12 @@ import {
   Button,
   Menu,
   MenuItem
-} from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+} from '../../atoms';
+import { useTheme } from '../../atoms';
 import { SearchInput } from '../molecules/shared/SearchInput';
 import { AuthButton } from '../auth/AuthButton';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+import { SearchIcon, ArrowDropDownIcon } from '../atoms/Icons';
 // import { LanguageSwitcher } from '../molecules/shared/LanguageSwitcher'; // Disabled until translations are available
 
 export const Header: React.FC = () => {
@@ -60,7 +59,7 @@ export const Header: React.FC = () => {
           role="button"
           tabIndex={0}
           aria-label="Go to homepage"
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               navigateWithCollector('/');
@@ -117,7 +116,7 @@ export const Header: React.FC = () => {
             href={buildUrlWithCollector('/sets')}
             role="menuitem"
             aria-label="Browse all Magic sets"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               navigateWithCollector('/sets');
             }}
@@ -165,7 +164,7 @@ export const Header: React.FC = () => {
             <MenuItem
               component="a"
               href={buildUrlWithCollector('/search/cards')}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.preventDefault();
                 handleSearchMenuClose();
                 navigateWithCollector('/search/cards');
@@ -179,7 +178,7 @@ export const Header: React.FC = () => {
             <MenuItem
               component="a"
               href={buildUrlWithCollector('/search/artists')}
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.preventDefault();
                 handleSearchMenuClose();
                 navigateWithCollector('/search/artists');

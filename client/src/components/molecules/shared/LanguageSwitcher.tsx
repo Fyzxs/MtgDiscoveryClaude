@@ -8,7 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
   type SelectChangeEvent
-} from '@mui/material';
+} from '../../atoms';
 import { useTranslation } from 'react-i18next';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '../../../i18n/config';
 

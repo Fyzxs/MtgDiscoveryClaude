@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Typography, Paper } from '../../atoms';
+import { useTheme } from '../../atoms';
 
 interface CardEntryHelpPanelProps {
   isVisible: boolean;

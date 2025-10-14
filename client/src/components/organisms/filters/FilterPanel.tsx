@@ -8,7 +8,7 @@ import {
   Grid,
   FormControlLabel,
   Switch
-} from '@mui/material';
+} from '../../atoms';
 import { DebouncedSearchInput } from '../../molecules/shared/DebouncedSearchInput';
 import { MultiSelectDropdown } from '../../molecules/shared/MultiSelectDropdown';
 import { SortDropdown } from '../../molecules/shared/SortDropdown';

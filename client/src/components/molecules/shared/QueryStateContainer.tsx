@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, CircularProgress, Alert, Box, type ContainerProps } from '@mui/material';
+import { Container, CircularProgress, Alert, Box, type ContainerProps } from '../../atoms';
 import { handleGraphQLError } from '../../../utils/networkErrorHandler';
 
 interface QueryStateContainerProps {

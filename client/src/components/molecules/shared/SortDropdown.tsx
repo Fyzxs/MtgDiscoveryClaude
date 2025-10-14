@@ -1,6 +1,5 @@
 import React from 'react';
-import { Select, FormControl, InputLabel, MenuItem, Skeleton } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
+import { Select, FormControl, InputLabel, MenuItem, Skeleton, type SelectChangeEvent } from '../../atoms';
 import type { SortOption } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';
 

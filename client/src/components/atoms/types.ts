@@ -3,6 +3,7 @@
 
 import type {
   AlertProps as MuiAlertProps,
+  AutocompleteProps as MuiAutocompleteProps,
   BoxProps as MuiBoxProps,
   ButtonProps as MuiButtonProps,
   CardProps as MuiCardProps,
@@ -24,9 +25,12 @@ import type {
   InputLabelProps as MuiInputLabelProps,
   LinearProgressProps as MuiLinearProgressProps,
   LinkProps as MuiLinkProps,
+  ListItemIconProps as MuiListItemIconProps,
+  ListItemTextProps as MuiListItemTextProps,
   MenuItemProps as MuiMenuItemProps,
   ModalProps as MuiModalProps,
   PaperProps as MuiPaperProps,
+  PopoverProps as MuiPopoverProps,
   SelectProps as MuiSelectProps,
   SkeletonProps as MuiSkeletonProps,
   StackProps as MuiStackProps,
@@ -35,6 +39,9 @@ import type {
   TooltipProps as MuiTooltipProps,
   TypographyProps as MuiTypographyProps,
   ZoomProps as MuiZoomProps,
+  GridProps as MuiGridProps,
+  SxProps as MuiSxProps,
+  Theme as MuiTheme,
 } from '@mui/material';
 
 // Layout Components
@@ -43,6 +50,7 @@ export type ContainerProps = MuiContainerProps;
 export type StackProps = MuiStackProps;
 export type PaperProps = MuiPaperProps;
 export type DividerProps = MuiDividerProps;
+export type GridProps = MuiGridProps;
 
 // Typography
 export type TypographyProps = MuiTypographyProps;
@@ -62,6 +70,7 @@ export type FormControlLabelProps = MuiFormControlLabelProps;
 export type InputLabelProps = MuiInputLabelProps;
 export type InputAdornmentProps = MuiInputAdornmentProps;
 export type MenuItemProps = MuiMenuItemProps;
+export type AutocompleteProps<T, Multiple extends boolean | undefined = undefined, DisableClearable extends boolean | undefined = undefined, FreeSolo extends boolean | undefined = undefined> = MuiAutocompleteProps<T, Multiple, DisableClearable, FreeSolo>;
 
 // Feedback
 export type AlertProps = MuiAlertProps;
@@ -83,3 +92,10 @@ export type ModalProps = MuiModalProps;
 export type CollapseProps = MuiCollapseProps;
 export type IconProps = MuiIconProps;
 export type ZoomProps = MuiZoomProps;
+export type PopoverProps = MuiPopoverProps;
+export type ListItemIconProps = MuiListItemIconProps;
+export type ListItemTextProps = MuiListItemTextProps;
+
+// Utility Types
+export type SxProps = MuiSxProps;
+export type Theme = MuiTheme;

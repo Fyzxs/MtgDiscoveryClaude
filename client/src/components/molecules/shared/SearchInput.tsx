@@ -4,10 +4,9 @@ import {
   Box,
   InputAdornment,
   IconButton
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
+} from '../../atoms';
 import type { SearchInputProps as StandardSearchProps } from '../../../types/components';
+import { SearchIcon, ClearIcon } from '../../atoms/Icons';
 
 interface SearchInputProps extends Omit<StandardSearchProps, 'onChange'> {
   onChange: (value: string) => void;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from '../../atoms';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { SetCollectionPanel } from './SetCollectionPanel';
 import { SectionErrorBoundary } from '../ErrorBoundaries';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip } from '@mui/material';
+import Chip from '../Chip';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
 
 interface ReleaseDateBadgeProps {

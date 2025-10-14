@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tooltip, Skeleton, type SxProps, type Theme } from '@mui/material';
-import FlipIcon from '@mui/icons-material/Flip';
+import { Box, IconButton, Tooltip, Skeleton, type SxProps, type Theme } from '../../atoms';
 import type { Card } from '../../../types/card';
 import { imageCache } from '../../../utils/imageCache';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
+import { FlipIcon } from '../../atoms/Icons';
 
 interface CardImageDisplayProps {
   card: Card;

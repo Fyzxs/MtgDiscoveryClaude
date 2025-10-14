@@ -1,4 +1,5 @@
-import { Typography, Box } from '@mui/material';
+import Typography from '../Typography';
+import Box from '../Box';
 import { DarkBadge } from '../shared/DarkBadge';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import type { StyledComponentProps } from '../../../types/components';

@@ -1,20 +1,20 @@
 import React from 'react';
-import { 
-  Select, 
-  FormControl, 
-  InputLabel, 
-  MenuItem, 
-  Chip, 
+import {
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Chip,
   Typography,
   IconButton,
   InputAdornment,
   Skeleton,
-  Box
-} from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
-import ClearIcon from '@mui/icons-material/Clear';
+  Box,
+  type SelectChangeEvent
+} from '../../atoms';
 import type { MultiSelectOption } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';
+import { ClearIcon } from '../../atoms/Icons';
 
 // Re-export for backward compatibility
 export type { MultiSelectOption } from '../../../types/filters';

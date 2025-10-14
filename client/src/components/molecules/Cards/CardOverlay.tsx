@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Typography } from '../../atoms';
+import { useTheme } from '../../atoms';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
 import { CardName, SetLink, PriceDisplay } from '../../atoms';
