@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { logger } from '../utils/logger';
 import { useMutation } from '@apollo/client/react';
 import { ADD_SET_GROUP_TO_USER_SET_CARD, GET_USER_SET_CARDS } from '../graphql/queries/userCards';
 import { useCollectorParam } from './useCollectorParam';
@@ -21,7 +22,7 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
     count: number
   ) => {
     if (!collectorId) {
-      console.error('No collector ID available');
+      logger.error('No collector ID available');
       return;
     }
 
@@ -49,7 +50,7 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
         awaitRefetchQueries: true
       });
     } catch (err) {
-      console.error('Error toggling set group:', err);
+      logger.error('Error toggling set group:', err);
     }
   }, [collectorId, addSetGroupMutation]);
 

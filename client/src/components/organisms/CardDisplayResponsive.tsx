@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, useTheme } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box, useTheme } from '../atoms';
+import type { SxProps, Theme } from '../atoms';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
@@ -12,7 +12,6 @@ import { ManaCost } from '../molecules/Cards/ManaCost';
 import { useLongPress } from '../../hooks/useLongPress';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import { useHapticFeedback } from '../../hooks/useHapticFeedback';
-import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { getRarityColor } from '../../theme';
 
 interface CardDisplayProps {
@@ -45,7 +44,6 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
   sx = {},
 }) => {
   const theme = useTheme();
-  const { isMobile, isTablet } = useResponsiveBreakpoints();
   const { triggerHaptic } = useHapticFeedback({ enabled: enableHapticFeedback });
 
   const [isHovered, setIsHovered] = useState(false);
@@ -170,7 +168,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
     <Box
       component="div"
       sx={getContainerSx()}
-      {...eventHandlers}
+      {...(eventHandlers as Partial<React.DOMAttributes<HTMLDivElement>>)}
     >
       {/* Mobile Layout - Horizontal */}
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>

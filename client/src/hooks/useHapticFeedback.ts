@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { logger } from '../utils/logger';
 
 export type HapticFeedbackType =
   | 'light'
@@ -10,6 +11,16 @@ export type HapticFeedbackType =
   | 'success'
   | 'warning'
   | 'error';
+
+interface HapticEngine {
+  impactOccurred?: (intensity: number) => void;
+  selectionChanged?: () => void;
+  notificationOccurred?: (type: number) => void;
+}
+
+interface WindowWithHaptics extends Window {
+  hapticFeedback?: HapticEngine;
+}
 
 interface UseHapticFeedbackOptions {
   enabled?: boolean;
@@ -63,7 +74,7 @@ export const useHapticFeedback = ({
 
   const triggerModernHaptic = useCallback((type: HapticFeedbackType) => {
     // Modern Haptic API (primarily iOS Safari)
-    const hapticEngine = (window as any).hapticFeedback;
+    const hapticEngine = (window as WindowWithHaptics).hapticFeedback;
 
     if (!hapticEngine) return false;
 
@@ -98,7 +109,7 @@ export const useHapticFeedback = ({
       }
       return true;
     } catch (error) {
-      console.warn('Haptic feedback failed:', error);
+      logger.warn('Haptic feedback failed:', error);
       return false;
     }
   }, []);
@@ -113,7 +124,7 @@ export const useHapticFeedback = ({
         return true;
       }
     } catch (error) {
-      console.warn('Vibration failed:', error);
+      logger.warn('Vibration failed:', error);
     }
 
     return false;

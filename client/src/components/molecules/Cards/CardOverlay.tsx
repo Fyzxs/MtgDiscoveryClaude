@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Typography } from '../../atoms';
+import { useTheme } from '../../atoms';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
 import { CardName, SetLink, PriceDisplay } from '../../atoms';
@@ -43,7 +43,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const price = card.prices?.usd;
   const scryfallUrl = card.scryfallUri;
   const tcgplayerUrl = card.purchaseUris?.tcgplayer;
-  const collectionData = (card as any).userCollection;
+  const collectionData = card.userCollection;
 
   return (
     <Box
@@ -109,6 +109,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           <ArtistLinks
             artists={artists}
             artistIds={artistIds}
+            context={context}
             onArtistClick={onArtistClick}
           />
         )}

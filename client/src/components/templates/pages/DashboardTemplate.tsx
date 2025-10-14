@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, type SxProps, type Theme } from '../../atoms';
 
 interface DashboardTemplateProps {
   /** Dashboard header content (welcome message, user info, page title) */
@@ -31,7 +31,7 @@ interface DashboardTemplateProps {
   };
 
   /** Additional container styles */
-  containerSx?: any;
+  containerSx?: SxProps<Theme>;
 
   /** Layout mode - single column or with sidebar */
   layout?: 'single' | 'sidebar';

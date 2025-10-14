@@ -1,5 +1,7 @@
 import React from 'react';
-import { Alert, Typography, Box } from '@mui/material';
+import Alert from '../Alert';
+import Typography from '../Typography';
+import Box from '../Box';
 
 interface ErrorAlertProps {
   message: string;

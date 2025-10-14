@@ -142,11 +142,11 @@ export const TRANSLATION_KEYS = {
 // Helper type for extracting nested keys
 export type TranslationKey<T> = T extends string
   ? T
-  : T extends Record<string, any>
+  : T extends Record<string, unknown>
   ? {
       [K in keyof T]: T[K] extends string
         ? T[K]
-        : T[K] extends Record<string, any>
+        : T[K] extends Record<string, unknown>
         ? `${K & string}.${TranslationKey<T[K]>}`
         : never;
     }[keyof T]

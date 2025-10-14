@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@mui/material';
+import { Container } from '../atoms';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';

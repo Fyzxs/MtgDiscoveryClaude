@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Divider } from '@mui/material';
+import { Box, Typography, Divider } from '../atoms';
 import { CardGrid } from './CardGrid';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import type { Card, CardContext } from '../../types/card';

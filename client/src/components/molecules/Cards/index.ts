@@ -1,7 +1,7 @@
 export { ArtistInfo } from './ArtistInfo';
 export { ArtistLinks } from './ArtistLinks';
+export { CardBadges } from './CardBadges';
 export { CardCompact } from './CardCompact';
-export { CardCompact as CardCompactResponsive } from './CardCompactResponsive';
 export { CardEntryHelpPanel } from './CardEntryHelpPanel';
 export { CardImageDisplay } from './CardImageDisplay';
 export { CardLinks } from './CardLinks';

@@ -70,7 +70,7 @@ export const mtgCardPropsComparison = (
   if (prevProps.card.purchaseUris?.tcgplayer !== nextProps.card.purchaseUris?.tcgplayer) return false;
 
   // Collection data changes (critical for collector view)
-  if ((prevProps.card as any).userCollection !== (nextProps.card as any).userCollection) return false;
+  if (prevProps.card.userCollection !== nextProps.card.userCollection) return false;
 
   // If we get here, props are effectively the same
   return true;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Fab, Zoom } from '@mui/material';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Fab, Zoom } from '../../atoms';
 import type { FabComponentProps } from '../../../types/components';
+import { KeyboardArrowUpIcon } from '../../atoms/Icons';
 
 interface BackToTopFabProps extends FabComponentProps {
   /**
@@ -59,7 +59,7 @@ export const BackToTopFab: React.FC<BackToTopFabProps> = ({
 
     // Add scroll listener
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // Cleanup
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -67,9 +67,9 @@ export const BackToTopFab: React.FC<BackToTopFabProps> = ({
   }, [threshold]);
 
   const handleClick = () => {
-    window.scrollTo({ 
-      top: 0, 
-      behavior: scrollBehavior 
+    window.scrollTo({
+      top: 0,
+      behavior: scrollBehavior
     });
   };
 

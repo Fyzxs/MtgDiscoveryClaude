@@ -8,31 +8,21 @@ import {
   Stack,
   Button,
   Tooltip
-} from '@mui/material';
-// import { useQuery } from '@apollo/client'; // TODO: Uncomment after types generated
+} from '../atoms';
 import { getLegalityColor } from '../../theme';
 import { ModalErrorBoundary } from '../ErrorBoundaries';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import CircleIcon from '@mui/icons-material/Circle';
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import WarningIcon from '@mui/icons-material/Warning';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
-// import { GET_USER_CARD_BY_ID } from '../../graphql/queries/userCards'; // TODO: Uncomment after types generated
 import { CollectionSummary, ModalContainer, ManaCost } from '../molecules';
 import { RarityBadge, PriceDisplay } from '../atoms';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
 import { AllPrintingsDisplay } from './AllPrintingsDisplay';
 import { RulingsDisplay, CardImageDisplay } from '../molecules';
-import { CardBadges, SetLink } from '../atoms';
+import { CardBadges } from '../molecules/Cards/CardBadges';
+import { SetLink } from '../atoms';
 import { ArtistLinks } from '../molecules';
 import { CardName } from '../atoms';
+import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../atoms/Icons';
 
 interface CardDetailsModalProps {
   open: boolean;

@@ -189,7 +189,7 @@ export const getGridConfig = (breakpoint: keyof typeof gridConfig) => gridConfig
 // Utility function to create responsive sx objects
 export const createResponsiveSx = (
   property: string,
-  values: { xs?: any; sm?: any; md?: any; lg?: any; xl?: any }
+  values: { xs?: unknown; sm?: unknown; md?: unknown; lg?: unknown; xl?: unknown }
 ) => ({
   [property]: values,
 });

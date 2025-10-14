@@ -70,7 +70,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         let propName = key.replace('_excludes', '');
         // Convert snake_case to camelCase for property lookup
         propName = snakeToCamel(propName);
-        const cardValue = (card as any)[propName];
+        const cardValue = (card as unknown as Record<string, unknown>)[propName];
         if (cardValue && typeof cardValue === 'string') {
           if (cardValue.toLowerCase().includes(String(value).toLowerCase())) {
             return false;
@@ -81,7 +81,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         let propName = key.replace('_contains', '');
         // Convert snake_case to camelCase for property lookup
         propName = snakeToCamel(propName);
-        const cardValue = (card as any)[propName];
+        const cardValue = (card as unknown as Record<string, unknown>)[propName];
         if (!cardValue || typeof cardValue !== 'string') {
           return false;
         }
@@ -91,7 +91,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
       } else {
         // Direct property match or array contains
         // Handle special property mappings first
-        let cardValue: any;
+        let cardValue: unknown;
 
         if (key === 'date') {
           // Map 'date' property to card's releasedAt field
@@ -102,11 +102,11 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
           cardValue = undefined;
         } else {
           // Try both the original key and the camelCase version
-          cardValue = (card as any)[key];
+          cardValue = (card as unknown as Record<string, unknown>)[key];
           if (cardValue === undefined) {
             // Try converting snake_case to camelCase
             const camelKey = snakeToCamel(key);
-            cardValue = (card as any)[camelKey];
+            cardValue = (card as unknown as Record<string, unknown>)[camelKey];
           }
         }
 

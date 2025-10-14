@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useRef, useCallback, useState } from 'react';
+import { logger } from '../utils/logger';
 import { NotificationToastStack } from '../components/organisms/NotificationToastStack';
 import type { NotificationToastStackRef } from '../components/organisms/NotificationToastStack';
 import type { CardCollectionUpdate } from '../types/collection';
 import { useMutation, useApolloClient } from '@apollo/client/react';
+import { gql } from '@apollo/client';
 import { ADD_CARD_TO_COLLECTION } from '../graphql/mutations/addCardToCollection';
 import { useUser } from './UserContext';
-import { cardCacheManager } from '../services/CardCacheManager';
 import { perfMonitor } from '../utils/performanceMonitor';
 
 interface CollectionContextValue {
@@ -14,8 +15,31 @@ interface CollectionContextValue {
   setIsAnyCardEntering: (isEntering: boolean) => void;
 }
 
+interface UserCollectionItem {
+  finish: string;
+  special: string;
+  count: number;
+}
+
+interface CachedCard {
+  userCollection?: UserCollectionItem[];
+}
+
+interface AddCardMutationResponse {
+  addCardToCollection?: {
+    __typename: string;
+    data?: Array<{
+      userCollection: UserCollectionItem[];
+    }>;
+    status?: {
+      message: string;
+    };
+  };
+}
+
 const CollectionContext = createContext<CollectionContextValue | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
 export const useCollection = () => {
   const context = useContext(CollectionContext);
   if (!context) {
@@ -75,34 +99,73 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
         }
       }));
 
-      // Execute mutation
+      // INSTANT UI UPDATE: Get current collection from cache and update it optimistically
+      // This preserves other finish types (foil, etched, etc.) while updating the target one
+      const cacheId = apolloClient.cache.identify({ __typename: 'Card', id: update.cardId });
+      const cachedCard = cacheId ? apolloClient.cache.readFragment({
+        id: cacheId,
+        fragment: gql`
+          fragment CardCollection on Card {
+            userCollection {
+              finish
+              special
+              count
+            }
+          }
+        `
+      }) : null;
+
+      const currentCollection = (cachedCard as CachedCard)?.userCollection || [];
+      const targetFinish = FINISH_MAP[update.finish] || 'nonfoil';
+      const targetSpecial = SPECIAL_MAP[update.special] || 'none';
+
+      // Find existing entry and ADD to its count (update.count is a delta, not absolute)
+      let updated = false;
+      const optimisticUserCollection = currentCollection.map((item: UserCollectionItem) => {
+        if (item.finish === targetFinish && item.special === targetSpecial) {
+          updated = true;
+          // Add the delta to the existing count
+          return { ...item, count: item.count + update.count };
+        }
+        return item;
+      });
+
+      // If no matching entry was found, create new entry with the delta as initial count
+      if (!updated) {
+        optimisticUserCollection.push({
+          finish: targetFinish,
+          special: targetSpecial,
+          count: update.count
+        });
+      }
+
+      window.dispatchEvent(new CustomEvent('collection-updated', {
+        detail: {
+          cardId: update.cardId,
+          setId: update.setId,
+          userCollection: optimisticUserCollection
+        }
+      }));
+
+      // Execute mutation in background (UI already updated above)
       perfMonitor.start('collection-mutation');
+      // console.time('APOLLO_MUTATION');
+      const mutationStart = performance.now();
       const result = await addCardToCollection({ variables });
+      const mutationEnd = performance.now();
+      // // console.timeEnd('APOLLO_MUTATION');
+      logger.debug(`[TIMING] Mutation took ${mutationEnd - mutationStart}ms`);
       perfMonitor.end('collection-mutation');
 
       perfMonitor.end('collection-update-total');
 
       // Check if mutation was successful
-      if ((result.data as any)?.addCardToCollection?.__typename === 'CardsSuccessResponse') {
-        const updatedCard = (result.data as any).addCardToCollection.data?.[0];
+      if ((result.data as AddCardMutationResponse)?.addCardToCollection?.__typename === 'CardsSuccessResponse') {
+        const updatedCard = (result.data as AddCardMutationResponse).addCardToCollection?.data?.[0];
 
         if (updatedCard) {
-          // OPTIMIZATION: Use requestIdleCallback for non-critical cache updates
-          // This ensures these operations happen when the browser is idle
-          const idleCallback = (window as any).requestIdleCallback || queueMicrotask;
-          idleCallback(() => {
-            // Don't clear cache - Apollo cache update should be sufficient
-            // Clearing cache was causing Related Cards to reload unnecessarily
-
-            // Update Apollo cache with new collection data
-            apolloClient.cache.modify({
-              id: apolloClient.cache.identify({ __typename: 'Card', id: update.cardId }),
-              fields: {
-                userCollection: () => updatedCard.userCollection
-              }
-            });
-
-            // Trigger event to notify pages to update the card in place
+          // Dispatch again with real data from server (in case it differs from optimistic)
+          queueMicrotask(() => {
             window.dispatchEvent(new CustomEvent('collection-updated', {
               detail: {
                 cardId: update.cardId,
@@ -124,14 +187,14 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
           });
         });
       } else {
-        const errorMessage = (result.data as any)?.addCardToCollection?.__typename === 'FailureResponse'
-          ? (result.data as any).addCardToCollection.status?.message || 'Failed to update collection'
+        const errorMessage = (result.data as AddCardMutationResponse)?.addCardToCollection?.__typename === 'FailureResponse'
+          ? (result.data as AddCardMutationResponse).addCardToCollection?.status?.message || 'Failed to update collection'
           : 'Failed to update collection';
         throw new Error(errorMessage);
       }
     } catch (error) {
       perfMonitor.end('collection-update-total');
-      console.error('Collection update failed:', error);
+      logger.error('Collection update failed:', error);
 
       let errorMessage = 'Update failed';
       if (error instanceof Error) {

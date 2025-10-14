@@ -6,9 +6,10 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery
-} from '@mui/material';
+} from '../../atoms';
 import { useTranslation } from 'react-i18next';
 import type { UserCardData } from '../../../types/card';
+import type { CardFinish, CardSpecial } from '../../../types/collection';
 import { useSymbols, useFinishDisplay, useSpecialDisplay } from '../../../hooks/useSymbols';
 
 // Helper component to wrap symbols with localized tooltips
@@ -16,7 +17,7 @@ const SymbolWithTooltip: React.FC<{
   symbol: string;
   label: string;
   children: React.ReactNode
-}> = ({ symbol, label, children }) => (
+}> = ({ label, children }) => (
   <Tooltip title={label} arrow placement="top">
     <span role="img" aria-label={label} style={{ cursor: 'help' }}>
       {children}
@@ -40,7 +41,6 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
 
   // Translation hooks
   const { t: tCollection } = useTranslation('collection');
-  const { t: tCards } = useTranslation('cards');
   const { getStatusSymbol } = useSymbols();
   const finishDisplay = useFinishDisplay();
   const specialDisplay = useSpecialDisplay();
@@ -100,9 +100,9 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
   const getFinishIndicators = () => {
     const indicators: React.ReactElement[] = [];
 
-    if (finishTypes.includes('nonfoil')) {
-      const symbol = finishDisplay.getSymbol('nonfoil');
-      const label = finishDisplay.getLabel('nonfoil');
+    if (finishTypes.includes('non-foil')) {
+      const symbol = finishDisplay.getSymbol('non-foil');
+      const label = finishDisplay.getLabel('non-foil');
       indicators.push(
         <SymbolWithTooltip key="nonfoil" symbol={symbol} label={label}>
           {symbol}
@@ -140,8 +140,8 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
 
     // Order: Artist Proof → Signed → Altered
     if (specialTypes.has('artist_proof')) {
-      const symbol = specialDisplay.getSymbol('artist-proof');
-      const label = specialDisplay.getLabel('artist-proof');
+      const symbol = specialDisplay.getSymbol('artist_proof' as 'artist-proof');
+      const label = specialDisplay.getLabel('artist_proof' as 'artist-proof');
       indicators.push(
         <SymbolWithTooltip key="artist_proof" symbol={symbol} label={label}>
           {symbol}
@@ -176,10 +176,10 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
   const getFinishCounts = () => {
     const counts: React.ReactElement[] = [];
 
-    if (finishTypes.includes('nonfoil')) {
-      const count = finishGroups.nonfoil.reduce((sum, item) => sum + item.count, 0);
-      const symbol = finishDisplay.getSymbol('nonfoil');
-      const label = finishDisplay.getLabel('nonfoil');
+    if (finishTypes.includes('non-foil')) {
+      const count = finishGroups['non-foil'].reduce((sum, item) => sum + item.count, 0);
+      const symbol = finishDisplay.getSymbol('non-foil');
+      const label = finishDisplay.getLabel('non-foil');
       counts.push(
         <span key="nonfoil">
           <SymbolWithTooltip symbol={symbol} label={label}>
@@ -226,8 +226,8 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
 
     if (specialTypes.has('artist_proof')) {
       const count = collection.filter(item => item && item.special === 'artist_proof').reduce((sum, item) => sum + item.count, 0);
-      const symbol = specialDisplay.getSymbol('artist-proof');
-      const label = specialDisplay.getLabel('artist-proof');
+      const symbol = specialDisplay.getSymbol('artist_proof' as 'artist-proof');
+      const label = specialDisplay.getLabel('artist_proof' as 'artist-proof');
       counts.push(
         <span key="artist_proof">
           <SymbolWithTooltip symbol={symbol} label={label}>
@@ -384,13 +384,13 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
 
           {/* Group by finish type */}
           {finishTypes.sort((a, b) => {
-            const order = { nonfoil: 0, foil: 1, etched: 2 };
-            return (order as any)[a] - (order as any)[b];
+            const order: Record<string, number> = { 'non-foil': 0, foil: 1, etched: 2 };
+            return (order[a] ?? 999) - (order[b] ?? 999);
           }).map((finish) => {
             const finishCards = finishGroups[finish];
             const finishTotal = finishCards.reduce((sum, item) => sum + item.count, 0);
-            const finishSymbol = finishDisplay.getSymbol(finish as any);
-            const finishLabel = finishDisplay.getLabel(finish as any);
+            const finishSymbol = finishDisplay.getSymbol(finish as CardFinish);
+            const finishLabel = finishDisplay.getLabel(finish as CardFinish);
 
             // Group by special type within finish
             const regularCount = finishCards.filter(item => item.special === 'none').reduce((sum, item) => sum + item.count, 0);
@@ -404,8 +404,8 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
                 {regularCount > 0 && <>{regularCount}</>}
                 {regularCount > 0 && specialCards.length > 0 && <>, </>}
                 {specialCards.map((card, idx) => {
-                  const specialSymbol = specialDisplay.getSymbol(card.special as any);
-                  const specialLabel = specialDisplay.getLabel(card.special as any);
+                  const specialSymbol = specialDisplay.getSymbol((card.special === 'artist_proof' ? 'artist-proof' : card.special) as CardSpecial);
+                  const specialLabel = specialDisplay.getLabel((card.special === 'artist_proof' ? 'artist-proof' : card.special) as CardSpecial);
                   return (
                     <React.Fragment key={idx}>
                       {idx > 0 && ', '}
@@ -431,8 +431,8 @@ export const CollectionSummaryI18n: React.FC<CollectionSummaryProps> = ({
                 const totalCount = collection
                   .filter(item => item.special === special)
                   .reduce((sum, item) => sum + item.count, 0);
-                const specialSymbol = specialDisplay.getSymbol(special as any);
-                const specialLabel = specialDisplay.getLabel(special as any);
+                const specialSymbol = specialDisplay.getSymbol((special === 'artist_proof' ? 'artist-proof' : special) as CardSpecial);
+                const specialLabel = specialDisplay.getLabel((special === 'artist_proof' ? 'artist-proof' : special) as CardSpecial);
 
                 return (
                   <Typography key={special} variant="body2" sx={{ mb: 1 }}>

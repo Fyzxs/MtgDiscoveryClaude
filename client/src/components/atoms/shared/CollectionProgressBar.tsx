@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, LinearProgress, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import Box from '../Box';
+import LinearProgress from '../LinearProgress';
+import Typography from '../Typography';
+import { useTheme } from '@mui/material';
 
 interface CollectionProgressBarProps {
   collected: number;

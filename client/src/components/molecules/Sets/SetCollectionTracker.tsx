@@ -7,8 +7,7 @@ import {
   LinearProgress,
   Tooltip,
   Chip
-} from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+} from '../../atoms';
 
 interface FinishProgress {
   finishType: 'non-foil' | 'foil' | 'etched';
@@ -41,18 +40,10 @@ interface SetCollectionTrackerProps {
   onGroupToggle: (groupId: string, isSelected: boolean) => void;
 }
 
-const FINISH_EMOJIS = {
-  'non-foil': '🔹',
-  'foil': '✨',
-  'etched': '⚡'
-};
-
 export const SetCollectionTracker: React.FC<SetCollectionTrackerProps> = ({
   progress,
   onGroupToggle
 }) => {
-  const theme = useTheme();
-
   const handleGroupChange = (groupId: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     onGroupToggle(groupId, event.target.checked);
   };

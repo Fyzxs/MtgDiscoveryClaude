@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '../../utils/logger';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useQuery } from '@apollo/client/react';
 import { GET_USER_INFO } from '../../graphql/mutations/user';
@@ -27,6 +28,20 @@ export interface CollectorProfile {
   collectionValue?: number;
 }
 
+interface UserInfoQueryData {
+  userInfo?: {
+    userId: string;
+    email: string;
+  };
+}
+
+interface UserInfoQueryResult {
+  loading: boolean;
+  data?: UserInfoQueryData;
+  error?: Error;
+  refetch: () => Promise<unknown>;
+}
+
 export interface UserSyncState {
   userProfile: UserProfile | null;
   isLoading: boolean;
@@ -47,7 +62,7 @@ export const useUserSync = (): UserSyncState => {
     const checkTokenReady = () => {
       const ready = getTokenReadyState();
       if (ready !== tokenReady) {
-        console.log('useUserSync - Token ready state changed:', ready);
+        logger.debug('useUserSync - Token ready state changed:', ready);
         setTokenReady(ready);
       }
     };
@@ -59,10 +74,10 @@ export const useUserSync = (): UserSyncState => {
   }, [isAuthenticated, auth0Loading, tokenReady]);
 
   // Use GET_USER_INFO authenticated query
-  const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery(GET_USER_INFO, {
+  const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery<UserInfoQueryData>(GET_USER_INFO, {
     skip: tokenReady === false,
     errorPolicy: 'all'
-  }) as any;
+  }) as UserInfoQueryResult;
 
   // Handle user info query results
   useEffect(() => {
@@ -81,9 +96,9 @@ export const useUserSync = (): UserSyncState => {
       };
       setUserProfile(simpleProfile);
       setIsFirstTimeUser(false);
-      console.log('User info loaded:', simpleProfile);
+      logger.debug('User info loaded:', simpleProfile);
     } else if (userInfoError) {
-      console.error('User info query error:', userInfoError);
+      logger.error('User info query error:', userInfoError);
       setError('Failed to load user info');
       setIsFirstTimeUser(true);
     }
@@ -95,7 +110,7 @@ export const useUserSync = (): UserSyncState => {
       try {
         await refetchUserInfo();
       } catch (err) {
-        console.error('User sync error:', err);
+        logger.error('User sync error:', err);
         setError('Failed to sync user info');
       }
     }

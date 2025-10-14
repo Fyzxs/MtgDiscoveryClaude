@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Alert, IconButton, Box } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import Alert from '../Alert';
+import IconButton from '../IconButton';
+import Box from '../Box';
 import {
   FINISH_DISPLAY_NAMES,
   SPECIAL_DISPLAY_NAMES
@@ -9,6 +10,7 @@ import type {
   CardFinish,
   CardSpecial
 } from '../../../types/collection';
+import { CloseIcon } from '../Icons';
 
 export interface ToastMessage {
   id: string;

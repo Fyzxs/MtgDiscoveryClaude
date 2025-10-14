@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Fab, Zoom, Paper, Box, Typography, IconButton, Collapse } from '@mui/material';
-import KeyboardIcon from '@mui/icons-material/Keyboard';
-import CloseIcon from '@mui/icons-material/Close';
-import { useTheme } from '@mui/material/styles';
+import { Fab, Zoom, Paper, Box, Typography, IconButton, Collapse } from '../../atoms';
+import { useTheme } from '../../atoms';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
+import { KeyboardIcon, CloseIcon } from '../../atoms/Icons';
 
 export const QuickEntryKeysFab: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -16,8 +15,8 @@ export const QuickEntryKeysFab: React.FC = () => {
   const hasCards = () => {
     const pathname = location.pathname;
     return pathname.includes('/set/') ||
-           pathname.includes('/artists/') ||
-           pathname.includes('/card/');
+      pathname.includes('/artists/') ||
+      pathname.includes('/card/');
   };
 
   // Check if ctor parameter is in URL

@@ -4,7 +4,7 @@ export interface SetGroupingFilter {
     max: string | null;
     orConditions?: string[];
   };
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface SetGrouping {

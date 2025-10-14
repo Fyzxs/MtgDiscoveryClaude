@@ -1,4 +1,5 @@
 import type { CollectionEntryState } from '../types/collection';
+import { logger } from './logger';
 import { FINISH_DISPLAY_NAMES, SPECIAL_DISPLAY_NAMES } from '../types/collection';
 
 class DirectDomOverlay {
@@ -96,7 +97,7 @@ class DirectDomOverlay {
       try {
         const overlay = this.createOverlay(cardId);
         this.overlays.set(cardId, overlay);
-      } catch (e) {
+      } catch {
         // Card might not be ready yet
       }
     }
@@ -126,7 +127,7 @@ class DirectDomOverlay {
       overlay.classList.remove('visible');
       const duration = performance.now() - start;
       if (duration > 1) {
-        console.warn(`[DirectDomOverlay] Hide took ${duration.toFixed(2)}ms for card: ${cardId}`);
+        logger.warn(`[DirectDomOverlay] Hide took ${duration.toFixed(2)}ms for card: ${cardId}`);
       }
     }
   }

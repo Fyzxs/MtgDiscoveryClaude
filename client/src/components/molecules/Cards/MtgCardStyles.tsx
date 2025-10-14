@@ -1,5 +1,4 @@
-import { keyframes } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { keyframes, useTheme } from '../../atoms';
 import { useMemo } from 'react';
 import { getRarityGlowStyles } from '../../../utils/rarityStyles';
 import type { Card } from '../../../types/card';
