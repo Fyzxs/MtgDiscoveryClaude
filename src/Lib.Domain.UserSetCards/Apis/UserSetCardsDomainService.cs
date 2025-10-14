@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Lib.Aggregator.UserSetCards.Apis;
+using Lib.Domain.UserSetCards.Commands;
+using Lib.Domain.UserSetCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -8,14 +9,19 @@ namespace Lib.Domain.UserSetCards.Apis;
 
 public sealed class UserSetCardsDomainService : IUserSetCardsDomainService
 {
-    private readonly IUserSetCardsAggregatorService _userSetCardsAggregatorService;
+    private readonly IUserSetCardsDomainService _queryOperations;
+    private readonly IUserSetCardsDomainService _commandOperations;
 
-    public UserSetCardsDomainService(ILogger logger) : this(new UserSetCardsAggregatorService(logger))
+    public UserSetCardsDomainService(ILogger logger) : this(new QueryUserSetCardsDomainService(logger), new CommandUserSetCardsDomainService(logger))
     { }
 
-    private UserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) => _userSetCardsAggregatorService = userSetCardsAggregatorService;
+    private UserSetCardsDomainService(IUserSetCardsDomainService queryOperations, IUserSetCardsDomainService commandOperations)
+    {
+        _queryOperations = queryOperations;
+        _commandOperations = commandOperations;
+    }
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _userSetCardsAggregatorService.GetUserSetCardByUserAndSetAsync(userSetCard).ConfigureAwait(false);
+    public Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => _queryOperations.GetUserSetCardByUserAndSetAsync(userSetCard);
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _userSetCardsAggregatorService.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
+    public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _commandOperations.AddSetGroupToUserSetCardAsync(entity);
 }
