@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
@@ -17,33 +18,28 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserMutationMethods
 {
     private readonly IEntryService _entryService;
+    private readonly IOperationResponseToResponseModelMapper<UserRegistrationOutEntity> _userRegistrationResponseMapper;
 
-    public UserMutationMethods(ILogger logger) : this(new EntryService(logger))
+    public UserMutationMethods(ILogger logger) : this(
+        new EntryService(logger),
+        new OperationResponseToResponseModelMapper<UserRegistrationOutEntity>())
     {
     }
 
-    private UserMutationMethods(IEntryService entryService) => _entryService = entryService;
+    private UserMutationMethods(
+        IEntryService entryService,
+        IOperationResponseToResponseModelMapper<UserRegistrationOutEntity> userRegistrationResponseMapper)
+    {
+        _entryService = entryService;
+        _userRegistrationResponseMapper = userRegistrationResponseMapper;
+    }
 
     [Authorize]
     [GraphQLType(typeof(UserRegistrationResponseModelUnionType))]
     public async Task<ResponseModel> RegisterUserInfoAsync(ClaimsPrincipal claimsPrincipal)
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
-
         IOperationResponse<UserRegistrationOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureResponseModel()
-            {
-                Status = new StatusDataModel()
-                {
-                    Message = response.OuterException.StatusMessage,
-                    StatusCode = response.OuterException.StatusCode
-                }
-            };
-        }
-
-        return new SuccessDataResponseModel<UserRegistrationOutEntity>() { Data = response.ResponseData };
+        return await _userRegistrationResponseMapper.Map(response).ConfigureAwait(false);
     }
 }
