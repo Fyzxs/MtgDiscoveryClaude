@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

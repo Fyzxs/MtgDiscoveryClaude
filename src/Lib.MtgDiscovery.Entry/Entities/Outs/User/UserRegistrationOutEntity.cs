@@ -1,4 +1,4 @@
-namespace Lib.MtgDiscovery.Entry.Entities.Outs.User;
+﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.User;
 
 public sealed class UserRegistrationOutEntity
 {
