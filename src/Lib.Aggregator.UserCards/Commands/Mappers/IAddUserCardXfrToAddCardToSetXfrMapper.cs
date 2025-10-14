@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Lib.Adapter.UserCards.Apis.Entities;
+﻿using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
+using Lib.Shared.Abstractions.Mappers;
 
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
 
@@ -8,7 +8,6 @@ namespace Lib.Aggregator.UserCards.Commands.Mappers;
 /// Maps IAddUserCardXfrEntity to IAddCardToSetXfrEntity.
 /// Creates AddCardToSetXfrEntity for updating UserSetCards aggregation.
 /// </summary>
-internal interface IAddUserCardXfrToAddCardToSetXfrMapper
+internal interface IAddUserCardXfrToAddCardToSetXfrMapper : ICreateMapper<IAddUserCardXfrEntity, IAddCardToSetXfrEntity>
 {
-    Task<IAddCardToSetXfrEntity> Map(IAddUserCardXfrEntity source);
 }

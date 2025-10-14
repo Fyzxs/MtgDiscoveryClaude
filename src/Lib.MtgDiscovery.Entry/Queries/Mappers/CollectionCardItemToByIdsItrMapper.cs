@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 

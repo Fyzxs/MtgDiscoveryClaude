@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

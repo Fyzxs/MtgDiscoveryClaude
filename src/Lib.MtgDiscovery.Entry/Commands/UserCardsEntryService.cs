@@ -3,8 +3,7 @@ using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Commands.UserCards;
 using Lib.MtgDiscovery.Entry.Entities;
-using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +17,9 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
         new AddCardToCollectionEntryService(logger))
     { }
 
-    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection) => _addCardToCollection = addCardToCollection;
+    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection)
+        => _addCardToCollection = addCardToCollection;
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => await _addCardToCollection.Execute(new AddCardToCollectionArgsEntity { AuthUser = authUser, AddUserCard = args }).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args)
+        => await _addCardToCollection.Execute(args).ConfigureAwait(false);
 }

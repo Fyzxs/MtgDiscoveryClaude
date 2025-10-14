@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
+using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -18,12 +20,25 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserSetCardsMutationMethods
 {
     private readonly IEntryService _entryService;
+    private readonly IAddSetGroupToUserSetCardArgsMapper _argsMapper;
+    private readonly IOperationResponseToResponseModelMapper<UserSetCardOutEntity> _userSetCardResponseMapper;
 
-    public UserSetCardsMutationMethods(ILogger logger) : this(new EntryService(logger))
+    public UserSetCardsMutationMethods(ILogger logger) : this(
+        new EntryService(logger),
+        new AddSetGroupToUserSetCardArgsMapper(),
+        new OperationResponseToResponseModelMapper<UserSetCardOutEntity>())
     {
     }
 
-    private UserSetCardsMutationMethods(IEntryService entryService) => _entryService = entryService;
+    private UserSetCardsMutationMethods(
+        IEntryService entryService,
+        IAddSetGroupToUserSetCardArgsMapper argsMapper,
+        IOperationResponseToResponseModelMapper<UserSetCardOutEntity> userSetCardResponseMapper)
+    {
+        _entryService = entryService;
+        _argsMapper = argsMapper;
+        _userSetCardResponseMapper = userSetCardResponseMapper;
+    }
 
     [Authorize]
     [GraphQLType(typeof(UserSetCardResponseModelUnionType))]
@@ -31,24 +46,10 @@ public sealed class UserSetCardsMutationMethods
         ClaimsPrincipal claimsPrincipal,
         AddSetGroupToUserSetCardArgEntity input)
     {
-        AuthUserArgEntity authUserArg = new(claimsPrincipal);
-
+        IAddSetGroupToUserSetCardArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, input).ConfigureAwait(false);
         IOperationResponse<UserSetCardOutEntity> response = await _entryService
-            .AddSetGroupToUserSetCardAsync(authUserArg, input)
+            .AddSetGroupToUserSetCardAsync(combinedArgs)
             .ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureResponseModel()
-            {
-                Status = new StatusDataModel()
-                {
-                    Message = response.OuterException.StatusMessage,
-                    StatusCode = response.OuterException.StatusCode
-                }
-            };
-        }
-
-        return new SuccessDataResponseModel<UserSetCardOutEntity>() { Data = response.ResponseData };
+        return await _userSetCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

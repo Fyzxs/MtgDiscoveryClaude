@@ -1,4 +1,5 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Scryfall.Ingestion.Services;
 using Lib.Scryfall.Shared.Apis.Models;
 using Newtonsoft.Json.Linq;
@@ -15,7 +16,7 @@ internal sealed class ScryfallSetToCosmosMapper : IScryfallSetToCosmosMapper
 
     private ScryfallSetToCosmosMapper(ISetGroupingsLoader groupingsLoader) => _groupingsLoader = groupingsLoader;
 
-    public ScryfallSetItemExtEntity Map(IScryfallSet scryfallSet)
+    public Task<ScryfallSetItemExtEntity> Map(IScryfallSet scryfallSet)
     {
         dynamic data = scryfallSet.Data();
         string setCode = scryfallSet.Code();
@@ -30,9 +31,11 @@ internal sealed class ScryfallSetToCosmosMapper : IScryfallSetToCosmosMapper
             data = dataObject;
         }
 
-        return new ScryfallSetItemExtEntity
+        ScryfallSetItemExtEntity result = new()
         {
             Data = data
         };
+
+        return Task.FromResult(result);
     }
 }

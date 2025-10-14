@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Lib.Aggregator.UserSetCards.Entities;
+using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
@@ -14,10 +15,4 @@ internal sealed class UserSetCardArgToItrMapper : IUserSetCardArgToItrMapper
             SetId = userSetCardArgs.SetId
         });
     }
-}
-
-internal sealed class UserSetCardItrEntity : IUserSetCardItrEntity
-{
-    public string UserId { get; init; }
-    public string SetId { get; init; }
 }

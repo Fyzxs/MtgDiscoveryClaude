@@ -33,9 +33,9 @@ public sealed class SetAdapterService : ISetAdapterService
 
     private SetAdapterService(ISetQueryAdapter setQueryAdapter) => _setQueryAdapter = setQueryAdapter;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setQueryAdapter.GetSetsByIdsAsync(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setQueryAdapter.SetsByIdsAsync(setIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setQueryAdapter.GetSetsByCodesAsync(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setQueryAdapter.SetsByCodesAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync() => await _setQueryAdapter.GetAllSetsAsync().ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync() => await _setQueryAdapter.AllSetsAsync().ConfigureAwait(false);
 }

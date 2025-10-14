@@ -33,9 +33,10 @@ public interface IUserCardItrEntity
     IEnumerable<string> ArtistIds { get; }
 
     /// <summary>
-    /// The name of the card (used for efficient querying by name).
+    /// The deterministic GUID generated from the card name (used for efficient querying by name).
+    /// This matches the NameGuid used in the CardsByName collection.
     /// </summary>
-    string CardName { get; }
+    string CardNameGuid { get; }
 
     /// <summary>
     /// The details of this specific collected card version with finish, quantity, and set grouping.

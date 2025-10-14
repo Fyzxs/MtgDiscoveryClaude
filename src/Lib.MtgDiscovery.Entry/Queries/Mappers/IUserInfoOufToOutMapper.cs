@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.User;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface IUserInfoOufToOutMapper
+internal interface IUserInfoOufToOutMapper : ICreateMapper<IUserInfoOufEntity, UserRegistrationOutEntity>
 {
-    Task<UserRegistrationOutEntity> Map(IUserInfoOufEntity userInfo);
 }
