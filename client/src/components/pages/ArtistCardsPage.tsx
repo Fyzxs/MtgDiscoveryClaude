@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, startTransition } from 'react';
+import React, { startTransition } from 'react';
 import { useParams } from 'react-router-dom';
 import { Alert } from '../atoms';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
@@ -6,240 +6,44 @@ import { ArtistPageHeader } from '../organisms/ArtistPageHeader';
 import { ArtistPageFilters } from '../organisms/ArtistPageFilters';
 import { ArtistPageCardDisplay } from '../organisms/ArtistPageCardDisplay';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import { useUrlState } from '../../hooks/useUrlState';
-import { useFilterState } from '../../hooks/useFilterState';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
-import { RARITY_ORDER } from '../../config/cardSortOptions';
-import {
-  getUniqueRarities,
-  getUniqueSets,
-  getUniqueFormats,
-  createCardFilterFunctions
-} from '../../utils/cardUtils';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { SectionErrorBoundary } from '../ErrorBoundaries';
-import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { useCardQueries } from '../../hooks/useCardQueries';
-import { toPascalCase, getArtistNameInfo } from '../../utils/artistUtils';
-import type { Card } from '../../types/card';
+import { useArtistCardsData } from '../../hooks/useArtistCardsData';
 
-interface CardsResponse {
-  cardsByArtistName: {
-    __typename: string;
-    data?: Card[];
-    status?: {
-      message: string;
-    };
-  };
-}
-
-
+/**
+ * ArtistCardsPage - Display all cards by a specific artist with filtering
+ * Refactored to use useArtistCardsData hook for reduced complexity
+ */
 export const ArtistCardsPage: React.FC = () => {
-  // Get artist name from route params and decode it
   const { artistName } = useParams<{ artistName: string }>();
   const decodedArtistName = decodeURIComponent(artistName || '').replace(/-/g, ' ');
-  const pascalCasedName = toPascalCase(decodedArtistName);
 
-  // Check for collector parameter
-  const { hasCollector } = useCollectorParam();
-
-  // URL state configuration for query parameters
-  const urlStateConfig = {
-    search: { default: '' },
-    rarities: { default: [] },
-    sets: { default: [] },
-    sort: { default: 'release-desc' },
-    counts: { default: [] },
-    signed: { default: [] }
-  };
-
-  // Get initial values from URL only once on mount
-  const { getInitialValues } = useUrlState({}, urlStateConfig);
-  const [initialValues] = useState(() => getInitialValues());
-
-  // Use card cache for fetching cards by artist
-  const { fetchCardsByArtist } = useCardQueries();
-  const [cardsLoading, setCardsLoading] = useState(true);
-  const [cardsError, setCardsError] = useState<Error | null>(null);
-  const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
-
-  useEffect(() => {
-    if (!artistName) return;
-
-    const loadCards = async () => {
-      setCardsLoading(true);
-      setCardsError(null);
-      try {
-        const cards = await fetchCardsByArtist(decodedArtistName);
-        setCardsData({
-          cardsByArtistName: {
-            __typename: 'CardsByArtistSuccessResponse',
-            data: cards
-          }
-        });
-      } catch (err) {
-        setCardsError(err as Error);
-        setCardsData({
-          cardsByArtistName: {
-            __typename: 'FailureResponse',
-            status: {
-              message: (err as Error).message
-            }
-          }
-        });
-      } finally {
-        setCardsLoading(false);
-      }
-    };
-
-    loadCards();
-  }, [artistName, decodedArtistName, fetchCardsByArtist]);
-
-  // Get unique rarities, sets, and formats from data
-  const allRarities = useMemo(() => getUniqueRarities(cardsData?.cardsByArtistName?.data || []), [cardsData]);
-  const allSetObjects = useMemo(() => getUniqueSets(cardsData?.cardsByArtistName?.data || []), [cardsData]);
-  const allSets = useMemo(() => allSetObjects.map(set => set.value), [allSetObjects]);
-  const allFormats = useMemo(() => getUniqueFormats(cardsData?.cardsByArtistName?.data || []), [cardsData]);
-
-  // Create a map for set code to display label
-  const setLabelMap = useMemo(() => {
-    const map = new Map<string, string>();
-    allSetObjects.forEach(set => map.set(set.value, set.label));
-    return map;
-  }, [allSetObjects]);
-
-  // Configure filter state with sort options
-  const filterConfig = useMemo(() => {
-    const cardFilterFunctions = createCardFilterFunctions<Card>();
-
-    return {
-      searchFields: ['name'] as (keyof Card)[],
-      sortOptions: {
-        'release-desc': (a: Card, b: Card) => {
-          if (!a.releasedAt && !b.releasedAt) return 0;
-          if (!a.releasedAt) return 1;
-          if (!b.releasedAt) return -1;
-          return new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime();
-        },
-        'release-asc': (a: Card, b: Card) => {
-          if (!a.releasedAt && !b.releasedAt) return 0;
-          if (!a.releasedAt) return 1;
-          if (!b.releasedAt) return -1;
-          return new Date(a.releasedAt).getTime() - new Date(b.releasedAt).getTime();
-        },
-        'name-asc': (a: Card, b: Card) => a.name.localeCompare(b.name),
-        'name-desc': (a: Card, b: Card) => b.name.localeCompare(a.name),
-        'rarity': (a: Card, b: Card) => {
-          return (RARITY_ORDER[a.rarity?.toLowerCase() || ''] ?? 99) - (RARITY_ORDER[b.rarity?.toLowerCase() || ''] ?? 99);
-        },
-        'price-desc': (a: Card, b: Card) => {
-          const priceA = parseFloat(a.prices?.usd || '0');
-          const priceB = parseFloat(b.prices?.usd || '0');
-          return priceB - priceA;
-        },
-        'price-asc': (a: Card, b: Card) => {
-          const priceA = parseFloat(a.prices?.usd || '0');
-          const priceB = parseFloat(b.prices?.usd || '0');
-          return priceA - priceB;
-        },
-        'set-asc': (a: Card, b: Card) => (a.setName || '').localeCompare(b.setName || ''),
-        'collection-asc': (a: Card, b: Card) => {
-          const getTotal = (card: Card) => {
-            if (!card.userCollection) return 0;
-            const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
-            return collectionArray.reduce((sum, item) => sum + item.count, 0);
-          };
-          return getTotal(a) - getTotal(b);
-        },
-        'collection-desc': (a: Card, b: Card) => {
-          const getTotal = (card: Card) => {
-            if (!card.userCollection) return 0;
-            const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];
-            return collectionArray.reduce((sum, item) => sum + item.count, 0);
-          };
-          return getTotal(b) - getTotal(a);
-        }
-      },
-      filterFunctions: cardFilterFunctions,
-      defaultSort: 'release-desc'
-    };
-  }, []);
-
+  // All data and state management extracted to custom hook
   const {
+    cards,
+    cardsData,
+    cardsLoading,
+    cardsError,
     searchTerm,
     sortBy,
     filters,
-    filteredData: filteredCards,
+    selectedRarities,
+    selectedSets,
+    allRarities,
+    allSets,
+    allFormats,
+    setLabelMap,
+    filteredCards,
+    displayArtistName,
+    alternateNames,
     setSearchTerm,
     setSortBy,
-    updateFilter
-  } = useFilterState(
-    cardsData?.cardsByArtistName?.data,
-    filterConfig,
-    {
-      search: (typeof initialValues.search === 'string' ? initialValues.search : '') || '',
-      sort: (typeof initialValues.sort === 'string' ? initialValues.sort : 'release-desc') || 'release-desc',
-      filters: {
-        rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
-        sets: Array.isArray(initialValues.sets) ? initialValues.sets : (initialValues.sets ? [initialValues.sets] : []),
-        formats: [], // Empty means show all (both paper and digital)
-        collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
-        signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
-      }
-    }
-  );
+    updateFilter,
+    hasCollector
+  } = useArtistCardsData(artistName, decodedArtistName);
 
-  const selectedRarities = (Array.isArray(filters.rarities) ? filters.rarities : []) as string[];
-  const selectedSets = (Array.isArray(filters.sets) ? filters.sets : []) as string[];
-
-  // Memoize cards array to prevent unnecessary re-renders
-  const cards = useMemo(() => cardsData?.cardsByArtistName?.data || [], [cardsData]);
-
-  // Get the most common artist name variation and alternates from loaded cards
-  const artistNameInfo = useMemo(() => {
-    if (cards.length === 0) {
-      return { primaryName: pascalCasedName, alternateNames: [] };
-    }
-    return getArtistNameInfo(cards, decodedArtistName);
-  }, [cards, decodedArtistName, pascalCasedName]);
-
-  const displayArtistName = artistNameInfo.primaryName;
-  const alternateNames = artistNameInfo.alternateNames;
-
-  // Sync non-search filters with URL immediately
-  useUrlState(
-    {
-      rarities: selectedRarities,
-      sets: selectedSets,
-      sort: sortBy,
-      counts: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
-      signed: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]
-    },
-    {
-      rarities: { default: [] },
-      sets: { default: [] },
-      sort: { default: 'release-desc' },
-      counts: { default: [] },
-      signed: { default: [] }
-    },
-    {
-      debounceMs: 0
-    }
-  );
-
-  // Sync search term separately with debounce
-  useUrlState(
-    {
-      search: searchTerm
-    },
-    {
-      search: { default: '' }
-    },
-    {
-      debounceMs: 300
-    }
-  );
-
+  // Handler functions
   const handleClearFilters = () => {
     startTransition(() => {
       setSearchTerm('');
@@ -252,7 +56,11 @@ export const ArtistCardsPage: React.FC = () => {
     });
   };
 
-  // Early returns for error states
+  const handleSearchChange = (value: string) => {
+    startTransition(() => setSearchTerm(value));
+  };
+
+  // Error handling
   if (!artistName) {
     return (
       <Alert severity="error" sx={{ m: 4 }}>
@@ -269,6 +77,7 @@ export const ArtistCardsPage: React.FC = () => {
     );
   }
 
+  // Render using template composition pattern
   return (
     <QueryStateContainer
       loading={cardsLoading}
@@ -292,11 +101,7 @@ export const ArtistCardsPage: React.FC = () => {
             filters={{
               search: {
                 value: searchTerm,
-                onChange: (value: string) => {
-                  startTransition(() => {
-                    setSearchTerm(value);
-                  });
-                }
+                onChange: handleSearchChange
               },
               rarities: {
                 value: selectedRarities,
@@ -352,4 +157,6 @@ export const ArtistCardsPage: React.FC = () => {
       <BackToTopFab />
     </QueryStateContainer>
   );
-};export default ArtistCardsPage;
+};
+
+export default ArtistCardsPage;
