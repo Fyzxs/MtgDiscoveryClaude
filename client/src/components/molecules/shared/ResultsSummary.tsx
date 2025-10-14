@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Box, type SxProps, type Theme } from '@mui/material';
+import { Typography, Box, type SxProps, type Theme } from '../../atoms';
 
 interface ResultsSummaryProps {
   current: number;

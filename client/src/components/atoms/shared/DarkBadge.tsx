@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import Box from '../Box';
+import type { SxProps } from '@mui/material';
+import type { Theme } from '../types';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface DarkBadgeProps extends StyledComponentProps {

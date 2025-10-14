@@ -1,5 +1,7 @@
 import React from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import Box from '../Box';
+import CircularProgress from '../CircularProgress';
+import Typography from '../Typography';
 
 interface LoadingContainerProps {
   size?: 'small' | 'medium' | 'large';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Fab, Zoom } from '@mui/material';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Fab, Zoom } from '../../atoms';
 import type { FabComponentProps } from '../../../types/components';
+import { KeyboardArrowUpIcon } from '../../atoms/Icons';
 
 interface BackToTopFabProps extends FabComponentProps {
   /**

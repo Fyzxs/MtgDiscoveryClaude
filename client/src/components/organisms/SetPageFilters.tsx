@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControlLabel, Switch } from '../../atoms';
 import { FilterPanel } from './filters/FilterPanel';
 import { FilterErrorBoundary } from '../ErrorBoundaries';
 import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
@@ -161,7 +161,7 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
               control={
                 <Switch
                   checked={showGroups !== false}
-                  onChange={(e) => onShowGroupsChange(e.target.checked)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onShowGroupsChange(e.target.checked)}
                   size="small"
                 />
               }

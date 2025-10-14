@@ -7,7 +7,7 @@ import {
   LinearProgress,
   Tooltip,
   Chip
-} from '@mui/material';
+} from '../../atoms';
 
 interface FinishProgress {
   finishType: 'non-foil' | 'foil' | 'etched';

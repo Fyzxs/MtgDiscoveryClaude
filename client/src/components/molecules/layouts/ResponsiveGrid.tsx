@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box, useTheme } from '../../atoms';
 import type { GridLayoutProps } from '../../../types/components';
 
 export interface ResponsiveGridProps extends GridLayoutProps {

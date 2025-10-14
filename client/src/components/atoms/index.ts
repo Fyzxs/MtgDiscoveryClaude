@@ -10,6 +10,7 @@ export { default as Container } from './Container';
 export { default as Stack } from './Stack';
 export { default as Paper } from './Paper';
 export { default as Divider } from './Divider';
+export { default as Grid } from './Grid';
 
 // Typography
 export { default as Typography } from './Typography';
@@ -29,6 +30,7 @@ export { default as FormControlLabel } from './FormControlLabel';
 export { default as InputLabel } from './InputLabel';
 export { default as InputAdornment } from './InputAdornment';
 export { default as MenuItem } from './MenuItem';
+export { default as Autocomplete } from './Autocomplete';
 
 // Feedback
 export { default as Alert } from './Alert';
@@ -50,6 +52,12 @@ export { default as Modal } from './Modal';
 export { default as Collapse } from './Collapse';
 export { default as Icon } from './Icon';
 export { default as Zoom } from './Zoom';
+export { default as Popover } from './Popover';
+export { default as ListItemIcon } from './ListItemIcon';
+export { default as ListItemText } from './ListItemText';
+
+// Icons
+export * from './Icons';
 
 // Export all prop types
 export type {
@@ -59,6 +67,7 @@ export type {
   StackProps,
   PaperProps,
   DividerProps,
+  GridProps,
 
   // Typography
   TypographyProps,
@@ -78,6 +87,7 @@ export type {
   InputLabelProps,
   InputAdornmentProps,
   MenuItemProps,
+  AutocompleteProps,
 
   // Feedback
   AlertProps,
@@ -99,12 +109,15 @@ export type {
   CollapseProps,
   IconProps,
   ZoomProps,
+  PopoverProps,
+  ListItemIconProps,
+  ListItemTextProps,
 } from './types';
 
 // Re-export utilities and types that are commonly used
 // These don't need wrapping as they're not components
-export { useTheme, keyframes } from '@mui/material';
-export type { SxProps, Theme } from '@mui/material';
+export { useTheme, keyframes, useMediaQuery, alpha } from '@mui/material';
+export type { SxProps, Theme, SelectChangeEvent } from '@mui/material';
 
 // === Domain-Specific Atoms ===
 // Re-export all domain atoms from subfolders

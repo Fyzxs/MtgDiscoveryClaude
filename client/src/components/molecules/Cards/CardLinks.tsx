@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box } from '../../atoms';
+import type { SxProps, Theme } from '../../atoms';
 import { ExternalLinkIcon } from '../shared/ExternalLinkIcon';
 
 interface CardLinksProps {

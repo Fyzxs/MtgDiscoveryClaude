@@ -1,5 +1,5 @@
 import React, { useDeferredValue, useState, useEffect } from 'react';
-import { Box, type SxProps, type Theme } from '@mui/material';
+import { Box, type SxProps, type Theme } from '../../atoms';
 import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';

@@ -6,7 +6,7 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery
-} from '@mui/material';
+} from '../../atoms';
 import type { UserCardData } from '../../../types/card';
 
 // Emoji definitions with tooltips for accessibility

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { logger } from '../../../utils/logger';
-import { Card, CardContent, Box, CardActionArea, Typography } from '@mui/material';
-import { useTheme, alpha } from '@mui/material/styles';
+import { Card, CardContent, Box, CardActionArea, Typography } from '../../atoms';
+import { useTheme, alpha } from '../../atoms';
 import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import { SetTitle } from '../../atoms/Sets/SetTitle';

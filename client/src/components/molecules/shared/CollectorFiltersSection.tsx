@@ -3,7 +3,7 @@ import {
   Box,
   Typography,
   Grid
-} from '@mui/material';
+} from '../../atoms';
 import { MultiSelectDropdown } from './MultiSelectDropdown';
 import type { CollectorFiltersConfig } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';

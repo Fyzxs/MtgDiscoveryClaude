@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button } from '@mui/material';
+import { Button } from '../../atoms';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
-import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import { CollectionsBookmarkIcon } from '../../atoms/Icons';
 
 export const MyCollectionButton: React.FC = () => {
   const { userProfile } = useUser();

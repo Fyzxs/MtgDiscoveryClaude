@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Container, Typography, Divider } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box, Container, Typography, Divider } from '../../atoms';
+import { useTheme } from '../../atoms';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '../../atoms';
 import { SetTypeBadge } from '../../atoms/Sets/SetTypeBadge';
 import { DigitalBadge } from '../../atoms/Sets/DigitalBadge';
 import { FoilOnlyBadge } from '../../atoms/Sets/FoilOnlyBadge';
