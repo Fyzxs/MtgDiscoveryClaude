@@ -1,6 +1,9 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useAuth0, User } from '@auth0/auth0-react';
-import { useUserSync, UserProfile, CollectorProfile } from '../hooks/user/useUserSync';
+import React, { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import type { User } from '@auth0/auth0-react';
+import { useUserSync } from '../hooks/user/useUserSync';
+import type { UserProfile, CollectorProfile } from '../hooks/user/useUserSync';
 
 interface UserContextType {
   // Auth0 user data
@@ -62,6 +65,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (context === undefined) {
@@ -71,16 +75,19 @@ export const useUser = (): UserContextType => {
 };
 
 // Convenience hooks for specific data
+// eslint-disable-next-line react-refresh/only-export-components -- Convenience hook for UserContext
 export const useUserProfile = () => {
   const { userProfile } = useUser();
   return userProfile;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- Convenience hook for UserContext
 export const useCollectorProfile = () => {
   const { collectorProfile } = useUser();
   return collectorProfile;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- Convenience hook for UserContext
 export const useIsCollector = () => {
   const { collectorProfile, userProfile } = useUser();
   return !!collectorProfile || !!userProfile;

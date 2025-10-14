@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { logger } from '../../../utils/logger';
+import { Box, Typography } from '../../atoms';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
-import { LoadingContainer } from '../../atoms/shared/LoadingContainer';
-import { ErrorAlert } from '../../atoms/shared/ErrorAlert';
+import { LoadingContainer, ErrorAlert } from '../../atoms';
 import { formatRulingDate } from '../../../utils/dateFormatters';
 import { fetchWithRetry, globalLoadingManager } from '../../../utils/networkErrorHandler';
 
@@ -41,7 +41,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
       setLoading(true);
       setError(null);
       globalLoadingManager.setLoading(loadingKey, true);
-      
+
       try {
         const data: RulingsResponse = await fetchWithRetry<RulingsResponse>(rulingsUri, {
           method: 'GET',
@@ -52,10 +52,10 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
           retryDelay: 1000,
           timeout: 8000,
           onRetry: (attemptNumber, error) => {
-            console.log(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.message);
+            logger.debug(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.message);
           }
         });
-        
+
         // Sort rulings by date (oldest first)
         const sortedRulings = (data.data || []).sort((a, b) => {
           const dateA = new Date(a.published_at).getTime();
@@ -64,7 +64,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
         });
         setRulings(sortedRulings);
       } catch (err) {
-        console.error('Error fetching rulings:', err);
+        logger.error('Error fetching rulings:', err);
         const networkError = err as Error & { userMessage?: string };
         if (networkError.userMessage) {
           setError(networkError.userMessage);
@@ -108,9 +108,9 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
         <Box sx={{ pl: 2 }}>
           {rulings.map((ruling, index) => (
             <Box key={index} sx={{ mb: 2.5 }}>
-              <Typography 
-                variant="caption" 
-                sx={{ 
+              <Typography
+                variant="caption"
+                sx={{
                   color: 'primary.main',
                   fontWeight: 600,
                   display: 'block',
@@ -119,9 +119,9 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
               >
                 {formatRulingDate(ruling.published_at)}
               </Typography>
-              <Typography 
-                variant="body2" 
-                sx={{ 
+              <Typography
+                variant="body2"
+                sx={{
                   color: 'text.secondary',
                   lineHeight: 1.6
                 }}

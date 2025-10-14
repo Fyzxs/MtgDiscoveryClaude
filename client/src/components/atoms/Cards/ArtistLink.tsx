@@ -1,4 +1,5 @@
 import { DarkBadge } from '../shared/DarkBadge';
+import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface ArtistLinkProps extends StyledComponentProps {
@@ -7,16 +8,21 @@ interface ArtistLinkProps extends StyledComponentProps {
   onArtistClick?: (artistName: string, artistId?: string) => void;
 }
 
-export const ArtistLink = ({ 
+export const ArtistLink = ({
   artistName,
   artistId,
   onArtistClick,
-  className 
+  className
 }: ArtistLinkProps) => {
+  const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+
+  const artistPath = `/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`;
+  const href = buildUrlWithCollector(artistPath);
+
   return (
     <DarkBadge
       component="a"
-      href={`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`}
+      href={href}
       tabIndex={0}
       onKeyDown={(e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -32,6 +38,9 @@ export const ArtistLink = ({
         if (onArtistClick) {
           e.preventDefault();
           onArtistClick(artistName, artistId);
+        } else {
+          // Use collector navigation for regular clicks
+          createCollectorClickHandler(artistPath)(e);
         }
       }}
       className={className}

@@ -4,7 +4,7 @@ export const CARD_NAME_SEARCH = gql`
   query CardNameSearch($searchTerm: CardSearchTermArgEntityInput!) {
     cardNameSearch(searchTerm: $searchTerm) {
       __typename
-      ... on SuccessCardNameSearchResultsResponse {
+      ... on CardNameSearchResultsSuccessResponse {
         data {
           name
         }
