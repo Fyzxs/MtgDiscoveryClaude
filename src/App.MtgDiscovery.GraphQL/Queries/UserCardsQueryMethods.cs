@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -16,12 +17,21 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public sealed class UserCardsQueryMethods
 {
     private readonly IEntryService _entryService;
+    private readonly IOperationResponseToResponseModelMapper<List<UserCardOutEntity>> _userCardResponseMapper;
 
-    public UserCardsQueryMethods(ILogger logger) : this(new EntryService(logger))
+    public UserCardsQueryMethods(ILogger logger) : this(
+        new EntryService(logger),
+        new OperationResponseToResponseModelMapper<List<UserCardOutEntity>>())
     {
     }
 
-    private UserCardsQueryMethods(IEntryService entryService) => _entryService = entryService;
+    private UserCardsQueryMethods(
+        IEntryService entryService,
+        IOperationResponseToResponseModelMapper<List<UserCardOutEntity>> userCardResponseMapper)
+    {
+        _entryService = entryService;
+        _userCardResponseMapper = userCardResponseMapper;
+    }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
     public async Task<ResponseModel> UserCardsBySet(UserCardsBySetArgEntity setArgs)
@@ -29,20 +39,7 @@ public sealed class UserCardsQueryMethods
         IOperationResponse<List<UserCardOutEntity>> response = await _entryService
             .UserCardsBySetAsync(setArgs)
             .ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureResponseModel()
-            {
-                Status = new StatusDataModel()
-                {
-                    Message = response.OuterException.StatusMessage,
-                    StatusCode = response.OuterException.StatusCode
-                }
-            };
-        }
-
-        return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = response.ResponseData };
+        return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
@@ -51,20 +48,7 @@ public sealed class UserCardsQueryMethods
         IOperationResponse<List<UserCardOutEntity>> response = await _entryService
             .UserCardAsync(cardArgs)
             .ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureResponseModel()
-            {
-                Status = new StatusDataModel()
-                {
-                    Message = response.OuterException.StatusMessage,
-                    StatusCode = response.OuterException.StatusCode
-                }
-            };
-        }
-
-        return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = response.ResponseData };
+        return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
@@ -73,19 +57,6 @@ public sealed class UserCardsQueryMethods
         IOperationResponse<List<UserCardOutEntity>> response = await _entryService
             .UserCardsByIdsAsync(cardsArgs)
             .ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureResponseModel()
-            {
-                Status = new StatusDataModel()
-                {
-                    Message = response.OuterException.StatusMessage,
-                    StatusCode = response.OuterException.StatusCode
-                }
-            };
-        }
-
-        return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = response.ResponseData };
+        return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 }
