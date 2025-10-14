@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, useTheme } from '../../atoms';
-import type { SxProps, Theme } from '../../atoms';
+import { Box, useTheme } from '../atoms';
+import type { SxProps, Theme } from '../atoms';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';

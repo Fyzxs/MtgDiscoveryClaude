@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '../../atoms';
+import { Box } from '../atoms';
 import { Header } from '../organisms/Header';
 import { Footer } from '../organisms/Footer';
 import { SkipNavigation } from '../atoms/shared/SkipNavigation';

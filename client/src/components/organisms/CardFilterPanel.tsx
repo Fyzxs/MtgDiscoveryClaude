@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '../../atoms';
+import { Box } from '../atoms';
 import { FilterPanel } from './filters/FilterPanel';
 import { MultiSelectDropdown, SortDropdown } from '../molecules';
 import { getFormatOptions } from '../../utils/cardUtils';

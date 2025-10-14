@@ -13,7 +13,7 @@ import {
   ListItemIcon,
   ListItemText,
   Chip
-} from '../../atoms';
+} from '../atoms';
 import { useLanguageDetection } from '../../hooks/useLanguageDetection';
 
 /**

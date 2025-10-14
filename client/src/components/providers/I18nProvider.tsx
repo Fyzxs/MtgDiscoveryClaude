@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { CircularProgress, Box } from '../../atoms';
+import { CircularProgress, Box } from '../atoms';
 import i18n from '../../i18n/config';
 
 interface I18nProviderProps {

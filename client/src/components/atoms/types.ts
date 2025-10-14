@@ -3,6 +3,7 @@
 
 import type {
   AlertProps as MuiAlertProps,
+  AppBarProps as MuiAppBarProps,
   AutocompleteProps as MuiAutocompleteProps,
   BoxProps as MuiBoxProps,
   ButtonProps as MuiButtonProps,
@@ -15,6 +16,10 @@ import type {
   CircularProgressProps as MuiCircularProgressProps,
   CollapseProps as MuiCollapseProps,
   ContainerProps as MuiContainerProps,
+  DialogProps as MuiDialogProps,
+  DialogTitleProps as MuiDialogTitleProps,
+  DialogContentProps as MuiDialogContentProps,
+  DialogActionsProps as MuiDialogActionsProps,
   DividerProps as MuiDividerProps,
   FabProps as MuiFabProps,
   FormControlProps as MuiFormControlProps,
@@ -25,8 +30,12 @@ import type {
   InputLabelProps as MuiInputLabelProps,
   LinearProgressProps as MuiLinearProgressProps,
   LinkProps as MuiLinkProps,
+  ListProps as MuiListProps,
+  ListItemProps as MuiListItemProps,
+  ListItemButtonProps as MuiListItemButtonProps,
   ListItemIconProps as MuiListItemIconProps,
   ListItemTextProps as MuiListItemTextProps,
+  MenuProps as MuiMenuProps,
   MenuItemProps as MuiMenuItemProps,
   ModalProps as MuiModalProps,
   PaperProps as MuiPaperProps,
@@ -36,6 +45,7 @@ import type {
   StackProps as MuiStackProps,
   SwitchProps as MuiSwitchProps,
   TextFieldProps as MuiTextFieldProps,
+  ToolbarProps as MuiToolbarProps,
   TooltipProps as MuiTooltipProps,
   TypographyProps as MuiTypographyProps,
   ZoomProps as MuiZoomProps,
@@ -54,6 +64,11 @@ export type GridProps = MuiGridProps;
 
 // Typography
 export type TypographyProps = MuiTypographyProps;
+
+// Navigation
+export type AppBarProps = MuiAppBarProps;
+export type ToolbarProps = MuiToolbarProps;
+export type MenuProps = MuiMenuProps;
 
 // Buttons
 export type ButtonProps = MuiButtonProps;
@@ -78,6 +93,19 @@ export type CircularProgressProps = MuiCircularProgressProps;
 export type LinearProgressProps = MuiLinearProgressProps;
 export type SkeletonProps = MuiSkeletonProps;
 
+// Dialog Components
+export type DialogProps = MuiDialogProps;
+export type DialogTitleProps = MuiDialogTitleProps;
+export type DialogContentProps = MuiDialogContentProps;
+export type DialogActionsProps = MuiDialogActionsProps;
+
+// List Components
+export type ListProps = MuiListProps;
+export type ListItemProps = MuiListItemProps;
+export type ListItemButtonProps = MuiListItemButtonProps;
+export type ListItemIconProps = MuiListItemIconProps;
+export type ListItemTextProps = MuiListItemTextProps;
+
 // Card Components
 export type CardProps = MuiCardProps;
 export type CardMediaProps = MuiCardMediaProps;
@@ -93,8 +121,6 @@ export type CollapseProps = MuiCollapseProps;
 export type IconProps = MuiIconProps;
 export type ZoomProps = MuiZoomProps;
 export type PopoverProps = MuiPopoverProps;
-export type ListItemIconProps = MuiListItemIconProps;
-export type ListItemTextProps = MuiListItemTextProps;
 
 // Utility Types
 export type SxProps = MuiSxProps;

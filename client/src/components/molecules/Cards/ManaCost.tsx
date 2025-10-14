@@ -8,8 +8,8 @@ interface ManaCostProps extends StyledComponentProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const ManaCost: React.FC<ManaCostProps> = ({ 
-  manaCost, 
+export const ManaCost: React.FC<ManaCostProps> = ({
+  manaCost,
   size = 'medium',
   className
 }) => {

@@ -51,8 +51,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   const showLabel = isFocused || Boolean(value);
 
   return (
-    <Box 
-      component="form" 
+    <Box
+      component="form"
       onSubmit={handleSubmit}
       sx={{ position: 'relative' }}
     >
