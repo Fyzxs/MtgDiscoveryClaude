@@ -2,16 +2,17 @@
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards;
+using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.MtgDiscovery.Entry.Queries;
 using Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
-using Lib.Shared.DataModels.Entities.Outs.Artists;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
-using Lib.Shared.DataModels.Entities.Outs.Sets;
-using Lib.Shared.DataModels.Entities.Outs.User;
-using Lib.Shared.DataModels.Entities.Outs.UserCards;
-using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -81,7 +82,7 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<UserRegistrationOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => _userEntryService.RegisterUserAsync(authUser);
 
-    public Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => _userCardsEntryService.AddCardToCollectionAsync(authUser, args);
+    public Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args) => _userCardsEntryService.AddCardToCollectionAsync(args);
 
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => _userCardsQueryEntryService.UserCardAsync(cardArgs);
 
@@ -91,5 +92,5 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<UserSetCardOutEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => _userSetCardsQueryEntryService.GetUserSetCardByUserAndSetAsync(userSetCardArgs);
 
-    public Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAuthUserArgEntity authUser, IAddSetGroupToUserSetCardArgEntity argEntity) => _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(authUser, argEntity);
+    public Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args) => _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args);
 }

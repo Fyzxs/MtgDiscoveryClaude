@@ -13,7 +13,7 @@ internal sealed class CollectedItemCountValidator : OperationResponseValidator<I
 
     public sealed class Validator : IValidator<IAddCardToCollectionArgsEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg) => Task.FromResult(arg.AddUserCard.UserCardDetails?.Count != 0);
+        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg) => Task.FromResult(arg.AddUserCard.UserCardDetails.Count != 0);
     }
 
     public sealed class Message : OperationResponseMessage

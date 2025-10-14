@@ -4,7 +4,6 @@ using Lib.Adapter.UserSetCards.Apis;
 using Lib.Adapter.UserSetCards.Commands;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Aggregator.UserSetCards.Commands.Mappers;
-using Lib.Aggregator.UserSetCards.Entities;
 using Lib.Aggregator.UserSetCards.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;

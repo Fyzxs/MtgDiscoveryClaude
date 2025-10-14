@@ -6,17 +6,6 @@ using Lib.Universal.Extensions;
 namespace Lib.MtgDiscovery.Entry.Queries.Actions;
 
 /// <summary>
-/// Validator that returns both validation result and potential failure response.
-/// </summary>
-internal interface IValidatorWithResponse<in TToValidate, TResponseType>
-{
-    /// <summary>
-    /// Validates input and returns failure response if invalid.
-    /// </summary>
-    Task<AsyncTryOut<IOperationResponse<TResponseType>>> TryValidate(TToValidate toValidate);
-}
-
-/// <summary>
 /// Wrapper that adapts a validator to return an AsyncTryResult.
 /// </summary>
 internal sealed class ValidatorWithResponse<TToValidate, TResponseType> : IValidatorWithResponse<TToValidate, TResponseType>
@@ -27,8 +16,7 @@ internal sealed class ValidatorWithResponse<TToValidate, TResponseType> : IValid
 
     public async Task<AsyncTryOut<IOperationResponse<TResponseType>>> TryValidate(TToValidate toValidate)
     {
-        IValidatorActionResult<IOperationResponse<TResponseType>> validatorResult =
-            await _validator.Validate(toValidate).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<TResponseType>> validatorResult = await _validator.Validate(toValidate).ConfigureAwait(false);
 
         if (validatorResult.IsValid()) return new SuccessAsyncTryOut<IOperationResponse<TResponseType>>();
 

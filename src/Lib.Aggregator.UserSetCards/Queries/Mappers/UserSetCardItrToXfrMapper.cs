@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Adapter.UserSetCards.Apis.Entities;
-using Lib.Aggregator.UserSetCards.Entities;
 using Lib.Aggregator.UserSetCards.Queries.Entities;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 

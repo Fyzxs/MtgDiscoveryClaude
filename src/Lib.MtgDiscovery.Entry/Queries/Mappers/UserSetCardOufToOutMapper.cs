@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Aggregator.UserSetCards.Entities;
-using Lib.Shared.DataModels.Entities.Outs.UserSetCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 

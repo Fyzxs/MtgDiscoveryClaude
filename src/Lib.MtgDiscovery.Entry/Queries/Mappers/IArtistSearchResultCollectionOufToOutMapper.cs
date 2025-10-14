@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.Shared.Abstractions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Outs.Artists;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 

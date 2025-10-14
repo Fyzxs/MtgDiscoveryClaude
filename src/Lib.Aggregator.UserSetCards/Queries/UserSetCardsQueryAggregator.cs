@@ -3,7 +3,6 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Aggregator.UserSetCards.Apis;
-using Lib.Aggregator.UserSetCards.Entities;
 using Lib.Aggregator.UserSetCards.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;

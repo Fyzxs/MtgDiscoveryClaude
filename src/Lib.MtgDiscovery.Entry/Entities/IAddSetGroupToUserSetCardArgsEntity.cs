@@ -3,7 +3,7 @@ using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Entities;
 
-internal interface IAddSetGroupToUserSetCardArgsEntity
+public interface IAddSetGroupToUserSetCardArgsEntity
 {
     IAuthUserArgEntity AuthUser { get; }
     IAddSetGroupToUserSetCardArgEntity AddSetGroupToUserSetCard { get; }
