@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '../../atoms';
 import { ManaSymbol } from '../../atoms';
 import type { StyledComponentProps } from '../../../types/components';
 
