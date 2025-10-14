@@ -116,31 +116,18 @@ The .NET solution implements a layered architecture following the intended data 
 
 **Data Flow (Request → Response):**
 1. **App Layer** (`App.MtgDiscovery.GraphQL`): Translate request into ArgEntity
-<<<<<<< HEAD
-2. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Validates ArgEntity and maps to ItrEntity
-3. **Shared Layer** (`Lib.Shared.*`): Applies rules on the data (validation, filtering, transformation)
-4. **Domain Layer** (`Lib.Domain.*`): Applies ALWAYS rules on the data (business logic)
-5. **Aggregator Layer** (`Lib.Aggregator.*`): Knows what adapters to talk to, orchestrates data retrieval
-6. **Adapter Layer** (`Lib.Adapter.*`): Maps ItrEntity to XfrEntity for adapter operations, calls external systems (Cosmos DB via `Lib.Adapter.Scryfall.Cosmos`), maps ExtEntity back to ItrEntity
-7. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.Universal`, `Lib.Scryfall.Ingestion`): Core infrastructure components
-=======
 2. **Entry Layer** (`Lib.MtgDiscovery.Entry`): Validates ArgEntity and maps to ItrEntity (In-Flow Internal)  
 3. **Shared Layer** (`Lib.Shared.*`): Applies rules on the data (validation, filtering, transformation)
 4. **Domain Layer** (`Lib.Domain.*`): Applies ALWAYS rules on the data (business logic)
 5. **Aggregator Layer** (`Lib.Aggregator.*`): Knows what adapters to talk to, orchestrates data retrieval
 6. **Adapter Layer** (`Lib.Adapter.*`): Maps ItrEntity to ExtEntity, calls external world, maps ExtEntity back to OufEntity (Out-Flow Internal)
 7. **Infrastructure Layer** (`Lib.Cosmos`, `Lib.Universal`): Core infrastructure components
->>>>>>> main
 
 **Return Flow (Response ← Request):**
 - Aggregator aggregates adapter responses
 - Domain applies always rules
 - Shared applies rules
-<<<<<<< HEAD
-- Entry maps ItrEntity to OutEntity (and intermediate OufEntity where needed)
-=======
 - Entry maps OufEntity to OutEntity
->>>>>>> main
 - App translates OutEntity to response
 
 **Entity Types by Layer:**
@@ -368,16 +355,9 @@ Registration follows the standard layer pattern:
 5. **Adapter Layer**: `UserInfoExtEntity` (Cosmos document) via `Lib.Adapter.Scryfall.Cosmos` operators
 
 ### User Information Types
-<<<<<<< HEAD
-- `Lib.Shared.DataModels/Entities/Args/IAuthUserArgEntity.cs` - JWT authentication argument interface (Auth0 claims)
-- `Lib.Shared.DataModels/Entities/Itrs/IUserInfoItrEntity.cs` - User info interface with string properties
-  - Properties: `string UserId`, `string UserSourceId`, `string UserNickname`
-- `Lib.Shared.DataModels/Entities/Itrs/IUserRegistrationItrEntity.cs` - Registration response
-=======
 - `Lib.Shared.DataModels/Entities/IUserInfoItrEntity.cs:5-10` - User info interface with string properties (In-Flow Internal)
   - Properties: `string UserId`, `string UserSourceId`, `string UserNickname`
 - `Lib.Shared.DataModels/Entities/IUserRegistrationOufEntity.cs:5-7` - Registration response (Out-Flow Internal)
->>>>>>> main
   - Property: `string UserId`
 
 ### Storage Implementation
