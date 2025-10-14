@@ -1,4 +1,4 @@
-#pragma warning disable CA1056, CA1819
+﻿#pragma warning disable CA1056, CA1819
 using System.Collections.Generic;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 

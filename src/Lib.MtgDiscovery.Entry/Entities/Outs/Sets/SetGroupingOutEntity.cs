@@ -1,4 +1,4 @@
-namespace Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
+﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 
 public sealed class SetGroupingOutEntity
 {

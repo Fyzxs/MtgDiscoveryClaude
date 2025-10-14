@@ -1,4 +1,4 @@
-#pragma warning disable CA1056
+﻿#pragma warning disable CA1056
 
 namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 

@@ -1,4 +1,4 @@
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
+﻿namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
 
 public sealed class CardsByNameGuidInquisitionArgs
 {

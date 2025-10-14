@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.MtgDiscovery.Entry.Queries.UserCards;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

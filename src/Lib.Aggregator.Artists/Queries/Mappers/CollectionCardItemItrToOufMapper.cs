@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Aggregator.Cards.Entities;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 
-namespace Lib.Aggregator.Cards.Queries.Mappers;
+namespace Lib.Aggregator.Artists.Queries.Mappers;
 
 internal sealed class CollectionCardItemItrToOufMapper : ICollectionCardItemItrToOufMapper
 {
