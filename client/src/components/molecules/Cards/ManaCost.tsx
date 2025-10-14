@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@mui/material';
 import { ManaSymbol } from '../../atoms';
 import type { StyledComponentProps } from '../../../types/components';
 
@@ -23,10 +24,10 @@ export const ManaCost: React.FC<ManaCostProps> = ({
   const symbols = parseManaSymbols(manaCost);
 
   return (
-    <div className={`flex items-center gap-1 ${className}`}>
+    <Box className={className} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       {symbols.map((symbol, index) => (
         <ManaSymbol key={index} symbol={symbol} size={size} />
       ))}
-    </div>
+    </Box>
   );
 };
