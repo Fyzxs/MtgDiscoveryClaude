@@ -8,6 +8,7 @@ using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Apis.Pipeline;
 using Lib.Scryfall.Ingestion.Configuration;
 using Lib.Scryfall.Ingestion.Pipeline;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.BulkIngestion;
 

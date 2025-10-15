@@ -4,6 +4,7 @@ using Lib.Scryfall.Ingestion.Collections;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Paging;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
+using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Internal.Collections;
 

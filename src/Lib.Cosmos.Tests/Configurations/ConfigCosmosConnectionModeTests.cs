@@ -1,5 +1,7 @@
 ﻿using System;
 using Lib.Cosmos.Configurations;
+using Lib.Universal.Configurations;
+using Microsoft.Azure.Cosmos;
 using TestConvenience.Core.Fakes;
 
 namespace Lib.Cosmos.Tests.Configurations;

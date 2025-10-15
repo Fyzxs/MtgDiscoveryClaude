@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Universal.Configurations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Example.Core;
 

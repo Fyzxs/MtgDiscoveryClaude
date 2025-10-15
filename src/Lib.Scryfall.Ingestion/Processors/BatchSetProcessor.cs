@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Configurations;
 using Lib.Scryfall.Shared.Apis.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
 

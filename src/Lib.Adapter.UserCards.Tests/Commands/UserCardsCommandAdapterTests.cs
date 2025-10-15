@@ -1,9 +1,13 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Commands;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Adapter.UserCards.Tests.Fakes;
+using Lib.Cosmos.Apis.Operators;
+using Lib.Shared.Invocation.Operations;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 

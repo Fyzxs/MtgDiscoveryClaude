@@ -1,5 +1,6 @@
 ﻿using System;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Dashboard;
 

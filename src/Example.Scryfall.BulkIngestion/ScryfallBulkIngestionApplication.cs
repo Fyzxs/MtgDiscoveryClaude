@@ -5,6 +5,7 @@ using Lib.Scryfall.Ingestion.Apis;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.BulkIngestion;
 using Lib.Scryfall.Ingestion.Dashboard;
+using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.BulkIngestion;
 

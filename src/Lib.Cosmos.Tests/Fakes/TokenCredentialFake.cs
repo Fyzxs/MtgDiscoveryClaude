@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Azure.Core;
 
 namespace Lib.Cosmos.Tests.Fakes;
 

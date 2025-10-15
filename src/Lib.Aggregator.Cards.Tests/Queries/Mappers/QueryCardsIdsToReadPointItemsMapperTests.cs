@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
+using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
 

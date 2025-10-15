@@ -5,6 +5,8 @@ using Lib.Cosmos.Apis;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Example.LibCosmos;
 

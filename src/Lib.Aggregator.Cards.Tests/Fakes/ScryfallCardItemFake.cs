@@ -1,4 +1,6 @@
-﻿namespace Lib.Aggregator.Cards.Tests.Fakes;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+
+namespace Lib.Aggregator.Cards.Tests.Fakes;
 
 internal static class ScryfallCardItemFactoryFake
 {

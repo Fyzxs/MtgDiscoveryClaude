@@ -10,6 +10,8 @@ using Lib.Scryfall.Ingestion.Http;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Universal.Http;
 using Lib.Universal.Primitives;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Lib.Scryfall.Ingestion.Paging;
