@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Alert } from '../atoms';
+import { PageContainer } from '../molecules/layouts';
+import { StatusMessage } from '../molecules/feedback';
 import { SetPageTemplate } from '../templates/SetPageTemplate';
 import { SetPageHeader } from '../organisms/SetPageHeader';
 import { SetPageFilters } from '../organisms/SetPageFilters';
@@ -50,21 +51,21 @@ export const SetPage: React.FC = () => {
   // Error handling
   if (!setCode) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
+      <PageContainer maxWidth="lg" sx={{ mt: 4 }}>
+        <StatusMessage severity="error">
           No set code provided. Please provide a set code in the URL (e.g., ?set=lea)
-        </Alert>
-      </Container>
+        </StatusMessage>
+      </PageContainer>
     );
   }
 
   if (cardsData?.cardsBySetCode?.__typename === 'FailureResponse') {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error">
+      <PageContainer maxWidth="lg" sx={{ mt: 4 }}>
+        <StatusMessage severity="error">
           {cardsData.cardsBySetCode.status?.message || 'Failed to load cards'}
-        </Alert>
-      </Container>
+        </StatusMessage>
+      </PageContainer>
     );
   }
 

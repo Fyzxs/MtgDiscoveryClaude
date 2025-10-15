@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '../atoms';
+import { Section } from '../molecules/layouts';
 import { Header } from '../organisms/Header';
 import { Footer } from '../organisms/Footer';
 import { SkipNavigation } from '../atoms/shared/SkipNavigation';
@@ -12,16 +12,18 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <Box 
-      sx={{ 
+    <Section
+      asSection={false}
+      sx={{
         ...pageContainer,
         backgroundColor: 'background.default'
       }}
     >
       <SkipNavigation />
       <Header />
-      <Box 
-        component="main" 
+      <Section
+        component="main"
+        asSection={false}
         id="main-content"
         role="main"
         tabIndex={-1}
@@ -33,9 +35,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         }}
       >
         {children}
-      </Box>
+      </Section>
       <Footer />
       <QuickEntryKeysFab />
-    </Box>
+    </Section>
   );
 };
