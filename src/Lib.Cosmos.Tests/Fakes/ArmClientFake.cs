@@ -1,8 +1,4 @@
-﻿using Azure.Core;
-using Azure.ResourceManager;
-using Azure.ResourceManager.Resources;
-
-namespace Lib.Cosmos.Tests.Fakes;
+﻿namespace Lib.Cosmos.Tests.Fakes;
 
 internal sealed class ArmClientFake : ArmClient
 {

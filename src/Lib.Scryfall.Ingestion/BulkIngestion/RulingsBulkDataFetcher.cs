@@ -4,8 +4,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.BulkIngestion;
 

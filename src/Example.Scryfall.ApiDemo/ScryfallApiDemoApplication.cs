@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Example.Core;
 using Lib.Scryfall.Ingestion.Collections;
-using Lib.Scryfall.Shared.Apis.Models;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Example.Scryfall.ApiDemo;
 

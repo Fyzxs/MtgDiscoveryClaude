@@ -1,9 +1,6 @@
 ﻿using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Models;
 using Lib.Scryfall.Ingestion.Transformers;
-using Lib.Scryfall.Shared.Apis.Models;
-using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Internal.Collections;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Lib.Scryfall.Shared.Apis.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Filters;
 

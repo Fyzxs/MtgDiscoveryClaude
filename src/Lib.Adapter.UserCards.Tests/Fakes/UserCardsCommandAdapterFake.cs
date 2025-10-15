@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
-using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 

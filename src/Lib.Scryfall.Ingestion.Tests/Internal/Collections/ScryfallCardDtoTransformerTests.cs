@@ -2,8 +2,6 @@
 using Lib.Scryfall.Ingestion.Models;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
 using Lib.Scryfall.Ingestion.Transformers;
-using Lib.Scryfall.Shared.Apis.Models;
-using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Tests.Internal.Collections;
 

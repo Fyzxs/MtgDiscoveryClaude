@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Lib.Scryfall.Shared.Apis.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Collections;
 

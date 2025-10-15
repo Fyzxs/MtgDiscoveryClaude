@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Services;
 using Lib.Scryfall.Shared.Apis.Models;
-using Newtonsoft.Json.Linq;
 
 namespace Lib.Scryfall.Ingestion.Models;
 

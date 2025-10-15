@@ -11,7 +11,6 @@ using Lib.Scryfall.Ingestion.BulkIngestion;
 using Lib.Scryfall.Ingestion.Mappers;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Shared.Abstractions.Identifiers;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Pipeline;
 

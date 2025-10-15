@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Lib.Adapter.UserSetCards.Apis.Entities;
+﻿namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
 /// <summary>
 /// Transfer entity representing a finish-specific group of cards within a user's set collection.

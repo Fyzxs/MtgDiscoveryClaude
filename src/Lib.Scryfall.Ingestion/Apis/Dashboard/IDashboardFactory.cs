@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace Lib.Scryfall.Ingestion.Apis.Dashboard;
+﻿namespace Lib.Scryfall.Ingestion.Apis.Dashboard;
 
 public interface IDashboardFactory
 {
