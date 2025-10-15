@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using Lib.Adapter.UserCards.Exceptions;
-using Lib.Shared.Invocation.Exceptions;
 
 namespace Lib.Adapter.UserCards.Tests.Exceptions;
 

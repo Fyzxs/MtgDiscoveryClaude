@@ -5,7 +5,6 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Shared.Abstractions.Identifiers;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
 

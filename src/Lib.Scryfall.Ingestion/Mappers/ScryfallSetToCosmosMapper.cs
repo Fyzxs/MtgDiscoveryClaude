@@ -2,7 +2,6 @@
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Scryfall.Ingestion.Services;
 using Lib.Scryfall.Shared.Apis.Models;
-using Newtonsoft.Json.Linq;
 
 namespace Lib.Scryfall.Ingestion.Mappers;
 

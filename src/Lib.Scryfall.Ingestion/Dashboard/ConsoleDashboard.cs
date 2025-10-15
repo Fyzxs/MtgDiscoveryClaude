@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Dashboard;
 
