@@ -10,8 +10,8 @@ export interface CollectionEntryState {
 
 export interface CardCollectionUpdate {
   cardId: string;
-  setId?: string;
-  setGroupId?: string;
+  setId: string;
+  setGroupId: string;
   count: number;
   finish: CardFinish;
   special: CardSpecial;
