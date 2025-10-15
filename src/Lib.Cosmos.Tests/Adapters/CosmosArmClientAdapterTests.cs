@@ -1,4 +1,7 @@
-﻿using Lib.Cosmos.Adapters;
+﻿using Azure.Core;
+using Azure.ResourceManager;
+using Azure.ResourceManager.Resources;
+using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Tests.Fakes;
 using TestConvenience.Core.Reflection;
 

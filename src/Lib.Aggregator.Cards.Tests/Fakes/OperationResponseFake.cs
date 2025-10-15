@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Lib.Shared.Invocation.Exceptions;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 

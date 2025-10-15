@@ -2,6 +2,7 @@
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Cosmos.Tests.Fakes;
+using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 

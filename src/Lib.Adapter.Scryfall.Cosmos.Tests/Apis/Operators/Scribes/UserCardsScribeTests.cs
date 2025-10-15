@@ -1,4 +1,5 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
+using Lib.Cosmos.Apis.Operators;
 using TestConvenience.Core.Fakes;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.Apis.Operators.Scribes;

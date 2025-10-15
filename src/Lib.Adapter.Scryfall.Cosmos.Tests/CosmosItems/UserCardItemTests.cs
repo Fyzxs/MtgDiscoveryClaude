@@ -2,6 +2,7 @@
 using System.Reflection;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.CosmosItems;
 
