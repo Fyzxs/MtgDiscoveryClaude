@@ -105,13 +105,13 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
             CardId = cardId;
             SetId = setId;
             UserId = userId;
-            Details = details;
+            UserCardDetails = details;
         }
 
         public string CardId { get; }
         public string SetId { get; }
         public string UserId { get; }
-        public IUserCardDetailsArgEntity Details { get; }
+        public IUserCardDetailsArgEntity UserCardDetails { get; }
     }
 
     private sealed class AddCardToCollectionArgsEntity : IAddCardToCollectionArgsEntity

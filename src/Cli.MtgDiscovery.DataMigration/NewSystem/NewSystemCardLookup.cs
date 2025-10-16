@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -29,27 +30,27 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
 
         if (response.IsFailure)
         {
-            return OperationResponse<ICardItemItrEntity>.Failure(response.OuterException);
+            return new FailureOperationResponse<ICardItemItrEntity>(response.OuterException);
         }
 
         ICardItemItrEntity card = response.ResponseData.Cards.FirstOrDefault();
 
         if (card is null)
         {
-            return OperationResponse<ICardItemItrEntity>.Failure(
-                new System.InvalidOperationException($"Card with Scryfall ID {scryfallId} not found"));
+            OperationException notFoundException = new OperationException($"Card with Scryfall ID {scryfallId} not found");
+            return new FailureOperationResponse<ICardItemItrEntity>(notFoundException);
         }
 
-        return OperationResponse<ICardItemItrEntity>.Success(card);
+        return new SuccessOperationResponse<ICardItemItrEntity>(card);
     }
 
     private sealed class CardIdsItrEntity : ICardIdsItrEntity
     {
         public CardIdsItrEntity(string[] ids)
         {
-            Ids = ids;
+            CardIds = ids;
         }
 
-        public string[] Ids { get; }
+        public ICollection<string> CardIds { get; }
     }
 }
