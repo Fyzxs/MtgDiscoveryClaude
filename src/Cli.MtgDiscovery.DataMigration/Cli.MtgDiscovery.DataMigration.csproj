@@ -1,5 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj" />
+    <ProjectReference Include="..\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
+    <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
+    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
