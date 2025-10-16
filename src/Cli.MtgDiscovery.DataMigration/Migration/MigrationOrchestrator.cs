@@ -190,10 +190,10 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
                 OldCardId = sqlRecord.CardId,
                 ScryfallId = cosmosCard.body.scryfall_id,
                 SetId = sqlRecord.SetId,
-                Finish = addCardEntity.AddUserCard.Details.Finish,
-                Special = addCardEntity.AddUserCard.Details.Special,
-                SetGroupId = addCardEntity.AddUserCard.Details.SetGroupId,
-                Count = addCardEntity.AddUserCard.Details.Count
+                Finish = addCardEntity.AddUserCard.UserCardDetails.Finish,
+                Special = addCardEntity.AddUserCard.UserCardDetails.Special,
+                SetGroupId = addCardEntity.AddUserCard.UserCardDetails.SetGroupId,
+                Count = addCardEntity.AddUserCard.UserCardDetails.Count
             };
 
             await _successLogger.LogSuccessAsync(success).ConfigureAwait(false);
