@@ -9,6 +9,7 @@ public interface IBulkProcessingConfiguration
     int DashboardRefreshFrequency { get; }
     bool ProcessRulings { get; }
     bool SetsOnly { get; }
+    bool UseRazorConsole { get; }
     IReadOnlyCollection<string> SetCodesToProcess { get; }
     DateTime? SetsReleasedAfter { get; }
 }

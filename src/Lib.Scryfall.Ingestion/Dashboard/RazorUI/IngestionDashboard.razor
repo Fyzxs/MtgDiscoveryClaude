@@ -1,0 +1,108 @@
+@using RazorConsole.Components
+@using Spectre.Console
+@using System.Threading.Tasks
+@inject DashboardState State
+
+<Border BoxBorder="@BoxBorder.Double" BorderColor="@Color.Blue">
+    <Rows>
+        <Align Horizontal="@HorizontalAlignment.Center">
+            <Markup Content="Scryfall Bulk Ingestion Progress" Foreground="@Color.White" />
+        </Align>
+
+        <Newline />
+
+        @if (!string.IsNullOrEmpty(State.ProgressType))
+        {
+            <ProgressSection
+                Type="@State.ProgressType"
+                Current="@State.ProgressCurrent"
+                Total="@State.ProgressTotal"
+                CurrentItem="@GetCurrentItem()" />
+        }
+        else
+        {
+            @if (State.SetTotal > 0)
+            {
+                <ProgressSection
+                    Type="Sets"
+                    Current="@State.SetCurrent"
+                    Total="@State.SetTotal"
+                    CurrentItem="@State.SetName" />
+            }
+            else if (State.CardTotal > 0 || State.CardCurrent > 0)
+            {
+                <ProgressSection
+                    Type="Cards"
+                    Current="@State.CardCurrent"
+                    Total="@State.CardTotal"
+                    CurrentItem="@State.CardName" />
+            }
+            else if (State.TrigramTotal > 0 || State.TrigramCurrent > 0)
+            {
+                <ProgressSection
+                    Type="Trigrams"
+                    Current="@State.TrigramCurrent"
+                    Total="@State.TrigramTotal"
+                    CurrentItem="@State.TrigramName" />
+            }
+            else if (State.RulingTotal > 0 || State.RulingCurrent > 0)
+            {
+                <ProgressSection
+                    Type="Rulings"
+                    Current="@State.RulingCurrent"
+                    Total="@State.RulingTotal"
+                    CurrentItem="@State.RulingName" />
+            }
+            else
+            {
+                <Markup Content="Status: Waiting to start..." Foreground="@Color.Grey" />
+            }
+        }
+
+        <CompletedCountsSection Counts="@State.CompletedCounts" />
+
+        <RecentActivitySection Logs="@State.RecentLogs" />
+
+        <Newline />
+        <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+            <SystemMetricsSection MemoryMB="@State.MemoryUsage" Elapsed="@State.Elapsed" />
+        </Border>
+
+        @if (State.IsComplete)
+        {
+            <Newline />
+            <Markup Content="@State.CompletionMessage" Foreground="@Color.Green" />
+        }
+    </Rows>
+</Border>
+
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        // Start the update loop in a background task so the component can render
+        _ = Task.Run(async () =>
+        {
+            while (State.IsComplete is false)
+            {
+                State.UpdateMemoryUsage();
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private string GetCurrentItem()
+    {
+        if (!string.IsNullOrEmpty(State.ProgressItem))
+        {
+            return string.IsNullOrEmpty(State.ProgressAction)
+                ? State.ProgressItem
+                : $"{State.ProgressAction} - {State.ProgressItem}";
+        }
+        return State.ProgressAction;
+    }
+}

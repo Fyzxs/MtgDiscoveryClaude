@@ -1,0 +1,64 @@
+@using RazorConsole.Components
+@using Spectre.Console
+
+@if (!string.IsNullOrEmpty(Type))
+{
+    @if (Total > 0)
+    {
+        <Rows>
+            <Columns>
+                <Markup Content="@($"{Type.PadRight(15)}")" />
+                <Markup Content="@CreateProgressBar(Current, Total)" />
+                <Markup Content="@($" {Current:N0}/{Total:N0} ({Percent}%)")" Foreground="@Color.Green" />
+            </Columns>
+            @if (!string.IsNullOrEmpty(CurrentItem))
+            {
+                <Markup Content="@($"  Current: {TruncateString(CurrentItem, 70)}")" Foreground="@Color.Grey" />
+            }
+        </Rows>
+    }
+    else if (Current > 0)
+    {
+        <Columns>
+            <Markup Content="@($"{Type.PadRight(15)}")" />
+            <Markup Content="Processing..." />
+            <RazorConsole.Components.Spinner SpinnerType="@Spectre.Console.Spinner.Known.Dots" />
+            <Markup Content="@($" {Current:N0} items")" Foreground="@Color.Yellow" />
+        </Columns>
+    }
+    else
+    {
+        <Markup Content="@($"{Type.PadRight(15)} Waiting to start...")" Foreground="@Color.Grey" />
+    }
+}
+
+@code {
+    [Parameter]
+    public string Type { get; init; } = string.Empty;
+
+    [Parameter]
+    public int Current { get; init; }
+
+    [Parameter]
+    public int Total { get; init; }
+
+    [Parameter]
+    public string CurrentItem { get; init; } = string.Empty;
+
+    private int Percent => Total > 0 ? (Current * 100 / Total) : 0;
+
+    private static string CreateProgressBar(int current, int total)
+    {
+        int barWidth = 30;
+        int filled = total > 0 ? (current * barWidth / total) : 0;
+        int empty = barWidth - filled;
+        return $"[{new string('█', filled)}{new string('░', empty)}]";
+    }
+
+    private static string TruncateString(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        if (text.Length <= maxLength) return text;
+        return string.Concat(text.AsSpan(0, maxLength - 3), "...");
+    }
+}
