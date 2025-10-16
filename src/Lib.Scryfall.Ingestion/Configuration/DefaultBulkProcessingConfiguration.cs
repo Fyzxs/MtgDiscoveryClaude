@@ -10,6 +10,7 @@ internal sealed class DefaultBulkProcessingConfiguration : IBulkProcessingConfig
     public int DashboardRefreshFrequency => 100;
     public bool ProcessRulings => false;
     public bool SetsOnly => false;
+    public bool UseRazorConsole => false;
     public IReadOnlyCollection<string> SetCodesToProcess => [];
     public DateTime? SetsReleasedAfter => null;
 }
