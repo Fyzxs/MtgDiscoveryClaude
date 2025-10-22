@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Dashboard.RazorUI;
@@ -8,7 +9,7 @@ using RazorConsole.Core;
 
 namespace Lib.Scryfall.Ingestion.Dashboard;
 
-internal sealed class RazorConsoleDashboard : IIngestionDashboard
+internal sealed class RazorConsoleDashboard : IIngestionDashboard, IDisposable
 {
     private readonly DashboardState _state;
     private readonly ILogger _fallbackLogger;
@@ -63,6 +64,8 @@ internal sealed class RazorConsoleDashboard : IIngestionDashboard
 
     public void Complete(string message) => _state.MarkComplete(message);
 
+    public CancellationToken GetCancellationToken() => _state.GetCancellationToken();
+
     public IDisposable BeginScope<TState>(TState state) where TState : notnull =>
         _fallbackLogger.BeginScope(state);
 
@@ -78,4 +81,6 @@ internal sealed class RazorConsoleDashboard : IIngestionDashboard
         _state.AddLog($"[{logLevel}] {message}");
         // Don't forward to fallback logger to avoid console output interference with RazorConsole
     }
+
+    public void Dispose() => _state.Dispose();
 }

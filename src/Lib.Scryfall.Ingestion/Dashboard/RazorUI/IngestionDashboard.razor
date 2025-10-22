@@ -73,16 +73,35 @@
             <Newline />
             <Markup Content="@State.CompletionMessage" Foreground="@Color.Green" />
         }
+
+        <Newline />
+        <Align Horizontal="@HorizontalAlignment.Center">
+            @if (State.IsComplete)
+            {
+                <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+                    <Markup Content=" Press [X] to Exit " Foreground="@Color.White" />
+                </Border>
+            }
+            else
+            {
+                <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Red">
+                    <Markup Content=" Press [C] to Cancel " Foreground="@Color.Yellow" />
+                </Border>
+            }
+        </Align>
     </Rows>
 </Border>
 
 @code {
+    private Task _keyListenerTask;
+    private bool _disposed;
+
     protected override Task OnInitializedAsync()
     {
         // Start the update loop in a background task so the component can render
         _ = Task.Run(async () =>
         {
-            while (State.IsComplete is false)
+            while (State.IsComplete is false && _disposed is false)
             {
                 State.UpdateMemoryUsage();
                 await InvokeAsync(StateHasChanged).ConfigureAwait(false);
@@ -90,6 +109,30 @@
             }
 
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        });
+
+        // Start key listener task
+        _keyListenerTask = Task.Run(async () =>
+        {
+            while (_disposed is false)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+
+                    if (State.IsComplete is false && (key.Key == ConsoleKey.C || key.KeyChar == 'c' || key.KeyChar == 'C'))
+                    {
+                        State.RequestCancellation();
+                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                    }
+                    else if (State.IsComplete && (key.Key == ConsoleKey.X || key.KeyChar == 'x' || key.KeyChar == 'X'))
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+
+                await Task.Delay(50).ConfigureAwait(false);
+            }
         });
 
         return Task.CompletedTask;
@@ -104,5 +147,14 @@
                 : $"{State.ProgressAction} - {State.ProgressItem}";
         }
         return State.ProgressAction;
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        if (_keyListenerTask is not null)
+        {
+            _keyListenerTask.Wait(TimeSpan.FromSeconds(1));
+        }
     }
 }
