@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Core;
 using Lib.Cosmos.Apis.Configurations;
@@ -13,11 +14,26 @@ internal abstract class CosmosGenesisClientAdapter : ICosmosGenesisClientAdapter
     protected CosmosGenesisClientAdapter(CosmosClient cosmosClient) => _cosmosClient = cosmosClient;
 
     protected static CosmosClientOptions Options(ICosmosConnectionOptionsConfig config)
-        => new()
+    {
+        CosmosClientOptions options = new()
         {
             ConnectionMode = config.ConnectionMode(),
-            ApplicationPreferredRegions = config.PreferredRegions().AsSystemType()
+            ApplicationPreferredRegions = config.PreferredRegions().AsSystemType(),
+            HttpClientFactory = () =>
+            {
+                HttpMessageHandler httpMessageHandler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (_, cert, _, _) =>
+                    {
+                        string issuer = cert?.Issuer ?? string.Empty;
+                        return issuer.Contains("localhost", StringComparison.OrdinalIgnoreCase);
+                    }
+                };
+                return new HttpClient(httpMessageHandler);
+            }
         };
+        return options;
+    }
 
     public Task<Container> GetContainer(ICosmosContainerDefinition cosmosContainerDef)
         => Task.FromResult(_cosmosClient.GetContainer(cosmosContainerDef.DatabaseName(), cosmosContainerDef.ContainerName()));

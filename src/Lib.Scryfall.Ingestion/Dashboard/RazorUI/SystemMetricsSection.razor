@@ -1,0 +1,22 @@
+@using RazorConsole.Components
+@using Spectre.Console
+@using System
+
+<Columns>
+    <Markup Content="@($"Memory: {MemoryMB} MB")" Foreground="@Color.Aqua" />
+    <Markup Content=" | " />
+    <Markup Content="@($"Elapsed: {FormatElapsed(Elapsed)}")" Foreground="@Color.Yellow" />
+</Columns>
+
+@code {
+    [Parameter]
+    public long MemoryMB { get; init; }
+
+    [Parameter]
+    public TimeSpan Elapsed { get; init; }
+
+    private static string FormatElapsed(TimeSpan elapsed)
+    {
+        return $"{elapsed.Hours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
+    }
+}

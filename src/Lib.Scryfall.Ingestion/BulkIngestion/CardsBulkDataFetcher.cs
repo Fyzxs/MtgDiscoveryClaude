@@ -52,6 +52,7 @@ internal sealed class CardsBulkDataFetcher
 
     private async IAsyncEnumerable<IScryfallCard> ParseCardsFile(string url)
     {
+        await Task.Delay(2_000).ConfigureAwait(false);
         using Stream stream = await _httpClient.StreamAsync(new Uri(url)).ConfigureAwait(false);
         using StreamReader reader = new(stream);
         using JsonTextReader jsonReader = new(reader);
@@ -59,7 +60,7 @@ internal sealed class CardsBulkDataFetcher
         JsonSerializer serializer = new();
 
         // Read the array start
-        await jsonReader.ReadAsync().ConfigureAwait(false);
+        _ = await jsonReader.ReadAsync().ConfigureAwait(false);
         if (jsonReader.TokenType is not JsonToken.StartArray)
         {
             _logger.LogInvalidCardsFormat();
