@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Box, type SxProps, type Theme } from '../../atoms';
+import { type SxProps, type Theme } from '../../atoms';
+import { PageContainer, Section } from '../../molecules/layouts';
 
 interface SearchTemplateProps {
   /** Search input component - the primary interaction */
@@ -126,7 +127,7 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
   const shouldShowInitialContent = showInitialState && !isLoading;
 
   return (
-    <Container
+    <PageContainer
       maxWidth={maxWidth}
       sx={{
         mt: containerPadding.mt,
@@ -137,9 +138,8 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
       }}
     >
       {/* Search Input - Primary and Prominent */}
-      <Box
-        component="section"
-        aria-label="Search input"
+      <Section
+        label="Search input"
         sx={{
           mb: hasAdvancedFilters ? 3 : 4,
           display: 'flex',
@@ -147,13 +147,12 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
         }}
       >
         {searchInput}
-      </Box>
+      </Section>
 
       {/* Advanced Filters - Optional/Collapsible */}
       {hasAdvancedFilters && (
-        <Box
-          component="section"
-          aria-label="Advanced search filters"
+        <Section
+          label="Advanced search filters"
           sx={{
             mb: hasResultsSummary || hasQuickFilters ? 3 : 4,
             display: 'flex',
@@ -161,14 +160,13 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
           }}
         >
           {advancedFilters}
-        </Box>
+        </Section>
       )}
 
       {/* Results Summary - Search Context */}
       {hasResultsSummary && (shouldShowResults || shouldShowEmpty) && (
-        <Box
-          component="section"
-          aria-label="Search results summary"
+        <Section
+          label="Search results summary"
           sx={{
             mb: hasQuickFilters ? 2 : 3,
             display: 'flex',
@@ -176,14 +174,13 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
           }}
         >
           {resultsSummary}
-        </Box>
+        </Section>
       )}
 
       {/* Quick Filters/Facets - Search Refinement */}
       {hasQuickFilters && shouldShowResults && (
-        <Box
-          component="section"
-          aria-label="Search filters"
+        <Section
+          label="Search filters"
           sx={{
             mb: 3,
             display: 'flex',
@@ -191,13 +188,12 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
           }}
         >
           {quickFilters}
-        </Box>
+        </Section>
       )}
 
       {/* Main Content Area - Results, Loading, or Empty State */}
-      <Box
-        component="section"
-        aria-label="Search results"
+      <Section
+        label="Search results"
         sx={{
           mb: hasPagination ? 4 : 0,
           minHeight: 200, // Prevent layout shift during loading
@@ -207,7 +203,7 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
       >
         {/* Loading State */}
         {shouldShowLoading && (
-          <Box sx={{
+          <Section asSection={false} sx={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -215,12 +211,12 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
             py: 4
           }}>
             {loadingState}
-          </Box>
+          </Section>
         )}
 
         {/* Empty State */}
         {shouldShowEmpty && (
-          <Box sx={{
+          <Section asSection={false} sx={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -228,7 +224,7 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
             py: 4
           }}>
             {emptyState}
-          </Box>
+          </Section>
         )}
 
         {/* Search Results */}
@@ -236,7 +232,7 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
 
         {/* Initial State Content */}
         {shouldShowInitialContent && (
-          <Box sx={{
+          <Section asSection={false} sx={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -244,15 +240,16 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
             py: 4
           }}>
             {resultsContent}
-          </Box>
+          </Section>
         )}
-      </Box>
+      </Section>
 
       {/* Pagination - Bottom Navigation */}
       {hasPagination && shouldShowResults && (
-        <Box
+        <Section
           component="nav"
-          aria-label="Search results pagination"
+          label="Search results pagination"
+          asSection={false}
           sx={{
             mt: 4,
             display: 'flex',
@@ -260,8 +257,8 @@ export const SearchTemplate: React.FC<SearchTemplateProps> = ({
           }}
         >
           {pagination}
-        </Box>
+        </Section>
       )}
-    </Container>
+    </PageContainer>
   );
 };

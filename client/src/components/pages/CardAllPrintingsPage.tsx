@@ -3,14 +3,10 @@ import { logger } from '../../utils/logger';
 import { useParams } from 'react-router-dom';
 import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';
-import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  CircularProgress,
-  Alert
-} from '../atoms';
+import { PageContainer, Section } from '../molecules/layouts';
+import { Heading, BodyText } from '../molecules/text';
+import { LoadingIndicator, StatusMessage } from '../molecules/feedback';
+import { AppButton } from '../molecules/shared';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { CardGrid } from '../organisms/CardGrid';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
@@ -157,63 +153,63 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+        <Section asSection={false} sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+          <LoadingIndicator />
+        </Section>
+      </PageContainer>
     );
   }
 
   if (hasError) {
     return (
-      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-        <Alert 
-          severity="error" 
+      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+        <StatusMessage
+          severity="error"
           sx={{ mb: 2 }}
           action={
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button 
-                color="inherit" 
-                size="small" 
+            <Section asSection={false} sx={{ display: 'flex', gap: 1 }}>
+              <AppButton
+                color="inherit"
+                size="small"
                 startIcon={<RefreshIcon />}
                 onClick={handleRetry}
-                disabled={loading}
+                loading={loading}
               >
                 {loading ? 'Retrying...' : 'Retry'}
-              </Button>
-            </Box>
+              </AppButton>
+            </Section>
           }
         >
-          <Typography variant="body1">
+          <BodyText variant="body1">
             {userFriendlyError || graphQLError || 'Failed to load card details'}
-          </Typography>
+          </BodyText>
           {retryCount > 0 && (
-            <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+            <BodyText variant="caption" display="block" sx={{ mt: 1 }}>
               Retry attempts: {retryCount}
-            </Typography>
+            </BodyText>
           )}
-        </Alert>
-      </Container>
+        </StatusMessage>
+      </PageContainer>
     );
   }
 
   if (cards.length === 0) {
     return (
-      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-        <Typography>No cards found with name "{decodedCardName}"</Typography>
-      </Container>
+      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+        <BodyText>No cards found with name "{decodedCardName}"</BodyText>
+      </PageContainer>
     );
   }
 
   return (
-    <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+    <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
       {/* Centered card name */}
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h2" fontWeight="bold">
+      <Section asSection={false} sx={{ textAlign: 'center', mb: 4 }}>
+        <Heading variant="h2" fontWeight="bold">
           {decodedCardName}
-        </Typography>
-      </Box>
+        </Heading>
+      </Section>
 
       {/* Card Filter Panel - Centered controls */}
       <CardFilterPanel
@@ -283,6 +279,6 @@ export const CardAllPrintingsPage: React.FC = () => {
           onArtistClick={handleArtistClick}
         />
       </AppErrorBoundary>
-    </Container>
+    </PageContainer>
   );
 };export default CardAllPrintingsPage;

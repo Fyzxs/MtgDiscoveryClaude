@@ -122,7 +122,6 @@ export const GET_CARDS_BY_NAME = gql`
             cardhoarder
           }
           cardFaces {
-            objectString
             name
             manaCost
             typeLine
@@ -153,7 +152,6 @@ export const GET_CARDS_BY_NAME = gql`
             cmc
           }
           allParts {
-            objectString
             id
             component
             name
@@ -311,7 +309,6 @@ export const GET_CARDS_BY_SET_CODE = gql`
             cardhoarder
           }
           cardFaces {
-            objectString
             name
             manaCost
             typeLine
@@ -342,7 +339,6 @@ export const GET_CARDS_BY_SET_CODE = gql`
             cmc
           }
           allParts {
-            objectString
             id
             component
             name
@@ -580,7 +576,6 @@ export const GET_CARDS_BY_ARTIST = gql`
             cardhoarder
           }
           cardFaces {
-            objectString
             name
             manaCost
             typeLine
@@ -611,7 +606,6 @@ export const GET_CARDS_BY_ARTIST = gql`
             cmc
           }
           allParts {
-            objectString
             id
             component
             name

@@ -32,4 +32,22 @@ export default tseslint.config(
       ],
     },
   },
+  // Enforce atomic design hierarchy: pages and templates should NOT import atoms directly
+  // Exceptions: type-only imports, icons, and accessibility components
+  {
+    files: ['src/components/pages/**/*.{ts,tsx}', 'src/components/templates/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'warn', // Changed to 'warn' to allow documented exceptions
+        {
+          patterns: [
+            {
+              group: ['../atoms', '../atoms/*', '../../atoms', '../../atoms/*'],
+              message: 'Pages and templates should NOT import atoms directly. Use molecules or organisms instead. Exceptions: type-only imports (SxProps, Theme), icons, and specialized components (SkipNavigation) are allowed as documented in ATOMIC_DESIGN_HIERARCHY.md',
+            },
+          ],
+        },
+      ],
+    },
+  },
 )

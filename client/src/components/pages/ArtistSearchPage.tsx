@@ -1,6 +1,8 @@
 import React, { useState, useCallback, startTransition } from 'react';
 import { useLazyQuery } from '@apollo/client/react';
-import { Typography, Box, CircularProgress } from '../atoms';
+import { Heading, BodyText } from '../molecules/text';
+import { Section } from '../molecules/layouts';
+import { LoadingIndicator } from '../molecules/feedback';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
 import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
 import { ArtistSearchResults } from '../organisms/ArtistSearchResults';
@@ -61,10 +63,10 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
 
   // Search input slot
   const searchInput = (
-    <Box sx={{ width: '100%', maxWidth: 600 }}>
-      <Typography variant="h4" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
+    <Section asSection={false} sx={{ width: '100%', maxWidth: 600 }}>
+      <Heading variant="h4" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
         Artist Search
-      </Typography>
+      </Heading>
       <DebouncedSearchInput
         value={searchTerm}
         onChange={handleSearchChange}
@@ -73,27 +75,27 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
         fullWidth
         disabled={loading}
       />
-    </Box>
+    </Section>
   );
 
   // Results summary slot
   const resultsSummary = hasSearched && (
-    <Typography variant="body2" color="text.secondary">
+    <BodyText variant="body2" color="text.secondary">
       {searchTerm.length < 3 ? (
         <CharacterCountMessage remainingChars={3 - searchTerm.length} />
       ) : hasResults ? (
         `Search results for "${searchTerm}"`
       ) : null}
-    </Typography>
+    </BodyText>
   );
 
   // Results content slot
   const resultsContent = (() => {
     if (showInitialState) {
       return (
-        <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
+        <BodyText variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
           Search by Artist Name - Enter at least 3 characters to search
-        </Typography>
+        </BodyText>
       );
     }
 
@@ -112,14 +114,14 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
 
   // Loading state slot
   const loadingState = (
-    <CircularProgress size={40} />
+    <LoadingIndicator withContainer={false} centered={false} size={40} />
   );
 
   // Empty state slot
   const emptyState = (
-    <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
+    <BodyText variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
       No artists found matching "{searchTerm}"
-    </Typography>
+    </BodyText>
   );
 
   return (
