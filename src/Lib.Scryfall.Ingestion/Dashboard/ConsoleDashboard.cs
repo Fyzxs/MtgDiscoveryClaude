@@ -373,6 +373,8 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         return $"{elapsed.Hours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
     }
 
+    public CancellationToken GetCancellationToken() => CancellationToken.None;
+
     // ILogger implementation
     public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
 

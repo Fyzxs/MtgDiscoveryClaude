@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
@@ -44,6 +45,8 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
         _dashboard.SetStartTime();
         _dashboard.Refresh();
 
+        CancellationToken cancellationToken = _dashboard.GetCancellationToken();
+
         try
         {
             // Phase 1: Fetch all data
@@ -51,16 +54,20 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
 
             Dictionary<string, IScryfallSet> sets = await _setsPipeline.FetchSetsAsync().ConfigureAwait(false);
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             Dictionary<string, IScryfallRuling> rulings = [];
             if (_config.ProcessRulings)
             {
                 rulings = await _rulingsPipeline.FetchAndAggregateRulingsAsync().ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             IReadOnlyList<IScryfallCard> cards = [];
             if (_config.SetsOnly is false)
             {
                 cards = await _cardsPipeline.FetchCardsAsync().ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
 
                 // Phase 2: Process cards (relationships, artists, etc.)
                 _dashboard.LogProcessingPhase();
@@ -79,25 +86,32 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
                     _artistsPipeline.TrackArtist(card);
                     _trigramsPipeline.TrackCard(card);
                 }
+
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             // Phase 3: Write all data
             _dashboard.LogWritingPhase();
 
             await _setsPipeline.WriteSetsAsync(sets).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (_config.ProcessRulings)
             {
                 await _rulingsPipeline.WriteRulingsAsync(rulings.Values).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             if (!_config.SetsOnly)
             {
                 await _cardsPipeline.WriteCardsAsync(cards).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
 
                 await _artistsPipeline.WriteArtistsAsync().ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
 
                 await _trigramsPipeline.WriteTrigramsAsync().ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             string completionMessage = _config.SetsOnly
@@ -107,6 +121,11 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
                     : $"Ingestion completed: {sets.Count} sets, {cards.Count} cards processed (rulings skipped)";
 
             _dashboard.Complete(completionMessage);
+        }
+        catch (OperationCanceledException)
+        {
+            _dashboard.LogBulkIngestionCancelled();
+            _dashboard.Complete("Ingestion cancelled by user");
         }
         catch (Exception ex)
         {
@@ -123,6 +142,11 @@ internal static partial class BulkIngestionOrchestratorLoggerExtensions
         Level = LogLevel.Error,
         Message = "Bulk ingestion failed")]
     public static partial void LogBulkIngestionFailed(this ILogger logger, Exception ex);
+
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Bulk ingestion cancelled by user")]
+    public static partial void LogBulkIngestionCancelled(this ILogger logger);
 
     [LoggerMessage(
         Level = LogLevel.Information,
