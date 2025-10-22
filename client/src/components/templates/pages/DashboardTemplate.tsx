@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Box, type SxProps, type Theme } from '../../atoms';
+import { type SxProps, type Theme } from '../../atoms';
+import { PageContainer, Section } from '../../molecules/layouts';
 
 interface DashboardTemplateProps {
   /** Dashboard header content (welcome message, user info, page title) */
@@ -127,7 +128,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
   const hasSidebar = Boolean(sidebar) && layout === 'sidebar';
 
   return (
-    <Container
+    <PageContainer
       maxWidth={maxWidth}
       sx={{
         mt: containerPadding.mt,
@@ -139,8 +140,9 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
     >
       {/* Dashboard Header Section */}
       {hasHeader && (
-        <Box
+        <Section
           component="header"
+          asSection={false}
           sx={{
             mb: hasHeroStats ? 4 : widgetSpacing,
             display: 'flex',
@@ -149,14 +151,13 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
           }}
         >
           {header}
-        </Box>
+        </Section>
       )}
 
       {/* Hero Stats/Metrics Section */}
       {hasHeroStats && (
-        <Box
-          component="section"
-          aria-label="Key metrics and statistics"
+        <Section
+          label="Key metrics and statistics"
           sx={{
             mb: widgetSpacing,
             p: 2,
@@ -165,11 +166,11 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
           }}
         >
           {heroStats}
-        </Box>
+        </Section>
       )}
 
       {/* Main Layout Container */}
-      <Box sx={{
+      <Section asSection={false} sx={{
         display: hasSidebar ? 'flex' : 'block',
         gap: hasSidebar ? widgetSpacing : 0,
         alignItems: 'flex-start',
@@ -177,8 +178,9 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
       }}>
 
         {/* Main Content Area */}
-        <Box
+        <Section
           component="main"
+          asSection={false}
           sx={{
             flex: hasSidebar ? 1 : 'none',
             width: hasSidebar ? { xs: '100%', lg: 'auto' } : '100%',
@@ -186,21 +188,19 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
           }}
         >
           {/* Main Widget Grid */}
-          <Box
-            component="section"
-            aria-label="Main dashboard widgets"
+          <Section
+            label="Main dashboard widgets"
             sx={{
               mb: hasSecondaryContent || hasQuickActions ? widgetSpacing : 0
             }}
           >
             {mainWidgets}
-          </Box>
+          </Section>
 
           {/* Secondary Content Area */}
           {hasSecondaryContent && (
-            <Box
-              component="section"
-              aria-label="Secondary content and activity"
+            <Section
+              label="Secondary content and activity"
               sx={{
                 mb: hasQuickActions ? widgetSpacing : 0,
                 p: 2,
@@ -209,14 +209,13 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
               }}
             >
               {secondaryContent}
-            </Box>
+            </Section>
           )}
 
           {/* Quick Actions Panel */}
           {hasQuickActions && (
-            <Box
-              component="section"
-              aria-label="Quick actions"
+            <Section
+              label="Quick actions"
               sx={{
                 p: 2,
                 borderRadius: 2,
@@ -229,14 +228,15 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
               }}
             >
               {quickActions}
-            </Box>
+            </Section>
           )}
-        </Box>
+        </Section>
 
         {/* Sidebar Content */}
         {hasSidebar && (
-          <Box
+          <Section
             component="aside"
+            asSection={false}
             sx={{
               flexShrink: 0,
               width: { xs: '100%', lg: 320 },
@@ -249,9 +249,9 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
             }}
           >
             {sidebar}
-          </Box>
+          </Section>
         )}
-      </Box>
-    </Container>
+      </Section>
+    </PageContainer>
   );
 };
