@@ -31355,28 +31355,28 @@
     "SetCode": "arn",
     "Groupings": [
       {
-        "Id": "booster",
-        "DisplayName": "In Boosters",
-        "Order": 0,
-        "CardCount": 78,
-        "RawQuery": "set:arn is:booster",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "booster": true
-          }
-        }
-      },
-      {
         "Id": "variation",
         "DisplayName": "Card Variations",
-        "Order": 1,
+        "Order": 0,
         "CardCount": 14,
         "RawQuery": "set:arn is:variation",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
             "variation": true
+          }
+        }
+      },
+      {
+        "Id": "booster",
+        "DisplayName": "In Boosters",
+        "Order": 1,
+        "CardCount": 78,
+        "RawQuery": "set:arn is:booster",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "booster": true
           }
         }
       }
