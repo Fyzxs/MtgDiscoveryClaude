@@ -4,7 +4,6 @@ using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Artists.Queries.Mappers;
-using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
@@ -6,6 +6,7 @@
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.RateLimiting" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="RazorConsole.Core" />
   </ItemGroup>
   
   <ItemGroup>
@@ -18,6 +19,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Lib.Scryfall.Ingestion.Tests" />
+    <InternalsVisibleTo Include="Example.Scryfall.BulkIngestion" />
     <InternalsVisibleTo Include="Example.Scryfall.CosmosIngestion" />
     <InternalsVisibleTo Include="Example.Scryfall.ApiDemo" />
     <InternalsVisibleTo Include="Example.Scryfall.FilterTest" />

@@ -23,8 +23,9 @@ export const Header: React.FC = () => {
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
-      // Navigate to set page while preserving collector parameter
-      navigateWithCollector(`/set/${setCode.trim().toLowerCase()}`);
+      // Navigate to set page while preserving only collector parameter
+      // Use replace to avoid polluting browser history with intermediate states
+      navigateWithCollector(`/set/${setCode.trim().toLowerCase()}`, undefined, { replace: true });
       setSetCode('');
     }
   };

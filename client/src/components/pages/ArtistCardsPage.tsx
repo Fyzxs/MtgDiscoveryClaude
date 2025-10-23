@@ -1,6 +1,6 @@
 import React, { startTransition } from 'react';
 import { useParams } from 'react-router-dom';
-import { Alert } from '../atoms';
+import { StatusMessage } from '../molecules/feedback';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
 import { ArtistPageHeader } from '../organisms/ArtistPageHeader';
 import { ArtistPageFilters } from '../organisms/ArtistPageFilters';
@@ -63,17 +63,17 @@ export const ArtistCardsPage: React.FC = () => {
   // Error handling
   if (!artistName) {
     return (
-      <Alert severity="error" sx={{ m: 4 }}>
+      <StatusMessage severity="error" sx={{ m: 4 }}>
         No artist name provided. Please provide an artist name in the URL.
-      </Alert>
+      </StatusMessage>
     );
   }
 
   if (cardsData?.cardsByArtistName?.__typename === 'FailureResponse') {
     return (
-      <Alert severity="error" sx={{ m: 4 }}>
+      <StatusMessage severity="error" sx={{ m: 4 }}>
         {cardsData.cardsByArtistName.status?.message || 'Failed to load cards'}
-      </Alert>
+      </StatusMessage>
     );
   }
 

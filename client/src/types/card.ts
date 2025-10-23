@@ -55,7 +55,6 @@ export interface PurchaseUris {
 }
 
 export interface CardFace {
-  objectString?: string;
   name?: string;
   manaCost?: string;
   typeLine?: string;
@@ -80,7 +79,6 @@ export interface CardFace {
 }
 
 export interface AllPart {
-  objectString?: string;
   id?: string;
   component?: string;
   name?: string;

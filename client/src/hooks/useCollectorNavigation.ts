@@ -10,8 +10,11 @@ interface NavigationHelpers {
 
   /**
    * Navigates to a path while preserving collector parameter
+   * @param path - The path to navigate to
+   * @param additionalParams - Additional query parameters to include
+   * @param options - Navigation options (replace: true to replace history entry)
    */
-  navigateWithCollector: (path: string, additionalParams?: Record<string, string>) => void;
+  navigateWithCollector: (path: string, additionalParams?: Record<string, string>, options?: { replace?: boolean }) => void;
 
   /**
    * Creates event handler that preserves collector parameter
@@ -38,7 +41,15 @@ export const useCollectorNavigation = (): NavigationHelpers => {
   const navigate = useNavigate();
 
   const buildUrlWithCollector = useCallback((path: string, additionalParams?: Record<string, string>): string => {
-    const url = new URL(path, window.location.origin);
+    // Parse the path to separate pathname from any existing search params
+    const pathParts = path.split('?');
+    const pathname = pathParts[0];
+
+    // Create a clean URL with only the pathname
+    const url = new URL(pathname, window.location.origin);
+
+    // Clear any existing search params to ensure we start fresh
+    url.search = '';
 
     // Add collector parameter if it exists
     if (collectorParam.hasCollector && collectorParam.collectorId) {
@@ -55,10 +66,10 @@ export const useCollectorNavigation = (): NavigationHelpers => {
     return url.pathname + url.search;
   }, [collectorParam.hasCollector, collectorParam.collectorId]);
 
-  const navigateWithCollector = useCallback((path: string, additionalParams?: Record<string, string>): void => {
+  const navigateWithCollector = useCallback((path: string, additionalParams?: Record<string, string>, options?: { replace?: boolean }): void => {
     const fullUrl = buildUrlWithCollector(path, additionalParams);
     // Use React Router navigation instead of window.location to preserve SPA behavior and cache
-    navigate(fullUrl);
+    navigate(fullUrl, options);
   }, [buildUrlWithCollector, navigate]);
 
   const createCollectorClickHandler = useCallback((path: string, additionalParams?: Record<string, string>) => {

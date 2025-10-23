@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Box, type SxProps, type Theme } from '../../atoms';
+import { type SxProps, type Theme } from '../../atoms';
+import { PageContainer, Section } from '../../molecules/layouts';
 
 interface DetailTemplateProps {
   /** Breadcrumb navigation for context and back navigation */
@@ -130,7 +131,7 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
   const hasActions = Boolean(actions);
 
   return (
-    <Container
+    <PageContainer
       maxWidth={maxWidth}
       sx={{
         mt: containerPadding.mt,
@@ -142,9 +143,10 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
     >
       {/* Breadcrumb Navigation */}
       {hasBreadcrumb && (
-        <Box
+        <Section
           component="nav"
-          aria-label="Breadcrumb navigation"
+          label="Breadcrumb navigation"
+          asSection={false}
           sx={{
             mb: 2,
             display: 'flex',
@@ -152,12 +154,13 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
           }}
         >
           {breadcrumb}
-        </Box>
+        </Section>
       )}
 
       {/* Main Header Section */}
-      <Box
+      <Section
         component="header"
+        asSection={false}
         sx={{
           mb: hasHeroSection ? 3 : 4,
           display: 'flex',
@@ -166,13 +169,12 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
         }}
       >
         {header}
-      </Box>
+      </Section>
 
       {/* Hero Section */}
       {hasHeroSection && (
-        <Box
-          component="section"
-          aria-label="Hero information"
+        <Section
+          label="Hero information"
           sx={{
             mb: 4,
             display: 'flex',
@@ -184,11 +186,11 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
           }}
         >
           {heroSection}
-        </Box>
+        </Section>
       )}
 
       {/* Main Layout Container */}
-      <Box sx={{
+      <Section asSection={false} sx={{
         display: hasSidebar ? 'flex' : 'block',
         gap: hasSidebar ? 4 : 0,
         alignItems: 'flex-start',
@@ -196,8 +198,9 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
       }}>
 
         {/* Main Content Area */}
-        <Box
+        <Section
           component="main"
+          asSection={false}
           sx={{
             flex: hasSidebar ? 1 : 'none',
             width: hasSidebar ? { xs: '100%', md: 'auto' } : '100%',
@@ -205,12 +208,13 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
           }}
         >
           {mainContent}
-        </Box>
+        </Section>
 
         {/* Sidebar Content */}
         {hasSidebar && (
-          <Box
+          <Section
             component="aside"
+            asSection={false}
             sx={{
               flexShrink: 0,
               width: { xs: '100%', md: 320 },
@@ -219,15 +223,14 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
             }}
           >
             {sidebar}
-          </Box>
+          </Section>
         )}
-      </Box>
+      </Section>
 
       {/* Related Content Section */}
       {hasRelatedContent && (
-        <Box
-          component="section"
-          aria-label="Related content"
+        <Section
+          label="Related content"
           sx={{
             mt: 6,
             mb: hasActions ? 4 : 0,
@@ -235,14 +238,13 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
           }}
         >
           {relatedContent}
-        </Box>
+        </Section>
       )}
 
       {/* Actions Area */}
       {hasActions && (
-        <Box
-          component="section"
-          aria-label="Page actions"
+        <Section
+          label="Page actions"
           sx={{
             mt: 4,
             display: 'flex',
@@ -253,8 +255,8 @@ export const DetailTemplate: React.FC<DetailTemplateProps> = ({
           }}
         >
           {actions}
-        </Box>
+        </Section>
       )}
-    </Container>
+    </PageContainer>
   );
 };
