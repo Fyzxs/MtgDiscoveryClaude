@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Typography } from '../atoms';
+import { Heading } from '../molecules/text';
 import { GET_ALL_SETS } from '../../graphql/queries/sets';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
@@ -111,9 +111,9 @@ export const AllSetsPage: React.FC = () => {
       <BrowseTemplate
         maxWidth={false}
         header={
-          <Typography variant="h3" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
+          <Heading variant="h3" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
             All Sets
-          </Typography>
+          </Heading>
         }
         filters={
           <FilterPanel

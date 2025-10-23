@@ -144,7 +144,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             await _cardsByNameScribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
 
             // Write the set-card relationship
-            ScryfallSetCardItemExtEntity setCardItem = _setCardMapper.Map(card.Data());
+            ScryfallSetCardItemExtEntity setCardItem = await _setCardMapper.Map(card.Data()).ConfigureAwait(false);
             await _setCardsScribe.UpsertAsync(setCardItem).ConfigureAwait(false);
         }
 

@@ -1,5 +1,4 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
-using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.Cosmos.Containers;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Dashboard;
 
@@ -15,4 +16,5 @@ public interface IIngestionDashboard : ILogger
     void SetStartTime();
     void Refresh();
     void Complete(string message);
+    CancellationToken GetCancellationToken();
 }

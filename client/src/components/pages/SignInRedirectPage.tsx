@@ -3,13 +3,9 @@ import { logger } from '../../utils/logger';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
-import {
-  Container,
-  Typography,
-  Box,
-  CircularProgress,
-  Alert
-} from '../atoms';
+import { PageContainer, Section } from '../molecules/layouts';
+import { Heading, BodyText } from '../molecules/text';
+import { LoadingIndicator, StatusMessage } from '../molecules/feedback';
 import { REGISTER_USER } from '../../graphql/mutations/user';
 import { getTokenReadyState } from '../../graphql/apollo-client';
 
@@ -137,53 +133,54 @@ export const SignInRedirectPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 12 }}>
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
+    <PageContainer maxWidth="sm" sx={{ py: 12 }}>
+      <Section
+        asSection={false}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
           gap: 3
         }}
       >
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Heading variant="h4" component="h1" gutterBottom>
           Welcome to MTG Discovery
-        </Typography>
+        </Heading>
 
         {setupStatus !== 'error' && (
-          <CircularProgress size={48} />
+          <LoadingIndicator withContainer={false} size={48} />
         )}
 
-        <Alert 
+        <StatusMessage
           severity={getStatusColor()}
           sx={{ width: '100%' }}
         >
           {statusMessage}
-        </Alert>
+        </StatusMessage>
 
         {user && setupStatus !== 'error' && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body1" color="text.secondary">
+          <Section asSection={false} sx={{ mt: 2 }}>
+            <BodyText variant="body1" color="text.secondary">
               Hello, {user.name || user.email}!
-            </Typography>
+            </BodyText>
             {setupStatus === 'waiting-token' && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              <BodyText variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                 Preparing secure authentication...
-              </Typography>
+              </BodyText>
             )}
-          </Box>
+          </Section>
         )}
 
         {setupStatus === 'error' && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+          <Section asSection={false} sx={{ mt: 2 }}>
+            <BodyText variant="body2" color="text.secondary">
               You can try refreshing the page or{' '}
               <a href="/" style={{ color: 'inherit' }}>return to the home page</a>.
-            </Typography>
-          </Box>
+            </BodyText>
+          </Section>
         )}
-      </Box>
-    </Container>
+      </Section>
+    </PageContainer>
   );
 };export default SignInRedirectPage;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <ItemGroup>
     <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="RazorConsole.Core" />
   </ItemGroup>
 
   <ItemGroup>

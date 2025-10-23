@@ -1,0 +1,41 @@
+@using RazorConsole.Components
+@using Spectre.Console
+@using System.Collections.Generic
+@using System.Linq
+
+@if (Counts.Count > 0)
+{
+    <Rows>
+        <Newline />
+        <Markup Content="Completed:" Foreground="@Color.White" />
+        <Columns>
+            @foreach (KeyValuePair<string, int> kvp in Counts.OrderBy(x => GetTypeOrder(x.Key)))
+            {
+                <Markup Content="@($"{kvp.Key}: {kvp.Value:N0}")" Foreground="@Color.Green" />
+                @if (kvp.Key != Counts.OrderBy(x => GetTypeOrder(x.Key)).Last().Key)
+                {
+                    <Markup Content=" | " Foreground="@Color.Grey" />
+                }
+            }
+        </Columns>
+    </Rows>
+}
+
+@code {
+    [Parameter]
+    public IReadOnlyDictionary<string, int> Counts { get; init; } = new Dictionary<string, int>();
+
+    private static int GetTypeOrder(string type)
+    {
+        return type switch
+        {
+            "Sets" => 1,
+            "Cards" => 2,
+            "Rulings" => 3,
+            "Artists" => 4,
+            "Card Trigrams" => 5,
+            "Artist Trigrams" => 6,
+            _ => 99
+        };
+    }
+}

@@ -88,13 +88,13 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       const variables = perfMonitor.measure('collection-prepare-variables', () => ({
         args: {
           cardId: update.cardId,
-          setId: update.setId || '',
+          setId: update.setId,
           userId: userProfile.id,
           userCardDetails: {
             finish: FINISH_MAP[update.finish] || 'nonfoil',
             special: SPECIAL_MAP[update.special] || 'none',
             count: update.count,
-            setGroupId: update.setGroupId || 'normal'
+            setGroupId: update.setGroupId
           }
         }
       }));

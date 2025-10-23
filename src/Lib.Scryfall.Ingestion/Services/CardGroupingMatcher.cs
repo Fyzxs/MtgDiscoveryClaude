@@ -170,25 +170,32 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         // Try to get the property value from card data
         object cardValue = GetProperty(cardData, propertyKey);
 
+        // Normalize expected value from JValue if needed
+        object normalizedExpectedValue = expectedValue;
+        if (expectedValue is JValue jValue)
+        {
+            normalizedExpectedValue = jValue.Value;
+        }
+
         // Check direct property match
         if (cardValue is not null)
         {
             // Boolean comparison
-            if (expectedValue is bool expectedBool && cardValue is bool cardBool)
+            if (normalizedExpectedValue is bool expectedBool && cardValue is bool cardBool)
             {
                 return cardBool == expectedBool;
             }
             // String comparison (case insensitive)
-            if (expectedValue is string expectedStr && cardValue.ToString() is string cardStr)
+            if (normalizedExpectedValue is string expectedStr && cardValue.ToString() is string cardStr)
             {
                 return string.Equals(cardStr, expectedStr, StringComparison.OrdinalIgnoreCase);
             }
             // Direct value comparison
-            return Equals(cardValue, expectedValue);
+            return Equals(cardValue, normalizedExpectedValue);
         }
 
         // Check in array properties (finishes, frame_effects, promo_types)
-        if (expectedValue is bool boolValue && boolValue)
+        if (normalizedExpectedValue is bool boolValue && boolValue)
         {
             // For boolean true, check if the property name exists in arrays
             if (CheckArrayContains(cardData, "finishes", propertyKey) ||
@@ -198,7 +205,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
                 return true;
             }
         }
-        else if (expectedValue is string stringValue)
+        else if (normalizedExpectedValue is string stringValue)
         {
             // For string values, check if the value exists in arrays
             if (propertyKey == "frame" && CheckArrayContains(cardData, "frame_effects", stringValue))
@@ -220,7 +227,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         }
 
         // For boolean false, we want NOT found
-        if (expectedValue is bool falseBool && falseBool is false)
+        if (normalizedExpectedValue is bool falseBool && falseBool is false)
         {
             // If we reached here and it's false, that means we didn't find it, which is what we want
             return true;

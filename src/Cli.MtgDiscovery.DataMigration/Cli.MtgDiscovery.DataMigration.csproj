@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj" />
+    <ProjectReference Include="..\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
+    <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
+    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

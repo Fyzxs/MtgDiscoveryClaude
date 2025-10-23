@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Microsoft.Extensions.Logging;
 
@@ -97,6 +98,8 @@ internal sealed class SilentDashboard : IIngestionDashboard
             _logger.LogCompletedCount(type, count);
         }
     }
+
+    public CancellationToken GetCancellationToken() => CancellationToken.None;
 
     // ILogger implementation - delegate to underlying logger
     public IDisposable BeginScope<TState>(TState state) => _logger.BeginScope(state);
