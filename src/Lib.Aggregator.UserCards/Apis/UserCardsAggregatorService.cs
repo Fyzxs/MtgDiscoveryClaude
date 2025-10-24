@@ -10,8 +10,8 @@ namespace Lib.Aggregator.UserCards.Apis;
 
 public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
 {
-    private readonly IUserCardsAggregatorService _commandOperations;
-    private readonly IUserCardsAggregatorService _queryOperations;
+    private readonly IUserCardsCommandAggregatorService _commandOperations;
+    private readonly IUserCardsQueryAggregatorService _queryOperations;
 
     public UserCardsAggregatorService(ILogger logger) : this(
         new UserCardsCommandAggregator(logger),
@@ -19,8 +19,8 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
     { }
 
     private UserCardsAggregatorService(
-        IUserCardsAggregatorService commandOperations,
-        IUserCardsAggregatorService queryOperations)
+        IUserCardsCommandAggregatorService commandOperations,
+        IUserCardsQueryAggregatorService queryOperations)
     {
         _commandOperations = commandOperations;
         _queryOperations = queryOperations;
