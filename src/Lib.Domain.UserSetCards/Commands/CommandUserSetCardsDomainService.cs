@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.UserSetCards.Commands;
 
-internal sealed class CommandUserSetCardsDomainService : IUserSetCardsDomainService
+internal sealed class CommandUserSetCardsDomainService : IUserSetCardsCommandDomainService
 {
     private readonly IUserSetCardsAggregatorService _userSetCardsAggregatorService;
 
@@ -15,8 +15,6 @@ internal sealed class CommandUserSetCardsDomainService : IUserSetCardsDomainServ
     { }
 
     private CommandUserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) => _userSetCardsAggregatorService = userSetCardsAggregatorService;
-
-    public Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => throw new System.NotImplementedException("Use QueryUserSetCardsDomainService for read operations");
 
     public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _userSetCardsAggregatorService.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
 }

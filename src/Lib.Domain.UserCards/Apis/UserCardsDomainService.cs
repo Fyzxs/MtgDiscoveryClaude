@@ -10,13 +10,13 @@ namespace Lib.Domain.UserCards.Apis;
 
 public sealed class UserCardsDomainService : IUserCardsDomainService
 {
-    private readonly IUserCardsDomainService _queryOperations;
-    private readonly IUserCardsDomainService _commandOperations;
+    private readonly IUserCardsQueryDomainService _queryOperations;
+    private readonly IUserCardsCommandDomainService _commandOperations;
 
     public UserCardsDomainService(ILogger logger) : this(new QueryUserCardsDomainService(logger), new CommandUserCardsDomainService(logger))
     { }
 
-    private UserCardsDomainService(IUserCardsDomainService queryOperations, IUserCardsDomainService commandOperations)
+    private UserCardsDomainService(IUserCardsQueryDomainService queryOperations, IUserCardsCommandDomainService commandOperations)
     {
         _queryOperations = queryOperations;
         _commandOperations = commandOperations;
