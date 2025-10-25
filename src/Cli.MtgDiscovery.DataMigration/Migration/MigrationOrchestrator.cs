@@ -12,6 +12,7 @@ using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Operators;
 using Cli.MtgDiscovery.DataMigration.SuccessTracking;
 using Lib.Cosmos.Apis;
+using Lib.Cosmos.Apis.Operators;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs;
@@ -85,7 +86,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
                     notFoundCount++;
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OutOfMemoryException && ex is not StackOverflowException)
             {
                 errorCount++;
                 _logger.LogError(ex, "Error processing record {CardId}", sqlRecord.CardId);
@@ -125,7 +126,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
             .ReadCardAsync(sqlRecord.CardId)
             .ConfigureAwait(false);
 
-        if (cosmosResponse.IsFailure)
+        if (cosmosResponse.IsNotSuccessful())
         {
             MigrationError error = new()
             {
