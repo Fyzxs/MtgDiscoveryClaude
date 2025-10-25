@@ -23,8 +23,13 @@ internal abstract class CosmosGenesisClientAdapter : ICosmosGenesisClientAdapter
             {
                 HttpMessageHandler httpMessageHandler = new HttpClientHandler()
                 {
-                    ServerCertificateCustomValidationCallback = (_, cert, _, _) =>
+                    ServerCertificateCustomValidationCallback = (_, cert, _, sslPolicyErrors) =>
                     {
+                        if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
+                        {
+                            return true;
+                        }
+
                         string issuer = cert?.Issuer ?? string.Empty;
                         return issuer.Contains("localhost", StringComparison.OrdinalIgnoreCase);
                     }
