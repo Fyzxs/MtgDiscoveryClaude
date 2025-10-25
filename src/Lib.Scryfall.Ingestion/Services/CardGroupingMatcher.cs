@@ -33,8 +33,8 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
             return null;
         }
 
-        // Sort groupings by order (process in order)
-        List<CardGrouping> sortedGroupings = [.. groupingData.Groupings.OrderBy(g => g.Order)];
+        // Sort groupings by order descending (process most specific first)
+        List<CardGrouping> sortedGroupings = [.. groupingData.Groupings.OrderByDescending(g => g.Order)];
 
         // Find first matching grouping
         foreach (CardGrouping grouping in sortedGroupings)
