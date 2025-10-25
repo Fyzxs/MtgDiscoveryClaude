@@ -8,10 +8,7 @@ internal sealed class OldFinishMapper : IOldFinishMapper
 {
     private readonly ILogger _logger;
 
-    public OldFinishMapper(ILogger logger)
-    {
-        _logger = logger;
-    }
+    public OldFinishMapper(ILogger logger) => _logger = logger;
 
     public Task<string> Map((bool foil, bool nonfoil, bool etched) source)
     {

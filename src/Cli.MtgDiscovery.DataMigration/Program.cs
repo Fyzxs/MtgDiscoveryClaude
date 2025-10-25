@@ -16,7 +16,21 @@ internal sealed class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unhandled exception: {ex.Message}");
+            Console.WriteLine("=== UNHANDLED EXCEPTION ===");
+            Console.WriteLine($"Type: {ex.GetType().FullName}");
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine($"Stack Trace:\n{ex.StackTrace}");
+
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine("\n=== INNER EXCEPTION ===");
+                Console.WriteLine($"Type: {ex.InnerException.GetType().FullName}");
+                Console.WriteLine($"Message: {ex.InnerException.Message}");
+                Console.WriteLine($"Stack Trace:\n{ex.InnerException.StackTrace}");
+            }
+
+            Console.WriteLine("\n=== FULL EXCEPTION ===");
+            Console.WriteLine(ex.ToString());
             return 1;
         }
     }

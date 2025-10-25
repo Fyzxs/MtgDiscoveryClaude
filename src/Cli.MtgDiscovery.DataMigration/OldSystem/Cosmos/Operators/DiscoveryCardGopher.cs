@@ -12,10 +12,7 @@ internal sealed class DiscoveryCardGopher : CosmosGopher
     private readonly ILogger<DiscoveryCardGopher> _logger;
 
     public DiscoveryCardGopher(ILogger<DiscoveryCardGopher> logger)
-        : base(new OldDiscoveryCardsCosmosContainer(logger))
-    {
-        _logger = logger;
-    }
+        : base(new OldDiscoveryCardsCosmosContainer(logger)) => _logger = logger;
 
     public async Task<OpResponse<OldDiscoveryCardExtEntity>> ReadCardAsync(string cardId)
     {

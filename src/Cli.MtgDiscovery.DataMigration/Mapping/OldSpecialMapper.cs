@@ -9,14 +9,11 @@ internal sealed class OldSpecialMapper : IOldSpecialMapper
 {
     private readonly ILogger _logger;
 
-    public OldSpecialMapper(ILogger logger)
-    {
-        _logger = logger;
-    }
+    public OldSpecialMapper(ILogger logger) => _logger = logger;
 
     public Task<IEnumerable<(string special, int count)>> Map(CollectorDataRecord source)
     {
-        List<(string special, int count)> results = new();
+        List<(string special, int count)> results = [];
 
         if (source.Unmodified > 0)
         {

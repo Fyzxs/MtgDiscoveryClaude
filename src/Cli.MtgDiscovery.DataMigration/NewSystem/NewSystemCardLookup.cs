@@ -1,7 +1,7 @@
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
-using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
@@ -33,11 +33,11 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
             return new FailureOperationResponse<ICardItemItrEntity>(response.OuterException);
         }
 
-        ICardItemItrEntity card = response.ResponseData.Cards.FirstOrDefault();
+        ICardItemItrEntity card = response.ResponseData.Data.FirstOrDefault();
 
         if (card is null)
         {
-            OperationException notFoundException = new OperationException($"Card with Scryfall ID {scryfallId} not found");
+            BadRequestOperationException notFoundException = new($"Card with Scryfall ID {scryfallId} not found");
             return new FailureOperationResponse<ICardItemItrEntity>(notFoundException);
         }
 
@@ -46,10 +46,7 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
 
     private sealed class CardIdsItrEntity : ICardIdsItrEntity
     {
-        public CardIdsItrEntity(string[] ids)
-        {
-            CardIds = ids;
-        }
+        public CardIdsItrEntity(string[] ids) => CardIds = ids;
 
         public ICollection<string> CardIds { get; }
     }

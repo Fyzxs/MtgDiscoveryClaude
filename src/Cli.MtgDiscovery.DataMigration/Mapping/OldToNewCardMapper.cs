@@ -39,7 +39,7 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
         List<IAddCardToCollectionArgsEntity> results = specialEntries
             .Select(entry => CreateAddCardEntity(
                 source.targetUserId,
-                source.newSystemCard.CardId,
+                source.newSystemCard.Id,
                 source.newSystemCard.SetId,
                 finish,
                 entry.special,
