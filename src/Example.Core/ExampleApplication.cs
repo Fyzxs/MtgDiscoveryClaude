@@ -10,6 +10,8 @@ public abstract class ExampleApplication
     private static readonly ISimpleLogger s_log = new SimpleConsoleLogger();
     protected void Log(string msg) => s_log.Log(msg);
 
+    protected IConfiguration Configuration { get; private set; }
+
     public async Task StartUp(string[] args)
     {
         Log($"Starting up {GetType().Name}...");
@@ -34,6 +36,7 @@ public abstract class ExampleApplication
             {
                 Log("Setting MonoState Config, with a risky hard cast");
                 MonoStateConfig.SetConfiguration((IConfigurationRoot)hostContext.Configuration);
+                Configuration = hostContext.Configuration;
             })
             .Build();
     }

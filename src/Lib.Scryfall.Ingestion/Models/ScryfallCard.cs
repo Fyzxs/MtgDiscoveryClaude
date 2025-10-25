@@ -51,7 +51,12 @@ internal sealed class ScryfallCard : IScryfallCard
         string setCode = GetSetCode(_dto.Data);
         string groupId = _groupingMatcher.GetGroupIdForCard(_dto.Data, setCode);
 
-        if (string.IsNullOrEmpty(groupId) is false)
+        // Assign 'default-cards' if no grouping matches
+        if (string.IsNullOrEmpty(groupId))
+        {
+            _dto.Data.set_group_id = "default-cards";
+        }
+        else
         {
             _dto.Data.set_group_id = groupId;
         }
