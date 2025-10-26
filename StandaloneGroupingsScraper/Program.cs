@@ -359,8 +359,15 @@ public class ScryfallGroupingsScraper
 
         filters.Properties = new Dictionary<string, object>();
 
-        // is:X patterns with custom mappings
-        var isMatches = Regex.Matches(query, @"is:(\w+)");
+        // -is:X patterns (negated, must check before is:X to avoid false matches)
+        var notIsMatches = Regex.Matches(query, @"-is:(\w+)");
+        foreach (Match match in notIsMatches)
+        {
+            filters.Properties[match.Groups[1].Value] = false;
+        }
+
+        // is:X patterns with custom mappings (use negative lookbehind to exclude -is:)
+        var isMatches = Regex.Matches(query, @"(?<!-)is:(\w+)");
         foreach (Match match in isMatches)
         {
             var isValue = match.Groups[1].Value;
