@@ -1,3 +1,4 @@
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
@@ -5,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Cli.MtgDiscovery.DataMigration.ErrorTracking;
 
-internal sealed class CsvErrorLogger : IErrorLogger
+internal sealed class CsvErrorLogger : IErrorLogger, IDisposable
 {
     private readonly ILogger _logger;
     private readonly string _filePath;
@@ -61,12 +62,14 @@ internal sealed class CsvErrorLogger : IErrorLogger
             return string.Empty;
         }
 
-        if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+        if (value.Contains(',', StringComparison.OrdinalIgnoreCase) || value.Contains('"', StringComparison.OrdinalIgnoreCase) || value.Contains('\n', StringComparison.OrdinalIgnoreCase))
         {
-            string escaped = value.Replace("\"", "\"\"");
+            string escaped = value.Replace("\"", "\"\"", StringComparison.OrdinalIgnoreCase);
             return $"\"{escaped}\"";
         }
 
         return value;
     }
+
+    public void Dispose() => _writer?.Dispose();
 }

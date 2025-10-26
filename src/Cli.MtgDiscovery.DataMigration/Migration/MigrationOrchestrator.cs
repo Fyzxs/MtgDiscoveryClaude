@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
 using Cli.MtgDiscovery.DataMigration.ErrorTracking;
@@ -11,7 +10,6 @@ using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Operators;
 using Cli.MtgDiscovery.DataMigration.SuccessTracking;
-using Lib.Cosmos.Apis;
 using Lib.Cosmos.Apis.Operators;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -143,7 +141,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
         OldDiscoveryCardExtEntity cosmosCard = cosmosResponse.Value;
 
         IOperationResponse<ICardItemItrEntity> lookupResponse = await _cardLookup
-            .LookupCardByScryfallIdAsync(cosmosCard.body.scryfall_id)
+            .LookupCardByScryfallIdAsync(cosmosCard.Body.ScryfallId)
             .ConfigureAwait(false);
 
         if (lookupResponse.IsFailure)
@@ -151,7 +149,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
             MigrationError error = new()
             {
                 OldCardId = sqlRecord.CardId,
-                ScryfallId = cosmosCard.body.scryfall_id,
+                ScryfallId = cosmosCard.Body.ScryfallId,
                 SetId = sqlRecord.SetId,
                 ErrorReason = "Card not found in new system"
             };
@@ -177,7 +175,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
                 MigrationError error = new()
                 {
                     OldCardId = sqlRecord.CardId,
-                    ScryfallId = cosmosCard.body.scryfall_id,
+                    ScryfallId = cosmosCard.Body.ScryfallId,
                     SetId = sqlRecord.SetId,
                     ErrorReason = $"Failed to add card to collection: {addResponse.OuterException?.Message ?? "Unknown error"}"
                 };
@@ -189,7 +187,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
             MigrationSuccess success = new()
             {
                 OldCardId = sqlRecord.CardId,
-                ScryfallId = cosmosCard.body.scryfall_id,
+                ScryfallId = cosmosCard.Body.ScryfallId,
                 SetId = sqlRecord.SetId,
                 Finish = addCardEntity.AddUserCard.UserCardDetails.Finish,
                 Special = addCardEntity.AddUserCard.UserCardDetails.Special,

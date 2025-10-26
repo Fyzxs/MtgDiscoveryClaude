@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
 using Cli.MtgDiscovery.DataMigration.ErrorTracking;
@@ -11,9 +11,7 @@ using Cli.MtgDiscovery.DataMigration.SuccessTracking;
 using Example.Core;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Domain.Cards.Apis;
-using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Commands;
 using Lib.Universal.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,10 +22,10 @@ internal sealed class DataMigrationApplication : ExampleApplication
 {
     protected override async Task Execute()
     {
-        ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
         {
-            builder.AddConsole();
-            builder.SetMinimumLevel(LogLevel.Debug);
+            _ = builder.AddConsole();
+            _ = builder.SetMinimumLevel(LogLevel.Debug);
         });
 
         ILogger logger = loggerFactory.CreateLogger<DataMigrationApplication>();
@@ -37,14 +35,9 @@ internal sealed class DataMigrationApplication : ExampleApplication
             logger.LogInformation("Starting Data Migration Tool");
 
             logger.LogDebug("Checking if configuration is available...");
-            if (MonoStateConfig.CurrentConfiguration is null)
-            {
-                logger.LogError("MonoStateConfig.CurrentConfiguration is null!");
-                throw new InvalidOperationException("Configuration was not initialized");
-            }
 
             logger.LogDebug("Attempting to load MigrationConfiguration section...");
-            IConfigurationSection migrationSection = MonoStateConfig.CurrentConfiguration.GetSection("MigrationConfiguration");
+            IConfigurationSection migrationSection = Configuration.GetSection("MigrationConfiguration");
 
             logger.LogDebug("MigrationConfiguration section exists: {Exists}", migrationSection.Exists());
             logger.LogDebug("MigrationConfiguration section path: {Path}", migrationSection.Path);
@@ -58,7 +51,7 @@ internal sealed class DataMigrationApplication : ExampleApplication
 
             MigrationConfiguration migrationConfig = migrationSection.Get<MigrationConfiguration>();
 
-            AzureSqlConfiguration sqlConfig = MonoStateConfig.CurrentConfiguration
+            AzureSqlConfiguration sqlConfig = Configuration
                 .GetSection("AzureSqlConfiguration")
                 .Get<AzureSqlConfiguration>();
 
@@ -73,7 +66,7 @@ internal sealed class DataMigrationApplication : ExampleApplication
             logger.LogInformation("Target User ID: '{UserId}' (Length: {Length})", migrationConfig.TargetUserId, migrationConfig.TargetUserId?.Length ?? 0);
             logger.LogInformation("Error Output Path: '{Path}'", migrationConfig.ErrorOutputPath);
             logger.LogInformation("Success Output Path: '{Path}'", migrationConfig.SuccessOutputPath);
-            logger.LogDebug("SQL Connection String: {ConnectionString}", sqlConfig.ConnectionString.Substring(0, Math.Min(50, sqlConfig.ConnectionString.Length)) + "...");
+            logger.LogDebug("SQL Connection String: {ConnectionString}", sqlConfig.ConnectionString[..Math.Min(50, sqlConfig.ConnectionString.Length)] + "...");
 
             if (string.IsNullOrWhiteSpace(migrationConfig.SourceCollectorId))
             {
@@ -93,7 +86,7 @@ internal sealed class DataMigrationApplication : ExampleApplication
                 sqlConfig);
 
             logger.LogInformation("Creating Cosmos DB gopher...");
-            DiscoveryCardGopher cosmosGopher = new DiscoveryCardGopher(
+            DiscoveryCardGopher cosmosGopher = new(
                 loggerFactory.CreateLogger<DiscoveryCardGopher>());
 
             logger.LogInformation("Creating card domain service...");
@@ -127,11 +120,11 @@ internal sealed class DataMigrationApplication : ExampleApplication
                 finishMapper,
                 specialMapper);
 
-            IErrorLogger errorLogger = new CsvErrorLogger(
+            using IErrorLogger errorLogger = new CsvErrorLogger(
                 loggerFactory.CreateLogger<CsvErrorLogger>(),
                 migrationConfig);
 
-            ISuccessLogger successLogger = new CsvSuccessLogger(
+            using ISuccessLogger successLogger = new CsvSuccessLogger(
                 loggerFactory.CreateLogger<CsvSuccessLogger>(),
                 migrationConfig);
 

@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.SuccessTracking;
+﻿namespace Cli.MtgDiscovery.DataMigration.SuccessTracking;
 
-public sealed class MigrationSuccess
+internal sealed class MigrationSuccess
 {
     public required string OldCardId { get; init; }
     public required string ScryfallId { get; init; }

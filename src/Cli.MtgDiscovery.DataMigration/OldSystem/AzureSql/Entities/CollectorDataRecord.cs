@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
+﻿namespace Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 
-public sealed class CollectorDataRecord
+internal sealed class CollectorDataRecord
 {
     public required string CollectorId { get; init; }
     public required string SetId { get; init; }
