@@ -8,6 +8,7 @@ using Lib.Adapter.UserCards.Exceptions;
 using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 

@@ -1,4 +1,5 @@
 ﻿using Lib.Cosmos.Apis.Ids;
+using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
