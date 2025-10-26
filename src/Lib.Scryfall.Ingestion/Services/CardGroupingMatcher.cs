@@ -208,11 +208,6 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         else if (normalizedExpectedValue is string stringValue)
         {
             // For string values, check if the value exists in arrays
-            if (propertyKey == "frame" && CheckArrayContains(cardData, "frame_effects", stringValue))
-            {
-                return true;
-            }
-
             if (propertyKey == "border" && CheckBorderColor(cardData, stringValue))
             {
                 return true;
