@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 
 namespace Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql;
 
-public interface ICollectorDataReader
+internal interface ICollectorDataReader
 {
     Task<IEnumerable<CollectorDataRecord>> ReadAllAsync(string collectorId);
     Task<int> GetTotalCountAsync(string collectorId);

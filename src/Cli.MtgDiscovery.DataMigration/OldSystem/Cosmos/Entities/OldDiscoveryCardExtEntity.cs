@@ -1,15 +1,15 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 
-public sealed class OldDiscoveryCardExtEntity
+internal sealed class OldDiscoveryCardExtEntity
 {
     [JsonProperty("id")]
-    public required string id { get; init; }
+    public required string Id { get; init; }
 
     [JsonProperty("partition")]
-    public required string partition { get; init; }
+    public required string Partition { get; init; }
 
     [JsonProperty("body")]
-    public required OldDiscoveryCardBody body { get; init; }
+    public required OldDiscoveryCardBody Body { get; init; }
 }

@@ -1,3 +1,4 @@
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
@@ -5,18 +6,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Cli.MtgDiscovery.DataMigration.SuccessTracking;
 
-internal sealed class CsvSuccessLogger : ISuccessLogger
+internal sealed class CsvSuccessLogger : ISuccessLogger, IDisposable
 {
     private readonly ILogger _logger;
-    private readonly string _filePath;
     private readonly StreamWriter _writer;
     private bool _headerWritten;
 
     public CsvSuccessLogger(ILogger logger, MigrationConfiguration configuration)
     {
         _logger = logger;
-        _filePath = configuration.SuccessOutputPath;
-        _writer = new StreamWriter(_filePath, append: false);
+        string filePath = configuration.SuccessOutputPath;
+        _writer = new StreamWriter(filePath, append: false);
         _headerWritten = false;
     }
 
@@ -64,12 +64,14 @@ internal sealed class CsvSuccessLogger : ISuccessLogger
             return string.Empty;
         }
 
-        if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+        if (value.Contains(',', StringComparison.OrdinalIgnoreCase) || value.Contains('"', StringComparison.OrdinalIgnoreCase) || value.Contains('\n', StringComparison.OrdinalIgnoreCase))
         {
-            string escaped = value.Replace("\"", "\"\"");
+            string escaped = value.Replace("\"", "\"\"", StringComparison.OrdinalIgnoreCase);
             return $"\"{escaped}\"";
         }
 
         return value;
     }
+
+    public void Dispose() => _writer?.Dispose();
 }

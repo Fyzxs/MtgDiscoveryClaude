@@ -1,8 +1,9 @@
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Cli.MtgDiscovery.DataMigration.SuccessTracking;
 
-public interface ISuccessLogger
+internal interface ISuccessLogger : IDisposable
 {
     Task LogSuccessAsync(MigrationSuccess success);
     Task FlushAsync();

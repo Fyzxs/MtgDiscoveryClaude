@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
@@ -29,7 +29,7 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
     public async Task<IEnumerable<IAddCardToCollectionArgsEntity>> Map((CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId) source)
     {
         string finish = await _finishMapper
-            .Map((source.oldCosmosCard.body.foil, source.oldCosmosCard.body.nonfoil, source.oldCosmosCard.body.etched))
+            .Map((source.oldCosmosCard.Body.Foil, source.oldCosmosCard.Body.Nonfoil, source.oldCosmosCard.Body.Etched))
             .ConfigureAwait(false);
 
         IEnumerable<(string special, int count)> specialEntries = await _specialMapper

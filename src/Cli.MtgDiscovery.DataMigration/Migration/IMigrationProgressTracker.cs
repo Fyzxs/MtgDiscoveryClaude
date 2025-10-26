@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.Migration;
+﻿namespace Cli.MtgDiscovery.DataMigration.Migration;
 
-public interface IMigrationProgressTracker
+internal interface IMigrationProgressTracker
 {
     void Initialize(int totalRecords);
     void IncrementProgress();
