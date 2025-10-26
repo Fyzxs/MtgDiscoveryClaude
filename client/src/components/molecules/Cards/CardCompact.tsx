@@ -5,7 +5,7 @@ import type { Card, CardContext } from '../../../types/card';
 import { CardImageDisplay } from './CardImageDisplay';
 import { PriceDisplay } from '../../atoms';
 import { CollectorNumber, RarityBadge } from '../../atoms';
-import { ArtistInfo } from './ArtistInfo';
+import { ArtistLinks } from './ArtistLinks';
 import { CardLinks } from './CardLinks';
 import { useLongPress } from '../../../hooks/useLongPress';
 import { useSwipeGesture } from '../../../hooks/useSwipeGesture';
@@ -187,21 +187,10 @@ export const CardCompact: React.FC<CardCompactProps> = ({
           </Box>
 
           {/* Artist */}
-          <ArtistInfo
+          <ArtistLinks
             artist={card.artist}
             artistIds={card.artistIds}
             context={context}
-            sx={{
-              fontSize: '0.75rem',
-              mb: 2,
-              '& a': {
-                color: 'text.secondary',
-                textDecoration: 'none',
-                '&:hover': {
-                  color: 'primary.main',
-                },
-              },
-            }}
           />
 
           {/* Card Name - conditional display */}
