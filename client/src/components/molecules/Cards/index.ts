@@ -1,4 +1,3 @@
-export { ArtistInfo } from './ArtistInfo';
 export { ArtistLinks } from './ArtistLinks';
 export { CardBadges } from './CardBadges';
 export { CardCompact } from './CardCompact';

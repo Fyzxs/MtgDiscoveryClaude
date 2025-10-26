@@ -4,7 +4,7 @@ import { ArtistLink } from '../../atoms';
 import type { CardContext } from '../../../types/card';
 
 interface ArtistLinksProps {
-  artists: string[];
+  artist?: string;
   artistIds?: string[];
   context?: CardContext;
   onArtistClick?: (artistName: string, artistId?: string) => void;
@@ -12,13 +12,16 @@ interface ArtistLinksProps {
 }
 
 export const ArtistLinks: React.FC<ArtistLinksProps> = ({
-  artists,
+  artist,
   artistIds,
   context = {},
   onArtistClick,
   className
 }) => {
-  if (!artists || artists.length === 0) return null;
+  if (!artist) return null;
+
+  const artists = artist.split(/\s+(?:&|and)\s+/i);
+  if (artists.length === 0) return null;
 
   // Don't show artist on artist page unless there are multiple artists
   const isMultipleArtists = artists.length > 1;

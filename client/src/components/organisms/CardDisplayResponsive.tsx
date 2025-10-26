@@ -6,7 +6,7 @@ import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
 import { CollectorInfo } from '../molecules/Cards/CollectorInfo';
 import { CardMetadata } from '../molecules/Cards/CardMetadata';
-import { ArtistInfo } from '../molecules/Cards/ArtistInfo';
+import { ArtistLinks } from '../molecules/Cards/ArtistLinks';
 import { CardLinks } from '../molecules/Cards/CardLinks';
 import { ManaCost } from '../molecules/Cards/ManaCost';
 import { useLongPress } from '../../hooks/useLongPress';
@@ -217,7 +217,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
               <ManaCost manaCost={card.manaCost} size="small" />
             )}
 
-            <ArtistInfo
+            <ArtistLinks
               artist={card.artist}
               artistIds={card.artistIds}
               context={context}
@@ -317,7 +317,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
           )}
 
           {/* Artist Info */}
-          <ArtistInfo
+          <ArtistLinks
             artist={card.artist}
             artistIds={card.artistIds}
             context={context}
