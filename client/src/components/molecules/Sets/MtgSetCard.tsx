@@ -75,6 +75,47 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     // Allow right-click, middle-click, and normal navigation to work
   };
 
+  const getBackgroundColor = () => {
+    if (!hasCollector || !collectionProgress) {
+      return theme.palette.background.paper;
+    }
+
+    const isNotCollecting = collectionProgress.setTotalCards === 0 && collectionProgress.percentage === 0;
+    if (isNotCollecting) {
+      return theme.palette.background.paper;
+    }
+
+    const percentage = collectionProgress.percentage;
+
+    if (percentage >= 100) {
+      return alpha(theme.palette.success.dark, 0.25);
+    }
+    if (percentage > 75) {
+      return alpha(theme.palette.secondary.dark, 0.25);
+    }
+    return alpha(theme.palette.primary.dark, 0.25);
+  };
+
+  const getHoverBackgroundColor = () => {
+    if (!hasCollector || !collectionProgress) {
+      return alpha(theme.palette.primary.main, 0.05);
+    }
+
+    const isNotCollecting = collectionProgress.setTotalCards === 0 && collectionProgress.percentage === 0;
+    if (isNotCollecting) {
+      return alpha(theme.palette.primary.main, 0.05);
+    }
+
+    const percentage = collectionProgress.percentage;
+
+    if (percentage >= 100) {
+      return alpha(theme.palette.success.main, 0.35);
+    }
+    if (percentage > 75) {
+      return alpha(theme.palette.secondary.main, 0.35);
+    }
+    return alpha(theme.palette.primary.main, 0.35);
+  };
 
   return (
     <Card
@@ -83,12 +124,12 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
       sx={{
         cursor: 'pointer',
         transition: 'all 0.1s ease',
-        backgroundColor: 'background.paper',
+        backgroundColor: getBackgroundColor(),
         border: `1px solid ${theme.palette.mtg.cardBorder}`,
         '&:hover': {
           transform: 'translateY(-6px)',
           boxShadow: theme.mtg.shadows.card.hover,
-          backgroundColor: alpha(theme.palette.primary.main, 0.05),
+          backgroundColor: getHoverBackgroundColor(),
           borderColor: alpha(theme.palette.primary.main, 0.3),
         },
         height: '360px',
