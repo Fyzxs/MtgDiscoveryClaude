@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useTransition } from 'react';
 import { logger } from '../../utils/logger';
 import { useParams } from 'react-router-dom';
 import { useCardQueries } from '../../hooks/useCardQueries';
@@ -6,12 +6,14 @@ import type { Card } from '../../types/card';
 import { PageContainer, Section } from '../molecules/layouts';
 import { Heading, BodyText } from '../molecules/text';
 import { LoadingIndicator, StatusMessage } from '../molecules/feedback';
-import { AppButton } from '../molecules/shared';
+import { AppButton, FilterControlsWithLoading } from '../molecules/shared';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { CardGrid } from '../organisms/CardGrid';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
+import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
+import { useOptimizedSort } from '../../hooks/useOptimizedSort';
 import { CardFilterPanel } from '../organisms/CardFilterPanel';
-import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
+import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS, createCardSortOptions } from '../../config/cardSortOptions';
 import { CollectorFiltersSection } from '../molecules/shared/CollectorFiltersSection';
 import {
   getCollectionCountOptions,
@@ -21,6 +23,7 @@ import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErr
 import { AppErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+import { useUrlState } from '../../hooks/useUrlState';
 import { RefreshIcon } from '../atoms/Icons';
 
 // Stable empty array to prevent infinite re-renders
@@ -45,6 +48,10 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   // Check if we have a collector parameter
   const { hasCollector } = useCollectorParam();
+
+  // Loading state with minimum display time
+  const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
+  const [isPending, startFilterTransition] = useTransition();
 
   // Use card cache for fetching cards by name
   const { fetchCardsByName } = useCardQueries();
@@ -128,21 +135,46 @@ export const CardAllPrintingsPage: React.FC = () => {
     navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
   };
 
+  // Read initial values from URL
+  const urlStateConfig = useMemo(() => ({
+    rarities: { default: [] },
+    artists: { default: [] },
+    formats: { default: [] },
+    sort: { default: 'release-desc' },
+    ...(hasCollector ? {
+      counts: { default: [] },
+      signed: { default: [] }
+    } : {})
+  }), [hasCollector]);
+
+  const { getInitialValues } = useUrlState({}, urlStateConfig);
+  const initialUrlValues = useMemo(() => getInitialValues(), [getInitialValues]);
+
   // Memoize filtering options to prevent infinite re-renders
   const filteringOptions = useMemo(() => ({
-    defaultSort: 'release-desc', // Always default to newest first
+    defaultSort: 'release-desc',
+    initialSort: typeof initialUrlValues.sort === 'string' ? initialUrlValues.sort : 'release-desc',
+    initialFilters: {
+      rarities: Array.isArray(initialUrlValues.rarities) ? initialUrlValues.rarities : [],
+      artists: Array.isArray(initialUrlValues.artists) ? initialUrlValues.artists : [],
+      formats: Array.isArray(initialUrlValues.formats) ? initialUrlValues.formats : [],
+      ...(hasCollector ? {
+        collectionCounts: Array.isArray(initialUrlValues.counts) ? initialUrlValues.counts : [],
+        signedCards: Array.isArray(initialUrlValues.signed) ? initialUrlValues.signed : []
+      } : {})
+    },
     includeSets: false,
     includeCollectorFilters: hasCollector
-  }), [hasCollector]);
+  }), [hasCollector, initialUrlValues]);
 
   // Use the shared card filtering hook (no search or sets filter for card detail page)
   const {
-    filteredCards,
+    filteredCards: unsortedFilteredCards,
     totalCards,
     sortBy,
     filters,
-    setSortBy,
-    updateFilter,
+    setSortBy: setSortByOriginal,
+    updateFilter: updateFilterOriginal,
     uniqueArtists,
     uniqueRarities,
     uniqueFormats,
@@ -150,6 +182,51 @@ export const CardAllPrintingsPage: React.FC = () => {
     hasMultipleRarities,
     hasMultipleFormats
   } = useCardFiltering(cards, filteringOptions);
+
+  // Create sort options and apply sorting
+  const sortOptions = useMemo(() => createCardSortOptions<Card>(), []);
+  const sortFunction = useMemo(() => {
+    return sortOptions[sortBy] || sortOptions['release-desc'];
+  }, [sortOptions, sortBy]);
+  const filteredCards = useOptimizedSort(unsortedFilteredCards, sortBy, sortFunction);
+
+  // Wrapped filter handlers with loading state
+  const setSortBy = useCallback((value: string) => {
+    showLoading();
+    startFilterTransition(() => {
+      setSortByOriginal(value);
+      hideLoading();
+    });
+  }, [setSortByOriginal, showLoading, hideLoading]);
+
+  const updateFilter = useCallback((filterName: string, value: unknown) => {
+    showLoading();
+    startFilterTransition(() => {
+      updateFilterOriginal(filterName, value);
+      hideLoading();
+    });
+  }, [updateFilterOriginal, showLoading, hideLoading]);
+
+  // Extract filter values for URL state
+  const selectedRarities = (Array.isArray(filters.rarities) ? filters.rarities : []) as string[];
+  const selectedArtists = (Array.isArray(filters.artists) ? filters.artists : []) as string[];
+  const selectedFormats = (Array.isArray(filters.formats) ? filters.formats : []) as string[];
+
+  // URL state sync for filters and sort
+  useUrlState(
+    {
+      rarities: selectedRarities,
+      artists: selectedArtists,
+      formats: selectedFormats,
+      sort: sortBy,
+      ...(hasCollector ? {
+        counts: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
+        signed: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]
+      } : {})
+    },
+    urlStateConfig,
+    { debounceMs: 0 }
+  );
 
   if (loading) {
     return (
@@ -212,50 +289,52 @@ export const CardAllPrintingsPage: React.FC = () => {
       </Section>
 
       {/* Card Filter Panel - Centered controls */}
-      <CardFilterPanel
-        sortBy={sortBy}
-        filters={filters}
-        onSortChange={setSortBy}
-        onFilterChange={updateFilter}
-        uniqueArtists={uniqueArtists}
-        uniqueRarities={uniqueRarities}
-        uniqueFormats={uniqueFormats}
-        hasMultipleArtists={hasMultipleArtists}
-        hasMultipleRarities={hasMultipleRarities}
-        hasMultipleFormats={hasMultipleFormats}
-        filteredCount={filteredCards.length}
-        totalCount={totalCards}
-        showSearch={false}
-        sortOptions={hasCollector ? CARD_DETAIL_COLLECTOR_SORT_OPTIONS : CARD_DETAIL_SORT_OPTIONS}
-        centerControls={true}
-      />
-
-      {/* Collector-specific filters */}
-      {hasCollector && (
-        <CollectorFiltersSection
-          config={{
-            collectionCounts: {
-              key: 'collectionCounts',
-              value: (filters.collectionCounts as string[]) || [],
-              onChange: (value: string[]) => updateFilter('collectionCounts', value),
-              options: getCollectionCountOptions(),
-              label: 'Collection Count',
-              placeholder: 'All Counts',
-              minWidth: 180
-            },
-            signedCards: {
-              key: 'signedCards',
-              value: (filters.signedCards as string[]) || [],
-              onChange: (value: string[]) => updateFilter('signedCards', value),
-              options: getSignedCardsOptions(),
-              label: 'Signed Cards',
-              placeholder: 'All Cards',
-              minWidth: 150
-            }
-          }}
-          sx={{ mt: 2, mb: 3, mx: 'auto', maxWidth: '800px' }}
+      <FilterControlsWithLoading isLoading={isFiltering || isPending}>
+        <CardFilterPanel
+          sortBy={sortBy}
+          filters={filters}
+          onSortChange={setSortBy}
+          onFilterChange={updateFilter}
+          uniqueArtists={uniqueArtists}
+          uniqueRarities={uniqueRarities}
+          uniqueFormats={uniqueFormats}
+          hasMultipleArtists={hasMultipleArtists}
+          hasMultipleRarities={hasMultipleRarities}
+          hasMultipleFormats={hasMultipleFormats}
+          filteredCount={filteredCards.length}
+          totalCount={totalCards}
+          showSearch={false}
+          sortOptions={hasCollector ? CARD_DETAIL_COLLECTOR_SORT_OPTIONS : CARD_DETAIL_SORT_OPTIONS}
+          centerControls={true}
         />
-      )}
+
+        {/* Collector-specific filters */}
+        {hasCollector && (
+          <CollectorFiltersSection
+            config={{
+              collectionCounts: {
+                key: 'collectionCounts',
+                value: (filters.collectionCounts as string[]) || [],
+                onChange: (value: string[]) => updateFilter('collectionCounts', value),
+                options: getCollectionCountOptions(),
+                label: 'Collection Count',
+                placeholder: 'All Counts',
+                minWidth: 180
+              },
+              signedCards: {
+                key: 'signedCards',
+                value: (filters.signedCards as string[]) || [],
+                onChange: (value: string[]) => updateFilter('signedCards', value),
+                options: getSignedCardsOptions(),
+                label: 'Signed Cards',
+                placeholder: 'All Cards',
+                minWidth: 150
+              }
+            }}
+            sx={{ mt: 2, mb: 3, mx: 'auto', maxWidth: '800px' }}
+          />
+        )}
+      </FilterControlsWithLoading>
 
       {/* Results Summary */}
       <ResultsSummary

@@ -1,8 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useTransition, useCallback } from 'react';
 import { useUrlState } from './useUrlState';
 import { useFilterState } from './useFilterState';
 import { useCollectorParam } from './useCollectorParam';
 import { useCardQueries } from './useCardQueries';
+import { useOptimizedSort } from './useOptimizedSort';
+import { useMinimumLoadingTime } from './useMinimumLoadingTime';
 import { RARITY_ORDER } from '../config/cardSortOptions';
 import {
   getUniqueRarities,
@@ -42,6 +44,10 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
 
   const { getInitialValues } = useUrlState({}, urlStateConfig);
   const [initialValues] = useState(() => getInitialValues());
+
+  // Loading state with minimum display time
+  const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
+  const [isPending, startTransition] = useTransition();
 
   // Card data fetching
   const { fetchCardsByArtist } = useCardQueries();
@@ -148,7 +154,7 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
     searchTerm,
     sortBy,
     filters,
-    filteredData: filteredCards,
+    filteredData: unsortedFilteredCards,
     setSearchTerm,
     setSortBy,
     updateFilter
@@ -170,6 +176,30 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
 
   const selectedRarities = (Array.isArray(filters.rarities) ? filters.rarities : []) as string[];
   const selectedSets = (Array.isArray(filters.sets) ? filters.sets : []) as string[];
+
+  // Wrapped versions of setSortBy and updateFilter that use transitions
+  const setSortByWithTransition = useCallback((newSortBy: string) => {
+    showLoading();
+    startTransition(() => {
+      setSortBy(newSortBy);
+      hideLoading();
+    });
+  }, [setSortBy, showLoading, hideLoading]);
+
+  const updateFilterWithTransition = useCallback((filterName: string, value: unknown) => {
+    showLoading();
+    startTransition(() => {
+      updateFilter(filterName, value);
+      hideLoading();
+    });
+  }, [updateFilter, showLoading, hideLoading]);
+
+  // Apply sorting to filtered cards using useOptimizedSort
+  const sortFunction = useMemo(() => {
+    return filterConfig.sortOptions[sortBy] || filterConfig.sortOptions['release-desc'];
+  }, [filterConfig.sortOptions, sortBy]);
+
+  const filteredCards = useOptimizedSort(unsortedFilteredCards, sortBy, sortFunction);
 
   // Get artist name info
   const pascalCasedName = toPascalCase(decodedArtistName);
@@ -229,8 +259,10 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
     alternateNames: artistNameInfo.alternateNames,
     // Handlers
     setSearchTerm,
-    setSortBy,
-    updateFilter,
+    setSortBy: setSortByWithTransition,
+    updateFilter: updateFilterWithTransition,
+    // Loading state
+    isFilteringOrSorting: isFiltering || isPending,
     // Collector state
     hasCollector
   };
