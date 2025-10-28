@@ -37,9 +37,9 @@ internal sealed class SetsByCodeAggregatorService : ISetsByCodeAggregatorService
         _setItemItrToOufMapper = setItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(ISetCodesItrEntity input)
     {
-        ISetCodesXfrEntity xfrEntity = await _setCodesItrToXfrMapper.Map(args).ConfigureAwait(false);
+        ISetCodesXfrEntity xfrEntity = await _setCodesItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByCodesAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
