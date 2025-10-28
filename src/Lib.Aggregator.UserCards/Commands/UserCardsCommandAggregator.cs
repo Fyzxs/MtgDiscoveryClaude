@@ -16,5 +16,5 @@ internal sealed class UserCardsCommandAggregator : IUserCardsCommandAggregatorSe
 
     private UserCardsCommandAggregator(IAddUserCardAggregatorService addUserCardOperations) => _addUserCardOperations = addUserCardOperations;
 
-    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _addUserCardOperations.AddUserCardAsync(userCard);
+    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _addUserCardOperations.Execute(userCard);
 }

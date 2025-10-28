@@ -42,13 +42,13 @@ internal sealed class UserCardsQueryAggregator : IUserCardsQueryAggregatorServic
         _userCardsByNameOperations = userCardsByNameOperations;
     }
 
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _userCardOperations.UserCardAsync(userCard);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _userCardOperations.Execute(userCard);
 
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => _userCardsBySetOperations.UserCardsBySetAsync(userCardsSet);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => _userCardsBySetOperations.Execute(userCardsSet);
 
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => _userCardsByIdsOperations.UserCardsByIdsAsync(userCards);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => _userCardsByIdsOperations.Execute(userCards);
 
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _userCardsByArtistOperations.UserCardsByArtistAsync(userCardsArtist);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _userCardsByArtistOperations.Execute(userCardsArtist);
 
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _userCardsByNameOperations.UserCardsByNameAsync(userCardsName);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _userCardsByNameOperations.Execute(userCardsName);
 }
