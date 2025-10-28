@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.Invocation.Operations;
+﻿using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Aggregator.Artists.Queries.CardsByArtistName;
 
+/// <summary>
+/// Marker interface for retrieving cards by artist name aggregation operation.
+/// Implements single-method delegation pattern with Execute method.
+/// </summary>
 internal interface ICardsByArtistNameAggregatorService
-{
-    Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName);
-}
+    : IOperationResponseService<IArtistNameItrEntity, ICardItemCollectionOufEntity>;
