@@ -15,26 +15,31 @@ internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
     private readonly ISetAdapterService _setAdapterService;
     private readonly ICollectionSetItemExtToItrMapper _setItemMapper;
     private readonly ICollectionSetItemItrToOufMapper _setItemItrToOufMapper;
+    private readonly INoArgsItrToXfrMapper _noArgsMapper;
 
     public AllSetsAggregatorService(ILogger logger) : this(
         new SetAdapterService(logger),
         new CollectionSetItemExtToItrMapper(),
-        new CollectionSetItemItrToOufMapper())
+        new CollectionSetItemItrToOufMapper(),
+        new NoArgsItrToXfrMapper())
     { }
 
     private AllSetsAggregatorService(
         ISetAdapterService setAdapterService,
         ICollectionSetItemExtToItrMapper setItemMapper,
-        ICollectionSetItemItrToOufMapper setItemItrToOufMapper)
+        ICollectionSetItemItrToOufMapper setItemItrToOufMapper,
+        INoArgsItrToXfrMapper noArgsMapper)
     {
         _setAdapterService = setAdapterService;
         _setItemMapper = setItemMapper;
         _setItemItrToOufMapper = setItemItrToOufMapper;
+        _noArgsMapper = noArgsMapper;
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(INoArgsItrEntity input)
     {
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.AllSetsAsync().ConfigureAwait(false);
+        Lib.Shared.DataModels.Entities.Xfrs.INoArgsXfrEntity noArgsXfr = await _noArgsMapper.Map(input).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.AllSetsAsync(noArgsXfr).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
