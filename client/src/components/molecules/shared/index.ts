@@ -6,6 +6,7 @@ export { DebouncedSearchInput } from './DebouncedSearchInput';
 export { EmptyState } from './EmptyState';
 export { ExpandableSection } from './ExpandableSection';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
+export { FilterControlsWithLoading } from './FilterControlsWithLoading';
 export { LanguageSwitcher } from './LanguageSwitcher';
 export { ModalContainer } from './ModalContainer';
 export { MultiSelectDropdown } from './MultiSelectDropdown';
