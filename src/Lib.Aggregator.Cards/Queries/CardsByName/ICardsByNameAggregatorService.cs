@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.Invocation.Operations;
+﻿using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Aggregator.Cards.Queries.CardsByName;
 
 internal interface ICardsByNameAggregatorService
-{
-    Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName);
-}
+    : IOperationResponseService<ICardNameItrEntity, ICardItemCollectionOufEntity>;

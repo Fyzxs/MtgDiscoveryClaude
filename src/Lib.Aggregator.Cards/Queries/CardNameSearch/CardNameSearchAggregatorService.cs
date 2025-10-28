@@ -33,14 +33,14 @@ internal sealed class CardNameSearchAggregatorService : ICardNameSearchAggregato
         _stringToSearchResultMapper = stringToSearchResultMapper;
     }
 
-    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> Execute(ICardSearchTermItrEntity input)
     {
-        ICardSearchTermXfrEntity xfrEntity = await _cardSearchTermItrToXfrMapper.Map(searchTerm).ConfigureAwait(false);
+        ICardSearchTermXfrEntity xfrEntity = await _cardSearchTermItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardNameSearchCollectionOufEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{searchTerm.SearchTerm}'", response.OuterException));
+            return new FailureOperationResponse<ICardNameSearchCollectionOufEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{input.SearchTerm}'", response.OuterException));
         }
 
         ICollection<ICardNameSearchResultItrEntity> results = await _stringToSearchResultMapper.Map(response.ResponseData).ConfigureAwait(false);
