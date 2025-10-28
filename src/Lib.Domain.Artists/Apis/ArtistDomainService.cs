@@ -8,12 +8,12 @@ namespace Lib.Domain.Artists.Apis;
 
 public sealed class ArtistDomainService : IArtistDomainService
 {
-    private readonly IArtistDomainService _artistDomainOperations;
+    private readonly IArtistsQueryDomainService _artistDomainOperations;
 
-    public ArtistDomainService(ILogger logger) : this(new QueryArtistDomainService(logger))
+    public ArtistDomainService(ILogger logger) : this(new ArtistsQueryDomainService(logger))
     { }
 
-    private ArtistDomainService(IArtistDomainService artistDomainOperations) => _artistDomainOperations = artistDomainOperations;
+    private ArtistDomainService(IArtistsQueryDomainService artistDomainOperations) => _artistDomainOperations = artistDomainOperations;
 
     public Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistDomainOperations.ArtistSearchAsync(searchTerm);
 

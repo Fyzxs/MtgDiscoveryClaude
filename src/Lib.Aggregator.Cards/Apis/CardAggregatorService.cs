@@ -8,12 +8,12 @@ namespace Lib.Aggregator.Cards.Apis;
 
 public sealed class CardAggregatorService : ICardAggregatorService
 {
-    private readonly ICardAggregatorService _cardAggregatorOperations;
+    private readonly ICardsQueryAggregatorService _cardAggregatorOperations;
 
     public CardAggregatorService(ILogger logger) : this(new CardsQueryAggregator(logger))
     { }
 
-    private CardAggregatorService(ICardAggregatorService cardAggregatorOperations) => _cardAggregatorOperations = cardAggregatorOperations;
+    private CardAggregatorService(ICardsQueryAggregatorService cardAggregatorOperations) => _cardAggregatorOperations = cardAggregatorOperations;
 
     public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardAggregatorOperations.CardsByIdsAsync(args);
 

@@ -31,9 +31,9 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
         _allSetsOperations = allSetsOperations;
     }
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args) => _setsByIdOperations.SetsAsync(args);
+    public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args) => _setsByIdOperations.Execute(args);
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args) => _setsByCodeOperations.SetsByCodeAsync(args);
+    public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args) => _setsByCodeOperations.Execute(args);
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync() => _allSetsOperations.AllSetsAsync();
+    public Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(INoArgsItrEntity noArgs) => _allSetsOperations.Execute(noArgs);
 }

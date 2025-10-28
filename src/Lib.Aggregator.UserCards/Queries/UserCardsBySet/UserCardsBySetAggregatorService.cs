@@ -32,9 +32,9 @@ internal sealed class UserCardsBySetAggregatorService : IUserCardsBySetAggregato
         _userCardsSetItrToXfrMapper = userCardsSetItrToXfrMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> Execute(IUserCardsSetItrEntity input)
     {
-        IUserCardsSetXfrEntity xfrEntity = await _userCardsSetItrToXfrMapper.Map(userCardsSet).ConfigureAwait(false);
+        IUserCardsSetXfrEntity xfrEntity = await _userCardsSetItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsBySetAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)

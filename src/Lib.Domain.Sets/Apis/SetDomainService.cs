@@ -8,16 +8,16 @@ namespace Lib.Domain.Sets.Apis;
 
 public sealed class SetDomainService : ISetDomainService
 {
-    private readonly ISetDomainService _setDomainService;
+    private readonly ISetsQueryDomainService _setDomainOperations;
 
-    public SetDomainService(ILogger logger) : this(new QuerySetDomainService(logger))
+    public SetDomainService(ILogger logger) : this(new SetsQueryDomainService(logger))
     { }
 
-    private SetDomainService(ISetDomainService setDomainService) => _setDomainService = setDomainService;
+    private SetDomainService(ISetsQueryDomainService setDomainOperations) => _setDomainOperations = setDomainOperations;
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds) => await _setDomainService.SetsAsync(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds) => await _setDomainOperations.SetsAsync(setIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _setDomainService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _setDomainOperations.SetsByCodeAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync() => await _setDomainService.AllSetsAsync().ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(INoArgsItrEntity noArgs) => await _setDomainOperations.AllSetsAsync(noArgs).ConfigureAwait(false);
 }

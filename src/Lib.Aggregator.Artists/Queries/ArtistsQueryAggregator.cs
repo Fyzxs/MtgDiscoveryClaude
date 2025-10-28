@@ -31,9 +31,9 @@ internal sealed class ArtistsQueryAggregator : IArtistAggregatorService
         _cardsByArtistNameOperations = cardsByArtistNameOperations;
     }
 
-    public Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistSearchOperations.ArtistSearchAsync(searchTerm);
+    public Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistSearchOperations.Execute(searchTerm);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => _cardsByArtistOperations.CardsByArtistAsync(artistId);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => _cardsByArtistOperations.Execute(artistId);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => _cardsByArtistNameOperations.CardsByArtistNameAsync(artistName);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => _cardsByArtistNameOperations.Execute(artistName);
 }
