@@ -37,9 +37,9 @@ internal sealed class SetsByIdAggregatorService : ISetsByIdAggregatorService
         _setItemItrToOufMapper = setItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(ISetIdsItrEntity input)
     {
-        ISetIdsXfrEntity xfrEntity = await _setIdsItrToXfrMapper.Map(args).ConfigureAwait(false);
+        ISetIdsXfrEntity xfrEntity = await _setIdsItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByIdsAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)

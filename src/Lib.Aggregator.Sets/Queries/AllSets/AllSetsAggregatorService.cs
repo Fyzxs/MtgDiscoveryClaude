@@ -32,7 +32,7 @@ internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
         _setItemItrToOufMapper = setItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync()
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(INoArgsItrEntity input)
     {
         IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.AllSetsAsync().ConfigureAwait(false);
 
