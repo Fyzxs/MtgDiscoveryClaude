@@ -75,7 +75,7 @@ export const useUserSync = (): UserSyncState => {
 
   // Use GET_USER_INFO authenticated query
   const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery<UserInfoQueryData>(GET_USER_INFO, {
-    skip: tokenReady === false,
+    skip: auth0Loading || isAuthenticated === false || tokenReady === false,
     errorPolicy: 'all'
   }) as UserInfoQueryResult;
 
