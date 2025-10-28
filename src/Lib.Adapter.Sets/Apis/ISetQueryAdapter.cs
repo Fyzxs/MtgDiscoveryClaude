@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis.Entities;
+using Lib.Shared.DataModels.Entities.Xfrs;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.Sets.Apis;
@@ -29,5 +30,5 @@ public interface ISetQueryAdapter
 {
     Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds);
     Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes);
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync();
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(INoArgsXfrEntity noArgs);
 }
