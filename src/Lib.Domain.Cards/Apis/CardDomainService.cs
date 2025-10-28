@@ -8,12 +8,12 @@ namespace Lib.Domain.Cards.Apis;
 
 public sealed class CardDomainService : ICardDomainService
 {
-    private readonly ICardDomainService _cardDomainOperations;
+    private readonly ICardsQueryDomainService _cardDomainOperations;
 
-    public CardDomainService(ILogger logger) : this(new QueryCardDomainService(logger))
+    public CardDomainService(ILogger logger) : this(new CardsQueryDomainService(logger))
     { }
 
-    private CardDomainService(ICardDomainService cardDomainOperations) => _cardDomainOperations = cardDomainOperations;
+    private CardDomainService(ICardsQueryDomainService cardDomainOperations) => _cardDomainOperations = cardDomainOperations;
 
     public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardDomainOperations.CardsByIdsAsync(args);
 
