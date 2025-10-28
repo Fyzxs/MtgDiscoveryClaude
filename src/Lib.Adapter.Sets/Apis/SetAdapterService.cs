@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Queries;
+using Lib.Shared.DataModels.Entities.Xfrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -37,5 +38,5 @@ public sealed class SetAdapterService : ISetAdapterService
 
     public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setQueryAdapter.SetsByCodesAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync() => await _setQueryAdapter.AllSetsAsync().ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(INoArgsXfrEntity noArgs) => await _setQueryAdapter.AllSetsAsync(noArgs).ConfigureAwait(false);
 }
