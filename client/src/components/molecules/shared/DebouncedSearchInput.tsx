@@ -6,6 +6,7 @@ import { SearchIcon, ClearIcon } from '../../atoms/Icons';
 interface DebouncedSearchInputProps extends SearchInputProps {
   loading?: boolean;
   disabled?: boolean;
+  onEnter?: (value: string) => void;
 }
 
 interface HTMLInputElementWithClear extends HTMLInputElement {
@@ -21,7 +22,8 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
   fullWidth = false,
   minWidth = 300,
   loading = false,
-  disabled = false
+  disabled = false,
+  onEnter
 }) => {
   const [hasText, setHasText] = useState(!!value);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -85,6 +87,13 @@ const DebouncedSearchInputComponent: React.FC<DebouncedSearchInputProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Handle Enter key press
+    if (e.key === 'Enter' && onEnter && searchInputRef.current) {
+      e.preventDefault();
+      onEnter(searchInputRef.current.value);
+      return;
+    }
+
     // When Tab is pressed in search box, skip filter/sort controls and go to first card
     if (e.key === 'Tab' && !e.shiftKey) {
       // Find the first card in the card grid

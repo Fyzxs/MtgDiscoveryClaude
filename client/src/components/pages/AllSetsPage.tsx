@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, startTransition } from 'react';
+import React, { useMemo, useCallback, startTransition, useTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Heading } from '../molecules/text';
@@ -6,8 +6,10 @@ import { GET_ALL_SETS } from '../../graphql/queries/sets';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { EmptyState } from '../molecules/shared/EmptyState';
+import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import type { SortOption } from '../molecules/shared/SortDropdown';
 import { useUrlFilterState, createUrlFilterConfig } from '../../hooks/useUrlFilterState';
+import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 import { GraphQLQueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../organisms/filters/FilterPanel';
 import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
@@ -32,13 +34,17 @@ const EMPTY_SETS_ARRAY: MtgSet[] = [];
 
 export const AllSetsPage: React.FC = () => {
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
-  
+
+  // Loading state with minimum display time
+  const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
+  const [isPending, startFilterTransition] = useTransition();
+
   // Simplified filter state with URL synchronization
-  const filterConfig = useMemo(() => 
+  const filterConfig = useMemo(() =>
     createUrlFilterConfig('sets', {
       urlParams: {
         search: 'search',
-        sort: 'sort', 
+        sort: 'sort',
         filters: { setTypes: 'types' }
       }
     }), []);
@@ -90,12 +96,20 @@ export const AllSetsPage: React.FC = () => {
   };
 
   const handleSetTypeChange = useCallback((value: string[]) => {
-    updateFilter('setTypes', value);
-  }, [updateFilter]);
+    showLoading();
+    startFilterTransition(() => {
+      updateFilter('setTypes', value);
+      hideLoading();
+    });
+  }, [updateFilter, showLoading, hideLoading]);
 
   const handleSortChange = useCallback((value: string) => {
-    setSortBy(value);
-  }, [setSortBy]);
+    showLoading();
+    startFilterTransition(() => {
+      setSortBy(value);
+      hideLoading();
+    });
+  }, [setSortBy, showLoading, hideLoading]);
 
   const sortOptions: SortOption[] = [
     { value: 'release-desc', label: 'Release Date (Newest)' },
@@ -124,36 +138,38 @@ export const AllSetsPage: React.FC = () => {
           </Heading>
         }
         filters={
-          <FilterPanel
-            config={{
-              search: {
-                value: searchTerm,
-                onChange: (value: string) => {
-                  startTransition(() => {
-                    setSearchTerm(value);
-                  });
+          <FilterControlsWithLoading isLoading={isFiltering || isPending}>
+            <FilterPanel
+              config={{
+                search: {
+                  value: searchTerm,
+                  onChange: (value: string) => {
+                    startTransition(() => {
+                      setSearchTerm(value);
+                    });
+                  },
+                  placeholder: 'Search sets...',
+                  debounceMs: 300
                 },
-                placeholder: 'Search sets...',
-                debounceMs: 300
-              },
-              multiSelects: [
-                {
-                  key: 'setTypes',
-                  value: selectedSetTypes,
-                  onChange: handleSetTypeChange,
-                  options: setTypes,
-                  label: 'Set Types',
-                  placeholder: 'All Types'
+                multiSelects: [
+                  {
+                    key: 'setTypes',
+                    value: selectedSetTypes,
+                    onChange: handleSetTypeChange,
+                    options: setTypes,
+                    label: 'Set Types',
+                    placeholder: 'All Types'
+                  }
+                ],
+                sort: {
+                  value: sortBy,
+                  onChange: handleSortChange,
+                  options: sortOptions
                 }
-              ],
-              sort: {
-                value: sortBy,
-                onChange: handleSortChange,
-                options: sortOptions
-              }
-            }}
-            layout="horizontal"
-          />
+              }}
+              layout="horizontal"
+            />
+          </FilterControlsWithLoading>
         }
         summary={
           <ResultsSummary

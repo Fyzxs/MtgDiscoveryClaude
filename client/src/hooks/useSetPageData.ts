@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, startTransition } from 'react';
+import { useState, useEffect, useMemo, useRef, startTransition, useTransition, useCallback } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useCardQueries } from './useCardQueries';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
@@ -6,6 +6,7 @@ import { useUrlState } from './useUrlState';
 import { useFilterState } from './useFilterState';
 import { useCollectorParam } from './useCollectorParam';
 import { useQueryStates } from '../components/molecules/shared/QueryStateContainer';
+import { useMinimumLoadingTime } from './useMinimumLoadingTime';
 import { RARITY_ORDER, parseCollectorNumber } from '../config/cardSortOptions';
 import {
   getUniqueArtists,
@@ -76,6 +77,10 @@ export const useSetPageData = (setCode: string | undefined) => {
 
   const { getInitialValues, updateUrl } = useUrlState({}, urlStateConfig);
   const [initialValues] = useState(() => getInitialValues());
+
+  // Loading state with minimum display time
+  const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
+  const [isPending, startFilterTransition] = useTransition();
 
   // Card data fetching
   const { fetchSetCards } = useCardQueries();
@@ -424,16 +429,43 @@ export const useSetPageData = (setCode: string | undefined) => {
         .filter(g => g.cards.length > 0 && visibleGroupIds.has(g.id))
         .reduce((sum, g) => sum + g.cards.length, 0);
 
-  // Handler functions
-  const handleRarityChange = (value: string[]) => updateFilter('rarities', value);
-  const handleSortChange = (value: string) => setSortBy(value);
+  // Wrapped versions of handlers that use transitions
+  const handleRarityChange = useCallback((value: string[]) => {
+    showLoading();
+    startFilterTransition(() => {
+      updateFilter('rarities', value);
+      hideLoading();
+    });
+  }, [updateFilter, showLoading, hideLoading]);
+
+  const handleSortChange = useCallback((value: string) => {
+    showLoading();
+    startFilterTransition(() => {
+      setSortBy(value);
+      hideLoading();
+    });
+  }, [setSortBy, showLoading, hideLoading]);
+
+  const updateFilterWithTransition = useCallback((filterName: string, value: unknown) => {
+    showLoading();
+    startFilterTransition(() => {
+      updateFilter(filterName, value);
+      hideLoading();
+    });
+  }, [updateFilter, showLoading, hideLoading]);
+
   const handleClearFilters = () => {
-    setSearchTerm('');
-    updateFilter('rarities', []);
-    updateFilter('artists', []);
-    updateFilter('groups', []);
-    updateFilter('showGroups', true);
+    showLoading();
+    startFilterTransition(() => {
+      setSearchTerm('');
+      updateFilter('rarities', []);
+      updateFilter('artists', []);
+      updateFilter('groups', []);
+      updateFilter('showGroups', true);
+      hideLoading();
+    });
   };
+
   const handleSearchChange = (value: string) => {
     startTransition(() => setSearchTerm(value));
   };
@@ -473,7 +505,9 @@ export const useSetPageData = (setCode: string | undefined) => {
     handleSortChange,
     handleRarityChange,
     handleClearFilters,
-    updateFilter,
+    updateFilter: updateFilterWithTransition,
+    // Loading state
+    isFilteringOrSorting: isFiltering || isPending,
     // Collector state
     hasCollector,
     collectorId

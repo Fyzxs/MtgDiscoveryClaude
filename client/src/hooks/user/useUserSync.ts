@@ -73,9 +73,23 @@ export const useUserSync = (): UserSyncState => {
     }
   }, [isAuthenticated, auth0Loading, tokenReady]);
 
+  // Only query user info when fully authenticated and token is ready
+  const shouldQueryUserInfo = isAuthenticated && auth0Loading === false && tokenReady && user !== undefined;
+
+  // Debug logging for authentication state
+  useEffect(() => {
+    logger.debug('useUserSync - Auth state:', {
+      isAuthenticated,
+      auth0Loading,
+      tokenReady,
+      hasUser: user !== undefined,
+      shouldQuery: shouldQueryUserInfo
+    });
+  }, [isAuthenticated, auth0Loading, tokenReady, user, shouldQueryUserInfo]);
+
   // Use GET_USER_INFO authenticated query
   const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery<UserInfoQueryData>(GET_USER_INFO, {
-    skip: tokenReady === false,
+    skip: shouldQueryUserInfo === false,
     errorPolicy: 'all'
   }) as UserInfoQueryResult;
 
@@ -97,12 +111,13 @@ export const useUserSync = (): UserSyncState => {
       setUserProfile(simpleProfile);
       setIsFirstTimeUser(false);
       logger.debug('User info loaded:', simpleProfile);
-    } else if (userInfoError) {
+    } else if (userInfoError && shouldQueryUserInfo) {
+      // Only log errors when we should be querying (not when skipped)
       logger.error('User info query error:', userInfoError);
       setError('Failed to load user info');
       setIsFirstTimeUser(true);
     }
-  }, [userInfoData, userInfoError, user]);
+  }, [userInfoData, userInfoError, user, shouldQueryUserInfo]);
 
   const syncUser = useCallback(async () => {
     // Simply refetch user info
@@ -122,12 +137,12 @@ export const useUserSync = (): UserSyncState => {
     }
   }, [refetchUserInfo]);
 
-  // Auto-sync user when Auth0 authentication completes
+  // Auto-sync user when Auth0 authentication completes and token is ready
   useEffect(() => {
-    if (isAuthenticated && user && !userProfile && !userInfoLoading) {
+    if (shouldQueryUserInfo && userProfile === null && userInfoLoading === false) {
       syncUser();
     }
-  }, [isAuthenticated, user, userProfile, userInfoLoading, syncUser]);
+  }, [shouldQueryUserInfo, userProfile, userInfoLoading, syncUser]);
 
   return {
     userProfile,
