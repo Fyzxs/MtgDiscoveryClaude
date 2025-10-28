@@ -1,10 +1,7 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
+﻿using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis;
 using Lib.Adapter.UserSetCards.Apis.Entities;
-using Lib.Adapter.UserSetCards.Exceptions;
-using Lib.Adapter.UserSetCards.Queries.Mappers;
-using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -13,49 +10,17 @@ namespace Lib.Adapter.UserSetCards.Queries;
 /// <summary>
 /// Cosmos DB implementation of the user set card query adapter.
 ///
-/// This class handles all Cosmos DB-specific user set card query operations,
-/// implementing the specialized IUserSetCardQueryAdapter interface.
+/// This class coordinates all Cosmos DB-specific user set card query operations
+/// by delegating to specialized single-method adapters.
+/// The main UserSetCardsAdapterService delegates to this implementation.
 /// </summary>
 internal sealed class UserSetCardsQueryAdapter : IUserSetCardsQueryAdapter
 {
-    private readonly ICosmosGopher _userSetCardsGopher;
-    private readonly IUserSetCardsGetXfrToExtMapper _readPointMapper;
+    private readonly IGetUserSetCardAdapter _getUserSetCardAdapter;
 
-    public UserSetCardsQueryAdapter(ILogger logger) : this(new UserSetCardsGopher(logger), new UserSetCardsGetXfrToExtMapper())
-    { }
+    public UserSetCardsQueryAdapter(ILogger logger) : this(new GetUserSetCardAdapter(logger)) { }
 
-    private UserSetCardsQueryAdapter(ICosmosGopher userSetCardsGopher, IUserSetCardsGetXfrToExtMapper readPointMapper)
-    {
-        _userSetCardsGopher = userSetCardsGopher;
-        _readPointMapper = readPointMapper;
-    }
+    private UserSetCardsQueryAdapter(IGetUserSetCardAdapter getUserSetCardAdapter) => _getUserSetCardAdapter = getUserSetCardAdapter;
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams)
-    {
-        ReadPointItem readPoint = await _readPointMapper.Map(readParams).ConfigureAwait(false);
-
-        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
-
-        if (readResponse.IsNotSuccessful())
-        {
-            // If document not found, return empty UserSetCard instead of failure
-            if (readResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                UserSetCardExtEntity emptyCard = new()
-                {
-                    UserId = readParams.UserId,
-                    SetId = readParams.SetId,
-                    TotalCards = 0,
-                    UniqueCards = 0,
-                    Collecting = [],
-                    Groups = []
-                };
-                return new SuccessOperationResponse<UserSetCardExtEntity>(emptyCard);
-            }
-
-            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
-        }
-
-        return new SuccessOperationResponse<UserSetCardExtEntity>(readResponse.Value);
-    }
+    public Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) => _getUserSetCardAdapter.Execute(readParams);
 }
