@@ -37,9 +37,9 @@ internal sealed class CardsByIdsAggregatorService : ICardsByIdsAggregatorService
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ICardIdsItrEntity input)
     {
-        ICardIdsXfrEntity xfrEntity = await _cardIdsItrToXfrMapper.Map(args).ConfigureAwait(false);
+        ICardIdsXfrEntity xfrEntity = await _cardIdsItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> response = await _cardAdapterService.GetCardsByIdsAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)

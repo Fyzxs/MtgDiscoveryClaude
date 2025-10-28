@@ -37,14 +37,14 @@ internal sealed class CardsBySetCodeAggregatorService : ICardsBySetCodeAggregato
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ISetCodeItrEntity input)
     {
-        ISetCodeXfrEntity xfrEntity = await _setCodeItrToXfrMapper.Map(setCode).ConfigureAwait(false);
+        ISetCodeXfrEntity xfrEntity = await _setCodeItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> response = await _cardAdapterService.GetCardsBySetCodeAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardItemCollectionOufEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for set '{setCode.SetCode}'", response.OuterException));
+            return new FailureOperationResponse<ICardItemCollectionOufEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for set '{input.SetCode}'", response.OuterException));
         }
 
         IEnumerable<ICardItemItrEntity> mappedCards = await _setCardItemMapper.Map(response.ResponseData).ConfigureAwait(false);
