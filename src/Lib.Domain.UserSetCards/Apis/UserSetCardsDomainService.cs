@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Commands;
 using Lib.Domain.UserSetCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
@@ -22,6 +23,9 @@ public sealed class UserSetCardsDomainService : IUserSetCardsDomainService
     }
 
     public Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => _queryOperations.GetUserSetCardByUserAndSetAsync(userSetCard);
+
+    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
+        _queryOperations.GetAllUserSetCardsAsync(userSetCards);
 
     public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _commandOperations.AddSetGroupToUserSetCardAsync(entity);
 }

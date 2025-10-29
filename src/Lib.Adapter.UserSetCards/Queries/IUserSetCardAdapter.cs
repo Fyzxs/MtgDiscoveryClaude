@@ -7,5 +7,5 @@ namespace Lib.Adapter.UserSetCards.Queries;
 /// <summary>
 /// Adapter for retrieving user set card data from storage.
 /// </summary>
-internal interface IGetUserSetCardAdapter
+internal interface IUserSetCardAdapter
     : IOperationResponseService<IUserSetCardGetXfrEntity, UserSetCardExtEntity>;

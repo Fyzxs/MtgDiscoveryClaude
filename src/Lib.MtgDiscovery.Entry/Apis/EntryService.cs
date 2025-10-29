@@ -91,5 +91,7 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<UserSetCardOutEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => _userSetCardsQueryEntryService.GetUserSetCardByUserAndSetAsync(userSetCardArgs);
 
+    public Task<IOperationResponse<List<UserSetCardOutEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) => _userSetCardsQueryEntryService.GetAllUserSetCardsAsync(userSetCardsArgs);
+
     public Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args) => _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args);
 }
