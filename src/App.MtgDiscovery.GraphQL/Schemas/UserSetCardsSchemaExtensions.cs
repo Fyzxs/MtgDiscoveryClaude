@@ -13,8 +13,10 @@ internal static class UserSetCardsSchemaExtensions
     {
         return builder
             .AddTypeExtension<UserSetCardsQueryMethods>()
+            .AddTypeExtension<AllUserSetCardsQueryMethods>()
             // Input types
             .AddType<UserSetCardArgEntityInputType>()
+            .AddType<AllUserSetCardsArgEntityInputType>()
             .AddType<AddSetGroupToUserSetCardArgEntityInputType>()
             // Output types
             .AddType<UserSetCardOutEntityType>()
@@ -23,6 +25,8 @@ internal static class UserSetCardsSchemaExtensions
             .AddType<UserSetCardCollectingOutEntityType>()
             // Response union types
             .AddType<UserSetCardResponseModelUnionType>()
-            .AddType<UserSetCardSuccessDataResponseModelType>();
+            .AddType<UserSetCardSuccessDataResponseModelType>()
+            .AddType<AllUserSetCardsResponseModelUnionType>()
+            .AddType<AllUserSetCardsSuccessDataResponseModelType>();
     }
 }

@@ -7,21 +7,21 @@ using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
-namespace Lib.Aggregator.UserSetCards.Queries.GetUserSetCard;
+namespace Lib.Aggregator.UserSetCards.Queries;
 
-internal sealed class GetUserSetCardAggregatorService : IGetUserSetCardAggregatorService
+internal sealed class UserSetCardAggregatorService : IUserSetCardAggregatorService
 {
     private readonly IUserSetCardsAdapterService _userSetCardsAdapterService;
     private readonly IUserSetCardItrToXfrMapper _itrToXfrMapper;
     private readonly IUserSetCardExtToItrMapper _extToItrMapper;
 
-    public GetUserSetCardAggregatorService(ILogger logger) : this(
+    public UserSetCardAggregatorService(ILogger logger) : this(
         new UserSetCardsAdapterService(logger),
         new UserSetCardItrToXfrMapper(),
         new UserSetCardExtToItrMapper())
     { }
 
-    private GetUserSetCardAggregatorService(
+    private UserSetCardAggregatorService(
         IUserSetCardsAdapterService userSetCardsAdapterService,
         IUserSetCardItrToXfrMapper itrToXfrMapper,
         IUserSetCardExtToItrMapper extToItrMapper)
