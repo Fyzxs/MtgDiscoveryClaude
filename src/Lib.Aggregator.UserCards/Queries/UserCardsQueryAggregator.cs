@@ -1,11 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
-using Lib.Aggregator.UserCards.Queries.UserCard;
-using Lib.Aggregator.UserCards.Queries.UserCardsByArtist;
-using Lib.Aggregator.UserCards.Queries.UserCardsByIds;
-using Lib.Aggregator.UserCards.Queries.UserCardsByName;
-using Lib.Aggregator.UserCards.Queries.UserCardsBySet;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
