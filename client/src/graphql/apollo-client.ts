@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 import { logger } from '../utils/logger';
 import { setContext } from '@apollo/client/link/context';
 
@@ -49,8 +50,43 @@ const authLink = setContext(async (_, { headers }) => {
   return { headers };
 });
 
+// Error link to handle and enhance GraphQL errors
+const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach((err) => {
+      const extensionMessage = err.extensions?.message as string | undefined;
+
+      // Detect Cosmos DB emulator errors
+      if (extensionMessage?.toLowerCase().includes('localhost:8081') &&
+          (extensionMessage.toLowerCase().includes('connection') ||
+           extensionMessage.toLowerCase().includes('refused'))) {
+
+        // Enhance the error message
+        err.message = '🔌 Database connection failed. Did you forget to start the Cosmos DB emulator?';
+        logger.error('[GraphQL Error] Cosmos DB emulator not running:', {
+          operation: operation.operationName,
+          originalMessage: extensionMessage
+        });
+      } else {
+        logger.error('[GraphQL Error]:', {
+          message: err.message,
+          operation: operation.operationName,
+          path: err.path,
+          extensions: err.extensions
+        });
+      }
+    });
+  }
+
+  if (networkError) {
+    logger.error('[Network Error]:', networkError);
+  }
+
+  return forward(operation);
+});
+
 export const apolloClient = new ApolloClient({
-  link: ApolloLink.from([authLink, httpLink]),
+  link: ApolloLink.from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
