@@ -44,13 +44,24 @@ export class ErrorBoundary extends Component<Props, State> {
 
     // Enhanced logging with context
     logger.error(`[ErrorBoundary${name ? ` - ${name}` : ''}]:`, error, errorInfo);
-    
+
+    // Check if this is a Cosmos DB emulator error
+    const errorMessage = error.message || '';
+    const errorStack = error.stack || '';
+
+    if (errorMessage.includes('Unexpected Execution Error') ||
+        (errorStack.includes('localhost:8081') &&
+         (errorStack.includes('connection') || errorStack.includes('refused')))) {
+      // Replace the error message for Cosmos DB connection issues
+      error.message = '🔌 Database connection failed. Did you forget to start the Cosmos DB emulator?';
+    }
+
     // Store error info and increment count
-    this.setState((prevState) => ({ 
+    this.setState((prevState) => ({
       errorInfo,
-      errorCount: prevState.errorCount + 1 
+      errorCount: prevState.errorCount + 1
     }));
-    
+
     // Call custom error handler if provided
     if (onError) {
       onError(error, errorInfo);
@@ -63,7 +74,7 @@ export class ErrorBoundary extends Component<Props, State> {
       componentStack: errorInfo.componentStack,
       errorCount: this.state.errorCount + 1
     });
-    
+
     // Auto-retry for network errors after delay
     if (error.message?.includes('fetch') || error.message?.includes('network')) {
       this.resetTimeoutId = setTimeout(() => {

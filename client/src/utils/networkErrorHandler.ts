@@ -199,7 +199,11 @@ export const fetchWithRetry = async <T>(
 
 interface GraphQLError {
   message: string;
-  extensions?: Record<string, unknown>;
+  extensions?: {
+    message?: string;
+    stackTrace?: string;
+    [key: string]: unknown;
+  };
 }
 
 interface ApolloError {
@@ -209,10 +213,65 @@ interface ApolloError {
 }
 
 /**
+ * Detects if error is related to Cosmos DB emulator not running
+ */
+const isCosmosEmulatorError = (graphQLError: GraphQLError): boolean => {
+  const extensionMessage = graphQLError.extensions?.message?.toLowerCase() || '';
+  const errorMessage = graphQLError.message.toLowerCase();
+
+  // Check for connection refused on localhost:8081 (Cosmos DB emulator port)
+  if (extensionMessage.includes('localhost:8081') &&
+      (extensionMessage.includes('connection') ||
+       extensionMessage.includes('refused') ||
+       extensionMessage.includes('could not be made'))) {
+    return true;
+  }
+
+  // Check for other Cosmos DB connection patterns
+  if (extensionMessage.includes('cosmos') &&
+      extensionMessage.includes('connection')) {
+    return true;
+  }
+
+  // Check if the error mentions unexpected execution and has Cosmos stack trace
+  if (errorMessage.includes('unexpected execution') &&
+      graphQLError.extensions?.stackTrace?.includes('Cosmos')) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * Detects if error is a backend service unavailable error
+ */
+const isBackendServiceError = (graphQLError: GraphQLError): boolean => {
+  const extensionMessage = graphQLError.extensions?.message?.toLowerCase() || '';
+
+  // Check for general database connection issues
+  if (extensionMessage.includes('database') &&
+      (extensionMessage.includes('unavailable') ||
+       extensionMessage.includes('connection'))) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
  * GraphQL-specific error handling
  */
 export const handleGraphQLError = (error: ApolloError | Error): NetworkError => {
   const apolloError = error as ApolloError;
+
+  // Check if the error message itself indicates Cosmos DB issue
+  const errorMessage = error.message || '';
+  if (errorMessage.includes('Unexpected Execution Error')) {
+    const networkError = createNetworkError(new Error(errorMessage));
+    networkError.userMessage = '🔌 Database connection failed. Did you forget to start the Cosmos DB emulator?';
+    networkError.isRetryable = false;
+    return networkError;
+  }
 
   // Handle Apollo Client errors
   if (apolloError.networkError) {
@@ -225,6 +284,24 @@ export const handleGraphQLError = (error: ApolloError | Error): NetworkError => 
   // Handle GraphQL errors
   if (apolloError.graphQLErrors?.length && apolloError.graphQLErrors.length > 0) {
     const graphQLError = apolloError.graphQLErrors[0];
+
+    // Check for Cosmos DB emulator errors
+    if (isCosmosEmulatorError(graphQLError)) {
+      const networkError = createNetworkError(new Error(graphQLError.message));
+      networkError.userMessage = '🔌 Database connection failed. Did you forget to start the Cosmos DB emulator?';
+      networkError.isRetryable = false;
+      return networkError;
+    }
+
+    // Check for backend service errors
+    if (isBackendServiceError(graphQLError)) {
+      const networkError = createNetworkError(new Error(graphQLError.message));
+      networkError.userMessage = 'The database service is currently unavailable. Please check your backend services.';
+      networkError.isRetryable = false;
+      return networkError;
+    }
+
+    // Generic GraphQL error
     const networkError = createNetworkError(new Error(graphQLError.message));
     networkError.userMessage = 'Failed to load data. Please try refreshing the page.';
     networkError.isRetryable = false; // GraphQL errors are typically not retryable
@@ -232,8 +309,8 @@ export const handleGraphQLError = (error: ApolloError | Error): NetworkError => 
   }
 
   // Generic error
-  const errorMessage = apolloError.message || (error as Error).message || 'GraphQL query failed';
-  return createNetworkError(new Error(errorMessage));
+  const errorMsg = apolloError.message || (error as Error).message || 'GraphQL query failed';
+  return createNetworkError(new Error(errorMsg));
 };
 
 /**
