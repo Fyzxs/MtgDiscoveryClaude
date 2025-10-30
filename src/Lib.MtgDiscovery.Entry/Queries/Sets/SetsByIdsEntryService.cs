@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Queries.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Sets;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -18,24 +19,28 @@ internal sealed class SetsByIdsEntryService : ISetsByIdsEntryService
     private readonly ISetIdsArgEntityValidator _setIdsArgEntityValidator;
     private readonly ISetIdsArgToItrMapper _setIdsArgToItrMapper;
     private readonly ICollectionSetItemOufToOutMapper _setItemOufToOutMapper;
+    private readonly IUserSetEnrichment _userSetEnrichment;
 
     public SetsByIdsEntryService(ILogger logger) : this(
         new SetDomainService(logger),
         new SetIdsArgEntityValidatorContainer(),
         new SetIdsArgToItrMapper(),
-        new CollectionSetItemOufToOutMapper())
+        new CollectionSetItemOufToOutMapper(),
+        new UserSetEnrichment(logger))
     { }
 
     private SetsByIdsEntryService(
         ISetDomainService setDomainService,
         ISetIdsArgEntityValidator setIdsArgEntityValidator,
         ISetIdsArgToItrMapper setIdsArgToItrMapper,
-        ICollectionSetItemOufToOutMapper setItemOufToOutMapper)
+        ICollectionSetItemOufToOutMapper setItemOufToOutMapper,
+        IUserSetEnrichment userSetEnrichment)
     {
         _setDomainService = setDomainService;
         _setIdsArgEntityValidator = setIdsArgEntityValidator;
         _setIdsArgToItrMapper = setIdsArgToItrMapper;
         _setItemOufToOutMapper = setItemOufToOutMapper;
+        _userSetEnrichment = userSetEnrichment;
     }
 
     public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(ISetIdsArgEntity args)
@@ -48,6 +53,13 @@ internal sealed class SetsByIdsEntryService : ISetsByIdsEntryService
         if (opResponse.IsFailure) return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
 
         List<SetItemOutEntity> outEntities = await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        // Enrich with user set card information if userId is present
+        if (args.HasUserId)
+        {
+            await _userSetEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+        }
+
         return new SuccessOperationResponse<List<SetItemOutEntity>>(outEntities);
     }
 }
