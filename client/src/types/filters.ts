@@ -15,6 +15,8 @@ export interface SortOption {
   label: string;
   /** Optional condition to show this option */
   condition?: boolean;
+  /** Whether this is a collector-only option (applies special styling) */
+  isCollectorOption?: boolean;
 }
 
 /**
@@ -102,6 +104,7 @@ export interface CollectorFiltersConfig {
   collectionCounts?: MultiSelectConfig;
   signedCards?: MultiSelectConfig;
   finishes?: MultiSelectConfig;
+  collectionStatus?: MultiSelectConfig;
 }
 
 /**
