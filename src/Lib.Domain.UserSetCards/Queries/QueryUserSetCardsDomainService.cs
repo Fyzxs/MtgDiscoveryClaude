@@ -19,9 +19,9 @@ internal sealed class QueryUserSetCardsDomainService : IUserSetCardsQueryDomainS
     private QueryUserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) =>
         _userSetCardsAggregatorService = userSetCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
-        await _userSetCardsAggregatorService.GetUserSetCardByUserAndSetAsync(userSetCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
+        await _userSetCardsAggregatorService.UserSetCardByUserAndSetAsync(userSetCard).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
-        await _userSetCardsAggregatorService.GetAllUserSetCardsAsync(userSetCards).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
+        await _userSetCardsAggregatorService.AllUserSetCardsAsync(userSetCards).ConfigureAwait(false);
 }

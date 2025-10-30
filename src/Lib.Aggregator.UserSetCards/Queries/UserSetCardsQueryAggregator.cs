@@ -26,9 +26,9 @@ internal sealed class UserSetCardsQueryAggregator : IUserSetCardsQueryAggregator
         _getAllUserSetCardsOperations = getAllUserSetCardsOperations;
     }
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
+    public Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
         _getUserSetCardOperations.Execute(userSetCard);
 
-    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
+    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
         _getAllUserSetCardsOperations.Execute(userSetCards);
 }

@@ -16,12 +16,12 @@ public interface IUserSetCardsQueryEntryService
     /// </summary>
     /// <param name="userSetCardArgs">Arguments containing the user ID and set ID to query</param>
     /// <returns>User set card collection summary wrapped in an operation response</returns>
-    Task<IOperationResponse<UserSetCardOutEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs);
+    Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs);
 
     /// <summary>
     /// Retrieves all user set card collection summaries for a specific user.
     /// </summary>
     /// <param name="userSetCardsArgs">Arguments containing the user ID to query</param>
     /// <returns>Collection of user set card summaries wrapped in an operation response</returns>
-    Task<IOperationResponse<List<UserSetCardOutEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs);
+    Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs);
 }

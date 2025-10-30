@@ -89,9 +89,9 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => _userCardsQueryEntryService.UserCardsByIdsAsync(cardsArgs);
 
-    public Task<IOperationResponse<UserSetCardOutEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => _userSetCardsQueryEntryService.GetUserSetCardByUserAndSetAsync(userSetCardArgs);
+    public Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => _userSetCardsQueryEntryService.UserSetCardByUserAndSetAsync(userSetCardArgs);
 
-    public Task<IOperationResponse<List<UserSetCardOutEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) => _userSetCardsQueryEntryService.GetAllUserSetCardsAsync(userSetCardsArgs);
+    public Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) => _userSetCardsQueryEntryService.AllUserSetCardsAsync(userSetCardsArgs);
 
     public Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args) => _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args);
 }

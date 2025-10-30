@@ -26,9 +26,9 @@ internal sealed class UserSetCardsQueryEntryService : IUserSetCardsQueryEntrySer
         _allUserSetCardsEntryService = allUserSetCardsEntryService;
     }
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) =>
+    public async Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) =>
         await _userSetCardEntryService.Execute(userSetCardArgs).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) =>
+    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) =>
         await _allUserSetCardsEntryService.Execute(userSetCardsArgs).ConfigureAwait(false);
 }
