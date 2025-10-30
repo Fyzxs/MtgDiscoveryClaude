@@ -55,7 +55,7 @@ internal sealed class AllUserSetCardsEntryService : IAllUserSetCardsEntryService
             await _argToItrMapper.Map(userSetCardsArgs).ConfigureAwait(false);
 
         IOperationResponse<IEnumerable<IUserSetCardOufEntity>> opResponse =
-            await _domainService.GetAllUserSetCardsAsync(itrEntity).ConfigureAwait(false);
+            await _domainService.AllUserSetCardsAsync(itrEntity).ConfigureAwait(false);
 
         if (opResponse.IsFailure)
         {
