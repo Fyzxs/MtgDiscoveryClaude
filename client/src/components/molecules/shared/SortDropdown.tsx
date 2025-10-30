@@ -64,7 +64,30 @@ const SortDropdownComponent: React.FC<SortDropdownProps> = ({
           }
 
           return (
-            <MenuItem key={option.value} value={option.value}>
+            <MenuItem
+              key={option.value}
+              value={option.value}
+              sx={option.isCollectorOption ? {
+                bgcolor: theme => theme.palette.mode === 'dark'
+                  ? theme.palette.grey[900]
+                  : theme.palette.grey[100],
+                '&:hover': {
+                  bgcolor: theme => theme.palette.mode === 'dark'
+                    ? theme.palette.grey[800]
+                    : theme.palette.grey[200],
+                },
+                '&.Mui-selected': {
+                  bgcolor: theme => theme.palette.mode === 'dark'
+                    ? theme.palette.grey[800]
+                    : theme.palette.grey[200],
+                  '&:hover': {
+                    bgcolor: theme => theme.palette.mode === 'dark'
+                      ? theme.palette.grey[700]
+                      : theme.palette.grey[300],
+                  }
+                }
+              } : undefined}
+            >
               {option.label}
             </MenuItem>
           );

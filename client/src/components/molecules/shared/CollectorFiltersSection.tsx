@@ -23,11 +23,12 @@ const CollectorFiltersSectionComponent: React.FC<CollectorFiltersSectionProps> =
   const {
     collectionCounts,
     signedCards,
-    finishes
+    finishes,
+    collectionStatus
   } = config;
 
   // If no collector filters are configured, don't render anything
-  if (!collectionCounts && !signedCards && !finishes) {
+  if (!collectionCounts && !signedCards && !finishes && !collectionStatus) {
     return null;
   }
 
@@ -114,6 +115,23 @@ const CollectorFiltersSectionComponent: React.FC<CollectorFiltersSectionProps> =
               fullWidth={finishes.fullWidth !== false}
               loading={finishes.loading}
               disabled={finishes.disabled}
+            />
+          </Grid>
+        )}
+
+        {/* Collection Status Filter */}
+        {collectionStatus && (
+          <Grid size={{ xs: 12, sm: 'auto' }}>
+            <MultiSelectDropdown
+              value={collectionStatus.value}
+              onChange={collectionStatus.onChange}
+              options={collectionStatus.options}
+              label={collectionStatus.label}
+              placeholder={collectionStatus.placeholder}
+              minWidth={collectionStatus.minWidth || 180}
+              fullWidth={collectionStatus.fullWidth !== false}
+              loading={collectionStatus.loading}
+              disabled={collectionStatus.disabled}
             />
           </Grid>
         )}

@@ -1,12 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { logger } from '../../utils/logger';
 import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../atoms';
 import { useTheme } from '../atoms';
 import type { MtgSet } from '../../types/set';
-import { useSetCollectionProgress, type SetCollectionProgress, type CollectionGroup } from '../../hooks/useSetCollectionProgress';
 import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { ChevronLeftIcon } from '../atoms';
+
+// Collection group types
+interface GroupFinishProgress {
+  finishType: 'nonFoil' | 'foil' | 'etched';
+  collected: number;
+  total: number;
+  percentage: number;
+  emoji: string;
+}
+
+interface CollectionGroup {
+  setGroupId: string;
+  displayName: string;
+  isCollecting: boolean;
+  count: number;
+  finishes: GroupFinishProgress[];
+}
 
 // Extended type for display groups with sorting index
 interface DisplayCollectionGroup extends CollectionGroup {
@@ -28,35 +44,64 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
   availableGroupIds,
   onGroupToggled
 }) => {
-  const [collectionProgress, setCollectionProgress] = useState<SetCollectionProgress | undefined>(undefined);
   const theme = useTheme();
   const { hasCollector } = useCollectorParam();
-  const { getCollectionProgress } = useSetCollectionProgress();
   const { toggleSetGroup } = useSetGroupToggle();
 
-  useEffect(() => {
-    if (hasCollector === false) {
-      return;
+  // Calculate collection progress from embedded userCollection data
+  const collectionProgress = useMemo(() => {
+    if (!hasCollector || !set.userCollection) {
+      return undefined;
     }
 
-    let cancelled = false;
+    // Build detailed group information
+    const groups: CollectionGroup[] = set.userCollection.collecting.map(collectingGroup => {
+      const groupData = set.userCollection?.groups.find(g => g.rarity === collectingGroup.setGroupId);
+      const grouping = set.groupings?.find(g => g.id === collectingGroup.setGroupId);
 
-    getCollectionProgress(set)
-      .then(progress => {
-        if (cancelled === false) {
-          setCollectionProgress(progress);
-        }
-      })
-      .catch(error => {
-        if (cancelled === false) {
-          logger.error('Error fetching collection progress:', error);
-        }
-      });
+      const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
+      const foilCollected = groupData?.group.foil.cards.length || 0;
+      const etchedCollected = groupData?.group.etched.cards.length || 0;
 
-    return () => {
-      cancelled = true;
-    };
-  }, [hasCollector, set.id, getCollectionProgress, set]);
+      // TODO: Get actual totals per finish from set metadata
+      // For now, distribute the count evenly across finishes
+      const totalPerFinish = Math.ceil(collectingGroup.count / 3);
+
+      const finishes: GroupFinishProgress[] = [
+        {
+          finishType: 'nonFoil',
+          collected: nonFoilCollected,
+          total: totalPerFinish,
+          percentage: totalPerFinish > 0 ? (nonFoilCollected / totalPerFinish) * 100 : 0,
+          emoji: '🔹'
+        },
+        {
+          finishType: 'foil',
+          collected: foilCollected,
+          total: totalPerFinish,
+          percentage: totalPerFinish > 0 ? (foilCollected / totalPerFinish) * 100 : 0,
+          emoji: '✨'
+        },
+        {
+          finishType: 'etched',
+          collected: etchedCollected,
+          total: totalPerFinish,
+          percentage: totalPerFinish > 0 ? (etchedCollected / totalPerFinish) * 100 : 0,
+          emoji: '⚡'
+        }
+      ];
+
+      return {
+        setGroupId: collectingGroup.setGroupId,
+        displayName: grouping?.displayName || collectingGroup.setGroupId.charAt(0).toUpperCase() + collectingGroup.setGroupId.slice(1),
+        isCollecting: collectingGroup.collecting,
+        count: collectingGroup.count,
+        finishes
+      };
+    });
+
+    return { groups };
+  }, [hasCollector, set.userCollection, set.groupings]);
 
   const handleGroupToggle = async (e: React.ChangeEvent<HTMLInputElement>, groupId: string) => {
     const isCollecting = e.target.checked;
@@ -66,11 +111,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
     const count = grouping?.cardCount || 0;
 
     // Mutation will handle refetchQueries and update the cache
-    await toggleSetGroup(set.id, groupId, isCollecting, count);
-
-    // Get updated data from cache (mutation already refetched)
-    const updatedProgress = await getCollectionProgress(set);
-    setCollectionProgress(updatedProgress);
+    await toggleSetGroup(set.id, set.code, groupId, isCollecting, count);
 
     // Notify parent that group was toggled (to refresh set card)
     onGroupToggled?.();
