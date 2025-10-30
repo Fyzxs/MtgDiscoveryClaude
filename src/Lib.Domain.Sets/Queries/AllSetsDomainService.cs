@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Apis;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.Sets.Queries;
 
@@ -13,7 +14,10 @@ internal sealed class AllSetsDomainService : IAllSetsDomainService
 {
     private readonly ISetAggregatorService _setAggregatorService;
 
-    public AllSetsDomainService(ISetAggregatorService setAggregatorService) => _setAggregatorService = setAggregatorService;
+    public AllSetsDomainService(ILogger logger) : this(new SetAggregatorService(logger))
+    { }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(INoArgsItrEntity input) => await _setAggregatorService.AllSetsAsync(input).ConfigureAwait(false);
+    private AllSetsDomainService(ISetAggregatorService setAggregatorService) => _setAggregatorService = setAggregatorService;
+
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(IAllSetsItrEntity input) => await _setAggregatorService.AllSetsAsync(input).ConfigureAwait(false);
 }

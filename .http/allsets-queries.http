@@ -1,17 +1,23 @@
 ###
+# All Sets Query Tests
+# Queries for all MTG sets in the database
+# Can optionally include user collection data by providing userId
+
+###
 # Variables
 # @name variables
-@baseUrl = {{$dotenv BASE_URL}}
-@graphqlEndpoint = {{baseUrl}}/graphql
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
 
 
-### Get All Sets
+### Get All Sets (without user data)
 # @ref variables
-POST {{graphqlEndpoint}}
+# Returns all sets without user collection information
+POST {{gqlEndpoint}}
 Content-Type: application/json
 
-query GetAllSets {
-  allSets {
+query GetAllSets($args: AllSetsArgEntityInput!) {
+  allSets(args: $args) {
     __typename
     ... on SetsSuccessResponse {
       data {
@@ -41,4 +47,140 @@ query GetAllSets {
   }
 }
 
-{}
+{
+  "args": {}
+}
+
+
+### Get All Sets with User Collection Data
+# @ref variables
+# Returns all sets enriched with user's collection statistics when userId is provided
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetAllSetsWithUserData($args: AllSetsArgEntityInput!) {
+  allSets(args: $args) {
+    __typename
+    ... on SetsSuccessResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+        userCollection {
+          totalCards
+          uniqueCards
+          collecting {
+            setGroupId
+            collecting
+            count
+          }
+          groups {
+            rarity
+            group {
+              nonFoil {
+                cards
+              }
+              foil {
+                cards
+              }
+              etched {
+                cards
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+
+### Get All Sets with User Collection Data
+# @ref variables
+# Returns all sets enriched with user's collection statistics when userId is provided
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetAllSetsWithUserData($args: AllSetsArgEntityInput!) {
+  allSets(args: $args) {
+    __typename
+    ... on SetsSuccessResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+        userCollection {
+          totalCards
+          uniqueCards
+          collecting {
+            setGroupId
+            collecting
+            count
+          }
+          groups {
+            rarity
+            group {
+              nonFoil {
+                cards
+              }
+              foil {
+                cards
+              }
+              etched {
+                cards
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+  }
+}

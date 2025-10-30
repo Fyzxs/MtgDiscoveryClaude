@@ -19,5 +19,5 @@ public sealed class SetDomainService : ISetDomainService
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _setDomainOperations.SetsByCodeAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(INoArgsItrEntity noArgs) => await _setDomainOperations.AllSetsAsync(noArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets) => await _setDomainOperations.AllSetsAsync(allSets).ConfigureAwait(false);
 }

@@ -5,4 +5,4 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface ICollectionSetItemOufToOutMapper : ICreateMapper<ISetItemCollectionOufEntity, List<ScryfallSetOutEntity>>;
+internal interface ICollectionSetItemOufToOutMapper : ICreateMapper<ISetItemCollectionOufEntity, List<SetItemOutEntity>>;

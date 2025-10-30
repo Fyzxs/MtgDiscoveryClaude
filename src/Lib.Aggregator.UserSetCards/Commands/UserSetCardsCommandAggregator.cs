@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Apis;
-using Lib.Aggregator.UserSetCards.Commands.AddSetGroup;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

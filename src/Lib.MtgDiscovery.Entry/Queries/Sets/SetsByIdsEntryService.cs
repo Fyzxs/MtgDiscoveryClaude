@@ -38,16 +38,16 @@ internal sealed class SetsByIdsEntryService : ISetsByIdsEntryService
         _setItemOufToOutMapper = setItemOufToOutMapper;
     }
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> Execute(ISetIdsArgEntity args)
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(ISetIdsArgEntity args)
     {
         IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> validatorResult = await _setIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<ScryfallSetOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<SetItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ISetIdsItrEntity itrEntity = await _setIdsArgToItrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<List<ScryfallSetOutEntity>>(opResponse.OuterException);
+        if (opResponse.IsFailure) return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
 
-        List<ScryfallSetOutEntity> outEntities = await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<List<ScryfallSetOutEntity>>(outEntities);
+        List<SetItemOutEntity> outEntities = await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<List<SetItemOutEntity>>(outEntities);
     }
 }

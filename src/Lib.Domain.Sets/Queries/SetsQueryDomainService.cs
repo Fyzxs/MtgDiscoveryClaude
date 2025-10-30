@@ -13,15 +13,20 @@ internal sealed class SetsQueryDomainService : ISetsQueryDomainService
     private readonly ISetsByCodeDomainService _setsByCodeService;
     private readonly IAllSetsDomainService _allSetsService;
 
-    public SetsQueryDomainService(ILogger logger)
-        : this(new SetAggregatorService(logger))
+    public SetsQueryDomainService(ILogger logger) : this(
+        new SetsDomainService(logger),
+        new SetsByCodeDomainService(logger),
+        new AllSetsDomainService(logger))
     { }
 
-    private SetsQueryDomainService(ISetAggregatorService setAggregatorService)
+    private SetsQueryDomainService(
+        ISetsDomainService setsService,
+        ISetsByCodeDomainService setsByCodeService,
+        IAllSetsDomainService allSetsService)
     {
-        _setsService = new SetsDomainService(setAggregatorService);
-        _setsByCodeService = new SetsByCodeDomainService(setAggregatorService);
-        _allSetsService = new AllSetsDomainService(setAggregatorService);
+        _setsService = setsService;
+        _setsByCodeService = setsByCodeService;
+        _allSetsService = allSetsService;
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds)
@@ -30,6 +35,6 @@ internal sealed class SetsQueryDomainService : ISetsQueryDomainService
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes)
         => await _setsByCodeService.Execute(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(INoArgsItrEntity noArgs)
-        => await _allSetsService.Execute(noArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets)
+        => await _allSetsService.Execute(allSets).ConfigureAwait(false);
 }
