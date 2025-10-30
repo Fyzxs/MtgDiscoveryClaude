@@ -15,10 +15,8 @@ internal sealed class UserCardsCommandDomainService : IUserCardsCommandDomainSer
 {
     private readonly IAddUserCardDomainService _addUserCardService;
 
-    public UserCardsCommandDomainService(ILogger logger)
-        : this(new AddUserCardDomainService(new UserCardsAggregatorService(logger)))
-    {
-    }
+    public UserCardsCommandDomainService(ILogger logger) : this(new AddUserCardDomainService(logger))
+    { }
 
     private UserCardsCommandDomainService(IAddUserCardDomainService addUserCardService) => _addUserCardService = addUserCardService;
 

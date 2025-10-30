@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.UserCards.Queries;
 
@@ -14,7 +15,10 @@ internal sealed class UserCardsByArtistDomainService : IUserCardsByArtistDomainS
 {
     private readonly IUserCardsQueryAggregatorService _userCardsAggregatorService;
 
-    public UserCardsByArtistDomainService(IUserCardsQueryAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
+    public UserCardsByArtistDomainService(ILogger logger) : this(new UserCardsAggregatorService(logger))
+    { }
+
+    private UserCardsByArtistDomainService(IUserCardsQueryAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> Execute(IUserCardsArtistItrEntity input) => await _userCardsAggregatorService.UserCardsByArtistAsync(input).ConfigureAwait(false);
 }
