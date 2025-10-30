@@ -38,5 +38,5 @@ public sealed class SetAdapterService : ISetAdapterService
 
     public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setQueryAdapter.SetsByCodesAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(INoArgsXfrEntity noArgs) => await _setQueryAdapter.AllSetsAsync(noArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets) => await _setQueryAdapter.AllSetsAsync(allSets).ConfigureAwait(false);
 }
