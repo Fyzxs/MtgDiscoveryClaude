@@ -4,6 +4,6 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface ISetItemOufToOutMapper : ICreateMapper<ISetItemItrEntity, ScryfallSetOutEntity>
+internal interface ISetItemOufToOutMapper : ICreateMapper<ISetItemItrEntity, SetItemOutEntity>
 {
 }

@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.Cards.Queries;
 
@@ -13,7 +14,10 @@ internal sealed class CardsBySetCodeDomainService : ICardsBySetCodeDomainService
 {
     private readonly ICardAggregatorService _cardAggregatorService;
 
-    public CardsBySetCodeDomainService(ICardAggregatorService cardAggregatorService) => _cardAggregatorService = cardAggregatorService;
+    public CardsBySetCodeDomainService(ILogger logger) : this(new CardAggregatorService(logger))
+    { }
+
+    private CardsBySetCodeDomainService(ICardAggregatorService cardAggregatorService) => _cardAggregatorService = cardAggregatorService;
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ISetCodeItrEntity input) => await _cardAggregatorService.CardsBySetCodeAsync(input).ConfigureAwait(false);
 }

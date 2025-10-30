@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -16,11 +17,26 @@ namespace Lib.Adapter.UserSetCards.Queries;
 /// </summary>
 internal sealed class UserSetCardsQueryAdapter : IUserSetCardsQueryAdapter
 {
-    private readonly IGetUserSetCardAdapter _getUserSetCardAdapter;
+    private readonly IUserSetCardAdapter _getUserSetCardAdapter;
+    private readonly IAllUserSetCardsAdapter _getAllUserSetCardsAdapter;
 
-    public UserSetCardsQueryAdapter(ILogger logger) : this(new GetUserSetCardAdapter(logger)) { }
+    public UserSetCardsQueryAdapter(ILogger logger) : this(
+        new UserSetCardAdapter(logger),
+        new AllUserSetCardsAdapter(logger))
+    {
+    }
 
-    private UserSetCardsQueryAdapter(IGetUserSetCardAdapter getUserSetCardAdapter) => _getUserSetCardAdapter = getUserSetCardAdapter;
+    private UserSetCardsQueryAdapter(
+        IUserSetCardAdapter getUserSetCardAdapter,
+        IAllUserSetCardsAdapter getAllUserSetCardsAdapter)
+    {
+        _getUserSetCardAdapter = getUserSetCardAdapter;
+        _getAllUserSetCardsAdapter = getAllUserSetCardsAdapter;
+    }
 
-    public Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) => _getUserSetCardAdapter.Execute(readParams);
+    public Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) =>
+        _getUserSetCardAdapter.Execute(readParams);
+
+    public Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams) =>
+        _getAllUserSetCardsAdapter.Execute(queryParams);
 }

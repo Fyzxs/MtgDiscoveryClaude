@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Lib.Aggregator.Artists.Apis;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.Artists.Queries;
 
@@ -13,7 +14,10 @@ internal sealed class CardsByArtistNameDomainService : ICardsByArtistNameDomainS
 {
     private readonly IArtistAggregatorService _artistAggregatorService;
 
-    public CardsByArtistNameDomainService(IArtistAggregatorService artistAggregatorService) => _artistAggregatorService = artistAggregatorService;
+    public CardsByArtistNameDomainService(ILogger logger) : this(new ArtistAggregatorService(logger))
+    { }
+
+    private CardsByArtistNameDomainService(IArtistAggregatorService artistAggregatorService) => _artistAggregatorService = artistAggregatorService;
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(IArtistNameItrEntity input) => await _artistAggregatorService.CardsByArtistNameAsync(input).ConfigureAwait(false);
 }

@@ -20,19 +20,26 @@ internal sealed class UserCardsQueryDomainService : IUserCardsQueryDomainService
     private readonly IUserCardsByArtistDomainService _userCardsByArtistService;
     private readonly IUserCardsByNameDomainService _userCardsByNameService;
 
-    public UserCardsQueryDomainService(ILogger logger)
-        : this(
-            new UserCardsAggregatorService(logger))
-    {
-    }
+    public UserCardsQueryDomainService(ILogger logger) : this(
+        new UserCardDomainService(logger),
+        new UserCardsBySetDomainService(logger),
+        new UserCardsByIdsDomainService(logger),
+        new UserCardsByArtistDomainService(logger),
+        new UserCardsByNameDomainService(logger))
+    { }
 
-    private UserCardsQueryDomainService(IUserCardsQueryAggregatorService userCardsAggregatorService)
+    private UserCardsQueryDomainService(
+        IUserCardDomainService userCardService,
+        IUserCardsBySetDomainService userCardsBySetService,
+        IUserCardsByIdsDomainService userCardsByIdsService,
+        IUserCardsByArtistDomainService userCardsByArtistService,
+        IUserCardsByNameDomainService userCardsByNameService)
     {
-        _userCardService = new UserCardDomainService(userCardsAggregatorService);
-        _userCardsBySetService = new UserCardsBySetDomainService(userCardsAggregatorService);
-        _userCardsByIdsService = new UserCardsByIdsDomainService(userCardsAggregatorService);
-        _userCardsByArtistService = new UserCardsByArtistDomainService(userCardsAggregatorService);
-        _userCardsByNameService = new UserCardsByNameDomainService(userCardsAggregatorService);
+        _userCardService = userCardService;
+        _userCardsBySetService = userCardsBySetService;
+        _userCardsByIdsService = userCardsByIdsService;
+        _userCardsByArtistService = userCardsByArtistService;
+        _userCardsByNameService = userCardsByNameService;
     }
 
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => await _userCardService.Execute(userCard).ConfigureAwait(false);

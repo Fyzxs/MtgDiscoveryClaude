@@ -24,4 +24,7 @@ public sealed class UserSetCardsAdapterException : OperationException
     public UserSetCardsAdapterException() : base(HttpStatusCode.InternalServerError, "UserSetCards adapter operation failed")
     {
     }
+    public UserSetCardsAdapterException(string message, Exception innerException) : base(HttpStatusCode.InternalServerError, message, innerException)
+    {
+    }
 }

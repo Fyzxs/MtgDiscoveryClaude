@@ -30,5 +30,5 @@ public interface ISetQueryAdapter
 {
     Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds);
     Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes);
-    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(INoArgsXfrEntity noArgs);
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets);
 }

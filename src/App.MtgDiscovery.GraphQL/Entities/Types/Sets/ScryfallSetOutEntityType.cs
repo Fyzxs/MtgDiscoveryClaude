@@ -3,9 +3,9 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 
-internal sealed class ScryfallSetOutEntityType : ObjectType<ScryfallSetOutEntity>
+internal sealed class ScryfallSetOutEntityType : ObjectType<SetItemOutEntity>
 {
-    protected override void Configure(IObjectTypeDescriptor<ScryfallSetOutEntity> descriptor)
+    protected override void Configure(IObjectTypeDescriptor<SetItemOutEntity> descriptor)
     {
         descriptor.Name("Set")
             .Description("Represents a Magic: The Gathering set from Scryfall");
@@ -78,5 +78,8 @@ internal sealed class ScryfallSetOutEntityType : ObjectType<ScryfallSetOutEntity
             .Name("groupings")
             .Type<ListType<SetGroupingOutEntityType>>()
             .Description("Card groupings as displayed on the Scryfall set page");
+        descriptor.Field(f => f.UserCollection)
+            .Name("userCollection")
+            .Description("User-specific collection information for this set (populated when userId provided)");
     }
 }

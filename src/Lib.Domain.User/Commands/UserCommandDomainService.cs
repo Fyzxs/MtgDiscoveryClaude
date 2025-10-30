@@ -11,11 +11,10 @@ internal sealed class UserCommandDomainService : IUserCommandDomainService
 {
     private readonly IRegisterUserDomainService _registerUserService;
 
-    public UserCommandDomainService(ILogger logger)
-        : this(new UserAggregatorService(logger))
+    public UserCommandDomainService(ILogger logger) : this(new RegisterUserDomainService(logger))
     { }
 
-    private UserCommandDomainService(IUserAggregatorService userAggregatorService) => _registerUserService = new RegisterUserDomainService(userAggregatorService);
+    private UserCommandDomainService(IRegisterUserDomainService registerUserService) => _registerUserService = registerUserService;
 
     public async Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
         => await _registerUserService.Execute(userInfo).ConfigureAwait(false);

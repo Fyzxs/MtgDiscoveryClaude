@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Apis;
-using Lib.Aggregator.Sets.Queries.AllSets;
-using Lib.Aggregator.Sets.Queries.SetsByCode;
-using Lib.Aggregator.Sets.Queries.SetsById;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -35,5 +32,5 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
 
     public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args) => _setsByCodeOperations.Execute(args);
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(INoArgsItrEntity noArgs) => _allSetsOperations.Execute(noArgs);
+    public Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets) => _allSetsOperations.Execute(allSets);
 }
