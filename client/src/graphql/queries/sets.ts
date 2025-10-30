@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_ALL_SETS = gql`
-  query GetAllSets {
-    allSets {
+  query GetAllSets($args: AllSetsArgEntityInput) {
+    allSets(args: $args) {
       __typename
       ... on SetsSuccessResponse {
         data {
@@ -22,6 +22,29 @@ export const GET_ALL_SETS = gql`
           foilOnly
           block
           iconSvgUri
+          userCollection {
+            totalCards
+            uniqueCards
+            collecting {
+              setGroupId
+              collecting
+              count
+            }
+            groups {
+              rarity
+              group {
+                nonFoil {
+                  cards
+                }
+                foil {
+                  cards
+                }
+                etched {
+                  cards
+                }
+              }
+            }
+          }
         }
       }
       ... on FailureResponse {

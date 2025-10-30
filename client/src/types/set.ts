@@ -34,6 +34,7 @@ export interface MtgSet {
   block?: string;
   iconSvgUri: string;
   groupings?: SetGrouping[];
+  userCollection?: import('./collection').UserSetCardCollection;
 }
 
 export interface SetContext {
