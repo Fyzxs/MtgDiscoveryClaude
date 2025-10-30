@@ -5,11 +5,11 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal sealed class NoArgsArgToItrMapper : INoArgsArgToItrMapper
+internal sealed class AllSetsArgToItrMapper : IAllSetsArgToItrMapper
 {
-    public Task<INoArgsItrEntity> Map(INoArgsArgEntity source)
+    public Task<IAllSetsItrEntity> Map(IAllSetsArgEntity source)
     {
-        INoArgsItrEntity result = new NoArgsItrEntity();
+        IAllSetsItrEntity result = new AllSetsItrEntity();
         return Task.FromResult(result);
     }
 }

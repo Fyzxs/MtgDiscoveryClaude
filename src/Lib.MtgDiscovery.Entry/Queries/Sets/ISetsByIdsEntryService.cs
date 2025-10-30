@@ -5,6 +5,6 @@ using Lib.Shared.Invocation.Services;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Sets;
 
-internal interface ISetsByIdsEntryService : IOperationResponseService<ISetIdsArgEntity, List<ScryfallSetOutEntity>>
+internal interface ISetsByIdsEntryService : IOperationResponseService<ISetIdsArgEntity, List<SetItemOutEntity>>
 {
 }

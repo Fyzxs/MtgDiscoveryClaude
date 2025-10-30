@@ -8,9 +8,9 @@ namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
 internal sealed class SetItemOufToOutMapper : ISetItemOufToOutMapper
 {
-    public Task<ScryfallSetOutEntity> Map(ISetItemItrEntity setItem)
+    public Task<SetItemOutEntity> Map(ISetItemItrEntity setItem)
     {
-        ScryfallSetOutEntity result = new()
+        SetItemOutEntity result = new()
         {
             Id = setItem.Id,
             Code = setItem.Code,
@@ -29,7 +29,8 @@ internal sealed class SetItemOufToOutMapper : ISetItemOufToOutMapper
             Block = setItem.Block,
             IconSvgUri = setItem.IconSvgUri,
             PrintedSize = setItem.PrintedSize,
-            Groupings = SetGroupingOutEntities(setItem)
+            Groupings = SetGroupingOutEntities(setItem),
+            UserCollection = null
         };
 
         return Task.FromResult(result);

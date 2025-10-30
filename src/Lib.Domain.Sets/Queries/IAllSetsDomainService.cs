@@ -8,4 +8,4 @@ namespace Lib.Domain.Sets.Queries;
 /// Implements single-method delegation pattern with Execute method.
 /// </summary>
 internal interface IAllSetsDomainService
-    : IOperationResponseService<INoArgsItrEntity, ISetItemCollectionOufEntity>;
+    : IOperationResponseService<IAllSetsItrEntity, ISetItemCollectionOufEntity>;

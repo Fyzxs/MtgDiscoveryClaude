@@ -15,9 +15,9 @@ internal sealed class CollectionSetItemOufToOutMapper : ICollectionSetItemOufToO
 
     private CollectionSetItemOufToOutMapper(ISetItemOufToOutMapper mapper) => _mapper = mapper;
 
-    public async Task<List<ScryfallSetOutEntity>> Map(ISetItemCollectionOufEntity collection)
+    public async Task<List<SetItemOutEntity>> Map(ISetItemCollectionOufEntity collection)
     {
-        ScryfallSetOutEntity[] mappedSets = await Task.WhenAll(
+        SetItemOutEntity[] mappedSets = await Task.WhenAll(
             collection.Data.Select(setItem => _mapper.Map(setItem))
         ).ConfigureAwait(false);
 

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.MtgDiscovery.Entry.Queries.Sets;
+using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -31,9 +31,9 @@ internal sealed class SetEntryService : ISetEntryService
         _allSets = allSets;
     }
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity args) => await _setsByIds.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity args) => await _setsByIds.Execute(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity args) => await _setsByCode.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity args) => await _setsByCode.Execute(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> AllSetsAsync() => await _allSets.Execute(new NoArgsEntity()).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> AllSetsAsync(IAllSetsArgEntity args) => await _allSets.Execute(args).ConfigureAwait(false);
 }

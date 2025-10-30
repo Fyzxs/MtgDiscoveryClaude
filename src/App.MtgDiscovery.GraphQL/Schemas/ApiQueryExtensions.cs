@@ -21,7 +21,6 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
             .AddTypeExtension<UserCardsQueryMethods>()
-            .AddTypeExtension<UserSetCardsQueryMethods>()
             .AddTypeExtension<UserInfoQueryMethods>()
             // Input types for queries
             .AddType<UserCardsBySetArgEntityInputType>()
@@ -46,14 +45,6 @@ internal static class ApiQueryExtensions
             .AddType<UserCardsCollectionSuccessDataResponseModelType>()
             .AddType<UserCardCollectionOutEntityType>()
             .AddType<CollectedItemOutEntityType>()
-            // UserSetCards query types
-            .AddType<UserSetCardArgEntityInputType>()
-            .AddType<UserSetCardResponseModelUnionType>()
-            .AddType<UserSetCardSuccessDataResponseModelType>()
-            .AddType<UserSetCardOutEntityType>()
-            .AddType<UserSetCardRarityGroupOutEntityType>()
-            .AddType<UserSetCardGroupOutEntityType>()
-            .AddType<UserSetCardFinishGroupOutEntityType>()
             // UserInfo query types
             .AddType<UserInfoOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
