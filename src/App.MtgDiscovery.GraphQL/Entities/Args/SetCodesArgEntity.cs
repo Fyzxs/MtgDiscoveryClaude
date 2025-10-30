@@ -6,4 +6,5 @@ namespace App.MtgDiscovery.GraphQL.Entities.Args;
 public sealed class SetCodesArgEntity : ISetCodesArgEntity
 {
     public ICollection<string> SetCodes { get; init; }
+    public string UserId { get; set; }
 }
