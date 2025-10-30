@@ -17,6 +17,7 @@ import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { CardGridErrorBoundary } from '../ErrorBoundaries';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
 import type { MtgSet } from '../../types/set';
+import { useCollectorParam } from '../../hooks/useCollectorParam';
 
 interface SetsResponse {
   allSets: {
@@ -33,7 +34,12 @@ interface SetsResponse {
 const EMPTY_SETS_ARRAY: MtgSet[] = [];
 
 export const AllSetsPage: React.FC = () => {
-  const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS);
+  const { hasCollector, collectorId } = useCollectorParam();
+  const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS, {
+    variables: hasCollector && collectorId ? {
+      args: { userId: collectorId }
+    } : undefined
+  });
 
   // Loading state with minimum display time
   const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);

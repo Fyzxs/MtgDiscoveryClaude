@@ -71,3 +71,26 @@ export interface UserSetCardResponse {
     };
   };
 }
+
+// UserSetCard Collection data embedded in Set queries
+export interface UserSetCardCollecting {
+  setGroupId: string;
+  collecting: boolean;
+  count: number;
+}
+
+export interface UserSetCardRarityGroup {
+  rarity: string;
+  group: {
+    nonFoil: { cards: string[] };
+    foil: { cards: string[] };
+    etched: { cards: string[] };
+  };
+}
+
+export interface UserSetCardCollection {
+  totalCards: number;
+  uniqueCards: number;
+  collecting: UserSetCardCollecting[];
+  groups: UserSetCardRarityGroup[];
+}
