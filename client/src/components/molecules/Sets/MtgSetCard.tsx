@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { logger } from '../../../utils/logger';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, Box, CardActionArea, Typography } from '../../atoms';
 import { useTheme, alpha } from '../../atoms';
 import type { MtgSet, SetContext } from '../../../types/set';
@@ -12,7 +11,6 @@ import { SetIconDisplay } from './SetIconDisplay';
 import { BottomBadges } from './BottomBadges';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
-import { useSetCollectionProgress, type SetCollectionProgress } from '../../../hooks/useSetCollectionProgress';
 
 interface MtgSetCardProps {
   set: MtgSet;
@@ -27,40 +25,48 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   className = ''
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [collectionProgress, setCollectionProgress] = useState<SetCollectionProgress | undefined>(undefined);
   const setTypeColor = getSetTypeColor(set.setType);
   const theme = useTheme();
   const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
   const { hasCollector } = useCollectorParam();
-  const { getCollectionProgress } = useSetCollectionProgress();
 
   const setPath = `/set/${set.code}`;
   const setUrl = buildUrlWithCollector(setPath);
 
-  useEffect(() => {
-    if (!hasCollector) {
-      return;
+  // Calculate collection progress from embedded userCollection data
+  const collectionProgress = useMemo(() => {
+    if (!hasCollector || !set.userCollection) {
+      return undefined;
     }
 
-    let cancelled = false;
+    const collectingGroups = set.userCollection.collecting.filter(g => g.collecting === true);
 
-    getCollectionProgress(set)
-      .then(progress => {
-        if (!cancelled) {
-          logger.debug('Collection progress received for', set.code, ':', progress);
-          setCollectionProgress(progress);
-        }
-      })
-      .catch(error => {
-        if (!cancelled) {
-          logger.error('Error fetching collection progress:', error);
-        }
-      });
+    const collectedInTrackingGroups = collectingGroups.reduce((sum, collectingGroup) => {
+      const groupData = set.userCollection?.groups.find(g => g.rarity === collectingGroup.setGroupId);
+      if (!groupData) {
+        return sum;
+      }
 
-    return () => {
-      cancelled = true;
+      const nonFoilCount = groupData.group.nonFoil.cards.length;
+      const foilCount = groupData.group.foil.cards.length;
+      const etchedCount = groupData.group.etched.cards.length;
+
+      return sum + nonFoilCount + foilCount + etchedCount;
+    }, 0);
+
+    const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+
+    const percentage = totalAvailableInTrackingGroups > 0
+      ? (collectedInTrackingGroups / totalAvailableInTrackingGroups) * 100
+      : 0;
+
+    return {
+      setTotalCards: totalAvailableInTrackingGroups,
+      uniqueCards: collectedInTrackingGroups,
+      totalCards: set.userCollection.totalCards,
+      percentage
     };
-  }, [hasCollector, set, getCollectionProgress]);
+  }, [hasCollector, set.userCollection]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only handle click if there's a custom onSetClick handler
