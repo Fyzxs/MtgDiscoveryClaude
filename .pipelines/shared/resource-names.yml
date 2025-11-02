@@ -1,0 +1,72 @@
+# Template to generate resource names based on naming convention
+# Format: {resourceShortName}-{appName}-{environment}-{regionShortName}-{sequenceNumber}
+
+parameters:
+  - name: environment
+    type: string
+  - name: includeShared
+    type: boolean
+    default: false
+
+steps:
+  - pwsh: |
+      # Resource naming convention
+      $appName = "$(appName)"
+      $environment = "${{ parameters.environment }}"
+      $regionShortName = "$(regionShortName)"
+      $sequenceNumber = "$(sequenceNumber)"
+
+      # Generate environment-specific resource names
+      $rgName = "$(resourceGroupShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $cosmosName = "$(cosmosDbShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $caeName = "$(containerAppEnvShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $caName = "$(containerAppShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $swaName = "$(staticWebAppShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $appiName = "$(appInsightsShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $logName = "$(logAnalyticsShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $identityName = "$(managedIdentityShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+      $appConfigName = "$(appConfigShortName)-$appName-$environment-$regionShortName-$sequenceNumber"
+
+      # Set as pipeline variables
+      Write-Host "##vso[task.setvariable variable=resourceGroupName;isOutput=true]$rgName"
+      Write-Host "##vso[task.setvariable variable=cosmosDbName;isOutput=true]$cosmosName"
+      Write-Host "##vso[task.setvariable variable=containerAppEnvName;isOutput=true]$caeName"
+      Write-Host "##vso[task.setvariable variable=containerAppName;isOutput=true]$caName"
+      Write-Host "##vso[task.setvariable variable=staticWebAppName;isOutput=true]$swaName"
+      Write-Host "##vso[task.setvariable variable=appInsightsName;isOutput=true]$appiName"
+      Write-Host "##vso[task.setvariable variable=logAnalyticsName;isOutput=true]$logName"
+      Write-Host "##vso[task.setvariable variable=managedIdentityName;isOutput=true]$identityName"
+      Write-Host "##vso[task.setvariable variable=appConfigName;isOutput=true]$appConfigName"
+
+      Write-Host "Environment-specific resource names generated:"
+      Write-Host "  Resource Group: $rgName"
+      Write-Host "  Cosmos DB: $cosmosName"
+      Write-Host "  Container App Environment: $caeName"
+      Write-Host "  Container App: $caName"
+      Write-Host "  Static Web App: $swaName"
+      Write-Host "  Application Insights: $appiName"
+      Write-Host "  Log Analytics: $logName"
+      Write-Host "  Managed Identity: $identityName"
+      Write-Host "  App Configuration: $appConfigName"
+    displayName: 'Generate Environment Resource Names'
+    name: envNames
+
+  - ${{ if eq(parameters.includeShared, true) }}:
+    - pwsh: |
+        # Generate shared resource names (no environment in name)
+        $appName = "$(appName)"
+        $regionShortName = "$(regionShortName)"
+        $sequenceNumber = "$(sequenceNumber)"
+
+        $sharedRgName = "$(resourceGroupShortName)-$appName-shared-$regionShortName-$sequenceNumber"
+        $crName = "$(containerRegistryShortName)$appName" + "shared" + "$regionShortName$sequenceNumber"
+
+        # Set as pipeline variables
+        Write-Host "##vso[task.setvariable variable=sharedResourceGroupName;isOutput=true]$sharedRgName"
+        Write-Host "##vso[task.setvariable variable=containerRegistryName;isOutput=true]$crName"
+
+        Write-Host "Shared resource names generated:"
+        Write-Host "  Shared Resource Group: $sharedRgName"
+        Write-Host "  Container Registry: $crName"
+      displayName: 'Generate Shared Resource Names'
+      name: sharedNames

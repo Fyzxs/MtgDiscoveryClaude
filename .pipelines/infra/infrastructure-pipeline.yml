@@ -1,0 +1,76 @@
+# Infrastructure Pipeline
+# Creates all Azure resources for dev and prod environments
+# Trigger: Manual only
+
+trigger: none
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - template: ../vars/consts.yaml
+  # Service connection names for each scope
+  - name: sharedServiceConnection
+    value: 'mtg-shared'
+  - name: devServiceConnection
+    value: 'mtg-dev'
+  - name: prodServiceConnection
+    value: 'mtg-prod'
+
+stages:
+  - stage: CreateSharedResources
+    displayName: 'Create Shared Resources'
+    jobs:
+      - job: CreateShared
+        displayName: 'Create Shared Resource Group and ACR'
+        steps:
+          - template: ../shared/resource-names.yml
+            parameters:
+              environment: 'shared'
+              includeShared: true
+
+          - template: steps/create-shared.yml
+            parameters:
+              azureSubscription: $(sharedServiceConnection)
+
+  - stage: CreateDevEnvironment
+    displayName: 'Create Dev Environment'
+    dependsOn: CreateSharedResources
+    variables:
+      - template: ../vars/dev.yaml
+    jobs:
+      - job: CreateDevResources
+        displayName: 'Create Dev Resources'
+        steps:
+          - template: ../shared/resource-names.yml
+            parameters:
+              environment: 'dev'
+              includeShared: true
+
+          - template: steps/create-environment.yml
+            parameters:
+              environment: 'dev'
+              azureSubscription: $(devServiceConnection)
+              sharedServiceConnection: $(sharedServiceConnection)
+
+  - stage: CreateProdEnvironment
+    displayName: 'Create Prod Environment'
+    dependsOn: CreateSharedResources
+    variables:
+      - template: ../vars/prod.yaml
+    jobs:
+      - job: CreateProdResources
+        displayName: 'Create Prod Resources'
+        steps:
+          - template: ../shared/resource-names.yml
+            parameters:
+              environment: 'prod'
+              includeShared: true
+
+          - template: steps/create-environment.yml
+            parameters:
+              environment: 'prod'
+              azureSubscription: $(prodServiceConnection)
+              sharedServiceConnection: $(sharedServiceConnection)

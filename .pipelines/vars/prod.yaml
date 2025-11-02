@@ -1,0 +1,15 @@
+variables:
+  # Environment identifier
+  environment: 'prod'
+  sequenceNumber: '01'
+
+  # Environment-specific settings
+  containerAppMinReplicas: 1
+  containerAppMaxReplicas: 2
+  staticWebAppSku: 'Free'
+  appConfigLocation: 'westcentralus'  # Prod uses West Central US (same as other resources)
+
+  # Auth0 configuration (NOT secrets - these are public identifiers)
+  auth0Domain: 'dev-63szoyl0kt0p7e5q.us.auth0.com'
+  auth0Audience: 'api://mtg-discovery'
+  auth0ClientId: 'drLStHk9n1hFbpAODI9QBcUuCyWFCks7'
