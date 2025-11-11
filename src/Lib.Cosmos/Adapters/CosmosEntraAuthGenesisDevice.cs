@@ -109,13 +109,15 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
             DefaultTtl = containerConfig.TimeToLive()
         };
 
-        CosmosDBSqlContainerCreateOrUpdateContent cosmosDbSqlContainerCreateOrUpdateContent = new(location, cosmosDbSqlContainerResourceInfo)
-        {
-            Options = new CosmosDBCreateUpdateConfig()
-            {
-                AutoscaleMaxThroughput = containerConfig.AutoscaleMax()
-            }
-        };
+        CosmosDBSqlContainerCreateOrUpdateContent cosmosDbSqlContainerCreateOrUpdateContent = new(location, cosmosDbSqlContainerResourceInfo);
+        // Note: Options with CosmosDBCreateUpdateConfig should NOT be set for serverless Cosmos DB accounts
+        // Serverless accounts do not support throughput configuration
+        //{
+        //    Options = new CosmosDBCreateUpdateConfig()
+        //    {
+        //        AutoscaleMaxThroughput = containerConfig.AutoscaleMax()
+        //    }
+        //};
 
         return cosmosDbSqlContainerCreateOrUpdateContent;
     }
