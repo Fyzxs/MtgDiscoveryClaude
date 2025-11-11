@@ -36,9 +36,9 @@ const EMPTY_SETS_ARRAY: MtgSet[] = [];
 export const AllSetsPage: React.FC = () => {
   const { hasCollector, collectorId } = useCollectorParam();
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS, {
-    variables: hasCollector && collectorId ? {
-      args: { userId: collectorId }
-    } : undefined
+    variables: {
+      args: hasCollector && collectorId ? { userId: collectorId } : {}
+    }
   });
 
   // Loading state with minimum display time
@@ -51,7 +51,10 @@ export const AllSetsPage: React.FC = () => {
       urlParams: {
         search: 'search',
         sort: 'sort',
-        filters: { setTypes: 'types' }
+        filters: {
+          setTypes: 'types',
+          collectionStatus: 'status'
+        }
       }
     }), []);
 
@@ -69,11 +72,15 @@ export const AllSetsPage: React.FC = () => {
     {
       search: '',
       sort: 'release-desc',
-      filters: { setTypes: [] }
+      filters: {
+        setTypes: [],
+        collectionStatus: []
+      }
     }
   );
 
   const selectedSetTypes = (Array.isArray(filters.setTypes) ? filters.setTypes : []) as string[];
+  const selectedCollectionStatuses = (Array.isArray(filters.collectionStatus) ? filters.collectionStatus : []) as string[];
 
   // Apply sorting to filtered sets
   const filteredSets = useMemo(() => {
@@ -109,6 +116,14 @@ export const AllSetsPage: React.FC = () => {
     });
   }, [updateFilter, showLoading, hideLoading]);
 
+  const handleCollectionStatusChange = useCallback((value: string[]) => {
+    showLoading();
+    startFilterTransition(() => {
+      updateFilter('collectionStatus', value);
+      hideLoading();
+    });
+  }, [updateFilter, showLoading, hideLoading]);
+
   const handleSortChange = useCallback((value: string) => {
     showLoading();
     startFilterTransition(() => {
@@ -117,14 +132,25 @@ export const AllSetsPage: React.FC = () => {
     });
   }, [setSortBy, showLoading, hideLoading]);
 
-  const sortOptions: SortOption[] = [
-    { value: 'release-desc', label: 'Release Date (Newest)' },
-    { value: 'release-asc', label: 'Release Date (Oldest)' },
-    { value: 'name-asc', label: 'Name (A-Z)' },
-    { value: 'name-desc', label: 'Name (Z-A)' },
-    { value: 'cards-desc', label: 'Card Count (High-Low)' },
-    { value: 'cards-asc', label: 'Card Count (Low-High)' }
-  ];
+  const sortOptions: SortOption[] = useMemo(() => {
+    const baseSortOptions: SortOption[] = [
+      { value: 'release-desc', label: 'Release Date (Newest)' },
+      { value: 'release-asc', label: 'Release Date (Oldest)' },
+      { value: 'name-asc', label: 'Name (A-Z)' },
+      { value: 'name-desc', label: 'Name (Z-A)' },
+      { value: 'cards-desc', label: 'Card Count (High-Low)' },
+      { value: 'cards-asc', label: 'Card Count (Low-High)' }
+    ];
+
+    if (hasCollector) {
+      baseSortOptions.push(
+        { value: 'completion-desc', label: '# Percent Collected', isCollectorOption: true },
+        { value: 'collected-desc', label: '# Cards Collected', isCollectorOption: true }
+      );
+    }
+
+    return baseSortOptions;
+  }, [hasCollector]);
 
   const sets = data?.allSets?.data || EMPTY_SETS_ARRAY;
   const setTypes = getUniqueSetTypes(sets);
@@ -171,7 +197,18 @@ export const AllSetsPage: React.FC = () => {
                   value: sortBy,
                   onChange: handleSortChange,
                   options: sortOptions
-                }
+                },
+                collectorFilters: hasCollector ? {
+                  collectionStatus: {
+                    key: 'collectionStatus',
+                    value: selectedCollectionStatuses,
+                    onChange: handleCollectionStatusChange,
+                    options: ['not-started', 'in-progress', 'completed'],
+                    label: 'Collection Status',
+                    placeholder: 'All Statuses',
+                    minWidth: 180
+                  }
+                } : undefined
               }}
               layout="horizontal"
             />

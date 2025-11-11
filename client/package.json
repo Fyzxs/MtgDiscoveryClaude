@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "codegen": "graphql-codegen --config codegen.ts",
-    "codegen:watch": "graphql-codegen --config codegen.ts --watch"
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch",
+    "deploy:preview": "npm run build && swa deploy ./dist --deployment-token $SWA_TOKEN --app-name swa-mtg-dev-wcus-01 --env preview",
+    "deploy:production": "npm run build && swa deploy ./dist --deployment-token $SWA_TOKEN --app-name swa-mtg-dev-wcus-01 --env production"
   },
   "dependencies": {
     "@apollo/client": "^4.0.0",
