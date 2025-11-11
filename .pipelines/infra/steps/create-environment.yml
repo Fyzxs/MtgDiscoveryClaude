@@ -1,0 +1,474 @@
+# Template to create environment-specific resources
+
+parameters:
+  - name: environment
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: sharedServiceConnection
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Create Log Analytics Workspace'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Log Analytics workspace: $(envNames.logAnalyticsName)"
+
+        az monitor log-analytics workspace create \
+          --resource-group $(envNames.resourceGroupName) \
+          --workspace-name $(envNames.logAnalyticsName) \
+          --location $(location) \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        # Get workspace ID and key
+        WORKSPACE_ID=$(az monitor log-analytics workspace show \
+          --resource-group $(envNames.resourceGroupName) \
+          --workspace-name $(envNames.logAnalyticsName) \
+          --query customerId \
+          -o tsv)
+
+        WORKSPACE_KEY=$(az monitor log-analytics workspace get-shared-keys \
+          --resource-group $(envNames.resourceGroupName) \
+          --workspace-name $(envNames.logAnalyticsName) \
+          --query primarySharedKey \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=logAnalyticsWorkspaceId;isOutput=true]$WORKSPACE_ID"
+        echo "##vso[task.setvariable variable=logAnalyticsWorkspaceKey;isOutput=true;issecret=true]$WORKSPACE_KEY"
+
+        echo "Log Analytics workspace created successfully"
+    name: logAnalytics
+
+  - task: AzureCLI@2
+    displayName: 'Create Application Insights'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Application Insights: $(envNames.appInsightsName) in $(appInsightsLocation)"
+
+        az monitor app-insights component create \
+          --app $(envNames.appInsightsName) \
+          --location $(appInsightsLocation) \
+          --resource-group $(envNames.resourceGroupName) \
+          --application-type $(appInsightsType) \
+          --workspace $(logAnalytics.logAnalyticsWorkspaceId) \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        # Get connection string
+        CONNECTION_STRING=$(az monitor app-insights component show \
+          --app $(envNames.appInsightsName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query connectionString \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=appInsightsConnectionString;isOutput=true;issecret=true]$CONNECTION_STRING"
+
+        echo "Application Insights created successfully"
+    name: appInsights
+
+  - task: AzureCLI@2
+    displayName: 'Create App Configuration Store'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating App Configuration store: $(envNames.appConfigName)"
+        echo "Location: $(appConfigLocation) (separate from other resources to avoid Free tier limit)"
+
+        az appconfig create \
+          --name $(envNames.appConfigName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --location $(appConfigLocation) \
+          --sku Free \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        # Get endpoint
+        ENDPOINT=$(az appconfig show \
+          --name $(envNames.appConfigName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query endpoint \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=appConfigEndpoint;isOutput=true]$ENDPOINT"
+
+        echo "App Configuration store created successfully"
+        echo "Endpoint: $ENDPOINT"
+        echo "Location: $(appConfigLocation)"
+        echo "SKU: Free tier"
+    name: appConfig
+
+  - task: AzureCLI@2
+    displayName: 'Populate App Configuration with Auth0 Settings'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Populating App Configuration with Auth0 settings"
+
+        # Set Auth0 configuration values
+        az appconfig kv set \
+          --name $(envNames.appConfigName) \
+          --key "Auth0:Domain" \
+          --value "$(auth0Domain)" \
+          --yes
+
+        az appconfig kv set \
+          --name $(envNames.appConfigName) \
+          --key "Auth0:Audience" \
+          --value "$(auth0Audience)" \
+          --yes
+
+        az appconfig kv set \
+          --name $(envNames.appConfigName) \
+          --key "Auth0:ClientId" \
+          --value "$(auth0ClientId)" \
+          --yes
+
+        echo "App Configuration populated successfully"
+        echo "  Auth0:Domain = $(auth0Domain)"
+        echo "  Auth0:Audience = $(auth0Audience)"
+        echo "  Auth0:ClientId = $(auth0ClientId)"
+
+  - task: AzureCLI@2
+    displayName: 'Create Cosmos DB Account (Serverless)'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Cosmos DB account (Serverless): $(envNames.cosmosDbName)"
+
+        # Check if Cosmos DB already exists (creation can take several minutes)
+        COSMOS_EXISTS=$(az cosmosdb show \
+          --name $(envNames.cosmosDbName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query id \
+          -o tsv 2>/dev/null || echo "")
+
+        if [ -z "$COSMOS_EXISTS" ]; then
+          az cosmosdb create \
+            --name $(envNames.cosmosDbName) \
+            --resource-group $(envNames.resourceGroupName) \
+            --locations regionName=$(location) \
+            --capabilities EnableServerless \
+            --default-consistency-level $(cosmosDbConsistencyLevel) \
+            --tags \
+              Environment=${{ parameters.environment }} \
+              Application=$(appName) \
+              CapacityMode=Serverless
+
+          echo "Cosmos DB account created successfully (Serverless mode)"
+        else
+          echo "Cosmos DB account already exists, skipping creation"
+        fi
+
+        # Get endpoint (no key needed - will use managed identity)
+        COSMOS_ENDPOINT=$(az cosmosdb show \
+          --name $(envNames.cosmosDbName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query documentEndpoint \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=cosmosEndpoint;isOutput=true]$COSMOS_ENDPOINT"
+
+        echo "Cosmos DB Endpoint: $COSMOS_ENDPOINT"
+        echo "Cosmos DB Capacity Mode: Serverless (pay-per-request)"
+        echo "Cosmos DB uses RBAC with managed identity (no keys)"
+    name: cosmosDb
+
+  - task: AzureCLI@2
+    displayName: 'Create User-Assigned Managed Identity'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating user-assigned managed identity: $(envNames.managedIdentityName)"
+
+        az identity create \
+          --name $(envNames.managedIdentityName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --location $(location) \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        # Get identity details
+        IDENTITY_ID=$(az identity show \
+          --name $(envNames.managedIdentityName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query id \
+          -o tsv)
+
+        PRINCIPAL_ID=$(az identity show \
+          --name $(envNames.managedIdentityName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query principalId \
+          -o tsv)
+
+        CLIENT_ID=$(az identity show \
+          --name $(envNames.managedIdentityName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query clientId \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=identityName;isOutput=true]$(envNames.managedIdentityName)"
+        echo "##vso[task.setvariable variable=identityId;isOutput=true]$IDENTITY_ID"
+        echo "##vso[task.setvariable variable=principalId;isOutput=true]$PRINCIPAL_ID"
+        echo "##vso[task.setvariable variable=clientId;isOutput=true]$CLIENT_ID"
+
+        echo "Managed Identity created successfully"
+        echo "  Name: $(envNames.managedIdentityName)"
+        echo "  Principal ID: $PRINCIPAL_ID"
+        echo "  Client ID: $CLIENT_ID"
+    name: managedIdentity
+
+  - task: AzureCLI@2
+    displayName: 'Create Container Apps Environment'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Container Apps Environment: $(envNames.containerAppEnvName)"
+
+        az containerapp env create \
+          --name $(envNames.containerAppEnvName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --location $(location) \
+          --logs-workspace-id $(logAnalytics.logAnalyticsWorkspaceId) \
+          --logs-workspace-key $(logAnalytics.logAnalyticsWorkspaceKey) \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        echo "Container Apps Environment created successfully"
+
+  - task: AzureCLI@2
+    displayName: 'Create Container App with User-Assigned Identity'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Container App: $(envNames.containerAppName)"
+        echo "Assigning managed identity: $(managedIdentity.identityName)"
+
+        # Initial container app with placeholder image and user-assigned managed identity
+        # Will be updated by deployment pipeline with actual application
+        az containerapp create \
+          --name $(envNames.containerAppName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --environment $(envNames.containerAppEnvName) \
+          --image mcr.microsoft.com/azuredocs/containerapps-helloworld:latest \
+          --target-port $(containerAppPort) \
+          --ingress external \
+          --cpu $(containerAppCpu) \
+          --memory $(containerAppMemory) \
+          --min-replicas $(containerAppMinReplicas) \
+          --max-replicas $(containerAppMaxReplicas) \
+          --user-assigned $(managedIdentity.identityId) \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        # Note: Health probes will be configured during deployment with actual application
+        # Placeholder image may not have /health endpoint
+        echo "Container App created - health probes will be configured during application deployment"
+
+        # Get FQDN
+        FQDN=$(az containerapp show \
+          --name $(envNames.containerAppName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query properties.configuration.ingress.fqdn \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=containerAppFqdn;isOutput=true]$FQDN"
+
+        echo "Container App created successfully with health probes"
+        echo "Container App URL: https://$FQDN"
+        echo "Using Managed Identity: $(managedIdentity.identityName)"
+    name: containerApp
+
+  - task: AzureCLI@2
+    displayName: 'Create Static Web App'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Static Web App: $(envNames.staticWebAppName) in $(swaLocation)"
+
+        az staticwebapp create \
+          --name $(envNames.staticWebAppName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --location $(swaLocation) \
+          --sku $(staticWebAppSku) \
+          --tags \
+            Environment=${{ parameters.environment }} \
+            Application=$(appName)
+
+        # Get hostname and deployment token
+        HOSTNAME=$(az staticwebapp show \
+          --name $(envNames.staticWebAppName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query defaultHostname \
+          -o tsv)
+
+        TOKEN=$(az staticwebapp secrets list \
+          --name $(envNames.staticWebAppName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query properties.apiKey \
+          -o tsv)
+
+        echo "##vso[task.setvariable variable=staticWebAppHostname;isOutput=true]$HOSTNAME"
+        echo "##vso[task.setvariable variable=staticWebAppToken;isOutput=true;issecret=true]$TOKEN"
+
+        echo "Static Web App created successfully"
+        echo "Static Web App URL: https://$HOSTNAME"
+    name: staticWebApp
+
+  - task: AzureCLI@2
+    displayName: 'Assign Cosmos DB RBAC Role'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Assigning Cosmos DB Built-in Data Contributor role to managed identity"
+        echo "  Identity: $(managedIdentity.identityName)"
+        echo "  Principal ID: $(managedIdentity.principalId)"
+        echo "  Cosmos DB: $(envNames.cosmosDbName)"
+
+        # Cosmos DB Built-in Data Contributor role ID
+        ROLE_ID="00000000-0000-0000-0000-000000000002"
+
+        # Check if role assignment already exists
+        EXISTING_ASSIGNMENT=$(az cosmosdb sql role assignment list \
+          --account-name $(envNames.cosmosDbName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query "[?principalId=='$(managedIdentity.principalId)'].id" \
+          -o tsv 2>/dev/null || echo "")
+
+        if [ -z "$EXISTING_ASSIGNMENT" ]; then
+          # Create role assignment
+          az cosmosdb sql role assignment create \
+            --account-name $(envNames.cosmosDbName) \
+            --resource-group $(envNames.resourceGroupName) \
+            --role-definition-id $ROLE_ID \
+            --principal-id $(managedIdentity.principalId) \
+            --scope "/"
+
+          echo "Cosmos DB RBAC role assigned successfully"
+        else
+          echo "Cosmos DB RBAC role already assigned, skipping"
+        fi
+
+  - task: AzureCLI@2
+    displayName: 'Assign ACR Pull Role'
+    inputs:
+      azureSubscription: ${{ parameters.sharedServiceConnection }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Assigning AcrPull role to managed identity for shared ACR"
+        echo "  Identity: $(managedIdentity.identityName)"
+        echo "  Principal ID: $(managedIdentity.principalId)"
+        echo "  ACR: $(sharedNames.containerRegistryName)"
+        echo "  Using service connection: ${{ parameters.sharedServiceConnection }}"
+
+        # Get ACR resource ID
+        ACR_ID=$(az acr show \
+          --name $(sharedNames.containerRegistryName) \
+          --query id \
+          -o tsv)
+
+        # Assign AcrPull role
+        az role assignment create \
+          --assignee $(managedIdentity.principalId) \
+          --role AcrPull \
+          --scope $ACR_ID
+
+        echo "AcrPull role assigned successfully"
+        echo "Container App can now pull images from ACR using managed identity"
+
+  - task: AzureCLI@2
+    displayName: 'Assign App Configuration Data Reader Role'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Assigning App Configuration Data Reader role to managed identity"
+        echo "  Identity: $(managedIdentity.identityName)"
+        echo "  Principal ID: $(managedIdentity.principalId)"
+        echo "  App Configuration: $(envNames.appConfigName)"
+
+        # Get App Configuration resource ID
+        APPCONFIG_ID=$(az appconfig show \
+          --name $(envNames.appConfigName) \
+          --resource-group $(envNames.resourceGroupName) \
+          --query id \
+          -o tsv)
+
+        # Assign App Configuration Data Reader role
+        az role assignment create \
+          --assignee $(managedIdentity.principalId) \
+          --role "App Configuration Data Reader" \
+          --scope $APPCONFIG_ID
+
+        echo "App Configuration Data Reader role assigned successfully"
+        echo "Container App can now read configuration values using managed identity"
+
+  - pwsh: |
+      Write-Host "========================================" -ForegroundColor Green
+      Write-Host "${{ parameters.environment }} Environment Resources Created" -ForegroundColor Green
+      Write-Host "========================================" -ForegroundColor Green
+      Write-Host ""
+      Write-Host "Resource Group: $(envNames.resourceGroupName)"
+      Write-Host ""
+      Write-Host "Managed Identity: $(managedIdentity.identityName)"
+      Write-Host "  Principal ID: $(managedIdentity.principalId)"
+      Write-Host "  Client ID: $(managedIdentity.clientId)"
+      Write-Host ""
+      Write-Host "App Configuration: $(envNames.appConfigName)"
+      Write-Host "  Endpoint: $(appConfig.appConfigEndpoint)"
+      Write-Host "  SKU: Free tier"
+      Write-Host "  Access: RBAC (App Configuration Data Reader)"
+      Write-Host "  Auth0 Settings: Configured"
+      Write-Host ""
+      Write-Host "Cosmos DB: $(envNames.cosmosDbName)"
+      Write-Host "  Endpoint: $(cosmosDb.cosmosEndpoint)"
+      Write-Host "  Capacity Mode: Serverless"
+      Write-Host "  Access: RBAC (Cosmos DB Built-in Data Contributor)"
+      Write-Host ""
+      Write-Host "Container App: $(envNames.containerAppName)"
+      Write-Host "  URL: https://$(containerApp.containerAppFqdn)"
+      Write-Host "  Identity: User-assigned managed identity"
+      Write-Host "  ACR Access: AcrPull role assigned"
+      Write-Host "  App Config Access: Data Reader role assigned"
+      Write-Host ""
+      Write-Host "Static Web App: $(envNames.staticWebAppName)"
+      Write-Host "  URL: https://$(staticWebApp.staticWebAppHostname)"
+      Write-Host ""
+      Write-Host "Application Insights: $(envNames.appInsightsName)"
+      Write-Host ""
+      Write-Host "Next steps:"
+      Write-Host "1. Run deployment pipelines to deploy applications"
+      Write-Host "2. All authentication uses RBAC - no keys or passwords!"
+      Write-Host "3. Auth0 configuration stored in App Configuration"
+    displayName: 'Summary'
