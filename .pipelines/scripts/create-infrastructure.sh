@@ -173,6 +173,12 @@ create_environment() {
         --location "$ENV_LOCATION" \
         --tags Environment="$ENV" Application="$APP_NAME"
 
+    local WORKSPACE_RESOURCE_ID=$(az monitor log-analytics workspace show \
+        --resource-group "$RG" \
+        --workspace-name "$LOG" \
+        --query id \
+        -o tsv)
+
     local WORKSPACE_ID=$(az monitor log-analytics workspace show \
         --resource-group "$RG" \
         --workspace-name "$LOG" \
@@ -192,7 +198,7 @@ create_environment() {
         --location "$APPI_LOCATION" \
         --resource-group "$RG" \
         --application-type web \
-        --workspace "$WORKSPACE_ID" \
+        --workspace "$WORKSPACE_RESOURCE_ID" \
         --tags Environment="$ENV" Application="$APP_NAME"
 
     # Create App Configuration
@@ -266,6 +272,16 @@ create_environment() {
         --user-assigned "$IDENTITY_ID" \
         --tags Environment="$ENV" Application="$APP_NAME"
 
+    # Configure ACR authentication with managed identity
+    log_info "Configuring ACR authentication for Container App"
+    local ACR_SERVER=$(az acr show --name "$SHARED_CR" --query loginServer -o tsv)
+
+    az containerapp registry set \
+        --name "$CA" \
+        --resource-group "$RG" \
+        --server "$ACR_SERVER" \
+        --identity "$IDENTITY_ID"
+
     # Create Static Web App
     log_info "Creating Static Web App: $SWA in $SWA_LOCATION"
     az staticwebapp create \
@@ -275,7 +291,7 @@ create_environment() {
         --sku "$SWA_SKU" \
         --tags Environment="$ENV" Application="$APP_NAME"
 
-    # Assign Cosmos DB RBAC role
+    # Assign Cosmos DB RBAC role (data plane - read/write data)
     log_info "Assigning Cosmos DB Built-in Data Contributor role to managed identity"
     local ROLE_ID="00000000-0000-0000-0000-000000000002"
 
@@ -293,6 +309,25 @@ create_environment() {
     else
         log_warn "Cosmos DB RBAC role already assigned, skipping"
     fi
+
+    # Assign Cosmos DB Account Reader role (read account metadata)
+    log_info "Assigning Cosmos DB Account Reader role to managed identity"
+    local COSMOS_ID=$(az cosmosdb show --name "$COSMOS" --resource-group "$RG" --query id -o tsv)
+
+    az role assignment create \
+        --assignee "$PRINCIPAL_ID" \
+        --role "Cosmos DB Account Reader Role" \
+        --scope "$COSMOS_ID" \
+        2>/dev/null || log_warn "Cosmos DB Account Reader role may already be assigned"
+
+    # Assign DocumentDB Account Contributor role (control plane - create databases/containers)
+    log_info "Assigning DocumentDB Account Contributor role to managed identity"
+
+    az role assignment create \
+        --assignee "$PRINCIPAL_ID" \
+        --role "DocumentDB Account Contributor" \
+        --scope "$COSMOS_ID" \
+        2>/dev/null || log_warn "DocumentDB Account Contributor role may already be assigned"
 
     # Assign ACR Pull role
     log_info "Assigning AcrPull role to managed identity for shared ACR"
@@ -313,6 +348,16 @@ create_environment() {
         --role "App Configuration Data Reader" \
         --scope "$APPCONFIG_ID" \
         2>/dev/null || log_warn "App Configuration role may already be assigned"
+
+    # Assign Reader role on resource group for Cosmos DB metadata access
+    log_info "Assigning Reader role to managed identity on resource group"
+    local RG_ID=$(az group show --name "$RG" --query id -o tsv)
+
+    az role assignment create \
+        --assignee "$PRINCIPAL_ID" \
+        --role "Reader" \
+        --scope "$RG_ID" \
+        2>/dev/null || log_warn "Reader role may already be assigned"
 
     # Summary
     echo ""

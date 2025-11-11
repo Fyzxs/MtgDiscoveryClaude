@@ -1,5 +1,4 @@
 ﻿using App.MtgDiscovery.GraphQL.ErrorHandling;
-using App.MtgDiscovery.GraphQL.HealthChecks;
 using App.MtgDiscovery.GraphQL.Schemas;
 using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +23,9 @@ internal sealed class Startup
     {
         // Register IConfiguration for DI
         _ = services.AddSingleton(_configuration);
+
+        // Configure Application Insights
+        _ = services.AddApplicationInsightsTelemetry();
 
         _ = services.AddCors(options =>
         {
@@ -67,6 +68,9 @@ internal sealed class Startup
 
         _ = services.AddAuthorization();
 
+        // Add health checks
+        _ = services.AddHealthChecks();
+
         // Register query method classes for DI
         //services.AddScoped<CardQueryMethods>();
         //services.AddScoped<SetQueryMethods>();
@@ -102,6 +106,12 @@ internal sealed class Startup
 
         _ = app.UseEndpoints(endpoints =>
         {
+            // Basic health endpoint for Container Apps probes
+            _ = endpoints.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                Predicate = _ => false // No checks, just returns 200 if app is alive
+            });
+
             // Startup probe - checks if the app has finished starting up
             _ = endpoints.MapHealthChecks("/health/startup", new HealthCheckOptions
             {

@@ -48,7 +48,7 @@ deploy_preview() {
 
     # Build with preview environment
     echo -e "${BLUE}Building application for preview...${NC}"
-    NODE_ENV=preview npm run build
+    npm run build -- --mode preview
 
     # Get deployment token
     get_deployment_token
