@@ -128,6 +128,29 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
               properties
             }
           }
+          userCollection {
+            totalCards
+            uniqueCards
+            collecting {
+              setGroupId
+              collecting
+              count
+            }
+            groups {
+              rarity
+              group {
+                nonFoil {
+                  cards
+                }
+                foil {
+                  cards
+                }
+                etched {
+                  cards
+                }
+              }
+            }
+          }
         }
       }
       ... on FailureResponse {
