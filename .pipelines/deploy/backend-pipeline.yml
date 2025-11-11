@@ -151,7 +151,46 @@ stages:
                           APPLICATIONINSIGHTS_CONNECTION_STRING=$(appInsightsInfo.connectionString) \
                           AZURE_CLIENT_ID=$(managedIdentityInfo.clientId)
 
-                      echo "Container App updated successfully"
+                      # Configure health probes
+                      echo "Configuring health probes (startup, liveness, readiness)"
+
+                      # Startup probe - gives app 60 seconds to initialize (6s × 10 = 60s)
+                      az containerapp update \
+                        --name $(envNames.containerAppName) \
+                        --resource-group $(envNames.resourceGroupName) \
+                        --health-probe-type startup \
+                        --health-probe-transport http \
+                        --health-probe-path /health \
+                        --health-probe-interval 6 \
+                        --health-probe-timeout 15 \
+                        --health-probe-failure-threshold 10 \
+                        --health-probe-success-threshold 1
+
+                      # Liveness probe - check every 30s, restart if 10 consecutive failures
+                      az containerapp update \
+                        --name $(envNames.containerAppName) \
+                        --resource-group $(envNames.resourceGroupName) \
+                        --health-probe-type liveness \
+                        --health-probe-transport http \
+                        --health-probe-path /health \
+                        --health-probe-interval 30 \
+                        --health-probe-timeout 15 \
+                        --health-probe-failure-threshold 10 \
+                        --health-probe-success-threshold 1
+
+                      # Readiness probe - check every 30s, remove from LB if 10 consecutive failures
+                      az containerapp update \
+                        --name $(envNames.containerAppName) \
+                        --resource-group $(envNames.resourceGroupName) \
+                        --health-probe-type readiness \
+                        --health-probe-transport http \
+                        --health-probe-path /health \
+                        --health-probe-interval 30 \
+                        --health-probe-timeout 15 \
+                        --health-probe-failure-threshold 10 \
+                        --health-probe-success-threshold 1
+
+                      echo "Container App updated successfully with health probes"
                       echo "Using managed identity client ID: $(managedIdentityInfo.clientId)"
 
                 - template: steps/verify-deployment.yml
@@ -220,7 +259,46 @@ stages:
                           APPLICATIONINSIGHTS_CONNECTION_STRING=$(appInsightsInfo.connectionString) \
                           AZURE_CLIENT_ID=$(managedIdentityInfo.clientId)
 
-                      echo "Container App updated successfully"
+                      # Configure health probes
+                      echo "Configuring health probes (startup, liveness, readiness)"
+
+                      # Startup probe - gives app 60 seconds to initialize (6s × 10 = 60s)
+                      az containerapp update \
+                        --name $(envNames.containerAppName) \
+                        --resource-group $(envNames.resourceGroupName) \
+                        --health-probe-type startup \
+                        --health-probe-transport http \
+                        --health-probe-path /health \
+                        --health-probe-interval 6 \
+                        --health-probe-timeout 15 \
+                        --health-probe-failure-threshold 10 \
+                        --health-probe-success-threshold 1
+
+                      # Liveness probe - check every 30s, restart if 10 consecutive failures
+                      az containerapp update \
+                        --name $(envNames.containerAppName) \
+                        --resource-group $(envNames.resourceGroupName) \
+                        --health-probe-type liveness \
+                        --health-probe-transport http \
+                        --health-probe-path /health \
+                        --health-probe-interval 30 \
+                        --health-probe-timeout 15 \
+                        --health-probe-failure-threshold 10 \
+                        --health-probe-success-threshold 1
+
+                      # Readiness probe - check every 30s, remove from LB if 10 consecutive failures
+                      az containerapp update \
+                        --name $(envNames.containerAppName) \
+                        --resource-group $(envNames.resourceGroupName) \
+                        --health-probe-type readiness \
+                        --health-probe-transport http \
+                        --health-probe-path /health \
+                        --health-probe-interval 30 \
+                        --health-probe-timeout 15 \
+                        --health-probe-failure-threshold 10 \
+                        --health-probe-success-threshold 1
+
+                      echo "Container App updated successfully with health probes"
                       echo "Using managed identity client ID: $(managedIdentityInfo.clientId)"
 
                 - template: steps/verify-deployment.yml
