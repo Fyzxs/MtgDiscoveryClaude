@@ -1,0 +1,196 @@
+# Frontend Deployment Pipeline
+# Builds and deploys the React application to Azure Static Web Apps
+# Stages: Build -> Dev -> Prod (manual approval required for prod)
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - client/**
+      - .pipelines/deploy/frontend-pipeline.yml
+
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - template: ../vars/consts.yaml
+  # Service connection names for each scope
+  - name: devServiceConnection
+    value: 'mtg-dev'
+  - name: prodServiceConnection
+    value: 'mtg-prod'
+  - name: nodeVersion
+    value: '20.x'
+  - name: clientPath
+    value: 'client'
+
+stages:
+  - stage: Build
+    displayName: 'Build Frontend'
+    jobs:
+      - job: BuildReact
+        displayName: 'Build React Application'
+        steps:
+          - task: NodeTool@0
+            displayName: 'Install Node.js'
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          - script: |
+              cd $(clientPath)
+              npm ci
+            displayName: 'Install Dependencies'
+
+          - script: |
+              cd $(clientPath)
+              npm run build
+            displayName: 'Build React Application'
+
+          - publish: $(clientPath)/dist
+            artifact: 'frontend-build'
+            displayName: 'Publish Build Artifacts'
+
+  - stage: DeployDev
+    displayName: 'Deploy to Dev'
+    dependsOn: Build
+    condition: succeeded()
+    variables:
+      - template: ../vars/dev.yaml
+    jobs:
+      - deployment: DeployToDevStaticWebApp
+        displayName: 'Deploy to Dev Environment'
+        environment: 'dev'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - template: ../shared/resource-names.yml
+                  parameters:
+                    environment: 'dev'
+                    includeShared: false
+
+                - template: ../shared/get-resource-info.yml
+                  parameters:
+                    resourceGroupName: $(envNames.resourceGroupName)
+                    staticWebAppName: $(envNames.staticWebAppName)
+                    containerAppName: $(envNames.containerAppName)
+                    azureSubscription: $(devServiceConnection)
+
+                - task: NodeTool@0
+                  displayName: 'Install Node.js'
+                  inputs:
+                    versionSpec: $(nodeVersion)
+
+                - script: |
+                    cd $(clientPath)
+                    # Create environment file for dev
+                    echo "VITE_GRAPHQL_ENDPOINT=https://$(containerAppInfo.fqdn)/graphql" > .env.production
+                    echo "VITE_AUTH0_DOMAIN=$(auth0Domain)" >> .env.production
+                    echo "VITE_AUTH0_CLIENT_ID=$(auth0ClientId)" >> .env.production
+                    echo "VITE_AUTH0_AUDIENCE=$(auth0Audience)" >> .env.production
+                  displayName: 'Configure Environment Variables'
+
+                - script: |
+                    cd $(clientPath)
+                    npm ci
+                  displayName: 'Install Dependencies'
+
+                - script: |
+                    cd $(clientPath)
+                    npm run build
+                  displayName: 'Build with Dev Configuration'
+
+                - task: AzureStaticWebApp@0
+                  displayName: 'Deploy to Azure Static Web Apps - Dev'
+                  inputs:
+                    azure_static_web_apps_api_token: $(staticWebAppInfo.deploymentToken)
+                    app_location: '$(clientPath)'
+                    output_location: 'dist'
+                    skip_app_build: true
+
+                - pwsh: |
+                    Write-Host "========================================" -ForegroundColor Green
+                    Write-Host "Dev Frontend Deployed Successfully" -ForegroundColor Green
+                    Write-Host "========================================" -ForegroundColor Green
+                    Write-Host ""
+                    Write-Host "Static Web App URL: https://$(staticWebAppInfo.hostname)"
+                    Write-Host "GraphQL Endpoint: https://$(containerAppInfo.fqdn)/graphql"
+                  displayName: 'Deployment Summary'
+
+  - stage: DeployProd
+    displayName: 'Deploy to Production'
+    dependsOn:
+      - Build
+      - DeployDev
+    condition: succeeded()
+    variables:
+      - template: ../vars/prod.yaml
+    jobs:
+      - deployment: DeployToProdStaticWebApp
+        displayName: 'Deploy to Production Environment'
+        environment: 'production' # This will require manual approval
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - template: ../shared/resource-names.yml
+                  parameters:
+                    environment: 'prod'
+                    includeShared: false
+
+                - template: ../shared/get-resource-info.yml
+                  parameters:
+                    resourceGroupName: $(envNames.resourceGroupName)
+                    staticWebAppName: $(envNames.staticWebAppName)
+                    containerAppName: $(envNames.containerAppName)
+                    azureSubscription: $(prodServiceConnection)
+
+                - task: NodeTool@0
+                  displayName: 'Install Node.js'
+                  inputs:
+                    versionSpec: $(nodeVersion)
+
+                - script: |
+                    cd $(clientPath)
+                    # Create environment file for production
+                    echo "VITE_GRAPHQL_ENDPOINT=https://$(containerAppInfo.fqdn)/graphql" > .env.production
+                    echo "VITE_AUTH0_DOMAIN=$(auth0Domain)" >> .env.production
+                    echo "VITE_AUTH0_CLIENT_ID=$(auth0ClientId)" >> .env.production
+                    echo "VITE_AUTH0_AUDIENCE=$(auth0Audience)" >> .env.production
+                  displayName: 'Configure Environment Variables'
+
+                - script: |
+                    cd $(clientPath)
+                    npm ci
+                  displayName: 'Install Dependencies'
+
+                - script: |
+                    cd $(clientPath)
+                    npm run build
+                  displayName: 'Build with Production Configuration'
+
+                - task: AzureStaticWebApp@0
+                  displayName: 'Deploy to Azure Static Web Apps - Production'
+                  inputs:
+                    azure_static_web_apps_api_token: $(staticWebAppInfo.deploymentToken)
+                    app_location: '$(clientPath)'
+                    output_location: 'dist'
+                    skip_app_build: true
+
+                - pwsh: |
+                    Write-Host "========================================" -ForegroundColor Green
+                    Write-Host "Production Frontend Deployed Successfully" -ForegroundColor Green
+                    Write-Host "========================================" -ForegroundColor Green
+                    Write-Host ""
+                    Write-Host "Static Web App URL: https://$(staticWebAppInfo.hostname)"
+                    Write-Host "GraphQL Endpoint: https://$(containerAppInfo.fqdn)/graphql"
+                  displayName: 'Deployment Summary'

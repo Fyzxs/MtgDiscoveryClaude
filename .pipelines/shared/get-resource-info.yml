@@ -1,0 +1,183 @@
+# Template to retrieve information from existing Azure resources
+
+parameters:
+  - name: resourceGroupName
+    type: string
+  - name: containerAppName
+    type: string
+    default: ''
+  - name: staticWebAppName
+    type: string
+    default: ''
+  - name: cosmosDbName
+    type: string
+    default: ''
+  - name: appInsightsName
+    type: string
+    default: ''
+  - name: containerRegistryName
+    type: string
+    default: ''
+  - name: managedIdentityName
+    type: string
+    default: ''
+  - name: azureSubscription
+    type: string
+  - name: sharedServiceConnection
+    type: string
+    default: ''
+
+steps:
+  - ${{ if ne(parameters.managedIdentityName, '') }}:
+    - task: AzureCLI@2
+      displayName: 'Get Managed Identity Info'
+      name: managedIdentityInfo
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Get managed identity details
+          CLIENT_ID=$(az identity show \
+            --name ${{ parameters.managedIdentityName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query clientId \
+            -o tsv 2>/dev/null || echo "")
+
+          PRINCIPAL_ID=$(az identity show \
+            --name ${{ parameters.managedIdentityName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query principalId \
+            -o tsv 2>/dev/null || echo "")
+
+          if [ -n "$CLIENT_ID" ]; then
+            echo "##vso[task.setvariable variable=clientId;isOutput=true]$CLIENT_ID"
+            echo "##vso[task.setvariable variable=principalId;isOutput=true]$PRINCIPAL_ID"
+            echo "Managed Identity Client ID: $CLIENT_ID"
+          else
+            echo "Managed Identity not found"
+          fi
+
+  - ${{ if ne(parameters.containerAppName, '') }}:
+    - task: AzureCLI@2
+      displayName: 'Get Container App Info'
+      name: containerAppInfo
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Get Container App FQDN
+          FQDN=$(az containerapp show \
+            --name ${{ parameters.containerAppName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query properties.configuration.ingress.fqdn \
+            -o tsv 2>/dev/null || echo "")
+
+          if [ -n "$FQDN" ]; then
+            echo "##vso[task.setvariable variable=fqdn;isOutput=true]$FQDN"
+            echo "Container App FQDN: $FQDN"
+          else
+            echo "Container App not found or has no ingress configured"
+          fi
+
+  - ${{ if ne(parameters.staticWebAppName, '') }}:
+    - task: AzureCLI@2
+      displayName: 'Get Static Web App Info'
+      name: staticWebAppInfo
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Get Static Web App default hostname
+          HOSTNAME=$(az staticwebapp show \
+            --name ${{ parameters.staticWebAppName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query defaultHostname \
+            -o tsv 2>/dev/null || echo "")
+
+          # Get deployment token
+          TOKEN=$(az staticwebapp secrets list \
+            --name ${{ parameters.staticWebAppName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query properties.apiKey \
+            -o tsv 2>/dev/null || echo "")
+
+          if [ -n "$HOSTNAME" ]; then
+            echo "##vso[task.setvariable variable=hostname;isOutput=true]$HOSTNAME"
+            echo "##vso[task.setvariable variable=deploymentToken;isOutput=true;issecret=true]$TOKEN"
+            echo "Static Web App Hostname: $HOSTNAME"
+          else
+            echo "Static Web App not found"
+          fi
+
+  - ${{ if ne(parameters.cosmosDbName, '') }}:
+    - task: AzureCLI@2
+      displayName: 'Get Cosmos DB Info'
+      name: cosmosDbInfo
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Get Cosmos DB endpoint (no key - using RBAC)
+          ENDPOINT=$(az cosmosdb show \
+            --name ${{ parameters.cosmosDbName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query documentEndpoint \
+            -o tsv 2>/dev/null || echo "")
+
+          if [ -n "$ENDPOINT" ]; then
+            echo "##vso[task.setvariable variable=endpoint;isOutput=true]$ENDPOINT"
+            echo "Cosmos DB Endpoint: $ENDPOINT"
+            echo "Cosmos DB uses RBAC authentication (no key needed)"
+          else
+            echo "Cosmos DB not found"
+          fi
+
+  - ${{ if ne(parameters.appInsightsName, '') }}:
+    - task: AzureCLI@2
+      displayName: 'Get Application Insights Info'
+      name: appInsightsInfo
+      inputs:
+        azureSubscription: ${{ parameters.azureSubscription }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Get Application Insights connection string
+          CONNECTION_STRING=$(az monitor app-insights component show \
+            --app ${{ parameters.appInsightsName }} \
+            --resource-group ${{ parameters.resourceGroupName }} \
+            --query connectionString \
+            -o tsv 2>/dev/null || echo "")
+
+          if [ -n "$CONNECTION_STRING" ]; then
+            echo "##vso[task.setvariable variable=connectionString;isOutput=true;issecret=true]$CONNECTION_STRING"
+            echo "Application Insights connection string retrieved"
+          else
+            echo "Application Insights not found"
+          fi
+
+  - ${{ if ne(parameters.containerRegistryName, '') }}:
+    - task: AzureCLI@2
+      displayName: 'Get Container Registry Info'
+      name: containerRegistryInfo
+      inputs:
+        # Use shared service connection if provided (ACR is in shared RG), otherwise use environment connection
+        azureSubscription: ${{ coalesce(parameters.sharedServiceConnection, parameters.azureSubscription) }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Get ACR login server (ACR is in shared resource group)
+          LOGIN_SERVER=$(az acr show \
+            --name ${{ parameters.containerRegistryName }} \
+            --query loginServer \
+            -o tsv 2>/dev/null || echo "")
+
+          if [ -n "$LOGIN_SERVER" ]; then
+            echo "##vso[task.setvariable variable=loginServer;isOutput=true]$LOGIN_SERVER"
+            echo "Container Registry Login Server: $LOGIN_SERVER"
+          else
+            echo "Container Registry not found"
+          fi
