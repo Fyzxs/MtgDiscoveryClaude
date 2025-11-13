@@ -8,4 +8,5 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 public interface IUserSetCardsCommandEntryService
 {
     Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args);
+    Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args);
 }

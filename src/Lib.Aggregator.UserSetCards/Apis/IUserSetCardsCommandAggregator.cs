@@ -7,4 +7,5 @@ namespace Lib.Aggregator.UserSetCards.Apis;
 public interface IUserSetCardsCommandAggregator
 {
     Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity);
+    Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity);
 }

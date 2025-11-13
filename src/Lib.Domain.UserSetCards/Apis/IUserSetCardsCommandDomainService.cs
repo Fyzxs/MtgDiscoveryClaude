@@ -7,4 +7,5 @@ namespace Lib.Domain.UserSetCards.Apis;
 public interface IUserSetCardsCommandDomainService
 {
     Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity);
+    Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity);
 }

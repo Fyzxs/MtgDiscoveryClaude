@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Lib.Shared.Invocation.Response.Models;
 
 namespace Lib.Shared.Invocation.Tests.Response.Models;

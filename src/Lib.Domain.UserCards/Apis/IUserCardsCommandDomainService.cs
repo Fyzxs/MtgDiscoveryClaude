@@ -7,4 +7,5 @@ namespace Lib.Domain.UserCards.Apis;
 public interface IUserCardsCommandDomainService
 {
     Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard);
+    Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard);
 }

@@ -28,4 +28,6 @@ public sealed class UserSetCardsDomainService : IUserSetCardsDomainService
         _queryOperations.AllUserSetCardsAsync(userSetCards);
 
     public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _commandOperations.AddSetGroupToUserSetCardAsync(entity);
+
+    public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => _commandOperations.AddCardToSetAsync(entity);
 }

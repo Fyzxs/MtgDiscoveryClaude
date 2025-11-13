@@ -9,4 +9,5 @@ namespace Cli.MtgDiscovery.DataMigration.NewSystem;
 internal interface INewSystemCardAdder
 {
     Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args);
+    Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args);
 }

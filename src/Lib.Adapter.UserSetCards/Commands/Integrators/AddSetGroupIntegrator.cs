@@ -1,4 +1,6 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 
@@ -13,7 +15,7 @@ internal sealed class AddSetGroupIntegrator : IAddSetGroupIntegrator
 
         string setGroupId = change.SetGroupId;
 
-        if (mergedItems.TryGetValue(setGroupId, out UserSetCardCollectingExtEntity? existingItem))
+        if (mergedItems.TryGetValue(setGroupId, out UserSetCardCollectingExtEntity existingItem))
         {
             mergedItems[setGroupId] = new UserSetCardCollectingExtEntity
             {
