@@ -9,11 +9,22 @@ namespace Lib.Aggregator.UserSetCards.Commands;
 internal sealed class UserSetCardsCommandAggregator : IUserSetCardsCommandAggregator
 {
     private readonly IAddSetGroupAggregatorService _addSetGroupOperations;
+    private readonly IAddCardToSetAggregatorService _addCardToSetOperations;
 
-    public UserSetCardsCommandAggregator(ILogger logger) : this(new AddSetGroupAggregatorService(logger))
+    public UserSetCardsCommandAggregator(ILogger logger) : this(
+        new AddSetGroupAggregatorService(logger),
+        new AddCardToSetAggregatorService(logger))
     { }
 
-    private UserSetCardsCommandAggregator(IAddSetGroupAggregatorService addSetGroupOperations) => _addSetGroupOperations = addSetGroupOperations;
+    private UserSetCardsCommandAggregator(
+        IAddSetGroupAggregatorService addSetGroupOperations,
+        IAddCardToSetAggregatorService addCardToSetOperations)
+    {
+        _addSetGroupOperations = addSetGroupOperations;
+        _addCardToSetOperations = addCardToSetOperations;
+    }
 
     public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _addSetGroupOperations.Execute(entity);
+
+    public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => _addCardToSetOperations.Execute(entity);
 }

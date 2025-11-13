@@ -285,6 +285,9 @@ public class ScryfallGroupingsScraper
 
             var query = HttpUtility.UrlDecode(searchUrl.Substring(queryIndex + 2).Split('&')[0]);
 
+            // Apply special case fixes for unsupported search operators
+            query = NormalizeUnsupportedQueries(query, setCode);
+
             Console.WriteLine($"     - {displayName} ({cardCount} cards)");
 
             groupings.Add(new CardGrouping
@@ -299,6 +302,27 @@ public class ScryfallGroupingsScraper
         }
 
         return groupings;
+    }
+
+    static string NormalizeUnsupportedQueries(string query, string setCode)
+    {
+        // Handle is:jumpstart queries which don't have a corresponding field in bulk JSON
+        // Replace with actual collector number ranges for known sets
+        if (query.Contains("is:jumpstart"))
+        {
+            if (setCode == "dmu")
+            {
+                // DMU jumpstart cards are #282-286
+                return query.Replace("is:jumpstart", "cn≥282 cn≤286");
+            }
+            else if (setCode == "bro")
+            {
+                // BRO jumpstart cards are #288-292
+                return query.Replace("is:jumpstart", "cn≥288 cn≤292");
+            }
+        }
+
+        return query;
     }
 
     static GroupingFilters ParseScryfallQuery(string query)

@@ -188,10 +188,17 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
             // String comparison (case insensitive)
             if (normalizedExpectedValue is string expectedStr && cardValue.ToString() is string cardStr)
             {
-                return string.Equals(cardStr, expectedStr, StringComparison.OrdinalIgnoreCase);
+                if (string.Equals(cardStr, expectedStr, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+                // Don't return false - fall through to check arrays (e.g., frame_effects when checking frame property)
             }
-            // Direct value comparison
-            return Equals(cardValue, normalizedExpectedValue);
+            // Direct value comparison for non-string, non-bool types
+            else if (Equals(cardValue, normalizedExpectedValue))
+            {
+                return true;
+            }
         }
 
         // Check in array properties (finishes, frame_effects, promo_types)

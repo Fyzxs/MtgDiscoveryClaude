@@ -18,7 +18,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.MtgDiscovery.Entry.Commands.UserCards;
 
-internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntryService
+/// <summary>
+/// Entry service for adding user cards without updating UserSetCards.
+/// Used by migration tools to separately track individual cards and set-level aggregation.
+/// </summary>
+internal sealed class AddUserCardOnlyEntryService : IAddUserCardOnlyEntryService
 {
     private readonly IUserCardsDomainService _userCardsDomainService;
     private readonly ICardDomainService _cardDomainService;
@@ -28,7 +32,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
     private readonly IUserCardOufToOutMapper _userCardOufToOutMapper;
     private readonly ICardNameGuidGenerator _cardNameGuidGenerator;
 
-    public AddCardToCollectionEntryService(ILogger logger) : this(
+    public AddUserCardOnlyEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
         new CardDomainService(logger),
         new AddCardToCollectionArgEntityValidatorContainer(),
@@ -38,7 +42,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         new CardNameGuidGenerator())
     { }
 
-    private AddCardToCollectionEntryService(
+    private AddUserCardOnlyEntryService(
         IUserCardsDomainService userCardsDomainService,
         ICardDomainService cardDomainService,
         IAddCardToCollectionArgEntityValidator addCardToCollectionArgEntityValidator,
@@ -68,7 +72,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         if (cardResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 
         List<CardItemOutEntity> cards = await _cardItemOufToOutMapper.Map(cardResponse.ResponseData).ConfigureAwait(false);
-        if (cards.Count == 0) return new FailureOperationResponse<List<CardItemOutEntity>>(new Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
+        if (cards.Count == 0) return new FailureOperationResponse<List<CardItemOutEntity>>(new Lib.Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
 
         // Extract card metadata
         CardItemOutEntity cardItem = cards[0];
@@ -92,7 +96,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
             Details = itrEntity.Details
         };
 
-        IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardAsync(enrichedEntity).ConfigureAwait(false);
+        IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardOnlyAsync(enrichedEntity).ConfigureAwait(false);
         if (addResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 
         // Map the user collection data to the card

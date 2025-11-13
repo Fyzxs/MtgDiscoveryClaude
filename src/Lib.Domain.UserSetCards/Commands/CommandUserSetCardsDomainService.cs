@@ -17,4 +17,6 @@ internal sealed class CommandUserSetCardsDomainService : IUserSetCardsCommandDom
     private CommandUserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) => _userSetCardsAggregatorService = userSetCardsAggregatorService;
 
     public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _userSetCardsAggregatorService.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => await _userSetCardsAggregatorService.AddCardToSetAsync(entity).ConfigureAwait(false);
 }

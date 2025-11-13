@@ -12,14 +12,24 @@ namespace Lib.MtgDiscovery.Entry.Commands;
 internal sealed class UserCardsEntryService : IUserCardsEntryService
 {
     private readonly IAddCardToCollectionEntryService _addCardToCollection;
+    private readonly IAddUserCardOnlyEntryService _addUserCardOnly;
 
     public UserCardsEntryService(ILogger logger) : this(
-        new AddCardToCollectionEntryService(logger))
+        new AddCardToCollectionEntryService(logger),
+        new AddUserCardOnlyEntryService(logger))
     { }
 
-    private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection)
-        => _addCardToCollection = addCardToCollection;
+    private UserCardsEntryService(
+        IAddCardToCollectionEntryService addCardToCollection,
+        IAddUserCardOnlyEntryService addUserCardOnly)
+    {
+        _addCardToCollection = addCardToCollection;
+        _addUserCardOnly = addUserCardOnly;
+    }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args)
         => await _addCardToCollection.Execute(args).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args)
+        => await _addUserCardOnly.Execute(args).ConfigureAwait(false);
 }

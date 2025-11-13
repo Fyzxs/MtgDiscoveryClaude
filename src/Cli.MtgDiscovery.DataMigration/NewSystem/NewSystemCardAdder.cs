@@ -27,4 +27,13 @@ internal sealed class NewSystemCardAdder : INewSystemCardAdder
 
         return response;
     }
+
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args)
+    {
+        IOperationResponse<List<CardItemOutEntity>> response = await _userCardsEntryService
+            .AddUserCardOnlyAsync(args)
+            .ConfigureAwait(false);
+
+        return response;
+    }
 }

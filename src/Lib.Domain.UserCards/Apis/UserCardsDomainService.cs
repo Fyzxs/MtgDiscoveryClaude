@@ -24,6 +24,8 @@ public sealed class UserCardsDomainService : IUserCardsDomainService
 
     public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardAsync(userCard);
 
+    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardOnlyAsync(userCard);
+
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _queryOperations.UserCardAsync(userCard);
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => _queryOperations.UserCardsBySetAsync(userCardsSet);

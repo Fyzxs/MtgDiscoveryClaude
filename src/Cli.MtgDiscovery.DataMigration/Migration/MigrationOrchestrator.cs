@@ -164,10 +164,11 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
             .Map((sqlRecord, cosmosCard, newSystemCard, _configuration.TargetUserId))
             .ConfigureAwait(false);
 
+        // Step 1: Add each variation to UserCards (without updating UserSetCards)
         foreach (IAddCardToCollectionArgsEntity addCardEntity in addCardEntities)
         {
             IOperationResponse<List<CardItemOutEntity>> addResponse = await _cardAdder
-                .AddCardToCollectionAsync(addCardEntity)
+                .AddUserCardOnlyAsync(addCardEntity)
                 .ConfigureAwait(false);
 
             if (addResponse.IsFailure)
@@ -177,7 +178,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
                     OldCardId = sqlRecord.CardId,
                     ScryfallId = cosmosCard.Body.ScryfallId,
                     SetId = sqlRecord.SetId,
-                    ErrorReason = $"Failed to add card to collection: {addResponse.OuterException?.Message ?? "Unknown error"}"
+                    ErrorReason = $"Failed to add user card: {addResponse.OuterException?.Message ?? "Unknown error"}"
                 };
 
                 await _errorLogger.LogErrorAsync(error).ConfigureAwait(false);

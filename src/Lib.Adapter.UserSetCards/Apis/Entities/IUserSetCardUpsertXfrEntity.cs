@@ -1,4 +1,6 @@
-﻿namespace Lib.Adapter.UserSetCards.Apis.Entities;
+﻿using System.Collections.Generic;
+
+namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
 public interface IUserSetCardUpsertXfrEntity
 {

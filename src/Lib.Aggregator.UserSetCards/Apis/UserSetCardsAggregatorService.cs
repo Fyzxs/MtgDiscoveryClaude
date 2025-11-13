@@ -35,4 +35,6 @@ public sealed class UserSetCardsAggregatorService : IUserSetCardsAggregatorServi
 
     public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) =>
         _commandOperations.AddSetGroupToUserSetCardAsync(entity);
+
+    public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => throw new System.NotImplementedException();
 }

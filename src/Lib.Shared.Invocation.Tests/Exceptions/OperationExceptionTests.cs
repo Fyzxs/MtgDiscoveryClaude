@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Lib.Shared.Invocation.Exceptions;
 
 namespace Lib.Shared.Invocation.Tests.Exceptions;
@@ -10,7 +11,7 @@ public sealed class OperationExceptionTests
     private sealed class TestOperationException : OperationException
 #pragma warning restore CA1032 // Implement standard exception constructors
     {
-        public TestOperationException(HttpStatusCode statusCode, string statusMessage, Exception? innerException = null)
+        public TestOperationException(HttpStatusCode statusCode, string statusMessage, Exception innerException = null)
             : base(statusCode, statusMessage, innerException)
         {
         }
