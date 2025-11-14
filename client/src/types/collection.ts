@@ -77,6 +77,7 @@ export interface UserSetCardCollecting {
   setGroupId: string;
   collecting: boolean;
   count: number;
+  collectingFinishes?: ('nonFoil' | 'foil' | 'etched')[]; // NEW: Which finishes are being collected (stubbed for Phase 1)
 }
 
 export interface UserSetCardRarityGroup {
