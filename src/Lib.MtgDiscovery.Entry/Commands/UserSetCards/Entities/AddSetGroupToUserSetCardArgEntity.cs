@@ -1,4 +1,5 @@
-﻿using Lib.Shared.DataModels.Entities.Args.UserSetCards;
+﻿using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Commands.UserSetCards.Entities;
 
@@ -9,4 +10,5 @@ internal sealed class AddSetGroupToUserSetCardArgEntity : IAddSetGroupToUserSetC
     public required string SetGroupId { get; init; }
     public required bool Collecting { get; init; }
     public required int Count { get; init; }
+    public required IReadOnlyCollection<string> CollectingFinishes { get; init; }
 }

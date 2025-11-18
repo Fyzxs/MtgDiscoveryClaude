@@ -29,9 +29,10 @@ export const GET_ALL_SETS = gql`
               setGroupId
               collecting
               count
+              collectingFinishes
             }
             groups {
-              rarity
+              setGroupId
               group {
                 nonFoil {
                   cards
@@ -135,9 +136,10 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
               setGroupId
               collecting
               count
+              collectingFinishes
             }
             groups {
-              rarity
+              setGroupId
               group {
                 nonFoil {
                   cards

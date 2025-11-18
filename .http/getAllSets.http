@@ -1,0 +1,73 @@
+###
+# Get All Sets Query
+# Frontend: client/src/graphql/queries/sets.ts - GET_ALL_SETS
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get All Sets with User Collection
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetAllSets($args: AllSetsArgEntityInput) {
+  allSets(args: $args) {
+    __typename
+    ... on SetsSuccessResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        printedSize
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+        userCollection {
+          totalCards
+          uniqueCards
+          collecting {
+            setGroupId
+            collecting
+            count
+            collectingFinishes
+          }
+          groups {
+            setGroupId
+            group {
+              nonFoil {
+                cards
+              }
+              foil {
+                cards
+              }
+              etched {
+                cards
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}

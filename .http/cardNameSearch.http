@@ -1,0 +1,33 @@
+###
+# Card Name Search Query
+# Frontend: client/src/graphql/queries/cardNameSearch.ts - CARD_NAME_SEARCH
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Card Name Search
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query CardNameSearch($searchTerm: CardSearchTermArgEntityInput!) {
+  cardNameSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on CardNameSearchResultsSuccessResponse {
+      data {
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "Lightning"
+  }
+}

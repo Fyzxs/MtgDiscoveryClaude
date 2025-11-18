@@ -15,7 +15,8 @@ internal sealed class AddSetGroupItrToXfrMapper : IAddSetGroupItrToXfrMapper
             SetId = source.SetId,
             SetGroupId = source.SetGroupId,
             Collecting = source.Collecting,
-            Count = source.Count
+            Count = source.Count,
+            CollectingFinishes = source.CollectingFinishes
         });
     }
 }

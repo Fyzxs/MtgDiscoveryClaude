@@ -1,0 +1,53 @@
+###
+# Add Set Group To User Set Card Mutation
+# Frontend: client/src/graphql/queries/userCards.ts - ADD_SET_GROUP_TO_USER_SET_CARD
+# NOTE: This mutation requires JWT authentication header
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Add Set Group to User Set Card
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+mutation AddSetGroupToUserSetCard($input: AddSetGroupToUserSetCardInput!) {
+  addSetGroupToUserSetCard(input: $input) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        collecting {
+          setGroupId
+          collecting
+          count
+          collectingFinishes
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "input": {
+    "setId": "288bd996-960e-448b-a187-9504c1930c2c",
+    "setGroupId": "booster",
+    "collecting": true,
+    "count": 291,
+    "collectingFinishes": ["nonFoil", "foil"]
+  }
+}

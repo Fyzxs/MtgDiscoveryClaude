@@ -1,0 +1,49 @@
+###
+# Get Sets By Code Query
+# Frontend: client/src/graphql/queries/sets.ts - GET_SETS_BY_CODE
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get Multiple Sets by Code
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SetsSuccessResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        releasedAt
+        setType
+        cardCount
+        printedSize
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "setCodes": ["neo"]
+  }
+}

@@ -84,7 +84,11 @@ internal sealed class Startup
             .AddArtistSchemaExtensions()
             .AddAuthorization()
             .AddErrorFilter<HttpStatusCodeErrorFilter>()
-            .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
+            .ModifyRequestOptions(opt =>
+            {
+                opt.IncludeExceptionDetails = true;
+            })
+            .DisableIntrospection(false)
             .UseDefaultPipeline()
             .AddDefaultTransactionScopeHandler()
             .ModifyOptions(o => o.EnableDefer = true);

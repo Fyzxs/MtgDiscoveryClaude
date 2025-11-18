@@ -1,0 +1,42 @@
+###
+# Add Card To Collection Mutation
+# Frontend: client/src/graphql/mutations/addCardToCollection.ts - ADD_CARD_TO_COLLECTION
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Add Card to Collection
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+mutation AddCardToCollection($args: AddCardToCollectionInput!) {
+  addCardToCollection(args: $args) {
+    __typename
+    ... on CardsSuccessResponse {
+      data {
+        id
+        userCollection {
+          finish
+          special
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "cardId": "3e7da55a-e0ff-4475-a67f-0f493726972e",
+    "finish": "nonFoil",
+    "special": false,
+    "count": 1
+  }
+}

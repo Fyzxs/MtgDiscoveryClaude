@@ -23,5 +23,9 @@ public sealed class UserSetCardCollectingOutEntityType : ObjectType<UserSetCardC
             .Name("count")
             .Type<NonNullType<IntType>>()
             .Description("The count of cards in this collecting group");
+        descriptor.Field(f => f.CollectingFinishes)
+            .Name("collectingFinishes")
+            .Type<NonNullType<ListType<NonNullType<StringType>>>>()
+            .Description("The finishes being collected for this set group (e.g., 'nonFoil', 'foil', 'etched')");
     }
 }
