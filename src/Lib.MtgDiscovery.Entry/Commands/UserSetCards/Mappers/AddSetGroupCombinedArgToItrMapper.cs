@@ -15,7 +15,8 @@ internal sealed class AddSetGroupCombinedArgToItrMapper : IAddSetGroupCombinedAr
             SetId = from.AddSetGroupToUserSetCard.SetId,
             SetGroupId = from.AddSetGroupToUserSetCard.SetGroupId,
             Collecting = from.AddSetGroupToUserSetCard.Collecting,
-            Count = from.AddSetGroupToUserSetCard.Count
+            Count = from.AddSetGroupToUserSetCard.Count,
+            CollectingFinishes = from.AddSetGroupToUserSetCard.CollectingFinishes
         };
 
         return Task.FromResult<IAddSetGroupToUserSetCardItrEntity>(itrEntity);

@@ -27,5 +27,9 @@ public sealed class AddSetGroupToUserSetCardArgEntityInputType : InputObjectType
             .Name("count")
             .Type<NonNullType<IntType>>()
             .Description("The count of cards in this set group");
+        _ = descriptor.Field(x => x.CollectingFinishes)
+            .Name("collectingFinishes")
+            .Type<NonNullType<ListType<NonNullType<StringType>>>>()
+            .Description("The finishes being collected for this set group (e.g., 'nonFoil', 'foil', 'etched')");
     }
 }

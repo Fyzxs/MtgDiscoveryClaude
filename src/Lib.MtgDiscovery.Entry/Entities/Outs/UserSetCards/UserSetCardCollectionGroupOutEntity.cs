@@ -1,7 +1,7 @@
 ﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 
-public sealed class UserSetCardRarityGroupOutEntity
+public sealed class UserSetCardCollectionGroupOutEntity
 {
-    public string Rarity { get; init; }
+    public string SetGroupId { get; init; }
     public UserSetCardGroupOutEntity Group { get; init; }
 }

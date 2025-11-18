@@ -10,10 +10,10 @@ internal sealed class UserSetCardOufToOutMapper : IUserSetCardOufToOutMapper
 {
     public Task<UserSetCardOutEntity> Map(IUserSetCardOufEntity oufEntity)
     {
-        List<UserSetCardRarityGroupOutEntity> groups = [.. oufEntity.Groups
-            .Select(kvp => new UserSetCardRarityGroupOutEntity
+        List<UserSetCardCollectionGroupOutEntity> groups = [.. oufEntity.Groups
+            .Select(kvp => new UserSetCardCollectionGroupOutEntity
             {
-                Rarity = kvp.Key,
+                SetGroupId = kvp.Key,
                 Group = new UserSetCardGroupOutEntity
                 {
                     NonFoil = new UserSetCardFinishGroupOutEntity { Cards = kvp.Value.NonFoil.Cards },
@@ -27,7 +27,8 @@ internal sealed class UserSetCardOufToOutMapper : IUserSetCardOufToOutMapper
             {
                 SetGroupId = c.SetGroupId,
                 Collecting = c.Collecting,
-                Count = c.Count
+                Count = c.Count,
+                CollectingFinishes = c.CollectingFinishes
             })];
 
         return Task.FromResult(new UserSetCardOutEntity

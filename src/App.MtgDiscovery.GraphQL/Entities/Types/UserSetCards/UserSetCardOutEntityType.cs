@@ -29,8 +29,8 @@ public sealed class UserSetCardOutEntityType : ObjectType<UserSetCardOutEntity>
             .Description("The number of unique cards the user has from this set");
         descriptor.Field(f => f.Groups)
             .Name("groups")
-            .Type<NonNullType<ListType<NonNullType<UserSetCardRarityGroupOutEntityType>>>>()
-            .Description("Card collection groups organized by rarity");
+            .Type<NonNullType<ListType<NonNullType<UserSetCardCollectionGroupOutEntityType>>>>()
+            .Description("Card collection groups organized by set group");
         descriptor.Field(f => f.Collecting)
             .Name("collecting")
             .Type<NonNullType<ListType<NonNullType<UserSetCardCollectingOutEntityType>>>>()

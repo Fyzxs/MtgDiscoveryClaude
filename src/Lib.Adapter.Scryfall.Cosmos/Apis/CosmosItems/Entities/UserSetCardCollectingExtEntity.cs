@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 
@@ -12,4 +13,7 @@ public sealed class UserSetCardCollectingExtEntity
 
     [JsonProperty("count")]
     public int Count { get; init; }
+
+    [JsonProperty("collecting_finishes")]
+    public IReadOnlyCollection<string> CollectingFinishes { get; init; } = [];
 }

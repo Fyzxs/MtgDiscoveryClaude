@@ -1,4 +1,6 @@
-﻿namespace Lib.Shared.DataModels.Entities.Args.UserSetCards;
+﻿using System.Collections.Generic;
+
+namespace Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 public interface IAddSetGroupToUserSetCardArgEntity
 {
@@ -6,4 +8,5 @@ public interface IAddSetGroupToUserSetCardArgEntity
     string SetGroupId { get; }
     bool Collecting { get; }
     int Count { get; }
+    IReadOnlyCollection<string> CollectingFinishes { get; }
 }

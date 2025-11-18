@@ -1,0 +1,44 @@
+###
+# Update Collector Profile Mutation
+# Frontend: client/src/graphql/mutations/user.ts - UPDATE_COLLECTOR_PROFILE
+# NOTE: This mutation requires JWT authentication header
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Update Collector Profile
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+mutation UpdateCollectorProfile($collectorProfile: UpdateCollectorProfileInput!) {
+  updateCollectorProfile(collectorProfile: $collectorProfile) {
+    __typename
+    ... on SuccessCollectorProfileResponse {
+      data {
+        id
+        displayName
+        isPublic
+        totalCards
+        uniqueCards
+        favoriteSet
+        collectionValue
+        userId
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
+    }
+  }
+}
+
+{
+  "collectorProfile": {
+    "displayName": "My Collection",
+    "isPublic": true,
+    "favoriteSet": "neo"
+  }
+}

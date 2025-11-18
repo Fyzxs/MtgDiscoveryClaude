@@ -1,4 +1,6 @@
-﻿namespace Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
+﻿using System.Collections.Generic;
+
+namespace Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 
 public interface IAddSetGroupToUserSetCardXfrEntity
 {
@@ -7,4 +9,5 @@ public interface IAddSetGroupToUserSetCardXfrEntity
     string SetGroupId { get; }
     bool Collecting { get; }
     int Count { get; }
+    IReadOnlyCollection<string> CollectingFinishes { get; }
 }

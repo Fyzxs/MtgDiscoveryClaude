@@ -130,12 +130,12 @@ export const presets = {
       'name-desc': <T extends { name: string }>(a: T, b: T) => b.name.localeCompare(a.name),
       'cards-desc': <T extends { cardCount?: number }>(a: T, b: T) => (b.cardCount || 0) - (a.cardCount || 0),
       'cards-asc': <T extends { cardCount?: number }>(a: T, b: T) => (a.cardCount || 0) - (b.cardCount || 0),
-      'completion-desc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ rarity: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
+      'completion-desc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
         const getPercentage = (item: T): number => {
           if (!item.userCollection) return -1;
           const collectingGroups = item.userCollection.collecting.filter(g => g.collecting === true);
           const collected = collectingGroups.reduce((sum, cg) => {
-            const groupData = item.userCollection?.groups.find(g => g.rarity === cg.setGroupId);
+            const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
             if (!groupData) return sum;
             return sum + groupData.group.nonFoil.cards.length + groupData.group.foil.cards.length + groupData.group.etched.cards.length;
           }, 0);
@@ -144,12 +144,12 @@ export const presets = {
         };
         return getPercentage(b) - getPercentage(a);
       },
-      'completion-asc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ rarity: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
+      'completion-asc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
         const getPercentage = (item: T): number => {
           if (!item.userCollection) return -1;
           const collectingGroups = item.userCollection.collecting.filter(g => g.collecting === true);
           const collected = collectingGroups.reduce((sum, cg) => {
-            const groupData = item.userCollection?.groups.find(g => g.rarity === cg.setGroupId);
+            const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
             if (!groupData) return sum;
             return sum + groupData.group.nonFoil.cards.length + groupData.group.foil.cards.length + groupData.group.etched.cards.length;
           }, 0);
@@ -166,7 +166,7 @@ export const presets = {
         if (!selectedTypes || selectedTypes.length === 0) return true;
         return selectedTypes.includes(item.setType);
       },
-      collectionStatus: <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ rarity: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(item: T, selectedStatuses: string[]) => {
+      collectionStatus: <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(item: T, selectedStatuses: string[]) => {
         if (!selectedStatuses || selectedStatuses.length === 0) return true;
         if (!item.userCollection) {
           return selectedStatuses.includes('not-started');
@@ -176,7 +176,7 @@ export const presets = {
           return selectedStatuses.includes('not-started');
         }
         const collected = collectingGroups.reduce((sum, cg) => {
-          const groupData = item.userCollection?.groups.find(g => g.rarity === cg.setGroupId);
+          const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
           if (!groupData) return sum;
           return sum + groupData.group.nonFoil.cards.length + groupData.group.foil.cards.length + groupData.group.etched.cards.length;
         }, 0);

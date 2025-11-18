@@ -13,7 +13,8 @@ internal sealed class UserSetCardCollectingExtToOufMapper : IUserSetCardCollecti
         {
             SetGroupId = source.SetGroupId,
             Collecting = source.Collecting,
-            Count = source.Count
+            Count = source.Count,
+            CollectingFinishes = source.CollectingFinishes
         });
     }
 }

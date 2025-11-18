@@ -485,6 +485,9 @@ Desktop.ini
 storybook-static
 *.storybook.log
 
+# GraphQL Schema
+client/schema.graphql
+client/schema.json
 
 # CLAUDE
 .claude/state/**
