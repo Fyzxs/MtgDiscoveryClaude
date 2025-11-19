@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Lib.Shared.Abstractions.Mappers;
+namespace Lib.Shared.Abstractions.Actions.Mappers;
 
 public interface IMapper<in TSource, in TResult>
 {

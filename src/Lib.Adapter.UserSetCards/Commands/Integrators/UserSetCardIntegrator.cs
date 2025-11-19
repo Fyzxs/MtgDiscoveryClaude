@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -16,11 +17,11 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
 
     private UserSetCardIntegrator(IUserSetCardGroupResolver groupResolver) => _groupResolver = groupResolver;
 
-    public UserSetCardExtEntity Integrate(UserSetCardExtEntity current, IAddCardToSetXfrEntity change)
+    public Task<UserSetCardExtEntity> Integrate(UserSetCardExtEntity current, IAddCardToSetXfrEntity change)
     {
-        if (change.Count == 0) return current;
+        if (change.Count == 0) return Task.FromResult(current);
 
-        return ApplyCardCountChange(current, change);
+        return Task.FromResult(ApplyCardCountChange(current, change));
     }
 
     private UserSetCardExtEntity ApplyCardCountChange(UserSetCardExtEntity record, IAddCardToSetXfrEntity entity)

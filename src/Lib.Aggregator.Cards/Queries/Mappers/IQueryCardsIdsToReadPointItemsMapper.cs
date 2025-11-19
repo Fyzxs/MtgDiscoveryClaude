@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.Abstractions.Mappers;
+using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Queries.Mappers;

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using Lib.Shared.Abstractions.Mappers;
+﻿using System.Collections.Generic;
+using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;

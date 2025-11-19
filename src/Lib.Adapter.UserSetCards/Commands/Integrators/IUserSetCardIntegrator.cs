@@ -1,6 +1,6 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
-using Lib.Shared.Abstractions.Integrators;
+using Lib.Shared.Abstractions.Actions.Integrators;
 
 namespace Lib.Adapter.UserSetCards.Commands.Integrators;
 
