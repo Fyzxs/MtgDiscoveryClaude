@@ -143,7 +143,12 @@ export const ADD_SET_GROUP_TO_USER_SET_CARD = gql`
           collecting {
             setGroupId
             collecting
-            count
+            counts {
+              total
+              nonFoil
+              foil
+              etched
+            }
             collectingFinishes
           }
         }
