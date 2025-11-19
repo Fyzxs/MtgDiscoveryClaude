@@ -66,10 +66,23 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     }, 0);
 
     // Total available cards in tracking groups (only those with collecting: true)
-    // Multiply count by the number of finishes being collected
+    // Use counts.total which already accounts for all finish types
     const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => {
-      const finishCount = (g.collectingFinishes || []).length;
-      return sum + (g.count * finishCount);
+      const collectingFinishes = g.collectingFinishes || [];
+      let total = 0;
+
+      // Sum only the finish types the user is collecting
+      if (collectingFinishes.includes('nonFoil')) {
+        total += g.counts.nonFoil;
+      }
+      if (collectingFinishes.includes('foil')) {
+        total += g.counts.foil;
+      }
+      if (collectingFinishes.includes('etched')) {
+        total += g.counts.etched;
+      }
+
+      return sum + total;
     }, 0);
 
     const percentage = totalAvailableInTrackingGroups > 0

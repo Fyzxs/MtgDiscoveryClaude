@@ -28,7 +28,12 @@ export const GET_ALL_SETS = gql`
             collecting {
               setGroupId
               collecting
-              count
+              counts {
+                total
+                nonFoil
+                foil
+                etched
+              }
               collectingFinishes
             }
             groups {
@@ -135,7 +140,12 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
             collecting {
               setGroupId
               collecting
-              count
+              counts {
+                total
+                nonFoil
+                foil
+                etched
+              }
               collectingFinishes
             }
             groups {

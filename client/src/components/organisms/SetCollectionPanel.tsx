@@ -152,9 +152,8 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       [groupId]: selectedFinishes
     }));
 
-    // Call stubbed mutation (will be real in Phase 3)
-    // @ts-expect-error - Phase 1 stub: Backend expects 'count' parameter, will be 'selectedFinishes' in Phase 3
-    await toggleSetGroup(set.id, set.code, groupId, isCollecting, selectedFinishes);
+    // Call mutation with counts
+    await toggleSetGroup(set.id, set.code, groupId, isCollecting, selectedFinishes, count);
 
     // Notify parent that group was toggled (to refresh set card)
     onGroupToggled?.();
@@ -175,15 +174,17 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       [groupId]: newSelections
     }));
 
+    // Get the count from the set's groupings metadata
+    const grouping = set.groupings?.find(g => g.id === groupId);
+    const count = grouping?.cardCount || 0;
+
     // If all finishes are unchecked, auto-uncheck the group
     if (newSelections.length === 0) {
-      // @ts-expect-error - Phase 1 stub: Backend expects 'count' parameter, will be 'selectedFinishes' in Phase 3
-      await toggleSetGroup(set.id, set.code, groupId, false, []);
+      await toggleSetGroup(set.id, set.code, groupId, false, [], count);
       onGroupToggled?.();
     } else {
       // Just update the finish selections
-      // @ts-expect-error - Phase 1 stub: Backend expects 'count' parameter, will be 'selectedFinishes' in Phase 3
-      await toggleSetGroup(set.id, set.code, groupId, true, newSelections);
+      await toggleSetGroup(set.id, set.code, groupId, true, newSelections, count);
       onGroupToggled?.();
     }
 
