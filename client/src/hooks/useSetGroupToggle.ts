@@ -4,7 +4,13 @@ import { useMutation } from '@apollo/client/react';
 import { ADD_SET_GROUP_TO_USER_SET_CARD } from '../graphql/queries/userCards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useCollectorParam } from './useCollectorParam';
-import { getMockFinishCounts } from '../utils/mockFinishCounts';
+
+interface FinishCounts {
+  total: number;
+  nonFoil: number;
+  foil: number;
+  etched: number;
+}
 
 interface UseSetGroupToggleResult {
   toggleSetGroup: (
@@ -13,7 +19,7 @@ interface UseSetGroupToggleResult {
     setGroupId: string,
     collecting: boolean,
     selectedFinishes: ('nonFoil' | 'foil' | 'etched')[],
-    cardCount: number
+    finishCounts: FinishCounts
   ) => Promise<void>;
   loading: boolean;
   error: Error | undefined;
@@ -30,15 +36,12 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
     setGroupId: string,
     collecting: boolean,
     selectedFinishes: ('nonFoil' | 'foil' | 'etched')[],
-    cardCount: number
+    finishCounts: FinishCounts
   ) => {
     if (!collectorId) {
       logger.error('No collector ID available');
       return;
     }
-
-    // Get finish counts based on set metadata
-    const finishCounts = getMockFinishCounts(setCode, setGroupId, cardCount);
 
     // Calculate total based on selected finishes
     let total = 0;

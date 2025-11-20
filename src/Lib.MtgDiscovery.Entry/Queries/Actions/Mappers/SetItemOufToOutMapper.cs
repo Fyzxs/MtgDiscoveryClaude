@@ -47,7 +47,13 @@ internal sealed class SetItemOufToOutMapper : ISetItemOufToOutMapper
                 Id = g.Id,
                 DisplayName = g.DisplayName,
                 Order = g.Order,
-                CardCount = g.CardCount,
+                CardCounts = g.CardCounts != null ? new FinishCountsOutEntity
+                {
+                    Total = g.CardCounts.Total,
+                    NonFoil = g.CardCounts.NonFoil,
+                    Foil = g.CardCounts.Foil,
+                    Etched = g.CardCounts.Etched
+                } : null,
                 RawQuery = g.RawQuery,
                 Filters = g.Filters != null ? new GroupingFiltersOutEntity
                 {
