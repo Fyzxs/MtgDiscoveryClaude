@@ -9,6 +9,7 @@ namespace Lib.Scryfall.Ingestion.Services;
 internal interface ICardGroupingMatcher
 {
     string GetGroupIdForCard(dynamic cardData, string setCode);
+    CardGrouping GetGroupingForCard(dynamic cardData, string setCode);
 }
 
 internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
@@ -27,6 +28,12 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
 
     public string GetGroupIdForCard(dynamic cardData, string setCode)
     {
+        CardGrouping grouping = GetGroupingForCard(cardData, setCode);
+        return grouping?.Id;
+    }
+
+    public CardGrouping GetGroupingForCard(dynamic cardData, string setCode)
+    {
         SetGroupingData groupingData = _groupingsLoader.GetGroupingsForSet(setCode);
         if (groupingData is null || groupingData.Groupings is null)
         {
@@ -41,7 +48,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         {
             if (CardMatchesGrouping(cardData, grouping))
             {
-                return grouping.Id;
+                return grouping;
             }
         }
 
