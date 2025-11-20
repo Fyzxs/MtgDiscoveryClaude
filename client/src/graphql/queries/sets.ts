@@ -123,7 +123,12 @@ export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
             id
             displayName
             order
-            cardCount
+            cardCounts {
+              total
+              nonFoil
+              foil
+              etched
+            }
             rawQuery
             filters {
               collectorNumberRange {
