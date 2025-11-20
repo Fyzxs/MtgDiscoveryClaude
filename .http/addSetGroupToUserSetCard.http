@@ -10,7 +10,7 @@
 ### Add Set Group to User Set Card
 POST {{gqlEndpoint}}
 Content-Type: application/json
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Authorization: Bearer {{BEARER_TOKEN}}
 
 mutation AddSetGroupToUserSetCard($input: AddSetGroupToUserSetCardInput!) {
   addSetGroupToUserSetCard(input: $input) {
@@ -24,7 +24,12 @@ mutation AddSetGroupToUserSetCard($input: AddSetGroupToUserSetCardInput!) {
         collecting {
           setGroupId
           collecting
-          count
+          counts {
+            total
+            nonFoil
+            foil
+            etched
+          }
           collectingFinishes
         }
       }
@@ -44,10 +49,15 @@ mutation AddSetGroupToUserSetCard($input: AddSetGroupToUserSetCardInput!) {
 
 {
   "input": {
-    "setId": "288bd996-960e-448b-a187-9504c1930c2c",
+    "setId": "30ec97cb-dca9-4bf4-a98b-310f9d8ceaff",
     "setGroupId": "booster",
     "collecting": true,
-    "count": 291,
+    "counts": {
+      "total": 602,
+      "nonFoil": 301,
+      "foil": 301,
+      "etched": 0
+    },
     "collectingFinishes": ["nonFoil", "foil"]
   }
 }

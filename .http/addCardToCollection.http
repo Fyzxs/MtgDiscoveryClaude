@@ -1,6 +1,7 @@
 ###
 # Add Card To Collection Mutation
 # Frontend: client/src/graphql/mutations/addCardToCollection.ts - ADD_CARD_TO_COLLECTION
+# NOTE: This mutation requires JWT authentication header
 ###
 @baseUrl = https://localhost:65203
 @gqlEndpoint = {{baseUrl}}/graphql
@@ -9,6 +10,7 @@
 ### Add Card to Collection
 POST {{gqlEndpoint}}
 Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
 
 mutation AddCardToCollection($args: AddCardToCollectionInput!) {
   addCardToCollection(args: $args) {
@@ -16,6 +18,12 @@ mutation AddCardToCollection($args: AddCardToCollectionInput!) {
     ... on CardsSuccessResponse {
       data {
         id
+        name
+        setCode
+        setName
+        collectorNumber
+        rarity
+        artist
         userCollection {
           finish
           special
@@ -24,6 +32,7 @@ mutation AddCardToCollection($args: AddCardToCollectionInput!) {
       }
     }
     ... on FailureResponse {
+      __typename
       status {
         message
         statusCode
@@ -34,9 +43,14 @@ mutation AddCardToCollection($args: AddCardToCollectionInput!) {
 
 {
   "args": {
-    "cardId": "3e7da55a-e0ff-4475-a67f-0f493726972e",
-    "finish": "nonFoil",
-    "special": false,
-    "count": 1
+    "cardId": "0223cf7f-4c6e-487f-babb-a740a15e1f0c",
+    "setId": "a2f58272-bba6-439d-871e-7a46686ac018",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "userCardDetails": {
+      "finish": "foil",
+      "special": "none",
+      "count": 2,
+      "setGroupId": "draft-cards"
+    }
   }
 }

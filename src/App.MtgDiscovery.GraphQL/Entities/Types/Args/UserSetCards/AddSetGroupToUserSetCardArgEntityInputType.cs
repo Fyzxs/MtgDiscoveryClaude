@@ -23,10 +23,10 @@ public sealed class AddSetGroupToUserSetCardArgEntityInputType : InputObjectType
             .Name("collecting")
             .Type<NonNullType<BooleanType>>()
             .Description("Whether the user is collecting this set group");
-        _ = descriptor.Field(x => x.Count)
-            .Name("count")
-            .Type<NonNullType<IntType>>()
-            .Description("The count of cards in this set group");
+        _ = descriptor.Field(x => x.Counts)
+            .Name("counts")
+            .Type<NonNullType<FinishCountsInputType>>()
+            .Description("The card counts by finish type for this set group");
         _ = descriptor.Field(x => x.CollectingFinishes)
             .Name("collectingFinishes")
             .Type<NonNullType<ListType<NonNullType<StringType>>>>()

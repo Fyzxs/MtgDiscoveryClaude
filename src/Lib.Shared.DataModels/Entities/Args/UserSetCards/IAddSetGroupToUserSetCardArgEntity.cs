@@ -7,6 +7,6 @@ public interface IAddSetGroupToUserSetCardArgEntity
     string SetId { get; }
     string SetGroupId { get; }
     bool Collecting { get; }
-    int Count { get; }
+    IFinishCountsArgEntity Counts { get; }
     IReadOnlyCollection<string> CollectingFinishes { get; }
 }

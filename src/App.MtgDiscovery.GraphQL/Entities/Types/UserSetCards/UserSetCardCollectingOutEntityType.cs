@@ -19,10 +19,10 @@ public sealed class UserSetCardCollectingOutEntityType : ObjectType<UserSetCardC
             .Name("collecting")
             .Type<NonNullType<BooleanType>>()
             .Description("Whether the user is actively collecting this set group");
-        descriptor.Field(f => f.Count)
-            .Name("count")
-            .Type<NonNullType<IntType>>()
-            .Description("The count of cards in this collecting group");
+        descriptor.Field(f => f.Counts)
+            .Name("counts")
+            .Type<NonNullType<FinishCountsType>>()
+            .Description("The card counts by finish type for this collecting group");
         descriptor.Field(f => f.CollectingFinishes)
             .Name("collectingFinishes")
             .Type<NonNullType<ListType<NonNullType<StringType>>>>()

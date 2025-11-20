@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <Compile Remove="Queries\Mappers\ArgToItrs\**" />
-    <EmbeddedResource Remove="Queries\Mappers\ArgToItrs\**" />
-    <None Remove="Queries\Mappers\ArgToItrs\**" />
+    <Compile Remove="Queries\Actions\Mappers\ArgToItrs\**" />
+    <EmbeddedResource Remove="Queries\Actions\Mappers\ArgToItrs\**" />
+    <None Remove="Queries\Actions\Mappers\ArgToItrs\**" />
   </ItemGroup>
 
   <ItemGroup>

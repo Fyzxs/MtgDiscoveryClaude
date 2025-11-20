@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Commands.UserSetCards.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards.Validators;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;

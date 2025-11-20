@@ -7,11 +7,6 @@ using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 
-internal interface ICollectionUserSetCardExtToOufMapper
-{
-    Task<IEnumerable<IUserSetCardOufEntity>> Map([NotNull] IEnumerable<UserSetCardExtEntity> source);
-}
-
 internal sealed class CollectionUserSetCardExtToOufMapper : ICollectionUserSetCardExtToOufMapper
 {
     private readonly IUserSetCardExtToItrMapper _mapper;

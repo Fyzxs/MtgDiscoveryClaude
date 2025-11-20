@@ -8,6 +8,6 @@ public interface IAddSetGroupToUserSetCardXfrEntity
     string SetId { get; }
     string SetGroupId { get; }
     bool Collecting { get; }
-    int Count { get; }
+    IFinishCountsXfrEntity Counts { get; }
     IReadOnlyCollection<string> CollectingFinishes { get; }
 }

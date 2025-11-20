@@ -7,16 +7,25 @@ namespace Lib.Aggregator.UserSetCards.Commands.Mappers;
 
 internal sealed class AddSetGroupItrToXfrMapper : IAddSetGroupItrToXfrMapper
 {
-    public Task<IAddSetGroupToUserSetCardXfrEntity> Map(IAddSetGroupToUserSetCardItrEntity source)
+    private readonly IFinishCountsItrToXfrMapper _finishCountsMapper;
+
+    public AddSetGroupItrToXfrMapper() : this(new FinishCountsItrToXfrMapper())
+    { }
+
+    private AddSetGroupItrToXfrMapper(IFinishCountsItrToXfrMapper finishCountsMapper) => _finishCountsMapper = finishCountsMapper;
+
+    public async Task<IAddSetGroupToUserSetCardXfrEntity> Map(IAddSetGroupToUserSetCardItrEntity source)
     {
-        return Task.FromResult<IAddSetGroupToUserSetCardXfrEntity>(new AddSetGroupToUserSetCardXfrEntity
+        IFinishCountsXfrEntity counts = await _finishCountsMapper.Map(source.Counts).ConfigureAwait(false);
+
+        return new AddSetGroupToUserSetCardXfrEntity
         {
             UserId = source.UserId,
             SetId = source.SetId,
             SetGroupId = source.SetGroupId,
             Collecting = source.Collecting,
-            Count = source.Count,
+            Counts = counts,
             CollectingFinishes = source.CollectingFinishes
-        });
+        };
     }
 }
