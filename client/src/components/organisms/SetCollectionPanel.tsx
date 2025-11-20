@@ -71,48 +71,53 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       const foilCollected = groupData?.group.foil.cards.length || 0;
       const etchedCollected = groupData?.group.etched.cards.length || 0;
 
-      // Get mock finish counts for this set and group
-      // Use the actual card count from groupings metadata, not collectingGroup.count
-      const mockFinishCounts = getMockFinishCounts(set.code, collectingGroup.setGroupId, grouping?.cardCount || 0);
+      // Use actual finish counts from backend (available in collectingGroup.counts)
+      // This provides accurate counts for each finish type
+      const finishCounts = collectingGroup.counts || {
+        total: grouping?.cardCount || 0,
+        nonFoil: grouping?.cardCount || 0,
+        foil: grouping?.cardCount || 0,
+        etched: 0
+      };
 
       // Get which finishes are being collected
-      // Use local state if available, otherwise use from backend, otherwise default to all
+      // Use local state if available, otherwise use from backend, otherwise default to available finishes
+      const availableFinishes = getDefaultCollectingFinishes(finishCounts);
       const collectingFinishes = localFinishSelections[collectingGroup.setGroupId]
-        // @ts-expect-error - Phase 1 stub: Backend doesn't have collectingFinishes property yet
         || collectingGroup.collectingFinishes
-        || getDefaultCollectingFinishes(mockFinishCounts);
+        || availableFinishes;
 
       const finishes: GroupFinishProgress[] = [];
 
       // Only show finishes that are available (count > 0)
-      if (mockFinishCounts.nonFoil > 0) {
+      if (finishCounts.nonFoil > 0) {
         finishes.push({
           finishType: 'nonFoil',
           collected: nonFoilCollected,
-          total: mockFinishCounts.nonFoil,
-          percentage: mockFinishCounts.nonFoil > 0 ? (nonFoilCollected / mockFinishCounts.nonFoil) * 100 : 0,
+          total: finishCounts.nonFoil,
+          percentage: finishCounts.nonFoil > 0 ? (nonFoilCollected / finishCounts.nonFoil) * 100 : 0,
           emoji: '🔹',
           isSelected: collectingFinishes.includes('nonFoil')
         });
       }
 
-      if (mockFinishCounts.foil > 0) {
+      if (finishCounts.foil > 0) {
         finishes.push({
           finishType: 'foil',
           collected: foilCollected,
-          total: mockFinishCounts.foil,
-          percentage: mockFinishCounts.foil > 0 ? (foilCollected / mockFinishCounts.foil) * 100 : 0,
+          total: finishCounts.foil,
+          percentage: finishCounts.foil > 0 ? (foilCollected / finishCounts.foil) * 100 : 0,
           emoji: '✨',
           isSelected: collectingFinishes.includes('foil')
         });
       }
 
-      if (mockFinishCounts.etched > 0) {
+      if (finishCounts.etched > 0) {
         finishes.push({
           finishType: 'etched',
           collected: etchedCollected,
-          total: mockFinishCounts.etched,
-          percentage: mockFinishCounts.etched > 0 ? (etchedCollected / mockFinishCounts.etched) * 100 : 0,
+          total: finishCounts.etched,
+          percentage: finishCounts.etched > 0 ? (etchedCollected / finishCounts.etched) * 100 : 0,
           emoji: '⚡',
           isSelected: collectingFinishes.includes('etched')
         });
@@ -223,7 +228,8 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       }
 
       // Otherwise, create a default group (not collecting, but may have collected cards)
-      // Get mock finish counts for uncollected groups too (reuse grouping from above)
+      // For uncollected groups, we don't have backend counts, so we need to use mock data
+      // TODO: Backend should provide finish counts for all groups, not just collecting ones
       const count = grouping?.cardCount || 0;
       const mockFinishCounts = getMockFinishCounts(set.code, groupId, count);
 
