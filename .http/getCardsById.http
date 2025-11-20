@@ -92,8 +92,8 @@ query GetCardsBatch($ids: CardIdsArgEntityInput!) {
   "ids": {
     "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
     "cardIds": [
-      "3e7da55a-e0ff-4475-a67f-0f493726972e",
-      "b3dffe4b-45ff-4b88-a1fc-26f7e85d6cd3"
+      "085973eb-56cd-4bb5-aefd-bdf36f2d2a3e",
+      "5d778bde-f927-419e-8052-6230562bdedd"
     ]
   }
 }

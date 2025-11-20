@@ -14,6 +14,9 @@ public sealed class UserSetCardCollectingExtEntity
     [JsonProperty("count")]
     public int Count { get; init; }
 
+    [JsonProperty("counts")]
+    public FinishCountsExtEntity Counts { get; init; }
+
     [JsonProperty("collecting_finishes")]
     public IReadOnlyCollection<string> CollectingFinishes { get; init; } = [];
 }

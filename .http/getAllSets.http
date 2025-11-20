@@ -37,7 +37,12 @@ query GetAllSets($args: AllSetsArgEntityInput) {
           collecting {
             setGroupId
             collecting
-            count
+            counts {
+              total
+              nonFoil
+              foil
+              etched
+            }
             collectingFinishes
           }
           groups {

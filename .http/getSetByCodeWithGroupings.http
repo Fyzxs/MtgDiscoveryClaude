@@ -55,7 +55,12 @@ query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
           collecting {
             setGroupId
             collecting
-            count
+            counts {
+              total
+              nonFoil
+              foil
+              etched
+            }
             collectingFinishes
           }
           groups {

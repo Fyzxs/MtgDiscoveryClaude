@@ -37,5 +37,6 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _queryOperations.UserCardsByArtistAsync(userCardsArtist);
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _queryOperations.UserCardsByNameAsync(userCardsName);
-    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => throw new System.NotImplementedException();
+
+    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardAsync(userCard);
 }

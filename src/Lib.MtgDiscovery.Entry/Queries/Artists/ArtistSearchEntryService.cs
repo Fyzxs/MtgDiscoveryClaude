@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.Artists;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
-using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;

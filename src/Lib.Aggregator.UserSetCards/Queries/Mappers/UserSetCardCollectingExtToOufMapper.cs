@@ -7,14 +7,23 @@ namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 
 internal sealed class UserSetCardCollectingExtToOufMapper : IUserSetCardCollectingExtToOufMapper
 {
-    public Task<IUserSetCardCollectingOufEntity> Map(UserSetCardCollectingExtEntity source)
+    private readonly IFinishCountsExtToOufMapper _finishCountsMapper;
+
+    public UserSetCardCollectingExtToOufMapper() : this(new FinishCountsExtToOufMapper())
+    { }
+
+    private UserSetCardCollectingExtToOufMapper(IFinishCountsExtToOufMapper finishCountsMapper) => _finishCountsMapper = finishCountsMapper;
+
+    public async Task<IUserSetCardCollectingOufEntity> Map(UserSetCardCollectingExtEntity source)
     {
-        return Task.FromResult<IUserSetCardCollectingOufEntity>(new UserSetCardCollectingOufEntity
+        IFinishCountsOufEntity counts = await _finishCountsMapper.Map(source.Counts).ConfigureAwait(false);
+
+        return new UserSetCardCollectingOufEntity
         {
             SetGroupId = source.SetGroupId,
             Collecting = source.Collecting,
-            Count = source.Count,
+            Counts = counts,
             CollectingFinishes = source.CollectingFinishes
-        });
+        };
     }
 }

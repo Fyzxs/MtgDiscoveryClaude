@@ -1,10 +1,8 @@
 ﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
-using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
-using App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
 using App.MtgDiscovery.GraphQL.Queries;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;

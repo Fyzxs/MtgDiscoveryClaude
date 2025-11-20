@@ -5,11 +5,6 @@ using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 
-internal interface IAllUserSetCardsItrToXfrMapper
-{
-    Task<IAllUserSetCardsXfrEntity> Map(IAllUserSetCardsItrEntity itr);
-}
-
 internal sealed class AllUserSetCardsItrToXfrMapper : IAllUserSetCardsItrToXfrMapper
 {
     public Task<IAllUserSetCardsXfrEntity> Map(IAllUserSetCardsItrEntity itr)

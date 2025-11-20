@@ -9,6 +9,6 @@ internal sealed class AddSetGroupToUserSetCardArgEntity : IAddSetGroupToUserSetC
     public required string SetId { get; init; }
     public required string SetGroupId { get; init; }
     public required bool Collecting { get; init; }
-    public required int Count { get; init; }
+    public required IFinishCountsArgEntity Counts { get; init; }
     public required IReadOnlyCollection<string> CollectingFinishes { get; init; }
 }
