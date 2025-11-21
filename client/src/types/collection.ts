@@ -73,11 +73,18 @@ export interface UserSetCardResponse {
 }
 
 // UserSetCard Collection data embedded in Set queries
+export interface UserSetCardCollectingCounts {
+  total: number;
+  nonFoil: number;
+  foil: number;
+  etched: number;
+}
+
 export interface UserSetCardCollecting {
   setGroupId: string;
   collecting: boolean;
-  count: number;
-  collectingFinishes?: ('nonFoil' | 'foil' | 'etched')[]; // NEW: Which finishes are being collected (stubbed for Phase 1)
+  counts: UserSetCardCollectingCounts;
+  collectingFinishes?: ('nonFoil' | 'foil' | 'etched')[];
 }
 
 /**
