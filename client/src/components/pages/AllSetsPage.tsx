@@ -1,11 +1,13 @@
 import React, { useMemo, useCallback, startTransition, useTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Box } from '../atoms';
 import { Heading } from '../molecules/text';
 import { GET_ALL_SETS } from '../../graphql/queries/sets';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { EmptyState } from '../molecules/shared/EmptyState';
+import { CollectionStatsSummary } from '../molecules/shared/CollectionStatsSummary';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import type { SortOption } from '../molecules/shared/SortDropdown';
 import { useUrlFilterState, createUrlFilterConfig } from '../../hooks/useUrlFilterState';
@@ -165,13 +167,16 @@ export const AllSetsPage: React.FC = () => {
       <BrowseTemplate
         maxWidth={false}
         header={
-          <Heading variant="h3" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
-            All Sets
-          </Heading>
+          <Box sx={{ width: '100%' }}>
+            <Heading variant="h3" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
+              All Sets
+            </Heading>
+            {hasCollector && <CollectionStatsSummary sets={sets} />}
+          </Box>
         }
         filters={
           <FilterControlsWithLoading isLoading={isFiltering || isPending}>
-            <FilterPanel
+              <FilterPanel
               config={{
                 search: {
                   value: searchTerm,

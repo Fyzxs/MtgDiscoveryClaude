@@ -1,6 +1,7 @@
 export { AppButton } from './AppButton';
 export { AppCard } from './AppCard';
 export { BackToTopFab } from './BackToTopFab';
+export { CollectionStatsSummary } from './CollectionStatsSummary';
 export { CollectorFiltersSection } from './CollectorFiltersSection';
 export { DebouncedSearchInput } from './DebouncedSearchInput';
 export { EmptyState } from './EmptyState';
