@@ -4,7 +4,7 @@ import { Box, Alert, Button, Typography, Stack } from './atoms';
 import { logger, errorTracking } from '../utils/logger';
 import { RefreshIcon, ErrorOutlineIcon } from './atoms/Icons';
 
-interface Props {
+interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
@@ -22,7 +22,7 @@ interface State {
   errorCount: number;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
   public state: State = {
     hasError: false,
     error: null,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Link } from '../../atoms';
 import type { SxProps, Theme } from '../../atoms';
 import type { CardContext } from '../../../types/card';
+import { parseArtistNames } from '../../../utils/artistUtils';
 
 interface ArtistInfoProps {
   artist?: string;
@@ -22,12 +23,7 @@ export const ArtistInfo: React.FC<ArtistInfoProps> = ({
 }) => {
   if (!artist) return null;
 
-  // Parse multiple artists (separated by & or and)
-  const parseArtists = (artistString: string): string[] => {
-    return artistString.split(/\s+(?:&|and)\s+/i);
-  };
-
-  const artists = parseArtists(artist);
+  const artists = parseArtistNames(artist);
   const isMultipleArtists = artists.length > 1;
 
   // Don't show artist on artist page unless there are multiple artists

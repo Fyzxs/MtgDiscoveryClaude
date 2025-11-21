@@ -59,7 +59,7 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#1976d2',
+        backgroundColor: theme.palette.primary.main,
         opacity: 0.2,
         animation: `${submitPulse} 0.6s ease-in-out infinite`,
         pointerEvents: 'none',
@@ -78,11 +78,11 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
       zIndex: 9999,
     },
     '&[data-flash="success"]::after': {
-      backgroundColor: '#4caf50',
+      backgroundColor: theme.palette.success.main,
       animation: `${flashSuccess} 0.3s ease-in-out 3`,
     },
     '&[data-flash="error"]::after': {
-      backgroundColor: '#f44336',
+      backgroundColor: theme.palette.error.main,
       animation: `${flashError} 0.3s ease-in-out 3`,
     },
     '&:focus': {
@@ -94,7 +94,7 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
     // CSS-only selection styles
     '&[data-selected="true"]': {
       border: '4px solid',
-      borderColor: '#1976d2',
+      borderColor: theme.palette.primary.main,
       boxShadow: `${theme.mtg.shadows.card.selected}, ${theme.mtg.shadows.card.normal}`,
       transform: 'scale(1.05)',
       '& .zoom-indicator': {

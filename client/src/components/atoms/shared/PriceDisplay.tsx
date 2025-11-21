@@ -2,18 +2,21 @@ import React from 'react';
 import Typography from '../Typography';
 import { DarkBadge } from './DarkBadge';
 import type { PriceDisplayProps as StandardPriceProps } from '../../../types/components';
+import type { SxProps, Theme } from '@mui/material';
 
 interface PriceDisplayProps extends Omit<StandardPriceProps, 'price' | 'currency'> {
   price: string | number | null | undefined;
   currency?: 'USD' | 'EUR' | 'usd' | 'eur';
   label?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const PriceDisplay: React.FC<PriceDisplayProps> = ({ 
-  price, 
+export const PriceDisplay: React.FC<PriceDisplayProps> = ({
+  price,
   currency = 'usd',
   label,
-  className = '' 
+  className = '',
+  sx
 }) => {
   const getPriceValue = (): number => {
     if (!price) return 0;
@@ -45,7 +48,8 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
       sx={{
         display: 'inline-flex',
         flexDirection: 'column',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        ...sx
       }}
     >
       {label && (

@@ -76,7 +76,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           opacity: '0 !important'
         }
       }}
-      className={`card-overlay ${className || ''}`}
+      className={className}
     >
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
         {/* Release Date Row - now at the top */}
@@ -136,7 +136,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           <PriceDisplay
             price={price}
             currency="usd"
-            className="text-sm"
+            sx={{ fontSize: '0.875rem' }}
           />
           <CardLinks
             scryfallUrl={scryfallUrl}
