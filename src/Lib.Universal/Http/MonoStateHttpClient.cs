@@ -15,7 +15,12 @@ public sealed class MonoStateHttpClient : IHttpClient
 #endif
     private static HttpClient s_httpClient;
 
-    private HttpClient MonoState() => s_httpClient ??= new HttpClient();
+    private static readonly SocketsHttpHandler s_handler = new()
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+    };
+
+    private HttpClient MonoState() => s_httpClient ??= new HttpClient(s_handler, disposeHandler: false);
     public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request) => await MonoState().SendAsync(request).ConfigureAwait(false);
     public async Task<T> ResponseAs<T>(Uri uri, CancellationToken token)
     {

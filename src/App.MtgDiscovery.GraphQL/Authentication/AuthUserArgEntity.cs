@@ -32,10 +32,10 @@ public sealed class AuthUserArgEntity : IAuthUserArgEntity
     public string DisplayName => _claimsPrincipal.FindFirst("https://mtg-discovery-api/nickname")?.Value
         ?? _claimsPrincipal.FindFirst("nickname")?.Value
         ?? _claimsPrincipal.FindFirst("name")?.Value
-        ?? "Unknown";
+        ?? throw new InvalidOperationException("No display name claim found in token");
 
     public string Email => _claimsPrincipal.FindFirst("https://mtg-discovery-api/email")?.Value
         ?? _claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value
         ?? _claimsPrincipal.FindFirst("email")?.Value
-        ?? "unknown@example.com";
+        ?? throw new InvalidOperationException("No email claim found in token");
 }
