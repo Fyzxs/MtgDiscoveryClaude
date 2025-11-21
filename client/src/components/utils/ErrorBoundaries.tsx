@@ -1,8 +1,8 @@
 import React from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import type { ReactNode, ErrorInfo } from 'react';
-import { Box, Typography } from './atoms';
-import { logger } from '../utils/logger';
+import { Box, Typography } from '../atoms';
+import { logger } from '../../utils/logger';
 
 type ErrorBoundaryLevel = 'page' | 'section' | 'component';
 type ErrorBoundaryVariant = 'default' | 'modal' | 'card-grid';

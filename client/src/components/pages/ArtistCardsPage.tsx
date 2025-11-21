@@ -9,7 +9,7 @@ import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
-import { SectionErrorBoundary } from '../ErrorBoundaries';
+import { SectionErrorBoundary } from '../utils/ErrorBoundaries';
 import { useArtistCardsData } from '../../hooks/useArtistCardsData';
 
 /**

@@ -10,5 +10,5 @@ export * from './auth';
 export * from './providers';
 
 // Error boundary components
-export { ErrorBoundary } from './ErrorBoundary';
-export * from './ErrorBoundaries';
+export { ErrorBoundary } from './utils/ErrorBoundary';
+export * from './utils/ErrorBoundaries';

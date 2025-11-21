@@ -17,7 +17,6 @@ import { useMtgCardMemo, mtgCardPropsComparison } from '../molecules/Cards/MtgCa
 interface MtgCardProps extends StyledComponentProps {
   card: Card;
   context?: CardContext;
-  collectionData?: UserCardData | UserCardData[];
   index: number;
   groupId: string;
   onSetClick?: (setCode?: string) => void;
@@ -28,11 +27,9 @@ interface MtgCardProps extends StyledComponentProps {
 const MtgCardComponent: React.FC<MtgCardProps> = ({
   card,
   context = {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  collectionData: _collectionData, // Used for memoization comparison
   index,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  groupId: _groupId, // Used for memoization comparison
+  // groupId is passed for memoization comparison in mtgCardPropsComparison
+  groupId: _groupId,
   onSetClick,
   onArtistClick,
   className = ''

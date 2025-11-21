@@ -16,7 +16,7 @@ import { GraphQLQueryStateContainer } from '../molecules/shared/QueryStateContai
 import { FilterPanel } from '../organisms/filters/FilterPanel';
 import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
-import { CardGridErrorBoundary } from '../ErrorBoundaries';
+import { CardGridErrorBoundary } from '../utils/ErrorBoundaries';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
 import type { MtgSet } from '../../types/set';
 import { useCollectorParam } from '../../hooks/useCollectorParam';

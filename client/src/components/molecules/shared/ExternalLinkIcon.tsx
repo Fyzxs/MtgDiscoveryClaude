@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Link } from '../../atoms';
+import { Box, Link, alpha, useTheme } from '../../atoms';
 
 type LinkType = 'scryfall' | 'tcgplayer' | 'cardmarket' | 'cardhoarder' | 'edhrec' | 'gatherer' | 'cardkingdom';
 
@@ -16,6 +16,7 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
   className = '',
   size = 'medium'
 }) => {
+  const theme = useTheme();
   const [imageError, setImageError] = useState(false);
 
   if (!url) return null;
@@ -65,9 +66,9 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
             height: sizeValue,
             borderRadius: '50%',
             overflow: 'hidden',
-            border: '1px solid rgba(255,255,255,0.2)',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-            bgcolor: 'rgba(255,255,255,0.9)',
+            border: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
+            boxShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.3)}`,
+            bgcolor: alpha(theme.palette.common.white, 0.9),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -118,8 +119,8 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
           color: 'white',
           fontWeight: 'bold',
           fontSize: '0.6rem',
-          border: '1px solid rgba(255,255,255,0.2)',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+          border: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
+          boxShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.3)}`
         }}
       >
         {config.text}

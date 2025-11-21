@@ -8,7 +8,7 @@ import './index.css'
 import App from './App.tsx'
 import { apolloClient } from './graphql/apollo-client'
 import { theme } from './theme'
-import { ErrorBoundary } from './components/ErrorBoundary'
+import { ErrorBoundary } from './components/utils/ErrorBoundary'
 import { Auth0TokenProvider } from './components/auth/Auth0TokenProvider'
 
 createRoot(document.getElementById('root')!).render(
