@@ -1,7 +1,7 @@
 import React from 'react';
 import { CardGrid } from './CardGrid';
 import { SearchEmptyState } from '../molecules/shared/EmptyState';
-import { CardGridErrorBoundary } from '../ErrorBoundaries';
+import { CardGridErrorBoundary } from '../utils/ErrorBoundaries';
 import type { Card } from '../../types/card';
 
 interface ArtistPageCardDisplayProps {

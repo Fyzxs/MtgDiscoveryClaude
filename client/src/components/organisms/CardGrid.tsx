@@ -147,7 +147,6 @@ export const CardGrid: React.FC<CardGridProps> = ({
             index={index}
             groupId={groupId}
             context={context}
-            collectionData={card.userCollection}
             onArtistClick={onArtistClick}
             onSetClick={onSetClick}
           />

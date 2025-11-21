@@ -20,7 +20,7 @@ import {
   getSignedCardsOptions
 } from '../../utils/cardUtils';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
-import { AppErrorBoundary } from '../ErrorBoundaries';
+import { AppErrorBoundary } from '../utils/ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 import { useUrlState } from '../../hooks/useUrlState';

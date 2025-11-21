@@ -1,5 +1,5 @@
 import React, { type ReactNode } from 'react';
-import { Modal, Box, IconButton } from '../../atoms';
+import { Modal, Box, IconButton, alpha, useTheme } from '../../atoms';
 import { CloseIcon } from '../../atoms/Icons';
 
 interface ModalContainerProps {
@@ -30,6 +30,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   disableEscapeKeyDown = false,
   disableBackdropClick = false
 }) => {
+  const theme = useTheme();
 
   const handleBackdropClick = () => {
     if (!disableBackdropClick) {
@@ -45,7 +46,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: 'rgba(0, 0, 0, 0.9)'
+        bgcolor: alpha(theme.palette.common.black, 0.9)
       }}
       onClick={handleBackdropClick}
     >

@@ -10,6 +10,8 @@ import {
   InputAdornment,
   Skeleton,
   Box,
+  alpha,
+  useTheme,
   type SelectChangeEvent
 } from '../../atoms';
 import type { MultiSelectOption } from '../../../types/filters';
@@ -47,6 +49,8 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
   disabled = false,
   sx = {}
 }) => {
+  const theme = useTheme();
+
   // Normalize options to always be MultiSelectOption[]
   const normalizedOptions: MultiSelectOption[] = options.map(opt => {
     if (typeof opt === 'string') {
@@ -150,7 +154,7 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
             value="CLEAR_ALL"
             role="option"
             aria-label="Clear all selections"
-            sx={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
+            sx={{ borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.12)}` }}
           >
             <Typography variant="body2" color="text.secondary">
               Clear All
