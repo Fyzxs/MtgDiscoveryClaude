@@ -28,5 +28,9 @@ export { SetPageCardDisplay } from './SetPageCardDisplay';
 export { SetPageFilters } from './SetPageFilters';
 export { SetPageHeader } from './SetPageHeader';
 
+// Collection organisms
+export { SetCollectionPanel } from './SetCollectionPanel';
+export { SetCollectionGroups } from './SetCollectionGroups';
+
 // Filter organisms
 export * from './filters';

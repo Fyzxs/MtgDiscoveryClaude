@@ -70,11 +70,10 @@ export const SetLink = ({
         aria-label={`View all cards from ${setName}`}
       >
         {setCode && (
-          <SetIcon 
-            setCode={setCode} 
+          <SetIcon
+            setCode={setCode}
             rarity={rarity}
             size="small"
-            className="group-hover/set:opacity-100"
           />
         )}
         <Typography 

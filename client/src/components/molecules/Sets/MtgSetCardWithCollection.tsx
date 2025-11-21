@@ -155,7 +155,7 @@ export const MtgSetCardWithCollection: React.FC<MtgSetCardWithCollectionProps> =
             <SetIconDisplay
               iconSvgUri={set.iconSvgUri}
               setName={set.name}
-              borderColor={isHovered ? '#1976d2' : setTypeColor}
+              borderColor={isHovered ? theme.palette.primary.main : setTypeColor}
             />
           )}
 

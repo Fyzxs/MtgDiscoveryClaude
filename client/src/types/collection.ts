@@ -109,3 +109,23 @@ export interface UserSetCardCollection {
   collecting: UserSetCardCollecting[];
   groups: UserSetCardCollectionGroup[];
 }
+
+// Shared types for collection group progress display
+export type SetGroupFinishType = 'nonFoil' | 'foil' | 'etched';
+
+export interface GroupFinishProgress {
+  finishType: SetGroupFinishType;
+  collected: number;
+  total: number;
+  percentage: number;
+  emoji: string;
+  isSelected?: boolean;
+}
+
+export interface CollectionGroup {
+  setGroupId: string;
+  displayName: string;
+  isCollecting: boolean;
+  count?: number;
+  finishes: GroupFinishProgress[];
+}

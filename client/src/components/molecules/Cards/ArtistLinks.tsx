@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography } from '../../atoms';
 import { ArtistLink } from '../../atoms';
 import type { CardContext } from '../../../types/card';
+import { parseArtistNames } from '../../../utils/artistUtils';
 
 interface ArtistLinksProps {
   artist?: string;
@@ -20,7 +21,7 @@ export const ArtistLinks: React.FC<ArtistLinksProps> = ({
 }) => {
   if (!artist) return null;
 
-  const artists = artist.split(/\s+(?:&|and)\s+/i);
+  const artists = parseArtistNames(artist);
   if (artists.length === 0) return null;
 
   // Don't show artist on artist page unless there are multiple artists
