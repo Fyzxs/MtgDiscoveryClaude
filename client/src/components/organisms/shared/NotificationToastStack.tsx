@@ -1,7 +1,7 @@
 import { useState, useCallback, useImperativeHandle, forwardRef } from 'react';
-import { Box, Button, Collapse } from '../atoms';
-import { CollectionToast } from '../atoms/Cards/CollectionToast';
-import type { ToastMessage } from '../atoms/Cards/CollectionToast';
+import { Box, Button, Collapse } from '../../atoms';
+import { CollectionToast } from '../../atoms/Cards/CollectionToast';
+import type { ToastMessage } from '../../atoms/Cards/CollectionToast';
 import type { Theme } from '@mui/material';
 
 export interface NotificationToastStackRef {

@@ -1,15 +1,15 @@
 import React from 'react';
-import { Box } from '../atoms';
+import { Box } from '../../atoms';
 import { FilterPanel } from './filters/FilterPanel';
-import { CollectorFiltersSection } from '../molecules/shared/CollectorFiltersSection';
-import { FilterErrorBoundary } from '../utils/ErrorBoundaries';
-import { ARTIST_PAGE_SORT_OPTIONS, ARTIST_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
+import { CollectorFiltersSection } from '../../molecules/shared/CollectorFiltersSection';
+import { FilterErrorBoundary } from '../../utils/ErrorBoundaries';
+import { ARTIST_PAGE_SORT_OPTIONS, ARTIST_PAGE_COLLECTOR_SORT_OPTIONS } from '../../../config/cardSortOptions';
 import {
   getCollectionCountOptions,
   getSignedCardsOptions,
   getFormatOptions
-} from '../../utils/cardUtils';
-import { MultiSelectDropdown } from '../molecules/shared/MultiSelectDropdown';
+} from '../../../utils/cardUtils';
+import { MultiSelectDropdown } from '../../molecules/shared/MultiSelectDropdown';
 
 interface ArtistPageFiltersProps {
   /** Total number of cards to determine if filters should show */

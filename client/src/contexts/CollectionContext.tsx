@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useRef, useCallback, useState } from 'react';
 import { logger } from '../utils/logger';
-import { NotificationToastStack } from '../components/organisms/NotificationToastStack';
-import type { NotificationToastStackRef } from '../components/organisms/NotificationToastStack';
+import { NotificationToastStack } from '../components/organisms/shared/NotificationToastStack';
+import type { NotificationToastStackRef } from '../components/organisms/shared/NotificationToastStack';
 import type { CardCollectionUpdate } from '../types/collection';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { gql } from '@apollo/client';

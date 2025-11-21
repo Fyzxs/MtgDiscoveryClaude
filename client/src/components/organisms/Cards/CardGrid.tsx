@@ -1,9 +1,9 @@
 import React, { useDeferredValue, useState, useEffect } from 'react';
-import { Box, type SxProps, type Theme } from '../atoms';
-import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
-import { useGridNavigation } from '../../hooks/useGridNavigation';
+import { Box, type SxProps, type Theme } from '../../atoms';
+import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
+import { useGridNavigation } from '../../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';
-import type { Card, CardContext } from '../../types/card';
+import type { Card, CardContext } from '../../../types/card';
 
 interface CardGridProps {
   cards: Card[];

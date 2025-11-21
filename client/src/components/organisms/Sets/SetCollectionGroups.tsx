@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '../atoms';
-import { useTheme } from '../atoms';
-import type { CollectionGroup } from '../../types/collection';
+import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '../../atoms';
+import { useTheme } from '../../atoms';
+import type { CollectionGroup } from '../../../types/collection';
 
 interface SetCollectionGroupsProps {
   groups: CollectionGroup[];

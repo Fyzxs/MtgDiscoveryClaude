@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, Typography, Divider } from '../atoms';
+import { Box, Typography, Divider } from '../../atoms';
 import { CardGrid } from './CardGrid';
-import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import type { Card, CardContext } from '../../types/card';
+import { ResultsSummary } from '../../molecules/shared/ResultsSummary';
+import type { Card, CardContext } from '../../../types/card';
 
 interface CardGroupProps {
   groupId: string;
