@@ -22,6 +22,14 @@ export const GET_ALL_SETS = gql`
           foilOnly
           block
           iconSvgUri
+          groupings {
+            id
+            cardCounts {
+              nonFoil
+              foil
+              etched
+            }
+          }
           userCollection {
             totalCards
             uniqueCards
