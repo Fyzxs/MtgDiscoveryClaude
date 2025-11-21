@@ -146,8 +146,8 @@ export const AllSetsPage: React.FC = () => {
 
     if (hasCollector) {
       baseSortOptions.push(
-        { value: 'completion-desc', label: '# Percent Collected', isCollectorOption: true },
-        { value: 'collected-desc', label: '# Cards Collected', isCollectorOption: true }
+        { value: 'completion-desc', label: 'Percent Collected', isCollectorOption: true },
+        { value: 'collected-desc', label: 'Cards Collected', isCollectorOption: true }
       );
     }
 
