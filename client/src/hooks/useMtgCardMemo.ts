@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Card, CardContext } from '../../../types/card';
+import type { Card, CardContext } from '../types/card';
 
 interface MtgCardMemoProps {
   card: Card;

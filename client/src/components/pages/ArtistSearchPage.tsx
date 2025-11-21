@@ -5,7 +5,7 @@ import { Section } from '../molecules/layouts';
 import { LoadingIndicator } from '../molecules/feedback';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
 import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
-import { ArtistSearchResults } from '../organisms/ArtistSearchResults';
+import { ArtistSearchResults } from '../organisms/Artists/ArtistSearchResults';
 import { ARTIST_NAME_SEARCH } from '../../graphql/queries/artistSearch';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 

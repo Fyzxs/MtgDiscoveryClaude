@@ -8,21 +8,22 @@ import {
   Stack,
   Button,
   Tooltip
-} from '../atoms';
-import { getLegalityColor } from '../../theme';
-import { ModalErrorBoundary } from '../utils/ErrorBoundaries';
-import type { Card } from '../../types/card';
-import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { CollectionSummary, ModalContainer, ManaCost } from '../molecules';
-import { RarityBadge, PriceDisplay } from '../atoms';
+} from '../../atoms';
+import { getLegalityColor } from '../../../theme';
+import { ModalErrorBoundary } from '../../utils/ErrorBoundaries';
+import type { Card } from '../../../types/card';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { CollectionSummary, ModalContainer, ManaCost } from '../../molecules';
+import { RarityBadge, PriceDisplay } from '../../atoms';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
 import { AllPrintingsDisplay } from './AllPrintingsDisplay';
-import { RulingsDisplay, CardImageDisplay } from '../molecules';
-import { CardBadges } from '../molecules/Cards/CardBadges';
-import { SetLink } from '../atoms';
-import { ArtistLinks } from '../molecules';
-import { CardName } from '../atoms';
-import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../atoms/Icons';
+import { RulingsDisplay } from '../../molecules';
+import { CardImageDisplay } from './CardImageDisplay';
+import { CardBadges } from '../../molecules/Cards/CardBadges';
+import { SetLink } from '../../atoms';
+import { ArtistLinks } from '../../molecules';
+import { CardName } from '../../atoms';
+import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../../atoms/Icons';
 
 interface CardDetailsModalProps {
   open: boolean;

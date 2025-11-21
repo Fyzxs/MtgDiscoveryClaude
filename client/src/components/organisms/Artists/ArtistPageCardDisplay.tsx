@@ -1,8 +1,8 @@
 import React from 'react';
-import { CardGrid } from './CardGrid';
-import { SearchEmptyState } from '../molecules/shared/EmptyState';
-import { CardGridErrorBoundary } from '../utils/ErrorBoundaries';
-import type { Card } from '../../types/card';
+import { CardGrid } from '../Cards/CardGrid';
+import { SearchEmptyState } from '../../molecules/shared/EmptyState';
+import { CardGridErrorBoundary } from '../../utils/ErrorBoundaries';
+import type { Card } from '../../../types/card';
 
 interface ArtistPageCardDisplayProps {
   /** Filtered cards to display */

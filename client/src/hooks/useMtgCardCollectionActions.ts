@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import type { RefObject } from 'react';
-import { useCollection } from '../../../contexts/CollectionContext';
-import { useCardCollectionEntry } from '../../../hooks/useCardCollectionEntry';
-import type { Card } from '../../../types/card';
-import type { CardFinish, CardSpecial } from '../../../types/collection';
+import { useCollection } from '../contexts/CollectionContext';
+import { useCardCollectionEntry } from '../hooks/useCardCollectionEntry';
+import type { Card } from '../types/card';
+import type { CardFinish, CardSpecial } from '../types/collection';
 
 interface CollectionUpdate {
   cardId: string;

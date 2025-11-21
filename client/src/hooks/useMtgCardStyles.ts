@@ -1,7 +1,7 @@
-import { keyframes, useTheme } from '../../atoms';
+import { keyframes, useTheme } from '@mui/material';
 import { useMemo } from 'react';
-import { getRarityGlowStyles } from '../../../utils/rarityStyles';
-import type { Card } from '../../../types/card';
+import { getRarityGlowStyles } from '../utils/rarityStyles';
+import type { Card } from '../types/card';
 
 // Flash animation for success/error feedback
 export const flashSuccess = keyframes`

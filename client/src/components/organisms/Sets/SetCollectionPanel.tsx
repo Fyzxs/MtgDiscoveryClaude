@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { logger } from '../../utils/logger';
-import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../atoms';
-import { useTheme } from '../atoms';
-import type { MtgSet } from '../../types/set';
-import type { GroupFinishProgress, CollectionGroup } from '../../types/collection';
-import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
-import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { ChevronLeftIcon } from '../atoms';
-import { getDefaultCollectingFinishes } from '../../utils/mockFinishCounts';
-import { useUser } from '../../contexts/UserContext';
+import { logger } from '../../../utils/logger';
+import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../../atoms';
+import { useTheme } from '../../atoms';
+import type { MtgSet } from '../../../types/set';
+import type { GroupFinishProgress, CollectionGroup } from '../../../types/collection';
+import { useSetGroupToggle } from '../../../hooks/useSetGroupToggle';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { ChevronLeftIcon } from '../../atoms';
+import { getDefaultCollectingFinishes } from '../../../utils/mockFinishCounts';
+import { useUser } from '../../../contexts/UserContext';
 
 // Extended type for display groups with sorting index
 interface DisplayCollectionGroup extends CollectionGroup {

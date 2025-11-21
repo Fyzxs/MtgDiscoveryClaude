@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Tooltip } from '../atoms';
-import { ContentCopyIcon } from '../atoms/Icons';
-import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
+import { Box, Typography, IconButton, Tooltip } from '../../atoms';
+import { ContentCopyIcon } from '../../atoms/Icons';
+import { MtgSetCard } from '../../molecules/Sets/MtgSetCard';
 import { SetCollectionPanel } from './SetCollectionPanel';
-import { SectionErrorBoundary } from '../utils/ErrorBoundaries';
-import type { MtgSet } from '../../types/set';
-import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { SectionErrorBoundary } from '../../utils/ErrorBoundaries';
+import type { MtgSet } from '../../../types/set';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
 
 interface SetPageHeaderProps {
   setInfo?: MtgSet;
