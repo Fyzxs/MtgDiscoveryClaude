@@ -14,11 +14,10 @@ public static class StringExtensions
     public static Stream ToStream(this string str)
     {
         MemoryStream stream = new();
-#pragma warning disable CA2000
-        StreamWriter writer = new(stream);
-#pragma warning restore CA2000
+        StreamWriter writer = new(stream, leaveOpen: true);
         writer.Write(str);
         writer.Flush();
+        writer.Dispose();
         stream.Position = 0;
         return stream;
     }
@@ -29,8 +28,7 @@ public static class StreamExtensions
     public static string AsString(this Stream stream)
     {
         stream.Position = 0;
-#pragma warning disable CA2000
-        return new StreamReader(stream).ReadToEnd();
-#pragma warning restore CA2000
+        using StreamReader reader = new(stream, leaveOpen: true);
+        return reader.ReadToEnd();
     }
 }
