@@ -130,11 +130,18 @@ export const presets = {
       'name-desc': <T extends { name: string }>(a: T, b: T) => b.name.localeCompare(a.name),
       'cards-desc': <T extends { cardCount?: number }>(a: T, b: T) => (b.cardCount || 0) - (a.cardCount || 0),
       'cards-asc': <T extends { cardCount?: number }>(a: T, b: T) => (a.cardCount || 0) - (b.cardCount || 0),
-      'completion-desc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; counts: { total: number; nonFoil: number; foil: number; etched: number }; setGroupId: string; collectingFinishes?: string[] }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
-        const getPercentage = (item: T): number => {
-          if (!item.userCollection) return -1;
+      'completion-desc': <T extends { cardCount?: number; userCollection?: { uniqueCards?: number; collecting: Array<{ collecting: boolean; counts: { total: number; nonFoil: number; foil: number; etched: number }; setGroupId: string; collectingFinishes?: string[] }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
+        // Check if actively collecting (has any group with collecting: true)
+        const isCollecting = (item: T): boolean => {
+          if (!item.userCollection) return false;
+          return item.userCollection.collecting.some(g => g.collecting === true);
+        };
+
+        // Get collection percentage for actively collecting sets
+        const getCollectingPercentage = (item: T): number => {
+          if (!item.userCollection) return 0;
           const collectingGroups = item.userCollection.collecting.filter(g => g.collecting === true);
-          if (collectingGroups.length === 0) return -1;
+          if (collectingGroups.length === 0) return 0;
           const collected = collectingGroups.reduce((sum, cg) => {
             const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
             if (!groupData) return sum;
@@ -155,7 +162,28 @@ export const presets = {
           }, 0);
           return total > 0 ? (collected / total) * 100 : 0;
         };
-        return getPercentage(b) - getPercentage(a);
+
+        // Get unique/total percentage for non-collecting sets
+        const getUniquePercentage = (item: T): number => {
+          const unique = item.userCollection?.uniqueCards ?? 0;
+          const total = item.cardCount ?? 0;
+          return total > 0 ? (unique / total) * 100 : 0;
+        };
+
+        const aCollecting = isCollecting(a);
+        const bCollecting = isCollecting(b);
+
+        // Collecting sets come first
+        if (aCollecting && !bCollecting) return -1;
+        if (!aCollecting && bCollecting) return 1;
+
+        // Both collecting: sort by collection percentage
+        if (aCollecting && bCollecting) {
+          return getCollectingPercentage(b) - getCollectingPercentage(a);
+        }
+
+        // Neither collecting: sort by unique/total percentage
+        return getUniquePercentage(b) - getUniquePercentage(a);
       },
       'completion-asc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; counts: { total: number; nonFoil: number; foil: number; etched: number }; setGroupId: string; collectingFinishes?: string[] }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
         const getPercentage = (item: T): number => {
@@ -192,7 +220,7 @@ export const presets = {
         if (!selectedTypes || selectedTypes.length === 0) return true;
         return selectedTypes.includes(item.setType);
       },
-      collectionStatus: <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(item: T, selectedStatuses: string[]) => {
+      collectionStatus: <T extends { userCollection?: { collecting: Array<{ collecting: boolean; counts: { total: number; nonFoil: number; foil: number; etched: number }; setGroupId: string; collectingFinishes?: string[] }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(item: T, selectedStatuses: string[]) => {
         if (!selectedStatuses || selectedStatuses.length === 0) return true;
         if (!item.userCollection) {
           return selectedStatuses.includes('not-started');
@@ -201,12 +229,26 @@ export const presets = {
         if (collectingGroups.length === 0) {
           return selectedStatuses.includes('not-started');
         }
+        // Calculate collected cards respecting collectingFinishes
         const collected = collectingGroups.reduce((sum, cg) => {
           const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
           if (!groupData) return sum;
-          return sum + groupData.group.nonFoil.cards.length + groupData.group.foil.cards.length + groupData.group.etched.cards.length;
+          const finishes = cg.collectingFinishes || [];
+          let groupTotal = 0;
+          if (finishes.includes('nonFoil')) groupTotal += groupData.group.nonFoil.cards.length;
+          if (finishes.includes('foil')) groupTotal += groupData.group.foil.cards.length;
+          if (finishes.includes('etched')) groupTotal += groupData.group.etched.cards.length;
+          return sum + groupTotal;
         }, 0);
-        const total = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+        // Calculate total cards respecting collectingFinishes
+        const total = collectingGroups.reduce((sum, g) => {
+          const finishes = g.collectingFinishes || [];
+          let groupTotal = 0;
+          if (finishes.includes('nonFoil')) groupTotal += g.counts.nonFoil;
+          if (finishes.includes('foil')) groupTotal += g.counts.foil;
+          if (finishes.includes('etched')) groupTotal += g.counts.etched;
+          return sum + groupTotal;
+        }, 0);
         const percentage = total > 0 ? (collected / total) * 100 : 0;
 
         if (percentage === 0) {

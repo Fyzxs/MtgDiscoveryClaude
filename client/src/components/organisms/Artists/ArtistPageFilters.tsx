@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '../../atoms';
-import { FilterPanel } from './filters/FilterPanel';
+import { FilterPanel } from '../filters/FilterPanel';
 import { CollectorFiltersSection } from '../../molecules/shared/CollectorFiltersSection';
 import { FilterErrorBoundary } from '../../utils/ErrorBoundaries';
 import { ARTIST_PAGE_SORT_OPTIONS, ARTIST_PAGE_COLLECTOR_SORT_OPTIONS } from '../../../config/cardSortOptions';

@@ -1,5 +1,4 @@
 export { ArtistLink } from './ArtistLink';
-export { CardImage } from './CardImage';
 export { CardName } from './CardName';
 export { CollectionToast } from './CollectionToast';
 export { CollectorNumber } from './CollectorNumber';
