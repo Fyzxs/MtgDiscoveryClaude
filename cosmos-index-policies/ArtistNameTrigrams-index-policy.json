@@ -1,0 +1,20 @@
+{
+  "indexingMode": "consistent",
+  "automatic": true,
+  "includedPaths": [
+    {
+      "path": "/partition/?"
+    },
+    {
+      "path": "/artists/[]/norm/?"
+    }
+  ],
+  "excludedPaths": [
+    {
+      "path": "/*"
+    },
+    {
+      "path": "/\"_etag\"/?"
+    }
+  ]
+}
