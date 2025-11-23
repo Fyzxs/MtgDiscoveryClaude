@@ -1,0 +1,23 @@
+{
+  "indexingMode": "consistent",
+  "automatic": true,
+  "includedPaths": [
+    {
+      "path": "/partition/?"
+    },
+    {
+      "path": "/trigram/?"
+    },
+    {
+      "path": "/cards/[]/norm/?"
+    }
+  ],
+  "excludedPaths": [
+    {
+      "path": "/*"
+    },
+    {
+      "path": "/\"_etag\"/?"
+    }
+  ]
+}
