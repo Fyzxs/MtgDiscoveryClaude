@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useFilterState } from './useFilterState';
 import { useUrlState } from './useUrlState';
 import type { UseFilterStateConfig } from '../types/filters';
+import { parseCollectorNumber } from '../config/cardSortOptions';
 
 export interface UrlFilterConfig<T> extends UseFilterStateConfig<T> {
   // URL state configuration
@@ -270,14 +271,10 @@ export const presets = {
     searchFields: ['name'] as const,
     sortOptions: {
       'collector-asc': <T extends { collectorNumber: string }>(a: T, b: T) => {
-        const aNum = parseInt(a.collectorNumber) || 0;
-        const bNum = parseInt(b.collectorNumber) || 0;
-        return aNum - bNum;
+        return parseCollectorNumber(a.collectorNumber || '') - parseCollectorNumber(b.collectorNumber || '');
       },
       'collector-desc': <T extends { collectorNumber: string }>(a: T, b: T) => {
-        const aNum = parseInt(a.collectorNumber) || 0;
-        const bNum = parseInt(b.collectorNumber) || 0;
-        return bNum - aNum;
+        return parseCollectorNumber(b.collectorNumber || '') - parseCollectorNumber(a.collectorNumber || '');
       },
       'name-asc': <T extends { name: string }>(a: T, b: T) => a.name.localeCompare(b.name),
       'name-desc': <T extends { name: string }>(a: T, b: T) => b.name.localeCompare(a.name),

@@ -42,6 +42,10 @@ export const SetLink = ({
         }}
         onClick={(e) => {
           e.stopPropagation();
+          // Allow browser's default behavior for modifier keys (CTRL/CMD+click = new tab, etc.)
+          if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) {
+            return;
+          }
           if (onSetClick) {
             e.preventDefault();
             onSetClick(setCode);
