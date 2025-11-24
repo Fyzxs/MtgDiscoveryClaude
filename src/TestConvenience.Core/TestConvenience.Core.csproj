@@ -3,6 +3,7 @@
     <PropertyGroup>
       <!-- This is a utility library, not a test project -->
       <IsTestProject>false</IsTestProject>
+      <NoWarn>$(NoWarn);MSTEST0001</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
