@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Commands;
 using Lib.Domain.UserSetCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

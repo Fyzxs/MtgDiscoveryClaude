@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.UserCards.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
 

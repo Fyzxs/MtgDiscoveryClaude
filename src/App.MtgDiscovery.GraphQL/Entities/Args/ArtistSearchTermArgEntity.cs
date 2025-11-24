@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Args;
+﻿using Lib.Shared.DataModels.Entities.Args.Artists;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args;
 

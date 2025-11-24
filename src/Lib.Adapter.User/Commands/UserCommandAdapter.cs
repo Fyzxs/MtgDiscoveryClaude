@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.User.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

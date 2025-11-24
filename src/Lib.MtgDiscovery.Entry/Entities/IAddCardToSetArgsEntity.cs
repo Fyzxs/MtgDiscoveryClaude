@@ -1,4 +1,4 @@
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Entities;

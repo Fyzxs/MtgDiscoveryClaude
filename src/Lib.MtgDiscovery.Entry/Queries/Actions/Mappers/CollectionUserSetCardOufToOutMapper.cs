@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
-using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 

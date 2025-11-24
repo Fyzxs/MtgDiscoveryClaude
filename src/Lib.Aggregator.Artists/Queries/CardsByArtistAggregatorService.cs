@@ -1,10 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Artists.Queries.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

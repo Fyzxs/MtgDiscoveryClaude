@@ -1,6 +1,6 @@
 ﻿using Lib.Shared.Abstractions.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Args.Artists;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 

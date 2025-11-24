@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Entities;
 

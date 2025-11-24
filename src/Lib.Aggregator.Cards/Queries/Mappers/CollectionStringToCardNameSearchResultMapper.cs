@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 namespace Lib.Aggregator.Cards.Queries.Mappers;
 

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Sets.Entities;
@@ -12,7 +12,7 @@ internal sealed class CollectorNumberRangeItrEntity : ICollectorNumberRangeItrEn
     public string Min { get; set; } = string.Empty;
     public string Max { get; set; } = string.Empty;
 
-    [JsonProperty(nameof(OrConditions))]
+    [JsonProperty("OrConditions")]
     public List<string> InternalOrConditions { get; set; } = [];
 
     [JsonIgnore]

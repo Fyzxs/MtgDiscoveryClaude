@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Args.UserCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 

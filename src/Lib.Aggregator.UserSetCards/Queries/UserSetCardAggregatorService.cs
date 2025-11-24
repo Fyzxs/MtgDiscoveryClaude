@@ -4,6 +4,7 @@ using Lib.Adapter.UserSetCards.Apis;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Aggregator.UserSetCards.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

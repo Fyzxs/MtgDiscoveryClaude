@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Queries.Artists;
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Args.Artists;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

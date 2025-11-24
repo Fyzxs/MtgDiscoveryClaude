@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Commands;
 using Lib.Aggregator.UserCards.Queries;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

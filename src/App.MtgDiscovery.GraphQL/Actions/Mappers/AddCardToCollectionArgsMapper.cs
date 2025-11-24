@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using Lib.MtgDiscovery.Entry.Entities;
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Args.UserCards;
 
 namespace App.MtgDiscovery.GraphQL.Actions.Mappers;
 

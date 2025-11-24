@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 
 namespace Lib.Aggregator.Cards.Queries.Mappers;
 

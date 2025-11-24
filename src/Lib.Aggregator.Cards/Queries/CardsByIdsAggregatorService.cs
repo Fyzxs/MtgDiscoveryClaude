@@ -5,7 +5,8 @@ using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

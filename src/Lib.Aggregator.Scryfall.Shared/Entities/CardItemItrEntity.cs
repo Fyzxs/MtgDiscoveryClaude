@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregator.Scryfall.Shared.Internals;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Aggregator.Scryfall.Shared.Entities;
