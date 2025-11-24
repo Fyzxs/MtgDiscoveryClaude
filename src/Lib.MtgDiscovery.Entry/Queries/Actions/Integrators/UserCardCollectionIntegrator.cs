@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Integrators;
 

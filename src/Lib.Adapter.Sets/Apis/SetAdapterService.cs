@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Queries;
-using Lib.Shared.DataModels.Entities.Xfrs;
+using Lib.Shared.DataModels.Entities.Xfrs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs;
+﻿using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 namespace Lib.Aggregator.Scryfall.Shared.Internals;
 

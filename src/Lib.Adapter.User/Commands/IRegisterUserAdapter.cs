@@ -1,5 +1,5 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.User.Commands;

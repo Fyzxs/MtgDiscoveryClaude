@@ -4,8 +4,9 @@ using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Args.Sets;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

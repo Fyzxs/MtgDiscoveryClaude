@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Newtonsoft.Json;
 
 namespace Lib.Aggregator.Sets.Models;
 
 internal sealed class GroupingFiltersItrEntity : IGroupingFiltersItrEntity
 {
-    [JsonProperty(nameof(CollectorNumberRange))]
+    [JsonProperty("CollectorNumberRange")]
     public CollectorNumberRangeItrEntity InternalCollectorNumberRange { get; set; }
 
-    [JsonProperty(nameof(Properties))]
+    [JsonProperty("Properties")]
     public Dictionary<string, object> InternalProperties { get; set; }
 
     [JsonIgnore]

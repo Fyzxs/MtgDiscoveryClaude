@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Oufs.Artists;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 

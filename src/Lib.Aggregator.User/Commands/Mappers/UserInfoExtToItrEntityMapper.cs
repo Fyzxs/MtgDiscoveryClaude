@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.User.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Oufs.User;
 
 namespace Lib.Aggregator.User.Commands.Mappers;
 

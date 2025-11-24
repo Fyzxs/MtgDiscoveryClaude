@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Aggregator.Artists.Queries.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 
