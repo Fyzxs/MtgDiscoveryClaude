@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Don't track the dmt
+**/.dmt
+
 # User-specific files
 *.rsuser
 *.suo

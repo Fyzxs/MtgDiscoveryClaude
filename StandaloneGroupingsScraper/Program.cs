@@ -68,34 +68,46 @@ public class ScryfallGroupingsScraper
             Console.WriteLine($"\nScraping set: {setCode}");
             var groupings = await ScrapeSetGroupings(httpClient, setCode);
 
-            if (groupings.Count > 0)
+            // If no groupings found, add a default grouping so cards have somewhere to go
+            if (groupings.Count == 0)
             {
-                setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
-                Console.WriteLine($"Found {groupings.Count} groupings for {setCode}");
-
-                // Print detailed info for debugging
-                foreach (var grouping in groupings)
+                Console.WriteLine($"No groupings found for {setCode}, adding default-cards grouping");
+                groupings.Add(new CardGrouping
                 {
-                    Console.WriteLine($"\n  Grouping: {grouping.DisplayName}");
-                    Console.WriteLine($"    Cards: {grouping.CardCount}");
-                    Console.WriteLine($"    Query: {grouping.RawQuery}");
-                    if (grouping.ParsedFilters?.CollectorNumberRange != null)
+                    Id = "default-cards",
+                    DisplayName = "Cards",
+                    Order = 0,
+                    CardCount = 0, // Will be populated during ingestion
+                    RawQuery = $"set:{setCode}",
+                    ParsedFilters = new GroupingFilters
                     {
-                        var cnr = grouping.ParsedFilters.CollectorNumberRange;
-                        if (cnr.Min != null || cnr.Max != null)
-                        {
-                            Console.WriteLine($"    CN Range: {cnr.Min ?? "?"} - {cnr.Max ?? "?"}");
-                        }
-                        if (cnr.OrConditions != null && cnr.OrConditions.Count > 0)
-                        {
-                            Console.WriteLine($"    OR Conditions: {string.Join(", ", cnr.OrConditions)}");
-                        }
+                        CollectorNumberRange = null,
+                        Properties = new Dictionary<string, object>()
+                    }
+                });
+            }
+
+            setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
+            Console.WriteLine($"Found {groupings.Count} groupings for {setCode}");
+
+            // Print detailed info for debugging
+            foreach (var grouping in groupings)
+            {
+                Console.WriteLine($"\n  Grouping: {grouping.DisplayName}");
+                Console.WriteLine($"    Cards: {grouping.CardCount}");
+                Console.WriteLine($"    Query: {grouping.RawQuery}");
+                if (grouping.ParsedFilters?.CollectorNumberRange != null)
+                {
+                    var cnr = grouping.ParsedFilters.CollectorNumberRange;
+                    if (cnr.Min != null || cnr.Max != null)
+                    {
+                        Console.WriteLine($"    CN Range: {cnr.Min ?? "?"} - {cnr.Max ?? "?"}");
+                    }
+                    if (cnr.OrConditions != null && cnr.OrConditions.Count > 0)
+                    {
+                        Console.WriteLine($"    OR Conditions: {string.Join(", ", cnr.OrConditions)}");
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine($"No groupings found for {setCode}");
             }
         }
         catch (Exception ex)
@@ -134,11 +146,27 @@ public class ScryfallGroupingsScraper
             try
             {
                 var groupings = await ScrapeSetGroupings(httpClient, setCode);
-                if (groupings.Count > 0)
+
+                // If no groupings found, add a default grouping so cards have somewhere to go
+                if (groupings.Count == 0)
                 {
-                    setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
-                    setsAdded++;
+                    groupings.Add(new CardGrouping
+                    {
+                        Id = "default-cards",
+                        DisplayName = "Cards",
+                        Order = 0,
+                        CardCount = 0, // Will be populated during ingestion
+                        RawQuery = $"set:{setCode}",
+                        ParsedFilters = new GroupingFilters
+                        {
+                            CollectorNumberRange = null,
+                            Properties = new Dictionary<string, object>()
+                        }
+                    });
                 }
+
+                setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
+                setsAdded++;
 
                 processed++;
 
@@ -288,14 +316,28 @@ public class ScryfallGroupingsScraper
             // Apply special case fixes for unsupported search operators
             query = NormalizeUnsupportedQueries(query, setCode);
 
-            // Skip buy-a-box groupings - they're too inconsistent and cards end up in promos anyway
-            if (anchorId == "bab" || query.Contains("is:bab"))
-            {
-                Console.WriteLine($"     - SKIPPED: {displayName} (buy-a-box)");
-                continue;
-            }
-
             Console.WriteLine($"     - {displayName} ({cardCount} cards)");
+
+            // Parse the query filters
+            GroupingFilters parsedFilters;
+
+            // Special case: Alchemy groupings should always check for alchemy promo type
+            // Some sets put Alchemy cards in wrong groupings, so we override based on display name
+            if (displayName.Equals("Alchemy", StringComparison.OrdinalIgnoreCase))
+            {
+                parsedFilters = new GroupingFilters
+                {
+                    CollectorNumberRange = null,
+                    Properties = new Dictionary<string, object>
+                    {
+                        ["promoType"] = "alchemy"
+                    }
+                };
+            }
+            else
+            {
+                parsedFilters = ParseScryfallQuery(query);
+            }
 
             groupings.Add(new CardGrouping
             {
@@ -304,7 +346,7 @@ public class ScryfallGroupingsScraper
                 Order = order++,
                 CardCount = cardCount,
                 RawQuery = query,
-                ParsedFilters = ParseScryfallQuery(query)
+                ParsedFilters = parsedFilters
             });
         }
 
@@ -408,6 +450,10 @@ public class ScryfallGroupingsScraper
             {
                 case "pwdeck":
                     filters.Properties["promoType"] = "planeswalkerdeck";
+                    break;
+                case "bab":
+                    // Scryfall uses "buyabox" in promo_types array, not "bab"
+                    filters.Properties["promoType"] = "buyabox";
                     break;
                 default:
                     filters.Properties[isValue] = true;
