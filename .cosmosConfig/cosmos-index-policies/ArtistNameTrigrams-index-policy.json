@@ -16,5 +16,21 @@
     {
       "path": "/\"_etag\"/?"
     }
-  ]
+  ],
+ "compositeIndexes": [
+   [
+     {
+       "path": "/partition",
+       "order": "ascending"
+     },
+     {
+       "path": "/id",
+       "order": "ascending"
+     },
+     {
+       "path": "/artists/[]/norm",
+       "order": "ascending"
+     }
+   ]
+ ]
 }

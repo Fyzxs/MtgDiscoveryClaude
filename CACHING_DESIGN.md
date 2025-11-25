@@ -86,142 +86,6 @@ This document describes the design for implementing in-memory caching at the ada
 
 ---
 
-## Comprehensive Marker Interface Pattern
-
-### Establishing Marker Interfaces for All Entity Types
-
-**Important:** While this document focuses on caching, we are using this opportunity to establish **marker interfaces for ALL entity types across ALL entity layers**. This is a comprehensive architectural pattern adoption, not just for caching.
-
-### Why Marker Interfaces for Everything?
-
-**MicroObjects Principle:**
-- Every concept should have an explicit representation through interfaces
-- Each entity type gets its own marker interface (1:1 mapping)
-- Type system enforces entity type distinctions
-- Interface-level behaviors can be defined once for all implementations
-
-**Benefits:**
-1. **Type Safety**: Prevents mixing entity types at compile time
-2. **Single Source of Truth**: Behaviors defined at interface level
-3. **Future Extensibility**: Easy to add cross-cutting concerns (validation, serialization, auditing)
-4. **Clear Documentation**: Type system documents all entity types
-5. **Consistency**: Same pattern across all layers
-
-### Entity Layers and Marker Interfaces
-
-The system has multiple entity layers following the data flow pattern. **Each entity type in each layer needs its own marker interface:**
-
-#### ArgEntity Layer (App → Entry)
-Argument entities from external input (GraphQL, REST, etc.)
-
-```csharp
-namespace Lib.Shared.DataModels.Entities.Args;
-
-public interface ICardArgEntity : IArgEntity { }
-public interface ISetArgEntity : IArgEntity { }
-public interface IArtistArgEntity : IArgEntity { }
-public interface IUserCardArgEntity : IArgEntity { }
-public interface IUserSetCardArgEntity : IArgEntity { }
-public interface IUserInfoArgEntity : IArgEntity { }
-```
-
-#### ItrEntity Layer (Entry ↔ Domain ↔ Aggregator)
-Internal transfer entities between service layers
-
-```csharp
-namespace Lib.Shared.DataModels.Entities.Itrs;
-
-public interface ICardItrEntity : IItrEntity { }
-public interface ISetItrEntity : IItrEntity { }
-public interface IArtistItrEntity : IItrEntity { }
-public interface IUserCardItrEntity : IItrEntity { }
-public interface IUserSetCardItrEntity : IItrEntity { }
-public interface IUserInfoItrEntity : IItrEntity { }
-```
-
-#### XfrEntity Layer (Adapter Operations)
-Transfer entities used within adapter layer operations
-
-```csharp
-namespace Lib.Shared.DataModels.Entities.Xfrs;
-
-// These also implement ICacheableEntity for caching
-public interface ICardXfrEntity : IXfrEntity { }
-public interface ISetXfrEntity : IXfrEntity { }
-public interface IArtistXfrEntity : IXfrEntity { }
-public interface IUserCardXfrEntity : IXfrEntity { }
-public interface IUserSetCardXfrEntity : IXfrEntity { }
-public interface IUserInfoXfrEntity : IXfrEntity { }
-```
-
-#### ExtEntity Layer (Cosmos Documents)
-External system entities (Cosmos DB documents)
-
-```csharp
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-
-// Note: These may not need marker interfaces since they're implementation-specific
-// But for consistency, could add:
-public interface ICardExtEntity : IExtEntity { }
-public interface ISetExtEntity : IExtEntity { }
-public interface IArtistExtEntity : IExtEntity { }
-```
-
-#### OufEntity Layer (Domain/Aggregator → Entry)
-Output from domain/aggregator layers (internal layer outputs)
-
-```csharp
-namespace Lib.Shared.DataModels.Entities.Oufs;
-
-public interface ICardOufEntity : IOufEntity { }
-public interface ISetOufEntity : IOufEntity { }
-public interface IArtistOufEntity : IOufEntity { }
-public interface IUserCardOufEntity : IOufEntity { }
-public interface IUserSetCardOufEntity : IOufEntity { }
-```
-
-#### OutEntity Layer (Entry → App)
-Output entities returned to external layer (GraphQL responses)
-
-```csharp
-namespace Lib.Shared.DataModels.Entities.Outs;
-
-public interface ICardOutEntity : IOutEntity { }
-public interface ISetOutEntity : IOutEntity { }
-public interface IArtistOutEntity : IOutEntity { }
-public interface IUserCardOutEntity : IOutEntity { }
-public interface IUserSetCardOutEntity : IOutEntity { }
-```
-
-### Complete Entity Type Matrix
-
-For **each entity concept**, create marker interface in **each relevant layer**:
-
-| Entity Concept | ArgEntity | ItrEntity | XfrEntity | OufEntity | OutEntity |
-|---------------|-----------|-----------|-----------|-----------|-----------|
-| Card | ICardArgEntity | ICardItrEntity | ICardXfrEntity | ICardOufEntity | ICardOutEntity |
-| Set | ISetArgEntity | ISetItrEntity | ISetXfrEntity | ISetOufEntity | ISetOutEntity |
-| Artist | IArtistArgEntity | IArtistItrEntity | IArtistXfrEntity | IArtistOufEntity | IArtistOutEntity |
-| UserCard | IUserCardArgEntity | IUserCardItrEntity | IUserCardXfrEntity | IUserCardOufEntity | IUserCardOutEntity |
-| UserSetCard | IUserSetCardArgEntity | IUserSetCardItrEntity | IUserSetCardXfrEntity | IUserSetCardOufEntity | IUserSetCardOutEntity |
-| UserInfo | IUserInfoArgEntity | IUserInfoItrEntity | IUserInfoXfrEntity | IUserInfoOufEntity | IUserInfoOutEntity |
-
-### Implementation Scope
-
-**Phase 1 (This Caching Implementation):**
-- Create ALL marker interfaces across ALL layers
-- Implement cache-specific behavior ONLY in XfrEntity layer
-- Update existing concrete entity classes to implement their marker interfaces
-- No behavior changes to non-XfrEntity layers (just add interfaces)
-
-**Benefits of Doing This Now:**
-1. **One-time cost**: Establish pattern comprehensively
-2. **Avoid partial adoption**: No mixing of old and new patterns
-3. **Clear architecture**: Type system reflects all entity types
-4. **Easy future additions**: Pattern is established for new entity types
-
----
-
 ## Self-Describing Entity Pattern (Caching-Specific)
 
 ### ICacheableEntity Interface
@@ -396,8 +260,9 @@ public interface ICacheService
 
 **Design Notes:**
 - Uses string cache keys (no ICacheKey interface needed)
-- Factory returns `IOperationResponse<T>` (caches both success and failure responses)
-- User partition invalidation uses prefix matching
+- Factory returns `IOperationResponse<T>` (only successful responses are cached)
+- Failures are never cached to avoid masking transient errors or data availability
+- User partition invalidation uses `CancellationTokenSource` per user (no prefix matching needed)
 - No policy parameters (single policy: cache forever)
 
 ---
@@ -457,8 +322,9 @@ internal sealed class CardQueryAdapter : ICardQueryAdapter
 **Key Points:**
 - Adapter explicitly coordinates cache and Cosmos operator
 - Cache key matches entity's cache key format
-- Caches the entire `IOperationResponse<T>` (including failures)
+- Only caches successful `IOperationResponse<T>` (failures are not cached)
 - Factory function only executes on cache miss
+- Transient errors are retried on subsequent requests instead of being cached
 
 ### Command Adapter Example
 
@@ -632,10 +498,17 @@ _cache.InvalidateUserPartition(userId);
 ```
 
 **Effect:**
-- Removes all cache entries with prefix `user:{userId}:`
+- Cancels the user's partition `CancellationTokenSource`
+- `MemoryCache` automatically evicts all entries linked to that token
 - Ensures user sees changes immediately
 - Simple and safe (can't miss an entry)
 - Trades cache efficiency for consistency
+
+**How It Works:**
+- Each user partition has a `CancellationTokenSource`
+- User cache entries are linked via `AddExpirationToken(new CancellationChangeToken(cts.Token))`
+- Canceling the token evicts all linked entries atomically
+- Thread-safe and built into `MemoryCache` infrastructure
 
 **When to Use:**
 - Default approach for all user write operations
@@ -715,10 +588,14 @@ Concrete implementation using Microsoft.Extensions.Caching.Memory:
 ```csharp
 namespace Lib.Shared.Caching.Implementations;
 
+// Required: Microsoft.Extensions.Caching.Memory
+// Required: Microsoft.Extensions.Primitives (for CancellationChangeToken)
+
 internal sealed class MemoryCacheService : ICacheService
 {
     private readonly IMemoryCache _cache;
     private readonly ILogger<MemoryCacheService> _logger;
+    private readonly ConcurrentDictionary<string, CancellationTokenSource> _partitionTokens = new();
     private static readonly MemoryCacheEntryOptions _cacheOptions = new()
     {
         // No expiration - cache forever
@@ -751,8 +628,13 @@ internal sealed class MemoryCacheService : ICacheService
         LogCacheMiss(cacheKey);
         IOperationResponse<TEntity> result = await factory().ConfigureAwait(false);
 
-        // Cache the result (both success and failure)
-        _cache.Set(cacheKey, result, _cacheOptions);
+        // Only cache successful responses - failures should not be cached
+        // This allows transient errors to be retried on subsequent requests
+        if (result.IsSuccess)
+        {
+            MemoryCacheEntryOptions options = CreateCacheOptions(cacheKey);
+            _cache.Set(cacheKey, result, options);
+        }
 
         return result;
     }
@@ -765,16 +647,48 @@ internal sealed class MemoryCacheService : ICacheService
 
     public void InvalidateUserPartition(string userId)
     {
-        // MemoryCache doesn't support prefix-based removal
-        // Options:
-        // 1. Track all keys in a concurrent dictionary
-        // 2. Use IMemoryCache.Compact() with custom logic
-        // 3. Store user keys in a set per user
-
-        // For now: Track keys and remove matching ones
-        // (Implementation details depend on key tracking strategy)
+        // Cancel the partition token - this evicts all entries linked to this user
+        if (_partitionTokens.TryRemove(userId, out CancellationTokenSource? cts))
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
 
         LogPartitionInvalidation(userId);
+    }
+
+    private MemoryCacheEntryOptions CreateCacheOptions(string cacheKey)
+    {
+        MemoryCacheEntryOptions options = new()
+        {
+            AbsoluteExpiration = null,
+            SlidingExpiration = null,
+            Priority = CacheItemPriority.Normal
+        };
+
+        // For user-partitioned keys, link to user's cancellation token
+        if (cacheKey.StartsWith("user:"))
+        {
+            string userId = ExtractUserId(cacheKey);
+            CancellationTokenSource cts = _partitionTokens.GetOrAdd(
+                userId,
+                _ => new CancellationTokenSource());
+
+            // Link this cache entry to the partition token
+            options.AddExpirationToken(new CancellationChangeToken(cts.Token));
+        }
+
+        return options;
+    }
+
+    private static string ExtractUserId(string cacheKey)
+    {
+        // Extract userId from "user:{userId}:..." format
+        int startIndex = 5; // Skip "user:"
+        int endIndex = cacheKey.IndexOf(':', startIndex);
+        return endIndex > startIndex
+            ? cacheKey.Substring(startIndex, endIndex - startIndex)
+            : cacheKey.Substring(startIndex);
     }
 
     public void Clear()
@@ -822,54 +736,29 @@ internal sealed class MemoryCacheService : ICacheService
 ```
 
 **Implementation Notes:**
-- Caches both success and failure responses
+- Only caches successful responses (failures are not cached to allow retry)
 - No expiration (cache forever)
-- Partition invalidation requires key tracking (see below)
-- Clear() operation uses Compact or custom key tracking
+- Partition invalidation uses `CancellationTokenSource` per user
+- User cache entries are linked to partition token via `AddExpirationToken()`
+- Canceling the token automatically evicts all linked entries
+- Clear() operation uses Compact to remove all entries
 
-### Key Tracking for Partition Invalidation
+### Partition Invalidation via CancellationToken
 
-To support user partition invalidation, need to track which keys belong to which user:
+User partition invalidation leverages `MemoryCache`'s built-in `CancellationChangeToken` support:
 
-```csharp
-private readonly ConcurrentDictionary<string, HashSet<string>> _userKeyIndex = new();
-private readonly object _indexLock = new();
+**How it Works:**
+1. Each user partition gets a `CancellationTokenSource` stored in `_partitionTokens`
+2. When caching user data, entries are linked to the user's token via `AddExpirationToken()`
+3. Calling `InvalidateUserPartition(userId)` cancels the token
+4. `MemoryCache` automatically evicts all entries linked to that token
+5. Next cache for that user creates a new `CancellationTokenSource`
 
-public void InvalidateUserPartition(string userId)
-{
-    if (_userKeyIndex.TryGetValue(userId, out HashSet<string>? keys))
-    {
-        lock (_indexLock)
-        {
-            foreach (string key in keys)
-            {
-                _cache.Remove(key);
-            }
-            _userKeyIndex.TryRemove(userId, out _);
-        }
-    }
-
-    LogPartitionInvalidation(userId);
-}
-
-// When caching, track user keys
-private void TrackUserKey(string cacheKey)
-{
-    if (cacheKey.StartsWith("user:"))
-    {
-        string userId = ExtractUserId(cacheKey);
-        lock (_indexLock)
-        {
-            if (_userKeyIndex.TryGetValue(userId, out HashSet<string>? keys) is false)
-            {
-                keys = new HashSet<string>();
-                _userKeyIndex[userId] = keys;
-            }
-            keys.Add(cacheKey);
-        }
-    }
-}
-```
+**Benefits:**
+- Thread-safe (built into `MemoryCache` infrastructure)
+- No manual key tracking or iteration required
+- Atomic eviction of all user entries
+- Clean separation of concerns (cache manages eviction)
 
 ---
 
