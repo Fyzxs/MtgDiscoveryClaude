@@ -9,6 +9,7 @@ import { CardMetadata } from '../../molecules/Cards/CardMetadata';
 import { ArtistLinks } from '../../molecules/Cards/ArtistLinks';
 import { CardLinks } from '../../molecules/Cards/CardLinks';
 import { ManaCost } from '../../molecules/Cards/ManaCost';
+import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { useLongPress } from '../../../hooks/useLongPress';
 import { useSwipeGesture } from '../../../hooks/useSwipeGesture';
 import { useHapticFeedback } from '../../../hooks/useHapticFeedback';
@@ -313,6 +314,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
               collectorNumber={card.collectorNumber}
               setCode={card.setCode}
               rarity={card.rarity}
+              reserved={card.reserved}
             />
           )}
 
