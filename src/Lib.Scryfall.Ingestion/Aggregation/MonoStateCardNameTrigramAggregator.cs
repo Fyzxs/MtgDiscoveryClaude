@@ -21,7 +21,7 @@ internal sealed class MonoStateCardNameTrigramAggregator : ICardNameTrigramAggre
         string flavorName = card.FlavorName();
         if (string.IsNullOrWhiteSpace(flavorName) is false)
         {
-            ProcessText(flavorName, actualName);
+            ProcessText(flavorName, flavorName);
         }
     }
 

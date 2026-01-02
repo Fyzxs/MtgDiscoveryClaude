@@ -66,6 +66,7 @@ internal sealed class GroupingFilters
 {
     public CollectorNumberRange CollectorNumberRange { get; set; }
     public Dictionary<string, object> Properties { get; set; }
+    public string Year { get; set; }
 }
 
 internal sealed class CollectorNumberRange

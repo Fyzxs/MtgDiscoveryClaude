@@ -15,6 +15,7 @@ import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
 import { CollectionSummary, ModalContainer, ManaCost } from '../../molecules';
 import { RarityBadge, PriceDisplay } from '../../atoms';
+import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
 import { AllPrintingsDisplay } from './AllPrintingsDisplay';
 import { RulingsDisplay } from '../../molecules';
@@ -100,6 +101,15 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
 
   if (!card) return null;
+
+  // Check if there are any displayable treatments
+  const hasDisplayableTreatments = (
+    card.foil ||
+    card.finishes?.includes('etched') ||
+    (card.promoTypes && card.promoTypes.length > 0) ||
+    (card.frameEffects && card.frameEffects.length > 0) ||
+    card.digital
+  );
 
   const formatOracleText = (text?: string) => {
     if (!text) return null;
@@ -335,7 +345,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               )}
 
               {/* Treatments */}
-              {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo || card.digital) && (
+              {hasDisplayableTreatments && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Treatments:
@@ -360,7 +370,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                     Artist:
                   </Typography>
                   <ArtistLinks
-                    artists={card.artist.split(/\s+(?:&|and)\s+/i)}
+                    artist={card.artist}
                     artistIds={card.artistIds}
                   />
                 </Box>
@@ -391,6 +401,13 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   }>
                     <HelpOutlineIcon sx={{ fontSize: 18, color: 'text.secondary', cursor: 'help' }} />
                   </Tooltip>
+                  {card.reserved && (
+                    <Tooltip title="This card is on the Reserved List">
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <ReservedListShield size="small" sx={{ mt: 0.25 }} />
+                      </Box>
+                    </Tooltip>
+                  )}
                 </Box>
 
                 <Grid container spacing={1.5}>

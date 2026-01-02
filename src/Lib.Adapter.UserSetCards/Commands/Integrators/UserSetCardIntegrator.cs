@@ -34,7 +34,8 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
             SetId = record.SetId,
             TotalCards = Math.Max(0, record.TotalCards + entity.Count),
             UniqueCards = Math.Max(0, record.UniqueCards + UpdateCardToGroup(finishGroups, entity)),
-            Groups = record.Groups
+            Groups = record.Groups,
+            Collecting = record.Collecting
         };
     }
 
