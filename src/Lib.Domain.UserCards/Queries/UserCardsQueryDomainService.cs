@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards.Signing;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -19,13 +20,15 @@ internal sealed class UserCardsQueryDomainService : IUserCardsQueryDomainService
     private readonly IUserCardsByIdsDomainService _userCardsByIdsService;
     private readonly IUserCardsByArtistDomainService _userCardsByArtistService;
     private readonly IUserCardsByNameDomainService _userCardsByNameService;
+    private readonly IUserCardsForSigningDomainService _userCardsForSigningService;
 
     public UserCardsQueryDomainService(ILogger logger) : this(
         new UserCardDomainService(logger),
         new UserCardsBySetDomainService(logger),
         new UserCardsByIdsDomainService(logger),
         new UserCardsByArtistDomainService(logger),
-        new UserCardsByNameDomainService(logger))
+        new UserCardsByNameDomainService(logger),
+        new UserCardsForSigningDomainService(logger))
     { }
 
     private UserCardsQueryDomainService(
@@ -33,13 +36,15 @@ internal sealed class UserCardsQueryDomainService : IUserCardsQueryDomainService
         IUserCardsBySetDomainService userCardsBySetService,
         IUserCardsByIdsDomainService userCardsByIdsService,
         IUserCardsByArtistDomainService userCardsByArtistService,
-        IUserCardsByNameDomainService userCardsByNameService)
+        IUserCardsByNameDomainService userCardsByNameService,
+        IUserCardsForSigningDomainService userCardsForSigningService)
     {
         _userCardService = userCardService;
         _userCardsBySetService = userCardsBySetService;
         _userCardsByIdsService = userCardsByIdsService;
         _userCardsByArtistService = userCardsByArtistService;
         _userCardsByNameService = userCardsByNameService;
+        _userCardsForSigningService = userCardsForSigningService;
     }
 
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => await _userCardService.Execute(userCard).ConfigureAwait(false);
@@ -51,4 +56,6 @@ internal sealed class UserCardsQueryDomainService : IUserCardsQueryDomainService
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => await _userCardsByArtistService.Execute(userCardsArtist).ConfigureAwait(false);
 
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => await _userCardsByNameService.Execute(userCardsName).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(IUserCardsForSigningItrEntity userCardsForSigning) => await _userCardsForSigningService.Execute(userCardsForSigning).ConfigureAwait(false);
 }

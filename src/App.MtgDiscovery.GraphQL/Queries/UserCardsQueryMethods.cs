@@ -6,6 +6,7 @@ using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
@@ -18,19 +19,23 @@ public sealed class UserCardsQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<List<UserCardOutEntity>> _userCardResponseMapper;
+    private readonly IOperationResponseToResponseModelMapper<SigningResultOutEntity> _signingResultResponseMapper;
 
     public UserCardsQueryMethods(ILogger logger) : this(
         new EntryService(logger),
-        new OperationResponseToResponseModelMapper<List<UserCardOutEntity>>())
+        new OperationResponseToResponseModelMapper<List<UserCardOutEntity>>(),
+        new OperationResponseToResponseModelMapper<SigningResultOutEntity>())
     {
     }
 
     private UserCardsQueryMethods(
         IEntryService entryService,
-        IOperationResponseToResponseModelMapper<List<UserCardOutEntity>> userCardResponseMapper)
+        IOperationResponseToResponseModelMapper<List<UserCardOutEntity>> userCardResponseMapper,
+        IOperationResponseToResponseModelMapper<SigningResultOutEntity> signingResultResponseMapper)
     {
         _entryService = entryService;
         _userCardResponseMapper = userCardResponseMapper;
+        _signingResultResponseMapper = signingResultResponseMapper;
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
@@ -58,5 +63,14 @@ public sealed class UserCardsQueryMethods
             .UserCardsByIdsAsync(cardsArgs)
             .ConfigureAwait(false);
         return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
+    }
+
+    [GraphQLType(typeof(SigningResultResponseModelUnionType))]
+    public async Task<ResponseModel> UserCardsForSigning(UserCardsForSigningArgEntity forSigningArgs)
+    {
+        IOperationResponse<SigningResultOutEntity> response = await _entryService
+            .UserCardsForSigningAsync(forSigningArgs)
+            .ConfigureAwait(false);
+        return await _signingResultResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

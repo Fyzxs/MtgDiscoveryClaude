@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { Box, Typography, Paper } from '../../atoms';
 import type { SxProps, Theme } from '../../atoms';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
 
 interface ArtistNameResult {
   artistId: string;
@@ -12,6 +13,18 @@ interface ArtistSearchResultsProps {
   onArtistClick: (artistName: string) => void;
   searchTerm?: string;
 }
+
+const buildArtistUrl = (artistName: string, collectorId: string | null): string => {
+  const basePath = `/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`;
+  const params = new URLSearchParams();
+
+  if (collectorId) {
+    params.set('ctor', collectorId);
+  }
+  params.set('formats', 'paper');
+
+  return `${basePath}?${params.toString()}`;
+};
 
 /**
  * ArtistSearchResults - Displays a list of artist search results with sorting and navigation
@@ -27,6 +40,8 @@ export const ArtistSearchResults: React.FC<ArtistSearchResultsProps> = React.mem
   onArtistClick,
   searchTerm
 }) => {
+  const { collectorId } = useCollectorParam();
+
   const sortedArtists = useMemo(() =>
     [...artists].sort((a, b) => a.name.localeCompare(b.name)),
     [artists]
@@ -69,6 +84,7 @@ export const ArtistSearchResults: React.FC<ArtistSearchResultsProps> = React.mem
             artist={artist}
             onArtistClick={onArtistClick}
             styles={artistPaperStyles}
+            collectorId={collectorId}
           />
         ))}
       </Box>
@@ -81,8 +97,9 @@ const ArtistResult = React.memo<{
   artist: ArtistNameResult;
   onArtistClick: (artistName: string) => void;
   styles: SxProps<Theme>;
-}>(({ artist, onArtistClick, styles }) => {
-  const artistUrl = `/artists/${encodeURIComponent(artist.name.toLowerCase().replace(/\s+/g, '-'))}`;
+  collectorId: string | null;
+}>(({ artist, onArtistClick, styles, collectorId }) => {
+  const artistUrl = buildArtistUrl(artist.name, collectorId);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     // Only prevent default for left clicks to allow right-click context menu

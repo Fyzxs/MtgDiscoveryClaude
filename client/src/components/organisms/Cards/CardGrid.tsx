@@ -1,4 +1,4 @@
-import React, { useDeferredValue, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Box, type SxProps, type Theme } from '../../atoms';
 import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../../hooks/useGridNavigation';
@@ -47,43 +47,56 @@ export const CardGrid: React.FC<CardGridProps> = ({
   onArtistClick,
   onSetClick
 }) => {
-  // Defer card rendering to keep UI responsive during filter changes
-  // When showing MORE cards (filter removal), React can render them in background
-  const deferredCards = useDeferredValue(cards);
+  // Create a stable fingerprint of the card LIST (just IDs, not data)
+  // This only changes when the actual cards change, not when collection data updates
+  const cardListFingerprint = useMemo(
+    () => cards.map(c => c.id).join(','),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only care about ID changes
+    [cards.length, cards[0]?.id, cards[cards.length - 1]?.id]
+  );
 
   // Progressive rendering: render cards in batches for better performance
   const [visibleCount, setVisibleCount] = useState(0);
+  const prevFingerprintRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Reset when cards change
-    setVisibleCount(0);
+    // Only run progressive loading when the card LIST changes (not just data)
+    // null means first run, empty string means no cards yet
+    if (prevFingerprintRef.current !== null && cardListFingerprint === prevFingerprintRef.current) {
+      return;
+    }
+    prevFingerprintRef.current = cardListFingerprint;
 
     // Render in batches to keep UI responsive
     const batchSize = 50;
-    const totalCards = deferredCards.length;
+    const cardsLength = cards.length;
 
-    if (totalCards === 0) return;
+    if (cardsLength === 0) {
+      setVisibleCount(0);
+      return;
+    }
 
     // First batch immediately
-    setVisibleCount(Math.min(batchSize, totalCards));
+    setVisibleCount(Math.min(batchSize, cardsLength));
 
     // Remaining batches progressively
-    if (totalCards > batchSize) {
+    if (cardsLength > batchSize) {
       const timeoutIds: NodeJS.Timeout[] = [];
 
-      for (let i = batchSize; i < totalCards; i += batchSize) {
+      for (let i = batchSize; i < cardsLength; i += batchSize) {
         const timeout = setTimeout(() => {
-          setVisibleCount(Math.min(i + batchSize, totalCards));
+          setVisibleCount(Math.min(i + batchSize, cardsLength));
         }, ((i / batchSize) - 1) * 50); // 50ms between batches
         timeoutIds.push(timeout);
       }
 
       return () => timeoutIds.forEach(clearTimeout);
     }
-  }, [deferredCards]);
+  }, [cardListFingerprint, cards.length]);
 
-  // Use visible cards for rendering
-  const cardsToRender = deferredCards.slice(0, visibleCount);
+  // Use cards directly (not deferred) so collection updates show immediately
+  // Progressive loading is controlled by visibleCount
+  const cardsToRender = cards.slice(0, visibleCount);
 
   // Grid navigation hook
   const { handleKeyDown } = useGridNavigation({
@@ -121,7 +134,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
   }
 
   // Empty state
-  if (deferredCards.length === 0) {
+  if (cards.length === 0) {
     return null;
   }
 

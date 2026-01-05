@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
 using Lib.Shared.Invocation.Operations;
@@ -32,4 +33,11 @@ public interface IUserCardsQueryEntryService
     /// <param name="cardsArgs">Arguments containing the user ID and card IDs to query</param>
     /// <returns>Collection of user cards wrapped in an operation response</returns>
     Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs);
+
+    /// <summary>
+    /// Retrieves user cards for multiple artists grouped by set for convention signing planning.
+    /// </summary>
+    /// <param name="forSigningArgs">Arguments containing the user ID and artist IDs to query</param>
+    /// <returns>Signing result grouped by set and artist wrapped in an operation response</returns>
+    Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs);
 }

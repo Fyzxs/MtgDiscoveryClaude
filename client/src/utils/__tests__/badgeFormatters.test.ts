@@ -66,6 +66,10 @@ describe('badgeFormatters', () => {
       expect(formatPromoText('serialized')).toBe('Serialized');
     });
 
+    it('should format galaxyfoil correctly', () => {
+      expect(formatPromoText('galaxyfoil')).toBe('Galaxy Foil');
+    });
+
     it('should format surgefoil correctly', () => {
       expect(formatPromoText('surgefoil')).toBe('Surge Foil');
     });

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import type {
   UseFilterStateConfig
 } from '../types/filters';
@@ -17,6 +17,7 @@ export interface FilterState {
 const EMPTY_FILTERS: Readonly<Record<string, unknown>> = {};
 const EMPTY_ARRAY: readonly unknown[] = [];
 const EMPTY_FUNCTIONS: Readonly<Record<string, (item: unknown, value: unknown) => boolean>> = {};
+const EMPTY_RESULT: readonly never[] = [];
 
 /**
  * Hook to manage filtering, searching, and sorting of data
@@ -40,7 +41,6 @@ export function useFilterState<T>(
   const [searchTerm, setSearchTerm] = useState(initialState?.search || '');
   const [sortBy, setSortBy] = useState(initialState?.sort || defaultSort);
   const [filters, setFilters] = useState<Record<string, unknown>>(initialState?.filters || EMPTY_FILTERS);
-  const [filteredData, setFilteredData] = useState<T[]>([]);
 
   // Generic filter update function
   const updateFilter = useCallback((filterName: string, value: unknown) => {
@@ -68,16 +68,17 @@ export function useFilterState<T>(
 
   // Check if any filters are active
   const hasActiveFilters = useMemo(() => {
-    return searchTerm !== '' || 
-           Object.keys(filters).length > 0 || 
+    return searchTerm !== '' ||
+           Object.keys(filters).length > 0 ||
            sortBy !== defaultSort;
   }, [searchTerm, filters, sortBy, defaultSort]);
 
-  // Apply filtering and sorting
-  useEffect(() => {
+  // Apply filtering synchronously via useMemo to prevent stale data issues
+  // This ensures that when data changes, filtered results are immediately available
+  // in the same render cycle (no effect-based delay)
+  const filteredData = useMemo(() => {
     if (!data) {
-      setFilteredData([]);
-      return;
+      return EMPTY_RESULT as T[];
     }
 
     let filtered = [...data];
@@ -85,7 +86,7 @@ export function useFilterState<T>(
     // Apply search filter
     if (searchTerm && searchFields.length > 0) {
       const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(item => 
+      filtered = filtered.filter(item =>
         searchFields.some(field => {
           const value = item[field];
           if (value === null || value === undefined) return false;
@@ -107,11 +108,10 @@ export function useFilterState<T>(
       }
     });
 
-    // NOTE: Sorting removed from here to avoid double-sorting
-    // Parent components should use useOptimizedSort for sorting the filtered results
+    // NOTE: Sorting is NOT done here - parent components use useOptimizedSort
 
-    setFilteredData(filtered);
-  }, [data, searchTerm, filters, searchFields, filterFunctions]); // sortBy removed - no longer used here, sorting happens in parent
+    return filtered;
+  }, [data, searchTerm, filters, searchFields, filterFunctions]);
 
   return {
     // State values
@@ -119,14 +119,14 @@ export function useFilterState<T>(
     sortBy,
     filters,
     filteredData,
-    
+
     // State setters
     setSearchTerm,
     setSortBy,
     updateFilter,
     clearFilter,
     clearAllFilters,
-    
+
     // Helper values
     hasActiveFilters,
     totalCount: data?.length || 0,

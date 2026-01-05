@@ -4,6 +4,7 @@ using Lib.Domain.UserCards.Commands;
 using Lib.Domain.UserCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards.Signing;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -36,4 +37,6 @@ public sealed class UserCardsDomainService : IUserCardsDomainService
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _queryOperations.UserCardsByArtistAsync(userCardsArtist);
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _queryOperations.UserCardsByNameAsync(userCardsName);
+
+    public Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(IUserCardsForSigningItrEntity userCardsForSigning) => _queryOperations.UserCardsForSigningAsync(userCardsForSigning);
 }

@@ -22,16 +22,18 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
     private readonly IUserCardsByIdsAdapter _userCardsByIdsAdapter;
     private readonly IUserCardsByArtistAdapter _userCardsByArtistAdapter;
     private readonly IUserCardsByNameAdapter _userCardsByNameAdapter;
+    private readonly IUserCardsForSigningAdapter _userCardsForSigningAdapter;
 
-    public UserCardsQueryAdapter(ILogger logger) : this(new UserCardsBySetAdapter(logger), new UserCardAdapter(logger), new UserCardsByIdsAdapter(logger), new UserCardsByArtistAdapter(logger), new UserCardsByNameAdapter(logger)) { }
+    public UserCardsQueryAdapter(ILogger logger) : this(new UserCardsBySetAdapter(logger), new UserCardAdapter(logger), new UserCardsByIdsAdapter(logger), new UserCardsByArtistAdapter(logger), new UserCardsByNameAdapter(logger), new UserCardsForSigningAdapter(logger)) { }
 
-    private UserCardsQueryAdapter(IUserCardsBySetAdapter userCardsBySetAdapter, IUserCardAdapter userCardAdapter, IUserCardsByIdsAdapter userCardsByIdsAdapter, IUserCardsByArtistAdapter userCardsByArtistAdapter, IUserCardsByNameAdapter userCardsByNameAdapter)
+    private UserCardsQueryAdapter(IUserCardsBySetAdapter userCardsBySetAdapter, IUserCardAdapter userCardAdapter, IUserCardsByIdsAdapter userCardsByIdsAdapter, IUserCardsByArtistAdapter userCardsByArtistAdapter, IUserCardsByNameAdapter userCardsByNameAdapter, IUserCardsForSigningAdapter userCardsForSigningAdapter)
     {
         _userCardsBySetAdapter = userCardsBySetAdapter;
         _userCardAdapter = userCardAdapter;
         _userCardsByIdsAdapter = userCardsByIdsAdapter;
         _userCardsByArtistAdapter = userCardsByArtistAdapter;
         _userCardsByNameAdapter = userCardsByNameAdapter;
+        _userCardsForSigningAdapter = userCardsForSigningAdapter;
     }
 
     public Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet) => _userCardsBySetAdapter.Execute(userCardsSet);
@@ -43,4 +45,6 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
     public Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist) => _userCardsByArtistAdapter.Execute(userCardsArtist);
 
     public Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName) => _userCardsByNameAdapter.Execute(userCardsName);
+
+    public Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning) => _userCardsForSigningAdapter.Execute(userCardsForSigning);
 }

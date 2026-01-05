@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
   const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
-  const { buildUrlWithCollector, navigateWithCollector } = useCollectorNavigation();
+  const { buildUrlWithCollector, navigateWithCollector, collectorParam } = useCollectorNavigation();
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
@@ -190,6 +190,22 @@ export const Header: React.FC = () => {
             >
               Artists
             </MenuItem>
+            {collectorParam.hasCollector && (
+              <MenuItem
+                component="a"
+                href={buildUrlWithCollector('/convention-signing')}
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handleSearchMenuClose();
+                  navigateWithCollector('/convention-signing');
+                }}
+                role="menuitem"
+                aria-label="Plan cards to get signed at conventions"
+                sx={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                Convention Signing
+              </MenuItem>
+            )}
           </Menu>
         </Box>
 
