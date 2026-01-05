@@ -1,5 +1,6 @@
 #nullable enable
 using Cli.MtgDiscovery.PriceUpdate.ManaPool.Entities;
+using Newtonsoft.Json.Linq;
 
 namespace Cli.MtgDiscovery.PriceUpdate.Mapping;
 
@@ -7,12 +8,14 @@ internal sealed class ManaPoolToPricesMapper : IManaPoolToPricesMapper
 {
     public dynamic MapToPrices(ManaPoolPriceItem item)
     {
-        return new
+        JObject prices = new()
         {
-            usd = CentsToDollars(item.PriceCents),
-            usd_foil = CentsToDollars(item.PriceCentsFoil),
-            usd_etched = CentsToDollars(item.PriceCentsEtched)
+            ["usd"] = CentsToDollars(item.PriceCents),
+            ["usd_foil"] = CentsToDollars(item.PriceCentsFoil),
+            ["usd_etched"] = CentsToDollars(item.PriceCentsEtched)
         };
+
+        return prices;
     }
 
     private static string? CentsToDollars(int? cents)

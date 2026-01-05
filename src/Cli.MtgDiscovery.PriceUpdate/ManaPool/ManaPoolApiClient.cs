@@ -1,7 +1,9 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.PriceUpdate.Configuration;
 using Cli.MtgDiscovery.PriceUpdate.ManaPool.Entities;
@@ -15,6 +17,7 @@ internal sealed class ManaPoolApiClient : IManaPoolApiClient
     private readonly ILogger<ManaPoolApiClient> _logger;
     private readonly HttpClient _httpClient;
     private readonly PriceUpdateConfiguration _config;
+    private readonly JsonSerializer _serializer;
 
     public ManaPoolApiClient(
         ILogger<ManaPoolApiClient> logger,
@@ -24,6 +27,7 @@ internal sealed class ManaPoolApiClient : IManaPoolApiClient
         _logger = logger;
         _httpClient = httpClient;
         _config = config;
+        _serializer = new JsonSerializer();
     }
 
     public async Task<IReadOnlyDictionary<string, ManaPoolPriceItem>> FetchAllPricesAsync()
@@ -72,11 +76,20 @@ internal sealed class ManaPoolApiClient : IManaPoolApiClient
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
-                _ = response.EnsureSuccessStatusCode();
+                using HttpRequestMessage request = new(HttpMethod.Get, uri);
 
-                string json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                ManaPoolApiResponse result = JsonConvert.DeserializeObject<ManaPoolApiResponse>(json)
+                using HttpResponseMessage response = await _httpClient
+                    .SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
+                    .ConfigureAwait(false);
+
+                response.EnsureSuccessStatusCode();
+
+                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                await using ConfiguredAsyncDisposable streamDisposal = stream.ConfigureAwait(false);
+                using StreamReader streamReader = new(stream);
+                using JsonTextReader jsonReader = new(streamReader);
+
+                ManaPoolApiResponse result = _serializer.Deserialize<ManaPoolApiResponse>(jsonReader)
                     ?? throw new InvalidOperationException($"Failed to deserialize ManaPool API response for page {page}");
 
                 return result;
