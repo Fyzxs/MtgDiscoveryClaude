@@ -196,6 +196,6 @@ export interface CardContext {
 
 export interface UserCardData {
   finish: 'nonfoil' | 'foil' | 'etched';
-  special: 'none' | 'artist_proof' | 'signed' | 'altered';
+  special: 'none' | 'proof' | 'signed' | 'altered';
   count: number;
 }

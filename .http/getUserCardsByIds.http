@@ -1,0 +1,198 @@
+###
+# Get User Cards By IDs Query
+# Frontend: client/src/graphql/queries/userCards.ts - GET_USER_CARDS_BATCH
+# Returns collection data for multiple cards owned by a user
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get User Cards By IDs - Basic Query
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsByIds($cardsArgs: UserCardsByIdsInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "cardIds": [
+      "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+      "82ae4f7b-8122-4af6-8079-888eabf1a11e"
+    ]
+  }
+}
+
+
+### Get User Cards By IDs - Multiple Cards
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsByIdsMultiple($cardsArgs: UserCardsByIdsInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "cardIds": [
+      "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+      "82ae4f7b-8122-4af6-8079-888eabf1a11e",
+      "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+    ]
+  }
+}
+
+
+### Get User Cards By IDs - Single Card
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsByIdsSingle($cardsArgs: UserCardsByIdsInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "cardIds": [
+      "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f"
+    ]
+  }
+}
+
+
+### Get User Cards By IDs - Missing User ID (should fail)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsByIdsNoUser($cardsArgs: UserCardsByIdsInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs": {
+    "userId": "",
+    "cardIds": [
+      "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f"
+    ]
+  }
+}
+
+
+### Get User Cards By IDs - Empty Card IDs (should fail)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsByIdsEmpty($cardsArgs: UserCardsByIdsInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "cardIds": []
+  }
+}
+
+
+###
+# Usage Notes:
+# Returns collection data for multiple cards owned by a user (batch query)
+#
+# Parameters:
+# - userId: The unique identifier of the user
+# - cardIds: Array of card IDs to query (GUID format)
+#
+# Use this for efficient batch loading of card collection data

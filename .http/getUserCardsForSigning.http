@@ -1,0 +1,242 @@
+###
+# Get User Cards For Signing Query
+# Frontend: client/src/graphql/queries/conventionSigning.ts - USER_CARDS_FOR_SIGNING
+# Used for Convention Signing Planner feature
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get User Cards For Signing - Basic Query
+# Get cards owned by a user that were illustrated by specified artists
+# Used for planning which cards to get signed at conventions
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsForSigning($forSigningArgs: UserCardsForSigningArgEntityInput!) {
+  userCardsForSigning(forSigningArgs: $forSigningArgs) {
+    __typename
+    ... on SigningResultSuccessResponse {
+      data {
+        sets {
+          setId
+          setCode
+          setName
+          artistCount
+          unsignedCardCount
+          artists {
+            artistId
+            artistName
+            unsignedCount
+            partiallySignedCount
+            cards {
+              cardId
+              cardName
+              imageUri
+              unsignedCopies
+              isPartiallySigned
+              collectedDetails {
+                finish
+                special
+                count
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "forSigningArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "artistIds": ["c1d04e55-6d09-5d3a-b3e1-6f8e2d9c4b7a"]
+  }
+}
+
+
+### Get User Cards For Signing - Multiple Artists
+# Query cards for multiple artists (common convention scenario)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsForSigningMultipleArtists($forSigningArgs: UserCardsForSigningArgEntityInput!) {
+  userCardsForSigning(forSigningArgs: $forSigningArgs) {
+    __typename
+    ... on SigningResultSuccessResponse {
+      data {
+        sets {
+          setId
+          setCode
+          setName
+          artistCount
+          unsignedCardCount
+          artists {
+            artistId
+            artistName
+            unsignedCount
+            partiallySignedCount
+            cards {
+              cardId
+              cardName
+              imageUri
+              unsignedCopies
+              isPartiallySigned
+              collectedDetails {
+                finish
+                special
+                count
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "forSigningArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "artistIds": [
+      "c1d04e55-6d09-5d3a-b3e1-6f8e2d9c4b7a",
+      "d2e15f66-7e1a-6e4b-c4f2-7g9f3e0d5c8b",
+      "e3f26g77-8f2b-7f5c-d5g3-8h0g4f1e6d9c"
+    ]
+  }
+}
+
+
+### Get User Cards For Signing - Empty Artist IDs (should fail validation)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsForSigningEmptyArtists($forSigningArgs: UserCardsForSigningArgEntityInput!) {
+  userCardsForSigning(forSigningArgs: $forSigningArgs) {
+    __typename
+    ... on SigningResultSuccessResponse {
+      data {
+        sets {
+          setId
+          setCode
+          setName
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "forSigningArgs": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "artistIds": []
+  }
+}
+
+
+### Get User Cards For Signing - Missing User ID (should fail validation)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsForSigningNoUserId($forSigningArgs: UserCardsForSigningArgEntityInput!) {
+  userCardsForSigning(forSigningArgs: $forSigningArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "forSigningArgs": {
+    "userId": "",
+    "artistIds": ["c1d04e55-6d09-5d3a-b3e1-6f8e2d9c4b7a"]
+  }
+}
+
+
+###
+# Usage Notes:
+# This query returns user's cards organized for convention signing planning.
+#
+# Parameters:
+# - userId: The unique identifier of the user whose cards to query
+# - artistIds: Array of artist IDs to filter cards by
+#
+# Response Structure:
+# - Results are grouped by Set, then by Artist within each set
+# - Each card includes:
+#   - unsignedCopies: Count of copies that don't have special="signed"
+#   - isPartiallySigned: True if user has at least one signed copy AND unsigned copies
+#   - collectedDetails: Full breakdown of finish/special/count for all copies
+#
+# Special Values for 'special' field:
+# - "none": Regular card
+# - "signed": Artist-signed card
+# - "altered": Altered art card
+# - "proof": Artist proof
+
+###
+# Expected Response Example:
+#
+# {
+#   "data": {
+#     "userCardsForSigning": {
+#       "__typename": "SigningResultSuccessResponse",
+#       "data": {
+#         "sets": [
+#           {
+#             "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
+#             "setCode": "lea",
+#             "setName": "Limited Edition Alpha",
+#             "artistCount": 1,
+#             "unsignedCardCount": 3,
+#             "artists": [
+#               {
+#                 "artistId": "c1d04e55-6d09-5d3a-b3e1-6f8e2d9c4b7a",
+#                 "artistName": "Mark Poole",
+#                 "unsignedCount": 3,
+#                 "partiallySignedCount": 1,
+#                 "cards": [
+#                   {
+#                     "cardId": "abc123",
+#                     "cardName": "Ancestral Recall",
+#                     "imageUri": "https://...",
+#                     "unsignedCopies": 2,
+#                     "isPartiallySigned": true,
+#                     "collectedDetails": [
+#                       { "finish": "nonfoil", "special": "none", "count": 2 },
+#                       { "finish": "nonfoil", "special": "signed", "count": 1 }
+#                     ]
+#                   }
+#                 ]
+#               }
+#             ]
+#           }
+#         ]
+#       }
+#     }
+#   }
+# }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Link, alpha, useTheme } from '../../atoms';
 
-type LinkType = 'scryfall' | 'tcgplayer' | 'cardmarket' | 'cardhoarder' | 'edhrec' | 'gatherer' | 'cardkingdom';
+type LinkType = 'scryfall' | 'tcgplayer' | 'cardmarket' | 'cardhoarder' | 'edhrec' | 'gatherer' | 'cardkingdom' | 'manapool' | 'manapool-artist';
 
 interface ExternalLinkIconProps {
   type: LinkType;
@@ -50,6 +50,10 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
         return 'https://gatherer.wizards.com/favicon.ico';
       case 'cardkingdom':
         return 'https://www.cardkingdom.com/favicon.ico';
+      case 'manapool':
+        return '/mp_logo.png';
+      case 'manapool-artist':
+        return '/mp_logo.png';
       default:
         return '';
     }
@@ -100,7 +104,9 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       cardhoarder: { bg: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)', text: 'CH' },
       edhrec: { bg: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)', text: 'EDH' },
       gatherer: { bg: 'linear-gradient(135deg, #4B5563 0%, #374151 100%)', text: 'WTC' },
-      cardkingdom: { bg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', text: 'CK' }
+      cardkingdom: { bg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', text: 'CK' },
+      manapool: { bg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)', text: 'MP' },
+      'manapool-artist': { bg: 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)', text: 'MP' }
     };
 
     const config = configs[type as keyof typeof configs] ||

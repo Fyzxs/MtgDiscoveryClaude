@@ -11,6 +11,7 @@ import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { SectionErrorBoundary } from '../utils/ErrorBoundaries';
 import { useArtistCardsData } from '../../hooks/useArtistCardsData';
+import { LinkParamsProvider } from '../../contexts/LinkParamsContext';
 
 /**
  * ArtistCardsPage - Display all cards by a specific artist with filtering
@@ -23,7 +24,6 @@ export const ArtistCardsPage: React.FC = () => {
   // All data and state management extracted to custom hook
   const {
     cards,
-    cardsData,
     cardsLoading,
     cardsError,
     searchTerm,
@@ -71,22 +71,23 @@ export const ArtistCardsPage: React.FC = () => {
     );
   }
 
-  if (cardsData?.cardsByArtistName?.__typename === 'FailureResponse') {
+  if (cardsError) {
     return (
       <StatusMessage severity="error" sx={{ m: 4 }}>
-        {cardsData.cardsByArtistName.status?.message || 'Failed to load cards'}
+        {cardsError.message || 'Failed to load cards'}
       </StatusMessage>
     );
   }
 
   // Render using template composition pattern
   return (
-    <QueryStateContainer
-      loading={cardsLoading}
-      error={cardsError}
-      containerProps={{ maxWidth: false }}
-    >
-      <BrowseTemplate
+    <LinkParamsProvider additionalParams={{ formats: 'paper' }}>
+      <QueryStateContainer
+        loading={cardsLoading}
+        error={cardsError}
+        containerProps={{ maxWidth: false }}
+      >
+        <BrowseTemplate
         header={
           <SectionErrorBoundary name="ArtistPageHeader">
             <ArtistPageHeader
@@ -157,9 +158,10 @@ export const ArtistCardsPage: React.FC = () => {
             onClearFilters={handleClearFilters}
           />
         }
-      />
-      <BackToTopFab />
-    </QueryStateContainer>
+        />
+        <BackToTopFab />
+      </QueryStateContainer>
+    </LinkParamsProvider>
   );
 };
 

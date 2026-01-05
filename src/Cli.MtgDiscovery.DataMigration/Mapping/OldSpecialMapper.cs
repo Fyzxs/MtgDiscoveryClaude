@@ -27,7 +27,7 @@ internal sealed class OldSpecialMapper : IOldSpecialMapper
 
         if (source.Proof > 0)
         {
-            results.Add(("artist_proof", source.Proof));
+            results.Add(("proof", source.Proof));
         }
 
         if (source.Altered > 0)

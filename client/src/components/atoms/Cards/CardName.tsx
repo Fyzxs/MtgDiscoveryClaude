@@ -2,26 +2,34 @@ import Typography from '../Typography';
 import Box from '../Box';
 import { DarkBadge } from '../shared/DarkBadge';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
+import { useLinkParams } from '../../../contexts/LinkParamsContext';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface CardNameProps extends StyledComponentProps {
   cardId?: string;
   cardName?: string;
   onCardClick?: (cardId?: string) => void;
+  /** Additional URL parameters to include in the link */
+  additionalParams?: Record<string, string>;
 }
 
 export const CardName = ({
   cardId,
   cardName,
   onCardClick,
-  className
+  className,
+  additionalParams
 }: CardNameProps) => {
   const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+  const contextParams = useLinkParams();
+
+  // Use explicit prop if provided, otherwise fall back to context
+  const params = additionalParams ?? contextParams;
 
   if (!cardName) return null;
 
   const cardPath = `/card/${encodeURIComponent(cardName)}`;
-  const href = buildUrlWithCollector(cardPath);
+  const href = buildUrlWithCollector(cardPath, params);
 
   return (
     <Box className={className}>
@@ -49,7 +57,7 @@ export const CardName = ({
             onCardClick(cardId);
           } else {
             // Use collector navigation for regular clicks
-            createCollectorClickHandler(cardPath)(e);
+            createCollectorClickHandler(cardPath, params)(e);
           }
         }}
         aria-label={`View all versions of ${cardName}`}

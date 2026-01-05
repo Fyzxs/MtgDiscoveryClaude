@@ -1,0 +1,146 @@
+###
+# Get User Card Query
+# Frontend: client/src/graphql/queries/userCards.ts - GET_USER_CARD_BY_ID
+# Returns a single card's collection data for a user
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get User Card - Basic Query
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCard($cardArgs: UserCardInput!) {
+  userCard(cardArgs: $cardArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardArgs": {
+    "cardId": "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+### Get User Card - Different Card
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardAlt($cardArgs: UserCardInput!) {
+  userCard(cardArgs: $cardArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardArgs": {
+    "cardId": "82ae4f7b-8122-4af6-8079-888eabf1a11e",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+### Get User Card - Missing User ID (should fail)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardNoUser($cardArgs: UserCardInput!) {
+  userCard(cardArgs: $cardArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardArgs": {
+    "cardId": "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+    "userId": ""
+  }
+}
+
+
+### Get User Card - Missing Card ID (should fail)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardNoCard($cardArgs: UserCardInput!) {
+  userCard(cardArgs: $cardArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardArgs": {
+    "cardId": "",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+###
+# Usage Notes:
+# Returns collection data for a single card owned by a user
+#
+# Parameters:
+# - userId: The unique identifier of the user
+# - cardId: The unique identifier of the card (GUID format)
+#
+# Response includes collectedList with finish/special/count

@@ -7,6 +7,8 @@ interface CardLinksProps {
   scryfallUrl?: string;
   tcgplayerUrl?: string;
   cardName?: string;
+  setCode?: string;
+  collectorNumber?: string;
   className?: string;
   sx?: SxProps<Theme>;
 }
@@ -15,6 +17,8 @@ export const CardLinks: React.FC<CardLinksProps> = ({
   scryfallUrl,
   tcgplayerUrl,
   cardName,
+  setCode,
+  collectorNumber,
   className,
   sx
 }) => {
@@ -35,6 +39,16 @@ export const CardLinks: React.FC<CardLinksProps> = ({
 
   const cardKingdomUrl = cardName ? generateCardKingdomUrl(cardName) : undefined;
 
+  // Generate ManaPool URL: https://manapool.com/card/{setCode}/{collectorNumber}/{cardName}
+  const generateManaPoolUrl = (set: string, collector: string, name: string): string => {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    return `https://manapool.com/card/${set.toLowerCase()}/${collector}/${slug}`;
+  };
+
+  const manaPoolUrl = setCode && collectorNumber && cardName
+    ? generateManaPoolUrl(setCode, collectorNumber, cardName)
+    : undefined;
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ...sx }} className={className}>
       <ExternalLinkIcon
@@ -50,6 +64,11 @@ export const CardLinks: React.FC<CardLinksProps> = ({
       <ExternalLinkIcon
         type="cardkingdom"
         url={cardKingdomUrl}
+        size="small"
+      />
+      <ExternalLinkIcon
+        type="manapool"
+        url={manaPoolUrl}
         size="small"
       />
     </Box>

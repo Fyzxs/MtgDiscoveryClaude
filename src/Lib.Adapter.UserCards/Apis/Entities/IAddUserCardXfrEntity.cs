@@ -25,6 +25,31 @@ public interface IAddUserCardXfrEntity
     string SetId { get; }
 
     /// <summary>
+    /// The name of the card (denormalized for display without additional lookups).
+    /// </summary>
+    string CardName { get; }
+
+    /// <summary>
+    /// The name of the set (denormalized for display without additional lookups).
+    /// </summary>
+    string SetName { get; }
+
+    /// <summary>
+    /// The code of the set (denormalized for URLs and display).
+    /// </summary>
+    string SetCode { get; }
+
+    /// <summary>
+    /// The release date of the card in ISO format (denormalized for sorting).
+    /// </summary>
+    string ReleasedAt { get; }
+
+    /// <summary>
+    /// The artist name (denormalized for display without additional lookups).
+    /// </summary>
+    string Artist { get; }
+
+    /// <summary>
     /// The artist IDs for this card (used for efficient querying by artist).
     /// </summary>
     IEnumerable<string> ArtistIds { get; }
@@ -39,4 +64,10 @@ public interface IAddUserCardXfrEntity
     /// The details of this specific collected card version with finish, quantity, and set grouping.
     /// </summary>
     IUserCardDetailsXfrEntity Details { get; }
+
+    /// <summary>
+    /// When true, replaces existing card counts instead of adding to them.
+    /// Used by migration tools to overwrite existing collection data.
+    /// </summary>
+    bool ReplaceMode { get; }
 }

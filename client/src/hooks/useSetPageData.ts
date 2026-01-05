@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo, useRef, startTransition, useTransition, useCallback } from 'react';
+import { useState, useEffect, useMemo, startTransition, useTransition, useCallback, useRef } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useCardQueries } from './useCardQueries';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useUrlState } from './useUrlState';
 import { useFilterState } from './useFilterState';
 import { useCollectorParam } from './useCollectorParam';
+import { useCollectionUpdates } from './useCollectionUpdates';
 import { useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { useMinimumLoadingTime } from './useMinimumLoadingTime';
 import { RARITY_ORDER, parseCollectorNumber } from '../config/cardSortOptions';
@@ -18,17 +19,6 @@ import type { Card } from '../types/card';
 import type { MtgSet } from '../types/set';
 import { groupCardsOptimized, getGroupDisplayName, getGroupOrder } from '../utils/optimizedCardGrouping';
 import { useOptimizedSort } from './useOptimizedSort';
-import { logger } from '../utils/logger';
-
-interface CardsSuccessResponse {
-  cardsBySetCode: {
-    __typename: string;
-    data?: Card[];
-    status?: {
-      message: string;
-    };
-  };
-}
 
 interface SetsResponse {
   setsByCode: {
@@ -82,18 +72,14 @@ export const useSetPageData = (setCode: string | undefined) => {
   const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
   const [isPending, startFilterTransition] = useTransition();
 
-  // Card data fetching
+  // Card data fetching - store cards directly, not wrapped in GraphQL response structure
   const { fetchSetCards } = useCardQueries();
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<Error | null>(null);
-  const [cardsData, setCardsData] = useState<CardsSuccessResponse | null>(null);
-  const cardsDataRef = useRef<CardsSuccessResponse | null>(null);
+  const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
 
-  // Keep ref in sync with state
-  useEffect(() => {
-    cardsDataRef.current = cardsData;
-    logger.debug('[useSetPageData] cardsData updated, card count:', cardsData?.cardsBySetCode?.data?.length || 0);
-  }, [cardsData]);
+  // Listen for collection updates via reusable hook
+  useCollectionUpdates(cards, setCards);
 
   // Load cards effect
   useEffect(() => {
@@ -102,26 +88,13 @@ export const useSetPageData = (setCode: string | undefined) => {
     const loadCards = async () => {
       setCardsLoading(true);
       setCardsError(null);
-      setCardsData({ cardsBySetCode: { __typename: 'CardsSuccessResponse', data: [] } });
 
       try {
-        const cards = await fetchSetCards(setCode);
-        setCardsData({
-          cardsBySetCode: {
-            __typename: 'CardsSuccessResponse',
-            data: cards
-          }
-        });
+        const fetchedCards = await fetchSetCards(setCode);
+        setCards(fetchedCards);
       } catch (error) {
         setCardsError(error as Error);
-        setCardsData({
-          cardsBySetCode: {
-            __typename: 'FailureResponse',
-            status: {
-              message: (error as Error).message
-            }
-          }
-        });
+        setCards(EMPTY_CARDS_ARRAY);
       } finally {
         setCardsLoading(false);
       }
@@ -130,42 +103,7 @@ export const useSetPageData = (setCode: string | undefined) => {
     loadCards();
   }, [setCode, collectorId, fetchSetCards]);
 
-  // Listen for collection updates
-  useEffect(() => {
-    const handleCollectionUpdate = (event: Event) => {
-      const detail = (event as CustomEvent).detail;
-
-      queueMicrotask(() => {
-        const currentData = cardsDataRef.current;
-        if (!currentData?.cardsBySetCode?.data) return;
-
-        const updatedCards: Card[] = [];
-        for (const card of currentData.cardsBySetCode.data) {
-          if (card.id === detail.cardId) {
-            updatedCards.push({
-              ...card,
-              userCollection: detail.userCollection
-            });
-          } else {
-            updatedCards.push(card);
-          }
-        }
-
-        setCardsData({
-          cardsBySetCode: {
-            __typename: 'CardsSuccessResponse',
-            data: updatedCards
-          }
-        });
-      });
-    };
-
-    window.addEventListener('collection-updated', handleCollectionUpdate as EventListener);
-    return () => window.removeEventListener('collection-updated', handleCollectionUpdate as EventListener);
-  }, []);
-
-  // Get unique values
-  const cards = cardsData?.cardsBySetCode?.data || EMPTY_CARDS_ARRAY;
+  // Get unique values - cards is now directly the Card[] array
   const allArtists = useMemo(() => getUniqueArtists(cards), [cards]);
   const allRarities = useMemo(() => getUniqueRarities(cards), [cards]);
   const allFinishes = useMemo(() => getUniqueFinishes(cards), [cards]);
@@ -478,7 +416,6 @@ export const useSetPageData = (setCode: string | undefined) => {
   return {
     // Data
     cards,
-    cardsData,
     setInfo,
     setName,
     // Loading states

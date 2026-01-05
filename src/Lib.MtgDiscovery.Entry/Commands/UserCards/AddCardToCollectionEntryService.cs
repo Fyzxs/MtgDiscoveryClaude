@@ -84,15 +84,21 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         // Map user card args to ITR entity with card metadata
         IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);
 
-        // Create updated entity with artist metadata and card name GUID
+        // Create updated entity with artist metadata, card name GUID, and denormalized display data
         UserCardCollectionItrEntity enrichedEntity = new()
         {
             UserId = itrEntity.UserId,
             CardId = itrEntity.CardId,
             SetId = itrEntity.SetId,
+            CardName = cardItem.Name,
+            SetName = cardItem.SetName,
+            SetCode = cardItem.SetCode,
+            ReleasedAt = cardItem.ReleasedAt,
+            Artist = cardItem.Artist,
             ArtistIds = artistIds,
             CardNameGuid = cardNameGuid,
-            Details = itrEntity.Details
+            Details = itrEntity.Details,
+            ReplaceMode = itrEntity.ReplaceMode
         };
 
         IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardAsync(enrichedEntity).ConfigureAwait(false);

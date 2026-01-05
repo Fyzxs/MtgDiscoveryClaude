@@ -7,4 +7,5 @@ public sealed class AddCardToCollectionArgsEntity : IAddCardToCollectionArgsEnti
 {
     public IAuthUserArgEntity AuthUser { get; init; }
     public IAddUserCardArgEntity AddUserCard { get; init; }
+    public bool ReplaceMode { get; init; }
 }

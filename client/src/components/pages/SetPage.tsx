@@ -19,7 +19,6 @@ export const SetPage: React.FC = () => {
   // All data and state management extracted to custom hook
   const {
     cards,
-    cardsData,
     setInfo,
     setName,
     isLoading,
@@ -61,11 +60,11 @@ export const SetPage: React.FC = () => {
     );
   }
 
-  if (cardsData?.cardsBySetCode?.__typename === 'FailureResponse') {
+  if (firstError) {
     return (
       <PageContainer maxWidth="lg" sx={{ mt: 4 }}>
         <StatusMessage severity="error">
-          {cardsData.cardsBySetCode.status?.message || 'Failed to load cards'}
+          {firstError.message || 'Failed to load cards'}
         </StatusMessage>
       </PageContainer>
     );

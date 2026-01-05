@@ -60,4 +60,11 @@ public interface IUserCardsQueryAdapter
     /// <param name="userCardsName">The user cards name entity containing userId and cardName</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
     Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName);
+
+    /// <summary>
+    /// Retrieves all user cards for multiple artists for convention signing planning.
+    /// </summary>
+    /// <param name="userCardsForSigning">The user cards for signing entity containing userId and artistIds</param>
+    /// <returns>Collection of user card collection information wrapped in an operation response</returns>
+    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning);
 }

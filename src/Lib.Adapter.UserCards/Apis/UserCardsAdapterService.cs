@@ -54,4 +54,6 @@ public sealed class UserCardsAdapterService : IUserCardsAdapterService
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist) => await _userCardsQueryAdapter.UserCardsByArtistAsync(userCardsArtist).ConfigureAwait(false);
 
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName) => await _userCardsQueryAdapter.UserCardsByNameAsync(userCardsName).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning) => await _userCardsQueryAdapter.UserCardsForSigningAsync(userCardsForSigning).ConfigureAwait(false);
 }

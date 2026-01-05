@@ -48,9 +48,11 @@ internal sealed class AddUserCardAdapter : IAddUserCardAdapter
 
         if (existingResponse.IsSuccessful())
         {
-            // Step 2: Merge with existing collected items
+            // Step 2: Merge with existing collected items (or replace if in replace mode)
             UserCardExtEntity existingItem = existingResponse.Value;
-            itemToUpsert = MergeCollectedItems(existingItem, input);
+            itemToUpsert = input.ReplaceMode
+                ? ReplaceCollectedItem(existingItem, input)
+                : MergeCollectedItems(existingItem, input);
         }
         else
         {
@@ -109,15 +111,58 @@ internal sealed class AddUserCardAdapter : IAddUserCardAdapter
             };
         }
 
+        // Return updated item with fresh metadata from newData (including denormalized display data)
+        return new UserCardExtEntity
+        {
+            UserId = existing.UserId,
+            CardId = existing.CardId,
+            SetId = existing.SetId,
+            CardName = newData.CardName,
+            SetName = newData.SetName,
+            SetCode = newData.SetCode,
+            ReleasedAt = newData.ReleasedAt,
+            Artist = newData.Artist,
+            ArtistIds = newData.ArtistIds,
+            CardNameGuid = newData.CardNameGuid,
+            CollectedList = [.. mergedItems.Values]
+        };
+    }
+
+    /// <summary>
+    /// Replaces existing collected items with the new data instead of merging.
+    /// Used by migration tools to overwrite existing collection data.
+    /// </summary>
+    private UserCardExtEntity ReplaceCollectedItem(UserCardExtEntity existing, IAddUserCardXfrEntity newData)
+    {
+        // Create a dictionary and replace (or add) the item for this finish/special combination
+        Dictionary<(string finish, string special), UserCardDetailsExtEntity> items = existing.CollectedList
+            .ToDictionary(item => (item.Finish, item.Special));
+
+        IUserCardDetailsXfrEntity newItem = newData.Details;
+        (string finish, string special) key = (newItem.Finish, newItem.Special);
+
+        // Replace the count directly (don't add to existing)
+        items[key] = new UserCardDetailsExtEntity
+        {
+            Finish = newItem.Finish,
+            Special = newItem.Special,
+            Count = newItem.Count
+        };
+
         // Return updated item with fresh metadata from newData
         return new UserCardExtEntity
         {
             UserId = existing.UserId,
             CardId = existing.CardId,
             SetId = existing.SetId,
+            CardName = newData.CardName,
+            SetName = newData.SetName,
+            SetCode = newData.SetCode,
+            ReleasedAt = newData.ReleasedAt,
+            Artist = newData.Artist,
             ArtistIds = newData.ArtistIds,
             CardNameGuid = newData.CardNameGuid,
-            CollectedList = [.. mergedItems.Values]
+            CollectedList = [.. items.Values]
         };
     }
 }

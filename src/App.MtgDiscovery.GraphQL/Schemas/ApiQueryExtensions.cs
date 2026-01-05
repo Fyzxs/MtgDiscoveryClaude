@@ -1,6 +1,7 @@
 ﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+using App.MtgDiscovery.GraphQL.Entities.Types.Signing;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using App.MtgDiscovery.GraphQL.Queries;
@@ -18,12 +19,13 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<CardQueryMethods>()
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
-            //.AddTypeExtension<UserCardsQueryMethods>()
+            .AddTypeExtension<UserCardsQueryMethods>()
             .AddTypeExtension<UserInfoQueryMethods>()
             // Input types for queries
             .AddType<UserCardsBySetArgEntityInputType>()
             .AddType<UserCardsByIdsArgEntityInputType>()
             .AddType<UserCardArgEntityInputType>()
+            .AddType<UserCardsForSigningArgEntityInputType>()
             .AddType<CardResponseModelUnionType>()
             .AddType<FailureResponseModelType>()
             .AddType<CardsSuccessDataResponseModelType>()
@@ -43,6 +45,13 @@ internal static class ApiQueryExtensions
             .AddType<UserCardsCollectionSuccessDataResponseModelType>()
             .AddType<UserCardCollectionOutEntityType>()
             .AddType<CollectedItemOutEntityType>()
+            // Signing query types
+            .AddType<SigningResultResponseModelUnionType>()
+            .AddType<SigningResultSuccessDataResponseModelType>()
+            .AddType<SigningResultOutEntityType>()
+            .AddType<SigningSetGroupOutEntityType>()
+            .AddType<SigningArtistGroupOutEntityType>()
+            .AddType<SigningCardOutEntityType>()
             // UserInfo query types
             .AddType<UserInfoOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);

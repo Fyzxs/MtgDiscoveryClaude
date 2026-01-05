@@ -20,8 +20,10 @@ createRoot(document.getElementById('root')!).render(
         authorizationParams={{
           redirect_uri: import.meta.env.VITE_AUTH0_REDIRECT_URI,
           audience: "api://mtg-discovery",
-          scope: "openid profile email"
+          scope: "openid profile email offline_access"
         }}
+        cacheLocation="localstorage"
+        useRefreshTokens={true}
       >
         <Auth0TokenProvider>
           <ThemeProvider theme={theme}>

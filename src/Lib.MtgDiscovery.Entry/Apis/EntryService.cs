@@ -6,6 +6,7 @@ using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
@@ -95,6 +96,8 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => _userCardsQueryEntryService.UserCardsBySetAsync(bySetArgs);
 
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => _userCardsQueryEntryService.UserCardsByIdsAsync(cardsArgs);
+
+    public Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs) => _userCardsQueryEntryService.UserCardsForSigningAsync(forSigningArgs);
 
     public Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => _userSetCardsQueryEntryService.UserSetCardByUserAndSetAsync(userSetCardArgs);
 

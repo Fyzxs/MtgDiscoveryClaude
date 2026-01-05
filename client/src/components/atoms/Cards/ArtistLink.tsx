@@ -1,23 +1,31 @@
 import { DarkBadge } from '../shared/DarkBadge';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
+import { useLinkParams } from '../../../contexts/LinkParamsContext';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface ArtistLinkProps extends StyledComponentProps {
   artistName: string;
   artistId?: string;
   onArtistClick?: (artistName: string, artistId?: string) => void;
+  /** Additional URL parameters to include in the link */
+  additionalParams?: Record<string, string>;
 }
 
 export const ArtistLink = ({
   artistName,
   artistId,
   onArtistClick,
-  className
+  className,
+  additionalParams
 }: ArtistLinkProps) => {
   const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+  const contextParams = useLinkParams();
+
+  // Use explicit prop if provided, otherwise fall back to context
+  const params = additionalParams ?? contextParams;
 
   const artistPath = `/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`;
-  const href = buildUrlWithCollector(artistPath);
+  const href = buildUrlWithCollector(artistPath, params);
 
   return (
     <DarkBadge
@@ -44,7 +52,7 @@ export const ArtistLink = ({
           onArtistClick(artistName, artistId);
         } else {
           // Use collector navigation for regular clicks
-          createCollectorClickHandler(artistPath)(e);
+          createCollectorClickHandler(artistPath, params)(e);
         }
       }}
       className={className}

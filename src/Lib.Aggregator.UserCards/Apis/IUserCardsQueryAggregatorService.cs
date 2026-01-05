@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards.Signing;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.UserCards.Apis;
@@ -42,4 +43,11 @@ public interface IUserCardsQueryAggregatorService
     /// <param name="userCardsName">The user cards name entity containing userId and cardName</param>
     /// <returns>Collection of user cards with the name wrapped in an operation response</returns>
     Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName);
+
+    /// <summary>
+    /// Retrieves user cards for multiple artists, grouped by set and artist for convention signing planning.
+    /// </summary>
+    /// <param name="userCardsForSigning">The user cards for signing entity containing userId and artistIds</param>
+    /// <returns>Grouped signing result with statistics wrapped in an operation response</returns>
+    Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(IUserCardsForSigningItrEntity userCardsForSigning);
 }
