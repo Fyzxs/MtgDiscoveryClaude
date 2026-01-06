@@ -40,6 +40,7 @@ export interface SearchConfig {
   fullWidth?: boolean;
   loading?: boolean;
   disabled?: boolean;
+  sx?: Record<string, unknown>;
 }
 
 /**

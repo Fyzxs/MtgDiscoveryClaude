@@ -39,14 +39,28 @@ export const ArtistLinks: React.FC<ArtistLinksProps> = ({
   if (displayArtists.length === 0) return null;
 
   return (
-    <Typography variant="caption" sx={{ fontSize: '0.75rem', display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center' }} className={className}>
+    <Typography
+      variant="caption"
+      sx={{
+        fontSize: '0.75rem',
+        display: 'flex',
+        gap: 0.5,
+        flexWrap: 'nowrap',
+        alignItems: 'center',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        maxWidth: '100%'
+      }}
+      className={className}
+    >
       {displayArtists.map((artistName, index) => {
         // Find the original index to get the correct artistId
         const originalIndex = artists.indexOf(artistName);
         return (
           <React.Fragment key={index}>
             {index > 0 && (
-              <Typography component="span" sx={{ color: 'grey.400', fontSize: '0.7rem', mx: 0.25 }}>
+              <Typography component="span" sx={{ color: 'grey.400', fontSize: '0.7rem', mx: 0.25, flexShrink: 0 }}>
                 &
               </Typography>
             )}
@@ -54,6 +68,7 @@ export const ArtistLinks: React.FC<ArtistLinksProps> = ({
               artistName={artistName}
               artistId={artistIds?.[originalIndex]}
               onArtistClick={onArtistClick}
+              sx={{ flexShrink: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}
             />
           </React.Fragment>
         );
