@@ -63,7 +63,10 @@ export { default as CardContent } from './CardContent';
 export { default as CardActionArea } from './CardActionArea';
 
 // Other Components
+export { default as Badge } from './Badge';
 export { default as Chip } from './Chip';
+export { default as Drawer } from './Drawer';
+export { default as SwipeableDrawer } from './SwipeableDrawer';
 export { default as Link } from './Link';
 export { default as Tooltip } from './Tooltip';
 export { default as Modal } from './Modal';
@@ -136,7 +139,10 @@ export type {
   CardActionAreaProps,
 
   // Other
+  BadgeProps,
   ChipProps,
+  DrawerProps,
+  SwipeableDrawerProps,
   LinkProps,
   TooltipProps,
   ModalProps,

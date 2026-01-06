@@ -51,11 +51,11 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
         component="section"
         role="search"
         aria-label="Filter and search options"
-        sx={{ mb: 4, ...sx }}
+        sx={{ mb: { xs: 2, sm: 3, md: 4 }, ...sx }}
       >
         <Grid
           container
-          spacing={spacing}
+          spacing={{ xs: 1, sm: 1.5, md: spacing }}
           sx={{ alignItems: 'center', justifyContent: 'center' }}
           role="group"
           aria-label="Filter controls"
@@ -206,7 +206,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
         {collectorFilters && (
           <CollectorFiltersSection
             config={collectorFilters}
-            sx={{ mt: 3 }}
+            sx={{ mt: { xs: 1.5, sm: 2, md: 3 } }}
           />
         )}
       </Box>

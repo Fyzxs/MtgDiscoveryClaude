@@ -81,9 +81,12 @@ export const BackToTopFab: React.FC<BackToTopFabProps> = ({
         onClick={handleClick}
         sx={{
           position: 'fixed',
-          bottom,
-          right,
-          zIndex
+          bottom: { xs: `calc(${bottom}px + env(safe-area-inset-bottom, 0px))`, sm: bottom },
+          right: { xs: 12, sm: right },
+          zIndex,
+          // Ensure minimum touch target on mobile
+          minWidth: 48,
+          minHeight: 48,
         }}
         aria-label={ariaLabel}
       >

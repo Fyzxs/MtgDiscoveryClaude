@@ -1,13 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { RefObject } from 'react';
+import type { OverlayBehavior } from './useCardDisplaySettings';
 
 interface MtgCardInteractionsProps {
   cardRef: RefObject<HTMLDivElement | null>;
+  overlayBehavior?: OverlayBehavior;
 }
 
-export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) => {
+export const useMtgCardInteractions = ({
+  cardRef,
+  overlayBehavior = 'hover'
+}: MtgCardInteractionsProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [overlayExpanded, setOverlayExpanded] = useState(false);
 
   // Track selection state from DOM attribute
   useEffect(() => {
@@ -27,6 +33,13 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
     return () => observer.disconnect();
   }, [cardRef]);
 
+  // Reset overlay expanded state when card is deselected or another card is selected
+  useEffect(() => {
+    if (!isSelected && overlayExpanded) {
+      setOverlayExpanded(false);
+    }
+  }, [isSelected, overlayExpanded]);
+
   const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Don't trigger selection if clicking on links or zoom indicator
     const target = e.target as HTMLElement;
@@ -44,6 +57,32 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
 
     const cardElement = e.currentTarget as HTMLElement;
 
+    // Handle tap-to-expand behavior on mobile/tablet
+    if (overlayBehavior === 'tap') {
+      // If overlay is not expanded, expand it (first tap)
+      if (!overlayExpanded) {
+        setOverlayExpanded(true);
+
+        // Clear ALL selections across ALL card groups on the page
+        const allSelected = document.querySelectorAll('[data-selected="true"]');
+        allSelected.forEach(selected => {
+          if (selected !== cardElement) {
+            selected.setAttribute('data-selected', 'false');
+          }
+        });
+
+        // Select this card
+        cardElement.setAttribute('data-selected', 'true');
+        cardElement.focus();
+        return;
+      }
+
+      // Second tap - open modal
+      setModalOpen(true);
+      return;
+    }
+
+    // Desktop behavior - select card
     // Clear ALL selections across ALL card groups on the page
     const allSelected = document.querySelectorAll('[data-selected="true"]');
     allSelected.forEach(selected => {
@@ -63,7 +102,7 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
 
     // Focus this card to enable keyboard navigation from here
     cardElement.focus();
-  }, []);
+  }, [overlayBehavior, overlayExpanded]);
 
   const handleZoomClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -75,11 +114,17 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
     setModalOpen(false);
   }, []);
 
+  const handleOverlayToggle = useCallback(() => {
+    setOverlayExpanded(prev => !prev);
+  }, []);
+
   return {
     modalOpen,
     isSelected,
+    overlayExpanded,
     handleCardClick,
     handleZoomClick,
-    handleModalClose
+    handleModalClose,
+    handleOverlayToggle
   };
 };

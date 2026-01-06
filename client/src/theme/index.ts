@@ -104,6 +104,7 @@ declare module '@mui/material/styles' {
         cardOverlay: string;
         hover: string;
         mobileOverlay: string;
+        minimalOverlay: string;
       };
       shadows: {
         card: {
@@ -130,6 +131,19 @@ declare module '@mui/material/styles' {
         tooltip: number;
         drawer: number;
         snackbar: number;
+      };
+      mobile: {
+        headerHeight: number;
+        filterBarHeight: number;
+        bottomNavHeight: number;
+        drawerMaxWidth: string;
+        sheetMaxHeight: string;
+        sheetBorderRadius: number;
+      };
+      mediaQueries: {
+        touch: string;
+        hover: string;
+        prefersReducedMotion: string;
       };
     };
   }
@@ -205,6 +219,19 @@ declare module '@mui/material/styles' {
         tooltip?: number;
         drawer?: number;
         snackbar?: number;
+      };
+      mobile?: {
+        headerHeight?: number;
+        filterBarHeight?: number;
+        bottomNavHeight?: number;
+        drawerMaxWidth?: string;
+        sheetMaxHeight?: string;
+        sheetBorderRadius?: number;
+      };
+      mediaQueries?: {
+        touch?: string;
+        hover?: string;
+        prefersReducedMotion?: string;
       };
     };
   }
@@ -372,10 +399,10 @@ export const theme = createTheme({
       },
     },
     breakpoints: {
-      mobile: '0px',     // Mobile first
-      tablet: '768px',   // Tablet breakpoint
-      desktop: '1024px', // Desktop breakpoint
-      wide: '1440px',    // Wide screen breakpoint
+      mobile: '0px',     // xs: 0-599px
+      tablet: '600px',   // sm: 600-899px
+      desktop: '900px',  // md: 900-1199px
+      wide: '1200px',    // lg: 1200px+
     },
     transitions: {
       card: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -389,6 +416,7 @@ export const theme = createTheme({
       cardOverlay: 'linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 60%, rgba(0,0,0,0) 100%)',
       hover: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
       mobileOverlay: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)',
+      minimalOverlay: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 70%, transparent 100%)',
     },
     shadows: {
       card: {
@@ -415,6 +443,19 @@ export const theme = createTheme({
       tooltip: 1500,  // Tooltips
       drawer: 1200,   // Navigation drawers
       snackbar: 1400, // Notifications
+    },
+    mobile: {
+      headerHeight: 56,        // Standard mobile app bar height
+      filterBarHeight: 48,     // Sticky filter bar height
+      bottomNavHeight: 56,     // Bottom navigation height (if used)
+      drawerMaxWidth: '85vw',  // Navigation drawer max width
+      sheetMaxHeight: '70vh',  // Bottom sheet max height
+      sheetBorderRadius: 16,   // Bottom sheet corner radius
+    },
+    mediaQueries: {
+      touch: '@media (pointer: coarse)',
+      hover: '@media (hover: hover)',
+      prefersReducedMotion: '@media (prefers-reduced-motion: reduce)',
     },
   },
 });

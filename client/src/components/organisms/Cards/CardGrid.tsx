@@ -4,13 +4,25 @@ import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';
 import type { Card, CardContext } from '../../../types/card';
+import type { Breakpoint } from '@mui/material/styles';
+
+type ResponsiveValue<T> = T | Partial<Record<Breakpoint, T>>;
+
+// Default responsive card widths for mobile-first design
+const DEFAULT_MIN_ITEM_WIDTH: Partial<Record<Breakpoint, number>> = {
+  xs: 110,  // ~3 cards on mobile
+  sm: 150,  // 4-5 cards on tablet
+  md: 180,  // auto-fill on medium
+  lg: 220,  // auto-fill on large
+  xl: 250,  // auto-fill on extra large
+};
 
 interface CardGridProps {
   cards: Card[];
   groupId: string;
   context: CardContext;
-  spacing?: number;
-  minItemWidth?: number;
+  spacing?: ResponsiveValue<number>;
+  minItemWidth?: ResponsiveValue<number>;
   sx?: SxProps<Theme>;
   enableNavigation?: boolean;
   isLoading?: boolean;
@@ -39,8 +51,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
   cards,
   groupId,
   context,
-  spacing = 1.5,
-  minItemWidth = 280,
+  spacing = { xs: 1, sm: 1.5 },
+  minItemWidth = DEFAULT_MIN_ITEM_WIDTH,
   sx = {},
   enableNavigation = true,
   isLoading = false,

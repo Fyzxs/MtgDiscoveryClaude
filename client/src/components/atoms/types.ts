@@ -5,6 +5,7 @@ import type {
   AlertProps as MuiAlertProps,
   AppBarProps as MuiAppBarProps,
   AutocompleteProps as MuiAutocompleteProps,
+  BadgeProps as MuiBadgeProps,
   BoxProps as MuiBoxProps,
   ButtonProps as MuiButtonProps,
   CardProps as MuiCardProps,
@@ -21,6 +22,8 @@ import type {
   DialogContentProps as MuiDialogContentProps,
   DialogActionsProps as MuiDialogActionsProps,
   DividerProps as MuiDividerProps,
+  DrawerProps as MuiDrawerProps,
+  SwipeableDrawerProps as MuiSwipeableDrawerProps,
   FabProps as MuiFabProps,
   FormControlProps as MuiFormControlProps,
   FormControlLabelProps as MuiFormControlLabelProps,
@@ -113,7 +116,10 @@ export type CardContentProps = MuiCardContentProps;
 export type CardActionAreaProps = MuiCardActionAreaProps;
 
 // Other Components
+export type BadgeProps = MuiBadgeProps;
 export type ChipProps = MuiChipProps;
+export type DrawerProps = MuiDrawerProps;
+export type SwipeableDrawerProps = MuiSwipeableDrawerProps;
 export type LinkProps = MuiLinkProps;
 export type TooltipProps = MuiTooltipProps;
 export type ModalProps = MuiModalProps;
