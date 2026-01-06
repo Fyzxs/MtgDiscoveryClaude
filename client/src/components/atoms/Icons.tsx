@@ -43,3 +43,7 @@ export { default as CollectionsBookmarkIcon } from '@mui/icons-material/Collecti
 export { default as ImageNotSupportedIcon } from '@mui/icons-material/ImageNotSupported';
 export { default as KeyboardIcon } from '@mui/icons-material/Keyboard';
 export { default as SearchOffIcon } from '@mui/icons-material/SearchOff';
+
+// View Icons
+export { default as ViewListIcon } from '@mui/icons-material/ViewList';
+export { default as ViewModuleIcon } from '@mui/icons-material/ViewModule';

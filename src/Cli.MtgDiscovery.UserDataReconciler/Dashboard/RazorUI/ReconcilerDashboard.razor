@@ -1,0 +1,239 @@
+@using RazorConsole.Components
+@using Spectre.Console
+@inject ReconcilerDashboardState State
+
+<Border BoxBorder="@BoxBorder.Double" BorderColor="@(State.IsDryRun ? Color.Yellow : Color.Green)">
+    <Rows>
+        <Align Horizontal="@HorizontalAlignment.Center">
+            <Markup Content="UserSetCards Data Reconciler" Foreground="@Color.White" />
+        </Align>
+
+        <Align Horizontal="@HorizontalAlignment.Center">
+            @if (State.IsDryRun)
+            {
+                <Markup Content="[ DRY RUN MODE - No changes will be made ]" Foreground="@Color.Yellow" />
+            }
+            else
+            {
+                <Markup Content="[ LIVE MODE - Changes will be applied ]" Foreground="@Color.Green" />
+            }
+        </Align>
+
+        <Newline />
+
+        <Markup Content="@($"Status: {State.Status}")" Foreground="@Color.Cyan1" />
+
+        <Newline />
+
+        @if (State.TotalUsers > 0)
+        {
+            <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Blue">
+                <Rows>
+                    <Markup Content="Current Progress" Foreground="@Color.White" />
+
+                    <Columns>
+                        <Markup Content="@($"User: ")" />
+                        <Markup Content="@CreateProgressBar(State.CurrentUserIndex, State.TotalUsers)" />
+                        <Markup Content="@($" {State.CurrentUserIndex}/{State.TotalUsers}")" Foreground="@Color.Cyan1" />
+                    </Columns>
+
+                    @if (!string.IsNullOrEmpty(State.CurrentUserId))
+                    {
+                        <Markup Content="@($"  ID: {TruncateUserId(State.CurrentUserId)}")" Foreground="@Color.Grey" />
+                    }
+
+                    @if (State.UserTotalSets > 0)
+                    {
+                        <Columns>
+                            <Markup Content="@($"Sets: ")" />
+                            <Markup Content="@CreateProgressBar(State.UserSetsProcessed, State.UserTotalSets)" />
+                            <Markup Content="@($" {State.UserSetsProcessed}/{State.UserTotalSets}")" Foreground="@Color.Green" />
+                        </Columns>
+
+                        @if (!string.IsNullOrEmpty(State.CurrentSetCode))
+                        {
+                            <Markup Content="@($"  Current Set: {State.CurrentSetCode}")" Foreground="@Color.Grey" />
+                        }
+                    }
+                </Rows>
+            </Border>
+        }
+
+        <Newline />
+
+        <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+            <Rows>
+                <Markup Content="Reconciliation Statistics" Foreground="@Color.White" />
+                <Columns>
+                    <Markup Content="@($"Sets Processed: {State.TotalSetsProcessed:N0}")" Foreground="@Color.Cyan1" />
+                    <Markup Content="   " />
+                    <Markup Content="@($"With Issues: {State.SetsWithDiscrepancy:N0}")" Foreground="@(State.SetsWithDiscrepancy > 0 ? Color.Yellow : Color.Grey)" />
+                </Columns>
+                <Columns>
+                    <Markup Content="@($"Sets Updated: {State.SetsUpdated:N0}")" Foreground="@(State.SetsUpdated > 0 ? Color.Green : Color.Grey)" />
+                    <Markup Content="   " />
+                    <Markup Content="@($"Errors: {State.ErrorCount:N0}")" Foreground="@(State.ErrorCount > 0 ? Color.Red : Color.Grey)" />
+                </Columns>
+                <Newline />
+                <Columns>
+                    <Markup Content="@($"Cards Added: +{State.CardsAdded:N0}")" Foreground="@(State.CardsAdded > 0 ? Color.Green : Color.Grey)" />
+                    <Markup Content="   " />
+                    <Markup Content="@($"Cards Removed: -{State.CardsRemoved:N0}")" Foreground="@(State.CardsRemoved > 0 ? Color.Red : Color.Grey)" />
+                </Columns>
+            </Rows>
+        </Border>
+
+        <Newline />
+
+        @if (State.RecentLogs.Count > 0)
+        {
+            <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+                <Rows>
+                    <Markup Content="Recent Activity" Foreground="@Color.White" />
+                    @foreach (string log in State.RecentLogs)
+                    {
+                        <Markup Content="@TruncateString(log, 70)" Foreground="@GetLogColor(log)" />
+                    }
+                </Rows>
+            </Border>
+            <Newline />
+        }
+
+        <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+            <Columns>
+                <Markup Content="@($"Memory: {State.MemoryUsage} MB")" Foreground="@Color.Grey" />
+                <Markup Content="   " />
+                <Markup Content="@($"Elapsed: {FormatElapsed(State.Elapsed)}")" Foreground="@Color.Grey" />
+            </Columns>
+        </Border>
+
+        @if (State.IsComplete)
+        {
+            <Newline />
+            <Markup Content="@State.CompletionMessage" Foreground="@Color.Green" />
+
+            @if (State.IsDryRun && State.SetsWithDiscrepancy > 0)
+            {
+                <Markup Content="Set DryRun to false in appsettings.json to apply these changes." Foreground="@Color.Yellow" />
+            }
+        }
+
+        <Newline />
+        <Align Horizontal="@HorizontalAlignment.Center">
+            @if (State.IsComplete)
+            {
+                <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+                    <Markup Content=" Press [X] to exit " Foreground="@Color.White" />
+                </Border>
+            }
+            else
+            {
+                <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Red">
+                    <Markup Content=" Press [C] to Cancel " Foreground="@Color.Yellow" />
+                </Border>
+            }
+        </Align>
+    </Rows>
+</Border>
+
+@code {
+    private Task _keyListenerTask;
+    private bool _disposed;
+
+    protected override Task OnInitializedAsync()
+    {
+        _ = Task.Run(async () =>
+        {
+            while (State.IsComplete is false && _disposed is false)
+            {
+                State.UpdateMemoryUsage();
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        });
+
+        _keyListenerTask = Task.Run(async () =>
+        {
+            while (_disposed is false)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+
+                    if (State.IsComplete is false && (key.Key == ConsoleKey.C || key.KeyChar == 'c' || key.KeyChar == 'C'))
+                    {
+                        State.RequestCancellation();
+                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                    }
+                    else if (State.IsComplete && (key.Key == ConsoleKey.X || key.KeyChar == 'x' || key.KeyChar == 'X'))
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+
+                await Task.Delay(50).ConfigureAwait(false);
+            }
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private static string CreateProgressBar(int current, int total)
+    {
+        int barWidth = 25;
+        int filled = total > 0 ? (current * barWidth / total) : 0;
+        int empty = barWidth - filled;
+        return $"[{new string('█', filled)}{new string('░', empty)}]";
+    }
+
+    private static string TruncateString(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        if (text.Length <= maxLength) return text;
+        return string.Concat(text.AsSpan(0, maxLength - 3), "...");
+    }
+
+    private static string TruncateUserId(string userId)
+    {
+        if (string.IsNullOrEmpty(userId)) return string.Empty;
+        if (userId.Length <= 20) return userId;
+        return $"{userId[..8]}...{userId[^8..]}";
+    }
+
+    private static string FormatElapsed(TimeSpan elapsed)
+    {
+        if (elapsed.TotalHours >= 1)
+        {
+            return $"{(int)elapsed.TotalHours}:{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
+        }
+        return $"{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
+    }
+
+    private static Color GetLogColor(string log)
+    {
+        if (log.Contains("ERROR", StringComparison.OrdinalIgnoreCase) || log.Contains("Failed", StringComparison.OrdinalIgnoreCase))
+        {
+            return Color.Red;
+        }
+        if (log.Contains("discrepancy", StringComparison.OrdinalIgnoreCase) || log.Contains("mismatch", StringComparison.OrdinalIgnoreCase))
+        {
+            return Color.Yellow;
+        }
+        if (log.Contains("updated", StringComparison.OrdinalIgnoreCase) || log.Contains("fixed", StringComparison.OrdinalIgnoreCase))
+        {
+            return Color.Green;
+        }
+        return Color.Grey;
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        if (_keyListenerTask is not null)
+        {
+            _keyListenerTask.Wait(TimeSpan.FromSeconds(1));
+        }
+    }
+}

@@ -7,18 +7,21 @@ import {
   Stack,
   Button,
   Tooltip,
-  Drawer
+  Drawer,
+  Collapse
 } from '../../atoms';
-import { getLegalityColor } from '../../../theme';
+import { getLegalityColor, getRarityColor } from '../../../theme';
 import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
-import { CollectionSummary, ManaCost } from '../../molecules';
+import { CollectionSummary, ManaCost, RulingsDisplay } from '../../molecules';
 import { RarityBadge, PriceDisplay } from '../../atoms';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { CardImageDisplay } from './CardImageDisplay';
 import { CardBadges } from '../../molecules/Cards/CardBadges';
 import { SetLink } from '../../atoms';
 import { ArtistLinks } from '../../molecules';
+import { RelatedCardsDisplay } from './RelatedCardsDisplay';
+import { AllPrintingsDisplay } from './AllPrintingsDisplay';
 import {
   NavigateBeforeIcon,
   NavigateNextIcon,
@@ -28,9 +31,11 @@ import {
   RemoveCircleIcon,
   WarningIcon,
   CloseIcon,
-  KeyboardArrowDownIcon
+  KeyboardArrowDownIcon,
+  ExpandMoreIcon
 } from '../../atoms/Icons';
 import { useTheme } from '../../atoms';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 interface CardDetailsSheetProps {
   open: boolean;
@@ -41,6 +46,57 @@ interface CardDetailsSheetProps {
   hasPrevious?: boolean;
   hasNext?: boolean;
 }
+
+// Collapsible section component for mobile
+interface CollapsibleSectionProps {
+  title: string;
+  defaultExpanded?: boolean;
+  children: React.ReactNode;
+}
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  title,
+  defaultExpanded = false,
+  children
+}) => {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+
+  return (
+    <Box>
+      <Button
+        fullWidth
+        onClick={() => setExpanded(!expanded)}
+        sx={{
+          justifyContent: 'space-between',
+          py: 1,
+          px: 0,
+          color: 'text.primary',
+          textTransform: 'none',
+          '&:hover': {
+            bgcolor: 'transparent'
+          }
+        }}
+        endIcon={
+          <ExpandMoreIcon
+            sx={{
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s'
+            }}
+          />
+        }
+      >
+        <Typography variant="subtitle2" fontWeight="bold">
+          {title}
+        </Typography>
+      </Button>
+      <Collapse in={expanded}>
+        <Box sx={{ pb: 1 }}>
+          {children}
+        </Box>
+      </Collapse>
+    </Box>
+  );
+};
 
 const LEGALITY_ICONS: Record<string, React.ReactNode> = {
   legal: <CircleIcon sx={{ fontSize: 14 }} />,
@@ -68,21 +124,28 @@ const generateCardKingdomSearchUrl = (cardName: string): string => {
   return `https://www.cardkingdom.com/catalog/search?${params.toString()}`;
 };
 
-// Simplified format list for mobile
-const MOBILE_FORMATS = ['standard', 'pioneer', 'modern', 'legacy', 'vintage', 'commander'];
-
 const FORMAT_DISPLAY_NAMES: Record<string, string> = {
   standard: 'Std',
   pioneer: 'Pio',
   modern: 'Mod',
   legacy: 'Leg',
   vintage: 'Vin',
-  commander: 'EDH'
+  commander: 'EDH',
+  historic: 'His',
+  timeless: 'Tim',
+  pauper: 'Pau',
+  penny: 'Pen',
+  brawl: 'Brl',
+  alchemy: 'Alc',
+  explorer: 'Exp',
+  duel: 'Duel',
+  oldschool: 'Old',
+  premodern: 'Pre'
 };
 
 /**
  * Mobile-optimized card details displayed as a bottom sheet.
- * Shows condensed information with expandable sections.
+ * Shows all information with collapsible sections.
  */
 export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
   open,
@@ -95,7 +158,7 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
 }) => {
   const theme = useTheme();
   const { hasCollector } = useCollectorParam();
-  const [showMoreLegalities, setShowMoreLegalities] = useState(false);
+  const { isTablet } = useResponsiveBreakpoints();
 
   if (!card) return null;
 
@@ -127,12 +190,21 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
     ));
   };
 
-  // Filter legalities for mobile view
+  // All legalities for display
   const allLegalities = Object.entries(card.legalities || {})
-    .filter(([format]) => format !== '__typename');
+    .filter(([format]) => format !== '__typename')
+    .sort((a, b) => {
+      const order = ['standard', 'pioneer', 'modern', 'legacy', 'vintage', 'commander'];
+      const aIndex = order.indexOf(a[0]);
+      const bIndex = order.indexOf(b[0]);
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return a[0].localeCompare(b[0]);
+    });
 
-  const mobileLegalities = allLegalities.filter(([format]) => MOBILE_FORMATS.includes(format));
-  const additionalLegalities = allLegalities.filter(([format]) => !MOBILE_FORMATS.includes(format));
+  // Check for related cards
+  const hasRelatedCards = card.allParts && card.allParts.length > 1;
 
   return (
     <Drawer
@@ -141,10 +213,10 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
       onClose={onClose}
       PaperProps={{
         sx: {
-          maxHeight: '85vh',
+          maxHeight: '90vh',
           borderTopLeftRadius: theme.mtg.mobile.sheetBorderRadius,
           borderTopRightRadius: theme.mtg.mobile.sheetBorderRadius,
-          bgcolor: 'background.paper',
+          bgcolor: 'grey.900',
         }
       }}
     >
@@ -176,7 +248,7 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
         justifyContent: 'space-between',
         borderBottom: 1,
         borderColor: 'divider',
-        minHeight: 44, // Touch target
+        minHeight: 44,
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {(onPrevious || onNext) && (
@@ -201,7 +273,11 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
           )}
         </Box>
         <IconButton
-          onClick={onClose}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
           sx={{ minWidth: 44, minHeight: 44 }}
         >
           <CloseIcon />
@@ -210,24 +286,22 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
 
       {/* Scrollable content */}
       <Box sx={{ overflow: 'auto', flex: 1 }}>
-        {/* Card Image - centered and sized appropriately */}
+        {/* Card Image - full width on mobile, 2/3 on tablet */}
         <Box sx={{
-          p: 2,
+          width: '100%',
           display: 'flex',
           justifyContent: 'center',
-          bgcolor: 'grey.900'
+          bgcolor: 'black'
         }}>
           <Box sx={{
-            width: '60%',
-            maxWidth: 300,
+            width: isTablet ? '66.67%' : '100%',
             aspectRatio: '745 / 1040'
           }}>
             <CardImageDisplay
               card={card}
-              size="normal"
-              borderRadius="6.75%"
+              size="large"
+              borderRadius={0}
               sx={{
-                boxShadow: 3,
                 width: '100%',
                 height: '100%'
               }}
@@ -237,7 +311,7 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
 
         {/* Card Details */}
         <Box sx={{ p: 2 }}>
-          <Stack spacing={2}>
+          <Stack spacing={1.5}>
             {/* Card name, mana cost, and type */}
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.5 }}>
@@ -279,9 +353,21 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
               </Box>
             )}
 
+            {/* Flavor Text */}
+            {card.flavorText && (
+              <Box>
+                <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+                  Flavor Text
+                </Typography>
+                <Typography variant="body2" fontStyle="italic" sx={{ pl: 1, color: 'text.secondary' }}>
+                  {card.flavorText}
+                </Typography>
+              </Box>
+            )}
+
             {/* P/T, Loyalty, Defense */}
             {(card.power || card.loyalty || card.defense) && (
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: card.power ? 'flex-end' : 'flex-start' }}>
                 {card.power && (
                   <Typography variant="body1" fontWeight="bold">
                     {card.power}/{card.toughness}
@@ -311,6 +397,7 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
                 <CollectionSummary
                   collectionData={card.userCollection}
                   size="small"
+                  forceInteractive
                 />
               </Box>
             )}
@@ -349,13 +436,10 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
 
             <Divider />
 
-            {/* Legalities - condensed for mobile */}
-            <Box>
-              <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                Legalities
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {mobileLegalities.map(([format, legality]) => {
+            {/* Legalities - Collapsible */}
+            <CollapsibleSection title="Legalities" defaultExpanded={false}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                {allLegalities.map(([format, legality]) => {
                   const isLegal = legality === 'legal';
                   return (
                     <Tooltip key={format} title={`${format}: ${LEGALITY_DESCRIPTIONS[legality] || legality}`}>
@@ -381,56 +465,13 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
                     </Tooltip>
                   );
                 })}
-                {additionalLegalities.length > 0 && (
-                  <Button
-                    size="small"
-                    onClick={() => setShowMoreLegalities(!showMoreLegalities)}
-                    endIcon={<KeyboardArrowDownIcon sx={{
-                      transform: showMoreLegalities ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.2s'
-                    }} />}
-                    sx={{ fontSize: '0.625rem', minHeight: 24, px: 1 }}
-                  >
-                    {showMoreLegalities ? 'Less' : `+${additionalLegalities.length} more`}
-                  </Button>
-                )}
               </Box>
-              {showMoreLegalities && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
-                  {additionalLegalities.map(([format, legality]) => {
-                    const isLegal = legality === 'legal';
-                    return (
-                      <Box
-                        key={format}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 0.25,
-                          px: 0.5,
-                          py: 0.25,
-                          bgcolor: isLegal ? 'success.dark' : 'grey.800',
-                          borderRadius: 0.5,
-                          opacity: isLegal ? 1 : 0.5
-                        }}
-                      >
-                        <Box sx={{ color: getLegalityColor(legality), display: 'flex' }}>
-                          {LEGALITY_ICONS[legality] || LEGALITY_ICONS.not_legal}
-                        </Box>
-                        <Typography variant="caption" sx={{ fontSize: '0.5rem' }}>
-                          {format}
-                        </Typography>
-                      </Box>
-                    );
-                  })}
-                </Box>
-              )}
-            </Box>
+            </CollapsibleSection>
 
-            {/* Prices - condensed row */}
-            {card.prices && (card.prices.usd || card.prices.usdFoil) && (
-              <>
-                <Divider />
-                <Box sx={{ display: 'flex', gap: 2 }}>
+            {/* Market Prices - Collapsible */}
+            {card.prices && (card.prices.usd || card.prices.usdFoil || card.prices.eur || card.prices.eurFoil) && (
+              <CollapsibleSection title="Market Prices" defaultExpanded={false}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                   {card.prices.usd && (
                     <PriceDisplay
                       price={card.prices.usd}
@@ -447,17 +488,28 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
                       compact
                     />
                   )}
+                  {card.prices.eur && (
+                    <PriceDisplay
+                      price={card.prices.eur}
+                      currency="EUR"
+                      label="Normal"
+                      compact
+                    />
+                  )}
+                  {card.prices.eurFoil && (
+                    <PriceDisplay
+                      price={card.prices.eurFoil}
+                      currency="EUR"
+                      label="Foil"
+                      compact
+                    />
+                  )}
                 </Box>
-              </>
+              </CollapsibleSection>
             )}
 
-            <Divider />
-
-            {/* External Links - as icon buttons */}
-            <Box>
-              <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                Links
-              </Typography>
+            {/* External Links - Collapsible */}
+            <CollapsibleSection title="External Links" defaultExpanded={false}>
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                 {card.purchaseUris?.tcgplayer && (
                   <Button
@@ -468,7 +520,19 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
                     target="_blank"
                     sx={{ minHeight: 36, fontSize: '0.75rem' }}
                   >
-                    TCG
+                    TCGPlayer
+                  </Button>
+                )}
+                {card.purchaseUris?.cardmarket && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<OpenInNewIcon sx={{ fontSize: '1rem' }} />}
+                    href={card.purchaseUris.cardmarket}
+                    target="_blank"
+                    sx={{ minHeight: 36, fontSize: '0.75rem' }}
+                  >
+                    Cardmarket
                   </Button>
                 )}
                 {card.scryfallUri && (
@@ -495,6 +559,18 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
                     EDHREC
                   </Button>
                 )}
+                {card.relatedUris?.gatherer && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<OpenInNewIcon sx={{ fontSize: '1rem' }} />}
+                    href={card.relatedUris.gatherer}
+                    target="_blank"
+                    sx={{ minHeight: 36, fontSize: '0.75rem' }}
+                  >
+                    Gatherer
+                  </Button>
+                )}
                 {card.name && (
                   <Button
                     size="small"
@@ -504,11 +580,27 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
                     target="_blank"
                     sx={{ minHeight: 36, fontSize: '0.75rem' }}
                   >
-                    CK
+                    Card Kingdom
                   </Button>
                 )}
               </Stack>
-            </Box>
+            </CollapsibleSection>
+
+            {/* Rulings - has its own collapse */}
+            {card.rulingsUri && (
+              <RulingsDisplay rulingsUri={card.rulingsUri} />
+            )}
+
+            {/* Related Cards - has its own collapse */}
+            {hasRelatedCards && (
+              <RelatedCardsDisplay
+                relatedCardIds={card.allParts!.map(part => part.id).filter((id): id is string => !!id)}
+                currentCardId={card.id}
+              />
+            )}
+
+            {/* Other Printings - has its own collapse */}
+            <AllPrintingsDisplay cardName={card.name} currentCardId={card.id} />
 
             {/* Bottom padding for safe area */}
             <Box sx={{ height: 'env(safe-area-inset-bottom, 16px)' }} />

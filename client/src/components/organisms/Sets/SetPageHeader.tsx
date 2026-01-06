@@ -6,6 +6,7 @@ import { SetCollectionPanel } from './SetCollectionPanel';
 import { SectionErrorBoundary } from '../../utils/ErrorBoundaries';
 import type { MtgSet } from '../../../types/set';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 interface SetPageHeaderProps {
   setInfo?: MtgSet;
@@ -23,6 +24,10 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { hasCollector } = useCollectorParam();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
+
+  // Use desktop layout for collection panel (positioned to side)
+  const showCollectionPanel = hasCollector && (isMobile === false && isTablet === false);
 
   const handleGroupToggled = () => {
     // Trigger refresh in MtgSetCard by changing key
@@ -35,9 +40,9 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
       {setInfo && (
         <SectionErrorBoundary name="SetInfoCard">
           <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            {/* Set ID */}
+            {/* Set ID - only visible on wide screens (lg+) */}
             <Box sx={{
-              display: 'flex',
+              display: { xs: 'none', lg: 'flex' },
               alignItems: 'center',
               gap: 1,
               bgcolor: 'background.paper',
@@ -63,8 +68,8 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
 
             <Box sx={{ position: 'relative' }}>
               <MtgSetCard key={refreshTrigger} set={setInfo} />
-              {/* Only render panel if collector parameter exists */}
-              {hasCollector && (
+              {/* Only render panel on desktop (positioned to side of card) */}
+              {showCollectionPanel && (
                 <Box sx={{ position: 'absolute', left: '100%', top: 0 }}>
                   <SetCollectionPanel
                     set={setInfo}
