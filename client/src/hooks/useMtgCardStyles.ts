@@ -1,6 +1,7 @@
 import { keyframes, useTheme } from '@mui/material';
 import { useMemo } from 'react';
 import { getRarityGlowStyles } from '../utils/rarityStyles';
+import { getRarityColor } from '../theme';
 import type { Card } from '../types/card';
 
 // Flash animation for success/error feedback
@@ -32,13 +33,16 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
     return getRarityGlowStyles(card.rarity, false, true);
   }, [card.rarity]);
 
+  const rarityBorderColor = getRarityColor(card.rarity);
+
   const cardStyles = useMemo(() => ({
     position: 'relative',
-    width: '280px',
+    width: '100%',
+    maxWidth: '280px',
     bgcolor: 'grey.800',
     borderRadius: '12px',
-    border: '3px solid',
-    borderColor: 'grey.700',
+    border: '2px solid',
+    borderColor: rarityBorderColor,
     overflow: 'hidden',
     boxShadow: theme.mtg.shadows.card.normal,
     transition: 'transform 0.05s ease-out',
@@ -49,8 +53,8 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
     '&[data-submitting="true"]': {
       transition: 'none !important',
       transform: 'scale(1) !important',
-      border: '3px solid',
-      borderColor: 'grey.700',
+      border: '2px solid',
+      borderColor: rarityBorderColor,
       boxShadow: theme.mtg.shadows.card.normal,
       '&::before': {
         content: '""',
@@ -110,7 +114,7 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
         transform: 'scale(1)'
       }
     }
-  }), [theme, hoverStyles]);
+  }), [theme, hoverStyles, rarityBorderColor]);
 
   return {
     cardStyles,

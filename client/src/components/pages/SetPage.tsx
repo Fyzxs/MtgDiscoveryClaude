@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
@@ -8,6 +8,10 @@ import { SetPageFilters } from '../organisms/Sets/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/Sets/SetPageCardDisplay';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { useSetPageData } from '../../hooks/useSetPageData';
+import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
+import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
+import { getCollectionCountOptions, getSignedCardsOptions } from '../../utils/cardUtils';
+import type { FilterPanelConfig } from '../../types/filters';
 
 /**
  * SetPage - Display a specific Magic: The Gathering set with filtering and grouping
@@ -15,6 +19,8 @@ import { useSetPageData } from '../../hooks/useSetPageData';
  */
 export const SetPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   // All data and state management extracted to custom hook
   const {
@@ -49,6 +55,141 @@ export const SetPage: React.FC = () => {
     hasCollector
   } = useSetPageData(setCode);
 
+  // Calculate active filter count for mobile filter badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (searchTerm) count++;
+    if (selectedRarities.length > 0) count++;
+    if (selectedArtists.length > 0) count++;
+    if (selectedGroupIds.length > 0) count++;
+    if (Array.isArray(filters.collectionCounts) && filters.collectionCounts.length > 0) count++;
+    if (Array.isArray(filters.signedCards) && filters.signedCards.length > 0) count++;
+    if (Array.isArray(filters.finishes) && filters.finishes.length > 0) count++;
+    return count;
+  }, [searchTerm, selectedRarities, selectedArtists, selectedGroupIds, filters]);
+
+  // Determine if we should use mobile layout (mobile or tablet)
+  const useMobileLayout = isMobile || isTablet;
+
+  // Check if there are multiple card groups (for showing groups toggle)
+  const hasMultipleGroups = cardGroups.filter(g => g.cards.length > 0).length > 1;
+
+  // Toggle filter drawer for mobile
+  const handleFilterDrawerToggle = useCallback(() => {
+    setFilterDrawerOpen(prev => !prev);
+  }, []);
+
+  // Handler for show groups change (used by both desktop and mobile)
+  const handleShowGroupsChange = useCallback((value: boolean) => {
+    updateFilter('showGroups', value);
+  }, [updateFilter]);
+
+  // Build filter config for mobile drawer (mirrors SetPageFilters logic)
+  const filterConfig: FilterPanelConfig = useMemo(() => {
+    const showGroups = filters.showGroups !== false;
+    const collectionCounts = (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[];
+    const signedCardsFilter = (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[];
+    const finishesFilter = (Array.isArray(filters.finishes) ? filters.finishes : []) as string[];
+
+    return {
+      search: {
+        value: searchTerm,
+        onChange: handleSearchChange,
+        placeholder: 'Search cards...',
+        debounceMs: 300,
+        minWidth: 150,
+        fullWidth: false,
+        sx: { width: 180 }
+      },
+      multiSelects: [
+        // Card Groups (if multiple groups exist)
+        ...(hasMultipleGroups && showGroups ? [{
+          key: 'cardGroups',
+          value: selectedGroupIds,
+          onChange: (value: string[]) => updateFilter('groups', value),
+          options: cardGroups
+            .filter(g => g.cards.length > 0)
+            .map(g => ({
+              value: g.id,
+              label: `${g.displayName} (${g.cards.length})`
+            })),
+          label: 'Card Group',
+          placeholder: 'All Groups',
+          fullWidth: true
+        }] : []),
+        // Rarities filter
+        ...(allRarities.length > 1 ? [{
+          key: 'rarities',
+          value: selectedRarities,
+          onChange: handleRarityChange,
+          options: allRarities.map(rarity => ({ value: rarity, label: rarity })),
+          label: 'Rarity',
+          placeholder: 'All Rarities',
+          fullWidth: true
+        }] : []),
+        // Artists filter
+        ...(allArtists.length > 1 ? [{
+          key: 'artists',
+          value: selectedArtists,
+          onChange: (value: string[]) => updateFilter('artists', value),
+          options: allArtists.map(artist => ({ value: artist, label: artist })),
+          label: 'Artist',
+          placeholder: 'All Artists',
+          fullWidth: true
+        }] : []),
+        // Finishes filter
+        ...(allFinishes.length > 1 ? [{
+          key: 'finishes',
+          value: finishesFilter,
+          onChange: (value: string[]) => updateFilter('finishes', value),
+          options: allFinishes.map(finish => ({ value: finish, label: finish })),
+          label: 'Finish',
+          placeholder: 'All Finishes',
+          fullWidth: true
+        }] : [])
+      ],
+      sort: {
+        value: sortBy,
+        onChange: handleSortChange,
+        options: (hasCollector ? SET_PAGE_COLLECTOR_SORT_OPTIONS : SET_PAGE_SORT_OPTIONS).map(opt => {
+          if (opt.value === 'release-desc' || opt.value === 'release-asc') {
+            return {
+              ...opt,
+              condition: cards.some(c => c.releasedAt !== cards[0]?.releasedAt)
+            };
+          }
+          return opt;
+        }),
+        fullWidth: true
+      },
+      collectorFilters: hasCollector ? {
+        collectionCounts: {
+          key: 'collectionCounts',
+          value: collectionCounts,
+          onChange: (value: string[]) => updateFilter('collectionCounts', value),
+          options: getCollectionCountOptions(),
+          label: 'Collection Count',
+          placeholder: 'All Counts',
+          fullWidth: true
+        },
+        signedCards: {
+          key: 'signedCards',
+          value: signedCardsFilter,
+          onChange: (value: string[]) => updateFilter('signedCards', value),
+          options: getSignedCardsOptions(),
+          label: 'Signed Cards',
+          placeholder: 'All Cards',
+          fullWidth: true
+        }
+      } : undefined
+    };
+  }, [
+    searchTerm, handleSearchChange, selectedGroupIds, selectedRarities, selectedArtists,
+    handleRarityChange, allRarities, allArtists, allFinishes, cardGroups, hasMultipleGroups,
+    filters.showGroups, filters.collectionCounts, filters.signedCards, filters.finishes,
+    sortBy, handleSortChange, hasCollector, cards, updateFilter
+  ]);
+
   // Error handling
   if (!setCode) {
     return (
@@ -77,6 +218,16 @@ export const SetPage: React.FC = () => {
       error={firstError}
       currentCount={currentCount}
       totalCount={cards.length}
+      // Mobile layout props
+      useMobileLayout={useMobileLayout}
+      filterDrawerOpen={filterDrawerOpen}
+      onFilterDrawerToggle={handleFilterDrawerToggle}
+      filterConfig={filterConfig}
+      activeFilterCount={activeFilterCount}
+      onClearFilters={handleClearFilters}
+      showGroupsToggle={hasMultipleGroups}
+      showGroups={filters.showGroups !== false}
+      onShowGroupsChange={handleShowGroupsChange}
       header={
         <SetPageHeader
           setInfo={setInfo}
@@ -99,7 +250,7 @@ export const SetPage: React.FC = () => {
             onRarityChange={handleRarityChange}
             onArtistChange={(value: string[]) => updateFilter('artists', value)}
             onGroupChange={(groupIds: string[]) => updateFilter('groups', groupIds)}
-            onShowGroupsChange={(value: boolean) => updateFilter('showGroups', value)}
+            onShowGroupsChange={handleShowGroupsChange}
             allRarities={allRarities}
             allArtists={allArtists}
             allFinishes={allFinishes}

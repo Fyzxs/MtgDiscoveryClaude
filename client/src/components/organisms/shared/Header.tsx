@@ -106,48 +106,8 @@ export const Header: React.FC = () => {
               MtgDiscovery
             </Typography>
 
-            {/* Search Button */}
-            <IconButton
-              onClick={handleSearchMenuOpen}
-              aria-label="Search options"
-              sx={{ minWidth: 44, minHeight: 44 }}
-            >
-              <SearchIcon />
-            </IconButton>
-
-            {/* Search Menu - shared with desktop */}
-            <Menu
-              anchorEl={searchAnchorEl}
-              open={Boolean(searchAnchorEl)}
-              onClose={handleSearchMenuClose}
-              role="menu"
-              aria-label="Search menu"
-            >
-              <MenuItem
-                component="a"
-                href={buildUrlWithCollector('/search/cards')}
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  handleSearchMenuClose();
-                  navigateWithCollector('/search/cards');
-                }}
-                sx={{ minHeight: 48 }}
-              >
-                Search Cards
-              </MenuItem>
-              <MenuItem
-                component="a"
-                href={buildUrlWithCollector('/search/artists')}
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  handleSearchMenuClose();
-                  navigateWithCollector('/search/artists');
-                }}
-                sx={{ minHeight: 48 }}
-              >
-                Search Artists
-              </MenuItem>
-            </Menu>
+            {/* Spacer to balance layout */}
+            <Box sx={{ minWidth: 44, minHeight: 44 }} />
           </Toolbar>
         </AppBar>
 

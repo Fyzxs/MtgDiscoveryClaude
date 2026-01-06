@@ -10,8 +10,8 @@ type ResponsiveValue<T> = T | Partial<Record<Breakpoint, T>>;
 
 // Default responsive card widths for mobile-first design
 const DEFAULT_MIN_ITEM_WIDTH: Partial<Record<Breakpoint, number>> = {
-  xs: 110,  // ~3 cards on mobile
-  sm: 150,  // 4-5 cards on tablet
+  xs: 120,  // 2-3 cards on mobile
+  sm: 140,  // 3-4 cards on tablet
   md: 180,  // auto-fill on medium
   lg: 220,  // auto-fill on large
   xl: 250,  // auto-fill on extra large

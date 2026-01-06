@@ -62,7 +62,9 @@
       "Bash(az account show:*)",
       "Bash(az repos pr list:*)",
       "Bash(git log:*)",
-      "Bash(dotnet list:*)"
+      "Bash(dotnet list:*)",
+      "Bash(xargs cat:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

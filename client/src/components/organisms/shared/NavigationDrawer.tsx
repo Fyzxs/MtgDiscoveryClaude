@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Drawer,
   Box,
@@ -8,9 +8,11 @@ import {
   ListItemText,
   Divider,
   Typography,
-  IconButton
+  IconButton,
+  TextField,
+  InputAdornment
 } from '../../atoms';
-import { CloseIcon, SearchIcon, CollectionsBookmarkIcon } from '../../atoms/Icons';
+import { CloseIcon, SearchIcon, CollectionsBookmarkIcon, NavigateNextIcon } from '../../atoms/Icons';
 import { useTheme } from '../../atoms';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
@@ -48,10 +50,32 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   const theme = useTheme();
   const { navigateWithCollector, buildUrlWithCollector, collectorParam } = useCollectorNavigation();
   const { isMobile } = useResponsiveBreakpoints();
+  const [setCode, setSetCode] = useState('');
 
   const handleNavigation = (path: string) => {
-    navigateWithCollector(path);
     onClose();
+    // Small delay to ensure drawer closes before navigation
+    setTimeout(() => {
+      navigateWithCollector(path);
+    }, 50);
+  };
+
+  const handleSetCodeSubmit = () => {
+    if (setCode.trim()) {
+      const code = setCode.trim().toLowerCase();
+      setSetCode('');
+      onClose();
+      // Small delay to ensure drawer closes before navigation
+      setTimeout(() => {
+        navigateWithCollector(`/set/${code}`);
+      }, 50);
+    }
+  };
+
+  const handleSetCodeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSetCodeSubmit();
+    }
   };
 
   const filteredNavItems = NAV_ITEMS.filter(item => {
@@ -106,6 +130,40 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
         >
           <CloseIcon />
         </IconButton>
+      </Box>
+
+      {/* Jump to Set */}
+      <Box sx={{ px: 2, py: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+          Jump to Set
+        </Typography>
+        <TextField
+          value={setCode}
+          onChange={(e) => setSetCode(e.target.value)}
+          onKeyDown={handleSetCodeKeyDown}
+          placeholder="Enter set code (e.g., lea)"
+          size="small"
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleSetCodeSubmit}
+                  disabled={!setCode.trim()}
+                  edge="end"
+                  size="small"
+                >
+                  <NavigateNextIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              bgcolor: 'background.default',
+            }
+          }}
+        />
       </Box>
 
       {/* Navigation Items */}
