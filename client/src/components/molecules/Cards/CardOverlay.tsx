@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '../../atoms';
+import { Box, Typography, Collapse } from '../../atoms';
 import { useTheme } from '../../atoms';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
@@ -7,7 +7,10 @@ import { CardName, SetLink, PriceDisplay } from '../../atoms';
 import { CardLinks } from './CardLinks';
 import { CollectionSummary } from './CollectionSummary';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
+import { formatCollectionCount } from '../../../utils/collectionFormatters';
+import { touchTargetStyles } from '../../../styles/touchTargets';
 import type { Card, CardContext } from '../../../types/card';
+import type { OverlayVariant } from '../../../hooks/useCardDisplaySettings';
 
 interface CardOverlayProps {
   card: Card;
@@ -17,8 +20,19 @@ interface CardOverlayProps {
   onArtistClick?: (artistName: string, artistId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   className?: string;
+  // Responsive props
+  variant?: OverlayVariant;
+  expanded?: boolean;
+  onExpandToggle?: () => void;
+  collectionCount?: number;
 }
 
+/**
+ * CardOverlay with responsive variants:
+ * - minimal: Mobile collapsed - shows collection count + card name only
+ * - compact: Mobile expanded/Tablet - shows count + name, artist, set, price
+ * - full: Desktop - shows all information (current behavior)
+ */
 export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   card,
   isSelected = false,
@@ -26,7 +40,10 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   onCardClick,
   onArtistClick,
   onSetClick,
-  className
+  className,
+  variant = 'full',
+  expanded = false,
+  collectionCount = 0
 }) => {
   const theme = useTheme();
 
@@ -46,6 +63,167 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const tcgplayerUrl = card.purchaseUris?.tcgplayer;
   const collectionData = card.userCollection;
 
+  // Minimal variant - mobile collapsed state
+  if (variant === 'minimal') {
+    return (
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          background: theme.mtg.gradients.minimalOverlay,
+        }}
+        className={className}
+      >
+        <Box sx={{
+          p: 1,
+          ...touchTargetStyles.minimum,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.5,
+        }}>
+          {/* Collection count + Card name - always visible */}
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}>
+            {context.hasCollector && (
+              <Typography
+                component="span"
+                sx={{
+                  fontWeight: 'bold',
+                  minWidth: 20,
+                  fontSize: '0.875rem',
+                }}
+              >
+                {formatCollectionCount(collectionCount)}
+              </Typography>
+            )}
+            <Typography
+              noWrap
+              sx={{
+                flex: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontSize: '0.75rem',
+                fontWeight: 500,
+              }}
+            >
+              {cardName}
+            </Typography>
+          </Box>
+
+          {/* Expanded content */}
+          <Collapse in={expanded}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, pt: 0.5 }}>
+              {/* Artist */}
+              <ArtistLinks
+                artist={artist}
+                artistIds={artistIds}
+                context={context}
+                onArtistClick={onArtistClick}
+              />
+
+              {/* Set + Price row */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Typography variant="caption" sx={{ color: 'grey.300', fontSize: '0.625rem' }}>
+                    {setCode?.toUpperCase()} #{collectorNumber}
+                  </Typography>
+                </Box>
+                <PriceDisplay
+                  price={price}
+                  currency="usd"
+                  sx={{ fontSize: '0.75rem' }}
+                />
+              </Box>
+            </Box>
+          </Collapse>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Compact variant - mobile expanded / tablet
+  if (variant === 'compact') {
+    return (
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          background: theme.mtg.gradients.cardOverlay,
+        }}
+        className={className}
+      >
+        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          {/* Collection count + Card name */}
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}>
+            {context.hasCollector && (
+              <Typography
+                component="span"
+                sx={{
+                  fontWeight: 'bold',
+                  minWidth: 20,
+                  fontSize: '0.875rem',
+                }}
+              >
+                {formatCollectionCount(collectionCount)}
+              </Typography>
+            )}
+            {!context.isOnCardPage && (
+              <CardName
+                cardId={cardId}
+                cardName={cardName}
+                onCardClick={onCardClick}
+              />
+            )}
+          </Box>
+
+          {/* Artist */}
+          <ArtistLinks
+            artist={artist}
+            artistIds={artistIds}
+            context={context}
+            onArtistClick={onArtistClick}
+          />
+
+          {/* Set + Collector # + Price row */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {!context.hideSetInfo && (
+                <SetLink
+                  setCode={setCode}
+                  setName={setName}
+                  rarity={rarity}
+                  onSetClick={onSetClick}
+                />
+              )}
+              <Typography variant="caption" sx={{ color: 'grey.400' }}>
+                #{collectorNumber}
+              </Typography>
+            </Box>
+            <PriceDisplay
+              price={price}
+              currency="usd"
+              sx={{ fontSize: '0.875rem' }}
+            />
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Full variant - desktop (original implementation)
   return (
     <Box
       sx={{

@@ -11,6 +11,7 @@ export { default as ArrowDropDownIcon } from '@mui/icons-material/ArrowDropDown'
 export { default as ChevronLeftIcon } from '@mui/icons-material/ChevronLeft';
 export { default as ExpandLessIcon } from '@mui/icons-material/ExpandLess';
 export { default as ExpandMoreIcon } from '@mui/icons-material/ExpandMore';
+export { default as KeyboardArrowDownIcon } from '@mui/icons-material/KeyboardArrowDown';
 export { default as KeyboardArrowUpIcon } from '@mui/icons-material/KeyboardArrowUp';
 export { default as NavigateBeforeIcon } from '@mui/icons-material/NavigateBefore';
 export { default as NavigateNextIcon } from '@mui/icons-material/NavigateNext';
@@ -19,10 +20,13 @@ export { default as NavigateNextIcon } from '@mui/icons-material/NavigateNext';
 export { default as ClearIcon } from '@mui/icons-material/Clear';
 export { default as CloseIcon } from '@mui/icons-material/Close';
 export { default as ContentCopyIcon } from '@mui/icons-material/ContentCopy';
+export { default as FilterListIcon } from '@mui/icons-material/FilterList';
 export { default as FlipIcon } from '@mui/icons-material/Flip';
+export { default as MenuIcon } from '@mui/icons-material/Menu';
 export { default as OpenInNewIcon } from '@mui/icons-material/OpenInNew';
 export { default as RefreshIcon } from '@mui/icons-material/Refresh';
 export { default as SearchIcon } from '@mui/icons-material/Search';
+export { default as TuneIcon } from '@mui/icons-material/Tune';
 export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOff';
 export { default as ZoomInIcon } from '@mui/icons-material/ZoomIn';
 

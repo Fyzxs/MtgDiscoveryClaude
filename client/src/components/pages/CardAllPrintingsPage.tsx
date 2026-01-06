@@ -25,7 +25,6 @@ import { AppErrorBoundary } from '../utils/ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 import { useUrlState } from '../../hooks/useUrlState';
-import { useCollectionUpdates } from '../../hooks/useCollectionUpdates';
 import { RefreshIcon } from '../atoms/Icons';
 import { LinkParamsProvider } from '../../contexts/LinkParamsContext';
 

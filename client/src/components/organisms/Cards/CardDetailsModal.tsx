@@ -25,6 +25,8 @@ import { SetLink } from '../../atoms';
 import { ArtistLinks } from '../../molecules';
 import { CardName } from '../../atoms';
 import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../../atoms/Icons';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
+import { CardDetailsSheet } from './CardDetailsSheet';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -98,9 +100,27 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   hasNext
 }) => {
   const { hasCollector } = useCollectorParam();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
 
+  // Use mobile sheet for mobile and tablet views
+  const useMobileSheet = isMobile || isTablet;
 
   if (!card) return null;
+
+  // Render mobile sheet on smaller screens
+  if (useMobileSheet) {
+    return (
+      <CardDetailsSheet
+        open={open}
+        onClose={onClose}
+        card={card}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+      />
+    );
+  }
 
   // Check if there are any displayable treatments
   const hasDisplayableTreatments = (

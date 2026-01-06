@@ -4,31 +4,119 @@ import { useTheme, alpha } from '../../atoms';
 import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import { SetTitle } from '../../atoms/Sets/SetTitle';
+import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
 import { CardCountDisplay } from '../../atoms/shared/CardCountDisplay';
 import { CollectionProgressBar } from '../../atoms/shared/CollectionProgressBar';
 import { TopBadges } from './TopBadges';
 import { SetIconDisplay } from './SetIconDisplay';
+import { SetNameWrapDisplay } from './SetNameWrapDisplay';
 import { BottomBadges } from './BottomBadges';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
+
+export type SetCardSize = 'sm' | 'md' | 'lg';
+
+// Size configurations for responsive set cards
+const SIZE_CONFIG: Record<SetCardSize, {
+  width: number;
+  height: number;
+  iconSize: number;
+  padding: number;
+  titleSize: string;
+  badgeFontSize: string;
+  showIcon: boolean;
+  showTopBadges: boolean;
+  showBottomBadges: boolean;
+  singleLineTitle: boolean;
+  showProgressBar: boolean;
+  useWrapDisplay: boolean;
+  wrapFontSize: number;
+}> = {
+  sm: {
+    width: 140,
+    height: 100,
+    iconSize: 44,
+    padding: 0.5,
+    titleSize: '0.625rem',
+    badgeFontSize: '0.5625rem',
+    showIcon: true,
+    showTopBadges: false,
+    showBottomBadges: false,
+    singleLineTitle: true,
+    showProgressBar: false,
+    useWrapDisplay: false,
+    wrapFontSize: 9,
+  },
+  md: {
+    width: 160,
+    height: 115,
+    iconSize: 48,
+    padding: 0.75,
+    titleSize: '0.6875rem',
+    badgeFontSize: '0.625rem',
+    showIcon: true,
+    showTopBadges: false,
+    showBottomBadges: false,
+    singleLineTitle: true,
+    showProgressBar: false,
+    useWrapDisplay: false,
+    wrapFontSize: 10,
+  },
+  lg: {
+    width: 200,
+    height: 260,
+    iconSize: 60,
+    padding: 1.5,
+    titleSize: '0.9375rem',
+    badgeFontSize: '0.6875rem',
+    showIcon: true,
+    showTopBadges: true,
+    showBottomBadges: true,
+    singleLineTitle: false,
+    showProgressBar: true,
+    useWrapDisplay: false,
+    wrapFontSize: 14,
+  },
+};
 
 interface MtgSetCardProps {
   set: MtgSet;
   context?: SetContext;
   onSetClick?: (setCode?: string) => void;
   className?: string;
+  /** Explicit size override - if not provided, determined by breakpoint */
+  size?: SetCardSize;
 }
 
 export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   set,
   onSetClick,
-  className = ''
+  className = '',
+  size: explicitSize
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const setTypeColor = getSetTypeColor(set.setType);
   const theme = useTheme();
   const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
   const { hasCollector } = useCollectorParam();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
+
+  // Determine size based on breakpoint or explicit override
+  const cardSize: SetCardSize = useMemo(() => {
+    if (explicitSize) {
+      return explicitSize;
+    }
+    if (isMobile) {
+      return 'sm';
+    }
+    if (isTablet) {
+      return 'md';
+    }
+    return 'lg';
+  }, [explicitSize, isMobile, isTablet]);
+
+  const sizeConfig = SIZE_CONFIG[cardSize];
 
   const setPath = `/set/${set.code}`;
   const setUrl = buildUrlWithCollector(setPath);
@@ -166,13 +254,17 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
         backgroundColor: getBackgroundColor(),
         border: `1px solid ${theme.palette.mtg.cardBorder}`,
         '&:hover': {
-          transform: 'translateY(-6px)',
-          boxShadow: theme.mtg.shadows.card.hover,
+          transform: isMobile ? 'none' : 'translateY(-6px)',
+          boxShadow: isMobile ? 'none' : theme.mtg.shadows.card.hover,
           backgroundColor: getHoverBackgroundColor(),
           borderColor: alpha(theme.palette.primary.main, 0.3),
         },
-        height: '360px',
-        width: '240px',
+        // Use responsive sizing
+        height: sizeConfig.height,
+        width: sizeConfig.width,
+        // Ensure minimum touch target
+        minHeight: 44,
+        minWidth: 44,
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
@@ -195,77 +287,179 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
         }}
       >
         <CardContent sx={{
-          p: 2,
+          p: sizeConfig.padding,
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
-          justifyContent: 'center',
-          gap: 0.25
+          justifyContent: sizeConfig.singleLineTitle ? 'center' : 'space-between',
+          gap: sizeConfig.singleLineTitle ? 0 : 0.25
         }}>
-          <Box sx={{ width: '100%' }}>
-            <SetTitle name={set.name} />
-
-            <TopBadges
-              setCode={set.code}
-              releaseDate={set.releasedAt}
+          {/* Wrap Display - text flows around icon (for sm size) */}
+          {sizeConfig.useWrapDisplay ? (
+            <SetNameWrapDisplay
+              setName={set.name}
+              centerWidth={sizeConfig.iconSize}
+              centerHeight={sizeConfig.iconSize}
+              containerWidth={sizeConfig.width - (sizeConfig.padding * 8 * 2)}
+              fontSize={sizeConfig.wrapFontSize}
+              fontWeight={500}
+              centerElement={
+                <SetIconDisplay
+                  iconSvgUri={set.iconSvgUri}
+                  setName={set.name}
+                  borderColor={isHovered ? theme.palette.primary.main : setTypeColor}
+                  size={sizeConfig.iconSize}
+                />
+              }
             />
-          </Box>
+          ) : (
+            <>
+              {/* Title - single line with ellipsis for compact */}
+              <Box sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                overflow: 'hidden',
+              }}>
+                <SetTitle
+                  name={set.name}
+                  sx={{
+                    fontSize: sizeConfig.titleSize,
+                    lineHeight: 1.1,
+                    minHeight: sizeConfig.singleLineTitle ? 'auto' : '48px',
+                    mb: 0,
+                    ...(sizeConfig.singleLineTitle && {
+                      display: 'block',
+                      WebkitLineClamp: 'unset',
+                      WebkitBoxOrient: 'unset',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: '100%',
+                    }),
+                  }}
+                />
+              </Box>
 
-          <SetIconDisplay
-            iconSvgUri={set.iconSvgUri}
-            setName={set.name}
-            borderColor={isHovered ? theme.palette.primary.main : setTypeColor}
-          />
+              {sizeConfig.showTopBadges && (
+                <TopBadges
+                  setCode={set.code}
+                  releaseDate={set.releasedAt}
+                  compact={false}
+                />
+              )}
+
+              {sizeConfig.showIcon && (
+                <SetIconDisplay
+                  iconSvgUri={set.iconSvgUri}
+                  setName={set.name}
+                  borderColor={isHovered ? theme.palette.primary.main : setTypeColor}
+                  size={sizeConfig.iconSize}
+                />
+              )}
+            </>
+          )}
 
           <Box sx={{ width: '100%' }}>
-            <BottomBadges
-              setType={set.setType}
-              digital={set.digital}
-              foilOnly={set.foilOnly}
-            />
+            {sizeConfig.showBottomBadges && (
+              <BottomBadges
+                setType={set.setType}
+                digital={set.digital}
+                foilOnly={set.foilOnly}
+              />
+            )}
 
             {hasCollector ? (
               collectionProgress ? (
-                <>
-                  <CollectionProgressBar
-                    collected={collectionProgress.setTotalCards > 0
-                      ? collectionProgress.uniqueCards
-                      : set.userCollection?.uniqueCards || 0}
-                    total={collectionProgress.setTotalCards}
-                    percentage={collectionProgress.percentage}
-                  />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ fontSize: '0.75rem', mt: 0.5 }}
-                  >
-                    {collectionProgress.setTotalCards > 0
-                      ? `${collectionProgress.totalCards} collected`
-                      : `${set.userCollection?.totalCards || 0} entered`
-                    }
-                    {` (${set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} in set)`}
-                  </Typography>
-                </>
+                sizeConfig.showProgressBar ? (
+                  // Large size: show progress bar with detailed text
+                  <>
+                    <CollectionProgressBar
+                      collected={collectionProgress.setTotalCards > 0
+                        ? collectionProgress.uniqueCards
+                        : set.userCollection?.uniqueCards || 0}
+                      total={collectionProgress.setTotalCards}
+                      percentage={collectionProgress.percentage}
+                      compact={false}
+                    />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: sizeConfig.badgeFontSize, mt: 0.5 }}
+                    >
+                      {collectionProgress.setTotalCards > 0
+                        ? `${collectionProgress.totalCards} collected`
+                        : `${set.userCollection?.totalCards || 0} entered`
+                      } ({set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} in set)
+                    </Typography>
+                  </>
+                ) : (
+                  // Compact size: [badge] [X/Y] - [Z%] format, no bar
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+                    <SetCodeBadge code={set.code} compact />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: sizeConfig.badgeFontSize, fontWeight: 500 }}
+                    >
+                      {collectionProgress.setTotalCards > 0
+                        ? `${collectionProgress.uniqueCards}/${collectionProgress.setTotalCards} - ${Math.round(collectionProgress.percentage)}%`
+                        : `${set.userCollection?.totalCards || 0}/${set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount}`
+                      }
+                    </Typography>
+                  </Box>
+                )
               ) : (
-                <>
-                  <CollectionProgressBar
-                    collected={set.userCollection?.uniqueCards || 0}
-                    total={0}
-                    percentage={0}
-                  />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ fontSize: '0.75rem', mt: 0.5 }}
-                  >
-                    {`${set.userCollection?.totalCards || 0} entered (${set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} in set)`}
-                  </Typography>
-                </>
+                sizeConfig.showProgressBar ? (
+                  <>
+                    <CollectionProgressBar
+                      collected={set.userCollection?.uniqueCards || 0}
+                      total={0}
+                      percentage={0}
+                      compact={false}
+                    />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: sizeConfig.badgeFontSize, mt: 0.5 }}
+                    >
+                      {set.userCollection?.totalCards || 0} entered ({set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} in set)
+                    </Typography>
+                  </>
+                ) : (
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+                    <SetCodeBadge code={set.code} compact />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: sizeConfig.badgeFontSize, fontWeight: 500 }}
+                    >
+                      {set.userCollection?.totalCards || 0}/{set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount}
+                    </Typography>
+                  </Box>
+                )
               )
             ) : (
-              <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
+              sizeConfig.showTopBadges ? (
+                <CardCountDisplay
+                  count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount}
+                  compact={false}
+                />
+              ) : (
+                // Compact: show set code badge with card count
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                  <SetCodeBadge code={set.code} compact />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: sizeConfig.badgeFontSize, fontWeight: 500 }}
+                  >
+                    {set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} cards
+                  </Typography>
+                </Box>
+              )
             )}
           </Box>
 

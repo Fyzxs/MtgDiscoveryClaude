@@ -11,6 +11,7 @@ export { FilterControlsWithLoading } from './FilterControlsWithLoading';
 export { LanguageSwitcher } from './LanguageSwitcher';
 export { ModalContainer } from './ModalContainer';
 export { MultiSelectDropdown } from './MultiSelectDropdown';
+export { NavigationArrows } from './NavigationArrows';
 export { QueryStateContainer } from './QueryStateContainer';
 export { ResultsSummary } from './ResultsSummary';
 export { SearchInput } from './SearchInput';

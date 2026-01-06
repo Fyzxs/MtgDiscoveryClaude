@@ -8,7 +8,7 @@ interface Auth0TokenProviderProps {
 }
 
 export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children }) => {
-  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const [tokenReady, setTokenReady] = useState(false);
 
   useEffect(() => {
@@ -36,6 +36,14 @@ export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children
           setTokenReadyState(true);
         }
       } catch (error) {
+        // Check if this is a missing refresh token error
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes('Missing Refresh Token') || errorMessage.includes('login_required')) {
+          logger.warn('Auth0TokenProvider - Session expired, re-authenticating...');
+          // Trigger a new login to get fresh tokens
+          loginWithRedirect();
+          return;
+        }
         logger.error('Auth0TokenProvider - Failed to get access token:', error);
         setTokenReady(false);
         setTokenReadyState(false);
@@ -43,7 +51,7 @@ export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children
     };
 
     initializeToken();
-  }, [getAccessTokenSilently, isAuthenticated, isLoading]);
+  }, [getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect]);
 
   useEffect(() => {
     const getToken = async (): Promise<string | null> => {
