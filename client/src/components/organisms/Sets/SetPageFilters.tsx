@@ -91,7 +91,8 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
             onChange: onSearchChange,
             placeholder: 'Search cards...',
             debounceMs: 300,
-            minWidth: 300
+            minWidth: 200,
+            sx: { width: 200 }
           },
           multiSelects: [
             // Card Groups (if multiple groups exist)

@@ -96,7 +96,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         <CardImageDisplay
           card={card}
           size={displaySettings.imageScryfallSize}
-          showFlipButton={!displaySettings.isMobile}
+          showFlipButton={!displaySettings.isMobile && !displaySettings.isTablet}
           sx={{
             position: 'absolute',
             top: 0,
