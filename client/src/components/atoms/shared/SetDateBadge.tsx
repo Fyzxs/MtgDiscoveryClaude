@@ -20,13 +20,13 @@ export const SetDateBadge: React.FC<SetDateBadgeProps> = ({ date, compact = fals
       variant="filled"
       sx={{
         fontWeight: 600,
-        fontSize: compact ? '0.625rem' : undefined,
-        height: compact ? 20 : undefined,
+        fontSize: compact ? '0.5625rem' : undefined,
+        height: compact ? 18 : undefined,
         backgroundColor: 'rgba(0, 0, 0, 0.9)',
         color: 'white',
         border: compact ? '1px solid rgba(255, 255, 255, 0.2)' : '2px solid rgba(255, 255, 255, 0.2)',
         '& .MuiChip-label': {
-          px: compact ? 0.75 : 1,
+          px: compact ? 0.5 : 1,
         },
       }}
     />

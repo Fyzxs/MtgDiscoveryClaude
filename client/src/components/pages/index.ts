@@ -1,6 +1,7 @@
 // Barrel exports for page components
 export { AllSetsPage } from './AllSetsPage';
 export { SetPage } from './SetPage';
+export { BinderPage } from './BinderPage';
 export { CardSearchPage } from './CardSearchPage';
 export { ArtistSearchPage } from './ArtistSearchPage';
 export { ArtistCardsPage } from './ArtistCardsPage';

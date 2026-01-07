@@ -61,7 +61,7 @@ const generateCardKingdomSearchUrl = (cardName: string): string => {
     'filter[tab]': 'mtg_card',
     'filter[name]': cardName
   });
-  
+
   return `https://www.cardkingdom.com/catalog/search?${params.toString()}`;
 };
 
@@ -107,7 +107,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
   if (!card) return null;
 
-<<<<<<< HEAD
   // Render mobile sheet on smaller screens
   if (useMobileSheet) {
     return (
@@ -123,8 +122,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
     );
   }
 
-=======
->>>>>>> c6bb6adc (latest stuff)
   // Check if there are any displayable treatments
   const hasDisplayableTreatments = (
     card.foil ||
@@ -235,7 +232,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
             bgcolor: 'grey.900',
             borderRadius: '0 0 0 8px'
           }}>
-            <Box sx={{ 
+            <Box sx={{
               position: 'relative',
               width: '100%',
               maxWidth: '600px',
@@ -253,10 +250,10 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               />
             </Box>
             {/* Card ID */}
-            <Box sx={{ 
-              mt: 2, 
-              display: 'flex', 
-              alignItems: 'center', 
+            <Box sx={{
+              mt: 2,
+              display: 'flex',
+              alignItems: 'center',
               gap: 1,
               bgcolor: 'background.paper',
               borderRadius: 1,
@@ -267,7 +264,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                 {card.id}
               </Typography>
               <Tooltip title="Copy ID">
-                <IconButton 
+                <IconButton
                   size="small"
                   onClick={() => {
                     navigator.clipboard.writeText(card.id);

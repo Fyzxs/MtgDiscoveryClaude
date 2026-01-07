@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Tooltip } from '../../atoms';
-import { ContentCopyIcon } from '../../atoms/Icons';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Box, Typography, IconButton, Tooltip, Button } from '../../atoms';
+import { ContentCopyIcon, MenuBookIcon } from '../../atoms/Icons';
 import { MtgSetCard } from '../../molecules/Sets/MtgSetCard';
 import { SetCollectionPanel } from './SetCollectionPanel';
 import { SectionErrorBoundary } from '../../utils/ErrorBoundaries';
@@ -21,6 +22,8 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
   setCode,
   availableGroupIds
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { hasCollector } = useCollectorParam();
@@ -32,6 +35,10 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
   const handleGroupToggled = () => {
     // Trigger refresh in MtgSetCard by changing key
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleBinderClick = () => {
+    navigate(`/set/binder/${setCode}${location.search}`);
   };
 
   return (
@@ -81,6 +88,17 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
                 </Box>
               )}
             </Box>
+
+            {/* Binder View button */}
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<MenuBookIcon />}
+              onClick={handleBinderClick}
+              sx={{ mt: 1 }}
+            >
+              Binder View
+            </Button>
           </Box>
         </SectionErrorBoundary>
       )}
