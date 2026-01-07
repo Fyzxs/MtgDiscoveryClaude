@@ -179,6 +179,7 @@ export const createTouchOptimizedSize = (
 
 /**
  * Creates responsive container with max-width constraints
+ * Aligned with MUI breakpoints: xs (0-599), sm (600-899), md (900-1199), lg (1200+)
  */
 export const createResponsiveContainer = (
   maxWidth: keyof typeof gridConfig = 'wide'
@@ -186,9 +187,9 @@ export const createResponsiveContainer = (
   width: '100%',
   maxWidth: {
     xs: '100%',
-    sm: maxWidth === 'mobile' ? '100%' : '768px',
-    md: maxWidth === 'mobile' || maxWidth === 'tablet' ? '768px' : '1024px',
-    lg: maxWidth === 'wide' ? '1440px' : '1024px',
+    sm: maxWidth === 'mobile' ? '100%' : '600px',
+    md: maxWidth === 'mobile' || maxWidth === 'tablet' ? '600px' : '900px',
+    lg: maxWidth === 'wide' ? '1200px' : '900px',
   },
   marginX: 'auto',
   paddingX: {

@@ -107,15 +107,15 @@ interface StatItemProps {
 }
 
 const StatItem: React.FC<StatItemProps> = ({ value, label, subtext }) => (
-  <Box sx={{ textAlign: 'center', px: { xs: 1, sm: 2 } }}>
+  <Box sx={{ textAlign: 'center', px: { xs: 1, sm: 1, md: 0.5, lg: 2 } }}>
     <Typography
       variant="h5"
       component="div"
-      sx={{ fontWeight: 'bold', color: 'primary.main' }}
+      sx={{ fontWeight: 'bold', color: 'primary.main', fontSize: { md: '1.25rem', lg: '1.5rem' } }}
     >
       {value}
     </Typography>
-    <Typography variant="body2" color="text.secondary">
+    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { md: '0.8rem', lg: '0.875rem' } }}>
       {label}
     </Typography>
     {subtext && (
@@ -136,7 +136,7 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
     <Paper
       elevation={0}
       sx={{
-        p: 2,
+        p: { xs: 2, md: 1.5, lg: 2 },
         mb: 2,
         mx: 'auto',
         width: 'fit-content',
@@ -153,7 +153,7 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
           flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'center',
           alignItems: 'center',
-          gap: { xs: 2, sm: 3 },
+          gap: { xs: 2, sm: 2, md: 1, lg: 3 },
           flexWrap: 'wrap'
         }}
       >
@@ -166,7 +166,7 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
           sx={{
             display: { xs: 'none', sm: 'block' },
             width: '1px',
-            height: 40,
+            height: { sm: 40, md: 32, lg: 40 },
             bgcolor: 'divider'
           }}
         />
@@ -181,14 +181,14 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
           sx={{
             display: { xs: 'none', sm: 'block' },
             width: '1px',
-            height: 40,
+            height: { sm: 40, md: 32, lg: 40 },
             bgcolor: 'divider'
           }}
         />
 
         <StatItem
           value={`${formatNumber(stats.collectingSetsCompleted)} of ${formatNumber(stats.collectingSetsTotal)}`}
-          label="collecting sets completed"
+          label="sets completed"
           subtext={stats.collectingSetsTotal > 0 ? `${formatPercentage(stats.collectingSetsCompleted, stats.collectingSetsTotal)}%` : undefined}
         />
 
@@ -196,7 +196,7 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
           sx={{
             display: { xs: 'none', sm: 'block' },
             width: '1px',
-            height: 40,
+            height: { sm: 40, md: 32, lg: 40 },
             bgcolor: 'divider'
           }}
         />
@@ -205,21 +205,6 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
           value={`${formatNumber(stats.setsWithAllUnique)} of ${formatNumber(stats.totalSets)}`}
           label="all unique cards"
           subtext={`${formatPercentage(stats.setsWithAllUnique, stats.totalSets)}%`}
-        />
-
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            width: '1px',
-            height: 40,
-            bgcolor: 'divider'
-          }}
-        />
-
-        <StatItem
-          value={`${formatNumber(stats.setsWithCards)} of ${formatNumber(stats.totalSets)}`}
-          label="sets with cards"
-          subtext={`${formatPercentage(stats.setsWithCards, stats.totalSets)}%`}
         />
       </Box>
     </Paper>

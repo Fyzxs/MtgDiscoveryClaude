@@ -4,6 +4,7 @@ using Lib.Aggregator.UserCards.Commands;
 using Lib.Aggregator.UserCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards.Signing;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -27,7 +28,7 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
         _queryOperations = queryOperations;
     }
 
-    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardAsync(userCard);
+    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardOnlyAsync(userCard);
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _queryOperations.UserCardAsync(userCard);
 
@@ -38,6 +39,8 @@ public sealed class UserCardsAggregatorService : IUserCardsAggregatorService
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _queryOperations.UserCardsByArtistAsync(userCardsArtist);
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _queryOperations.UserCardsByNameAsync(userCardsName);
+
+    public Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(IUserCardsForSigningItrEntity userCardsForSigning) => _queryOperations.UserCardsForSigningAsync(userCardsForSigning);
 
     public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardAsync(userCard);
 }

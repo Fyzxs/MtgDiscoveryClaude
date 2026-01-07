@@ -3,6 +3,7 @@ import { Fab, Zoom, Paper, Box, Typography, IconButton, Collapse } from '../../a
 import { useTheme } from '../../atoms';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import { KeyboardIcon, CloseIcon } from '../../atoms/Icons';
 
 export const QuickEntryKeysFab: React.FC = () => {
@@ -10,6 +11,7 @@ export const QuickEntryKeysFab: React.FC = () => {
   const theme = useTheme();
   const location = useLocation();
   const { userProfile } = useUser();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
 
   // Check if current page has cards that can be added to collection
   const hasCards = () => {
@@ -44,7 +46,8 @@ export const QuickEntryKeysFab: React.FC = () => {
   // 1. User is authenticated
   // 2. Current page has cards that can be added to collection
   // 3. ctor parameter is present in URL
-  if (!userProfile?.id || !hasCards() || !hasCtorParam()) {
+  // 4. Not on mobile/tablet (no keyboard entry on touch devices)
+  if (!userProfile?.id || !hasCards() || !hasCtorParam() || isMobile || isTablet) {
     return null;
   }
 

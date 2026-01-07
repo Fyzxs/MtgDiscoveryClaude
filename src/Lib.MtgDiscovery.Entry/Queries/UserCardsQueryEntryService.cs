@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.MtgDiscovery.Entry.Queries.UserCards;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
@@ -14,21 +15,25 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
     private readonly IUserCardEntryService _userCard;
     private readonly IUserCardsBySetEntryService _userCardsBySet;
     private readonly IUserCardsByIdsEntryService _userCardsByIds;
+    private readonly IUserCardsForSigningEntryService _userCardsForSigning;
 
     public UserCardsQueryEntryService(ILogger logger) : this(
         new UserCardEntryService(logger),
         new UserCardsBySetEntryService(logger),
-        new UserCardsByIdsEntryService(logger))
+        new UserCardsByIdsEntryService(logger),
+        new UserCardsForSigningEntryService(logger))
     { }
 
     private UserCardsQueryEntryService(
         IUserCardEntryService userCard,
         IUserCardsBySetEntryService userCardsBySet,
-        IUserCardsByIdsEntryService userCardsByIds)
+        IUserCardsByIdsEntryService userCardsByIds,
+        IUserCardsForSigningEntryService userCardsForSigning)
     {
         _userCard = userCard;
         _userCardsBySet = userCardsBySet;
         _userCardsByIds = userCardsByIds;
+        _userCardsForSigning = userCardsForSigning;
     }
 
     public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => await _userCard.Execute(cardArgs).ConfigureAwait(false);
@@ -36,4 +41,6 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
     public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => await _userCardsBySet.Execute(bySetArgs).ConfigureAwait(false);
 
     public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => await _userCardsByIds.Execute(cardsArgs).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs) => await _userCardsForSigning.Execute(forSigningArgs).ConfigureAwait(false);
 }

@@ -19,6 +19,8 @@ internal sealed class UserCardsQueryAdapterFake : IUserCardsQueryAdapter
     public int UserCardsByArtistAsyncInvokeCount { get; private set; }
     public IOperationResponse<IEnumerable<UserCardExtEntity>> UserCardsByNameAsyncResult { get; init; }
     public int UserCardsByNameAsyncInvokeCount { get; private set; }
+    public IOperationResponse<IEnumerable<UserCardExtEntity>> UserCardsForSigningAsyncResult { get; init; }
+    public int UserCardsForSigningAsyncInvokeCount { get; private set; }
 
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet)
     {
@@ -48,5 +50,11 @@ internal sealed class UserCardsQueryAdapterFake : IUserCardsQueryAdapter
     {
         UserCardsByNameAsyncInvokeCount++;
         return await Task.FromResult(UserCardsByNameAsyncResult).ConfigureAwait(false);
+    }
+
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning)
+    {
+        UserCardsForSigningAsyncInvokeCount++;
+        return await Task.FromResult(UserCardsForSigningAsyncResult).ConfigureAwait(false);
     }
 }

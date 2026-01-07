@@ -1,15 +1,19 @@
 import React from 'react';
-import { Box, Typography } from '../../atoms';
+import { Box } from '../../atoms';
+import { BadgePill } from '../../atoms/Cards/BadgePill';
+import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 
 interface RarityCollectorBadgeProps {
   rarity?: string;
   collectorNumber?: string;
+  reserved?: boolean;
   className?: string;
 }
 
 export const RarityCollectorBadge: React.FC<RarityCollectorBadgeProps> = ({
   rarity,
   collectorNumber,
+  reserved = false,
   className
 }) => {
   if (!rarity && !collectorNumber) return null;
@@ -56,51 +60,30 @@ export const RarityCollectorBadge: React.FC<RarityCollectorBadgeProps> = ({
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }} className={className}>
       {rarity && (
-        <Box
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            px: 0.75,
-            py: 0.25,
-            borderTopLeftRadius: '4px',
-            borderBottomLeftRadius: '4px',
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-            background: colors.rarity,
-            color: 'white',
-            fontSize: '0.75rem',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
-          }}
-        >
-          <Typography variant="caption" sx={{ fontSize: 'inherit', fontWeight: 'inherit' }}>
-            {rarity.charAt(0)}
-          </Typography>
-        </Box>
+        <BadgePill
+          content={rarity.charAt(0).toUpperCase()}
+          background={colors.rarity}
+          borderRadiusLeft={true}
+          borderRadiusRight={false}
+        />
+      )}
+      {reserved && (
+        <BadgePill
+          content={<ReservedListShield size="small" iconSx={{ filter: 'none', width: 12, height: 12, display: 'block' }} />}
+          background="linear-gradient(135deg, rgba(181, 166, 66, 0.9) 0%, rgba(139, 115, 85, 0.9) 100%)"
+          borderRadiusLeft={false}
+          borderRadiusRight={false}
+          sx={{ px: 0.5 }}
+        />
       )}
       {collectorNumber && (
-        <Box
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            px: 0.75,
-            py: 0.25,
-            borderTopLeftRadius: rarity ? 0 : '4px',
-            borderBottomLeftRadius: rarity ? 0 : '4px',
-            borderTopRightRadius: '4px',
-            borderBottomRightRadius: '4px',
-            background: colors.collector,
-            color: 'white',
-            fontSize: '0.75rem',
-            fontFamily: 'monospace',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
-          }}
-        >
-          <Typography variant="caption" sx={{ fontSize: 'inherit', fontFamily: 'inherit' }}>
-            #<span style={{ fontWeight: 'bold' }}>{collectorNumber}</span>
-          </Typography>
-        </Box>
+        <BadgePill
+          content={<>#<span style={{ fontWeight: 'bold' }}>{collectorNumber}</span></>}
+          background={colors.collector}
+          borderRadiusLeft={(rarity || reserved) ? false : true}
+          borderRadiusRight={true}
+          fontFamily="monospace"
+        />
       )}
     </Box>
   );

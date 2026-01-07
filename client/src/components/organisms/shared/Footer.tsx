@@ -1,85 +1,90 @@
-import React from 'react';
-import { Box, Container, Typography, Divider } from '../../atoms';
+import React, { useState } from 'react';
+import { Box, Container, Typography, Collapse } from '../../atoms';
 import { useTheme } from '../../atoms';
+import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms/Icons';
+import { touchTargetStyles } from '../../../styles/touchTargets';
 
 export const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
+  const [expanded, setExpanded] = useState(false);
   const theme = useTheme();
-  
+
+  const handleToggle = () => {
+    setExpanded(!expanded);
+  };
+
   return (
-    <Box 
-      component="footer" 
-      sx={{ 
+    <Box
+      component="footer"
+      sx={{
         mt: 'auto',
         backgroundColor: 'background.paper',
         borderTop: '1px solid',
         borderColor: 'divider',
-        py: 4
       }}
     >
       <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography 
-            variant="h6" 
-            gutterBottom 
-            sx={{ 
-              fontWeight: 'bold',
-              background: theme.mtg.gradients.footer,
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              mb: 3
-            }}
+        <Box
+          onClick={handleToggle}
+          role="button"
+          tabIndex={0}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'Collapse footer' : 'Expand footer for legal information'}
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleToggle();
+            }
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            py: 1.5,
+            cursor: 'pointer',
+            ...touchTargetStyles.minimum,
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+            '&:focus': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '-2px',
+            },
+          }}
+        >
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontWeight: 500 }}
           >
-            MtgDiscovery
+            Fan Content
           </Typography>
-          
-          <Divider sx={{ mb: 3 }} />
-          
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
-            paragraph
-            sx={{ 
-              maxWidth: '800px', 
-              mx: 'auto',
-              lineHeight: 1.7
-            }}
-          >
-            MtgDiscovery is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. 
-            The literal and graphical information presented on this site about Magic: The Gathering, 
-            including card images and mana symbols, is copyright Wizards of the Coast, LLC. 
-            MtgDiscovery is not produced by or endorsed by Wizards of the Coast.
-          </Typography>
-
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
-            paragraph
-            sx={{ 
-              maxWidth: '800px', 
-              mx: 'auto',
-              lineHeight: 1.7
-            }}
-          >
-            Data provided by Scryfall, LLC. MtgDiscovery is not produced by or endorsed by Scryfall.
-            Card prices and promotional offers represent daily estimates and/or market values provided by affiliates. 
-            No guarantee is made for any price information. See stores for final prices and details.
-          </Typography>
-
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
-            sx={{ 
-              maxWidth: '800px', 
-              mx: 'auto',
-              lineHeight: 1.7
-            }}
-          >
-            All other content © {currentYear} MtgDiscovery. 
-            Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
-          </Typography>
+          {expanded ? (
+            <ExpandLessIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+          ) : (
+            <ExpandMoreIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+          )}
         </Box>
+
+        <Collapse in={expanded}>
+          <Box sx={{ textAlign: 'center', pb: 2, px: 2 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                display: 'block',
+                maxWidth: '600px',
+                mx: 'auto',
+                lineHeight: 1.6,
+              }}
+            >
+              MtgDiscovery is unofficial Fan Content permitted under the Fan Content Policy.
+              Not approved/endorsed by Wizards.
+              Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
+            </Typography>
+          </Box>
+        </Collapse>
       </Container>
     </Box>
   );

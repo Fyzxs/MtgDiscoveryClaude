@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
+using Lib.Aggregator.UserCards.Queries.UserCardsForSigning;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards.Signing;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -15,13 +17,15 @@ internal sealed class UserCardsQueryAggregator : IUserCardsQueryAggregatorServic
     private readonly IUserCardsByIdsAggregatorService _userCardsByIdsOperations;
     private readonly IUserCardsByArtistAggregatorService _userCardsByArtistOperations;
     private readonly IUserCardsByNameAggregatorService _userCardsByNameOperations;
+    private readonly IUserCardsForSigningAggregatorService _userCardsForSigningOperations;
 
     public UserCardsQueryAggregator(ILogger logger) : this(
         new UserCardAggregatorService(logger),
         new UserCardsBySetAggregatorService(logger),
         new UserCardsByIdsAggregatorService(logger),
         new UserCardsByArtistAggregatorService(logger),
-        new UserCardsByNameAggregatorService(logger))
+        new UserCardsByNameAggregatorService(logger),
+        new UserCardsForSigningAggregatorService(logger))
     { }
 
     private UserCardsQueryAggregator(
@@ -29,13 +33,15 @@ internal sealed class UserCardsQueryAggregator : IUserCardsQueryAggregatorServic
         IUserCardsBySetAggregatorService userCardsBySetOperations,
         IUserCardsByIdsAggregatorService userCardsByIdsOperations,
         IUserCardsByArtistAggregatorService userCardsByArtistOperations,
-        IUserCardsByNameAggregatorService userCardsByNameOperations)
+        IUserCardsByNameAggregatorService userCardsByNameOperations,
+        IUserCardsForSigningAggregatorService userCardsForSigningOperations)
     {
         _userCardOperations = userCardOperations;
         _userCardsBySetOperations = userCardsBySetOperations;
         _userCardsByIdsOperations = userCardsByIdsOperations;
         _userCardsByArtistOperations = userCardsByArtistOperations;
         _userCardsByNameOperations = userCardsByNameOperations;
+        _userCardsForSigningOperations = userCardsForSigningOperations;
     }
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _userCardOperations.Execute(userCard);
@@ -47,4 +53,6 @@ internal sealed class UserCardsQueryAggregator : IUserCardsQueryAggregatorServic
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _userCardsByArtistOperations.Execute(userCardsArtist);
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _userCardsByNameOperations.Execute(userCardsName);
+
+    public Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(IUserCardsForSigningItrEntity userCardsForSigning) => _userCardsForSigningOperations.Execute(userCardsForSigning);
 }

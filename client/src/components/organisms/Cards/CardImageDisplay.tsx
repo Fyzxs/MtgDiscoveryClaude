@@ -41,26 +41,15 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
   });
 
   // Check if this is a double-faced card that we can flip
-  // We can flip if there's no main imageUris field (meaning we need to use cardFaces for images)
-  // OR if there are multiple card faces
-  const hasNoMainImage = !card.imageUris;
-  const hasMultipleFaces = card.cardFaces && card.cardFaces.length > 1;
-  const isFlippable = hasNoMainImage && card.cardFaces && card.cardFaces.length > 0;
-  const isDoubleFaced = isFlippable || hasMultipleFaces;
+  // If card has no main imageUris, it must use cardFaces for images (data invariant)
+  const isDoubleFaced = !card.imageUris;
   const currentFace = isDoubleFaced && card.cardFaces ? card.cardFaces[currentFaceIndex] : null;
 
   // Determine which image to show
   const getImageUrl = () => {
     // If card has no main imageUris, we must use cardFaces
-    if (hasNoMainImage && currentFace?.imageUris) {
+    if (isDoubleFaced && currentFace?.imageUris) {
       // Use the current face's image
-      if (size === 'large') return currentFace.imageUris.large || currentFace.imageUris.normal || currentFace.imageUris.small || '';
-      if (size === 'small') return currentFace.imageUris.small || currentFace.imageUris.normal || '';
-      return currentFace.imageUris.normal || currentFace.imageUris.large || currentFace.imageUris.small || '';
-    }
-
-    // If it's a double-faced card with faces but also has main imageUris, prefer faces when flipped
-    if (isDoubleFaced && currentFaceIndex > 0 && currentFace?.imageUris) {
       if (size === 'large') return currentFace.imageUris.large || currentFace.imageUris.normal || currentFace.imageUris.small || '';
       if (size === 'small') return currentFace.imageUris.small || currentFace.imageUris.normal || '';
       return currentFace.imageUris.normal || currentFace.imageUris.large || currentFace.imageUris.small || '';
@@ -136,11 +125,11 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
           height: '100%',
           // Card back as background - ensure it shows
           backgroundImage: `url(${CARD_BACK_URL})`,
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          borderRadius,
-          minHeight: '200px' // Ensure minimum height
+          bgcolor: 'black',
+          borderRadius
         }}
       >
 
@@ -155,7 +144,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
               width: '100%',
               height: '100%',
               borderRadius,
-              bgcolor: 'grey.800'
+              bgcolor: 'black'
             }}
           />
         )}

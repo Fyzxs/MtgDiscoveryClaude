@@ -83,6 +83,11 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
             UserId = original.UserId,
             CardId = original.CardId,
             SetId = original.SetId,
+            CardName = original.CardName,
+            SetName = original.SetName,
+            SetCode = original.SetCode,
+            ReleasedAt = original.ReleasedAt,
+            Artist = original.Artist,
             ArtistIds = original.ArtistIds,
             CardNameGuid = original.CardNameGuid,
             Details = negatedDetails
@@ -94,9 +99,15 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         public required string UserId { get; init; }
         public required string CardId { get; init; }
         public required string SetId { get; init; }
+        public required string CardName { get; init; }
+        public required string SetName { get; init; }
+        public required string SetCode { get; init; }
+        public required string ReleasedAt { get; init; }
+        public required string Artist { get; init; }
         public required IEnumerable<string> ArtistIds { get; init; }
         public required string CardNameGuid { get; init; }
         public required IUserCardDetailsXfrEntity Details { get; init; }
+        public bool ReplaceMode { get; init; }
     }
 
     private sealed class UserCardDetailsXfrEntity : IUserCardDetailsXfrEntity

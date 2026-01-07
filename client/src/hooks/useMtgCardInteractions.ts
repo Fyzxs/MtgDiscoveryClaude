@@ -1,13 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { RefObject } from 'react';
+import type { OverlayBehavior } from './useCardDisplaySettings';
 
 interface MtgCardInteractionsProps {
   cardRef: RefObject<HTMLDivElement | null>;
+  overlayBehavior?: OverlayBehavior;
 }
 
-export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) => {
+export const useMtgCardInteractions = ({
+  cardRef,
+  overlayBehavior = 'hover'
+}: MtgCardInteractionsProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [overlayExpanded, setOverlayExpanded] = useState(false);
 
   // Track selection state from DOM attribute
   useEffect(() => {
@@ -27,6 +33,34 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
     return () => observer.disconnect();
   }, [cardRef]);
 
+  // Reset overlay expanded state when card is deselected or another card is selected
+  useEffect(() => {
+    if (!isSelected && overlayExpanded) {
+      setOverlayExpanded(false);
+    }
+  }, [isSelected, overlayExpanded]);
+
+  // Deselect when clicking outside any card (desktop only)
+  useEffect(() => {
+    if (overlayBehavior !== 'hover') return;
+
+    const handleDocumentClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check if click was inside any MTG card
+      const clickedCard = target.closest('[data-mtg-card="true"]');
+      if (clickedCard) return;
+
+      // Click was outside all cards - deselect all
+      const allSelected = document.querySelectorAll('[data-selected="true"]');
+      allSelected.forEach(selected => {
+        selected.setAttribute('data-selected', 'false');
+      });
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, [overlayBehavior]);
+
   const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Don't trigger selection if clicking on links or zoom indicator
     const target = e.target as HTMLElement;
@@ -44,6 +78,13 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
 
     const cardElement = e.currentTarget as HTMLElement;
 
+    // Handle tap behavior on mobile/tablet - single tap opens modal
+    if (overlayBehavior === 'tap') {
+      setModalOpen(true);
+      return;
+    }
+
+    // Desktop behavior - select card
     // Clear ALL selections across ALL card groups on the page
     const allSelected = document.querySelectorAll('[data-selected="true"]');
     allSelected.forEach(selected => {
@@ -63,7 +104,7 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
 
     // Focus this card to enable keyboard navigation from here
     cardElement.focus();
-  }, []);
+  }, [overlayBehavior, overlayExpanded]);
 
   const handleZoomClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -73,13 +114,21 @@ export const useMtgCardInteractions = ({ cardRef }: MtgCardInteractionsProps) =>
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
+    // Reset overlay state so next tap starts fresh
+    setOverlayExpanded(false);
+  }, []);
+
+  const handleOverlayToggle = useCallback(() => {
+    setOverlayExpanded(prev => !prev);
   }, []);
 
   return {
     modalOpen,
     isSelected,
+    overlayExpanded,
     handleCardClick,
     handleZoomClick,
-    handleModalClose
+    handleModalClose,
+    handleOverlayToggle
   };
 };

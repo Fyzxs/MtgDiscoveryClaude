@@ -5,6 +5,7 @@ import type { Card, CardContext } from '../../../types/card';
 import { CardImageDisplay } from './CardImageDisplay';
 import { PriceDisplay } from '../../atoms';
 import { CollectorNumber, RarityBadge } from '../../atoms';
+import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { ArtistLinks } from '../../molecules/Cards/ArtistLinks';
 import { CardLinks } from '../../molecules/Cards/CardLinks';
 import { useLongPress } from '../../../hooks/useLongPress';
@@ -183,7 +184,10 @@ export const CardCompact: React.FC<CardCompactProps> = ({
               setCode={card.setCode}
               sx={{ fontSize: '0.75rem' }}
             />
-            {card.rarity && <RarityBadge rarity={card.rarity} />}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {card.rarity && <RarityBadge rarity={card.rarity} />}
+              {card.reserved && <ReservedListShield size="small" />}
+            </Box>
           </Box>
 
           {/* Artist */}

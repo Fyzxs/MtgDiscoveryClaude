@@ -3,11 +3,10 @@ import {
   Box,
   Typography,
   Popover,
-  Tooltip,
-  useTheme,
-  useMediaQuery
+  Tooltip
 } from '../../atoms';
 import type { UserCardData } from '../../../types/card';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 // Emoji definitions with tooltips for accessibility
 const EMOJI_TOOLTIPS = {
@@ -19,28 +18,44 @@ const EMOJI_TOOLTIPS = {
   '🎨': 'Altered'
 } as const;
 
-// Helper component to wrap emoji with tooltip
-const EmojiWithTooltip: React.FC<{ emoji: keyof typeof EMOJI_TOOLTIPS; children: React.ReactNode }> = ({ emoji, children }) => (
-  <Tooltip title={EMOJI_TOOLTIPS[emoji]} arrow placement="top">
-    <span role="img" aria-label={EMOJI_TOOLTIPS[emoji]} style={{ cursor: 'help' }}>
-      {children}
-    </span>
-  </Tooltip>
-);
+// Helper component to wrap emoji with tooltip (conditionally)
+const EmojiWithTooltip: React.FC<{ emoji: keyof typeof EMOJI_TOOLTIPS; children: React.ReactNode; disableTooltip?: boolean }> = ({ emoji, children, disableTooltip }) => {
+  if (disableTooltip) {
+    return (
+      <span role="img" aria-label={EMOJI_TOOLTIPS[emoji]}>
+        {children}
+      </span>
+    );
+  }
+  return (
+    <Tooltip title={EMOJI_TOOLTIPS[emoji]} arrow placement="top">
+      <span role="img" aria-label={EMOJI_TOOLTIPS[emoji]} style={{ cursor: 'help' }}>
+        {children}
+      </span>
+    </Tooltip>
+  );
+};
 
 interface CollectionSummaryProps {
   collectionData?: UserCardData | UserCardData[];
   size?: 'small' | 'medium' | 'large';
+  /** Force interactive mode even on mobile (for use in detail sheets) */
+  forceInteractive?: boolean;
 }
 
 export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   collectionData,
-  size = 'medium'
+  size = 'medium',
+  forceInteractive = false
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
+
+  // On mobile/tablet: disable tooltips and clicks (unless forceInteractive)
+  const isTouchDevice = isMobile || isTablet;
+  const disableTooltips = isTouchDevice;
+  const disableClicks = isTouchDevice && !forceInteractive;
 
   // Convert to array if single item, handle empty data
   const collection = collectionData
@@ -96,13 +111,13 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   const getFinishIndicators = () => {
     const indicators: React.ReactElement[] = [];
     if (finishTypes.includes('nonfoil')) {
-      indicators.push(<EmojiWithTooltip key="nonfoil" emoji="🔹">🔹</EmojiWithTooltip>);
+      indicators.push(<EmojiWithTooltip key="nonfoil" emoji="🔹" disableTooltip={disableTooltips}>🔹</EmojiWithTooltip>);
     }
     if (finishTypes.includes('foil')) {
-      indicators.push(<EmojiWithTooltip key="foil" emoji="✨">✨</EmojiWithTooltip>);
+      indicators.push(<EmojiWithTooltip key="foil" emoji="✨" disableTooltip={disableTooltips}>✨</EmojiWithTooltip>);
     }
     if (finishTypes.includes('etched')) {
-      indicators.push(<EmojiWithTooltip key="etched" emoji="🌟">🌟</EmojiWithTooltip>);
+      indicators.push(<EmojiWithTooltip key="etched" emoji="🌟" disableTooltip={disableTooltips}>🌟</EmojiWithTooltip>);
     }
     return indicators.length > 0 ? <>{indicators}</> : null;
   };
@@ -112,26 +127,26 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
     if (!hasSpecials) return null;
     const indicators: React.ReactElement[] = [];
     // Order: 📜 → ✍️ → 🎨
-    if (specialTypes.has('artist_proof')) {
-      indicators.push(<EmojiWithTooltip key="artist_proof" emoji="📜">📜</EmojiWithTooltip>);
+    if (specialTypes.has('proof')) {
+      indicators.push(<EmojiWithTooltip key="proof" emoji="📜" disableTooltip={disableTooltips}>📜</EmojiWithTooltip>);
     }
     if (specialTypes.has('signed')) {
-      indicators.push(<EmojiWithTooltip key="signed" emoji="✍️">✍️</EmojiWithTooltip>);
+      indicators.push(<EmojiWithTooltip key="signed" emoji="✍️" disableTooltip={disableTooltips}>✍️</EmojiWithTooltip>);
     }
     if (specialTypes.has('altered')) {
-      indicators.push(<EmojiWithTooltip key="altered" emoji="🎨">🎨</EmojiWithTooltip>);
+      indicators.push(<EmojiWithTooltip key="altered" emoji="🎨" disableTooltip={disableTooltips}>🎨</EmojiWithTooltip>);
     }
     return <>{indicators}</>;
   };
 
-  // Get counts for hover state
+  // Get counts for expanded state
   const getFinishCounts = () => {
     const counts: React.ReactElement[] = [];
     if (finishTypes.includes('nonfoil')) {
       const count = finishGroups.nonfoil.reduce((sum, item) => sum + item.count, 0);
       counts.push(
         <span key="nonfoil">
-          <EmojiWithTooltip emoji="🔹">🔹</EmojiWithTooltip>{count}
+          <EmojiWithTooltip emoji="🔹" disableTooltip={disableTooltips}>🔹</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -139,7 +154,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       const count = finishGroups.foil.reduce((sum, item) => sum + item.count, 0);
       counts.push(
         <span key="foil">
-          <EmojiWithTooltip emoji="✨">✨</EmojiWithTooltip>{count}
+          <EmojiWithTooltip emoji="✨" disableTooltip={disableTooltips}>✨</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -147,7 +162,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       const count = finishGroups.etched.reduce((sum, item) => sum + item.count, 0);
       counts.push(
         <span key="etched">
-          <EmojiWithTooltip emoji="🌟">🌟</EmojiWithTooltip>{count}
+          <EmojiWithTooltip emoji="🌟" disableTooltip={disableTooltips}>🌟</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -156,11 +171,11 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
   const getSpecialCounts = () => {
     const counts: React.ReactElement[] = [];
-    if (specialTypes.has('artist_proof')) {
-      const count = collection.filter(item => item && item.special === 'artist_proof').reduce((sum, item) => sum + item.count, 0);
+    if (specialTypes.has('proof')) {
+      const count = collection.filter(item => item && item.special === 'proof').reduce((sum, item) => sum + item.count, 0);
       counts.push(
-        <span key="artist_proof">
-          <EmojiWithTooltip emoji="📜">📜</EmojiWithTooltip>{count}
+        <span key="proof">
+          <EmojiWithTooltip emoji="📜" disableTooltip={disableTooltips}>📜</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -168,7 +183,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       const count = collection.filter(item => item.special === 'signed').reduce((sum, item) => sum + item.count, 0);
       counts.push(
         <span key="signed">
-          <EmojiWithTooltip emoji="✍️">✍️</EmojiWithTooltip>{count}
+          <EmojiWithTooltip emoji="✍️" disableTooltip={disableTooltips}>✍️</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -176,7 +191,7 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
       const count = collection.filter(item => item.special === 'altered').reduce((sum, item) => sum + item.count, 0);
       counts.push(
         <span key="altered">
-          <EmojiWithTooltip emoji="🎨">🎨</EmojiWithTooltip>{count}
+          <EmojiWithTooltip emoji="🎨" disableTooltip={disableTooltips}>🎨</EmojiWithTooltip>{count}
         </span>
       );
     }
@@ -185,16 +200,16 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
   // Format display based on state
   const getDisplayText = () => {
-    if (isHovered && !isMobile) {
-      // Hover state: show counts with padding to prevent size reduction
+    if (isHovered) {
+      // Expanded state: show total + counts breakdown
       const finishPart = getFinishCounts();
       const specialPart = hasSpecials ? getSpecialCounts() : null;
       const separator = finishPart && specialPart ? ' | ' : '';
       return (
         <>
-          &nbsp;&nbsp;{finishPart}
+          [{totalCards}] {finishPart}
           {separator}
-          {specialPart}&nbsp;&nbsp;
+          {specialPart}
         </>
       );
     } else {
@@ -215,32 +230,26 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    if (isMobile && !isHovered) {
-      // First click on mobile: show hover state
-      setIsHovered(true);
-    } else {
-      // Second click on mobile or any click on desktop: show detailed popover
-      setAnchorEl(event.currentTarget);
-    }
+    if (disableClicks) return;
+    event.stopPropagation();
+    event.preventDefault();
+    // Show popover on click (desktop or forceInteractive touch device)
+    setAnchorEl(event.currentTarget);
   };
 
   const handleMouseEnter = () => {
-    if (!isMobile) {
-      setIsHovered(true);
-    }
+    if (disableClicks) return;
+    setIsHovered(true);
   };
 
   const handleMouseLeave = () => {
-    if (!isMobile) {
-      setIsHovered(false);
-    }
+    if (disableClicks) return;
+    setIsHovered(false);
   };
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
-    if (isMobile) {
-      setIsHovered(false);
-    }
+    setIsHovered(false);
   };
 
   const open = Boolean(anchorEl);
@@ -258,20 +267,22 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
     >
       <Typography
         variant="body2"
-        onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onClick={disableClicks ? undefined : handleClick}
+        onMouseEnter={disableClicks ? undefined : handleMouseEnter}
+        onMouseLeave={disableClicks ? undefined : handleMouseLeave}
         sx={{
           fontSize: size === 'small' ? '0.75rem' : size === 'large' ? '1rem' : '0.875rem',
           fontWeight: 500,
           color: 'white',
-          cursor: 'pointer',
+          cursor: disableClicks ? 'default' : 'pointer',
           userSelect: 'none',
           minWidth: 'max-content',
           whiteSpace: 'nowrap',
-          '&:hover': {
-            color: 'primary.light'
-          }
+          ...(!disableClicks && {
+            '&:hover': {
+              color: 'primary.light'
+            }
+          })
         }}
       >
         {getDisplayText()}
@@ -320,8 +331,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
                 {specialCards.map((card, idx) => (
                   <React.Fragment key={idx}>
                     {idx > 0 && ', '}
-                    <EmojiWithTooltip emoji={card.special === 'artist_proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}>
-                      {card.special === 'artist_proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}
+                    <EmojiWithTooltip emoji={card.special === 'proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}>
+                      {card.special === 'proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}
                     </EmojiWithTooltip> {card.count}
                   </React.Fragment>
                 ))}
@@ -335,14 +346,14 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
           {hasSpecials && (
             <>
               <Box sx={{ borderBottom: 1, borderColor: 'divider', my: 2 }} />
-              {['artist_proof', 'signed', 'altered'].filter(special =>
+              {['proof', 'signed', 'altered'].filter(special =>
                 collection.some(item => item.special === special)
               ).map((special) => {
                 const totalCount = collection
                   .filter(item => item.special === special)
                   .reduce((sum, item) => sum + item.count, 0);
-                const specialIcon = special === 'artist_proof' ? '📜' : special === 'signed' ? '✍️' : '🎨';
-                const specialName = special === 'artist_proof' ? 'Artist Proof' : special === 'signed' ? 'Signed' : 'Altered';
+                const specialIcon = special === 'proof' ? '📜' : special === 'signed' ? '✍️' : '🎨';
+                const specialName = special === 'proof' ? 'Artist Proof' : special === 'signed' ? 'Signed' : 'Altered';
 
                 return (
                   <Typography key={special} variant="body2" sx={{ mb: 1 }}>

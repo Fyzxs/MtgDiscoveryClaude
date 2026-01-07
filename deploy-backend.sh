@@ -44,14 +44,14 @@ ENV_CONFIG[prod_aspnetcore_env]="Production"
 get_acr_credentials() {
     echo -e "${BLUE}Retrieving Azure Container Registry credentials...${NC}"
 
-    ACR_SERVER=$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)
+    ACR_SERVER=$(az acr show --name "$ACR_NAME" --query loginServer -o tsv | tr -d '\r')
     if [ -z "$ACR_SERVER" ]; then
         echo -e "${RED}Failed to retrieve ACR server${NC}"
         exit 1
     fi
 
-    ACR_USERNAME=$(az acr credential show --name "$ACR_NAME" --query username -o tsv)
-    ACR_PASSWORD=$(az acr credential show --name "$ACR_NAME" --query passwords[0].value -o tsv)
+    ACR_USERNAME=$(az acr credential show --name "$ACR_NAME" --query username -o tsv | tr -d '\r')
+    ACR_PASSWORD=$(az acr credential show --name "$ACR_NAME" --query passwords[0].value -o tsv | tr -d '\r')
 
     if [ -z "$ACR_USERNAME" ] || [ -z "$ACR_PASSWORD" ]; then
         echo -e "${RED}Failed to retrieve ACR credentials${NC}"
@@ -115,7 +115,7 @@ get_resource_info() {
     COSMOS_ENDPOINT=$(az cosmosdb show \
         --name "${ENV_CONFIG[${env}_cosmos_name]}" \
         --resource-group "$rg" \
-        --query documentEndpoint -o tsv)
+        --query documentEndpoint -o tsv | tr -d '\r')
 
     if [ -z "$COSMOS_ENDPOINT" ]; then
         echo -e "${RED}Failed to retrieve Cosmos DB endpoint${NC}"
@@ -126,7 +126,7 @@ get_resource_info() {
     APP_INSIGHTS_CONN=$(az monitor app-insights component show \
         --app "${ENV_CONFIG[${env}_appinsights_name]}" \
         --resource-group "$rg" \
-        --query connectionString -o tsv)
+        --query connectionString -o tsv | tr -d '\r')
 
     if [ -z "$APP_INSIGHTS_CONN" ]; then
         echo -e "${RED}Failed to retrieve Application Insights connection string${NC}"
@@ -138,7 +138,7 @@ get_resource_info() {
     MANAGED_IDENTITY_ID=$(az identity show \
         --name "${ENV_CONFIG[${env}_identity_name]}" \
         --resource-group "$rg" \
-        --query clientId -o tsv)
+        --query clientId -o tsv | tr -d '\r')
 
     if [ -z "$MANAGED_IDENTITY_ID" ]; then
         echo -e "${RED}Failed to retrieve Managed Identity client ID${NC}"
@@ -158,7 +158,8 @@ update_container_app() {
 
     # Get managed identity resource ID
     local IDENTITY_NAME="${ENV_CONFIG[${env}_identity_name]}"
-    local IDENTITY_RESOURCE_ID="/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$IDENTITY_NAME"
+    local SUBSCRIPTION_ID=$(az account show --query id -o tsv | tr -d '\r')
+    local IDENTITY_RESOURCE_ID="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/$rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$IDENTITY_NAME"
 
     # Configure registry credentials with managed identity
     echo -e "${BLUE}Configuring ACR authentication with managed identity${NC}"
@@ -208,7 +209,7 @@ get_app_url() {
     APP_FQDN=$(az containerapp show \
         --name "$app_name" \
         --resource-group "$rg" \
-        --query properties.configuration.ingress.fqdn -o tsv)
+        --query properties.configuration.ingress.fqdn -o tsv | tr -d '\r')
 
     if [ -z "$APP_FQDN" ]; then
         echo -e "${YELLOW}Warning: Could not retrieve Container App FQDN${NC}"

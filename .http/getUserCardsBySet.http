@@ -1,0 +1,146 @@
+###
+# Get User Cards By Set Query
+# Frontend: client/src/graphql/queries/userCards.ts - GET_USER_CARDS_BY_SET
+# Returns all cards owned by a user in a specific set
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get User Cards By Set - Basic Query
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsBySet($setArgs: UserCardsBySetInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setArgs": {
+    "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+### Get User Cards By Set - Limited Edition Alpha
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsBySetLEA($setArgs: UserCardsBySetInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setArgs": {
+    "setId": "288bd996-960e-448b-a187-9f2e09b8b210",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+### Get User Cards By Set - Missing User ID (should fail)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsBySetNoUser($setArgs: UserCardsBySetInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setArgs": {
+    "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
+    "userId": ""
+  }
+}
+
+
+### Get User Cards By Set - Missing Set ID (should fail)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query UserCardsBySetNoSet($setArgs: UserCardsBySetInput!) {
+  userCardsBySet(setArgs: $setArgs) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "setArgs": {
+    "setId": "",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  }
+}
+
+
+###
+# Usage Notes:
+# Returns all cards a user owns in a specific set
+#
+# Parameters:
+# - userId: The unique identifier of the user
+# - setId: The unique identifier of the set (GUID format)
+#
+# Response includes collectedList with finish/special/count for each card
