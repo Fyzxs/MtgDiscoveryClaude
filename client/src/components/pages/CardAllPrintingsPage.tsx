@@ -8,17 +8,22 @@ import { Heading, BodyText } from '../molecules/text';
 import { LoadingIndicator, StatusMessage } from '../molecules/feedback';
 import { AppButton, FilterControlsWithLoading } from '../molecules/shared';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
+import { MobileFilterBar } from '../molecules/shared/MobileFilterBar';
+import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { CardGrid } from '../organisms/Cards/CardGrid';
+import { FilterDrawer } from '../organisms/filters/FilterDrawer';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
 import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 import { useOptimizedSort } from '../../hooks/useOptimizedSort';
 import { useCollectionUpdates } from '../../hooks/useCollectionUpdates';
+import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { CardFilterPanel } from '../organisms/Cards/CardFilterPanel';
 import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS, createCardSortOptions } from '../../config/cardSortOptions';
 import { CollectorFiltersSection } from '../molecules/shared/CollectorFiltersSection';
 import {
   getCollectionCountOptions,
-  getSignedCardsOptions
+  getSignedCardsOptions,
+  getFormatOptions
 } from '../../utils/cardUtils';
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../utils/ErrorBoundaries';
@@ -27,6 +32,7 @@ import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 import { useUrlState } from '../../hooks/useUrlState';
 import { RefreshIcon } from '../atoms/Icons';
 import { LinkParamsProvider } from '../../contexts/LinkParamsContext';
+import type { FilterPanelConfig } from '../../types/filters';
 
 // Stable empty array to prevent infinite re-renders
 const EMPTY_CARDS_ARRAY: Card[] = [];
@@ -40,6 +46,11 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   // Check if we have a collector parameter
   const { hasCollector, collectorId } = useCollectorParam();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+
+  // Determine if we should use mobile layout
+  const useMobileLayout = isMobile || isTablet;
 
   // Loading state with minimum display time
   const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
@@ -211,6 +222,110 @@ export const CardAllPrintingsPage: React.FC = () => {
     { debounceMs: 0 }
   );
 
+  // Calculate active filter count for mobile filter badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (selectedRarities.length > 0) count++;
+    if (selectedArtists.length > 0) count++;
+    if (selectedFormats.length > 0) count++;
+    if (Array.isArray(filters.collectionCounts) && filters.collectionCounts.length > 0) count++;
+    if (Array.isArray(filters.signedCards) && filters.signedCards.length > 0) count++;
+    return count;
+  }, [selectedRarities, selectedArtists, selectedFormats, filters]);
+
+  // Toggle filter drawer for mobile
+  const handleFilterDrawerToggle = useCallback(() => {
+    setFilterDrawerOpen(prev => !prev);
+  }, []);
+
+  // Clear all filters handler
+  const handleClearFilters = useCallback(() => {
+    startFilterTransition(() => {
+      updateFilterOriginal('rarities', []);
+      updateFilterOriginal('artists', []);
+      updateFilterOriginal('formats', []);
+      if (hasCollector) {
+        updateFilterOriginal('collectionCounts', []);
+        updateFilterOriginal('signedCards', []);
+      }
+    });
+  }, [updateFilterOriginal, hasCollector]);
+
+  // Build filter config for mobile drawer
+  const filterConfig: FilterPanelConfig = useMemo(() => {
+    const collectionCounts = (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[];
+    const signedCardsFilter = (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[];
+
+    return {
+      multiSelects: [
+        // Rarities filter
+        ...(hasMultipleRarities ? [{
+          key: 'rarities',
+          value: selectedRarities,
+          onChange: (value: string[]) => updateFilter('rarities', value),
+          options: uniqueRarities.map(rarity => ({ value: rarity, label: rarity })),
+          label: 'Rarity',
+          placeholder: 'All Rarities',
+          fullWidth: true
+        }] : []),
+        // Artists filter
+        ...(hasMultipleArtists ? [{
+          key: 'artists',
+          value: selectedArtists,
+          onChange: (value: string[]) => updateFilter('artists', value),
+          options: uniqueArtists.map(artist => ({ value: artist, label: artist })),
+          label: 'Artist',
+          placeholder: 'All Artists',
+          fullWidth: true
+        }] : []),
+        // Formats filter
+        ...(hasMultipleFormats ? [{
+          key: 'formats',
+          value: selectedFormats,
+          onChange: (value: string[]) => updateFilter('formats', value),
+          options: getFormatOptions(),
+          label: 'Format',
+          placeholder: 'All Formats',
+          fullWidth: true
+        }] : [])
+      ],
+      sort: {
+        value: sortBy,
+        onChange: setSortBy,
+        options: hasCollector ? CARD_DETAIL_COLLECTOR_SORT_OPTIONS : CARD_DETAIL_SORT_OPTIONS,
+        fullWidth: true
+      },
+      collectorFilters: hasCollector ? {
+        collectionCounts: {
+          key: 'collectionCounts',
+          value: collectionCounts,
+          onChange: (value: string[]) => updateFilter('collectionCounts', value),
+          options: getCollectionCountOptions(),
+          label: 'Collection Count',
+          placeholder: 'All Counts',
+          fullWidth: true
+        },
+        signedCards: {
+          key: 'signedCards',
+          value: signedCardsFilter,
+          onChange: (value: string[]) => updateFilter('signedCards', value),
+          options: getSignedCardsOptions(),
+          label: 'Signed Cards',
+          placeholder: 'All Cards',
+          fullWidth: true
+        }
+      } : undefined
+    };
+  }, [
+    selectedRarities, selectedArtists, selectedFormats,
+    uniqueRarities, uniqueArtists, hasMultipleRarities, hasMultipleArtists, hasMultipleFormats,
+    filters.collectionCounts, filters.signedCards,
+    sortBy, setSortBy, hasCollector, updateFilter
+  ]);
+
+  // Build results summary text for mobile bar
+  const resultsSummary = `${filteredCards.length} of ${totalCards} printings`;
+
   if (loading) {
     return (
       <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
@@ -264,69 +379,82 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   return (
     <LinkParamsProvider additionalParams={{ formats: 'paper' }}>
-      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+      <PageContainer maxWidth={false} sx={{ mt: { xs: 1, sm: 2 }, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
         {/* Centered card name */}
-        <Section asSection={false} sx={{ textAlign: 'center', mb: 4 }}>
+        <Section asSection={false} sx={{ textAlign: 'center', mb: { xs: 2, md: 4 } }}>
           <Heading variant="h2" fontWeight="bold">
             {decodedCardName}
           </Heading>
         </Section>
 
-        {/* Card Filter Panel - Centered controls */}
-        <FilterControlsWithLoading isLoading={isFiltering || isPending}>
-          <CardFilterPanel
-            sortBy={sortBy}
-            filters={filters}
-            onSortChange={setSortBy}
-            onFilterChange={updateFilter}
-            uniqueArtists={uniqueArtists}
-            uniqueRarities={uniqueRarities}
-            uniqueFormats={uniqueFormats}
-            hasMultipleArtists={hasMultipleArtists}
-            hasMultipleRarities={hasMultipleRarities}
-            hasMultipleFormats={hasMultipleFormats}
-            filteredCount={filteredCards.length}
-            totalCount={totalCards}
-            showSearch={false}
-            sortOptions={hasCollector ? CARD_DETAIL_COLLECTOR_SORT_OPTIONS : CARD_DETAIL_SORT_OPTIONS}
-            centerControls={true}
+        {/* Mobile Filter Bar (sticky) */}
+        {useMobileLayout && (
+          <MobileFilterBar
+            activeFilterCount={activeFilterCount}
+            onFilterClick={handleFilterDrawerToggle}
+            resultsSummary={resultsSummary}
           />
+        )}
 
-          {/* Collector-specific filters */}
-          {hasCollector && (
-            <CollectorFiltersSection
-              config={{
-                collectionCounts: {
-                  key: 'collectionCounts',
-                  value: (filters.collectionCounts as string[]) || [],
-                  onChange: (value: string[]) => updateFilter('collectionCounts', value),
-                  options: getCollectionCountOptions(),
-                  label: 'Collection Count',
-                  placeholder: 'All Counts',
-                  minWidth: 180
-                },
-                signedCards: {
-                  key: 'signedCards',
-                  value: (filters.signedCards as string[]) || [],
-                  onChange: (value: string[]) => updateFilter('signedCards', value),
-                  options: getSignedCardsOptions(),
-                  label: 'Signed Cards',
-                  placeholder: 'All Cards',
-                  minWidth: 150
-                }
-              }}
-              sx={{ mt: 2, mb: 3, mx: 'auto', maxWidth: '800px' }}
+        {/* Desktop Filters Section (inline) */}
+        {useMobileLayout === false && (
+          <FilterControlsWithLoading isLoading={isFiltering || isPending}>
+            <CardFilterPanel
+              sortBy={sortBy}
+              filters={filters}
+              onSortChange={setSortBy}
+              onFilterChange={updateFilter}
+              uniqueArtists={uniqueArtists}
+              uniqueRarities={uniqueRarities}
+              uniqueFormats={uniqueFormats}
+              hasMultipleArtists={hasMultipleArtists}
+              hasMultipleRarities={hasMultipleRarities}
+              hasMultipleFormats={hasMultipleFormats}
+              filteredCount={filteredCards.length}
+              totalCount={totalCards}
+              showSearch={false}
+              sortOptions={hasCollector ? CARD_DETAIL_COLLECTOR_SORT_OPTIONS : CARD_DETAIL_SORT_OPTIONS}
+              centerControls={true}
             />
-          )}
-        </FilterControlsWithLoading>
 
-        {/* Results Summary */}
-        <ResultsSummary
-          current={filteredCards.length}
-          total={totalCards}
-          label="printings"
-          textAlign="center"
-        />
+            {/* Collector-specific filters */}
+            {hasCollector && (
+              <CollectorFiltersSection
+                config={{
+                  collectionCounts: {
+                    key: 'collectionCounts',
+                    value: (filters.collectionCounts as string[]) || [],
+                    onChange: (value: string[]) => updateFilter('collectionCounts', value),
+                    options: getCollectionCountOptions(),
+                    label: 'Collection Count',
+                    placeholder: 'All Counts',
+                    minWidth: 180
+                  },
+                  signedCards: {
+                    key: 'signedCards',
+                    value: (filters.signedCards as string[]) || [],
+                    onChange: (value: string[]) => updateFilter('signedCards', value),
+                    options: getSignedCardsOptions(),
+                    label: 'Signed Cards',
+                    placeholder: 'All Cards',
+                    minWidth: 150
+                  }
+                }}
+                sx={{ mt: 2, mb: 3, mx: 'auto', maxWidth: '800px' }}
+              />
+            )}
+          </FilterControlsWithLoading>
+        )}
+
+        {/* Results Summary - only show on desktop (mobile has it in the bar) */}
+        {useMobileLayout === false && (
+          <ResultsSummary
+            current={filteredCards.length}
+            total={totalCards}
+            label="printings"
+            textAlign="center"
+          />
+        )}
 
         {/* Cards Grid */}
         <AppErrorBoundary variant="card-grid" name="CardDetailGrid">
@@ -342,7 +470,22 @@ export const CardAllPrintingsPage: React.FC = () => {
             onArtistClick={handleArtistClick}
           />
         </AppErrorBoundary>
+
+        {/* Back to Top Button */}
+        <BackToTopFab />
       </PageContainer>
+
+      {/* Mobile Filter Drawer */}
+      {useMobileLayout && (
+        <FilterDrawer
+          open={filterDrawerOpen}
+          onClose={handleFilterDrawerToggle}
+          config={filterConfig}
+          title="Filter Printings"
+          activeFilterCount={activeFilterCount}
+          onClear={handleClearFilters}
+        />
+      )}
     </LinkParamsProvider>
   );
 };

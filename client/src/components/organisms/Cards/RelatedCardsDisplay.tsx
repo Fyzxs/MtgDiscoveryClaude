@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { logger } from '../../../utils/logger';
-import { Box, Typography, CircularProgress, Alert, Collapse, IconButton, Chip } from '../../atoms';
-import { MtgCard } from './MtgCard';
-import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
+import { Typography } from '../../atoms';
+import { ExpandableSection } from '../../molecules';
+import { LoadingContainer, ErrorAlert } from '../../atoms';
+import { CardGrid } from './CardGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import { useCardQueries } from '../../../hooks/useCardQueries';
 import type { Card } from '../../../types/card';
-import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms/Icons';
 
 interface RelatedCardsDisplayProps {
   relatedCardIds: string[];
@@ -105,107 +105,48 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
 
   // Sort cards alphabetically by name (A-Z)
   // Create a new array to avoid mutating the original
-  const cards = [...(data?.cardsById?.data || [])].sort((a, b) => 
+  const cards = [...(data?.cardsById?.data || [])].sort((a, b) =>
     (a.name || '').localeCompare(b.name || '')
   );
-  const loadedCount = cards.length;
-  const totalCount = filteredIds.length;
 
-  // Determine the badge text
-  const getBadgeText = () => {
-    if (!expanded) return totalCount.toString();
-    if (loading) return `Loading ${totalCount}...`;
-    if (userFriendlyError || data?.cardsById?.__typename === 'FailureResponse') return 'Error';
-    // Only show loaded/total if they're different
-    return loadedCount === totalCount ? loadedCount.toString() : `${loadedCount}/${totalCount}`;
-  };
+  const hasError = userFriendlyError || data?.cardsById?.__typename === 'FailureResponse';
 
   return (
-    <Box>
-      {/* Header with expand/collapse */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1,
-          cursor: 'pointer',
-          p: 1,
-          borderRadius: 1,
-          '&:hover': {
-            bgcolor: 'action.hover'
-          }
-        }}
-        onClick={() => setExpanded(!expanded)}
-      >
-        <IconButton size="small">
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
-        <Typography variant="body2">
-          Click to {expanded ? 'hide' : 'show'} related cards
-        </Typography>
-        <Chip 
-          label={getBadgeText()} 
-          size="small"
-          sx={{ 
-            height: 22,
-            fontSize: '0.8rem',
-            fontWeight: 'bold',
-            bgcolor: userFriendlyError || data?.cardsById?.__typename === 'FailureResponse' ? 'error.main' : loading ? 'action.disabled' : 'primary.main',
-            color: userFriendlyError || data?.cardsById?.__typename === 'FailureResponse' ? 'error.contrastText' : loading ? 'text.disabled' : 'primary.contrastText',
-            '& .MuiChip-label': {
-              px: 1.5
-            }
-          }}
+    <ExpandableSection
+      title="Related Cards"
+      count={filteredIds.length}
+      isLoading={loading}
+      isError={Boolean(hasError)}
+      expanded={expanded}
+      onExpandedChange={setExpanded}
+    >
+      {loading && (
+        <LoadingContainer py={4} />
+      )}
+
+      {userFriendlyError && (
+        <ErrorAlert message={userFriendlyError} />
+      )}
+
+      {data?.cardsById?.__typename === 'FailureResponse' && (
+        <ErrorAlert message={data.cardsById.status?.message || 'Failed to load related cards'} />
+      )}
+
+      {!loading && !hasError && cards.length > 0 && (
+        <CardGrid
+          cards={cards}
+          groupId="related-cards"
+          context={{}}
+          spacing={1.5}
+          sx={{ mt: 1 }}
         />
-      </Box>
+      )}
 
-      {/* Collapsible content */}
-      <Collapse in={expanded}>
-        <Box sx={{ mt: 2 }}>
-          {loading && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-              <CircularProgress size={24} />
-            </Box>
-          )}
-
-          {userFriendlyError && (
-            <Alert severity="error" sx={{ my: 1 }}>
-              {userFriendlyError}
-            </Alert>
-          )}
-
-          {data?.cardsById?.__typename === 'FailureResponse' && (
-            <Alert severity="error" sx={{ my: 1 }}>
-              {data.cardsById.status?.message || 'Failed to load related cards'}
-            </Alert>
-          )}
-
-          {!loading && !userFriendlyError && data?.cardsById?.__typename !== 'FailureResponse' && cards.length === 0 && (
-            <Typography variant="body2" color="text.secondary" align="center">
-              No related cards found
-            </Typography>
-          )}
-
-          {!loading && cards.length > 0 && (
-            <ResponsiveGridAutoFit 
-              minItemWidth={280} 
-              spacing={1.5}
-            >
-              {cards.map((card, index) => (
-                <MtgCard
-                  key={card.id}
-                  card={card}
-                  index={index}
-                  groupId="related"
-                  context={{
-                    isOnCardPage: true
-                  }}
-                />
-              ))}
-            </ResponsiveGridAutoFit>
-          )}
-        </Box>
-      </Collapse>
-    </Box>
+      {!loading && !hasError && cards.length === 0 && (
+        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+          No related cards found
+        </Typography>
+      )}
+    </ExpandableSection>
   );
 };

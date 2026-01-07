@@ -40,6 +40,27 @@ export const useMtgCardInteractions = ({
     }
   }, [isSelected, overlayExpanded]);
 
+  // Deselect when clicking outside any card (desktop only)
+  useEffect(() => {
+    if (overlayBehavior !== 'hover') return;
+
+    const handleDocumentClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check if click was inside any MTG card
+      const clickedCard = target.closest('[data-mtg-card="true"]');
+      if (clickedCard) return;
+
+      // Click was outside all cards - deselect all
+      const allSelected = document.querySelectorAll('[data-selected="true"]');
+      allSelected.forEach(selected => {
+        selected.setAttribute('data-selected', 'false');
+      });
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, [overlayBehavior]);
+
   const handleCardClick = useCallback((e: React.MouseEvent) => {
     // Don't trigger selection if clicking on links or zoom indicator
     const target = e.target as HTMLElement;

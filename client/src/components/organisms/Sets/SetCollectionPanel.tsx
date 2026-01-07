@@ -281,7 +281,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       sx={{
         display: 'flex',
         alignItems: 'flex-start',
-        height: '360px'
+        height: '260px'
       }}
     >
       {/* Expand/Collapse Button */}
@@ -313,7 +313,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
         <Box
           sx={{
             width: '300px',
-            height: '360px',
+            height: '260px',
             bgcolor: 'background.paper',
             border: `1px solid ${theme.palette.mtg.cardBorder}`,
             borderLeft: 'none',

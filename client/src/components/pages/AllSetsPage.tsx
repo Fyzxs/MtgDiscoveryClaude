@@ -305,21 +305,20 @@ export const AllSetsPage: React.FC = () => {
             <CardGridErrorBoundary name="AllSetsGrid">
               <ResponsiveGridAutoFit
                 minItemWidth={{
-                  xs: 140,  // 2 cards on mobile
-                  sm: 160,  // 3+ cards on tablet
-                  md: 180,  // 4+ cards on medium
-                  lg: 200,  // 5+ cards on large
-                  xl: 220,  // 6+ cards on extra large
+                  xs: 140,  // sm card size (140x115)
+                  sm: 160,  // md card size (160x130)
+                  md: 200,  // lg card size (200x260)
+                  lg: 200,  // lg card size
+                  xl: 200,  // lg card size
                 }}
-                spacing={{ xs: 0.5, sm: 0.75, md: 1.5 }}
-                sx={{
-                  // On mobile/tablet, use fixed widths (no stretching)
-                  gridTemplateColumns: {
-                    xs: 'repeat(auto-fill, 140px)',
-                    sm: 'repeat(auto-fill, 160px)',
-                    md: 'repeat(auto-fit, minmax(180px, 1fr))',
-                  },
+                maxItemWidth={{
+                  xs: 140,
+                  sm: 160,
+                  md: 220,
+                  lg: 220,
+                  xl: 220,
                 }}
+                spacing={{ xs: 1, sm: 1.5, md: 2 }}
               >
                 {filteredSets.map((set) => (
                   <MtgSetCard

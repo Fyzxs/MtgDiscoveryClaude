@@ -28,7 +28,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
   const [rulings, setRulings] = useState<Ruling[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(true); // Start expanded
+  const [expanded, setExpanded] = useState(false); // Start collapsed
 
   useEffect(() => {
     if (!rulingsUri) {

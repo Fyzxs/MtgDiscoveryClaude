@@ -54,26 +54,22 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
 
   const handleNavigation = (path: string) => {
     onClose();
-    // Small delay to ensure drawer closes before navigation
-    setTimeout(() => {
-      navigateWithCollector(path);
-    }, 50);
+    navigateWithCollector(path);
   };
 
   const handleSetCodeSubmit = () => {
     if (setCode.trim()) {
       const code = setCode.trim().toLowerCase();
-      setSetCode('');
       onClose();
-      // Small delay to ensure drawer closes before navigation
-      setTimeout(() => {
-        navigateWithCollector(`/set/${code}`);
-      }, 50);
+      navigateWithCollector(`/set/${code}`);
+      setSetCode('');
     }
   };
 
   const handleSetCodeKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
       handleSetCodeSubmit();
     }
   };

@@ -97,9 +97,7 @@ export const SetPage: React.FC = () => {
         onChange: handleSearchChange,
         placeholder: 'Search cards...',
         debounceMs: 300,
-        minWidth: 150,
-        fullWidth: false,
-        sx: { width: 180 }
+        fullWidth: true
       },
       multiSelects: [
         // Card Groups (if multiple groups exist)
