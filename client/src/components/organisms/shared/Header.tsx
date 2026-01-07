@@ -74,6 +74,7 @@ export const Header: React.FC = () => {
           >
             {/* Menu Button */}
             <IconButton
+              type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open navigation menu"
               sx={{ minWidth: 44, minHeight: 44 }}
