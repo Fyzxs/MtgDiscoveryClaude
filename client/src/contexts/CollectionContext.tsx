@@ -13,6 +13,8 @@ interface CollectionContextValue {
   submitCollectionUpdate: (update: CardCollectionUpdate, cardName?: string) => Promise<void>;
   isAnyCardEntering: boolean;
   setIsAnyCardEntering: (isEntering: boolean) => void;
+  getLastDelta: (cardId: string) => number | undefined;
+  lastDeltaVersion: number;
 }
 
 interface UserCollectionItem {
@@ -73,6 +75,14 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
   const { userProfile } = useUser();
   const [addCardToCollection] = useMutation(ADD_CARD_TO_COLLECTION);
 
+  // Track last modification delta per card (for LastDeltaBadge)
+  const lastDeltaMapRef = useRef<Map<string, number>>(new Map());
+  const [lastDeltaVersion, setLastDeltaVersion] = useState(0);
+
+  const getLastDelta = useCallback((cardId: string): number | undefined => {
+    return lastDeltaMapRef.current.get(cardId);
+  }, []);
+
   // REMOVED: Flash animation - now handled directly in MtgCard via DOM for performance
 
   const submitCollectionUpdate = useCallback(async (update: CardCollectionUpdate, cardName?: string) => {
@@ -83,6 +93,10 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       if (!userProfile?.id) {
         throw new Error('User not authenticated');
       }
+
+      // Store last delta for this card (for LastDeltaBadge display)
+      lastDeltaMapRef.current.set(update.cardId, update.count);
+      setLastDeltaVersion(v => v + 1);
 
       // OPTIMIZATION: Use static maps from module scope
       const variables = perfMonitor.measure('collection-prepare-variables', () => ({
@@ -225,7 +239,9 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
   const value: CollectionContextValue = {
     submitCollectionUpdate,
     isAnyCardEntering,
-    setIsAnyCardEntering
+    setIsAnyCardEntering,
+    getLastDelta,
+    lastDeltaVersion
   };
 
   return (
