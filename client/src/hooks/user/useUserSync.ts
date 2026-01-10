@@ -3,7 +3,7 @@ import { logger } from '../../utils/logger';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useQuery } from '@apollo/client/react';
 import { GET_USER_INFO } from '../../graphql/mutations/user';
-import { getTokenReadyState } from '../../graphql/apollo-client';
+import { subscribeToTokenReady } from '../../graphql/apollo-client';
 
 export interface UserProfile {
   id: string;
@@ -59,19 +59,15 @@ export const useUserSync = (): UserSyncState => {
   const [tokenReady, setTokenReady] = useState(false);
 
   useEffect(() => {
-    const checkTokenReady = () => {
-      const ready = getTokenReadyState();
-      if (ready !== tokenReady) {
+    if (isAuthenticated && auth0Loading === false) {
+      // Subscribe to token ready state changes instead of polling
+      const unsubscribe = subscribeToTokenReady((ready) => {
         logger.debug('useUserSync - Token ready state changed:', ready);
         setTokenReady(ready);
-      }
-    };
-
-    if (isAuthenticated && auth0Loading === false) {
-      const interval = setInterval(checkTokenReady, 100);
-      return () => clearInterval(interval);
+      });
+      return unsubscribe;
     }
-  }, [isAuthenticated, auth0Loading, tokenReady]);
+  }, [isAuthenticated, auth0Loading]);
 
   // Only query user info when fully authenticated and token is ready
   const shouldQueryUserInfo = isAuthenticated && auth0Loading === false && tokenReady && user !== undefined;

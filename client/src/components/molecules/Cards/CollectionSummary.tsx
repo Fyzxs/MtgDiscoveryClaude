@@ -29,7 +29,7 @@ const EmojiWithTooltip: React.FC<{ emoji: keyof typeof EMOJI_TOOLTIPS; children:
   }
   return (
     <Tooltip title={EMOJI_TOOLTIPS[emoji]} arrow placement="top">
-      <span role="img" aria-label={EMOJI_TOOLTIPS[emoji]} style={{ cursor: 'help' }}>
+      <span role="img" aria-label={EMOJI_TOOLTIPS[emoji]} style={{ cursor: 'help' }} tabIndex={-1}>
         {children}
       </span>
     </Tooltip>

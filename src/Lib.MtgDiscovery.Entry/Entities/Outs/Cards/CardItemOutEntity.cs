@@ -183,4 +183,7 @@ public class CardItemOutEntity
 
     // User collection data (populated when UserId provided)
     public ICollection<CollectedItemOutEntity> UserCollection { get; set; }
+
+    // User wishlist data (populated when UserId provided)
+    public ICollection<Lib.MtgDiscovery.Entry.Entities.Outs.UserWishlistCards.WishlistItemOutEntity> UserWishlist { get; set; }
 }

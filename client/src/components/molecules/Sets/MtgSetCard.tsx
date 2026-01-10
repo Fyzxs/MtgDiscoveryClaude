@@ -159,20 +159,24 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
     }, 0);
 
     // Total available cards in tracking groups (only those with collecting: true)
-    // Use counts.total which already accounts for all finish types
+    // Use set.groupings[].cardCounts as source of truth for available cards per grouping
     const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => {
+      // Look up the grouping metadata from the set to get accurate card counts
+      const grouping = set.groupings?.find(gr => gr.id === g.setGroupId);
+      const finishCounts = grouping?.cardCounts || g.counts || { total: 0, nonFoil: 0, foil: 0, etched: 0 };
+
       const collectingFinishes = g.collectingFinishes || [];
       let total = 0;
 
       // Sum only the finish types the user is collecting
       if (collectingFinishes.includes('nonFoil')) {
-        total += g.counts.nonFoil;
+        total += finishCounts.nonFoil;
       }
       if (collectingFinishes.includes('foil')) {
-        total += g.counts.foil;
+        total += finishCounts.foil;
       }
       if (collectingFinishes.includes('etched')) {
-        total += g.counts.etched;
+        total += finishCounts.etched;
       }
 
       return sum + total;
@@ -188,7 +192,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
       totalCards: set.userCollection.totalCards,
       percentage
     };
-  }, [hasCollector, set.userCollection]);
+  }, [hasCollector, set.userCollection, set.groupings]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Allow browser's default behavior for modifier keys (CTRL/CMD+click = new tab, etc.)

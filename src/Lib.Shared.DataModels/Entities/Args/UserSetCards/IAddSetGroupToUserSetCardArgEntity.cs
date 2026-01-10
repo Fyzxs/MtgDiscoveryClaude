@@ -4,6 +4,7 @@ namespace Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 public interface IAddSetGroupToUserSetCardArgEntity
 {
+    string UserId { get; }
     string SetId { get; }
     string SetGroupId { get; }
     bool Collecting { get; }

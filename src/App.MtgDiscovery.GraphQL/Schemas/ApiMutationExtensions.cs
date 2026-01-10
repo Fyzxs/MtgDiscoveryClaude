@@ -1,10 +1,12 @@
 ﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Mutations;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,7 @@ internal static class ApiMutationExtensions
             .AddTypeExtension<UserMutationMethods>()
             .AddTypeExtension<UserCardsMutationMethods>()
             .AddTypeExtension<UserSetCardsMutationMethods>()
+            .AddTypeExtension<UserWishlistCardsMutationMethods>()
             // Input types for mutations
             .AddType<AddCardToCollectionArgEntityInputType>()
             .AddType<CollectedItemArgEntityInputType>()
@@ -42,6 +45,14 @@ internal static class ApiMutationExtensions
             .AddType<FailureResponseModelType>()
             .AddType<StatusDataModelType>()
             .AddType<MetaDataModelType>()
+            // UserWishlistCards input types
+            .AddType<AddCardToWishlistArgEntityInputType>()
+            .AddType<WishlistItemArgEntityInputType>()
+            // UserWishlistCards response types
+            .AddType<AddCardToWishlistResponseModelUnionType>()
+            .AddType<UserWishlistSuccessDataResponseModelType>()
+            .AddType<UserWishlistCardOutEntityType>()
+            .AddType<WishlistItemOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

@@ -98,6 +98,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 fullWidth={select.fullWidth !== false}
                 loading={select.loading}
                 disabled={select.disabled}
+                searchable={select.searchable}
               />
             </Grid>
           ))}
@@ -257,6 +258,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               fullWidth={layout === 'vertical' && select.fullWidth !== false}
               loading={select.loading}
               disabled={select.disabled}
+              searchable={select.searchable}
             />
           ))}
 

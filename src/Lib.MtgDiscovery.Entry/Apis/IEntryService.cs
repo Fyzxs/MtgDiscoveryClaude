@@ -8,4 +8,5 @@ public interface IEntryService :
     IUserCardsEntryService,
     IUserCardsQueryEntryService,
     IUserSetCardsQueryEntryService,
-    IUserSetCardsCommandEntryService;
+    IUserSetCardsCommandEntryService,
+    IUserWishlistCardsEntryService;

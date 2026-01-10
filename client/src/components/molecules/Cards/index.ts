@@ -1,13 +1,12 @@
 export { ArtistLinks } from './ArtistLinks';
 export { CardBadges } from './CardBadges';
-export { CardEntryHelpPanel } from './CardEntryHelpPanel';
 export { CardImage } from './CardImage';
 export { CardLinks } from './CardLinks';
 export { CardMetadata } from './CardMetadata';
 export { CardOverlay } from './CardOverlay';
 export { CollectionSummary } from './CollectionSummary';
 export { CollectorInfo } from './CollectorInfo';
-export { GlobalCardEntryHelp } from './GlobalCardEntryHelp';
+export { WishlistSummary } from './WishlistSummary';
 export { ManaCost } from './ManaCost';
 export { QuickEntryKeysFab } from './QuickEntryKeysFab';
 export { RarityCollectorBadge } from './RarityCollectorBadge';

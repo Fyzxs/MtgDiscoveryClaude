@@ -22,6 +22,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
     private readonly ICardNameArgToItrMapper _cardNameArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly IUserWishlistCardByIdsEnrichment _userWishlistCardEnrichment;
     private readonly ICardNameArgToUserCardsNameContextMapper _nameContextMapper;
 
     public CardsByNameEntryService(ILogger logger) : this(
@@ -30,6 +31,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         new CardNameArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
         new UserCardEnrichment(logger),
+        new UserWishlistCardByIdsEnrichment(logger),
         new CardNameArgToUserCardsNameContextMapper())
     { }
 
@@ -39,6 +41,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         ICardNameArgToItrMapper cardNameArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
         IUserCardEnrichment userCardEnrichment,
+        IUserWishlistCardByIdsEnrichment userWishlistCardEnrichment,
         ICardNameArgToUserCardsNameContextMapper nameContextMapper)
     {
         _cardDomainService = cardDomainService;
@@ -46,6 +49,7 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         _cardNameArgToItrMapper = cardNameArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardEnrichment = userCardEnrichment;
+        _userWishlistCardEnrichment = userWishlistCardEnrichment;
         _nameContextMapper = nameContextMapper;
     }
 
@@ -66,6 +70,8 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
             IUserCardsNameItrEntity nameContext = await _nameContextMapper.Map(cardName).ConfigureAwait(false);
             await _userCardEnrichment.EnrichByName(outEntities, nameContext).ConfigureAwait(false);
         }
+
+        await _userWishlistCardEnrichment.Enrich(outEntities, cardName).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

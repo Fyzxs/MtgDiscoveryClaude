@@ -37,6 +37,7 @@ export const QuickEntryKeysFab: React.FC = () => {
     { keys: 'G/I', description: 'Signed' },
     { keys: 'R/P', description: 'Artist Proof' },
     { keys: 'T/M', description: 'Modified/Altered' },
+    { keys: 'Q/Y', description: 'Toggle Wishlist Mode' },
     { keys: 'X', description: 'Negate Quantity' },
     { keys: 'Enter', description: 'Confirm' },
     { keys: 'Esc', description: 'Cancel' }

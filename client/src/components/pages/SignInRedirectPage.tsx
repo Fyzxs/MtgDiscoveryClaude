@@ -7,7 +7,7 @@ import { PageContainer, Section } from '../molecules/layouts';
 import { Heading, BodyText } from '../molecules/text';
 import { LoadingIndicator, StatusMessage } from '../molecules/feedback';
 import { REGISTER_USER } from '../../graphql/mutations/user';
-import { getTokenReadyState } from '../../graphql/apollo-client';
+import { subscribeToTokenReady } from '../../graphql/apollo-client';
 
 interface RegistrationData {
   userId: string;
@@ -32,21 +32,16 @@ export const SignInRedirectPage: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState('Completing sign-in...');
   const [tokenReady, setTokenReady] = useState(false);
 
-  // Monitor token ready state
+  // Monitor token ready state using subscription instead of polling
   useEffect(() => {
-    const checkTokenReady = () => {
-      const ready = getTokenReadyState();
-      if (ready !== tokenReady) {
+    if (isAuthenticated && isLoading === false) {
+      const unsubscribe = subscribeToTokenReady((ready) => {
         logger.debug('SignInRedirectPage - Token ready state changed:', ready);
         setTokenReady(ready);
-      }
-    };
-
-    if (isAuthenticated && isLoading === false) {
-      const interval = setInterval(checkTokenReady, 100);
-      return () => clearInterval(interval);
+      });
+      return unsubscribe;
     }
-  }, [isAuthenticated, isLoading, tokenReady]);
+  }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
     const handleUserSetup = async () => {

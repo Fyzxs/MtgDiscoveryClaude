@@ -227,3 +227,17 @@ export const ALL_SETS_SORT_OPTIONS = [
   ALL_SORT_OPTIONS['release-desc'],
   ALL_SORT_OPTIONS['release-asc']
 ];
+
+// Wishlist page sort options (no collector number since cards span sets)
+export const WISHLIST_PAGE_SORT_OPTIONS = [
+  ALL_SORT_OPTIONS['name-asc'],
+  ALL_SORT_OPTIONS['name-desc'],
+  ALL_SORT_OPTIONS['set-asc'],
+  ALL_SORT_OPTIONS['set-desc'],
+  ALL_SORT_OPTIONS['rarity-asc'],
+  ALL_SORT_OPTIONS['rarity-desc'],
+  ALL_SORT_OPTIONS['price-desc'],
+  ALL_SORT_OPTIONS['price-asc'],
+  ALL_SORT_OPTIONS['release-desc'],
+  ALL_SORT_OPTIONS['release-asc']
+];
