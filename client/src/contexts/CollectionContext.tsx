@@ -6,6 +6,7 @@ import type { CardCollectionUpdate } from '../types/collection';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { gql } from '@apollo/client';
 import { ADD_CARD_TO_COLLECTION } from '../graphql/mutations/addCardToCollection';
+import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useUser } from './UserContext';
 import { useCollectorParam } from '../hooks/useCollectorParam';
 import { perfMonitor } from '../utils/performanceMonitor';
@@ -200,6 +201,22 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
                 userCollection: updatedCard.userCollection
               }
             }));
+          });
+        }
+
+        // Refetch set data so MtgSetCard updates with new collection counts
+        if (update.setCode) {
+          queueMicrotask(() => {
+            apolloClient.query({
+              query: GET_SET_BY_CODE_WITH_GROUPINGS,
+              variables: {
+                codes: {
+                  setCodes: [update.setCode],
+                  userId: targetUserId
+                }
+              },
+              fetchPolicy: 'network-only'
+            }).catch(err => logger.error('Failed to refetch set data:', err));
           });
         }
 
