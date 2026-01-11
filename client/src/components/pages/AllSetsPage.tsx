@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback, startTransition, useTransition, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { Box } from '../atoms';
 import { Heading } from '../molecules/text';
 import { GET_ALL_SETS } from '../../graphql/queries/sets';
@@ -108,16 +107,7 @@ export const AllSetsPage: React.FC = () => {
   };
 
   // URL synchronization is handled automatically by useUrlFilterState
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleSetClick = (setCode?: string) => {
-    if (setCode) {
-      // Preserve existing query parameters (like ctor) when navigating
-      navigate(`/set/${setCode}${location.search}`);
-    }
-  };
+  // MtgSetCard handles navigation with collector param preservation internally
 
   const handleSetTypeChange = useCallback((value: string[]) => {
     showLoading();
@@ -324,7 +314,6 @@ export const AllSetsPage: React.FC = () => {
                   <MtgSetCard
                     key={set.id}
                     set={set}
-                    onSetClick={handleSetClick}
                   />
                 ))}
               </ResponsiveGridAutoFit>

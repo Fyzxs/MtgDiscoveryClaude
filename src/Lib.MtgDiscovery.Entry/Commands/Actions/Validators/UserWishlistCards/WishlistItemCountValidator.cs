@@ -13,11 +13,11 @@ internal sealed class WishlistItemCountValidator : OperationResponseValidator<IA
 
     public sealed class Validator : IValidator<IAddCardToWishlistArgsEntity>
     {
-        public Task<bool> IsValid(IAddCardToWishlistArgsEntity arg) => Task.FromResult(0 < arg.AddUserWishlistCard.UserWishlistCardDetails.Count);
+        public Task<bool> IsValid(IAddCardToWishlistArgsEntity arg) => Task.FromResult(arg.AddUserWishlistCard.UserWishlistCardDetails.Count != 0);
     }
 
     public sealed class Message : OperationResponseMessage
     {
-        public override string AsSystemType() => "Wishlist item count must be greater than zero";
+        public override string AsSystemType() => "Wishlist item count cannot be zero";
     }
 }

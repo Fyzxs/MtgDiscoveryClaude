@@ -155,6 +155,32 @@ export const apolloClient = new ApolloClient({
           },
         },
       },
+      // Prevent normalization of Set-related nested objects to avoid cache merging issues
+      // These types don't have unique IDs, so they should be embedded in their parent
+      SetGrouping: {
+        keyFields: false,
+      },
+      SetGroupingFinishCounts: {
+        keyFields: false,
+      },
+      SetInformationOutEntity: {
+        keyFields: false,
+      },
+      UserSetCardCollecting: {
+        keyFields: false,
+      },
+      FinishCounts: {
+        keyFields: false,
+      },
+      UserSetCardCollectionGroup: {
+        keyFields: false,
+      },
+      UserSetCardGroup: {
+        keyFields: false,
+      },
+      UserSetCardFinishGroup: {
+        keyFields: false,
+      },
     },
   }),
   defaultOptions: {
