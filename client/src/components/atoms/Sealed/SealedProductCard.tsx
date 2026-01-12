@@ -49,6 +49,8 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
   return (
     <Box
       sx={{
+        width: '100%',
+        maxWidth: 250,
         bgcolor: 'grey.900',
         borderRadius: 2,
         overflow: 'hidden',
