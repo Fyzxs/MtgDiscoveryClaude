@@ -1,17 +1,17 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Cli.Sealed.ImageScraper.Dashboard.RazorUI;
+using Cli.Sealed.Ingestion.Dashboard.RazorUI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RazorConsole.Core;
 
-namespace Cli.Sealed.ImageScraper.Dashboard;
+namespace Cli.Sealed.Ingestion.Dashboard;
 
-internal sealed class RazorConsoleImageScraperDashboard : IImageScraperDashboard
+internal sealed class RazorConsoleIngestionDashboard : IIngestionDashboard
 {
-    private readonly ImageScraperDashboardState _state;
+    private readonly IngestionDashboardState _state;
 
-    public RazorConsoleImageScraperDashboard() => _state = new ImageScraperDashboardState();
+    public RazorConsoleIngestionDashboard() => _state = new IngestionDashboardState();
 
     public async Task RunUiAsync()
     {
@@ -20,7 +20,7 @@ internal sealed class RazorConsoleImageScraperDashboard : IImageScraperDashboard
             {
                 services.AddSingleton(_state);
             })
-            .UseRazorConsole<ImageScraperDashboard>();
+            .UseRazorConsole<IngestionDashboard>();
 
         IHost host = hostBuilder.Build();
         await host.RunAsync().ConfigureAwait(false);
@@ -36,13 +36,11 @@ internal sealed class RazorConsoleImageScraperDashboard : IImageScraperDashboard
     public void UpdateProgress(int current, string productName) =>
         _state.UpdateProgress(current, productName);
 
-    public void IncrementDownloaded() => _state.IncrementDownloaded();
+    public void IncrementSuccess() => _state.IncrementSuccess();
 
     public void IncrementSkipped() => _state.IncrementSkipped();
 
     public void IncrementError() => _state.IncrementError();
-
-    public void IncrementNoImage() => _state.IncrementNoImage();
 
     public void AddLog(string message) => _state.AddLog(message);
 
