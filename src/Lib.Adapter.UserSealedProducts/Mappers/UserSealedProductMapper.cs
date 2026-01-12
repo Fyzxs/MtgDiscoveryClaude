@@ -1,4 +1,6 @@
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 
 namespace Lib.Adapter.UserSealedProducts.Mappers;
@@ -20,6 +22,15 @@ internal sealed class UserSealedProductMapper : IUserSealedProductMapper
             ImageUrl = extEntity.ImageUrl,
             Count = extEntity.Count,
             UpdatedAt = extEntity.UpdatedAt
+        };
+    }
+
+    public ReadPointItem MapToReadPoint(string productUuid, string setId)
+    {
+        return new ReadPointItem
+        {
+            Id = new ProvidedCosmosItemId(productUuid),
+            Partition = new ProvidedPartitionKeyValue(setId)
         };
     }
 }
