@@ -11,6 +11,7 @@ export interface CollectionEntryState {
 export interface CardCollectionUpdate {
   cardId: string;
   setId: string;
+  setCode: string;
   setGroupId: string | null;
   count: number;
   finish: CardFinish;
@@ -83,7 +84,7 @@ export interface UserSetCardCollectingCounts {
 export interface UserSetCardCollecting {
   setGroupId: string;
   collecting: boolean;
-  counts: UserSetCardCollectingCounts;
+  counts?: UserSetCardCollectingCounts;
   collectingFinishes?: ('nonFoil' | 'foil' | 'etched')[];
 }
 
@@ -107,7 +108,7 @@ export interface UserSetCardCollection {
   totalCards: number;
   uniqueCards: number;
   collecting: UserSetCardCollecting[];
-  groups: UserSetCardCollectionGroup[];
+  groups?: UserSetCardCollectionGroup[];
 }
 
 // Shared types for collection group progress display
@@ -128,4 +129,43 @@ export interface CollectionGroup {
   isCollecting: boolean;
   count?: number;
   finishes: GroupFinishProgress[];
+}
+
+// Wishlist types
+export interface WishlistCardUpdate {
+  cardId: string;
+  setId: string;
+  count: number;
+  finish: CardFinish;
+  special: CardSpecial;
+}
+
+export interface WishlistUpdateResult {
+  success: boolean;
+  card?: unknown;
+  error?: string;
+}
+
+// Entry mode for toggling between collection and wishlist
+export type EntryMode = 'collection' | 'wishlist';
+
+// Wishlist entry from the /wishlist page query
+export interface WishlistEntry {
+  userId: string;
+  cardId: string;
+  cardName: string;
+  setId: string;
+  setCode: string;
+  setName: string;
+  artistIds: string[];
+  cardNameGuid: string;
+  createdAt: string;
+  updatedAt: string;
+  wishlistItems: WishlistEntryItem[];
+}
+
+export interface WishlistEntryItem {
+  finish: string;
+  special: string;
+  count: number;
 }

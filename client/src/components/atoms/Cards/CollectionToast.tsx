@@ -14,7 +14,7 @@ import { CloseIcon } from '../Icons';
 
 export interface ToastMessage {
   id: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'wishlist' | 'wishlist-remove';
   count: number;
   finish: CardFinish;
   special: CardSpecial;
@@ -35,7 +35,7 @@ export const CollectionToast: React.FC<CollectionToastProps> = ({
   autoHideDuration = 10000
 }) => {
   useEffect(() => {
-    if (message.type === 'success' && !message.sticky) {
+    if (message.type !== 'error' && !message.sticky) {
       const timer = setTimeout(() => {
         onClose(message.id);
       }, autoHideDuration);
@@ -47,13 +47,35 @@ export const CollectionToast: React.FC<CollectionToastProps> = ({
   const finishText = FINISH_DISPLAY_NAMES[message.finish];
   const specialText = SPECIAL_DISPLAY_NAMES[message.special];
 
-  const displayText = message.type === 'success'
-    ? `${message.count > 0 ? '+' : ''}${message.count} ${finishText}${specialText ? ` ${specialText}` : ''} Success`
-    : message.errorMessage || `${Math.abs(message.count)} ${finishText}${specialText ? ` ${specialText}` : ''} Failure`;
+  const getDisplayText = () => {
+    switch (message.type) {
+      case 'success':
+        return `${message.count > 0 ? '+' : ''}${message.count} ${finishText}${specialText ? ` ${specialText}` : ''} Added to Collection`;
+      case 'wishlist':
+        return `♡ ${message.count > 0 ? '+' : ''}${message.count} ${finishText}${specialText ? ` ${specialText}` : ''} Added to Wishlist`;
+      case 'wishlist-remove':
+        return `♡ -${Math.abs(message.count)} ${finishText}${specialText ? ` ${specialText}` : ''} Removed from Wishlist`;
+      case 'error':
+        return message.errorMessage || `${Math.abs(message.count)} ${finishText}${specialText ? ` ${specialText}` : ''} Failed`;
+      default:
+        return '';
+    }
+  };
+
+  const displayText = getDisplayText();
+
+  // Map wishlist types to MUI severity (info for wishlist actions)
+  const getSeverity = (): 'success' | 'error' | 'info' => {
+    if (message.type === 'error') return 'error';
+    if (message.type === 'wishlist' || message.type === 'wishlist-remove') return 'info';
+    return 'success';
+  };
+
+  const severity = getSeverity();
 
   return (
     <Alert
-      severity={message.type}
+      severity={severity}
       sx={{
         minWidth: 300,
         boxShadow: 3,
@@ -67,7 +89,7 @@ export const CollectionToast: React.FC<CollectionToastProps> = ({
           size="small"
           onClick={() => onClose(message.id)}
           sx={{
-            color: message.type === 'error' ? 'error.contrastText' : 'success.contrastText'
+            color: severity === 'error' ? 'error.contrastText' : severity === 'info' ? 'info.contrastText' : 'success.contrastText'
           }}
         >
           <CloseIcon fontSize="small" />

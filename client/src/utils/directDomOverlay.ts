@@ -49,6 +49,42 @@ class DirectDomOverlay {
         border-top-color: #f44336 !important;
       }
 
+      /* Mode label at top of overlay */
+      .dom-overlay-mode {
+        font-size: 0.75rem !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        margin-bottom: 4px !important;
+      }
+
+      .dom-overlay-mode::after {
+        content: 'collection update' !important;
+      }
+
+      body[data-entry-mode="wishlist"] .dom-overlay-mode::after {
+        content: '♡ Wishlist ♡' !important;
+      }
+
+      body[data-entry-mode="wishlist"] .dom-overlay-mode {
+        color: #f48fb1 !important;
+      }
+
+      /* Wishlist mode styling */
+      body[data-entry-mode="wishlist"] .direct-dom-overlay {
+        background: rgba(45, 20, 45, 0.95) !important;
+        border-top: 2px solid #e91e63 !important;
+      }
+
+      body[data-entry-mode="wishlist"] .dom-overlay-count {
+        color: #e91e63 !important;
+      }
+
+      body[data-entry-mode="wishlist"] .dom-overlay-count.negative {
+        color: #f44336 !important;
+      }
+
       .dom-overlay-count {
         font-size: 3rem !important;
         font-weight: bold !important;
@@ -194,6 +230,11 @@ class DirectDomOverlay {
     const overlay = document.createElement('div');
     overlay.className = 'direct-dom-overlay';
     overlay.dataset.overlayFor = cardId;
+
+    // Create mode label at top
+    const modeLabel = document.createElement('div');
+    modeLabel.className = 'dom-overlay-mode';
+    overlay.appendChild(modeLabel);
 
     // Create count display
     const count = document.createElement('div');

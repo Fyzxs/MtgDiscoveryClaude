@@ -9,6 +9,7 @@ internal sealed class AddSetGroupToUserSetCardArgsValidatorContainer : Validator
 {
     public AddSetGroupToUserSetCardArgsValidatorContainer() : base([
             new AuthUserNotEmptyValidator(),
+            new AuthUserMatchesUserIdSetCardValidator(),
             new SetIdNotEmptyValidator(),
             new SetGroupIdNotEmptyValidator(),
             new CountNotNegativeValidator(),

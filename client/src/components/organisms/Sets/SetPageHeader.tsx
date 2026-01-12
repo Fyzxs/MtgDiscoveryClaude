@@ -74,7 +74,7 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
             </Box>
 
             <Box sx={{ position: 'relative' }}>
-              <MtgSetCard key={refreshTrigger} set={setInfo} />
+              <MtgSetCard key={refreshTrigger} set={setInfo} expanded />
               {/* Only render panel on desktop (positioned to side of card) */}
               {showCollectionPanel && (
                 <Box sx={{ position: 'absolute', left: '100%', top: 0 }}>

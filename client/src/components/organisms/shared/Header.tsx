@@ -13,13 +13,14 @@ import { useTheme } from '../../atoms';
 import { SearchInput } from '../../molecules/shared/SearchInput';
 import { AuthButton } from '../../auth/AuthButton';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
-import { SearchIcon, ArrowDropDownIcon, MenuIcon } from '../../atoms/Icons';
+import { SearchIcon, ArrowDropDownIcon, MenuIcon, CollectionsBookmarkIcon } from '../../atoms/Icons';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import { NavigationDrawer } from './NavigationDrawer';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
   const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(null);
+  const [browseAnchorEl, setBrowseAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const theme = useTheme();
   const { buildUrlWithCollector, navigateWithCollector, collectorParam } = useCollectorNavigation();
@@ -45,7 +46,13 @@ export const Header: React.FC = () => {
     setSearchAnchorEl(null);
   };
 
-  // handleSearchMenuClick no longer needed - using href directly
+  const handleBrowseMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setBrowseAnchorEl(event.currentTarget);
+  };
+
+  const handleBrowseMenuClose = () => {
+    setBrowseAnchorEl(null);
+  };
 
   // Mobile Header
   if (showMobileHeader) {
@@ -193,25 +200,86 @@ export const Header: React.FC = () => {
             />
           </Box>
 
+          {/* Browse Dropdown */}
           <Button
             color="primary"
-            component="a"
-            href={buildUrlWithCollector('/sets')}
+            onClick={handleBrowseMenuOpen}
+            startIcon={<CollectionsBookmarkIcon />}
+            endIcon={<ArrowDropDownIcon />}
             role="menuitem"
-            aria-label="Browse all Magic sets"
-            onClick={(e: React.MouseEvent) => {
-              e.preventDefault();
-              navigateWithCollector('/sets');
-            }}
+            aria-label="Browse options"
+            aria-haspopup="true"
+            aria-expanded={Boolean(browseAnchorEl)}
             sx={{
               textTransform: 'none',
-              fontWeight: 500,
-              textDecoration: 'none'
+              fontWeight: 500
             }}
           >
-            All Sets
+            Browse
           </Button>
-          
+          <Menu
+            anchorEl={browseAnchorEl}
+            open={Boolean(browseAnchorEl)}
+            onClose={handleBrowseMenuClose}
+            role="menu"
+            aria-label="Browse menu"
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+          >
+            <MenuItem
+              component="a"
+              href={buildUrlWithCollector('/sets')}
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault();
+                handleBrowseMenuClose();
+                navigateWithCollector('/sets');
+              }}
+              role="menuitem"
+              aria-label="Browse all Magic sets"
+              sx={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              All Sets
+            </MenuItem>
+            {collectorParam.hasCollector && (
+              <MenuItem
+                component="a"
+                href={buildUrlWithCollector('/wishlist')}
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handleBrowseMenuClose();
+                  navigateWithCollector('/wishlist');
+                }}
+                role="menuitem"
+                aria-label="View your wishlist"
+                sx={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                Wishlist
+              </MenuItem>
+            )}
+            {collectorParam.hasCollector && (
+              <MenuItem
+                component="a"
+                href={buildUrlWithCollector('/convention-signing')}
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handleBrowseMenuClose();
+                  navigateWithCollector('/convention-signing');
+                }}
+                role="menuitem"
+                aria-label="Plan cards to get signed at conventions"
+                sx={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                Convention Signing
+              </MenuItem>
+            )}
+          </Menu>
+
           {/* Search Dropdown */}
           <Button
             color="primary"
@@ -272,22 +340,6 @@ export const Header: React.FC = () => {
             >
               Artists
             </MenuItem>
-            {collectorParam.hasCollector && (
-              <MenuItem
-                component="a"
-                href={buildUrlWithCollector('/convention-signing')}
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  handleSearchMenuClose();
-                  navigateWithCollector('/convention-signing');
-                }}
-                role="menuitem"
-                aria-label="Plan cards to get signed at conventions"
-                sx={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                Convention Signing
-              </MenuItem>
-            )}
           </Menu>
         </Box>
 

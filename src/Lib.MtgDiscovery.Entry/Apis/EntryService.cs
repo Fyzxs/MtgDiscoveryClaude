@@ -33,6 +33,7 @@ public sealed class EntryService : IEntryService
     private readonly IUserCardsQueryEntryService _userCardsQueryEntryService;
     private readonly IUserSetCardsQueryEntryService _userSetCardsQueryEntryService;
     private readonly IUserSetCardsCommandEntryService _userSetCardsCommandEntryService;
+    private readonly IUserWishlistCardsEntryService _userWishlistCardsEntryService;
 
     public EntryService(ILogger logger) : this(
         new CardEntryService(logger),
@@ -42,7 +43,8 @@ public sealed class EntryService : IEntryService
         new UserCardsEntryService(logger),
         new UserCardsQueryEntryService(logger),
         new UserSetCardsQueryEntryService(logger),
-        new UserSetCardsCommandEntryService(logger))
+        new UserSetCardsCommandEntryService(logger),
+        new UserWishlistCardsEntryService(logger))
     { }
 
     private EntryService(
@@ -53,7 +55,8 @@ public sealed class EntryService : IEntryService
         IUserCardsEntryService userCardsEntryService,
         IUserCardsQueryEntryService userCardsQueryEntryService,
         IUserSetCardsQueryEntryService userSetCardsQueryEntryService,
-        IUserSetCardsCommandEntryService userSetCardsCommandEntryService)
+        IUserSetCardsCommandEntryService userSetCardsCommandEntryService,
+        IUserWishlistCardsEntryService userWishlistCardsEntryService)
     {
         _cardEntryService = cardEntryService;
         _setEntryService = setEntryService;
@@ -63,6 +66,7 @@ public sealed class EntryService : IEntryService
         _userCardsQueryEntryService = userCardsQueryEntryService;
         _userSetCardsQueryEntryService = userSetCardsQueryEntryService;
         _userSetCardsCommandEntryService = userSetCardsCommandEntryService;
+        _userWishlistCardsEntryService = userWishlistCardsEntryService;
     }
 
     public Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => _cardEntryService.CardsByIdsAsync(args);
@@ -106,4 +110,8 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args) => _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args);
 
     public Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args) => _userSetCardsCommandEntryService.AddCardToSetAsync(args);
+
+    public Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToWishlistAsync(IAddCardToWishlistArgsEntity args) => _userWishlistCardsEntryService.AddCardToWishlistAsync(args);
+
+    public Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args) => _userWishlistCardsEntryService.GetUserWishlistAsync(args);
 }

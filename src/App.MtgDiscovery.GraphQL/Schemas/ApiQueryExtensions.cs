@@ -4,6 +4,7 @@ using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.Signing;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Queries;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<ArtistQueryMethods>()
             .AddTypeExtension<UserCardsQueryMethods>()
             .AddTypeExtension<UserInfoQueryMethods>()
+            .AddTypeExtension<UserWishlistCardsQueryMethods>()
             // Input types for queries
             .AddType<UserCardsBySetArgEntityInputType>()
             .AddType<UserCardsByIdsArgEntityInputType>()
@@ -54,6 +56,11 @@ internal static class ApiQueryExtensions
             .AddType<SigningCardOutEntityType>()
             // UserInfo query types
             .AddType<UserInfoOutEntityType>()
+            // UserWishlistCards query types
+            .AddType<UserWishlistResponseModelUnionType>()
+            .AddType<UserWishlistSuccessDataResponseModelType>()
+            .AddType<UserWishlistCardOutEntityType>()
+            .AddType<WishlistItemOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

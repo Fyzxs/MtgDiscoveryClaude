@@ -13,7 +13,7 @@ import {
 import { getLegalityColor, getRarityColor } from '../../../theme';
 import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
-import { CollectionSummary, ManaCost, RulingsDisplay } from '../../molecules';
+import { CollectionSummary, WishlistSummary, ManaCost, RulingsDisplay } from '../../molecules';
 import { RarityBadge, PriceDisplay } from '../../atoms';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { CardImageDisplay } from './CardImageDisplay';
@@ -388,17 +388,33 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
 
             <Divider />
 
-            {/* Collection (if collector) */}
-            {hasCollector && card.userCollection && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="subtitle2" fontWeight="bold">
-                  Collection:
-                </Typography>
-                <CollectionSummary
-                  collectionData={card.userCollection}
-                  size="small"
-                  forceInteractive
-                />
+            {/* Collection & Wishlist (if collector) */}
+            {hasCollector && (card.userCollection || card.userWishlist) && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                {card.userCollection && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Collection:
+                    </Typography>
+                    <CollectionSummary
+                      collectionData={card.userCollection}
+                      size="small"
+                      forceInteractive
+                    />
+                  </Box>
+                )}
+                {card.userWishlist && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Wishlist:
+                    </Typography>
+                    <WishlistSummary
+                      wishlistData={card.userWishlist}
+                      size="small"
+                      forceInteractive
+                    />
+                  </Box>
+                )}
               </Box>
             )}
 

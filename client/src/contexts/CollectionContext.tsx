@@ -6,7 +6,9 @@ import type { CardCollectionUpdate } from '../types/collection';
 import { useMutation, useApolloClient } from '@apollo/client/react';
 import { gql } from '@apollo/client';
 import { ADD_CARD_TO_COLLECTION } from '../graphql/mutations/addCardToCollection';
+import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useUser } from './UserContext';
+import { useCollectorParam } from '../hooks/useCollectorParam';
 import { perfMonitor } from '../utils/performanceMonitor';
 
 interface CollectionContextValue {
@@ -73,6 +75,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
   const toastStackRef = useRef<NotificationToastStackRef>(null);
   const [isAnyCardEntering, setIsAnyCardEntering] = useState(false);
   const { userProfile } = useUser();
+  const { collectorId } = useCollectorParam();
   const [addCardToCollection] = useMutation(ADD_CARD_TO_COLLECTION);
 
   // Track last modification delta per card (for LastDeltaBadge)
@@ -88,14 +91,23 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
   const submitCollectionUpdate = useCallback(async (update: CardCollectionUpdate, cardName?: string) => {
     perfMonitor.start('collection-update-total');
 
+    // Save previous delta for rollback on failure (before try block for catch access)
+    const previousDelta = lastDeltaMapRef.current.get(update.cardId);
+    let deltaWasSet = false;
+    // Save original collection for rollback on failure
+    let originalCollection: UserCollectionItem[] | null = null;
+
     try {
       // Fast-path validation - moved before any processing
       if (!userProfile?.id) {
         throw new Error('User not authenticated');
       }
+      // Use ctor from URL if present, otherwise use logged-in user's ID
+      const targetUserId = collectorId || userProfile.id;
 
       // Store last delta for this card (for LastDeltaBadge display)
       lastDeltaMapRef.current.set(update.cardId, update.count);
+      deltaWasSet = true;
       setLastDeltaVersion(v => v + 1);
 
       // OPTIMIZATION: Use static maps from module scope
@@ -103,7 +115,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
         args: {
           cardId: update.cardId,
           setId: update.setId,
-          userId: userProfile.id,
+          userId: targetUserId,
           userCardDetails: {
             finish: FINISH_MAP[update.finish] || 'nonfoil',
             special: SPECIAL_MAP[update.special] || 'none',
@@ -130,6 +142,8 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       }) : null;
 
       const currentCollection = (cachedCard as CachedCard)?.userCollection || [];
+      // Save for rollback
+      originalCollection = [...currentCollection];
       const targetFinish = FINISH_MAP[update.finish] || 'nonfoil';
       const targetSpecial = SPECIAL_MAP[update.special] || 'none';
 
@@ -190,6 +204,22 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
           });
         }
 
+        // Refetch set data so MtgSetCard updates with new collection counts
+        if (update.setCode) {
+          queueMicrotask(() => {
+            apolloClient.query({
+              query: GET_SET_BY_CODE_WITH_GROUPINGS,
+              variables: {
+                codes: {
+                  setCodes: [update.setCode],
+                  userId: targetUserId
+                }
+              },
+              fetchPolicy: 'network-only'
+            }).catch(err => logger.error('Failed to refetch set data:', err));
+          });
+        }
+
         // OPTIMIZATION: Defer toast to prevent blocking
         queueMicrotask(() => {
           toastStackRef.current?.addToast({
@@ -209,6 +239,27 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
     } catch (error) {
       perfMonitor.end('collection-update-total');
       logger.error('Collection update failed:', error);
+
+      // Revert delta badge to previous state on failure (only if we set it)
+      if (deltaWasSet) {
+        if (previousDelta === undefined) {
+          lastDeltaMapRef.current.delete(update.cardId);
+        } else {
+          lastDeltaMapRef.current.set(update.cardId, previousDelta);
+        }
+        setLastDeltaVersion(v => v + 1);
+      }
+
+      // Revert optimistic UI update by dispatching original collection
+      if (originalCollection !== null) {
+        window.dispatchEvent(new CustomEvent('collection-updated', {
+          detail: {
+            cardId: update.cardId,
+            setId: update.setId,
+            userCollection: originalCollection
+          }
+        }));
+      }
 
       let errorMessage = 'Update failed';
       if (error instanceof Error) {
@@ -234,7 +285,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       });
       throw error;
     }
-  }, [addCardToCollection, userProfile, apolloClient.cache]);
+  }, [addCardToCollection, userProfile, collectorId, apolloClient.cache]);
 
   const value: CollectionContextValue = {
     submitCollectionUpdate,

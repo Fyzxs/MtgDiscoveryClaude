@@ -37,10 +37,10 @@ interface UserSetCardData {
   collecting: {
     setGroupId: string;
     collecting: boolean;
-    count: number;
-    collectingFinishes: string[];
+    count?: number;
+    collectingFinishes?: string[];
   }[];
-  groups: {
+  groups?: {
     setGroupId: string;
     group: {
       nonFoil: { cards: string[] };
@@ -78,7 +78,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
 
       // Build detailed group information for ALL groups (not just collecting ones)
       const groups: CollectionGroup[] = userSetData.collecting.map(collectingGroup => {
-        const groupData = userSetData.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
+        const groupData = userSetData.groups?.find(g => g.setGroupId === collectingGroup.setGroupId);
 
         const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
         const foilCollected = groupData?.group.foil.cards.length || 0;
@@ -127,7 +127,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
       // Calculate actual cards collected in tracking groups (only those with collecting: true)
       // Only count finishes that the user is collecting
       const collectedInTrackingGroups = collectingGroups.reduce((sum, collectingGroup) => {
-        const groupData = userSetData.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
+        const groupData = userSetData.groups?.find(g => g.setGroupId === collectingGroup.setGroupId);
         if (!groupData) {
           return sum;
         }
@@ -149,10 +149,26 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
       }, 0);
 
       // Total available cards in tracking groups (only those with collecting: true)
-      // Multiply count by the number of finishes being collected
+      // Use set.groupings[].cardCounts as source of truth for available cards per grouping
       const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => {
-        const finishCount = (g.collectingFinishes || []).length;
-        return sum + (g.count * finishCount);
+        // Look up the grouping metadata from the set to get accurate card counts
+        const grouping = set.groupings?.find(gr => gr.id === g.setGroupId);
+        const finishCounts = grouping?.cardCounts || { total: 0, nonFoil: 0, foil: 0, etched: 0 };
+
+        const collectingFinishes = g.collectingFinishes || [];
+        let total = 0;
+
+        if (collectingFinishes.includes('nonFoil')) {
+          total += finishCounts.nonFoil;
+        }
+        if (collectingFinishes.includes('foil')) {
+          total += finishCounts.foil;
+        }
+        if (collectingFinishes.includes('etched')) {
+          total += finishCounts.etched;
+        }
+
+        return sum + total;
       }, 0);
 
       // If no groups are being collected, show 0% but still return the groups

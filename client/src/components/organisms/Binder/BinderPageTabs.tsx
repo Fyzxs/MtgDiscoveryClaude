@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useEffect } from 'react';
 import { Box } from '../../atoms';
 import { PageTab } from '../../atoms/Binder';
+import type { Card } from '../../../types/card';
 
 interface BinderPageTabsProps {
   /** Current page number (1-indexed) */
@@ -11,6 +12,12 @@ interface BinderPageTabsProps {
   onPageSelect: (page: number) => void;
   /** Whether in book mode (affects click behavior) */
   bookMode?: boolean;
+  /** Function to get cards for a specific page */
+  getPageCards?: (pageNum: number) => (Card | null)[];
+  /** Set of collected card IDs */
+  collectedCardIds?: Set<string>;
+  /** Whether there is a collector viewing */
+  hasCollector?: boolean;
 }
 
 /** Fixed spacing between tabs in pixels */
@@ -24,7 +31,10 @@ export const BinderPageTabs: React.FC<BinderPageTabsProps> = ({
   currentPage,
   totalPages,
   onPageSelect,
-  bookMode = false
+  bookMode = false,
+  getPageCards,
+  collectedCardIds,
+  hasCollector = false
 }) => {
   // In book mode, clicking a tab navigates to the spread containing that page
   const handleTabClick = (pageNum: number) => {
@@ -65,6 +75,28 @@ export const BinderPageTabs: React.FC<BinderPageTabsProps> = ({
     return { leftTabs: left, rightTabs: right };
   }, [totalPages, lastDisplayedPage]);
 
+  // Calculate which pages have missing cards (only when collector is viewing)
+  const pagesWithMissingCards = useMemo(() => {
+    const missing = new Set<number>();
+
+    if (!hasCollector || !getPageCards || !collectedCardIds) {
+      return missing;
+    }
+
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      const pageCards = getPageCards(pageNum);
+      const hasMissing = pageCards.some(card => {
+        if (card === null) return false;
+        return !collectedCardIds.has(card.id);
+      });
+      if (hasMissing) {
+        missing.add(pageNum);
+      }
+    }
+
+    return missing;
+  }, [hasCollector, getPageCards, collectedCardIds, totalPages]);
+
   // Simple vertical position for single column
   const getTabTopOffset = (index: number) => index * TAB_HEIGHT;
 
@@ -89,14 +121,14 @@ export const BinderPageTabs: React.FC<BinderPageTabsProps> = ({
   }, [currentPage, leftTabs.length]);
 
   // Common scrollable container styles
-  // Height matches binder page aspect ratio (3:4) at various widths
+  // Height matches binder page calculation: (100dvh - 220px) * 0.75
   const scrollContainerSx = {
     width: 32,
-    maxHeight: { xs: 480, sm: 600, md: 733, lg: 800 },
+    // Match binder page height across all breakpoints
+    maxHeight: 'calc((100dvh - 220px) * 0.75)',
     overflowY: 'auto',
     overflowX: 'hidden',
     flexShrink: 0,
-    alignSelf: 'flex-start',
     // Hide scrollbar but keep functionality
     scrollbarWidth: 'none',
     '&::-webkit-scrollbar': { display: 'none' }
@@ -104,13 +136,14 @@ export const BinderPageTabs: React.FC<BinderPageTabsProps> = ({
 
   // Render left tabs (pages already viewed)
   const leftTabsElement = leftTabs.length > 0 ? (
-    <Box ref={leftScrollRef} sx={scrollContainerSx}>
+    <Box ref={leftScrollRef} data-component="binder-tabs-left" sx={scrollContainerSx}>
       <Box sx={{ position: 'relative', height: leftTabs.length * TAB_HEIGHT }}>
         {leftTabs.map((pageNum, index) => (
           <PageTab
             key={`left-${pageNum}`}
             pageNumber={pageNum}
             isActive={pageNum === currentPage || (bookMode && pageNum >= lastDisplayedPage - 1 && pageNum <= lastDisplayedPage)}
+            hasMissingCards={pagesWithMissingCards.has(pageNum)}
             onClick={() => handleTabClick(pageNum)}
             side="left"
             topOffset={getTabTopOffset(index)}
@@ -122,13 +155,14 @@ export const BinderPageTabs: React.FC<BinderPageTabsProps> = ({
 
   // Render right tabs (pages not yet viewed)
   const rightTabsElement = rightTabs.length > 0 ? (
-    <Box sx={scrollContainerSx}>
+    <Box data-component="binder-tabs-right" sx={scrollContainerSx}>
       <Box sx={{ position: 'relative', height: rightTabs.length * TAB_HEIGHT }}>
         {rightTabs.map((pageNum, index) => (
           <PageTab
             key={`right-${pageNum}`}
             pageNumber={pageNum}
             isActive={false}
+            hasMissingCards={pagesWithMissingCards.has(pageNum)}
             onClick={() => handleTabClick(pageNum)}
             side="right"
             topOffset={getTabTopOffset(index)}

@@ -44,26 +44,10 @@ const computeCollectionStats = (sets: MtgSet[]): CollectionStats => {
       const collectingGroups = userCollection?.collecting?.filter(c => c.collecting === true) ?? [];
 
       if (collectingGroups.length > 0) {
-        // Calculate completion based on collected finishes in collecting groups
-        const collected = collectingGroups.reduce((sum, cg) => {
-          const groupData = userCollection?.groups?.find(g => g.setGroupId === cg.setGroupId);
-          if (!groupData) return sum;
-          const finishes = cg.collectingFinishes ?? [];
-          let groupTotal = 0;
-          if (finishes.includes('nonFoil')) groupTotal += groupData.group.nonFoil.cards.length;
-          if (finishes.includes('foil')) groupTotal += groupData.group.foil.cards.length;
-          if (finishes.includes('etched')) groupTotal += groupData.group.etched.cards.length;
-          return sum + groupTotal;
-        }, 0);
-
-        const total = collectingGroups.reduce((sum, g) => {
-          const finishes = g.collectingFinishes ?? [];
-          let groupTotal = 0;
-          if (finishes.includes('nonFoil')) groupTotal += g.counts.nonFoil;
-          if (finishes.includes('foil')) groupTotal += g.counts.foil;
-          if (finishes.includes('etched')) groupTotal += g.counts.etched;
-          return sum + groupTotal;
-        }, 0);
+        // Use uniqueCards directly - no need to calculate from cards arrays
+        const collected = userCollection?.uniqueCards ?? 0;
+        // Use set-level card count as the total (most accurate source of truth)
+        const total = set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount;
 
         // Only count as collecting if total > 0 (matches progress bar display logic)
         if (total > 0) {

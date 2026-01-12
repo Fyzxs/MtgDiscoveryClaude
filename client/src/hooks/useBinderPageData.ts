@@ -4,6 +4,7 @@ import { useCardQueries } from './useCardQueries';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useCollectorParam } from './useCollectorParam';
 import { useCollectionUpdates } from './useCollectionUpdates';
+import { useWishlistUpdates } from './useWishlistUpdates';
 import { useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { parseCollectorNumber } from '../config/cardSortOptions';
 import type { Card } from '../types/card';
@@ -42,8 +43,9 @@ export const useBinderPageData = (setCode: string | undefined) => {
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
 
-  // Listen for collection updates
+  // Listen for collection and wishlist updates
   useCollectionUpdates(cards, setCards);
+  useWishlistUpdates(cards, setCards);
 
   // Load cards effect
   useEffect(() => {

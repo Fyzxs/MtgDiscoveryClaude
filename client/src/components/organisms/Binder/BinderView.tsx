@@ -112,110 +112,119 @@ export const BinderView: React.FC<BinderViewProps> = ({
     currentPage,
     totalPages,
     onPageSelect: onPageChange,
-    bookMode
+    bookMode,
+    getPageCards,
+    collectedCardIds,
+    hasCollector
   });
 
   return (
     <Box
       ref={containerRef}
+      data-component="binder-view"
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'flex-start',
-        gap: 1,
-        py: 2,
+        // Mobile: align to top, Desktop: stretch to fill height
+        alignItems: { xs: 'flex-start', lg: 'stretch' },
+        gap: 0,
+        py: 1,
         px: { xs: 1, sm: 2 },
-        minHeight: { xs: 500, sm: 600, md: 700 },
+        // On mobile/tablet: use minHeight for natural flow
+        // On desktop+: fill parent container height
+        minHeight: { xs: 500, sm: 600, md: 700, lg: 0 },
+        height: '100%',
+        maxHeight: '100%',
+        overflow: 'hidden',
         touchAction: 'pan-y' // Allow vertical scroll, capture horizontal swipes
       }}
     >
-      {/* Left tabs - next to left card */}
-      {leftTabsElement}
-
       {/* Book mode: always show two-page layout */}
       {bookMode && (
         <>
-          {/* Left page or empty placeholder */}
-          {leftPageNum !== null ? (
-            <BinderPageGrid
-              cards={getPageCards(leftPageNum)}
-              collectedCardIds={collectedCardIds}
-              pageNumber={leftPageNum}
-              showPageNumber={true}
-              hasCollector={hasCollector}
-            />
-          ) : (
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: { xs: 360, sm: 450, md: 550, lg: 600 },
-                aspectRatio: '3 / 4',
-                bgcolor: 'grey.900',
-                borderRadius: 2,
-                border: '2px dashed',
-                borderColor: 'grey.800',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: 0.5
-              }}
-            />
-          )}
-
-          {/* Spine/divider */}
+          {/* Left section: tabs + page */}
           <Box
             sx={{
-              width: 4,
-              minHeight: { xs: 500, sm: 600, md: 700 },
-              bgcolor: 'grey.700',
-              borderRadius: 1,
-              alignSelf: 'stretch',
-              display: { xs: 'none', md: 'block' }
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-start',
+              gap: 0.5,
+              minWidth: 0,
+              overflow: 'hidden'
             }}
-          />
+          >
+            {leftTabsElement}
+            {/* Page wrapper for divider positioning */}
+            <Box sx={{ position: 'relative', flex: 1, minWidth: 0 }}>
+              <BinderPageGrid
+                cards={leftPageNum !== null ? getPageCards(leftPageNum) : Array(9).fill(null)}
+                collectedCardIds={collectedCardIds}
+                pageNumber={leftPageNum ?? 0}
+                hasCollector={hasCollector}
+              />
+              {/* Spine/divider */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  right: -2,
+                  top: 0,
+                  bottom: 0,
+                  width: 4,
+                  bgcolor: 'grey.700',
+                  borderRadius: 1,
+                  display: { xs: 'none', md: 'block' }
+                }}
+              />
+            </Box>
+          </Box>
 
-          {/* Right page or empty placeholder */}
-          {rightPageNum !== null && rightPageNum <= totalPages ? (
+          {/* Right section: page + tabs */}
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              gap: 0.5,
+              minWidth: 0,
+              overflow: 'hidden'
+            }}
+          >
             <BinderPageGrid
-              cards={getPageCards(rightPageNum)}
+              cards={rightPageNum !== null && rightPageNum <= totalPages ? getPageCards(rightPageNum) : Array(9).fill(null)}
               collectedCardIds={collectedCardIds}
-              pageNumber={rightPageNum}
-              showPageNumber={true}
+              pageNumber={rightPageNum ?? 0}
               hasCollector={hasCollector}
             />
-          ) : (
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: { xs: 360, sm: 450, md: 550, lg: 600 },
-                aspectRatio: '3 / 4',
-                bgcolor: 'grey.900',
-                borderRadius: 2,
-                border: '2px dashed',
-                borderColor: 'grey.800',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: 0.5
-              }}
-            />
-          )}
+            {rightTabsElement}
+          </Box>
         </>
       )}
 
       {/* Single page mode (non-book) */}
       {!bookMode && rightPageNum !== null && rightPageNum <= totalPages && (
-        <BinderPageGrid
-          cards={getPageCards(rightPageNum)}
-          collectedCardIds={collectedCardIds}
-          pageNumber={rightPageNum}
-          showPageNumber={true}
-          hasCollector={hasCollector}
-        />
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            gap: 0.5,
+            width: '100%',
+            overflow: 'hidden'
+          }}
+        >
+          {leftTabsElement}
+          <BinderPageGrid
+            cards={getPageCards(rightPageNum)}
+            collectedCardIds={collectedCardIds}
+            pageNumber={rightPageNum}
+            hasCollector={hasCollector}
+          />
+          {rightTabsElement}
+        </Box>
       )}
-
-      {/* Right tabs - next to right card */}
-      {rightTabsElement}
     </Box>
   );
 };
