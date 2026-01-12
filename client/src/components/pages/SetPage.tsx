@@ -10,6 +10,8 @@ import { SetPageFilters } from '../organisms/Sets/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/Sets/SetPageCardDisplay';
 import { SealedProductGrid } from '../organisms/Sealed';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
+import { MobileFilterBar } from '../molecules/shared/MobileFilterBar';
+import { FilterDrawer } from '../organisms/filters/FilterDrawer';
 import { useSetPageData } from '../../hooks/useSetPageData';
 import { useSealedProductsData } from '../../hooks/useSealedProductsData';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
@@ -245,23 +247,24 @@ export const SetPage: React.FC = () => {
     );
   }
 
+  // Build results summary text for mobile bar
+  const resultsSummary = `${currentCount} of ${cards.length} cards`;
+
   // Render using template composition pattern
   return (
-    <SetPageTemplate
+    <>
+      <SetPageTemplate
       isLoading={isLoading}
       error={firstError}
       currentCount={activeTab === 'cards' ? currentCount : sealedProducts.length}
       totalCount={activeTab === 'cards' ? cards.length : sealedProducts.length}
-      // Mobile layout props - only for cards tab
-      useMobileLayout={useMobileLayout && activeTab === 'cards'}
+      // Disable template's mobile layout - we'll handle it manually inside Cards tab
+      useMobileLayout={false}
       filterDrawerOpen={filterDrawerOpen}
       onFilterDrawerToggle={handleFilterDrawerToggle}
       filterConfig={filterConfig}
       activeFilterCount={activeFilterCount}
       onClearFilters={handleClearFilters}
-      showGroupsToggle={activeTab === 'cards' && hasMultipleGroups}
-      showGroups={filters.showGroups !== false}
-      onShowGroupsChange={handleShowGroupsChange}
       header={
         <Box>
           <SetPageHeader
@@ -296,6 +299,18 @@ export const SetPage: React.FC = () => {
           {/* Cards Tab Content */}
           {activeTab === 'cards' && (
             <Box>
+              {/* Mobile Filter Bar (sticky) - inside Cards tab */}
+              {useMobileLayout && (
+                <MobileFilterBar
+                  activeFilterCount={activeFilterCount}
+                  onFilterClick={handleFilterDrawerToggle}
+                  showGroups={filters.showGroups !== false}
+                  onShowGroupsChange={handleShowGroupsChange}
+                  showGroupsToggle={hasMultipleGroups}
+                  resultsSummary={resultsSummary}
+                />
+              )}
+
               {/* Filters Section */}
               {useMobileLayout === false && (
                 <FilterControlsWithLoading isLoading={isFilteringOrSorting}>
@@ -370,6 +385,19 @@ export const SetPage: React.FC = () => {
         </Box>
       }
     />
+
+      {/* Mobile Filter Drawer */}
+      {useMobileLayout && (
+        <FilterDrawer
+          open={filterDrawerOpen}
+          onClose={handleFilterDrawerToggle}
+          config={filterConfig}
+          title="Filter Cards"
+          activeFilterCount={activeFilterCount}
+          onClear={handleClearFilters}
+        />
+      )}
+    </>
   );
 };
 
