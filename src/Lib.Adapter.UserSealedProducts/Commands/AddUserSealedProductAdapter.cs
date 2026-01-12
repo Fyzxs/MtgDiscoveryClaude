@@ -6,7 +6,7 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Adapter.UserSealedProducts.Exceptions;
-using Lib.Cosmos.Apis.Ids;
+using Lib.Adapter.UserSealedProducts.Mappers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
@@ -22,27 +22,26 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 {
     private readonly ICosmosGopher _sealedProductsGopher;
     private readonly UserSealedProductsScribe _userSealedProductsScribe;
+    private readonly IUserSealedProductMapper _mapper;
 
     public AddUserSealedProductAdapter(ILogger logger)
-        : this(new SealedProductsGopher(logger), new UserSealedProductsScribe(logger))
+        : this(new SealedProductsGopher(logger), new UserSealedProductsScribe(logger), new UserSealedProductMapper())
     { }
 
     private AddUserSealedProductAdapter(
         ICosmosGopher sealedProductsGopher,
-        UserSealedProductsScribe userSealedProductsScribe)
+        UserSealedProductsScribe userSealedProductsScribe,
+        IUserSealedProductMapper mapper)
     {
         _sealedProductsGopher = sealedProductsGopher;
         _userSealedProductsScribe = userSealedProductsScribe;
+        _mapper = mapper;
     }
 
     public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(
         [NotNull] IUserSealedProductXfrEntity input)
     {
-        ReadPointItem productReadPoint = new ReadPointItem
-        {
-            Id = new ProvidedCosmosItemId(input.ProductUuid),
-            Partition = new ProvidedPartitionKeyValue(input.SetId)
-        };
+        ReadPointItem productReadPoint = _mapper.MapToReadPoint(input.ProductUuid, input.SetId);
 
         OpResponse<SealedProductExtEntity> productResponse =
             await _sealedProductsGopher.ReadAsync<SealedProductExtEntity>(productReadPoint).ConfigureAwait(false);
