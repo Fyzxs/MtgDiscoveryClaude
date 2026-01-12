@@ -213,36 +213,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             {product.name}
           </Typography>
         </Box>
-
-        {/* Purchase Links - Bottom right of image (all breakpoints) */}
-        {hasPurchaseLinks && (
-          <Stack
-            direction="row"
-            spacing={0.5}
-            sx={{
-              position: 'absolute',
-              bottom: { xs: 6, sm: 8 },
-              right: { xs: 6, sm: 8 },
-              zIndex: 3,
-            }}
-          >
-            <ExternalLinkIcon
-              type="tcgplayer"
-              url={product.purchaseUrlTcgplayer}
-              size="small"
-            />
-            <ExternalLinkIcon
-              type="cardmarket"
-              url={product.purchaseUrlCardmarket}
-              size="small"
-            />
-            <ExternalLinkIcon
-              type="cardkingdom"
-              url={product.purchaseUrlCardKingdom}
-              size="small"
-            />
-          </Stack>
-        )}
       </Box>
 
       {/* Product Info - Desktop only */}
@@ -273,6 +243,36 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           {product.name}
         </Typography>
       </Box>
+
+      {/* Purchase Links - Bottom right of entire card (all breakpoints) */}
+      {hasPurchaseLinks && (
+        <Stack
+          direction="row"
+          spacing={0.5}
+          sx={{
+            position: 'absolute',
+            bottom: { xs: 6, sm: 8 },
+            right: { xs: 6, sm: 8 },
+            zIndex: 3,
+          }}
+        >
+          <ExternalLinkIcon
+            type="tcgplayer"
+            url={product.purchaseUrlTcgplayer}
+            size="small"
+          />
+          <ExternalLinkIcon
+            type="cardmarket"
+            url={product.purchaseUrlCardmarket}
+            size="small"
+          />
+          <ExternalLinkIcon
+            type="cardkingdom"
+            url={product.purchaseUrlCardKingdom}
+            size="small"
+          />
+        </Stack>
+      )}
     </Box>
   );
 };
