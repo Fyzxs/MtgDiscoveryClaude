@@ -20,7 +20,6 @@ import { useBinderPageData } from '../../hooks/useBinderPageData';
 import { useBinderNavigation } from '../../hooks/useBinderNavigation';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { useUrlState } from '../../hooks/useUrlState';
-import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
 import { getCollectionCountOptions, getSignedCardsOptions } from '../../utils/cardUtils';
 import type { FilterPanelConfig } from '../../types/filters';
@@ -33,7 +32,6 @@ type SetPageTab = 'cards' | 'sealed' | 'binder';
  */
 export const SetPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
-  const { hasCollector } = useCollectorParam();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
