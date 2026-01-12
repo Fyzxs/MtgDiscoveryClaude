@@ -122,6 +122,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.Ingestion", "Cli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.SealedProducts", "Lib.Adapter.SealedProducts\Lib.Adapter.SealedProducts.csproj", "{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.SealedProducts", "Lib.Aggregator.SealedProducts\Lib.Aggregator.SealedProducts.csproj", "{407C453B-DEA0-4D79-B20B-3C4403E15D6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -744,6 +746,18 @@ Global
 		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x64.Build.0 = Release|Any CPU
 		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x86.ActiveCfg = Release|Any CPU
 		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x86.Build.0 = Release|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Debug|x64.Build.0 = Debug|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Debug|x86.Build.0 = Debug|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Release|x64.ActiveCfg = Release|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Release|x64.Build.0 = Release|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Release|x86.ActiveCfg = Release|Any CPU
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
