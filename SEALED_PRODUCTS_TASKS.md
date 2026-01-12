@@ -81,7 +81,7 @@ internal sealed class SealedProductsBySetIdQueryDefinition : InquiryDefinition
 ---
 
 ### Task 1.3: Create SealedProductsInquisitor
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitors/`
 
