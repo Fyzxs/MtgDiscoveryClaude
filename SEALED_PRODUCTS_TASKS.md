@@ -183,7 +183,7 @@ internal sealed class SealedProductsGopher : CosmosGopher
 ## Phase 2: Shared Data Models
 
 ### Task 2.1: Create SealedProductsBySetCode Arg Entity
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Shared.DataModels/Entities/Args/SealedProducts/`
 
