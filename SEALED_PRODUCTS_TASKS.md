@@ -52,7 +52,7 @@ internal sealed class SealedProductsBySetIdArgs : InquisitionArgs
 ---
 
 ### Task 1.2: Create SealedProductsBySetId Query Definition
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitions/`
 
