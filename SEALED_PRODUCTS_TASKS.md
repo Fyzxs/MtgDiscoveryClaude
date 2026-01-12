@@ -209,7 +209,7 @@ public interface ISealedProductsBySetCodeArgEntity : IArgEntity
 ---
 
 ### Task 2.2: Create SealedProduct Itr Entity
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Shared.DataModels/Entities/Itrs/SealedProducts/`
 
