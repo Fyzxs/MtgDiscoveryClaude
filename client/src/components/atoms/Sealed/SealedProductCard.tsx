@@ -213,39 +213,19 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             {product.name}
           </Typography>
         </Box>
-      </Box>
 
-      {/* Product Info - Desktop only */}
-      <Box
-        sx={{
-          display: { xs: 'none', sm: 'none', md: 'flex' },
-          p: { md: 1.5 },
-          flexGrow: 1,
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Product Name - 2-line truncation */}
-        <Typography
-          sx={{
-            fontSize: { md: '0.8125rem' },
-            fontWeight: 600,
-            color: 'text.primary',
-            lineHeight: 1.3,
-            mb: 'auto',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            minHeight: { md: '2.1rem' },
-          }}
-        >
-          {product.name}
-        </Typography>
-
-        {/* Purchase Links - Always at bottom */}
+        {/* Purchase Links - Bottom right of image (all breakpoints) */}
         {hasPurchaseLinks && (
-          <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            sx={{
+              position: 'absolute',
+              bottom: { xs: 6, sm: 8 },
+              right: { xs: 6, sm: 8 },
+              zIndex: 3,
+            }}
+          >
             <ExternalLinkIcon
               type="tcgplayer"
               url={product.purchaseUrlTcgplayer}
@@ -263,6 +243,35 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             />
           </Stack>
         )}
+      </Box>
+
+      {/* Product Info - Desktop only */}
+      <Box
+        sx={{
+          display: { xs: 'none', sm: 'none', md: 'flex' },
+          p: { md: 1.5 },
+          flexGrow: 1,
+          flexDirection: 'column',
+          overflow: 'hidden',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Product Name - 2-line truncation */}
+        <Typography
+          sx={{
+            fontSize: { md: '0.8125rem' },
+            fontWeight: 600,
+            color: 'text.primary',
+            lineHeight: 1.3,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textAlign: 'center',
+          }}
+        >
+          {product.name}
+        </Typography>
       </Box>
     </Box>
   );
