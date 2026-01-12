@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.SealedProducts.Apis.Entities;
 using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
@@ -6,8 +7,9 @@ namespace Lib.Adapter.SealedProducts.Queries.Mappers;
 
 internal sealed class SealedProductExtToOufMapper : ISealedProductExtToOufMapper
 {
-    public ISealedProductOufEntity Map(SealedProductExtEntity source) =>
-        new SealedProductOufEntity
+    public Task<ISealedProductOufEntity> Map(SealedProductExtEntity source)
+    {
+        ISealedProductOufEntity result = new SealedProductOufEntity
         {
             Uuid = source.Uuid,
             SetId = source.SetId,
@@ -24,4 +26,7 @@ internal sealed class SealedProductExtToOufMapper : ISealedProductExtToOufMapper
             PurchaseUrlCardmarket = source.PurchaseUrlCardmarket,
             PurchaseUrlCardKingdom = source.PurchaseUrlCardKingdom
         };
+
+        return Task.FromResult(result);
+    }
 }
