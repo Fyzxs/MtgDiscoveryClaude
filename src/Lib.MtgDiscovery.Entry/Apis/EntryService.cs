@@ -5,6 +5,7 @@ using Lib.MtgDiscovery.Entry.Commands.UserSetCards;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
@@ -14,6 +15,7 @@ using Lib.MtgDiscovery.Entry.Queries;
 using Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args.Artists;
 using Lib.Shared.DataModels.Entities.Args.Cards;
+using Lib.Shared.DataModels.Entities.Args.SealedProducts;
 using Lib.Shared.DataModels.Entities.Args.Sets;
 using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
@@ -34,6 +36,7 @@ public sealed class EntryService : IEntryService
     private readonly IUserSetCardsQueryEntryService _userSetCardsQueryEntryService;
     private readonly IUserSetCardsCommandEntryService _userSetCardsCommandEntryService;
     private readonly IUserWishlistCardsEntryService _userWishlistCardsEntryService;
+    private readonly ISealedProductsEntryService _sealedProductsEntryService;
 
     public EntryService(ILogger logger) : this(
         new CardEntryService(logger),
@@ -44,7 +47,8 @@ public sealed class EntryService : IEntryService
         new UserCardsQueryEntryService(logger),
         new UserSetCardsQueryEntryService(logger),
         new UserSetCardsCommandEntryService(logger),
-        new UserWishlistCardsEntryService(logger))
+        new UserWishlistCardsEntryService(logger),
+        new SealedProductsEntryService(logger))
     { }
 
     private EntryService(
@@ -56,7 +60,8 @@ public sealed class EntryService : IEntryService
         IUserCardsQueryEntryService userCardsQueryEntryService,
         IUserSetCardsQueryEntryService userSetCardsQueryEntryService,
         IUserSetCardsCommandEntryService userSetCardsCommandEntryService,
-        IUserWishlistCardsEntryService userWishlistCardsEntryService)
+        IUserWishlistCardsEntryService userWishlistCardsEntryService,
+        ISealedProductsEntryService sealedProductsEntryService)
     {
         _cardEntryService = cardEntryService;
         _setEntryService = setEntryService;
@@ -67,6 +72,7 @@ public sealed class EntryService : IEntryService
         _userSetCardsQueryEntryService = userSetCardsQueryEntryService;
         _userSetCardsCommandEntryService = userSetCardsCommandEntryService;
         _userWishlistCardsEntryService = userWishlistCardsEntryService;
+        _sealedProductsEntryService = sealedProductsEntryService;
     }
 
     public Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => _cardEntryService.CardsByIdsAsync(args);
@@ -114,4 +120,6 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToWishlistAsync(IAddCardToWishlistArgsEntity args) => _userWishlistCardsEntryService.AddCardToWishlistAsync(args);
 
     public Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args) => _userWishlistCardsEntryService.GetUserWishlistAsync(args);
+
+    public Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(ISealedProductsBySetCodeArgEntity args) => _sealedProductsEntryService.SealedProductsBySetCodeAsync(args);
 }
