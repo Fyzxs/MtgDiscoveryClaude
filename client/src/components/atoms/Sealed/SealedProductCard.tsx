@@ -224,7 +224,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           flexGrow: 1,
           flexDirection: 'column',
           overflow: 'hidden',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
         }}
       >
         {/* Product Name - 2-line truncation */}
