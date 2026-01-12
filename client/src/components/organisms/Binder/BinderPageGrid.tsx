@@ -43,12 +43,11 @@ export const BinderPageGrid: React.FC<BinderPageGridProps> = ({
         border: '2px solid',
         borderColor: 'grey.800',
         boxShadow: 3,
-        // Width-based sizing with height cap for wide screens
+        // Width fills parent, height calculated from aspect ratio, capped at viewport
         width: '100%',
+        maxWidth: { xs: '100%', sm: '600px', md: '700px', lg: '800px' },
         aspectRatio: `${gridAspectRatio}`,
-        // Max width = 75% of (available height * aspect ratio) to account for controls/UI
-        maxWidth: `calc((100dvh - 220px) * ${gridAspectRatio} * 0.75)`,
-        maxHeight: '100%',
+        maxHeight: 'calc(100vh - 500px)',
         overflow: 'hidden'
       }}
     >
