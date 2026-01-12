@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Box, Tabs, Tab, Button } from '@mui/material';
-import { MenuBookIcon } from '../atoms/Icons';
+import { useParams } from 'react-router-dom';
+import { Box, Tabs, Tab } from '@mui/material';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
@@ -10,18 +9,23 @@ import { SetPageHeader } from '../organisms/Sets/SetPageHeader';
 import { SetPageFilters } from '../organisms/Sets/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/Sets/SetPageCardDisplay';
 import { SealedProductGrid } from '../organisms/Sealed';
+import { BinderView, BinderControls } from '../organisms/Binder';
+import type { BinderViewMode } from '../organisms/Binder/BinderControls';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { MobileFilterBar } from '../molecules/shared/MobileFilterBar';
 import { FilterDrawer } from '../organisms/filters/FilterDrawer';
 import { useSetPageData } from '../../hooks/useSetPageData';
 import { useSealedProductsData } from '../../hooks/useSealedProductsData';
+import { useBinderPageData } from '../../hooks/useBinderPageData';
+import { useBinderNavigation } from '../../hooks/useBinderNavigation';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { useUrlState } from '../../hooks/useUrlState';
+import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
 import { getCollectionCountOptions, getSignedCardsOptions } from '../../utils/cardUtils';
 import type { FilterPanelConfig } from '../../types/filters';
 
-type SetPageTab = 'cards' | 'sealed';
+type SetPageTab = 'cards' | 'sealed' | 'binder';
 
 /**
  * SetPage - Display a specific Magic: The Gathering set with filtering and grouping
@@ -29,8 +33,7 @@ type SetPageTab = 'cards' | 'sealed';
  */
 export const SetPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { hasCollector } = useCollectorParam();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
@@ -43,7 +46,7 @@ export const SetPage: React.FC = () => {
   const initialTabValue = useMemo(() => {
     const values = getInitialValues();
     const tabValue = values.tab as string;
-    return (tabValue === 'cards' || tabValue === 'sealed') ? tabValue as SetPageTab : 'cards';
+    return (tabValue === 'cards' || tabValue === 'sealed' || tabValue === 'binder') ? tabValue as SetPageTab : 'cards';
   }, [getInitialValues]);
 
   const [activeTab, setActiveTab] = useState<SetPageTab>(initialTabValue);
@@ -91,6 +94,42 @@ export const SetPage: React.FC = () => {
     error: sealedError
   } = useSealedProductsData(setCode, activeTab === 'sealed');
 
+  // Binder view mode state
+  const canUseBookMode = !isMobile && !isTablet;
+  const [binderViewMode, setBinderViewMode] = useState<BinderViewMode>('book');
+  const useBookMode = canUseBookMode && binderViewMode === 'book';
+
+  // Binder data - only fetch when binder tab is active
+  const {
+    binderCards,
+    collectedCardIds,
+    getPageCards,
+    currentPage,
+    totalPages,
+    sortBy: binderSortBy,
+    setSortBy: setBinderSortBy,
+    goToPage,
+    nextPage,
+    prevPage,
+    nextSpread,
+    prevSpread,
+    hasCollectingGroups
+  } = useBinderPageData(activeTab === 'binder' ? setCode : undefined);
+
+  const effectiveHasCollector = hasCollector && hasCollectingGroups;
+  const handleBinderNext = useBookMode ? nextSpread : nextPage;
+  const handleBinderPrev = useBookMode ? prevSpread : prevPage;
+
+  // Keyboard navigation for binder
+  useBinderNavigation({
+    currentPage,
+    totalPages,
+    nextPage: handleBinderNext,
+    prevPage: handleBinderPrev,
+    goToPage,
+    enabled: activeTab === 'binder'
+  });
+
   // Tab change handler
   const handleTabChange = useCallback((_event: React.SyntheticEvent, newValue: SetPageTab) => {
     setActiveTab(newValue);
@@ -124,11 +163,6 @@ export const SetPage: React.FC = () => {
   const handleShowGroupsChange = useCallback((value: boolean) => {
     updateFilter('showGroups', value);
   }, [updateFilter]);
-
-  // Handler for Binder View button
-  const handleBinderClick = useCallback(() => {
-    navigate(`/set/binder/${setCode}${location.search}`);
-  }, [navigate, setCode, location.search]);
 
   // Build filter config for mobile drawer (mirrors SetPageFilters logic)
   const filterConfig: FilterPanelConfig = useMemo(() => {
@@ -298,6 +332,7 @@ export const SetPage: React.FC = () => {
             >
               <Tab label="Cards" value="cards" />
               <Tab label="Sealed" value="sealed" />
+              <Tab label="Binder" value="binder" />
             </Tabs>
           </Box>
         </Box>
@@ -318,18 +353,6 @@ export const SetPage: React.FC = () => {
                   resultsSummary={resultsSummary}
                 />
               )}
-
-              {/* Binder View Button - Above filters */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<MenuBookIcon />}
-                  onClick={handleBinderClick}
-                >
-                  Binder View
-                </Button>
-              </Box>
 
               {/* Filters Section */}
               {useMobileLayout === false && (
@@ -388,6 +411,47 @@ export const SetPage: React.FC = () => {
                   products={sealedProducts}
                   loading={sealedLoading}
                   error={sealedError}
+                />
+              </Box>
+            </Box>
+          )}
+
+          {/* Binder Tab Content */}
+          {activeTab === 'binder' && (
+            <Box>
+              {/* Binder Controls */}
+              <Box sx={{ mb: 2 }}>
+                <BinderControls
+                  sortBy={binderSortBy}
+                  onSortChange={setBinderSortBy}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPrev={handleBinderPrev}
+                  onNext={handleBinderNext}
+                  viewMode={binderViewMode}
+                  onViewModeChange={setBinderViewMode}
+                  canUseBookMode={canUseBookMode}
+                />
+              </Box>
+
+              {/* Binder View */}
+              <Box
+                sx={{
+                  minHeight: { xs: 500, lg: 0 },
+                  overflow: 'hidden'
+                }}
+              >
+                <BinderView
+                  cards={binderCards}
+                  collectedCardIds={collectedCardIds}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  bookMode={useBookMode}
+                  onPageChange={goToPage}
+                  onNext={handleBinderNext}
+                  onPrev={handleBinderPrev}
+                  getPageCards={getPageCards}
+                  hasCollector={effectiveHasCollector}
                 />
               </Box>
             </Box>
