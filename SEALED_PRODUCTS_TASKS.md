@@ -630,7 +630,7 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
 ---
 
 ### Task 3.7: Create SealedProductsAdapterService
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 3.6
 **Location:** `src/Lib.Adapter.SealedProducts/Apis/`
 
