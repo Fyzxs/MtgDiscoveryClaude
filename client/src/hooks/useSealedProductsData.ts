@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { GET_SEALED_PRODUCTS_BY_SET_CODE } from '../graphql/queries/sealedProducts';
 
 export interface SealedProduct {
