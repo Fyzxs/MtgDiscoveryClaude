@@ -1,11 +1,11 @@
 @using RazorConsole.Components
 @using Spectre.Console
-@inject ImageScraperDashboardState State
+@inject IngestionDashboardState State
 
 <Border BoxBorder="@BoxBorder.Double" BorderColor="@Color.Blue">
     <Rows>
         <Align Horizontal="@HorizontalAlignment.Center">
-            <Markup Content="Sealed Product Image Scraper" Foreground="@Color.White" />
+            <Markup Content="Sealed Product Cosmos Ingestion" Foreground="@Color.White" />
         </Align>
 
         <Newline />
@@ -40,13 +40,12 @@
             <Rows>
                 <Markup Content="Statistics" Foreground="@Color.White" />
                 <Columns>
-                    <Markup Content="@($"Downloaded: {State.DownloadedCount:N0}")" Foreground="@Color.Green" />
+                    <Markup Content="@($"Ingested: {State.SuccessCount:N0}")" Foreground="@Color.Green" />
                     <Markup Content="  " />
                     <Markup Content="@($"Skipped: {State.SkippedCount:N0}")" Foreground="@Color.Yellow" />
                     <Markup Content="  " />
                     <Markup Content="@($"Errors: {State.ErrorCount:N0}")" Foreground="@(State.ErrorCount > 0 ? Color.Red : Color.Grey)" />
                 </Columns>
-                <Markup Content="@($"No Image: {State.NoImageCount:N0}")" Foreground="@Color.Orange1" />
             </Rows>
         </Border>
 
