@@ -317,7 +317,7 @@ export const SetPage: React.FC = () => {
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                   <Chip
                     icon={filters.showGroups !== false ? <ViewModuleIcon /> : <ViewListIcon />}
-                    label={filters.showGroups !== false ? 'Binder View' : 'List View'}
+                    label={filters.showGroups !== false ? 'Grouped' : 'Flat'}
                     onClick={() => handleShowGroupsChange(!(filters.showGroups !== false))}
                     variant={filters.showGroups !== false ? 'filled' : 'outlined'}
                     color={filters.showGroups !== false ? 'primary' : 'default'}
