@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Box, Tabs, Tab } from '@mui/material';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
+import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { SetPageTemplate } from '../templates/SetPageTemplate';
 import { SetPageHeader } from '../organisms/Sets/SetPageHeader';
 import { SetPageFilters } from '../organisms/Sets/SetPageFilters';
@@ -306,6 +307,16 @@ export const SetPage: React.FC = () => {
                     onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
                   />
                 </FilterControlsWithLoading>
+              )}
+
+              {/* Results Summary - only show on desktop */}
+              {useMobileLayout === false && (
+                <ResultsSummary
+                  current={currentCount}
+                  total={cards.length}
+                  label="cards"
+                  textAlign="center"
+                />
               )}
 
               {/* Card Display */}
