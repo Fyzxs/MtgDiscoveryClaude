@@ -43,14 +43,8 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
       return;
     }
 
-    // When toggling collection, counts should be 0 - these represent collected cards, not available cards
-    // The finishCounts parameter represents what's available in the set, not what the user has collected
-    const counts = {
-      total: 0,
-      nonFoil: 0,
-      foil: 0,
-      etched: 0
-    };
+    // Use the collected card counts passed from the caller
+    const counts = finishCounts;
 
     logger.info('toggleSetGroup called:', {
       setId,

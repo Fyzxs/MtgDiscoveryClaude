@@ -42,6 +42,9 @@ export function useUrlState(
         } else if (urlValue.includes(',')) {
           // Default: treat comma-separated as array
           initialValues[key] = urlValue.split(',').filter(Boolean);
+        } else if (Array.isArray(keyConfig.default)) {
+          // If default is an array, wrap single value in array
+          initialValues[key] = [urlValue];
         } else {
           initialValues[key] = urlValue;
         }
