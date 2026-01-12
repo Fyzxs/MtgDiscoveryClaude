@@ -68,11 +68,12 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
       ref={lazyRef}
       sx={{
         width: '100%',
+        // Mobile/tablet: image-only height, Desktop: include info section
         height: {
-          xs: 240,
-          sm: 260,
-          md: 280,
-          lg: 300
+          xs: 150,  // Mobile: just image
+          sm: 170,  // Tablet: just image
+          md: 280,  // Desktop: image + info
+          lg: 300   // Large desktop: image + info
         },
         display: 'flex',
         flexDirection: 'column',
@@ -95,7 +96,9 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         sx={{
           position: 'relative',
           width: '100%',
-          paddingTop: '100%',
+          // Mobile/tablet: fill entire card, Desktop: square aspect ratio
+          paddingTop: { xs: '100%', sm: '100%', md: '100%' },
+          flexGrow: { xs: 1, sm: 1, md: 0 }, // Fill on mobile, fixed on desktop
           flexShrink: 0,
           backgroundImage: `url(${COMING_SOON_URL})`,
           backgroundSize: 'cover',
@@ -179,14 +182,45 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             <CardDateBadge date={product.releaseDate} />
           </Box>
         )}
+
+        {/* Product Name Badge - Mobile/Tablet only */}
+        <Box
+          sx={{
+            display: { xs: 'block', sm: 'block', md: 'none' },
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(8px)',
+            p: { xs: 0.75, sm: 1 },
+            zIndex: 2,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: '0.7rem', sm: '0.75rem' },
+              fontWeight: 600,
+              color: 'white',
+              lineHeight: 1.2,
+              textAlign: 'center',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {product.name}
+          </Typography>
+        </Box>
       </Box>
 
-      {/* Product Info - Fixed height with flex layout */}
+      {/* Product Info - Desktop only */}
       <Box
         sx={{
-          p: { xs: 1, sm: 1.5 },
+          display: { xs: 'none', sm: 'none', md: 'flex' },
+          p: { md: 1.5 },
           flexGrow: 1,
-          display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
         }}
@@ -194,7 +228,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         {/* Product Name - 2-line truncation */}
         <Typography
           sx={{
-            fontSize: { xs: '0.75rem', sm: '0.8125rem' },
+            fontSize: { md: '0.8125rem' },
             fontWeight: 600,
             color: 'text.primary',
             lineHeight: 1.3,
@@ -203,7 +237,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
-            minHeight: { xs: '1.95rem', sm: '2.1rem' },
+            minHeight: { md: '2.1rem' },
           }}
         >
           {product.name}
