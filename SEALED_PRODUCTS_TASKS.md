@@ -21,6 +21,23 @@ This document contains granular, independently implementable tasks for the seale
 | Entry Service | `Lib.MtgDiscovery.Entry/Queries/Cards/CardsBySetCodeEntryService.cs` |
 | GraphQL Query | `App.MtgDiscovery.GraphQL/Queries/SetQueryMethods.cs` |
 
+**Required Abstractions from `Lib.Shared.Abstractions/Actions/`:**
+
+When implementing the following patterns, you MUST extend the appropriate interface:
+
+| Pattern | Interface | Location |
+|---------|-----------|----------|
+| Mappers (create new object) | `ICreateMapper<TSource, TResult>` | `Actions/Mappers/ICreateMapper.cs` |
+| Mappers (update existing) | `IMapper<TSource, TResult>` | `Actions/Mappers/IMapper.cs` |
+| Validators | `IValidator<T>` | `Actions/Validators/IValidator.cs` |
+| Filters | `IFilter<T>` or `IFilterAction<TItem, TFailure>` | `Actions/Filters/` |
+| Transformations | `ITransformationAction<TSource, TResult>` | `Actions/Transformations/` |
+| Enrichments | `IEnrichmentAction<T>` | `Actions/Enrichments/` |
+| Resolvers | `IResolver<TIn, TOut>` | `Actions/Resolvers/IResolver.cs` |
+| Integrators | `IIntegrator<TSource, TDest>` | `Actions/Integrators/IIntegrator.cs` |
+
+**Important:** All mapper interfaces use `Task<T>` return types. Use `Task.FromResult()` for synchronous operations.
+
 ---
 
 ## Phase 1: Cosmos Read Infrastructure
