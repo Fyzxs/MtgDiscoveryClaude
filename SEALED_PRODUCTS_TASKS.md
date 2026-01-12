@@ -708,7 +708,7 @@ dotnet sln src/MtgDiscoveryVibe.sln add src/Lib.Aggregator.SealedProducts/Lib.Ag
 ---
 
 ### Task 4.2: Create SealedProductsBySetCode ItrToXfr Mapper
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 4.1, 2.3, 3.3
 **Location:** `src/Lib.Aggregator.SealedProducts/Queries/Mappers/`
 
