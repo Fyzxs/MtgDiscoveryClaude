@@ -20,6 +20,14 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
     private const string CacheDirectory = ".mtgjson-cache";
     private const string CacheFileName = "AllPrintings.json";
 
+    private static readonly HashSet<string> s_excludedCategories = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "booster_case",
+        "bundle_case",
+        "deck_box",
+        "deck"
+    };
+
     private readonly IReadOnlyList<string> _setCodes;
 
     public SealedProductIngestionApplication(string[] args) =>
@@ -176,7 +184,7 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
 
         foreach (MtgJsonSealedProductDto product in set.SealedProduct)
         {
-            if (string.Equals(product.Category, "booster_case", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(product.Category) is false && s_excludedCategories.Contains(product.Category))
             {
                 continue;
             }
