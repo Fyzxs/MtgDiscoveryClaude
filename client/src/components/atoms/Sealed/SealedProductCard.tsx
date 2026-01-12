@@ -1,8 +1,13 @@
-import React from 'react';
-import { Box, Typography, Chip, Stack } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, Chip, Stack, Skeleton } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
+import { CardDateBadge } from '../shared/CardDateBadge';
+import { useLazyLoad } from '../../../hooks/useLazyLoad';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
+
+// COMING_SOON placeholder image - shown while product image loads
+const COMING_SOON_URL = '/coming-soon.png';
 
 interface SealedProductCardProps {
   product: SealedProduct;
@@ -43,13 +48,34 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
 }) => {
   const theme = useTheme();
   const categoryColor = getCategoryColor(product.category);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Lazy load images as they approach viewport
+  const { ref: lazyRef, hasBeenInView } = useLazyLoad({
+    rootMargin: '100px',
+    threshold: 0.01
+  });
 
   const hasPurchaseLinks = product.purchaseUrlTcgplayer || product.purchaseUrlCardmarket || product.purchaseUrlCardKingdom;
 
+  // Determine badge label: use subtype if available and not "default", otherwise use category
+  const badgeLabel = product.subtype && product.subtype.toLowerCase() !== 'default'
+    ? formatCategory(product.subtype)
+    : formatCategory(product.category);
+
   return (
     <Box
+      ref={lazyRef}
       sx={{
         width: '100%',
+        height: {
+          xs: 240,
+          sm: 260,
+          md: 280,
+          lg: 300
+        },
+        display: 'flex',
+        flexDirection: 'column',
         bgcolor: 'grey.900',
         borderRadius: 2,
         overflow: 'hidden',
@@ -64,17 +90,37 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
       }}
       onClick={() => onProductClick?.(product)}
     >
-      {/* Product Image */}
+      {/* Product Image with COMING_SOON background */}
       <Box
         sx={{
           position: 'relative',
           width: '100%',
           paddingTop: '100%',
+          flexShrink: 0,
+          backgroundImage: `url(${COMING_SOON_URL})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           bgcolor: 'grey.800',
           overflow: 'hidden',
         }}
       >
-        {product.imageUrl ? (
+        {/* Loading skeleton */}
+        {!imageLoaded && hasBeenInView && (
+          <Skeleton
+            variant="rectangular"
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              bgcolor: 'rgba(0, 0, 0, 0.3)',
+            }}
+          />
+        )}
+
+        {/* Product image */}
+        {product.imageUrl && hasBeenInView && (
           <Box
             component="img"
             src={product.imageUrl}
@@ -87,92 +133,83 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
               height: '100%',
               objectFit: 'contain',
               p: 1,
+              opacity: imageLoaded ? 1 : 0,
+              transition: 'opacity 0.3s ease',
             }}
+            onLoad={() => setImageLoaded(true)}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
             }}
           />
-        ) : (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              color: 'grey.600',
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="caption">No Image</Typography>
-          </Box>
         )}
 
-        {/* Category Badge */}
-        {product.category && (
+        {/* Type Badge (subtype or category) */}
+        {badgeLabel && (
           <Chip
-            label={formatCategory(product.category)}
+            label={badgeLabel}
             size="small"
             sx={{
               position: 'absolute',
-              top: 8,
-              left: 8,
+              top: { xs: 6, sm: 8 },
+              left: { xs: 6, sm: 8 },
               bgcolor: alpha(categoryColor, 0.9),
               color: 'white',
-              fontSize: '0.65rem',
+              fontSize: { xs: '0.6rem', sm: '0.65rem' },
               fontWeight: 600,
-              height: 20,
+              height: { xs: 18, sm: 20 },
+              zIndex: 2,
               '& .MuiChip-label': {
                 px: 1,
               },
             }}
           />
         )}
+
+        {/* Release Date Badge */}
+        {product.releaseDate && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: { xs: 6, sm: 8 },
+              right: { xs: 6, sm: 8 },
+              zIndex: 2,
+            }}
+          >
+            <CardDateBadge date={product.releaseDate} />
+          </Box>
+        )}
       </Box>
 
-      {/* Product Info */}
-      <Box sx={{ p: 1.5 }}>
+      {/* Product Info - Fixed height with flex layout */}
+      <Box
+        sx={{
+          p: { xs: 1, sm: 1.5 },
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Product Name - 2-line truncation */}
         <Typography
           sx={{
-            fontSize: '0.8125rem',
+            fontSize: { xs: '0.75rem', sm: '0.8125rem' },
             fontWeight: 600,
             color: 'text.primary',
             lineHeight: 1.3,
-            mb: 0.5,
+            mb: 'auto',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
-            minHeight: '2.1rem',
+            minHeight: { xs: '1.95rem', sm: '2.1rem' },
           }}
         >
           {product.name}
         </Typography>
 
-        {product.subtype && (
-          <Typography
-            sx={{
-              fontSize: '0.6875rem',
-              color: 'text.secondary',
-              mb: 0.5,
-            }}
-          >
-            {formatCategory(product.subtype)}
-          </Typography>
-        )}
-
-        {product.cardCount && product.cardCount > 0 && (
-          <Typography
-            sx={{
-              fontSize: '0.6875rem',
-              color: 'text.secondary',
-            }}
-          >
-            {product.cardCount} cards
-          </Typography>
-        )}
-
-        {/* Purchase Links */}
+        {/* Purchase Links - Always at bottom */}
         {hasPurchaseLinks && (
           <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
             <ExternalLinkIcon
