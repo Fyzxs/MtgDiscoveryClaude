@@ -1,6 +1,5 @@
 import React from 'react';
 import { PageContainer } from '../molecules/layouts';
-import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { MobileFilterBar } from '../molecules/shared/MobileFilterBar';
@@ -82,16 +81,6 @@ export const SetPageTemplate: React.FC<SetPageTemplateProps> = ({
 
         {/* Desktop Filters Section (inline) */}
         {useMobileLayout === false && filters}
-
-        {/* Results Summary - only show on desktop (mobile has it in the bar) */}
-        {useMobileLayout === false && (
-          <ResultsSummary
-            current={currentCount}
-            total={totalCount}
-            label="cards"
-            textAlign="center"
-          />
-        )}
 
         {/* Card Display Section */}
         {cardDisplay}
