@@ -111,7 +111,7 @@ internal sealed class SealedProductsInquisitor : CosmosInquisitor
 ---
 
 ### Task 1.4: Create SealedProductsBySetIdInquisition
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 1.1, 1.2, 1.3
 **Location:** `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitions/`
 
