@@ -119,6 +119,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserWishlist
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.Ingestion", "Cli.Sealed.Ingestion\Cli.Sealed.Ingestion.csproj", "{60163036-BE1C-4B52-9CE3-D33C7D7C8597}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.SealedProducts", "Lib.Adapter.SealedProducts\Lib.Adapter.SealedProducts.csproj", "{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -729,6 +731,18 @@ Global
 		{60163036-BE1C-4B52-9CE3-D33C7D7C8597}.Release|x64.Build.0 = Release|Any CPU
 		{60163036-BE1C-4B52-9CE3-D33C7D7C8597}.Release|x86.ActiveCfg = Release|Any CPU
 		{60163036-BE1C-4B52-9CE3-D33C7D7C8597}.Release|x86.Build.0 = Release|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Debug|x64.Build.0 = Debug|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Debug|x86.Build.0 = Debug|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x64.ActiveCfg = Release|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x64.Build.0 = Release|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x86.ActiveCfg = Release|Any CPU
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
