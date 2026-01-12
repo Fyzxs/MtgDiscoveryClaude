@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Chip, Stack, Skeleton } from '@mui/material';
+import { Box, Typography, Chip, Stack } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
 import { CardDateBadge } from '../shared/CardDateBadge';
@@ -108,22 +108,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           overflow: 'hidden',
         }}
       >
-        {/* Loading skeleton */}
-        {!imageLoaded && hasBeenInView && (
-          <Skeleton
-            variant="rectangular"
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              bgcolor: 'rgba(0, 0, 0, 0.3)',
-            }}
-          />
-        )}
-
-        {/* Product image */}
+        {/* Product image - fades in over COMING_SOON background when loaded */}
         {product.imageUrl && hasBeenInView && (
           <Box
             component="img"
@@ -247,12 +232,13 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         </Typography>
       </Box>
 
-      {/* Purchase Links - Bottom right of entire card (all breakpoints) */}
+      {/* Purchase Links - Desktop only */}
       {hasPurchaseLinks && (
         <Stack
           direction="row"
           spacing={0.5}
           sx={{
+            display: { xs: 'none', sm: 'none', md: 'flex' },
             position: 'absolute',
             bottom: { xs: 6, sm: 8 },
             right: { xs: 6, sm: 8 },
