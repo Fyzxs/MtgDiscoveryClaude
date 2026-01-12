@@ -259,21 +259,20 @@ export const SetPage: React.FC = () => {
       filterConfig={filterConfig}
       activeFilterCount={activeFilterCount}
       onClearFilters={handleClearFilters}
-      showGroupsToggle={hasMultipleGroups}
+      showGroupsToggle={activeTab === 'cards' && hasMultipleGroups}
       showGroups={filters.showGroups !== false}
       onShowGroupsChange={handleShowGroupsChange}
       header={
-        <SetPageHeader
-          setInfo={setInfo}
-          setName={setName}
-          setCode={setCode}
-          availableGroupIds={allCardGroups.map(g => g.id)}
-        />
-      }
-      cardDisplay={
         <Box>
-          {/* Tab Navigation - Centered */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3, display: 'flex', justifyContent: 'center' }}>
+          <SetPageHeader
+            setInfo={setInfo}
+            setName={setName}
+            setCode={setCode}
+            availableGroupIds={allCardGroups.map(g => g.id)}
+          />
+
+          {/* Tab Navigation - Right after header */}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2, mb: 3, display: 'flex', justifyContent: 'center' }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
@@ -290,7 +289,10 @@ export const SetPage: React.FC = () => {
               <Tab label="Sealed" value="sealed" />
             </Tabs>
           </Box>
-
+        </Box>
+      }
+      cardDisplay={
+        <Box>
           {/* Cards Tab Content */}
           {activeTab === 'cards' && (
             <Box>
