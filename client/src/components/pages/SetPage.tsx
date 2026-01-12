@@ -359,16 +359,6 @@ export const SetPage: React.FC = () => {
                 </FilterControlsWithLoading>
               )}
 
-              {/* Results Summary - only show on desktop */}
-              {useMobileLayout === false && (
-                <ResultsSummary
-                  current={currentCount}
-                  total={cards.length}
-                  label="cards"
-                  textAlign="center"
-                />
-              )}
-
               {/* Card Display */}
               <SetPageCardDisplay
                 cardsLoading={cardsLoading}
