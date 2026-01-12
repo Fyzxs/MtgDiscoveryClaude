@@ -274,7 +274,7 @@ public interface ISealedProductsBySetCodeItrEntity : IItrEntity
 ---
 
 ### Task 2.4: Create SealedProduct Ouf Entity
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Shared.DataModels/Entities/Oufs/SealedProducts/`
 
