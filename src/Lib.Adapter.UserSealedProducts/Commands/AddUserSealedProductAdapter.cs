@@ -9,7 +9,6 @@ using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Adapter.UserSealedProducts.Exceptions;
 using Lib.Adapter.UserSealedProducts.Mappers;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -19,34 +18,30 @@ namespace Lib.Adapter.UserSealedProducts.Commands;
 /// Adds or updates a sealed product in a user's collection with intelligent merging logic.
 /// Fetches product details for denormalization and uses the Scribe's merge functionality.
 /// </summary>
-public sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
+internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 {
     private readonly ICosmosGopher _sealedProductsGopher;
     private readonly UserSealedProductsScribe _userSealedProductsScribe;
     private readonly IUserSealedProductReadPointMapper _readPointMapper;
-    private readonly IUserSealedProductOufMapper _oufMapper;
 
     public AddUserSealedProductAdapter(ILogger logger)
         : this(
             new SealedProductsGopher(logger),
             new UserSealedProductsScribe(logger),
-            new UserSealedProductReadPointMapper(),
-            new UserSealedProductOufMapper())
+            new UserSealedProductReadPointMapper())
     { }
 
     private AddUserSealedProductAdapter(
         ICosmosGopher sealedProductsGopher,
         UserSealedProductsScribe userSealedProductsScribe,
-        IUserSealedProductReadPointMapper readPointMapper,
-        IUserSealedProductOufMapper oufMapper)
+        IUserSealedProductReadPointMapper readPointMapper)
     {
         _sealedProductsGopher = sealedProductsGopher;
         _userSealedProductsScribe = userSealedProductsScribe;
         _readPointMapper = readPointMapper;
-        _oufMapper = oufMapper;
     }
 
-    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(
+    public async Task<IOperationResponse<UserSealedProductExtEntity>> Execute(
         [NotNull] IUserSealedProductXfrEntity input)
     {
         ReadPointItem productReadPoint = await _readPointMapper.Map(input.ProductUuid, input.SetId).ConfigureAwait(false);
@@ -56,7 +51,7 @@ public sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 
         if (productResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IUserSealedProductOufEntity>(
+            return new FailureOperationResponse<UserSealedProductExtEntity>(
                 new UserSealedProductsAdapterException(
                     $"Failed to fetch sealed product details: {productResponse.StatusCode}"));
         }
@@ -80,15 +75,11 @@ public sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IUserSealedProductOufEntity>(
+            return new FailureOperationResponse<UserSealedProductExtEntity>(
                 new UserSealedProductsAdapterException(
                     $"Failed to add user sealed product: {upsertResponse.StatusCode}"));
         }
 
-        UserSealedProductExtEntity result = upsertResponse.Value;
-
-        IUserSealedProductOufEntity oufEntity = await _oufMapper.Map(result).ConfigureAwait(false);
-
-        return new SuccessOperationResponse<IUserSealedProductOufEntity>(oufEntity);
+        return new SuccessOperationResponse<UserSealedProductExtEntity>(upsertResponse.Value);
     }
 }
