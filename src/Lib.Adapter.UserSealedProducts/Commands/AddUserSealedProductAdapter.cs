@@ -7,7 +7,6 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Adapter.UserSealedProducts.Exceptions;
-using Lib.Adapter.UserSealedProducts.Mappers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

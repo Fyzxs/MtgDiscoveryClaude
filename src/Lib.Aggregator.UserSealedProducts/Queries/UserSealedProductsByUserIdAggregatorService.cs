@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSealedProducts.Apis;
 using Lib.Aggregator.UserSealedProducts.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
@@ -29,7 +30,7 @@ internal sealed class UserSealedProductsByUserIdAggregatorService : IUserSealedP
 
     public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input)
     {
-        var extResponse = await _adapter.UserSealedProductsByUserIdAsync(input.UserId).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<UserSealedProductExtEntity>> extResponse = await _adapter.UserSealedProductsByUserIdAsync(input.UserId).ConfigureAwait(false);
 
         if (extResponse.IsFailure)
         {
@@ -37,7 +38,7 @@ internal sealed class UserSealedProductsByUserIdAggregatorService : IUserSealedP
         }
 
         List<IUserSealedProductItrEntity> itrEntities = [];
-        foreach (var extEntity in extResponse.Value)
+        foreach (UserSealedProductExtEntity extEntity in extResponse.ResponseData)
         {
             IUserSealedProductItrEntity itrEntity = await _itrMapper.Map(extEntity).ConfigureAwait(false);
             itrEntities.Add(itrEntity);

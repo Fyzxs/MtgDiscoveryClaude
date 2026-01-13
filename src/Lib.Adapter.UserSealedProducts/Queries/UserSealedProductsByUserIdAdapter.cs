@@ -4,9 +4,8 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Adapter.UserSealedProducts.Exceptions;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Cosmos.Apis.Primitives.CosmosItems.Inquisitions;
-using Lib.Cosmos.Apis.Primitives.CosmosItems.PartitionKeyValues;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.UserSealedProducts.Queries;
@@ -25,14 +24,11 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
 
     public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string userId)
     {
-        QueryInquisitionItem query = new QueryInquisitionItem
-        {
-            PartitionKeyValue = new ProvidedPartitionKeyValue(userId),
-            Query = "SELECT * FROM c"
-        };
+        QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c");
+        PartitionKey partitionKey = new PartitionKey(userId);
 
         OpResponse<IEnumerable<UserSealedProductExtEntity>> response =
-            await _userSealedProductsInquisitor.InquisiteAsync<UserSealedProductExtEntity>(query)
+            await _userSealedProductsInquisitor.QueryAsync<UserSealedProductExtEntity>(queryDefinition, partitionKey)
                 .ConfigureAwait(false);
 
         if (response.IsNotSuccessful())
