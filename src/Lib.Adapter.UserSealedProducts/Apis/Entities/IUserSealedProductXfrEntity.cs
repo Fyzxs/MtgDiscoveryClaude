@@ -1,6 +1,6 @@
 namespace Lib.Adapter.UserSealedProducts.Apis.Entities;
 
-internal interface IUserSealedProductXfrEntity
+public interface IUserSealedProductXfrEntity
 {
     string UserId { get; }
     string ProductUuid { get; }

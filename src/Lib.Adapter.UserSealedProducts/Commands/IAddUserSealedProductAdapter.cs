@@ -7,5 +7,5 @@ namespace Lib.Adapter.UserSealedProducts.Commands;
 /// <summary>
 /// Adapter for adding or updating a sealed product in a user's collection.
 /// </summary>
-internal interface IAddUserSealedProductAdapter
+public interface IAddUserSealedProductAdapter
     : IOperationResponseService<IUserSealedProductXfrEntity, IUserSealedProductOufEntity>;
