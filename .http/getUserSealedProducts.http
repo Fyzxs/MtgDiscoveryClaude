@@ -1,0 +1,57 @@
+###
+# Get User Sealed Products Query
+# NOTE: This is an internal query used by sealedProductsBySetCode to enrich results
+# You typically wouldn't call this directly, but it's here for testing
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Test: Get Sealed Products for MKM (should show userQuantity)
+# This is the primary way to see user collection data - it's automatically
+# enriched when you query sealedProductsBySetCode with authentication
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput!) {
+  sealedProductsBySetCode(args: $args) {
+    __typename
+    ... on SealedProductsSuccessResponse {
+      data {
+        uuid
+        name
+        setCode
+        category
+        imageUrl
+        userQuantity
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "setCode": "mkm"
+  }
+}
+
+
+### Test Workflow: Add then Query
+# Step 1: First, run a query to get a product UUID from the set
+# Step 2: Use addUserSealedProduct.http to add that product to your collection
+# Step 3: Run this query again to see userQuantity updated
+
+
+### Example: Complete test flow for MKM set
+# 1. Run the query above to get sealed products for MKM
+# 2. Pick a product UUID from the results (e.g., a booster box)
+# 3. Copy that UUID and the set ID to addUserSealedProduct.http
+# 4. Run the mutation to add it to your collection with countDelta: 1
+# 5. Run this query again - you should see userQuantity: 1 for that product
