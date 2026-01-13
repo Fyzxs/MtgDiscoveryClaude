@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.UserSealedProducts.Queries;
 
-internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByUserIdAdapter
+public sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByUserIdAdapter
 {
     private readonly ICosmosInquisitor _userSealedProductsInquisitor;
     private readonly IUserSealedProductItrMapper _mapper;
