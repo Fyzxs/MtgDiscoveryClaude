@@ -4,5 +4,5 @@ using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.UserSealedProducts.Queries;
 
-internal interface IUserSealedProductsByUserIdAdapter
+public interface IUserSealedProductsByUserIdAdapter
     : IOperationResponseService<UserSealedProductsByUserIdXfrArgs, IEnumerable<IUserSealedProductItrEntity>>;

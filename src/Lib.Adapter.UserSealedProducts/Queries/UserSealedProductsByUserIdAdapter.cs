@@ -54,7 +54,7 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
                     response.Exception()));
         }
 
-        List<IUserSealedProductItrEntity> itrEntities = new List<IUserSealedProductItrEntity>();
+        List<IUserSealedProductItrEntity> itrEntities = [];
         foreach (UserSealedProductExtEntity extEntity in response.Value)
         {
             IUserSealedProductItrEntity itrEntity = await _mapper.Map(extEntity).ConfigureAwait(false);

@@ -7,7 +7,7 @@ namespace Lib.Adapter.Scryfall.Cosmos.Apis.Mappers.UserSealedProducts;
 /// <summary>
 /// Maps sealed product UUID and user ID to a ReadPointItem for Cosmos DB operations.
 /// </summary>
-internal sealed class UserSealedProductReadPointMapper : IUserSealedProductReadPointMapper
+public sealed class UserSealedProductReadPointMapper : IUserSealedProductReadPointMapper
 {
     public UserSealedProductReadPointMapper()
     {
