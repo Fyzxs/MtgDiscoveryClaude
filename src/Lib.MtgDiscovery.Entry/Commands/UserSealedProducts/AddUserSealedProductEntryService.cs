@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Lib.Domain.UserSealedProducts.Commands;
+using Lib.Domain.UserSealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Actions.Validators.UserSealedProducts;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
@@ -16,18 +16,18 @@ namespace Lib.MtgDiscovery.Entry.Commands.UserSealedProducts;
 /// </summary>
 internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEntryService
 {
-    private readonly IAddUserSealedProductDomainService _domainService;
+    private readonly IUserSealedProductsCommandDomainService _domainService;
     private readonly IAddUserSealedProductArgValidator _validator;
 
     public AddUserSealedProductEntryService(ILogger logger)
         : this(
-            new AddUserSealedProductDomainService(logger),
+            new UserSealedProductsDomainService(logger),
             new AddUserSealedProductArgValidatorContainer())
     {
     }
 
     private AddUserSealedProductEntryService(
-        IAddUserSealedProductDomainService domainService,
+        IUserSealedProductsCommandDomainService domainService,
         IAddUserSealedProductArgValidator validator)
     {
         _domainService = domainService;
@@ -48,6 +48,6 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
             CountDelta = input.CountDelta
         };
 
-        return await _domainService.Execute(itrEntity).ConfigureAwait(false);
+        return await _domainService.AddUserSealedProductAsync(itrEntity).ConfigureAwait(false);
     }
 }
