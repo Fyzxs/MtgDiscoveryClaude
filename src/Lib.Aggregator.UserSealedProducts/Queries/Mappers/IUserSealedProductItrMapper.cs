@@ -1,5 +1,5 @@
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Shared.Abstractions.Patterns.Creation;
+using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 
 namespace Lib.Aggregator.UserSealedProducts.Queries.Mappers;
