@@ -15,10 +15,8 @@ internal sealed class UserSealedProductsByUserIdAggregator : IUserSealedProducts
         new UserSealedProductsByUserIdAdapter(logger))
     { }
 
-    private UserSealedProductsByUserIdAggregator(IUserSealedProductsByUserIdAdapter adapter)
-    {
+    private UserSealedProductsByUserIdAggregator(IUserSealedProductsByUserIdAdapter adapter) =>
         _adapter = adapter;
-    }
 
     public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input)
     {

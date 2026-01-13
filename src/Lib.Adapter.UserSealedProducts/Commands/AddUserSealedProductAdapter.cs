@@ -19,7 +19,7 @@ namespace Lib.Adapter.UserSealedProducts.Commands;
 /// Adds or updates a sealed product in a user's collection with intelligent merging logic.
 /// Fetches product details for denormalization and uses the Scribe's merge functionality.
 /// </summary>
-internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
+public sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 {
     private readonly ICosmosGopher _sealedProductsGopher;
     private readonly UserSealedProductsScribe _userSealedProductsScribe;
