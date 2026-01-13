@@ -2,8 +2,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Mappers.UserSealedProducts;
 using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
-using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
@@ -13,19 +13,21 @@ public sealed class UserSealedProductsScribe : CosmosScribe
 {
     private readonly ICosmosGopher _gopher;
     private readonly ICosmosJanitor _janitor;
+    private readonly IUserSealedProductReadPointMapper _readPointMapper;
 
     public UserSealedProductsScribe(ILogger logger)
         : base(new UserSealedProductsCosmosContainer(logger))
     {
         _gopher = new Apis.Operators.Gophers.UserSealedProductsGopher(logger);
         _janitor = new Apis.Operators.Janitors.UserSealedProductsJanitor(logger);
+        _readPointMapper = new UserSealedProductReadPointMapper();
     }
 
     public async Task<OpResponse<UserSealedProductExtEntity>> UpsertWithMergeAsync(
         [NotNull] UserSealedProductExtEntity input,
         int countDelta)
     {
-        ReadPointItem readPoint = CreateReadPoint(input.ProductUuid, input.UserId);
+        ReadPointItem readPoint = await _readPointMapper.Map(input.ProductUuid, input.UserId).ConfigureAwait(false);
 
         OpResponse<UserSealedProductExtEntity> existing =
             await _gopher.ReadAsync<UserSealedProductExtEntity>(readPoint).ConfigureAwait(false);
@@ -57,14 +59,5 @@ public sealed class UserSealedProductsScribe : CosmosScribe
         };
 
         return await UpsertAsync(updated).ConfigureAwait(false);
-    }
-
-    private static ReadPointItem CreateReadPoint(string productUuid, string userId)
-    {
-        return new ReadPointItem
-        {
-            Id = new ProvidedCosmosItemId(productUuid),
-            Partition = new ProvidedPartitionKeyValue(userId)
-        };
     }
 }

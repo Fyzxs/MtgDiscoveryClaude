@@ -20,11 +20,11 @@ internal sealed class UserSealedProductsByUserIdAggregator : IUserSealedProducts
         _adapter = adapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(string input)
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input)
     {
         UserSealedProductsByUserIdXfrArgs xfrArgs = new()
         {
-            UserId = input
+            UserId = input.UserId
         };
 
         return await _adapter.Execute(xfrArgs).ConfigureAwait(false);
