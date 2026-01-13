@@ -59,7 +59,7 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 
         UserSealedProductExtEntity itemToUpsert = new UserSealedProductExtEntity
         {
-            UserId = input.UserId,
+            CollectionId = input.CollectionId,
             ProductUuid = input.ProductUuid,
             Count = 0,
             ProductName = product.Name,

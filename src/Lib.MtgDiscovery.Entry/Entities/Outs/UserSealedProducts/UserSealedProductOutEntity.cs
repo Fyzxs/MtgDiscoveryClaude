@@ -6,7 +6,7 @@ namespace Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
 /// </summary>
 public sealed class UserSealedProductOutEntity
 {
-    public string UserId { get; init; }
+    public string CollectionId { get; init; }
     public string ProductUuid { get; init; }
     public string ProductName { get; init; }
     public string SetCode { get; init; }

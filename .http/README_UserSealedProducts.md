@@ -32,10 +32,13 @@ Variables:
 ```json
 {
   "args": {
-    "setCode": "mkm"
+    "setCode": "mkm",
+    "collectionId": "your-user-id"  // Same value as your userId
   }
 }
 ```
+
+**Note**: The `collectionId` is typically the same as your `userId`. The backend validates that the authenticated user (from JWT token) has permission to access the specified collection.
 
 ### 2. Add Product to Collection
 **File**: `addUserSealedProduct.http`
@@ -58,6 +61,7 @@ Variables:
   "args": {
     "productUuid": "uuid-from-step-1",
     "setId": "setId-from-step-1",
+    "collectionId": "your-user-id",  // Same as your userId
     "countDelta": 1
   }
 }
@@ -76,6 +80,7 @@ Run the same query from step 1 again. The product you added should now show `use
   "args": {
     "productUuid": "same-uuid",
     "setId": "same-setId",
+    "collectionId": "your-user-id",
     "countDelta": 5
   }
 }
@@ -88,6 +93,7 @@ Result: `count` should increase by 5
   "args": {
     "productUuid": "same-uuid",
     "setId": "same-setId",
+    "collectionId": "your-user-id",
     "countDelta": -2
   }
 }
@@ -101,6 +107,7 @@ Use negative of current count to remove completely:
   "args": {
     "productUuid": "same-uuid",
     "setId": "same-setId",
+    "collectionId": "your-user-id",
     "countDelta": -999
   }
 }
@@ -126,6 +133,7 @@ The backend automatically:
 - **Unauthenticated queries**: `userQuantity` always returns 0
 - **Authenticated queries**: `userQuantity` populated from user's collection
 - **Mutations**: Always require authentication (401 if no Bearer token)
+- **Collection Authorization**: The `collectionId` parameter identifies which collection to access/modify. The backend validates that the authenticated user (from JWT) has permission to access the specified collection. In most cases, `collectionId` equals your `userId`.
 
 ## Recommended Test Sets
 

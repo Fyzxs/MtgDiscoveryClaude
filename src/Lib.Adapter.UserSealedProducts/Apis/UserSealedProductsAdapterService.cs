@@ -30,6 +30,6 @@ public sealed class UserSealedProductsAdapterService : IUserSealedProductsAdapte
     public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) =>
         await _commandAdapter.AddUserSealedProductAsync(input).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string userId) =>
-        await _queryAdapter.UserSealedProductsByUserIdAsync(userId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId) =>
+        await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId).ConfigureAwait(false);
 }

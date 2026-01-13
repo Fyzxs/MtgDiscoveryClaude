@@ -9,10 +9,10 @@ public sealed class UserSealedProductExtEntity : CosmosItem
     public override string Id => ProductUuid;
 
     [JsonProperty("partition")]
-    public override string Partition => UserId;
+    public override string Partition => CollectionId;
 
-    [JsonProperty("user_id")]
-    public string UserId { get; init; }
+    [JsonProperty("collection_id")]
+    public string CollectionId { get; init; }
 
     [JsonProperty("product_uuid")]
     public string ProductUuid { get; init; }
