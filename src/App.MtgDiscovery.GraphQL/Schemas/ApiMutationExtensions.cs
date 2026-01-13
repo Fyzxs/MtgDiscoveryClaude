@@ -1,10 +1,12 @@
 ﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSealedProducts;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.UserSealedProducts;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Mutations;
@@ -23,6 +25,7 @@ internal static class ApiMutationExtensions
             .AddTypeExtension<UserCardsMutationMethods>()
             .AddTypeExtension<UserSetCardsMutationMethods>()
             .AddTypeExtension<UserWishlistCardsMutationMethods>()
+            .AddTypeExtension<UserSealedProductsMutationMethods>()
             // Input types for mutations
             .AddType<AddCardToCollectionArgEntityInputType>()
             .AddType<CollectedItemArgEntityInputType>()
@@ -48,11 +51,17 @@ internal static class ApiMutationExtensions
             // UserWishlistCards input types
             .AddType<AddCardToWishlistArgEntityInputType>()
             .AddType<WishlistItemArgEntityInputType>()
+            // UserSealedProducts input types
+            .AddType<AddUserSealedProductArgEntityInputType>()
             // UserWishlistCards response types
             .AddType<AddCardToWishlistResponseModelUnionType>()
             .AddType<UserWishlistSuccessDataResponseModelType>()
             .AddType<UserWishlistCardOutEntityType>()
             .AddType<WishlistItemOutEntityType>()
+            // UserSealedProducts response types
+            .AddType<AddUserSealedProductResponseModelUnionType>()
+            .AddType<AddUserSealedProductSuccessDataResponseModelType>()
+            .AddType<AddUserSealedProductResultOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

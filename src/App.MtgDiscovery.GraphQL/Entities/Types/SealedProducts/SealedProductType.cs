@@ -66,5 +66,9 @@ internal sealed class SealedProductType : ObjectType<SealedProductOutEntity>
             .Name("purchaseUrlCardKingdom")
             .Type<StringType>()
             .Description("The Card Kingdom purchase URL");
+        descriptor.Field(f => f.UserQuantity)
+            .Name("userQuantity")
+            .Type<NonNullType<IntType>>()
+            .Description("The quantity of this sealed product in the authenticated user's collection (0 if not authenticated)");
     }
 }
