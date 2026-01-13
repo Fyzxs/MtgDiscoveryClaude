@@ -129,7 +129,7 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(ISealedProductsBySetCodeArgEntity args) => _sealedProductsEntryService.SealedProductsBySetCodeAsync(args);
 
-    public Task<IOperationResponse<AddUserSealedProductResultOutEntity>> AddUserSealedProductAsync(IAddUserSealedProductArgEntity args) => _userSealedProductsEntryService.AddUserSealedProductAsync(args);
+    public Task<IOperationResponse<AddUserSealedProductResultOutEntity>> AddUserSealedProductAsync(IAddUserSealedProductArgsEntity args) => _userSealedProductsEntryService.AddUserSealedProductAsync(args);
 
     public Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(string userId) => _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(userId);
 }
