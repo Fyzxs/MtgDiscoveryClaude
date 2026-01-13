@@ -4,6 +4,7 @@ namespace App.MtgDiscovery.GraphQL.Entities.Args.UserSealedProducts;
 
 public sealed class AddUserSealedProductArgEntity : IAddUserSealedProductClientArgEntity
 {
+    public string CollectionId { get; init; } = string.Empty;
     public string ProductUuid { get; init; } = string.Empty;
     public string SetId { get; init; } = string.Empty;
     public int CountDelta { get; init; }

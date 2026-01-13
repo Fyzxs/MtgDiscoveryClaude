@@ -7,5 +7,5 @@ namespace Lib.Adapter.UserSealedProducts.Apis;
 
 public interface IUserSealedProductsQueryAdapter
 {
-    Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string userId);
+    Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId);
 }

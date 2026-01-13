@@ -8,9 +8,16 @@ namespace Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 public interface IAddUserSealedProductItrEntity : Abstractions.IItrEntity
 {
     /// <summary>
-    /// The unique identifier of the user who owns this sealed product collection entry.
+    /// The unique identifier of the authenticated user (from JWT).
+    /// Used for authorization validation only.
     /// </summary>
     string UserId { get; }
+
+    /// <summary>
+    /// The unique identifier of the collection being modified.
+    /// This is the value used for database operations.
+    /// </summary>
+    string CollectionId { get; }
 
     /// <summary>
     /// The unique identifier (UUID) of the sealed product being added to the collection.

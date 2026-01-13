@@ -28,7 +28,7 @@ public sealed class UserSealedProductsScribe : CosmosScribe
         [NotNull] UserSealedProductExtEntity input,
         int countDelta)
     {
-        ReadPointItem readPoint = await _readPointMapper.Map(input.ProductUuid, input.UserId).ConfigureAwait(false);
+        ReadPointItem readPoint = await _readPointMapper.Map(input.ProductUuid, input.CollectionId).ConfigureAwait(false);
 
         OpResponse<UserSealedProductExtEntity> existing =
             await _gopher.ReadAsync<UserSealedProductExtEntity>(readPoint).ConfigureAwait(false);
@@ -42,14 +42,14 @@ public sealed class UserSealedProductsScribe : CosmosScribe
             DeletePointItem deletePoint = new DeletePointItem
             {
                 Id = new ProvidedCosmosItemId(input.ProductUuid),
-                Partition = new ProvidedPartitionKeyValue(input.UserId)
+                Partition = new ProvidedPartitionKeyValue(input.CollectionId)
             };
             return await _janitor.DeleteAsync<UserSealedProductExtEntity>(deletePoint).ConfigureAwait(false);
         }
 
         UserSealedProductExtEntity updated = new UserSealedProductExtEntity
         {
-            UserId = input.UserId,
+            CollectionId = input.CollectionId,
             ProductUuid = input.ProductUuid,
             Count = newCount,
             ProductName = input.ProductName,

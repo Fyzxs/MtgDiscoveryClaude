@@ -10,7 +10,7 @@ internal sealed class UserSealedProductItrMapper : IUserSealedProductItrMapper
     {
         IUserSealedProductItrEntity itr = new UserSealedProductItrEntity
         {
-            UserId = input.UserId,
+            CollectionId = input.CollectionId,
             ProductUuid = input.ProductUuid,
             ProductName = input.ProductName,
             SetCode = input.SetCode,
@@ -24,7 +24,7 @@ internal sealed class UserSealedProductItrMapper : IUserSealedProductItrMapper
 
     private sealed class UserSealedProductItrEntity : IUserSealedProductItrEntity
     {
-        public required string UserId { get; init; }
+        public required string CollectionId { get; init; }
         public required string ProductUuid { get; init; }
         public required string ProductName { get; init; }
         public required string SetCode { get; init; }
