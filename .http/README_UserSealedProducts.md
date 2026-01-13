@@ -3,9 +3,50 @@
 ## Overview
 This guide helps you test the User Sealed Products collection tracking feature.
 
+## Setup
+
+### 1. Configure Environment Variables
+Copy the example environment file and update it with your values:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and update:
+- `BEARER_TOKEN`: Your Auth0 JWT token (see instructions below)
+- `COLLECTION_ID`: Your user/collection ID (typically same as userId from JWT)
+- `TEST_PRODUCT_UUID`: A valid product UUID from your database
+- `TEST_SET_ID`: A valid set ID (e.g., "mkm")
+
+### 2. Get Your JWT Token
+**Option A - From Browser DevTools:**
+1. Open frontend application (http://localhost:5173)
+2. Login with Auth0
+3. Open DevTools > Application/Storage > Local Storage
+4. Find the Auth0 token and copy it
+5. Paste into `.env` as `BEARER_TOKEN`
+
+**Option B - From Network Request:**
+1. Open frontend application and login
+2. Open DevTools > Network tab
+3. Make any GraphQL request
+4. Find the request and copy the `Authorization` header value
+5. Remove "Bearer " prefix and paste into `.env`
+
+### 3. Get Your Collection ID
+Run the `getUserInfo.http` query:
+```graphql
+query GetUserInfo {
+  userInfo {
+    userId
+  }
+}
+```
+The `userId` returned is your `COLLECTION_ID`.
+
 ## Prerequisites
 1. GraphQL server running on `https://localhost:65203/graphql`
-2. JWT Bearer token (Auth0) - set as `{{BEARER_TOKEN}}` in your HTTP client
+2. `.env` file configured (see Setup above)
 3. User must be registered (run user registration mutation first if needed)
 
 ## Testing Workflow
