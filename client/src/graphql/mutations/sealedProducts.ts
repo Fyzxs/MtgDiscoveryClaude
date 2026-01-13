@@ -16,8 +16,9 @@ export const ADD_USER_SEALED_PRODUCT = gql`
           statusCode
         }
         metaData {
-          requestId
-          timestamp
+          invocationId
+          timeStamp
+          elapsedTime
         }
       }
       ... on FailureResponse {
