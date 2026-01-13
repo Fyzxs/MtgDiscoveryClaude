@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.Invocation.Services;
 
-namespace Lib.Aggregator.UserSealedProducts.Queries;
+namespace Lib.Aggregator.UserSealedProducts.Apis;
 
-internal interface IUserSealedProductsByUserIdAggregator
+public interface IUserSealedProductsByUserIdAggregator
     : IOperationResponseService<IUserIdItrEntity, IEnumerable<IUserSealedProductItrEntity>>;

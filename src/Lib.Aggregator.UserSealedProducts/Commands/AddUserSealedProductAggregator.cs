@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Adapter.UserSealedProducts.Commands;
+using Lib.Aggregator.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
