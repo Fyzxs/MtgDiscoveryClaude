@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Mappers.UserSealedProducts;
 using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 
