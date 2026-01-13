@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.UserSealedProducts;
+using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.UserSealedProducts;
@@ -43,9 +44,9 @@ internal sealed class UserSealedProductsEntryService : IUserSealedProductsEntryS
     }
 
     public async Task<IOperationResponse<AddUserSealedProductResultOutEntity>> AddUserSealedProductAsync(
-        IAddUserSealedProductArgEntity args)
+        IAddUserSealedProductArgsEntity args)
     {
-        IOperationResponse<IUserSealedProductOufEntity> response = await _addUserSealedProductEntryService.Execute(args).ConfigureAwait(false);
+        IOperationResponse<IUserSealedProductOufEntity> response = await _addUserSealedProductEntryService.Execute(args.AddUserSealedProduct).ConfigureAwait(false);
         if (response.IsFailure) return new FailureOperationResponse<AddUserSealedProductResultOutEntity>(response.OuterException);
 
         AddUserSealedProductResultOutEntity outEntity = await _addResultMapper.Map(response.ResponseData).ConfigureAwait(false);

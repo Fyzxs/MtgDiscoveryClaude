@@ -10,6 +10,7 @@ using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -62,10 +63,10 @@ public sealed class SealedProductsQueryMethods
 
             if (userProductsResponse.IsSuccess)
             {
-                Dictionary<string, int> userQuantities = userProductsResponse.Value
+                Dictionary<string, int> userQuantities = userProductsResponse.ResponseData
                     .ToDictionary(up => up.ProductUuid, up => up.Count);
 
-                enrichedProducts = productsResponse.Value.Select(product => new SealedProductOutEntity
+                enrichedProducts = productsResponse.ResponseData.Select(product => new SealedProductOutEntity
                 {
                     Uuid = product.Uuid,
                     SetId = product.SetId,
@@ -86,7 +87,7 @@ public sealed class SealedProductsQueryMethods
             }
             else
             {
-                enrichedProducts = productsResponse.Value.Select(product => new SealedProductOutEntity
+                enrichedProducts = productsResponse.ResponseData.Select(product => new SealedProductOutEntity
                 {
                     Uuid = product.Uuid,
                     SetId = product.SetId,
@@ -108,7 +109,7 @@ public sealed class SealedProductsQueryMethods
         }
         else
         {
-            enrichedProducts = productsResponse.Value.Select(product => new SealedProductOutEntity
+            enrichedProducts = productsResponse.ResponseData.Select(product => new SealedProductOutEntity
             {
                 Uuid = product.Uuid,
                 SetId = product.SetId,
@@ -129,7 +130,7 @@ public sealed class SealedProductsQueryMethods
         }
 
         IOperationResponse<List<SealedProductOutEntity>> enrichedResponse =
-            OperationResponse<List<SealedProductOutEntity>>.CreateSuccess(enrichedProducts);
+            new SuccessOperationResponse<List<SealedProductOutEntity>>(enrichedProducts);
 
         return await _responseMapper.Map(enrichedResponse).ConfigureAwait(false);
     }
