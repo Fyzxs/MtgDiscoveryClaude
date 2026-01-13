@@ -17,15 +17,15 @@ namespace Lib.Adapter.UserSealedProducts.Queries;
 internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByUserIdAdapter
 {
     private readonly ICosmosInquisitor _userSealedProductsInquisitor;
-    private readonly IUserSealedProductMapper _mapper;
+    private readonly IUserSealedProductItrMapper _mapper;
 
     public UserSealedProductsByUserIdAdapter(ILogger logger)
-        : this(new UserSealedProductsInquisitor(logger), new UserSealedProductMapper())
+        : this(new UserSealedProductsInquisitor(logger), new UserSealedProductItrMapper())
     { }
 
     private UserSealedProductsByUserIdAdapter(
         ICosmosInquisitor userSealedProductsInquisitor,
-        IUserSealedProductMapper mapper)
+        IUserSealedProductItrMapper mapper)
     {
         _userSealedProductsInquisitor = userSealedProductsInquisitor;
         _mapper = mapper;
@@ -54,8 +54,12 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
                     response.Exception()));
         }
 
-        IEnumerable<IUserSealedProductItrEntity> itrEntities =
-            response.Value.Select(extEntity => _mapper.Map(extEntity));
+        List<IUserSealedProductItrEntity> itrEntities = new List<IUserSealedProductItrEntity>();
+        foreach (UserSealedProductExtEntity extEntity in response.Value)
+        {
+            IUserSealedProductItrEntity itrEntity = await _mapper.Map(extEntity).ConfigureAwait(false);
+            itrEntities.Add(itrEntity);
+        }
 
         return new SuccessOperationResponse<IEnumerable<IUserSealedProductItrEntity>>(itrEntities);
     }
