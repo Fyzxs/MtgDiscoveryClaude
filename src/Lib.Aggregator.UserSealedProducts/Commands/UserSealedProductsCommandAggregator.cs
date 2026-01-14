@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
-using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,6 @@ internal sealed class UserSealedProductsCommandAggregator : IUserSealedProductsC
         IAddUserSealedProductAggregatorService addUserSealedProductOperations) =>
         _addUserSealedProductOperations = addUserSealedProductOperations;
 
-    public Task<IOperationResponse<IUserSealedProductOufEntity>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
+    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
         _addUserSealedProductOperations.Execute(input);
 }

@@ -13,7 +13,7 @@ internal sealed class HasValidCountDeltaAddUserSealedProductArgValidator : Opera
 
     public sealed class Validator : IValidator<IAddUserSealedProductArgEntity>
     {
-        public Task<bool> IsValid(IAddUserSealedProductArgEntity arg) => Task.FromResult(arg.CountDelta is not 0);
+        public Task<bool> IsValid(IAddUserSealedProductArgEntity arg) => Task.FromResult(arg.UserSealedProductDetails.Count is not 0);
     }
 
     public sealed class Message : OperationResponseMessage

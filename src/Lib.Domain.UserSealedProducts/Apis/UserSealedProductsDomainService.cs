@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Lib.Domain.UserSealedProducts.Commands;
 using Lib.Domain.UserSealedProducts.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
-using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -27,7 +27,7 @@ public sealed class UserSealedProductsDomainService : IUserSealedProductsDomainS
         _commandOperations = commandOperations;
     }
 
-    public Task<IOperationResponse<IUserSealedProductOufEntity>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
+    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
         _commandOperations.AddUserSealedProductAsync(input);
 
     public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) =>

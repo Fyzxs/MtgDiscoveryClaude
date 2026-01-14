@@ -10,7 +10,7 @@ internal sealed class UserSealedProductItrToOutMapper : IUserSealedProductItrToO
     {
         UserSealedProductOutEntity result = new()
         {
-            CollectionId = source.CollectionId,
+            UserId = source.UserId,
             ProductUuid = source.ProductUuid,
             ProductName = source.ProductName,
             SetCode = source.SetCode,

@@ -2,7 +2,7 @@ namespace Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 
 public sealed class UserSealedProductItrEntity : IUserSealedProductItrEntity
 {
-    public string CollectionId { get; init; }
+    public string UserId { get; init; }
     public string ProductUuid { get; init; }
     public string ProductName { get; init; }
     public string SetCode { get; init; }

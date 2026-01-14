@@ -16,4 +16,5 @@ public interface ISealedProductOufEntity
     string PurchaseUrlTcgplayer { get; }
     string PurchaseUrlCardmarket { get; }
     string PurchaseUrlCardKingdom { get; }
+    int UserQuantity { get; }
 }
