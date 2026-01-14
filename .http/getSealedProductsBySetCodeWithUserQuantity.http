@@ -45,7 +45,7 @@ query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput
 {
   "args": {
     "setCode": "mkm",
-    "collectionId": "replace-with-your-collection-id"
+    "collectionId": "{{COLLECTION_ID}}"
   }
 }
 
@@ -89,7 +89,7 @@ query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput
 {
   "args": {
     "setCode": "mkm",
-    "collectionId": "replace-with-your-collection-id"
+    "collectionId": "{{COLLECTION_ID}}"
   }
 }
 

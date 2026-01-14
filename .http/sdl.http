@@ -1,0 +1,6 @@
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+###
+GET {{gqlEndpoint}}?sdl
