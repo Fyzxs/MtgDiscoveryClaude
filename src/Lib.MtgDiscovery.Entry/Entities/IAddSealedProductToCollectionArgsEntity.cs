@@ -3,7 +3,7 @@ using Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
 
 namespace Lib.MtgDiscovery.Entry.Entities;
 
-public interface IAddUserSealedProductArgsEntity
+public interface IAddSealedProductToCollectionArgsEntity
 {
     IAuthUserArgEntity AuthUser { get; }
     IAddUserSealedProductArgEntity AddUserSealedProduct { get; }

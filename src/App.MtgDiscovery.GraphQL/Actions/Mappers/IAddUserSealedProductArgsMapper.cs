@@ -7,5 +7,5 @@ namespace App.MtgDiscovery.GraphQL.Actions.Mappers;
 
 internal interface IAddUserSealedProductArgsMapper
 {
-    Task<IAddUserSealedProductArgsEntity> Map(ClaimsPrincipal claimsPrincipal, IAddUserSealedProductClientArgEntity addUserSealedProduct);
+    Task<IAddSealedProductToCollectionArgsEntity> Map(ClaimsPrincipal claimsPrincipal, IAddUserSealedProductArgEntity addUserSealedProduct);
 }

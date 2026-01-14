@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
@@ -8,7 +9,7 @@ using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities;
-using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
+using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -20,19 +21,19 @@ public sealed class UserSealedProductsMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IAddUserSealedProductArgsMapper _argsMapper;
-    private readonly IOperationResponseToResponseModelMapper<AddUserSealedProductResultOutEntity> _responseMapper;
+    private readonly IOperationResponseToResponseModelMapper<List<SealedProductOutEntity>> _responseMapper;
 
     public UserSealedProductsMutationMethods(ILogger logger) : this(
         new EntryService(logger),
         new AddUserSealedProductArgsMapper(),
-        new OperationResponseToResponseModelMapper<AddUserSealedProductResultOutEntity>())
+        new OperationResponseToResponseModelMapper<List<SealedProductOutEntity>>())
     {
     }
 
     private UserSealedProductsMutationMethods(
         IEntryService entryService,
         IAddUserSealedProductArgsMapper argsMapper,
-        IOperationResponseToResponseModelMapper<AddUserSealedProductResultOutEntity> responseMapper)
+        IOperationResponseToResponseModelMapper<List<SealedProductOutEntity>> responseMapper)
     {
         _entryService = entryService;
         _argsMapper = argsMapper;
@@ -43,8 +44,8 @@ public sealed class UserSealedProductsMutationMethods
     [GraphQLType(typeof(AddUserSealedProductResponseModelUnionType))]
     public async Task<ResponseModel> AddUserSealedProductAsync(ClaimsPrincipal claimsPrincipal, AddUserSealedProductArgEntity args)
     {
-        IAddUserSealedProductArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
-        IOperationResponse<AddUserSealedProductResultOutEntity> response = await _entryService.AddUserSealedProductAsync(combinedArgs).ConfigureAwait(false);
+        IAddSealedProductToCollectionArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
+        IOperationResponse<List<SealedProductOutEntity>> response = await _entryService.AddSealedProductToCollectionAsync(combinedArgs).ConfigureAwait(false);
         return await _responseMapper.Map(response).ConfigureAwait(false);
     }
 }

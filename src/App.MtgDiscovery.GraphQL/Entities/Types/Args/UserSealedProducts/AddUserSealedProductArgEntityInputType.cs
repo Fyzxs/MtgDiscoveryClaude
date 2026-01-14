@@ -21,9 +21,9 @@ public sealed class AddUserSealedProductArgEntityInputType : InputObjectType<Add
             .Type<NonNullType<StringType>>()
             .Description("The set ID containing the sealed product");
 
-        _ = descriptor.Field(x => x.CountDelta)
-            .Name("countDelta")
-            .Type<NonNullType<IntType>>()
-            .Description("The quantity change (positive to add, negative to remove)");
+        _ = descriptor.Field(x => x.UserSealedProductDetails)
+            .Name("userSealedProductDetails")
+            .Type<NonNullType<UserSealedProductDetailsArgEntityInputType>>()
+            .Description("The sealed product details including quantity change");
     }
 }

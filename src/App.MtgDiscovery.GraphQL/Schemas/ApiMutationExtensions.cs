@@ -6,7 +6,6 @@ using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
-using App.MtgDiscovery.GraphQL.Entities.Types.UserSealedProducts;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Mutations;
@@ -53,6 +52,7 @@ internal static class ApiMutationExtensions
             .AddType<WishlistItemArgEntityInputType>()
             // UserSealedProducts input types
             .AddType<AddUserSealedProductArgEntityInputType>()
+            .AddType<UserSealedProductDetailsArgEntityInputType>()
             // UserWishlistCards response types
             .AddType<AddCardToWishlistResponseModelUnionType>()
             .AddType<UserWishlistSuccessDataResponseModelType>()
@@ -61,7 +61,6 @@ internal static class ApiMutationExtensions
             // UserSealedProducts response types
             .AddType<AddUserSealedProductResponseModelUnionType>()
             .AddType<AddUserSealedProductSuccessDataResponseModelType>()
-            .AddType<AddUserSealedProductResultOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

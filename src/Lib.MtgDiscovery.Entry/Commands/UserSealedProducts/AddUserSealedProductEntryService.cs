@@ -1,53 +1,64 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.UserSealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Actions.Validators.UserSealedProducts;
+using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.Shared.Abstractions.Actions.Validators;
-using Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
-using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.MtgDiscovery.Entry.Commands.UserSealedProducts;
 
-/// <summary>
-/// Entry service for adding a user sealed product to the collection.
-/// Validates input, maps ArgEntity to ItrEntity, and delegates to domain layer.
-/// </summary>
 internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEntryService
 {
     private readonly IUserSealedProductsCommandDomainService _domainService;
-    private readonly IAddUserSealedProductArgValidator _validator;
+    private readonly IAddSealedProductToCollectionArgsValidator _validator;
+    private readonly ISealedProductOufToOutMapper _sealedProductMapper;
 
     public AddUserSealedProductEntryService(ILogger logger)
         : this(
             new UserSealedProductsDomainService(logger),
-            new AddUserSealedProductArgValidatorContainer())
+            new AddSealedProductToCollectionArgsValidatorContainer(),
+            new SealedProductOufToOutMapper())
     {
     }
 
     private AddUserSealedProductEntryService(
         IUserSealedProductsCommandDomainService domainService,
-        IAddUserSealedProductArgValidator validator)
+        IAddSealedProductToCollectionArgsValidator validator,
+        ISealedProductOufToOutMapper sealedProductMapper)
     {
         _domainService = domainService;
         _validator = validator;
+        _sealedProductMapper = sealedProductMapper;
     }
 
-    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(
-        IAddUserSealedProductArgEntity input)
+    public async Task<IOperationResponse<List<SealedProductOutEntity>>> Execute(
+        IAddSealedProductToCollectionArgsEntity input)
     {
-        IValidatorActionResult<IOperationResponse<IUserSealedProductOufEntity>> validatorResult = await _validator.Validate(input).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return validatorResult.FailureStatus();
+        IValidatorActionResult<IOperationResponse<List<SealedProductOutEntity>>> validatorResult = await _validator.Validate(input).ConfigureAwait(false);
+        if (validatorResult.IsNotValid()) { return validatorResult.FailureStatus(); }
 
         IAddUserSealedProductItrEntity itrEntity = new AddUserSealedProductItrEntity
         {
-            UserId = input.UserId,
-            ProductUuid = input.ProductUuid,
-            SetId = input.SetId,
-            CountDelta = input.CountDelta
+            UserId = input.AuthUser.UserId,
+            ProductUuid = input.AddUserSealedProduct.ProductUuid,
+            SetId = input.AddUserSealedProduct.SetId,
+            CountDelta = input.AddUserSealedProduct.UserSealedProductDetails.Count
         };
 
-        return await _domainService.AddUserSealedProductAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<List<ISealedProductOufEntity>> domainResponse = await _domainService.AddUserSealedProductAsync(itrEntity).ConfigureAwait(false);
+        if (domainResponse.IsFailure) { return new FailureOperationResponse<List<SealedProductOutEntity>>(domainResponse.OuterException); }
+
+        SealedProductOutEntity[] mappedEntities = await Task.WhenAll(
+            domainResponse.ResponseData.Select(ouf => _sealedProductMapper.Map(ouf))
+        ).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<List<SealedProductOutEntity>>(mappedEntities.ToList());
     }
 }
