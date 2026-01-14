@@ -3,7 +3,6 @@ export { AppCard } from './AppCard';
 export { BackToTopFab } from './BackToTopFab';
 export { CollectionStatsSummary } from './CollectionStatsSummary';
 export { CollectorFiltersSection } from './CollectorFiltersSection';
-export { DebouncedSearchInput } from './DebouncedSearchInput';
 export { EmptyState } from './EmptyState';
 export { ExpandableSection } from './ExpandableSection';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
@@ -18,3 +17,6 @@ export { QueryStateContainer } from './QueryStateContainer';
 export { ResultsSummary } from './ResultsSummary';
 export { SearchInput } from './SearchInput';
 export { SortDropdown } from './SortDropdown';
+
+// Badges
+export * from './badges';

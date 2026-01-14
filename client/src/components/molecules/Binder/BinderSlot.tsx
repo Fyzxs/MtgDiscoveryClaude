@@ -3,8 +3,10 @@ import { Box } from '../../atoms';
 import { CardImageDisplay } from '../../organisms/Cards/CardImageDisplay';
 import { CardDetailsModal } from '../../organisms/Cards/CardDetailsModal';
 import { ZoomIndicator } from '../../atoms/Cards/ZoomIndicator';
-import { LastDeltaBadge } from '../../atoms/Cards/LastDeltaBadge';
+import { DeltaBadge } from '../shared/badges';
 import { CollectionEntryOverlay } from '../Cards/CollectionEntryOverlay';
+import { CollectionSummary } from '../Cards/CollectionSummary';
+import { WishlistSummary } from '../Cards/WishlistSummary';
 import { useMtgCardCollectionActions } from '../../../hooks/useMtgCardCollectionActions';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import type { Card } from '../../../types/card';
@@ -254,7 +256,37 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
         )}
 
         {/* Last modification delta badge */}
-        {card && <LastDeltaBadge cardId={card.id} />}
+        {card && <DeltaBadge itemId={card.id} positioned />}
+
+        {/* Collection and Wishlist badges - bottom corners */}
+        {card && hasCollector && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 8,
+              left: 8,
+              right: 8,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              pointerEvents: 'auto',
+              zIndex: 20
+            }}
+          >
+            {card.userCollection && (
+              <CollectionSummary
+                collectionData={card.userCollection}
+                size="small"
+              />
+            )}
+            {card.userWishlist && (
+              <WishlistSummary
+                wishlistData={card.userWishlist}
+                size="small"
+              />
+            )}
+          </Box>
+        )}
 
         {/* Collection indicator for missing cards (only when there's a collector and not selected) */}
         {card && hasCollector && !isCollected && !isHovered && !isSelected && (

@@ -1,6 +1,6 @@
-import Link from '../Link';
-import Typography from '../Typography';
-import Box from '../Box';
+import Link from '../mui-wrappers/Link';
+import Typography from '../mui-wrappers/Typography';
+import Box from '../mui-wrappers/Box';
 import { SetIcon } from '../Sets/SetIcon';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useLinkParams } from '../../../contexts/LinkParamsContext';

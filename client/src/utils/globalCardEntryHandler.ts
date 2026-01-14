@@ -219,8 +219,8 @@ class GlobalCardEntryHandler {
       const specialMap: Record<string, CardSpecial> = {
         'g': 'signed',
         'i': 'signed',
-        'r': 'artist-proof',
-        'p': 'artist-proof',
+        'r': 'proof',
+        'p': 'proof',
         't': 'altered',
         'm': 'altered'
       };
@@ -255,14 +255,21 @@ class GlobalCardEntryHandler {
       count = -count;
     }
 
-    // Submit the update
+    // Capture values BEFORE resetting
+    const finish = state.finish;
+    const special = state.special;
+
+    // Hide overlay immediately for instant feedback
+    this.reset(cardId);
+
+    // Submit the update (async - happens in background)
     perfMonitor.start('card-entry-submit');
     try {
       await handler.onSubmit({
         cardId: handler.cardId,
         count,
-        finish: state.finish,
-        special: state.special,
+        finish,
+        special,
         setId: '', // Will be filled in by the onSubmit handler
         setCode: '',
         setGroupId: null
@@ -272,9 +279,6 @@ class GlobalCardEntryHandler {
     } finally {
       perfMonitor.end('card-entry-submit');
     }
-
-    // Reset entry state
-    this.reset(cardId);
   }
 }
 

@@ -4,7 +4,7 @@ import { useTheme, alpha } from '../../atoms';
 import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import { SetTitle } from '../../atoms/Sets/SetTitle';
-import { CardCountDisplay } from '../../atoms/shared/CardCountDisplay';
+import { CardCountDisplay } from '../../atoms';
 import { TopBadges } from './TopBadges';
 import { SetIconDisplay } from './SetIconDisplay';
 import { BottomBadges } from './BottomBadges';

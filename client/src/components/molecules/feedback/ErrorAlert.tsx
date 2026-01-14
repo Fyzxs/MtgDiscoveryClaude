@@ -1,7 +1,5 @@
 import React from 'react';
-import Alert from '../Alert';
-import Typography from '../Typography';
-import Box from '../Box';
+import { Alert, Typography, Box } from '../../atoms';
 
 interface ErrorAlertProps {
   message: string;

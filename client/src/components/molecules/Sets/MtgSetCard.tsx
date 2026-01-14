@@ -3,13 +3,10 @@ import { Card, CardContent, Box, CardActionArea, Typography } from '../../atoms'
 import { useTheme, alpha } from '../../atoms';
 import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
-import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
-import { SetDateBadge } from '../../atoms/shared/SetDateBadge';
 import { CollectionProgressBar } from '../../atoms/shared/CollectionProgressBar';
 import { SetIconDisplay } from './SetIconDisplay';
 import { SetTypeAccent } from '../../atoms/Sets/SetTypeAccent';
-import { DigitalBadge } from '../../atoms/Sets/DigitalBadge';
-import { FoilOnlyBadge } from '../../atoms/Sets/FoilOnlyBadge';
+import { AppBadge, DateBadge, StatusBadge } from '../shared/badges';
 import { ProgressRing } from '../../atoms/shared/ProgressRing';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
@@ -276,7 +273,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
 
         {/* Meta info: code and progress on separate lines */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <SetCodeBadge code={set.code} compact />
+          <AppBadge variant="code" label={set.code} compact />
           {hasCollector && collectionProgress ? (
             <Typography
               sx={{
@@ -458,8 +455,8 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
 
         {/* Meta badges */}
         <Box sx={{ display: 'flex', gap: 0.75, mb: 1, zIndex: 1 }}>
-          <SetCodeBadge code={set.code} />
-          <SetDateBadge date={set.releasedAt} />
+          <AppBadge variant="code" label={set.code} />
+          <DateBadge variant="chip" date={set.releasedAt} />
         </Box>
 
         {/* Full name */}
@@ -534,8 +531,8 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
               </Typography>
               {(set.digital || set.foilOnly) && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mt: 0.5 }}>
-                  {set.digital && <DigitalBadge show />}
-                  {set.foilOnly && <FoilOnlyBadge show />}
+                  {set.digital && <StatusBadge variant="digital" show />}
+                  {set.foilOnly && <StatusBadge variant="foil" show />}
                 </Box>
               )}
             </Box>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { logger } from '../../../utils/logger';
 import { Box, Typography } from '../../atoms';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
-import { LoadingContainer, ErrorAlert } from '../../atoms';
+import { LoadingIndicator, ErrorAlert } from '../feedback';
 import { formatRulingDate } from '../../../utils/dateFormatters';
 import { fetchWithRetry, globalLoadingManager } from '../../../utils/networkErrorHandler';
 
@@ -97,7 +97,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
       onExpandedChange={setExpanded}
     >
       {loading && (
-        <LoadingContainer size="small" />
+        <LoadingIndicator size={20} withContainer={false} />
       )}
 
       {error && (

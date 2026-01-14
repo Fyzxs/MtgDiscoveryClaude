@@ -7,7 +7,7 @@ import {
   Button,
   Divider,
 } from '../../atoms';
-import { CloseIcon } from '../../atoms/Icons';
+import { CloseIcon } from '../../atoms';
 import { touchTargetStyles } from '../../../styles/touchTargets';
 
 interface EdgeDrawerProps {

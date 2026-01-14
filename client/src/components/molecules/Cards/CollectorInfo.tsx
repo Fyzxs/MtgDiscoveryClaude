@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box } from '../../atoms';
-import { CollectorNumber, RarityBadge } from '../../atoms';
+import { CollectorNumber } from '../../atoms';
+import { AppBadge } from '../shared/badges';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 
 interface CollectorInfoProps {
@@ -26,7 +27,7 @@ export const CollectorInfo: React.FC<CollectorInfoProps> = ({
         <CollectorNumber number={collectorNumber} setCode={setCode} />
       )}
       {rarity && (
-        <RarityBadge rarity={rarity} />
+        <AppBadge variant="rarity" rarity={rarity} />
       )}
       {reserved && (
         <ReservedListShield />

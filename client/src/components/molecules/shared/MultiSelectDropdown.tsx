@@ -18,7 +18,7 @@ import {
 } from '../../atoms';
 import type { MultiSelectOption } from '../../../types/filters';
 import type { StyledComponentProps } from '../../../types/components';
-import { ClearIcon } from '../../atoms/Icons';
+import { ClearIcon } from '../../atoms';
 
 // Re-export for backward compatibility
 export type { MultiSelectOption } from '../../../types/filters';
