@@ -63,7 +63,8 @@ export const useSetPageData = (setCode: string | undefined) => {
     showGroups: { default: true },
     sort: { default: 'collector-asc' },
     counts: { default: [] },
-    signed: { default: [] }
+    signed: { default: [] },
+    wishlist: { default: false }
   };
 
   const { getInitialValues, updateUrl } = useUrlState({}, urlStateConfig);
@@ -216,7 +217,8 @@ export const useSetPageData = (setCode: string | undefined) => {
         showGroups: initialValues.showGroups !== undefined ? initialValues.showGroups : true,
         formats: [],
         collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
-        signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
+        signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : []),
+        wishlist: initialValues.wishlist === true || initialValues.wishlist === 'true'
       }
     }
   );
@@ -253,6 +255,7 @@ export const useSetPageData = (setCode: string | undefined) => {
     const countsArray = Array.isArray(filters.collectionCounts) ? filters.collectionCounts as string[] : [];
     const signedArray = Array.isArray(filters.signedCards) ? filters.signedCards as string[] : [];
     const showGroupsValue = typeof filters.showGroups === 'boolean' ? filters.showGroups : true;
+    const wishlistValue = typeof filters.wishlist === 'boolean' ? filters.wishlist : false;
 
     updateUrl({
       search: searchTerm || null,
@@ -262,7 +265,8 @@ export const useSetPageData = (setCode: string | undefined) => {
       groups: groupsArray.length > 0 ? groupsArray : null,
       showGroups: showGroupsValue !== true ? showGroupsValue : null,
       counts: (hasCollector && countsArray.length > 0) ? countsArray : null,
-      signed: (hasCollector && signedArray.length > 0) ? signedArray : null
+      signed: (hasCollector && signedArray.length > 0) ? signedArray : null,
+      wishlist: (hasCollector && wishlistValue === true) ? wishlistValue : null
     });
   }, [searchTerm, sortBy, filters, hasCollector, updateUrl]);
 
@@ -285,7 +289,8 @@ export const useSetPageData = (setCode: string | undefined) => {
       sort: sortBy,
       counts: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
       signed: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[],
-      finishes: (Array.isArray(filters.finishes) ? filters.finishes : []) as string[]
+      finishes: (Array.isArray(filters.finishes) ? filters.finishes : []) as string[],
+      wishlist: typeof filters.wishlist === 'boolean' ? filters.wishlist : false
     },
     {
       rarities: { default: [] },
@@ -295,7 +300,8 @@ export const useSetPageData = (setCode: string | undefined) => {
       sort: { default: 'collector-asc' },
       counts: { default: [] },
       signed: { default: [] },
-      finishes: { default: [] }
+      finishes: { default: [] },
+      wishlist: { default: false }
     },
     { debounceMs: 0 }
   );

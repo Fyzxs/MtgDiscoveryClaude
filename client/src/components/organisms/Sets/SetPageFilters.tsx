@@ -46,9 +46,11 @@ interface SetPageFiltersProps {
   collectionCounts?: string[];
   signedCards?: string[];
   finishes?: string[];
+  wishlist?: boolean;
   onCollectionCountsChange?: (value: string[]) => void;
   onSignedCardsChange?: (value: string[]) => void;
   onFinishesChange?: (value: string[]) => void;
+  onWishlistChange?: (value: boolean) => void;
 }
 
 export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
@@ -73,9 +75,11 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
   collectionCounts = [],
   signedCards = [],
   finishes = [],
+  wishlist = false,
   onCollectionCountsChange,
   onSignedCardsChange,
-  onFinishesChange
+  onFinishesChange,
+  onWishlistChange
 }) => {
   // Only show filters if there are multiple cards
   if (cards.length <= 1) {
@@ -189,6 +193,11 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
               label: 'Signed Cards',
               placeholder: 'All Cards',
               minWidth: 150
+            },
+            wishlist: {
+              label: 'Wishlisted',
+              value: wishlist,
+              onChange: onWishlistChange || (() => {})
             }
           } : undefined
         }}
