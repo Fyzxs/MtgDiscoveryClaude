@@ -16,5 +16,5 @@ public sealed class SealedProductOutEntity
     public string PurchaseUrlTcgplayer { get; init; }
     public string PurchaseUrlCardmarket { get; init; }
     public string PurchaseUrlCardKingdom { get; init; }
-    public int UserQuantity { get; init; }
+    public int UserQuantity { get; set; }
 }

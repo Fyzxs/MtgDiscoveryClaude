@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useApolloClient } from '@apollo/client/react';
 import { GET_SEALED_PRODUCTS_BY_SET_CODE } from '../graphql/queries/sealedProducts';
+import { useCollectorParam } from './useCollectorParam';
 
 export interface SealedProduct {
   uuid: string;
@@ -42,6 +43,7 @@ export const useSealedProductsData = (
   isActive: boolean
 ): UseSealedProductsDataResult => {
   const apolloClient = useApolloClient();
+  const { collectorId } = useCollectorParam();
   const [sealedProducts, setSealedProducts] = useState<SealedProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -56,19 +58,29 @@ export const useSealedProductsData = (
       setError(null);
 
       try {
+        console.log('[SealedProducts] Fetching with collectorId:', collectorId);
         const response = await apolloClient.query<SealedProductsResponse>({
           query: GET_SEALED_PRODUCTS_BY_SET_CODE,
-          variables: { args: { setCode } },
-          fetchPolicy: 'cache-first',
+          variables: {
+            args: {
+              setCode,
+              collectionId: collectorId || undefined
+            }
+          },
+          // Use network-only when collectorId present to ensure fresh user data
+          fetchPolicy: collectorId ? 'network-only' : 'cache-first',
         });
 
+        console.log('[SealedProducts] Response:', response.data);
         const data = response.data?.sealedProductsBySetCode;
         if (data?.__typename === 'SealedProductsSuccessResponse') {
+          console.log('[SealedProducts] Products with quantities:', data.data?.map(p => ({ name: p.name, userQuantity: p.userQuantity })));
           setSealedProducts(data.data || []);
         } else if (data?.__typename === 'FailureResponse') {
           setError(new Error(data.status?.message || 'Failed to fetch sealed products'));
         }
       } catch (err) {
+        console.error('[SealedProducts] Error:', err);
         setError(err as Error);
       } finally {
         setLoading(false);
@@ -76,7 +88,7 @@ export const useSealedProductsData = (
     };
 
     fetchSealedProducts();
-  }, [setCode, isActive, apolloClient]);
+  }, [setCode, isActive, apolloClient, collectorId]);
 
   return { sealedProducts, loading, error };
 };

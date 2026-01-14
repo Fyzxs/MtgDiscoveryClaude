@@ -93,11 +93,17 @@ export const SetPage: React.FC = () => {
   } = useSealedProductsData(setCode, true);
 
   // If sealed tab is active but no sealed products exist, switch to cards tab
+  // BUT: Don't switch if the user explicitly selected sealed via URL
   React.useEffect(() => {
-    if (activeTab === 'sealed' && sealedProducts.length === 0 && !sealedLoading) {
+    // Only auto-switch if the initial tab from URL was NOT sealed
+    // This preserves user's URL choice even if there are no sealed products
+    if (activeTab === 'sealed' &&
+        sealedProducts.length === 0 &&
+        !sealedLoading &&
+        initialTabValue !== 'sealed') {
       setActiveTab('cards');
     }
-  }, [activeTab, sealedProducts.length, sealedLoading]);
+  }, [activeTab, sealedProducts.length, sealedLoading, initialTabValue]);
 
   // Binder view mode state
   const canUseBookMode = !isMobile && !isTablet;

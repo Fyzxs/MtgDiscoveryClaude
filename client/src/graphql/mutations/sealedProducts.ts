@@ -1,24 +1,20 @@
 import { gql } from '@apollo/client';
 
 // Mutation to add/update user's sealed product collection count
-// Returns the updated product data with new count
-export const ADD_USER_SEALED_PRODUCT = gql`
-  mutation AddUserSealedProduct($args: AddUserSealedProductInput!) {
+// Returns the updated sealed product(s) with userQuantity populated
+// Matches the card collection pattern exactly
+export const ADD_SEALED_PRODUCT_TO_COLLECTION = gql`
+  mutation AddSealedProductToCollection($args: AddUserSealedProductInput!) {
     addUserSealedProduct(args: $args) {
       __typename
       ... on AddUserSealedProductSuccessResponse {
         data {
-          productUuid
-          count
-        }
-        status {
-          message
-          statusCode
-        }
-        metaData {
-          invocationId
-          timeStamp
-          elapsedTime
+          uuid
+          setId
+          name
+          category
+          imageUrl
+          userQuantity
         }
       }
       ... on FailureResponse {
