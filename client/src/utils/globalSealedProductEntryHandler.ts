@@ -1,4 +1,3 @@
-import { sealedProductOverlay } from './directSealedProductOverlay';
 import { logger } from './logger';
 import { perfMonitor } from './performanceMonitor';
 import type { SealedProductCollectionUpdate } from '../contexts/SealedCollectionContext';
@@ -13,6 +12,7 @@ interface SealedProductHandler {
   setId: string;
   onSubmit: (update: SealedProductCollectionUpdate) => Promise<void>;
   onFlashInvalid: () => void;
+  onOverlayUpdate: (state: { count: string; isNegative: boolean; visible: boolean }) => void;
 }
 
 class GlobalSealedProductEntryHandler {
@@ -41,7 +41,6 @@ class GlobalSealedProductEntryHandler {
     this.handlers.delete(productUuid);
     this.entryStates.delete(productUuid);
     this.isEntering.delete(productUuid);
-    sealedProductOverlay.cleanup(productUuid);
   }
 
   reset(productUuid: string) {
@@ -51,7 +50,11 @@ class GlobalSealedProductEntryHandler {
       state.count = '';
       state.isNegative = false;
     }
-    sealedProductOverlay.cleanup(productUuid);
+
+    const handler = this.handlers.get(productUuid);
+    if (handler) {
+      handler.onOverlayUpdate({ count: '', isNegative: false, visible: false });
+    }
   }
 
   private handleKeyUp(event: KeyboardEvent) {
@@ -130,9 +133,6 @@ class GlobalSealedProductEntryHandler {
       event.stopPropagation();
 
       if (!this.isEntering.get(productUuid)) {
-        // IMMEDIATELY show overlay
-        const state = this.entryStates.get(productUuid)!;
-        sealedProductOverlay.show(productUuid, state);
         this.isEntering.set(productUuid, true);
       }
 
@@ -179,8 +179,8 @@ class GlobalSealedProductEntryHandler {
     // Update state
     this.entryStates.set(productUuid, state);
 
-    // Update overlay
-    sealedProductOverlay.update(productUuid, state);
+    // Update overlay via React callback
+    handler.onOverlayUpdate({ ...state, visible: true });
   }
 
   private cancelEntry(productUuid: string) {

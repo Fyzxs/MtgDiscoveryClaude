@@ -22,14 +22,15 @@ class DirectDomOverlay {
         right: 0 !important;
         width: 100% !important;
         height: 33% !important;
+        padding: 4px !important;
         background: rgba(0, 0, 0, 0.95) !important;
         backdrop-filter: blur(4px) !important;
-        border-top: 2px solid #1976d2 !important;
+        border-top: 1px solid #1976d2 !important;
         z-index: 1000 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        justify-content: center !important;
+        justify-content: space-between !important;
         font-family: "Roboto","Helvetica","Arial",sans-serif !important;
         pointer-events: none !important;
         box-sizing: border-box !important;
@@ -51,12 +52,15 @@ class DirectDomOverlay {
 
       /* Mode label at top of overlay */
       .dom-overlay-mode {
-        font-size: 0.75rem !important;
+        font-size: 0.5rem !important;
         font-weight: 500 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.1em !important;
+        letter-spacing: 0.05em !important;
         color: rgba(255, 255, 255, 0.6) !important;
-        margin-bottom: 4px !important;
+        text-align: center !important;
+        width: 100% !important;
+        flex-shrink: 0 !important;
+        line-height: 1 !important;
       }
 
       .dom-overlay-mode::after {
@@ -85,12 +89,28 @@ class DirectDomOverlay {
         color: #f44336 !important;
       }
 
+      /* Main content container - side by side layout */
+      .dom-overlay-main {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        flex: 1 1 auto !important;
+        gap: 4px !important;
+      }
+
+      /* Count on the right - takes full height */
       .dom-overlay-count {
-        font-size: 3rem !important;
+        font-size: 2rem !important;
         font-weight: bold !important;
         color: #1976d2 !important;
         line-height: 1 !important;
-        margin-bottom: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 1 !important;
+        min-width: 0 !important;
         will-change: contents !important;
       }
 
@@ -98,74 +118,69 @@ class DirectDomOverlay {
         color: #f44336 !important;
       }
 
+      /* Details on the left */
       .dom-overlay-details {
         display: flex !important;
-        align-items: center !important;
-        gap: 16px !important;
-        height: 2rem !important;
-        will-change: contents !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        flex: 0 0 auto !important;
       }
 
       .dom-overlay-finish {
-        font-size: 1.25rem !important;
+        font-size: 0.7rem !important;
         font-weight: 500 !important;
         color: rgba(255, 255, 255, 0.87) !important;
+        line-height: 1.2 !important;
       }
 
       .dom-overlay-divider {
-        width: 1px !important;
-        height: 1.5rem !important;
-        background: rgba(255, 255, 255, 0.12) !important;
+        display: none !important;
       }
 
       .dom-overlay-special {
-        font-size: 1.25rem !important;
+        font-size: 0.7rem !important;
         font-weight: 500 !important;
         color: #ff9800 !important;
+        line-height: 1.2 !important;
       }
 
-      /* Responsive adjustments for smaller screens */
-      @media (max-width: 600px) {
-        .dom-overlay-count {
-          font-size: 1.75rem !important;
-          margin-bottom: 4px !important;
+      /* Larger cards (regular card view) */
+      @media (min-width: 600px) {
+        .dom-overlay-mode {
+          font-size: 0.65rem !important;
         }
 
-        .dom-overlay-details {
-          gap: 8px !important;
-          height: 1.5rem !important;
+        .dom-overlay-count {
+          font-size: 3rem !important;
         }
 
         .dom-overlay-finish {
-          font-size: 0.875rem !important;
+          font-size: 0.9rem !important;
         }
 
         .dom-overlay-special {
-          font-size: 0.875rem !important;
-        }
-
-        .dom-overlay-divider {
-          height: 1rem !important;
+          font-size: 0.9rem !important;
         }
       }
 
-      /* Tablet adjustments */
-      @media (min-width: 601px) and (max-width: 900px) {
-        .dom-overlay-count {
-          font-size: 2.25rem !important;
-          margin-bottom: 6px !important;
+      /* Desktop large cards */
+      @media (min-width: 1200px) {
+        .dom-overlay-mode {
+          font-size: 0.75rem !important;
         }
 
-        .dom-overlay-details {
-          gap: 12px !important;
+        .dom-overlay-count {
+          font-size: 4rem !important;
         }
 
         .dom-overlay-finish {
-          font-size: 1rem !important;
+          font-size: 1.1rem !important;
         }
 
         .dom-overlay-special {
-          font-size: 1rem !important;
+          font-size: 1.1rem !important;
         }
       }
     `;
@@ -236,12 +251,11 @@ class DirectDomOverlay {
     modeLabel.className = 'dom-overlay-mode';
     overlay.appendChild(modeLabel);
 
-    // Create count display
-    const count = document.createElement('div');
-    count.className = 'dom-overlay-count';
-    overlay.appendChild(count);
+    // Create main content container (side by side)
+    const mainContent = document.createElement('div');
+    mainContent.className = 'dom-overlay-main';
 
-    // Create details container
+    // Left side: details container
     const details = document.createElement('div');
     details.className = 'dom-overlay-details';
 
@@ -256,10 +270,17 @@ class DirectDomOverlay {
 
     const special = document.createElement('span');
     special.className = 'dom-overlay-special';
-    special.style.display = 'none';
+    special.style.visibility = 'hidden';
     details.appendChild(special);
 
-    overlay.appendChild(details);
+    mainContent.appendChild(details);
+
+    // Right side: count display
+    const count = document.createElement('div');
+    count.className = 'dom-overlay-count';
+    mainContent.appendChild(count);
+
+    overlay.appendChild(mainContent);
 
     // Append to card
     cardElement.appendChild(overlay);
@@ -271,7 +292,6 @@ class DirectDomOverlay {
     const count = overlay.querySelector('.dom-overlay-count') as HTMLElement;
     const finish = overlay.querySelector('.dom-overlay-finish') as HTMLElement;
     const special = overlay.querySelector('.dom-overlay-special') as HTMLElement;
-    const divider = overlay.querySelector('.dom-overlay-divider') as HTMLElement;
 
     if (count) {
       const displayCount = entryState.isNegative
@@ -285,15 +305,14 @@ class DirectDomOverlay {
       finish.textContent = FINISH_DISPLAY_NAMES[entryState.finish];
     }
 
-    if (special && divider) {
+    if (special) {
       const specialText = SPECIAL_DISPLAY_NAMES[entryState.special];
       if (specialText) {
         special.textContent = specialText;
-        special.style.display = 'block';
-        divider.style.display = 'block';
+        special.style.visibility = 'visible';
       } else {
-        special.style.display = 'none';
-        divider.style.display = 'none';
+        special.textContent = '';
+        special.style.visibility = 'hidden';
       }
     }
 
