@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from '../../atoms';
-import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
-import { SetDateBadge } from '../../atoms/shared/SetDateBadge';
+import { AppBadge, DateBadge } from '../shared/badges';
 
 interface TopBadgesProps {
   setCode: string;
@@ -22,8 +21,8 @@ export const TopBadges: React.FC<TopBadgesProps> = ({ setCode, releaseDate, comp
         gap: compact ? 1 : 0,
       }}
     >
-      <SetCodeBadge code={setCode} compact={compact} />
-      {!compact && <SetDateBadge date={releaseDate} />}
+      <AppBadge variant="code" label={setCode} compact={compact} />
+      {!compact && <DateBadge variant="chip" date={releaseDate} />}
     </Box>
   );
 };

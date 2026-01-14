@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Fab, Zoom } from '../../atoms';
 import type { FabComponentProps } from '../../../types/components';
-import { KeyboardArrowUpIcon } from '../../atoms/Icons';
+import { KeyboardArrowUpIcon } from '../../atoms';
 
 interface BackToTopFabProps extends FabComponentProps {
   /**

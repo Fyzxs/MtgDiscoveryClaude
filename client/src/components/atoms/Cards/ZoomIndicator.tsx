@@ -1,6 +1,6 @@
-import IconButton from '../IconButton';
+import IconButton from '../mui-wrappers/IconButton';
 import type { MouseEvent } from 'react';
-import { ZoomInIcon } from '../Icons';
+import { ZoomInIcon } from '../mui-wrappers/Icons';
 
 interface ZoomIndicatorProps {
   onZoomClick: (e: MouseEvent) => void;

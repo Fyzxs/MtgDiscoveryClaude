@@ -1,11 +1,9 @@
 export { ArtistLink } from './ArtistLink';
-export { BadgePill } from './BadgePill';
+export { CardCountDisplay } from './CardCountDisplay';
 export { CardName } from './CardName';
-export { CollectionToast } from './CollectionToast';
 export { CollectorNumber } from './CollectorNumber';
-export { LastDeltaBadge } from './LastDeltaBadge';
 export { ManaSymbol } from './ManaSymbol';
-export { RarityBadge } from './RarityBadge';
+export { PriceDisplay } from './PriceDisplay';
 export { ReservedListShield } from './ReservedListShield';
 export { SetLink } from './SetLink';
 export { ZoomIndicator } from './ZoomIndicator';

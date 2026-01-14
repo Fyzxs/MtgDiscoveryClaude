@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Button } from '../../atoms';
 import type { EmptyStateProps as StandardEmptyStateProps } from '../../../types/components';
-import { SearchOffIcon } from '../../atoms/Icons';
+import { SearchOffIcon } from '../../atoms';
 
 type EmptyStateProps = StandardEmptyStateProps;
 

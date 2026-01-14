@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { Box, Typography, IconButton, Chip } from '../../atoms';
-import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms/Icons';
+import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms';
 
 interface ExpandableSectionProps {
   title: string;

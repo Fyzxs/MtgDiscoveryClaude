@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Typography, IconButton, Tooltip, Button } from '../../atoms';
-import { ContentCopyIcon, MenuBookIcon } from '../../atoms/Icons';
+import { ContentCopyIcon, MenuBookIcon } from '../../atoms';
 import { MtgSetCard } from '../../molecules/Sets/MtgSetCard';
 import { SetCollectionPanel } from './SetCollectionPanel';
 import { SectionErrorBoundary } from '../../utils/ErrorBoundaries';

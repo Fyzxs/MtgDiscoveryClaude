@@ -14,7 +14,8 @@ import { getLegalityColor, getRarityColor } from '../../../theme';
 import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
 import { CollectionSummary, WishlistSummary, ManaCost, RulingsDisplay } from '../../molecules';
-import { RarityBadge, PriceDisplay } from '../../atoms';
+import { PriceDisplay } from '../../atoms';
+import { AppBadge } from '../../molecules/shared/badges';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { CardImageDisplay } from './CardImageDisplay';
 import { CardBadges } from '../../molecules/Cards/CardBadges';
@@ -33,7 +34,7 @@ import {
   CloseIcon,
   KeyboardArrowDownIcon,
   ExpandMoreIcon
-} from '../../atoms/Icons';
+} from '../../atoms';
 import { useTheme } from '../../atoms';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
@@ -327,7 +328,7 @@ export const CardDetailsSheet: React.FC<CardDetailsSheetProps> = ({
 
             {/* Rarity, Set, Collector # row */}
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-              {card.rarity && <RarityBadge rarity={card.rarity} size="small" />}
+              {card.rarity && <AppBadge variant="rarity" rarity={card.rarity} size="small" />}
               <SetLink
                 setCode={card.setCode}
                 setName={card.setName}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { logger } from '../../../utils/logger';
 import { Typography } from '../../atoms';
 import { ExpandableSection } from '../../molecules';
-import { LoadingContainer, ErrorAlert } from '../../atoms';
+import { LoadingIndicator, ErrorAlert } from '../../molecules/feedback';
 import { CardGrid } from './CardGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import { useCardQueries } from '../../../hooks/useCardQueries';
@@ -121,7 +121,7 @@ export const RelatedCardsDisplay: React.FC<RelatedCardsDisplayProps> = ({
       onExpandedChange={setExpanded}
     >
       {loading && (
-        <LoadingContainer py={4} />
+        <LoadingIndicator withContainer={false} />
       )}
 
       {userFriendlyError && (

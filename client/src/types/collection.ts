@@ -1,5 +1,5 @@
 export type CardFinish = 'non-foil' | 'foil' | 'etched';
-export type CardSpecial = 'none' | 'signed' | 'artist-proof' | 'altered';
+export type CardSpecial = 'none' | 'signed' | 'proof' | 'altered';
 
 export interface CollectionEntryState {
   count: string;
@@ -33,7 +33,7 @@ export const FINISH_DISPLAY_NAMES: Record<CardFinish, string> = {
 export const SPECIAL_DISPLAY_NAMES: Record<CardSpecial, string> = {
   'none': '',
   'signed': 'Signed',
-  'artist-proof': 'Artist Proof',
+  'proof': 'Artist Proof',
   'altered': 'Altered'
 };
 

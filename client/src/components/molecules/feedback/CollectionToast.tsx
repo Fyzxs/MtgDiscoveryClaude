@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import Alert from '../Alert';
-import IconButton from '../IconButton';
-import Box from '../Box';
+import { Alert, IconButton, Box, CloseIcon } from '../../atoms';
 import {
   FINISH_DISPLAY_NAMES,
   SPECIAL_DISPLAY_NAMES
@@ -10,7 +8,6 @@ import type {
   CardFinish,
   CardSpecial
 } from '../../../types/collection';
-import { CloseIcon } from '../Icons';
 
 export interface ToastMessage {
   id: string;
