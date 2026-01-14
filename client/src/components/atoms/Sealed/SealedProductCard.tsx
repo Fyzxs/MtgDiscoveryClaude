@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { Box, Typography, Chip, Stack } from '@mui/material';
+import React, { useRef, useCallback } from 'react';
+import { Box, Typography, Chip, Stack, Card as MuiCard } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
+import { LastDeltaBadge } from '../Cards/LastDeltaBadge';
+import { useSealedCollection } from '../../../contexts/SealedCollectionContext';
+import { useSealedProductCollectionActions } from '../../../hooks/useSealedProductCollectionActions';
+import { useSealedProductInteractions } from '../../../hooks/useSealedProductInteractions';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
-import { SealedCollectionBadge } from './SealedCollectionBadge';
-import { SealedProductCollectionEntry } from '../../molecules/Sealed/SealedProductCollectionEntry';
 
 // COMING_SOON placeholder image - shown while product image loads
 const COMING_SOON_URL = '/coming-soon.png';
 
 interface SealedProductCardProps {
   product: SealedProduct;
+  index: number;
   onProductClick?: (product: SealedProduct) => void;
-  // Collection tracking props
-  userQuantity?: number;
-  onQuantityChange?: (uuid: string, setId: string, delta: number) => void;
-  isUpdating?: boolean;
 }
 
 const formatCategory = (category: string | undefined): string => {
@@ -49,20 +48,42 @@ const getCategoryColor = (category: string | undefined): string => {
 
 export const SealedProductCard: React.FC<SealedProductCardProps> = ({
   product,
+  index,
   onProductClick,
-  userQuantity = 0,
-  onQuantityChange,
-  isUpdating = false,
 }) => {
   const theme = useTheme();
   const categoryColor = getCategoryColor(product.category);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [entryOpen, setEntryOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const productRef = useRef<HTMLDivElement>(null);
+  const { getLastDelta, lastDeltaVersion } = useSealedCollection();
 
   // Lazy load images as they approach viewport
-  const { ref: lazyRef, hasBeenInView } = useLazyLoad({
+  const { ref: lazyLoadRef, hasBeenInView } = useLazyLoad({
     rootMargin: '100px',
     threshold: 0.01
+  });
+
+  // Combined ref callback for both lazy loading and product ref
+  const handleRef = useCallback((node: HTMLDivElement | null) => {
+    productRef.current = node;
+    // lazyLoadRef is a ref object, not a callback - assign directly
+    if (lazyLoadRef) {
+      (lazyLoadRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    }
+  }, [lazyLoadRef]);
+
+  // Use interactions hook (matches card pattern exactly)
+  const { isSelected, handleProductClick } = useSealedProductInteractions({
+    productRef
+  });
+
+  // Use collection actions hook (registers keyboard handler)
+  useSealedProductCollectionActions({
+    productUuid: product.uuid,
+    setId: product.setId,
+    productName: product.name,
+    isSelected,
+    productRef
   });
 
   const hasPurchaseLinks = product.purchaseUrlTcgplayer || product.purchaseUrlCardmarket || product.purchaseUrlCardKingdom;
@@ -72,23 +93,36 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
     ? formatCategory(product.subtype)
     : formatCategory(product.category);
 
-  const handleBadgeClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEntryOpen(true);
-  };
+  // Wrap handleProductClick to pass product and onProductClick
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    handleProductClick(e, onProductClick, product);
+  }, [handleProductClick, onProductClick, product]);
 
-  const handleQuantityChange = (delta: number) => {
-    onQuantityChange?.(product.uuid, product.setId, delta);
-  };
+  // Get last delta for badge
+  const lastDelta = getLastDelta(product.uuid);
+
+  // Quantity for display
+  const quantity = product.userQuantity || 0;
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log(`[SealedProductCard] ${product.name} - userQuantity:`, product.userQuantity, 'quantity:', quantity);
+  }, [product.name, product.userQuantity, quantity]);
 
   return (
-    <>
-    <Box
-      ref={lazyRef}
+    <MuiCard
+      ref={handleRef}
+      elevation={4}
+      onClick={handleClick}
+      data-selected={isSelected}
+      data-product-uuid={product.uuid}
+      data-product-index={index}
+      tabIndex={-1}
+      role="button"
+      aria-label={`${product.name}, quantity: ${quantity}`}
       sx={{
         position: 'relative',
         width: '100%',
-        // Consistent heights across all breakpoints
         height: {
           xs: 240,
           sm: 260,
@@ -100,23 +134,46 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         bgcolor: 'grey.900',
         borderRadius: 2,
         overflow: 'hidden',
-        cursor: onProductClick ? 'pointer' : 'default',
+        cursor: 'pointer',
         border: `1px solid ${theme.palette.grey[800]}`,
         '&:hover': {
           transform: 'translateY(-4px)',
           boxShadow: theme.shadows[8],
           borderColor: alpha(categoryColor, 0.5),
         },
+        // Selected state
+        '&[data-selected="true"]': {
+          borderColor: 'primary.main',
+          borderWidth: 2,
+          boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
+        },
+        // Submitting state
+        '&[data-submitting="true"]': {
+          opacity: 0.7,
+        },
+        // Flash animations
+        '&[data-flash="success"]': {
+          animation: 'flash-success 0.9s ease-out',
+        },
+        '&[data-flash="error"]': {
+          animation: 'flash-error 0.9s ease-out',
+        },
         transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
+        '@keyframes flash-success': {
+          '0%': { backgroundColor: theme.palette.success.main },
+          '100%': { backgroundColor: theme.palette.grey[900] }
+        },
+        '@keyframes flash-error': {
+          '0%': { backgroundColor: theme.palette.error.main },
+          '100%': { backgroundColor: theme.palette.grey[900] }
+        }
       }}
-      onClick={() => onProductClick?.(product)}
     >
       {/* Product Image with COMING_SOON background */}
       <Box
         sx={{
           position: 'relative',
           width: '100%',
-          // Square aspect ratio (1:1) for all breakpoints
           paddingTop: '100%',
           flexShrink: 0,
           backgroundImage: `url(${COMING_SOON_URL})`,
@@ -126,12 +183,17 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           overflow: 'hidden',
         }}
       >
-        {/* Collection Badge - Top-left, shows when owned */}
-        {onQuantityChange && (
-          <SealedCollectionBadge
-            quantity={userQuantity}
-            onClick={handleBadgeClick}
-            isUpdating={isUpdating}
+        {/* Last Delta Badge - Top-left */}
+        {lastDelta !== undefined && (
+          <LastDeltaBadge
+            delta={lastDelta}
+            key={`${product.uuid}-${lastDeltaVersion}`}
+            sx={{
+              position: 'absolute',
+              top: { xs: 6, sm: 8 },
+              left: { xs: 6, sm: 8 },
+              zIndex: 3,
+            }}
           />
         )}
 
@@ -142,7 +204,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             size="small"
             sx={{
               position: 'absolute',
-              top: onQuantityChange && userQuantity > 0 ? { xs: 32, sm: 36 } : { xs: 6, sm: 8 },
+              top: lastDelta !== undefined ? { xs: 32, sm: 36 } : { xs: 6, sm: 8 },
               left: { xs: 6, sm: 8 },
               bgcolor: alpha(categoryColor, 0.9),
               color: 'white',
@@ -155,30 +217,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
               },
             }}
           />
-        )}
-
-        {/* Add "+" overlay on hover for non-owned (desktop only) */}
-        {onQuantityChange && userQuantity === 0 && (
-          <Box
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              position: 'absolute',
-              inset: 0,
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'rgba(0, 0, 0, 0.6)',
-              opacity: 0,
-              '&:hover': { opacity: 1 },
-              transition: 'opacity 0.2s',
-              cursor: 'pointer',
-              zIndex: 2,
-            }}
-            onClick={handleBadgeClick}
-          >
-            <Typography variant="h2" sx={{ color: 'white', userSelect: 'none' }}>
-              +
-            </Typography>
-          </Box>
         )}
 
         {/* Product image - fades in over COMING_SOON background when loaded */}
@@ -207,7 +245,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         )}
       </Box>
 
-      {/* Product Info - Always visible */}
+      {/* Product Info */}
       <Box
         sx={{
           p: { xs: 1, sm: 1.5 },
@@ -230,10 +268,23 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textAlign: 'center',
-            minHeight: { xs: '1.95rem', sm: '2.1rem' }, // Reserve 2 lines
+            minHeight: { xs: '1.95rem', sm: '2.1rem' },
           }}
         >
           {product.name}
+        </Typography>
+
+        {/* Quantity Display - Always show when userQuantity data is available */}
+        <Typography
+          sx={{
+            fontSize: { xs: '0.7rem', sm: '0.75rem' },
+            color: quantity > 0 ? 'success.main' : 'error.main',
+            textAlign: 'center',
+            mt: 0.5,
+            fontWeight: 600,
+          }}
+        >
+          {quantity > 0 ? `Qty: ${quantity}` : '⭕'}
         </Typography>
       </Box>
 
@@ -267,19 +318,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           />
         </Stack>
       )}
-    </Box>
-
-    {/* Collection Entry Modal */}
-    {onQuantityChange && (
-      <SealedProductCollectionEntry
-        productName={product.name}
-        currentQuantity={userQuantity}
-        onQuantityChange={handleQuantityChange}
-        open={entryOpen}
-        onClose={() => setEntryOpen(false)}
-        isUpdating={isUpdating}
-      />
-    )}
-    </>
+    </MuiCard>
   );
 };
