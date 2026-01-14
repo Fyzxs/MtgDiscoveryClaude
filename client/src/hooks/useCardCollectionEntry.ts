@@ -1,7 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { CollectionEntryState, CardCollectionUpdate, CardFinish } from '../types/collection';
+import type { CardCollectionUpdate, CardFinish, CardSpecial } from '../types/collection';
 import { globalCardEntry } from '../utils/globalCardEntryHandler';
-import { domOverlay } from '../utils/directDomOverlay';
+
+export interface CardOverlayState {
+  visible: boolean;
+  count: number;
+  isNegative: boolean;
+  finish: CardFinish;
+  special: CardSpecial;
+  flash: boolean;
+}
 
 interface UseCardCollectionEntryOptions {
   cardId: string;
@@ -12,8 +20,8 @@ interface UseCardCollectionEntryOptions {
 
 interface UseCardCollectionEntryReturn {
   isEntering: boolean;
-  entryState: CollectionEntryState;
   invalidFinishFlash: boolean;
+  overlayState: CardOverlayState;
 }
 
 export function useCardCollectionEntry({
@@ -22,21 +30,48 @@ export function useCardCollectionEntry({
   availableFinishes = ['non-foil', 'foil', 'etched'],
   onSubmit
 }: UseCardCollectionEntryOptions): UseCardCollectionEntryReturn {
-  // Just dummy state for React compatibility
-  const [isEntering] = useState(false);
-  const [entryState] = useState<CollectionEntryState>({
-    count: '',
-    finish: 'non-foil',
+  // React state for overlay display
+  const [overlayState, setOverlayState] = useState<CardOverlayState>({
+    visible: false,
+    count: 0,
+    isNegative: false,
+    finish: availableFinishes[0] || 'non-foil',
     special: 'none',
-    isNegative: false
+    flash: false
   });
+
+  // Track entering state
+  const [isEntering, setIsEntering] = useState(false);
   const [invalidFinishFlash, setInvalidFinishFlash] = useState(false);
 
   const flashInvalid = useCallback(() => {
     setInvalidFinishFlash(true);
-    domOverlay.flash(cardId);
-    setTimeout(() => setInvalidFinishFlash(false), 150);
-  }, [cardId]);
+    setOverlayState(prev => ({ ...prev, flash: true }));
+    setTimeout(() => {
+      setInvalidFinishFlash(false);
+      setOverlayState(prev => ({ ...prev, flash: false }));
+    }, 150);
+  }, []);
+
+  // Callback for global handler to update overlay state
+  const updateOverlayState = useCallback((state: {
+    count: string;
+    isNegative: boolean;
+    visible: boolean;
+    finish: CardFinish;
+    special: CardSpecial;
+  }) => {
+    const count = state.count === '' ? 0 : parseInt(state.count, 10);
+    setOverlayState({
+      visible: state.visible,
+      count,
+      isNegative: state.isNegative,
+      finish: state.finish,
+      special: state.special,
+      flash: false
+    });
+    setIsEntering(state.visible);
+  }, []);
 
   // Register with global handler
   useEffect(() => {
@@ -44,26 +79,34 @@ export function useCardCollectionEntry({
       cardId,
       availableFinishes,
       onSubmit,
-      onFlashInvalid: flashInvalid
+      onFlashInvalid: flashInvalid,
+      onOverlayUpdate: updateOverlayState
     });
 
     return () => {
       globalCardEntry.unregister(cardId);
     };
-  }, [cardId, availableFinishes, onSubmit, flashInvalid]);
+  }, [cardId, availableFinishes, onSubmit, flashInvalid, updateOverlayState]);
 
-  // Pre-create overlay when selected
+  // Reset overlay when not selected
   useEffect(() => {
-    if (isSelected) {
-      domOverlay.ensureOverlay(cardId);
-    } else {
+    if (isSelected === false) {
       globalCardEntry.reset(cardId);
+      setOverlayState({
+        visible: false,
+        count: 0,
+        isNegative: false,
+        finish: availableFinishes[0] || 'non-foil',
+        special: 'none',
+        flash: false
+      });
+      setIsEntering(false);
     }
-  }, [isSelected, cardId]);
+  }, [isSelected, cardId, availableFinishes]);
 
   return {
     isEntering,
-    entryState,
-    invalidFinishFlash
+    invalidFinishFlash,
+    overlayState
   };
 }

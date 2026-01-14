@@ -4,6 +4,7 @@ import { useCollection } from '../contexts/CollectionContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useEntryMode } from '../contexts/EntryModeContext';
 import { useCardCollectionEntry } from '../hooks/useCardCollectionEntry';
+import type { CardOverlayState } from '../hooks/useCardCollectionEntry';
 import type { Card } from '../types/card';
 import type { CardFinish, CardSpecial } from '../types/collection';
 
@@ -15,7 +16,7 @@ interface CollectionUpdate {
 }
 
 interface MtgCardCollectionActionsProps {
-  card: Card;
+  card?: Card;
   isSelected: boolean;
   cardRef: RefObject<HTMLDivElement | null>;
 }
@@ -45,16 +46,18 @@ export const useMtgCardCollectionActions = ({
 
   // Determine available finishes
   const availableFinishes = useMemo<CardFinish[]>(() => {
+    if (!card) return [];
     const finishes: CardFinish[] = [];
     if (card.nonFoil) finishes.push('non-foil');
     if (card.foil) finishes.push('foil');
     if (card.finishes?.includes('etched')) finishes.push('etched');
     return finishes.length > 0 ? finishes : ['foil']; // Default to foil if no finishes specified (should not happen)
-  }, [card.nonFoil, card.foil, card.finishes]);
+  }, [card]);
 
   // Handle collection/wishlist update submission based on mode
   // Uses refs to keep callback identity stable across mode changes
   const handleCollectionSubmit = useCallback(async (update: CollectionUpdate) => {
+    if (!card) return;
     const cardElement = cardRef.current;
     if (!cardElement) return;
 
@@ -94,12 +97,12 @@ export const useMtgCardCollectionActions = ({
       setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- cardRef is a ref, refs are stable
-  }, [card.name, card.setId, card.setCode, card.setGroupId]);
+  }, [card]);
 
-  // Collection entry hook
-  useCardCollectionEntry({
-    cardId: card.id,
-    isSelected,
+  // Collection entry hook - only register when card exists
+  const { overlayState, isEntering, invalidFinishFlash } = useCardCollectionEntry({
+    cardId: card?.id ?? '',
+    isSelected: card ? isSelected : false,
     availableFinishes,
     onSubmit: handleCollectionSubmit
   });
@@ -108,6 +111,9 @@ export const useMtgCardCollectionActions = ({
     availableFinishes,
     handleCollectionSubmit,
     isWishlistMode,
-    entryMode: mode
+    entryMode: mode,
+    overlayState,
+    isEntering,
+    invalidFinishFlash
   };
 };

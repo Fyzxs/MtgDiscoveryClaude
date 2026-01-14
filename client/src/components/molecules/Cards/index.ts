@@ -4,6 +4,7 @@ export { CardImage } from './CardImage';
 export { CardLinks } from './CardLinks';
 export { CardMetadata } from './CardMetadata';
 export { CardOverlay } from './CardOverlay';
+export { CollectionEntryOverlay } from './CollectionEntryOverlay';
 export { CollectionSummary } from './CollectionSummary';
 export { CollectorInfo } from './CollectorInfo';
 export { WishlistSummary } from './WishlistSummary';

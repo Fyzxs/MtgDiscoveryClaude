@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Box } from '../../atoms';
 import { CardImageDisplay } from '../../organisms/Cards/CardImageDisplay';
 import { CardDetailsModal } from '../../organisms/Cards/CardDetailsModal';
+import { ZoomIndicator } from '../../atoms/Cards/ZoomIndicator';
+import { LastDeltaBadge } from '../../atoms/Cards/LastDeltaBadge';
+import { CollectionEntryOverlay } from '../Cards/CollectionEntryOverlay';
+import { useMtgCardCollectionActions } from '../../../hooks/useMtgCardCollectionActions';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import type { Card } from '../../../types/card';
 
 interface BinderSlotProps {
@@ -18,7 +23,8 @@ interface BinderSlotProps {
 /**
  * Individual binder slot displaying a card with transparency for missing cards.
  * Card back shows through when card is not collected.
- * Hover/click reveals full card and opens details modal.
+ * Desktop: Click selects card for collection modification, zoom button opens details.
+ * Mobile: Click opens details modal directly.
  */
 export const BinderSlot: React.FC<BinderSlotProps> = ({
   card,
@@ -28,19 +34,114 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
 
   // Determine opacity: full opacity if no collector, collected, or hovered; otherwise transparent
   const cardOpacity = !hasCollector || isCollected || isHovered ? 1 : 0.3;
 
-  const handleClick = () => {
-    if (card) {
-      setModalOpen(true);
-    }
-  };
+  // Track selection state from DOM attribute
+  useEffect(() => {
+    if (!cardRef.current) return;
 
-  const handleModalClose = () => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-selected') {
+          const selected = cardRef.current?.getAttribute('data-selected') === 'true';
+          setIsSelected(selected || false);
+        }
+      });
+    });
+
+    observer.observe(cardRef.current, { attributes: true, attributeFilter: ['data-selected'] });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Enable collection actions via keyboard when card is selected (only for non-empty slots)
+  const { overlayState, isWishlistMode } = useMtgCardCollectionActions({
+    card: card ?? undefined,
+    isSelected: card ? isSelected : false,
+    cardRef
+  });
+
+  // Handle zoom button click - opens modal
+  const handleZoomClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setModalOpen(true);
+  }, []);
+
+  // Handle card click - select on desktop, open modal on mobile
+  const handleCardClick = useCallback((e: React.MouseEvent) => {
+    if (!card) return;
+
+    // Don't trigger selection if clicking on zoom indicator
+    const target = e.target as HTMLElement;
+    const clickedZoom = target.closest('.zoom-indicator');
+
+    if (clickedZoom) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const cardElement = e.currentTarget as HTMLElement;
+
+    // Mobile/tablet behavior - tap opens modal
+    if (isMobile || isTablet) {
+      setModalOpen(true);
+      return;
+    }
+
+    // Desktop behavior - select card for collection modification
+    // Clear ALL selections across ALL binder slots
+    const allSelected = document.querySelectorAll('[data-binder-card="true"][data-selected="true"]');
+    allSelected.forEach(selected => {
+      if (selected !== cardElement) {
+        selected.setAttribute('data-selected', 'false');
+      }
+    });
+
+    // Select the clicked card
+    cardElement.setAttribute('data-selected', 'true');
+
+    // Remove focus from any other focused element
+    const focused = document.querySelector(':focus');
+    if (focused && focused !== cardElement) {
+      (focused as HTMLElement).blur();
+    }
+
+    // Focus this card to enable keyboard navigation
+    cardElement.focus();
+  }, [card, isMobile, isTablet]);
+
+  const handleModalClose = useCallback(() => {
     setModalOpen(false);
-  };
+  }, []);
+
+  // Desktop only: deselect when clicking outside
+  useEffect(() => {
+    if (isMobile || isTablet) return;
+
+    const handleDocumentClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check if click was inside any binder card
+      const clickedCard = target.closest('[data-binder-card="true"]');
+      if (clickedCard) return;
+
+      // Click was outside all cards - deselect all
+      const allSelected = document.querySelectorAll('[data-binder-card="true"][data-selected="true"]');
+      allSelected.forEach(selected => {
+        selected.setAttribute('data-selected', 'false');
+      });
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, [isMobile, isTablet]);
 
   return (
     <Box
@@ -54,6 +155,11 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
       }}
     >
       <Box
+        ref={cardRef}
+        data-binder-card="true"
+        data-card-id={card?.id}
+        data-card-index={index}
+        data-selected="false"
         sx={{
           position: 'relative',
           // Maintain card aspect ratio - width-based sizing
@@ -65,25 +171,37 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
           cursor: card ? 'pointer' : 'default',
           bgcolor: 'grey.900',
           // Subtle border for slot definition
-          border: '1px solid',
+          border: '2px solid',
           borderColor: 'grey.800',
-          transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+          transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out',
           '&:hover': card ? {
             transform: 'scale(1.02)',
             boxShadow: 6,
-            zIndex: 1
-          } : undefined
+            zIndex: 1,
+            // Show zoom indicator on hover (desktop)
+            '& .zoom-indicator': {
+              opacity: 1,
+              transform: 'scale(1)'
+            }
+          } : undefined,
+          // Selected state styling
+          '&[data-selected="true"]': {
+            borderColor: 'primary.main',
+            borderWidth: 3,
+            boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.main}`,
+            zIndex: 2
+          }
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleClick}
+        onClick={handleCardClick}
         role={card ? 'button' : undefined}
         tabIndex={card ? 0 : -1}
         aria-label={card ? `${card.name}${isCollected ? '' : ' (not collected)'}` : `Empty slot ${index + 1}`}
         onKeyDown={(e) => {
           if (card && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
-            handleClick();
+            handleCardClick(e as any);
           }
         }}
       >
@@ -130,8 +248,16 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
           </Box>
         )}
 
-        {/* Collection indicator for missing cards (only when there's a collector) */}
-        {card && hasCollector && !isCollected && !isHovered && (
+        {/* Zoom indicator - desktop only */}
+        {card && !isMobile && !isTablet && (
+          <ZoomIndicator onZoomClick={handleZoomClick} />
+        )}
+
+        {/* Last modification delta badge */}
+        {card && <LastDeltaBadge cardId={card.id} />}
+
+        {/* Collection indicator for missing cards (only when there's a collector and not selected) */}
+        {card && hasCollector && !isCollected && !isHovered && !isSelected && (
           <Box
             sx={{
               position: 'absolute',
@@ -151,6 +277,20 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
           >
             Missing
           </Box>
+        )}
+
+        {/* Collection entry overlay - always mounted for pre-mount pattern */}
+        {card && (
+          <CollectionEntryOverlay
+            visible={overlayState.visible}
+            count={overlayState.count}
+            isNegative={overlayState.isNegative}
+            finish={overlayState.finish}
+            special={overlayState.special}
+            mode={isWishlistMode ? 'wishlist' : 'collection'}
+            variant="card"
+            flash={overlayState.flash}
+          />
         )}
       </Box>
 

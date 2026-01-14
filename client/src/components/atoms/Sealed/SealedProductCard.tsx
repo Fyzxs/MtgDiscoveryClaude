@@ -11,6 +11,7 @@ import type { SealedProduct } from '../../../hooks/useSealedProductsData';
 import { SealedProductOverlay } from '../../molecules/Sealed/SealedProductOverlay';
 import { SealedCollectionSummary } from '../../molecules/Sealed/SealedCollectionSummary';
 import type { SealedProductContext } from '../../../types/sealedProduct';
+import { CollectionEntryOverlay } from '../../molecules/Cards/CollectionEntryOverlay';
 
 // COMING_SOON placeholder image - shown while product image loads
 const COMING_SOON_URL = '/coming-soon.png';
@@ -51,7 +52,7 @@ interface SealedProductCardProps {
 }
 
 
-export const SealedProductCard: React.FC<SealedProductCardProps> = ({
+const SealedProductCardComponent: React.FC<SealedProductCardProps> = ({
   product,
   index,
   context = {},
@@ -82,8 +83,8 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
     productRef
   });
 
-  // Use collection actions hook (registers keyboard handler)
-  useSealedProductCollectionActions({
+  // Use collection actions hook (registers keyboard handler and gets overlay state)
+  const { overlayState } = useSealedProductCollectionActions({
     productUuid: product.uuid,
     setId: product.setId,
     productName: product.name,
@@ -329,6 +330,27 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           />
         </Stack>
       )}
+
+      {/* Collection Entry Overlay - Always mounted, controlled by CSS visibility */}
+      <CollectionEntryOverlay
+        visible={context.hasCollector === true && overlayState.visible}
+        count={overlayState.count}
+        isNegative={overlayState.isNegative}
+        mode="collection"
+        variant="sealed"
+        flash={overlayState.flash}
+      />
     </MuiCard>
   );
 };
+
+export const SealedProductCard = React.memo(SealedProductCardComponent, (prevProps, nextProps) => {
+  return (
+    prevProps.product.uuid === nextProps.product.uuid &&
+    prevProps.product.userQuantity === nextProps.product.userQuantity &&
+    prevProps.index === nextProps.index &&
+    prevProps.context?.hasCollector === nextProps.context?.hasCollector &&
+    prevProps.context?.hideCategory === nextProps.context?.hideCategory &&
+    prevProps.onProductClick === nextProps.onProductClick
+  );
+});
