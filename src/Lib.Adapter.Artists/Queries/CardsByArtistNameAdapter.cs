@@ -99,7 +99,7 @@ internal sealed class CardsByArtistNameAdapter : ICardsByArtistNameAdapter
         double confidenceScore = (double)topMatchScore / totalTrigrams;
 
         // Check if we have a second match and how it compares
-        bool hasSecondMatch = sortedMatches.Count > 1;
+        bool hasSecondMatch = 1 < sortedMatches.Count;
         double secondMatchScore = 0.0;
         if (hasSecondMatch)
         {
