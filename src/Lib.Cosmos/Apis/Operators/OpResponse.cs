@@ -36,7 +36,7 @@ public abstract class OpResponse<T> : ToSystemType<T>
     /// Checks if the operation was not successful based on the status code.
     /// </summary>
     /// <returns>True if the status code indicates failure; otherwise, false.</returns>
-    public bool IsNotSuccessful() => !IsSuccessful();
+    public bool IsNotSuccessful() => IsSuccessful() is false;
 
     /// <summary>
     /// Returns the value from the operation response.

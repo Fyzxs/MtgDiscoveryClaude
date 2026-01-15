@@ -27,7 +27,7 @@ internal sealed class PreviewSetFilter : IScryfallSetFilter
             return true;
         }
 
-        bool isPreview = releaseDate > DateTime.UtcNow;
+        bool isPreview = DateTime.UtcNow < releaseDate;
 
         if (isPreview)
         {

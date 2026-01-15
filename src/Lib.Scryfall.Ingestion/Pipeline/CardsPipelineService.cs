@@ -51,7 +51,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
         IAsyncEnumerable<IScryfallCard> cardStream = await _cardsFetcher.FetchCardsAsync().ConfigureAwait(false);
         int totalCards = 0;
         int skippedCards = 0;
-        bool hasSetFilter = _config.SetCodesToProcess.Count > 0;
+        bool hasSetFilter = 0 < _config.SetCodesToProcess.Count;
         DateTime? releasedAfter = _config.SetsReleasedAfter;
 
         await foreach (IScryfallCard card in cardStream.ConfigureAwait(false))
@@ -83,7 +83,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             _dashboard.UpdateProgress("Cards:", totalCards, 0, "Fetching", $"[{setCode}] {cardName}");
         }
 
-        if (skippedCards > 0)
+        if (0 < skippedCards)
         {
             _dashboard.LogCardsSkipped(skippedCards);
         }

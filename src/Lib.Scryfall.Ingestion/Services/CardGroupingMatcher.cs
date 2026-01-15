@@ -81,7 +81,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         }
 
         // Check properties if specified
-        if (grouping.ParsedFilters.Properties is not null && grouping.ParsedFilters.Properties.Count > 0)
+        if (grouping.ParsedFilters.Properties is not null && 0 < grouping.ParsedFilters.Properties.Count)
         {
             if (MatchesProperties(cardData, grouping.ParsedFilters.Properties) is false)
             {
@@ -132,7 +132,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
 
         // Check OR conditions (specific collector numbers)
         bool matchesOrCondition = false;
-        if (range.OrConditions is not null && range.OrConditions.Count > 0)
+        if (range.OrConditions is not null && 0 < range.OrConditions.Count)
         {
             string normalizedCardNumber = collectorNumber.ToLowerInvariant().Trim();
             matchesOrCondition = range.OrConditions.Any(cn =>

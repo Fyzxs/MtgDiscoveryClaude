@@ -119,7 +119,7 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            if (!_config.SetsOnly)
+            if (_config.SetsOnly is false)
             {
                 await _cardsPipeline.WriteCardsAsync(cards).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
