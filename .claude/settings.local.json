@@ -64,7 +64,8 @@
       "Bash(git log:*)",
       "Bash(dotnet list:*)",
       "Bash(xargs cat:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)"
     ],
     "deny": [],
     "ask": []
