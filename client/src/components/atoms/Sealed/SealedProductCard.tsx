@@ -1,9 +1,13 @@
 import React, { useRef, useCallback } from 'react';
-import { Box, Stack, Card as MuiCard, Chip, Typography } from '@mui/material';
+import Box from '../mui-wrappers/Box';
+import Stack from '../mui-wrappers/Stack';
+import Card from '../mui-wrappers/Card';
+import Chip from '../mui-wrappers/Chip';
+import Typography from '../mui-wrappers/Typography';
 import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
-import { LastDeltaBadge } from './LastDeltaBadge';
+import { DeltaBadge } from '../../molecules/shared/badges';
 import { useSealedCollection } from '../../../contexts/SealedCollectionContext';
 import { useSealedProductCollectionActions } from '../../../hooks/useSealedProductCollectionActions';
 import { useSealedProductInteractions } from '../../../hooks/useSealedProductInteractions';
@@ -118,7 +122,7 @@ const SealedProductCardComponent: React.FC<SealedProductCardProps> = ({
   }, [product.name, product.userQuantity, quantity]);
 
   return (
-    <MuiCard
+    <Card
       ref={handleRef}
       elevation={4}
       onClick={handleClick}
@@ -192,7 +196,7 @@ const SealedProductCardComponent: React.FC<SealedProductCardProps> = ({
       >
         {/* Last Delta Badge - Top-left */}
         {lastDelta !== undefined && (
-          <LastDeltaBadge
+          <DeltaBadge
             delta={lastDelta}
             key={`${product.uuid}-${lastDeltaVersion}`}
             sx={{
@@ -340,7 +344,7 @@ const SealedProductCardComponent: React.FC<SealedProductCardProps> = ({
         variant="sealed"
         flash={overlayState.flash}
       />
-    </MuiCard>
+    </Card>
   );
 };
 

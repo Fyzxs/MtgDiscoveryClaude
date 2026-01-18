@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '../../atoms';
-import { BadgePill } from '../../atoms/Cards/BadgePill';
+import { BadgePill } from './BadgePill';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 
 interface RarityCollectorBadgeProps {

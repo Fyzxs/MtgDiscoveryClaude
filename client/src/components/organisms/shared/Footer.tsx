@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Container, Typography, Collapse } from '../../atoms';
 import { useTheme } from '../../atoms';
-import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms/Icons';
+import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms';
 import { touchTargetStyles } from '../../../styles/touchTargets';
 
 export const Footer: React.FC = () => {

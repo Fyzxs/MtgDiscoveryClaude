@@ -4,7 +4,8 @@ import type { SxProps, Theme } from '../../atoms';
 import type { Card, CardContext } from '../../../types/card';
 import { CardImageDisplay } from './CardImageDisplay';
 import { PriceDisplay } from '../../atoms';
-import { CollectorNumber, RarityBadge } from '../../atoms';
+import { CollectorNumber } from '../../atoms';
+import { AppBadge } from '../../molecules/shared/badges';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { ArtistLinks } from '../../molecules/Cards/ArtistLinks';
 import { CardLinks } from '../../molecules/Cards/CardLinks';
@@ -190,7 +191,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
               sx={{ fontSize: '0.75rem' }}
             />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {card.rarity && <RarityBadge rarity={card.rarity} />}
+              {card.rarity && <AppBadge variant="rarity" rarity={card.rarity} />}
               {card.reserved && <ReservedListShield size="small" />}
             </Box>
           </Box>

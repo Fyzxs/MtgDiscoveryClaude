@@ -65,7 +65,7 @@ const FINISH_MAP: Record<string, string> = {
 const SPECIAL_MAP: Record<string, string> = {
   'none': 'none',
   'signed': 'signed',
-  'artist-proof': 'proof',
+  'proof': 'proof',
   'altered': 'altered'
 };
 

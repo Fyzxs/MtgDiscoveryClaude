@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, useTheme } from '@mui/material';
+import Box from '../mui-wrappers/Box';
+import { useTheme } from '@mui/material';
 import ShieldIcon from '@mui/icons-material/Shield';
 import type { SxProps, Theme } from '@mui/material';
 

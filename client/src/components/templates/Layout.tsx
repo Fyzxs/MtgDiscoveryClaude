@@ -2,7 +2,7 @@ import React from 'react';
 import { Section } from '../molecules/layouts';
 import { Header } from '../organisms/shared/Header';
 import { Footer } from '../organisms/shared/Footer';
-import { SkipNavigation } from '../atoms/shared/SkipNavigation';
+import { SkipNavigation } from '../atoms';
 import { QuickEntryKeysFab } from '../molecules/Cards/QuickEntryKeysFab';
 import { pageContainer, mainContent } from '../../styles/layoutStyles';
 

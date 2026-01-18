@@ -3,8 +3,10 @@ import { Box } from '../../atoms';
 import { CardImageDisplay } from '../../organisms/Cards/CardImageDisplay';
 import { CardDetailsModal } from '../../organisms/Cards/CardDetailsModal';
 import { ZoomIndicator } from '../../atoms/Cards/ZoomIndicator';
-import { LastDeltaBadge } from '../../atoms/Cards/LastDeltaBadge';
+import { DeltaBadge } from '../shared/badges';
 import { CollectionEntryOverlay } from '../Cards/CollectionEntryOverlay';
+import { CollectionSummary } from '../Cards/CollectionSummary';
+import { WishlistSummary } from '../Cards/WishlistSummary';
 import { useMtgCardCollectionActions } from '../../../hooks/useMtgCardCollectionActions';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import type { Card } from '../../../types/card';
@@ -248,16 +250,8 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
           </Box>
         )}
 
-        {/* Zoom indicator - desktop only */}
-        {card && !isMobile && !isTablet && (
-          <ZoomIndicator onZoomClick={handleZoomClick} />
-        )}
-
-        {/* Last modification delta badge */}
-        {card && <LastDeltaBadge cardId={card.id} />}
-
-        {/* Collection indicator for missing cards (only when there's a collector and not selected) */}
-        {card && hasCollector && !isCollected && !isHovered && !isSelected && (
+        {/* Collection indicator for missing cards (only when there's a collector) */}
+        {card && hasCollector && !isCollected && !isHovered && (
           <Box
             sx={{
               position: 'absolute',

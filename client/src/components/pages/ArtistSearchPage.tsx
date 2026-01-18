@@ -4,7 +4,7 @@ import { Heading, BodyText } from '../molecules/text';
 import { Section } from '../molecules/layouts';
 import { LoadingIndicator } from '../molecules/feedback';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
-import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
+import { SearchInput } from '../molecules/shared/SearchInput';
 import { ArtistSearchResults } from '../organisms/Artists/ArtistSearchResults';
 import { ARTIST_NAME_SEARCH } from '../../graphql/queries/artistSearch';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
@@ -73,12 +73,11 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
       <Heading variant="h4" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
         Artist Search
       </Heading>
-      <DebouncedSearchInput
+      <SearchInput
         value={searchTerm}
         onChange={handleSearchChange}
         onEnter={handleSearchSubmit}
         placeholder="Enter artist name and press Enter..."
-        debounceMs={500}
         fullWidth
         disabled={loading}
       />

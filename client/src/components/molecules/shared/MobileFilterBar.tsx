@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Chip, Typography } from '../../atoms';
 import { MobileFilterButton } from './MobileFilterButton';
-import { ViewListIcon, ViewModuleIcon } from '../../atoms/Icons';
+import { ViewListIcon, ViewModuleIcon } from '../../atoms';
 
 interface MobileFilterBarProps {
   /** Number of active filters */
