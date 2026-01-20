@@ -7,3 +7,4 @@ export { ArtistSearchPage } from './ArtistSearchPage';
 export { ArtistCardsPage } from './ArtistCardsPage';
 export { CardAllPrintingsPage } from './CardAllPrintingsPage';
 export { SignInRedirectPage } from './SignInRedirectPage';
+export { AuthCallbackPage } from './AuthCallbackPage';

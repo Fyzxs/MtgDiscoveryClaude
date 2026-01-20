@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Domain.User.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
@@ -17,37 +17,43 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
     private readonly IUserDomainService _userDomainService;
     private readonly IAuthUserArgEntityValidator _authUserArgEntityValidator;
     private readonly IAuthUserArgToItrMapper _authUserArgToItrMapper;
-    private readonly IUserInfoOufToOutMapper _userInfoOufToOutMapper;
+    private readonly IUserSyncOufToOutMapper _userSyncOufToOutMapper;
 
     public RegisterUserEntryService(ILogger logger) : this(
         new UserDomainService(logger),
         new AuthUserArgEntityValidatorContainer(),
         new AuthUserArgToItrMapper(),
-        new UserInfoOufToOutMapper())
+        new UserSyncOufToOutMapper())
     { }
 
     private RegisterUserEntryService(
         IUserDomainService userDomainService,
         IAuthUserArgEntityValidator authUserArgEntityValidator,
         IAuthUserArgToItrMapper authUserArgToItrMapper,
-        IUserInfoOufToOutMapper userInfoOufToOutMapper)
+        IUserSyncOufToOutMapper userSyncOufToOutMapper)
     {
         _userDomainService = userDomainService;
         _authUserArgEntityValidator = authUserArgEntityValidator;
         _authUserArgToItrMapper = authUserArgToItrMapper;
-        _userInfoOufToOutMapper = userInfoOufToOutMapper;
+        _userSyncOufToOutMapper = userSyncOufToOutMapper;
     }
 
-    public async Task<IOperationResponse<UserRegistrationOutEntity>> Execute(IAuthUserArgEntity authUser)
+    public async Task<IOperationResponse<UserSyncOutEntity>> Execute(IAuthUserArgEntity authUser)
     {
         IValidatorActionResult<IOperationResponse<IUserRegistrationItrEntity>> validatorResult = await _authUserArgEntityValidator.Validate(authUser).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<UserRegistrationOutEntity>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+        {
+            return new FailureOperationResponse<UserSyncOutEntity>(validatorResult.FailureStatus().OuterException);
+        }
 
         IUserInfoItrEntity itrEntity = await _authUserArgToItrMapper.Map(authUser).ConfigureAwait(false);
-        IOperationResponse<IUserInfoOufEntity> opResponse = await _userDomainService.RegisterUserAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<UserRegistrationOutEntity>(opResponse.OuterException);
+        IOperationResponse<IUserSyncOufEntity> opResponse = await _userDomainService.RegisterUserAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure)
+        {
+            return new FailureOperationResponse<UserSyncOutEntity>(opResponse.OuterException);
+        }
 
-        UserRegistrationOutEntity outEntity = await _userInfoOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<UserRegistrationOutEntity>(outEntity);
+        UserSyncOutEntity outEntity = await _userSyncOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<UserSyncOutEntity>(outEntity);
     }
 }
