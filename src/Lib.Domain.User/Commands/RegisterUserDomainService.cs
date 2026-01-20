@@ -8,8 +8,9 @@ using Microsoft.Extensions.Logging;
 namespace Lib.Domain.User.Commands;
 
 /// <summary>
-/// Single-method service for user registration operation.
+/// Single-method service for user registration/sync operation.
 /// Delegates to aggregator layer for data operations.
+/// Returns isFirstLogin flag to indicate new vs returning user.
 /// </summary>
 internal sealed class RegisterUserDomainService : IRegisterUserDomainService
 {
@@ -18,7 +19,9 @@ internal sealed class RegisterUserDomainService : IRegisterUserDomainService
     public RegisterUserDomainService(ILogger logger) : this(new UserAggregatorService(logger))
     { }
 
-    private RegisterUserDomainService(IUserAggregatorService userAggregatorService) => _userAggregatorService = userAggregatorService;
+    private RegisterUserDomainService(IUserAggregatorService userAggregatorService) =>
+        _userAggregatorService = userAggregatorService;
 
-    public async Task<IOperationResponse<IUserInfoOufEntity>> Execute(IUserInfoItrEntity input) => await _userAggregatorService.RegisterUserAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute(IUserInfoItrEntity input) =>
+        await _userAggregatorService.RegisterUserAsync(input).ConfigureAwait(false);
 }

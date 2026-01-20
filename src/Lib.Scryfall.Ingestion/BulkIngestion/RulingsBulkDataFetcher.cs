@@ -83,11 +83,12 @@ internal sealed class RulingsBulkDataFetcher
         }
     }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators - yield break requires async signature
     private static async IAsyncEnumerable<dynamic> EmptyRulings()
     {
-        await Task.CompletedTask.ConfigureAwait(false);
         yield break;
     }
+#pragma warning restore CS1998
 }
 
 internal static partial class RulingsBulkDataFetcherLoggerExtensions

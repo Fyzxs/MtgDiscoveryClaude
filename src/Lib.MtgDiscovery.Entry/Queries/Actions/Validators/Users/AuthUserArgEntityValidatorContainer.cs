@@ -12,6 +12,7 @@ internal sealed class AuthUserArgEntityValidatorContainer : ValidatorActionConta
             new HasValidUserIdAuthUserArgEntityValidator(),
             new HasValidSourceIdAuthUserArgEntityValidator(),
             new HasValidDisplayNameAuthUserArgEntityValidator(),
+            new HasValidEmailAuthUserArgEntityValidator(),
         ])
     { }
 }

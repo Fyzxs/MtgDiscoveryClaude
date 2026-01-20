@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Authentication;
@@ -18,20 +18,20 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserMutationMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IOperationResponseToResponseModelMapper<UserRegistrationOutEntity> _userRegistrationResponseMapper;
+    private readonly IOperationResponseToResponseModelMapper<UserSyncOutEntity> _userSyncResponseMapper;
 
     public UserMutationMethods(ILogger logger) : this(
         new EntryService(logger),
-        new OperationResponseToResponseModelMapper<UserRegistrationOutEntity>())
+        new OperationResponseToResponseModelMapper<UserSyncOutEntity>())
     {
     }
 
     private UserMutationMethods(
         IEntryService entryService,
-        IOperationResponseToResponseModelMapper<UserRegistrationOutEntity> userRegistrationResponseMapper)
+        IOperationResponseToResponseModelMapper<UserSyncOutEntity> userSyncResponseMapper)
     {
         _entryService = entryService;
-        _userRegistrationResponseMapper = userRegistrationResponseMapper;
+        _userSyncResponseMapper = userSyncResponseMapper;
     }
 
     [Authorize]
@@ -39,7 +39,7 @@ public sealed class UserMutationMethods
     public async Task<ResponseModel> RegisterUserInfoAsync(ClaimsPrincipal claimsPrincipal)
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
-        IOperationResponse<UserRegistrationOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
-        return await _userRegistrationResponseMapper.Map(response).ConfigureAwait(false);
+        IOperationResponse<UserSyncOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
+        return await _userSyncResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

@@ -6,18 +6,14 @@ namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
 internal sealed class UserInfoOufToOutMapper : IUserInfoOufToOutMapper
 {
-    public UserInfoOufToOutMapper()
+    public Task<UserRegistrationOutEntity> Map(IUserInfoOufEntity userInfo)
     {
-    }
-
-    public async Task<UserRegistrationOutEntity> Map(IUserInfoOufEntity userInfo)
-    {
-        await Task.CompletedTask.ConfigureAwait(false);
-
-        return new UserRegistrationOutEntity()
+        UserRegistrationOutEntity result = new()
         {
             UserId = userInfo.UserId,
             DisplayName = userInfo.UserNickname
         };
+
+        return Task.FromResult(result);
     }
 }

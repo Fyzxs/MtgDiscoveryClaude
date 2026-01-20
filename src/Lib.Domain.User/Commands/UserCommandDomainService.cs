@@ -14,8 +14,9 @@ internal sealed class UserCommandDomainService : IUserCommandDomainService
     public UserCommandDomainService(ILogger logger) : this(new RegisterUserDomainService(logger))
     { }
 
-    private UserCommandDomainService(IRegisterUserDomainService registerUserService) => _registerUserService = registerUserService;
+    private UserCommandDomainService(IRegisterUserDomainService registerUserService) =>
+        _registerUserService = registerUserService;
 
-    public async Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
-        => await _registerUserService.Execute(userInfo).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) =>
+        await _registerUserService.Execute(userInfo).ConfigureAwait(false);
 }

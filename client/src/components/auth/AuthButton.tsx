@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button, Box, Typography, CircularProgress } from '../atoms';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useApolloClient } from '@apollo/client/react';
 import { MyCollectionButton } from '../molecules/ui/MyCollectionButton';
+import { useAuthState } from '../../contexts/AuthStateContext';
 import { logger } from '../../utils/logger';
 
 interface AuthButtonProps {
@@ -10,37 +12,22 @@ interface AuthButtonProps {
 }
 
 export const AuthButton: React.FC<AuthButtonProps> = ({ fullWidth = false }) => {
-  const { isAuthenticated, user, loginWithRedirect, logout, isLoading, getAccessTokenSilently, getIdTokenClaims } = useAuth0();
+  const { isAuthenticated, user, isLoading } = useAuth0();
+  const { login, logout } = useAuthState();
+  const apolloClient = useApolloClient();
 
-  // Debug function to log JWT tokens
-  const logTokenInfo = async () => {
-    if (isAuthenticated) {
-      try {
-        logger.debug('=== JWT TOKEN INFO ===');
-        logger.debug('User object:', user);
-
-        // Get ID token claims
-        const idTokenClaims = await getIdTokenClaims();
-        logger.debug('ID Token Claims:', idTokenClaims);
-        logger.debug('Raw ID Token:', idTokenClaims?.__raw);
-
-        // Get access token
-        const accessToken = await getAccessTokenSilently();
-        logger.debug('Access Token:', accessToken);
-
-        // Decode JWT manually (base64)
-        if (idTokenClaims?.__raw) {
-          const parts = idTokenClaims.__raw.split('.');
-          const header = JSON.parse(atob(parts[0]));
-          const payload = JSON.parse(atob(parts[1]));
-          logger.debug('JWT Header:', header);
-          logger.debug('JWT Payload:', payload);
-        }
-      } catch (error) {
-        logger.error('Error getting tokens:', error);
-      }
+  // Handle logout with Apollo cache clear
+  const handleLogout = useCallback(async () => {
+    try {
+      // Clear Apollo cache before logging out to prevent stale data
+      await apolloClient.clearStore();
+      logger.debug('AuthButton - Apollo cache cleared');
+    } catch (error) {
+      logger.error('AuthButton - Error clearing Apollo cache:', error);
     }
-  };
+    // Use auth state logout which dispatches LOGOUT action and calls Auth0 logout
+    logout();
+  }, [apolloClient, logout]);
 
   if (isLoading) {
     return (
@@ -71,7 +58,7 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ fullWidth = false }) => 
             Welcome, {user.name || user.email}
           </Typography>
           <Button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+            onClick={handleLogout}
             variant="outlined"
             fullWidth
             sx={{ minHeight: 44 }}
@@ -88,18 +75,12 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ fullWidth = false }) => 
         <MyCollectionButton />
         <Typography
           variant="body2"
-          sx={{
-            color: 'text.primary',
-            cursor: 'pointer',
-            '&:hover': { textDecoration: 'underline' }
-          }}
-          onClick={logTokenInfo}
-          title="Click to log JWT info to console"
+          sx={{ color: 'text.primary' }}
         >
           Welcome, {user.name || user.email}
         </Typography>
         <Button
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+          onClick={handleLogout}
           variant="outlined"
           size="small"
           sx={{ minHeight: 44 }}
@@ -112,7 +93,7 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ fullWidth = false }) => 
 
   return (
     <Button
-      onClick={() => loginWithRedirect()}
+      onClick={login}
       variant="contained"
       size={fullWidth ? 'medium' : 'small'}
       fullWidth={fullWidth}
