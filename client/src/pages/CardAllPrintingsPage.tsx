@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@apollo/client/react';
+import { useCardCache } from '../hooks/useCardCache';
 import {
   Container,
   Typography,
@@ -85,16 +85,43 @@ export const CardAllPrintingsPage: React.FC = () => {
   // Check if we have a collector parameter
   const { hasCollector, collectorId } = useCollectorParam();
 
-  const { loading, error, data, refetch } = useQuery<CardsResponse>(GET_CARDS_BY_NAME, {
-    variables: {
-      cardName: {
-        cardName: decodedCardName,
-        userId: collectorId || undefined
-      }
-    },
-    skip: !cardName,
-    errorPolicy: 'all'
-  });
+  // Use card cache for fetching cards by name
+  const { fetchCardsByName } = useCardCache();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<CardsResponse | null>(null);
+
+  const refetch = async () => {
+    if (!cardName) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const cards = await fetchCardsByName(decodedCardName);
+      setData({
+        cardsByName: {
+          __typename: 'SuccessCardsResponse',
+          data: cards
+        }
+      });
+    } catch (err) {
+      setError(err as Error);
+      setData({
+        cardsByName: {
+          __typename: 'FailureResponse',
+          status: {
+            message: (err as Error).message
+          }
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refetch();
+  }, [cardName, decodedCardName]);
 
   useEffect(() => {
     const loadingKey = `card-detail-${decodedCardName}`;
@@ -171,15 +198,6 @@ export const CardAllPrintingsPage: React.FC = () => {
   if (hasError) {
     return (
       <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          component="a"
-          href="/search/cards"
-          sx={{ mb: 2, textDecoration: 'none' }}
-        >
-          Back to Search
-        </Button>
-        
         <Alert 
           severity="error" 
           sx={{ mb: 2 }}
@@ -213,14 +231,6 @@ export const CardAllPrintingsPage: React.FC = () => {
   if (cards.length === 0) {
     return (
       <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          component="a"
-          href="/search/cards"
-          sx={{ mb: 2, textDecoration: 'none' }}
-        >
-          Back to Search
-        </Button>
         <Typography>No cards found with name "{decodedCardName}"</Typography>
       </Container>
     );
@@ -228,15 +238,6 @@ export const CardAllPrintingsPage: React.FC = () => {
 
   return (
     <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        component="a"
-        href="/search/cards"
-        sx={{ mb: 3, textDecoration: 'none' }}
-      >
-        Back to Search
-      </Button>
-
       {/* Centered card name */}
       <Box sx={{ textAlign: 'center', mb: 4 }}>
         <Typography variant="h2" fontWeight="bold">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
+import { useCardCache } from '../hooks/useCardCache';
 import {
   Container,
   Typography,
@@ -109,15 +110,44 @@ export const SetPage: React.FC = () => {
   // Get initial values from URL only once on mount
   const { getInitialValues, updateUrl } = useUrlState({}, urlStateConfig);
   const [initialValues] = useState(() => getInitialValues());
-  const { loading: cardsLoading, error: cardsError, data: cardsData } = useQuery<CardsResponse>(GET_CARDS_BY_SET_CODE, {
-    variables: {
-      setCode: {
-        setCode,
-        userId: collectorId || undefined
+
+  // Use card cache for fetching cards
+  const { fetchSetCards } = useCardCache();
+  const [cardsLoading, setCardsLoading] = useState(false);
+  const [cardsError, setCardsError] = useState<Error | null>(null);
+  const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
+
+  useEffect(() => {
+    if (!setCode) return;
+
+    const loadCards = async () => {
+      setCardsLoading(true);
+      setCardsError(null);
+      try {
+        const cards = await fetchSetCards(setCode);
+        setCardsData({
+          cardsBySetCode: {
+            __typename: 'SuccessCardsResponse',
+            data: cards
+          }
+        });
+      } catch (error) {
+        setCardsError(error as Error);
+        setCardsData({
+          cardsBySetCode: {
+            __typename: 'FailureResponse',
+            status: {
+              message: (error as Error).message
+            }
+          }
+        });
+      } finally {
+        setCardsLoading(false);
       }
-    },
-    skip: !setCode
-  });
+    };
+
+    loadCards();
+  }, [setCode, fetchSetCards]);
   
   // Get unique artists, rarities, and finishes from data
   const allArtists = useMemo(() => getUniqueArtists(cardsData?.cardsBySetCode?.data || []), [cardsData]);
