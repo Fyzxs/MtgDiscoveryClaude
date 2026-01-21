@@ -3,7 +3,8 @@
 namespace Lib.Shared.DataModels.Entities;
 
 /// <summary>
-/// Represents a user's card collection entry with card details and collection information.
+/// Represents a user's card collection entry following MicroObjects principles.
+/// Contains all information needed to manage a user's ownership of a specific card.
 /// </summary>
 public interface IUserCardCollectionItrEntity
 {
@@ -25,5 +26,5 @@ public interface IUserCardCollectionItrEntity
     /// <summary>
     /// The list of collected versions of this card with quantities and finishes.
     /// </summary>
-    ICollection<ICollectedItemItrEntity> CollectedList { get; }
+    IEnumerable<ICollectedCardItrEntity> CollectedList { get; }
 }
