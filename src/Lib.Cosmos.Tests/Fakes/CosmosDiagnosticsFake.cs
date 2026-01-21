@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Fakes;
 

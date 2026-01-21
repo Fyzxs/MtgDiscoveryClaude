@@ -13,7 +13,6 @@ using Lib.Scryfall.Ingestion.Apis.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Apis.Pipeline;
 using Lib.Scryfall.Shared.Apis.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Pipeline;
 

@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Universal.Http;
-using Newtonsoft.Json;
 
 namespace Lib.Scryfall.Ingestion.Http;
 

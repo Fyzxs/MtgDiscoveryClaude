@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Processors;
 

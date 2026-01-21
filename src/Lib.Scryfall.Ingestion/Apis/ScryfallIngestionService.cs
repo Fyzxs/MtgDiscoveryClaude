@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Collections;
 using Lib.Scryfall.Ingestion.Processors;
 using Lib.Scryfall.Shared.Apis.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis;
 

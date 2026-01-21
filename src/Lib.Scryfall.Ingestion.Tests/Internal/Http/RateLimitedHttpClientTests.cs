@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Http;
 using Lib.Scryfall.Ingestion.Tests.Fakes;
-using Lib.Universal.Http;
 using TestConvenience.Core.Reflection;
 
 namespace Lib.Scryfall.Ingestion.Tests.Internal.Http;

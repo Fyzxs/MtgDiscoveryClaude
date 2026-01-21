@@ -2,7 +2,6 @@
 using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Tests.Fakes;
-using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Adapters;
 

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 

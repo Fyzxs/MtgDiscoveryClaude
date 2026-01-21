@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 
