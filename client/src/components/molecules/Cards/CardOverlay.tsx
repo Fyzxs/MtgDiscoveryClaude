@@ -105,9 +105,9 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
             rarity={rarity}
             collectorNumber={collectorNumber}
           />
-          {context.hasCollector && collectionData && (
+          {context.hasCollector && (
             <CollectionSummary
-              collection={collectionData.collectedList}
+              collection={collectionData?.collectedList || []}
               size="small"
             />
           )}
