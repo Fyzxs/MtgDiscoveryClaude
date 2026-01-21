@@ -495,3 +495,5 @@ client/schema.json
 # CLAUDE
 .claude/state/**
 .env.preview.local
+
+**/appsettings.Local.json
