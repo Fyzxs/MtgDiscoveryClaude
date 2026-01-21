@@ -7,15 +7,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.UserSealedProducts.Queries;
 
-internal sealed class UserSealedProductsByUserIdAggregator : Apis.IUserSealedProductsByUserIdAggregator
+internal sealed class UserSealedProductsByUserIdAggregatorService : IUserSealedProductsByUserIdAggregatorService
 {
     private readonly IUserSealedProductsByUserIdAdapter _adapter;
 
-    public UserSealedProductsByUserIdAggregator(ILogger logger) : this(
+    public UserSealedProductsByUserIdAggregatorService(ILogger logger) : this(
         new UserSealedProductsByUserIdAdapter(logger))
     { }
 
-    private UserSealedProductsByUserIdAggregator(IUserSealedProductsByUserIdAdapter adapter) =>
+    private UserSealedProductsByUserIdAggregatorService(IUserSealedProductsByUserIdAdapter adapter) =>
         _adapter = adapter;
 
     public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input)

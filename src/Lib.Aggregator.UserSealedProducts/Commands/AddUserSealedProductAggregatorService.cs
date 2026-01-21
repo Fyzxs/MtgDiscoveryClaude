@@ -8,15 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.UserSealedProducts.Commands;
 
-internal sealed class AddUserSealedProductAggregator : Apis.IAddUserSealedProductAggregator
+internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProductAggregatorService
 {
     private readonly IAddUserSealedProductAdapter _adapter;
 
-    public AddUserSealedProductAggregator(ILogger logger) : this(
+    public AddUserSealedProductAggregatorService(ILogger logger) : this(
         new AddUserSealedProductAdapter(logger))
     { }
 
-    private AddUserSealedProductAggregator(IAddUserSealedProductAdapter adapter) =>
+    private AddUserSealedProductAggregatorService(IAddUserSealedProductAdapter adapter) =>
         _adapter = adapter;
 
     public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input)
