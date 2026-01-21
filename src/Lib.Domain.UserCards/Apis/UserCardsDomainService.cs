@@ -13,7 +13,7 @@ public sealed class UserCardsDomainService : IUserCardsDomainService
     private readonly IUserCardsQueryDomainService _queryOperations;
     private readonly IUserCardsCommandDomainService _commandOperations;
 
-    public UserCardsDomainService(ILogger logger) : this(new QueryUserCardsDomainService(logger), new CommandUserCardsDomainService(logger))
+    public UserCardsDomainService(ILogger logger) : this(new UserCardsQueryDomainService(logger), new UserCardsCommandDomainService(logger))
     { }
 
     private UserCardsDomainService(IUserCardsQueryDomainService queryOperations, IUserCardsCommandDomainService commandOperations)
