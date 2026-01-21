@@ -19,4 +19,10 @@ public interface IUserCardDetailsItrEntity
     /// The number of cards of this specific version owned by the user.
     /// </summary>
     int Count { get; }
+
+    /// <summary>
+    /// The set grouping ID for the card (e.g., 'borderless', 'showcase').
+    /// This value is used for UserSetCards aggregation but not persisted in UserCards.
+    /// </summary>
+    string SetGroupId { get; }
 }
