@@ -40,7 +40,13 @@
       "Bash(az boards work-item list:*)",
       "Bash(az boards query:*)",
       "Bash(az boards work-item create:*)",
-      "Bash(az devops project list:*)"
+      "Bash(az devops project list:*)",
+      "Bash(az boards work-item update:*)",
+      "Bash(git push:*)",
+      "Bash(az repos pr create:*)",
+      "Bash(mkdir:*)",
+      "Bash(dotnet format:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
