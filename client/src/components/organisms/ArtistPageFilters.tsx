@@ -1,13 +1,15 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '../atoms';
 import { FilterPanel } from './filters/FilterPanel';
 import { CollectorFiltersSection } from '../molecules/shared/CollectorFiltersSection';
 import { FilterErrorBoundary } from '../ErrorBoundaries';
 import { ARTIST_PAGE_SORT_OPTIONS, ARTIST_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
 import {
   getCollectionCountOptions,
-  getSignedCardsOptions
+  getSignedCardsOptions,
+  getFormatOptions
 } from '../../utils/cardUtils';
+import { MultiSelectDropdown } from '../molecules/shared/MultiSelectDropdown';
 
 interface ArtistPageFiltersProps {
   /** Total number of cards to determine if filters should show */
@@ -60,6 +62,13 @@ interface ArtistPageFiltersProps {
     signedCards?: {
       value: string[];
       onChange: (value: string[]) => void;
+    };
+
+    /** Format filter (Digital/Paper) */
+    formats?: {
+      value: string[];
+      onChange: (value: string[]) => void;
+      shouldShow: boolean;
     };
   };
 }
@@ -120,7 +129,19 @@ export const ArtistPageFilters: React.FC<ArtistPageFiltersProps> = ({
               onChange: filters.sort.onChange,
               options: hasCollector ? ARTIST_PAGE_COLLECTOR_SORT_OPTIONS : ARTIST_PAGE_SORT_OPTIONS,
               minWidth: 180
-            }
+            },
+            customFilters: (filters.formats && filters.formats.shouldShow) ? [
+              <MultiSelectDropdown
+                key="formats"
+                value={filters.formats.value}
+                onChange={filters.formats.onChange}
+                options={getFormatOptions()}
+                label="Format"
+                placeholder="All Formats"
+                minWidth={150}
+                fullWidth={false}
+              />
+            ] : []
           }}
           layout="compact"
           sx={{ mb: hasCollector ? 2 : 4, display: 'flex', justifyContent: 'center' }}

@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, createHttpLink, ApolloLink } from '@apollo/client';
+import { logger } from '../utils/logger';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
@@ -17,7 +18,7 @@ export const setAuth0TokenGetter = (tokenGetter: () => Promise<string | null>) =
 // Function to set the token ready state
 export const setTokenReadyState = (ready: boolean) => {
   isTokenReady = ready;
-  console.log('Apollo Client - Token ready state:', ready);
+  logger.debug('Apollo Client - Token ready state:', ready);
 };
 
 // Function to check if token is ready
@@ -28,7 +29,10 @@ export const getTokenReadyState = (): boolean => {
 const authLink = setContext(async (_, { headers }) => {
   if (getAuth0Token) {
     try {
+      const tokenStart = performance.now();
       const idToken = await getAuth0Token();
+      const tokenEnd = performance.now();
+      logger.debug(`[AUTH] Token acquisition took ${tokenEnd - tokenStart}ms`);
       if (idToken) {
         return {
           headers: {
@@ -38,7 +42,7 @@ const authLink = setContext(async (_, { headers }) => {
         };
       }
     } catch (error) {
-      console.error('Auth0 ID token acquisition failed:', error);
+      logger.error('Auth0 ID token acquisition failed:', error);
     }
   }
 
@@ -68,6 +72,16 @@ export const apolloClient = new ApolloClient({
           },
         },
       },
+      Card: {
+        fields: {
+          userCollection: {
+            // Replace the entire array when mutation returns new collection data
+            merge(_existing, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
     },
   }),
   defaultOptions: {
@@ -77,6 +91,11 @@ export const apolloClient = new ApolloClient({
     },
     query: {
       errorPolicy: 'all'
+    },
+    mutate: {
+      errorPolicy: 'all',
+      awaitRefetchQueries: false,  // Don't wait for queries to refetch
+      refetchQueries: []  // Don't automatically refetch any queries
     }
   },
 });

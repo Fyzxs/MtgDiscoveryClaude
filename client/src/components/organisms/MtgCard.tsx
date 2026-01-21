@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import { Card as MuiCard, Box } from '@mui/material';
+import { Card as MuiCard, Box } from '../atoms';
 import type { Card, CardContext, UserCardData } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
 import { CardOverlay } from '../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
-import { CardBadges } from '../atoms/Cards/CardBadges';
+import { CardBadges } from '../molecules/Cards/CardBadges';
 import { srOnly } from '../../styles/cardStyles';
 import type { StyledComponentProps } from '../../types/components';
 // Extracted molecules
@@ -28,9 +28,11 @@ interface MtgCardProps extends StyledComponentProps {
 const MtgCardComponent: React.FC<MtgCardProps> = ({
   card,
   context = {},
-  collectionData: _collectionData,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  collectionData: _collectionData, // Used for memoization comparison
   index,
-  groupId: _groupId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  groupId: _groupId, // Used for memoization comparison
   onSetClick,
   onArtistClick,
   className = ''

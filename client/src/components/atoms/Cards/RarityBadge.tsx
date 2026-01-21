@@ -1,4 +1,4 @@
-import { Chip } from '@mui/material';
+import Chip from '../Chip';
 import type { Rarity } from '../../../types/card';
 import type { StyledComponentProps } from '../../../types/components';
 

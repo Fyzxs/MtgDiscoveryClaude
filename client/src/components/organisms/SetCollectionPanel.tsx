@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '@mui/material';
-import { ChevronLeft as ChevronLeftIcon } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
+import { logger } from '../../utils/logger';
+import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../atoms';
+import { useTheme } from '../atoms';
 import type { MtgSet } from '../../types/set';
 import { useSetCollectionProgress, type SetCollectionProgress, type CollectionGroup } from '../../hooks/useSetCollectionProgress';
 import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { ChevronLeftIcon } from '../atoms';
 
 // Extended type for display groups with sorting index
 interface DisplayCollectionGroup extends CollectionGroup {
@@ -29,7 +30,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
 }) => {
   const [collectionProgress, setCollectionProgress] = useState<SetCollectionProgress | undefined>(undefined);
   const theme = useTheme();
-  const { hasCollector, collectorId } = useCollectorParam();
+  const { hasCollector } = useCollectorParam();
   const { getCollectionProgress } = useSetCollectionProgress();
   const { toggleSetGroup } = useSetGroupToggle();
 
@@ -48,7 +49,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       })
       .catch(error => {
         if (cancelled === false) {
-          console.error('Error fetching collection progress:', error);
+          logger.error('Error fetching collection progress:', error);
         }
       });
 
@@ -127,10 +128,10 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       return a.originalIndex - b.originalIndex;
     });
   } catch (error) {
-    console.error('[SetCollectionPanel] Error building display groups:', error);
-    console.error('[SetCollectionPanel] availableGroupIds:', availableGroupIds);
-    console.error('[SetCollectionPanel] collectionProgress:', collectionProgress);
-    console.error('[SetCollectionPanel] set.groupings:', set.groupings);
+    logger.error('[SetCollectionPanel] Error building display groups:', error);
+    logger.error('[SetCollectionPanel] availableGroupIds:', availableGroupIds);
+    logger.error('[SetCollectionPanel] collectionProgress:', collectionProgress);
+    logger.error('[SetCollectionPanel] set.groupings:', set.groupings);
     return null;
   }
 
@@ -190,7 +191,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
                 control={
                   <Checkbox
                     checked={group.isCollecting}
-                    onChange={(e) => handleGroupToggle(e, group.setGroupId)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleGroupToggle(e, group.setGroupId)}
                     size="small"
                   />
                 }

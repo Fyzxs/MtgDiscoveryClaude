@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box, Typography, Paper } from '../atoms';
+import type { SxProps, Theme } from '../atoms';
 
 interface CardNameResult {
   name: string;

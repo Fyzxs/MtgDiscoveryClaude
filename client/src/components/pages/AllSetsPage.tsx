@@ -1,16 +1,16 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
-import { useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Typography } from '../atoms';
 import { GET_ALL_SETS } from '../../graphql/queries/sets';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import { EmptyState } from '../atoms/shared/EmptyState';
-import type { SortOption } from '../atoms/shared/SortDropdown';
+import { EmptyState } from '../molecules/shared/EmptyState';
+import type { SortOption } from '../molecules/shared/SortDropdown';
 import { useUrlFilterState, createUrlFilterConfig } from '../../hooks/useUrlFilterState';
 import { GraphQLQueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../organisms/filters/FilterPanel';
-import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
+import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { CardGridErrorBoundary } from '../ErrorBoundaries';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
@@ -61,7 +61,7 @@ export const AllSetsPage: React.FC = () => {
     }
   );
   
-  const selectedSetTypes = filters.setTypes || [];
+  const selectedSetTypes = (Array.isArray(filters.setTypes) ? filters.setTypes : []) as string[];
 
   // Get unique set types from data
   const getUniqueSetTypes = (sets: MtgSet[]): string[] => {
@@ -72,10 +72,12 @@ export const AllSetsPage: React.FC = () => {
   // URL synchronization is handled automatically by useUrlFilterState
 
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   const handleSetClick = (setCode?: string) => {
     if (setCode) {
-      navigate(`/set/${setCode}`);
+      // Preserve existing query parameters (like ctor) when navigating
+      navigate(`/set/${setCode}${location.search}`);
     }
   };
 
@@ -118,7 +120,11 @@ export const AllSetsPage: React.FC = () => {
             config={{
               search: {
                 value: searchTerm,
-                onChange: setSearchTerm,
+                onChange: (value: string) => {
+                  startTransition(() => {
+                    setSearchTerm(value);
+                  });
+                },
                 placeholder: 'Search sets...',
                 debounceMs: 300
               },
@@ -177,4 +183,4 @@ export const AllSetsPage: React.FC = () => {
       <BackToTopFab />
     </GraphQLQueryStateContainer>
   );
-};
+};export default AllSetsPage;

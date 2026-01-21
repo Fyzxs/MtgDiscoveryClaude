@@ -19,12 +19,6 @@ export const useResponsiveBreakpoints = (): ResponsiveBreakpoints => {
   const theme = useTheme();
   const [screenWidth, setScreenWidth] = useState(0);
 
-  // MUI breakpoint queries
-  const isMuiXs = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMuiSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const isMuiMd = useMediaQuery(theme.breakpoints.between('md', 'lg'));
-  const isMuiLg = useMediaQuery(theme.breakpoints.up('lg'));
-
   // Custom MTG breakpoint queries
   const isMobile = useMediaQuery(`(max-width: ${theme.mtg.breakpoints.tablet})`);
   const isTablet = useMediaQuery(

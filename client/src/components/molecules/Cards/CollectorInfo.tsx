@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '../../atoms';
 import { CollectorNumber, RarityBadge } from '../../atoms';
 
 interface CollectorInfoProps {
@@ -8,7 +9,7 @@ interface CollectorInfoProps {
   className?: string;
 }
 
-export const CollectorInfo: React.FC<CollectorInfoProps> = ({ 
+export const CollectorInfo: React.FC<CollectorInfoProps> = ({
   collectorNumber,
   setCode,
   rarity,
@@ -17,13 +18,13 @@ export const CollectorInfo: React.FC<CollectorInfoProps> = ({
   if (!collectorNumber && !rarity) return null;
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <Box className={className} sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
       {collectorNumber && (
         <CollectorNumber number={collectorNumber} setCode={setCode} />
       )}
       {rarity && (
         <RarityBadge rarity={rarity} />
       )}
-    </div>
+    </Box>
   );
 };

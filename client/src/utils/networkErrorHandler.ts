@@ -197,21 +197,34 @@ export const fetchWithRetry = async <T>(
   throw createNetworkError(new Error('Maximum retry attempts exceeded'));
 };
 
+interface GraphQLError {
+  message: string;
+  extensions?: Record<string, unknown>;
+}
+
+interface ApolloError {
+  networkError?: Error & { statusCode?: number };
+  graphQLErrors?: GraphQLError[];
+  message?: string;
+}
+
 /**
  * GraphQL-specific error handling
  */
-export const handleGraphQLError = (error: any): NetworkError => {
+export const handleGraphQLError = (error: ApolloError | Error): NetworkError => {
+  const apolloError = error as ApolloError;
+
   // Handle Apollo Client errors
-  if (error.networkError) {
+  if (apolloError.networkError) {
     return createNetworkError(
-      error.networkError,
-      error.networkError.statusCode
+      apolloError.networkError,
+      apolloError.networkError.statusCode
     );
   }
 
   // Handle GraphQL errors
-  if (error.graphQLErrors?.length > 0) {
-    const graphQLError = error.graphQLErrors[0];
+  if (apolloError.graphQLErrors?.length && apolloError.graphQLErrors.length > 0) {
+    const graphQLError = apolloError.graphQLErrors[0];
     const networkError = createNetworkError(new Error(graphQLError.message));
     networkError.userMessage = 'Failed to load data. Please try refreshing the page.';
     networkError.isRetryable = false; // GraphQL errors are typically not retryable
@@ -219,7 +232,8 @@ export const handleGraphQLError = (error: any): NetworkError => {
   }
 
   // Generic error
-  return createNetworkError(new Error(error.message || 'GraphQL query failed'));
+  const errorMessage = apolloError.message || (error as Error).message || 'GraphQL query failed';
+  return createNetworkError(new Error(errorMessage));
 };
 
 /**

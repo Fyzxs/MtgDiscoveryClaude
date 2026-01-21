@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Box, Typography, CircularProgress } from '@mui/material';
+import { Button, Box, Typography, CircularProgress } from '../atoms';
 import { useAuth0 } from '@auth0/auth0-react';
 import { MyCollectionButton } from '../molecules/ui/MyCollectionButton';
+import { logger } from '../../utils/logger';
 
 export const AuthButton: React.FC = () => {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading, getAccessTokenSilently, getIdTokenClaims } = useAuth0();
@@ -10,28 +11,28 @@ export const AuthButton: React.FC = () => {
   const logTokenInfo = async () => {
     if (isAuthenticated) {
       try {
-        console.log('=== JWT TOKEN INFO ===');
-        console.log('User object:', user);
-        
+        logger.debug('=== JWT TOKEN INFO ===');
+        logger.debug('User object:', user);
+
         // Get ID token claims
         const idTokenClaims = await getIdTokenClaims();
-        console.log('ID Token Claims:', idTokenClaims);
-        console.log('Raw ID Token:', idTokenClaims?.__raw);
-        
+        logger.debug('ID Token Claims:', idTokenClaims);
+        logger.debug('Raw ID Token:', idTokenClaims?.__raw);
+
         // Get access token
         const accessToken = await getAccessTokenSilently();
-        console.log('Access Token:', accessToken);
-        
+        logger.debug('Access Token:', accessToken);
+
         // Decode JWT manually (base64)
         if (idTokenClaims?.__raw) {
           const parts = idTokenClaims.__raw.split('.');
           const header = JSON.parse(atob(parts[0]));
           const payload = JSON.parse(atob(parts[1]));
-          console.log('JWT Header:', header);
-          console.log('JWT Payload:', payload);
+          logger.debug('JWT Header:', header);
+          logger.debug('JWT Payload:', payload);
         }
       } catch (error) {
-        console.error('Error getting tokens:', error);
+        logger.error('Error getting tokens:', error);
       }
     }
   };
