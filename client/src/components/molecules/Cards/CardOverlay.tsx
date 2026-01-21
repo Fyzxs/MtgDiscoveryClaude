@@ -36,7 +36,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const rarity = card.rarity;
   const collectorNumber = card.collectorNumber;
   const releaseDate = card.releasedAt;
-  const artists = card.artist ? card.artist.split(' // ') : [];
+  const artist = card.artist;
   const artistIds = card.artistIds;
   const setCode = card.setCode;
   const setName = card.setName;
@@ -105,14 +105,12 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         </Box>
 
         {/* Artist(s) */}
-        {artists.length > 0 && (
-          <ArtistLinks
-            artists={artists}
-            artistIds={artistIds}
-            context={context}
-            onArtistClick={onArtistClick}
-          />
-        )}
+        <ArtistLinks
+          artist={artist}
+          artistIds={artistIds}
+          context={context}
+          onArtistClick={onArtistClick}
+        />
 
         {/* Card Name */}
         {!context.isOnCardPage && (
