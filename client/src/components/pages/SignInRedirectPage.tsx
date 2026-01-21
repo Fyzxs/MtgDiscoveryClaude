@@ -9,7 +9,7 @@ import {
   Box,
   CircularProgress,
   Alert
-} from '../../atoms';
+} from '../atoms';
 import { REGISTER_USER } from '../../graphql/mutations/user';
 import { getTokenReadyState } from '../../graphql/apollo-client';
 

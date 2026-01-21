@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '../../atoms';
+import { Box, Typography } from '../atoms';
 
 interface ArtistPageHeaderProps {
   /** The primary artist name to display */

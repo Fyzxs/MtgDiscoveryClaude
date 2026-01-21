@@ -7,10 +7,10 @@ interface RarityCollectorBadgeProps {
   className?: string;
 }
 
-export const RarityCollectorBadge: React.FC<RarityCollectorBadgeProps> = ({ 
+export const RarityCollectorBadge: React.FC<RarityCollectorBadgeProps> = ({
   rarity,
   collectorNumber,
-  className 
+  className
 }) => {
   if (!rarity && !collectorNumber) return null;
 

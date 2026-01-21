@@ -59,7 +59,7 @@ export const BackToTopFab: React.FC<BackToTopFabProps> = ({
 
     // Add scroll listener
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // Cleanup
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -67,9 +67,9 @@ export const BackToTopFab: React.FC<BackToTopFabProps> = ({
   }, [threshold]);
 
   const handleClick = () => {
-    window.scrollTo({ 
-      top: 0, 
-      behavior: scrollBehavior 
+    window.scrollTo({
+      top: 0,
+      behavior: scrollBehavior
     });
   };
 

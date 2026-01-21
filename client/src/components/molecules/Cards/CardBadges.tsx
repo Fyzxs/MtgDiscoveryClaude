@@ -33,22 +33,22 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   // Ensure arrays are not null
   const safePromoTypes = promoTypes || [];
   const safeFrameEffects = frameEffects || [];
-  
+
   // Special foil promo types: check for entries ending in foil, galaxyfoil, ripplefoil, or exactly oilslick
   const hasSpecialFoilPromo = safePromoTypes.some(promo => {
     const lowerPromo = promo.toLowerCase();
-    return lowerPromo.endsWith('foil') || 
-           lowerPromo.endsWith('galaxyfoil') || 
-           lowerPromo.endsWith('ripplefoil') ||
-           lowerPromo === 'oilslick';
+    return lowerPromo.endsWith('foil') ||
+      lowerPromo.endsWith('galaxyfoil') ||
+      lowerPromo.endsWith('ripplefoil') ||
+      lowerPromo === 'oilslick';
   });
-  
+
   // Check if card is serialized - if so, only show that badge
   const isSerialized = safePromoTypes.some(promo => promo.toLowerCase() === 'serialized');
-  
+
   // Apply new foil badge logic using boolean properties
   const displayProperties: string[] = [];
-  
+
   if (!isSerialized) {
     // Non-foil badge: only show if card is BOTH non-foil AND foil (hybrid cards)
     if (nonfoil && foil) {
@@ -65,20 +65,20 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
       displayProperties.push('etched');
     }
   }
-  
+
   // Filter out excluded promo types - if serialized, only show that
-  const displayPromoTypes = isSerialized 
-    ? ['serialized'] 
+  const displayPromoTypes = isSerialized
+    ? ['serialized']
     : safePromoTypes.filter(
-        promoType => !excludePromoTypes.includes(promoType.toLowerCase())
-      );
+      promoType => !excludePromoTypes.includes(promoType.toLowerCase())
+    );
 
   // Filter out excluded frame effects - hide all if serialized
-  const displayFrameEffects = isSerialized 
-    ? [] 
+  const displayFrameEffects = isSerialized
+    ? []
     : safeFrameEffects.filter(
-        effect => !excludeFrameEffects.includes(effect.toLowerCase())
-      );
+      effect => !excludeFrameEffects.includes(effect.toLowerCase())
+    );
 
   // Format finish text for display
   const formatFinishText = (finish: string): string => {
@@ -95,13 +95,13 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   // Format promo type text for display
   const formatPromoText = (promoType: string): string => {
     const lowerType = promoType.toLowerCase();
-    
+
     // Handle FF + Roman numerals pattern (e.g., "ffxiv" -> "FF XIV")
     const ffRomanMatch = lowerType.match(/^ff([ivxlcdm]+)$/);
     if (ffRomanMatch) {
       return `FF ${ffRomanMatch[1].toUpperCase()}`;
     }
-    
+
     const formatMap: Record<string, string> = {
       'prerelease': 'Pre-Release',
       'promobundle': 'Promo Bundle',
@@ -192,9 +192,9 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
   }
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
+    <Box
+      sx={{
+        display: 'flex',
         flexDirection: inline ? 'row' : 'column-reverse',  // Row for inline, column-reverse for overlay
         flexWrap: inline ? 'wrap' : 'nowrap',
         gap: 0.5,
@@ -226,20 +226,20 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
               px: 1
             },
             backdropFilter: 'blur(4px)',
-            backgroundColor: property.toLowerCase() === 'foil' 
-              ? 'rgba(33, 150, 243, 0.9)' 
+            backgroundColor: property.toLowerCase() === 'foil'
+              ? 'rgba(33, 150, 243, 0.9)'
               : property.toLowerCase() === 'etched'
-              ? 'rgba(156, 39, 176, 0.9)'
-              : property.toLowerCase() === 'nonfoil'
-              ? 'rgba(158, 158, 158, 0.9)'
-              : 'rgba(97, 97, 97, 0.9)',
+                ? 'rgba(156, 39, 176, 0.9)'
+                : property.toLowerCase() === 'nonfoil'
+                  ? 'rgba(158, 158, 158, 0.9)'
+                  : 'rgba(97, 97, 97, 0.9)',
             color: 'white',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
           }}
         />
       ))}
-      
+
       {/* Digital badge */}
       {digital && (
         <Chip
@@ -260,7 +260,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
           }}
         />
       )}
-      
+
       {/* Promo type badges */}
       {displayPromoTypes.map((promoType, index) => (
         <Chip
@@ -275,11 +275,11 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
               px: 1
             },
             backdropFilter: 'blur(4px)',
-            backgroundColor: promoType.toLowerCase() === 'serialized' 
+            backgroundColor: promoType.toLowerCase() === 'serialized'
               ? 'rgba(255, 215, 0, 0.95)'  // Gold color for serialized
               : 'rgba(255, 152, 0, 0.9)',
             color: promoType.toLowerCase() === 'serialized' ? '#000' : 'white',
-            border: promoType.toLowerCase() === 'serialized' 
+            border: promoType.toLowerCase() === 'serialized'
               ? '1px solid rgba(255, 215, 0, 0.5)'
               : '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: promoType.toLowerCase() === 'serialized'
@@ -288,7 +288,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
           }}
         />
       ))}
-      
+
       {/* Generic promo badge if isPromo is true but no specific types (unless serialized) */}
       {isPromo && displayPromoTypes.length === 0 && !isSerialized && (
         <Chip
@@ -309,7 +309,7 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
           }}
         />
       )}
-      
+
       {/* Frame effect badges */}
       {displayFrameEffects.map((effect, index) => (
         <Chip
@@ -324,13 +324,13 @@ export const CardBadges: React.FC<CardBadgesProps> = ({
               px: 1
             },
             backdropFilter: 'blur(4px)',
-            backgroundColor: effect.toLowerCase() === 'showcase' 
+            backgroundColor: effect.toLowerCase() === 'showcase'
               ? 'rgba(76, 175, 80, 0.9)'
               : effect.toLowerCase() === 'extendedart'
-              ? 'rgba(0, 188, 212, 0.9)'
-              : effect.toLowerCase() === 'fullart'
-              ? 'rgba(255, 87, 34, 0.9)'
-              : 'rgba(121, 85, 72, 0.9)',
+                ? 'rgba(0, 188, 212, 0.9)'
+                : effect.toLowerCase() === 'fullart'
+                  ? 'rgba(255, 87, 34, 0.9)'
+                  : 'rgba(121, 85, 72, 0.9)',
             color: 'white',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 2px 4px rgba(0,0,0,0.2)'

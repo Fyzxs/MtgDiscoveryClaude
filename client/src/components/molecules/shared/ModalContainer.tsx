@@ -40,7 +40,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   return (
     <Modal
       open={open}
-      onClose={disableEscapeKeyDown ? () => {} : onClose}
+      onClose={disableEscapeKeyDown ? () => { } : onClose}
       sx={{
         display: 'flex',
         alignItems: 'center',

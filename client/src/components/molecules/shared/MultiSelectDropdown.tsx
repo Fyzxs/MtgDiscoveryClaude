@@ -92,8 +92,8 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
   // Show skeleton when loading
   if (loading) {
     return (
-      <FormControl 
-        fullWidth={fullWidth} 
+      <FormControl
+        fullWidth={fullWidth}
         sx={{ minWidth, ...sx }}
       >
         <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
@@ -102,8 +102,8 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
   }
 
   return (
-    <FormControl 
-      fullWidth={fullWidth} 
+    <FormControl
+      fullWidth={fullWidth}
       sx={{ minWidth, ...sx }}
       disabled={disabled}
     >
@@ -146,7 +146,7 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
           {value.length === 0 ? `No ${label.toLowerCase()} selected` : `${value.length} ${label.toLowerCase()} selected`}
         </Box>
         {showClearAll && (
-          <MenuItem 
+          <MenuItem
             value="CLEAR_ALL"
             role="option"
             aria-label="Clear all selections"
@@ -158,8 +158,8 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
           </MenuItem>
         )}
         {normalizedOptions.map((option) => (
-          <MenuItem 
-            key={option.value} 
+          <MenuItem
+            key={option.value}
             value={option.value}
             role="option"
             aria-selected={value.includes(option.value)}

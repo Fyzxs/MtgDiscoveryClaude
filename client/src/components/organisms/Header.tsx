@@ -7,8 +7,8 @@ import {
   Button,
   Menu,
   MenuItem
-} from '../../atoms';
-import { useTheme } from '../../atoms';
+} from '../atoms';
+import { useTheme } from '../atoms';
 import { SearchInput } from '../molecules/shared/SearchInput';
 import { AuthButton } from '../auth/AuthButton';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';

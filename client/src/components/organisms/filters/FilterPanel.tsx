@@ -47,15 +47,15 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
   // For horizontal layout using Grid
   if (layout === 'horizontal') {
     return (
-      <Box 
-        component="section" 
-        role="search" 
+      <Box
+        component="section"
+        role="search"
         aria-label="Filter and search options"
         sx={{ mb: 4, ...sx }}
       >
-        <Grid 
-          container 
-          spacing={spacing} 
+        <Grid
+          container
+          spacing={spacing}
           sx={{ alignItems: 'center', justifyContent: 'center' }}
           role="group"
           aria-label="Filter controls"
@@ -78,11 +78,11 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
           {/* Multi-select Dropdowns */}
           {multiSelects.map((select) => (
-            <Grid 
-              key={select.key} 
-              size={{ 
-                xs: 12, 
-                sm: 'auto' 
+            <Grid
+              key={select.key}
+              size={{
+                xs: 12,
+                sm: 'auto'
               }}
               role="group"
               aria-label={`${select.label} filter options`}
@@ -144,7 +144,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                       />
                     );
                   }) : []
-                : undefined}
+                  : undefined}
               />
             </Grid>
           ))}
@@ -215,17 +215,17 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
 
   // For vertical/compact layout using Stack
   return (
-    <Box 
-      component="section" 
-      role="search" 
+    <Box
+      component="section"
+      role="search"
       aria-label="Filter and search options"
       sx={{ mb: 4, display: 'flex', justifyContent: 'center', ...sx }}
     >
       <Stack spacing={spacing} role="group" aria-label="Filter controls">
-        <Stack 
-          direction={layout === 'vertical' ? 'column' : 'row'} 
-          spacing={spacing} 
-          flexWrap="wrap" 
+        <Stack
+          direction={layout === 'vertical' ? 'column' : 'row'}
+          spacing={spacing}
+          flexWrap="wrap"
           sx={{ rowGap: spacing }}
         >
           {/* Search Input */}
@@ -294,7 +294,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                     />
                   );
                 }) : []
-              : undefined}
+                : undefined}
             />
           ))}
 

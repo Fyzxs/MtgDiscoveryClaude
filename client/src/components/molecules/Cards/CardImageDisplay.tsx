@@ -33,13 +33,13 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
 }) => {
   const [currentFaceIndex, setCurrentFaceIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
-  
+
   // Use lazy loading hook
   const { ref: lazyRef, hasBeenInView } = useLazyLoad({
     rootMargin: '100px', // Start loading 100px before card enters viewport
     threshold: 0.01
   });
-  
+
   // Check if this is a double-faced card that we can flip
   // We can flip if there's no main imageUris field (meaning we need to use cardFaces for images)
   // OR if there are multiple card faces
@@ -48,7 +48,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
   const isFlippable = hasNoMainImage && card.cardFaces && card.cardFaces.length > 0;
   const isDoubleFaced = isFlippable || hasMultipleFaces;
   const currentFace = isDoubleFaced && card.cardFaces ? card.cardFaces[currentFaceIndex] : null;
-  
+
   // Determine which image to show
   const getImageUrl = () => {
     // If card has no main imageUris, we must use cardFaces
@@ -58,27 +58,27 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
       if (size === 'small') return currentFace.imageUris.small || currentFace.imageUris.normal || '';
       return currentFace.imageUris.normal || currentFace.imageUris.large || currentFace.imageUris.small || '';
     }
-    
+
     // If it's a double-faced card with faces but also has main imageUris, prefer faces when flipped
     if (isDoubleFaced && currentFaceIndex > 0 && currentFace?.imageUris) {
       if (size === 'large') return currentFace.imageUris.large || currentFace.imageUris.normal || currentFace.imageUris.small || '';
       if (size === 'small') return currentFace.imageUris.small || currentFace.imageUris.normal || '';
       return currentFace.imageUris.normal || currentFace.imageUris.large || currentFace.imageUris.small || '';
     }
-    
+
     // Use the main card image
     if (!card.imageUris) return '';
     if (size === 'large') return card.imageUris.large || card.imageUris.normal || card.imageUris.small || '';
     if (size === 'small') return card.imageUris.small || card.imageUris.normal || '';
     return card.imageUris.normal || card.imageUris.large || card.imageUris.small || '';
   };
-  
+
   const imageUrl = getImageUrl();
   const [imageLoaded, setImageLoaded] = useState(() => {
     // Check global cache if this image was already loaded
     return imageUrl ? imageCache.isLoaded(imageUrl) : true;
   });
-  
+
   // Only load image when it comes into view
   useEffect(() => {
     if (!imageUrl || !hasBeenInView) {
@@ -98,11 +98,11 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
       }
     });
   }, [imageUrl, hasBeenInView]);
-  
+
   const handleFlip = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering parent onClick
     if (!isDoubleFaced || isFlipping) return;
-    
+
     setIsFlipping(true);
     setTimeout(() => {
       setCurrentFaceIndex(prev => (prev + 1) % card.cardFaces!.length);
@@ -143,7 +143,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
           minHeight: '200px' // Ensure minimum height
         }}
       >
-        
+
         {/* Placeholder skeleton while not in view */}
         {!hasBeenInView && (
           <Skeleton
@@ -159,7 +159,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
             }}
           />
         )}
-        
+
         {/* Actual image - only render when it has been in view */}
         {imageUrl && hasBeenInView && (
           <Box
@@ -176,23 +176,23 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
               setImageLoaded(true); // But still show card back
             }}
             sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            borderRadius,
-            display: 'block',
-            backfaceVisibility: 'hidden',
-            opacity: imageLoaded ? 1 : 0,
-            transition: 'opacity 0.3s ease-in-out',
-            backgroundColor: 'transparent'
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              borderRadius,
+              display: 'block',
+              backfaceVisibility: 'hidden',
+              opacity: imageLoaded ? 1 : 0,
+              transition: 'opacity 0.3s ease-in-out',
+              backgroundColor: 'transparent'
             }}
           />
         )}
       </Box>
-      
+
       {/* Flip button for double-faced cards */}
       {isDoubleFaced && showFlipButton && (
         <Tooltip title={`Show ${currentFaceIndex === 0 ? 'back' : 'front'} face`}>

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, startTransition } from 'react';
 import { useParams } from 'react-router-dom';
-import { Alert } from '../../atoms';
+import { Alert } from '../atoms';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
 import { ArtistPageHeader } from '../organisms/ArtistPageHeader';
 import { ArtistPageFilters } from '../organisms/ArtistPageFilters';

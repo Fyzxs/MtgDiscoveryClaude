@@ -5,7 +5,7 @@ import { useCardQueries } from '../../hooks/useCardQueries';
 import {
   Container,
   Alert
-} from '../../atoms';
+} from '../atoms';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../../graphql/queries/sets';
 import { useUrlState } from '../../hooks/useUrlState';
 import { useFilterState } from '../../hooks/useFilterState';
