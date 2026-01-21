@@ -5,6 +5,7 @@ import { CardImageDisplay } from './CardImageDisplay';
 import { ZoomIndicator } from '../../atoms/Cards/ZoomIndicator';
 import { LastDeltaBadge } from '../../atoms/Cards/LastDeltaBadge';
 import { CardOverlay } from '../../molecules/Cards/CardOverlay';
+import { CollectionEntryOverlay } from '../../molecules/Cards/CollectionEntryOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
 import { CardBadges } from '../../molecules/Cards/CardBadges';
 import { srOnly } from '../../../styles/cardStyles';
@@ -64,7 +65,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
     cardRef,
     overlayBehavior: displaySettings.overlayBehavior
   });
-  useMtgCardCollectionActions({ card, isSelected, cardRef });
+  const { overlayState, isWishlistMode } = useMtgCardCollectionActions({ card, isSelected, cardRef });
 
   // Calculate collection count for mobile display
   const collectionCount = card.userCollection?.totalCount ?? 0;
@@ -141,6 +142,18 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         expanded={overlayExpanded}
         onExpandToggle={handleOverlayToggle}
         collectionCount={collectionCount}
+      />
+
+      {/* Collection entry overlay - always mounted for pre-mount pattern */}
+      <CollectionEntryOverlay
+        visible={overlayState.visible}
+        count={overlayState.count}
+        isNegative={overlayState.isNegative}
+        finish={overlayState.finish}
+        special={overlayState.special}
+        mode={isWishlistMode ? 'wishlist' : 'collection'}
+        variant="card"
+        flash={overlayState.flash}
       />
 
       {/* Hidden element for screen reader description */}

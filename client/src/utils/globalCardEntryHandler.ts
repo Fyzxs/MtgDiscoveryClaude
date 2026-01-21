@@ -1,30 +1,31 @@
-import { domOverlay } from './directDomOverlay';
 import { logger } from './logger';
-import type { CardFinish, CardSpecial, CollectionEntryState, CardCollectionUpdate } from '../types/collection';
 import { perfMonitor } from './performanceMonitor';
+import type { CardFinish, CardSpecial, CardCollectionUpdate } from '../types/collection';
+
+interface CollectionEntryState {
+  count: string;
+  finish: CardFinish;
+  special: CardSpecial;
+  isNegative: boolean;
+}
 
 interface CardHandler {
   cardId: string;
   availableFinishes: CardFinish[];
   onSubmit: (update: CardCollectionUpdate) => Promise<void>;
   onFlashInvalid: () => void;
-}
-
-interface WindowWithTempData extends Window {
-  __tempUpdateData?: CardCollectionUpdate;
+  onOverlayUpdate: (state: { count: string; isNegative: boolean; visible: boolean; finish: CardFinish; special: CardSpecial }) => void;
 }
 
 class GlobalCardEntryHandler {
   private handlers = new Map<string, CardHandler>();
   private entryStates = new Map<string, CollectionEntryState>();
   private isEntering = new Map<string, boolean>();
-  // Track recent Enter keydown to prevent keyup from triggering button click
   private recentEnterKeydown = false;
 
   constructor() {
     // Install ONE global handler that never changes
     document.addEventListener('keydown', this.handleKeyDown.bind(this), true);
-    // Also capture keyup to prevent Enter from triggering button activation
     document.addEventListener('keyup', this.handleKeyUp.bind(this), true);
   }
 
@@ -49,12 +50,32 @@ class GlobalCardEntryHandler {
     this.handlers.delete(cardId);
     this.entryStates.delete(cardId);
     this.isEntering.delete(cardId);
-    domOverlay.cleanup(cardId);
+  }
+
+  reset(cardId: string) {
+    this.isEntering.set(cardId, false);
+    const state = this.entryStates.get(cardId);
+    if (state) {
+      state.count = '';
+      state.finish = this.getDefaultFinish(cardId);
+      state.special = 'none';
+      state.isNegative = false;
+    }
+
+    const handler = this.handlers.get(cardId);
+    if (handler) {
+      handler.onOverlayUpdate({
+        count: '',
+        isNegative: false,
+        visible: false,
+        finish: this.getDefaultFinish(cardId),
+        special: 'none'
+      });
+    }
   }
 
   private handleKeyUp(event: KeyboardEvent) {
-    // If we recently handled an Enter keydown, prevent the keyup from triggering
-    // the browser's default button activation behavior (which causes scroll)
+    // Prevent Enter keyup from triggering button activation
     if (this.recentEnterKeydown && event.key.toLowerCase() === 'enter') {
       this.recentEnterKeydown = false;
       event.preventDefault();
@@ -79,7 +100,6 @@ class GlobalCardEntryHandler {
     const urlParams = new URLSearchParams(window.location.search);
     const collectorId = urlParams.get('ctor');
     if (!collectorId) {
-      // Silently ignore - no error message, just don't process
       return;
     }
 
@@ -113,7 +133,6 @@ class GlobalCardEntryHandler {
     if (key === 'enter') {
       if (this.isEntering.get(cardId)) {
         this.submitEntry(cardId);
-        // Mark that we handled Enter so keyup doesn't trigger button click
         this.recentEnterKeydown = true;
         event.preventDefault();
         event.stopPropagation();
@@ -131,9 +150,6 @@ class GlobalCardEntryHandler {
       event.stopPropagation();
 
       if (!this.isEntering.get(cardId)) {
-        // IMMEDIATELY show overlay
-        const state = this.entryStates.get(cardId)!;
-        domOverlay.show(cardId, state, false);
         this.isEntering.set(cardId, true);
       }
 
@@ -214,95 +230,53 @@ class GlobalCardEntryHandler {
 
     // Update state
     this.entryStates.set(cardId, state);
-    // Update DOM
-    domOverlay.show(cardId, state, false);
+
+    // Update overlay via React callback
+    handler.onOverlayUpdate({ ...state, visible: true });
   }
 
   private cancelEntry(cardId: string) {
-    this.isEntering.set(cardId, false);
-    this.entryStates.set(cardId, {
-      count: '',
-      finish: this.getDefaultFinish(cardId),
-      special: 'none',
-      isNegative: false
-    });
-    domOverlay.hide(cardId);
+    this.reset(cardId);
   }
 
   private async submitEntry(cardId: string) {
-    perfMonitor.start('submit-entry-total');
-
     const handler = this.handlers.get(cardId);
     const state = this.entryStates.get(cardId);
     if (!handler || !state) return;
 
-    // Pre-calculate BEFORE any DOM operations
-    perfMonitor.measure('submit-prepare-data', () => {
-      const count = parseInt(state.count || '0');
-      const finalCount = state.isNegative ? -count : count;
-      (window as WindowWithTempData).__tempUpdateData = {
-        cardId,
-        count: finalCount,
-        finish: state.finish,
-        special: state.special
-      };
-    });
-
-    const updateData = (window as WindowWithTempData).__tempUpdateData!;
-    delete (window as WindowWithTempData).__tempUpdateData;
-
-    // Get card element for instant state updates
-    const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
-
-    // CRITICAL: Instant visual feedback - no animations
-    perfMonitor.measure('submit-hide-ui', () => {
-      // 1. Mark card as submitting (disables transform transition) but KEEP selected
-      if (cardElement) {
-        cardElement.setAttribute('data-submitting', 'true');
-        // Don't deselect - user wants to stay on same card for rapid entry
-      }
-
-      // 2. Hide overlay immediately
-      domOverlay.hide(cardId);
-
-      // 3. Reset state immediately after
-      this.isEntering.set(cardId, false);
-      this.entryStates.set(cardId, {
-        count: '',
-        finish: this.getDefaultFinish(cardId),
-        special: 'none',
-        isNegative: false
-      });
-    });
-
-    perfMonitor.end('submit-entry-total');
-
-    // Fire-and-forget the submission - don't block UI
-    handler.onSubmit(updateData).catch(error => {
-      logger.error('[GlobalCardEntry] Submission failed:', error);
-      // Error handling happens in CollectionContext (toast)
-    });
-  }
-
-  reset(cardId: string) {
-    // Only hide if we're actually entering (navigating away from entry mode)
-    // Don't hide if submitEntry already did it
-    const wasEntering = this.isEntering.get(cardId);
-
-    this.isEntering.set(cardId, false);
-    this.entryStates.set(cardId, {
-      count: '',
-      finish: this.getDefaultFinish(cardId),
-      special: 'none',
-      isNegative: false
-    });
-
-    // Hide overlay if user was entering (navigating away), but submitEntry already hides it
-    if (wasEntering) {
-      domOverlay.hide(cardId);
+    // Validate count
+    if (state.count === '') {
+      handler.onFlashInvalid();
+      return;
     }
+
+    let count = parseInt(state.count, 10);
+    if (state.isNegative) {
+      count = -count;
+    }
+
+    // Submit the update
+    perfMonitor.start('card-entry-submit');
+    try {
+      await handler.onSubmit({
+        cardId: handler.cardId,
+        count,
+        finish: state.finish,
+        special: state.special,
+        setId: '', // Will be filled in by the onSubmit handler
+        setCode: '',
+        setGroupId: null
+      });
+    } catch (error) {
+      logger.error('Failed to submit card entry:', error);
+    } finally {
+      perfMonitor.end('card-entry-submit');
+    }
+
+    // Reset entry state
+    this.reset(cardId);
   }
 }
 
-// Global singleton
+// Export singleton instance
 export const globalCardEntry = new GlobalCardEntryHandler();
