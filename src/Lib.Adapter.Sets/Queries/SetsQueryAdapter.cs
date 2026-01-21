@@ -46,8 +46,7 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
         _allSetsInquisition = allSetsInquisition;
     }
 
-    //TODO: Remove the Get prefix
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync([NotNull] ISetIdsXfrEntity setIds)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync([NotNull] ISetIdsXfrEntity setIds)
     {
         // Extract primitives for external system interface
         IEnumerable<string> setIdList = setIds.SetIds;
@@ -74,7 +73,7 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>(successfulSets);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync([NotNull] ISetCodesXfrEntity setCodes)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync([NotNull] ISetCodesXfrEntity setCodes)
     {
         // Extract primitives for external system interface
         IEnumerable<string> setCodeList = setCodes.SetCodes;
@@ -103,10 +102,10 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
 
         //TODO: Should be a mapper
         ISetIdsXfrEntity setIdsEntity = new SetIdsXfrEntity { SetIds = setIds };
-        return await GetSetsByIdsAsync(setIdsEntity).ConfigureAwait(false);
+        return await SetsByIdsAsync(setIdsEntity).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync()
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync()
     {
         OpResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _allSetsInquisition
             .QueryAsync<ScryfallSetItemExtEntity>(CancellationToken.None)

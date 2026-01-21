@@ -8,10 +8,10 @@ using Lib.Adapter.Artists.Exceptions;
 using Lib.Adapter.Artists.Queries.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Artists.Queries;
@@ -25,21 +25,21 @@ namespace Lib.Adapter.Artists.Queries;
 /// </summary>
 internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
 {
-    private readonly ICosmosInquisitor _artistNameTrigramsInquisitor;
-    private readonly ICosmosInquisitor _artistCardsInquisitor;
+    private readonly ICosmosInquisition<ArtistNameTrigramSearchInquisitionArgs> _artistNameTrigramSearchInquisition;
+    private readonly ICosmosInquisition<CardsByArtistIdInquisitionArgs> _cardsByArtistIdInquisition;
 
     public ArtistsQueryAdapter(ILogger logger) : this(
-        new ArtistNameTrigramsInquisitor(logger),
-        new ScryfallArtistCardsInquisitor(logger))
+        new ArtistNameTrigramSearchInquisition(logger),
+        new CardsByArtistIdInquisition(logger))
     {
     }
 
     private ArtistsQueryAdapter(
-        ICosmosInquisitor artistNameTrigramsInquisitor,
-        ICosmosInquisitor artistCardsInquisitor)
+        ICosmosInquisition<ArtistNameTrigramSearchInquisitionArgs> artistNameTrigramSearchInquisition,
+        ICosmosInquisition<CardsByArtistIdInquisitionArgs> cardsByArtistIdInquisition)
     {
-        _artistNameTrigramsInquisitor = artistNameTrigramsInquisitor;
-        _artistCardsInquisitor = artistCardsInquisitor;
+        _artistNameTrigramSearchInquisition = artistNameTrigramSearchInquisition;
+        _cardsByArtistIdInquisition = cardsByArtistIdInquisition;
     }
 
     public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync([NotNull] IArtistSearchTermXfrEntity xfrEntity)
@@ -52,15 +52,16 @@ internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
         foreach (string trigram in xfrEntity.SearchTerms)
         {
             // Query for this trigram with server-side filtering
-            QueryDefinition queryDefinition = new QueryDefinition(
-                "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE artist FROM artist IN c.artists WHERE CONTAINS(artist.norm, @normalized))")
-                .WithParameter("@trigram", trigram)
-                .WithParameter("@partition", trigram[..1])
-                .WithParameter("@normalized", xfrEntity.Normalized);
+            ArtistNameTrigramSearchInquisitionArgs args = new()
+            {
+                Trigram = trigram,
+                Partition = trigram[..1],
+                Normalized = xfrEntity.Normalized
+            };
 
-            OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtEntity>(
-                queryDefinition,
-                new PartitionKey(trigram[..1])).ConfigureAwait(false);
+            OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramSearchInquisition
+                .QueryAsync<ArtistNameTrigramExtEntity>(args)
+                .ConfigureAwait(false);
 
             if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null) continue;
 
@@ -95,15 +96,12 @@ internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
 
     public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync([NotNull] IArtistIdXfrEntity artistId)
     {
-        // Extract primitives for external system interface
-
         // Query all cards for this artist ID using the artist ID as partition key
-        QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c WHERE c.partition = @artistId")
-            .WithParameter("@artistId", artistId.ArtistId);
+        CardsByArtistIdInquisitionArgs args = new() { ArtistId = artistId.ArtistId };
 
-        OpResponse<IEnumerable<ScryfallArtistCardExtEntity>> cardsResponse = await _artistCardsInquisitor.QueryAsync<ScryfallArtistCardExtEntity>(
-            queryDefinition,
-            new PartitionKey(artistId.ArtistId)).ConfigureAwait(false);
+        OpResponse<IEnumerable<ScryfallArtistCardExtEntity>> cardsResponse = await _cardsByArtistIdInquisition
+            .QueryAsync<ScryfallArtistCardExtEntity>(args)
+            .ConfigureAwait(false);
 
         if (cardsResponse.IsNotSuccessful())
         {
@@ -125,15 +123,16 @@ internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
         {
             // Query for this trigram with server-side filtering
             string firstChar = trigram[..1];
-            QueryDefinition queryDefinition = new QueryDefinition(
-                "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE artist FROM artist IN c.artists WHERE CONTAINS(artist.norm, @normalized))")
-                .WithParameter("@trigram", trigram)
-                .WithParameter("@partition", firstChar)
-                .WithParameter("@normalized", artistName.Normalized);
+            ArtistNameTrigramSearchInquisitionArgs args = new()
+            {
+                Trigram = trigram,
+                Partition = firstChar,
+                Normalized = artistName.Normalized
+            };
 
-            OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramsInquisitor.QueryAsync<ArtistNameTrigramExtEntity>(
-                queryDefinition,
-                new PartitionKey(firstChar)).ConfigureAwait(false);
+            OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramSearchInquisition
+                .QueryAsync<ArtistNameTrigramExtEntity>(args)
+                .ConfigureAwait(false);
 
             if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null) continue;
 
