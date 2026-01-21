@@ -73,6 +73,9 @@ export const SetLink = ({
           py: 0.25,
           borderRadius: 1,
           bgcolor: 'rgba(0, 0, 0, 0.6)',
+          maxWidth: '100%',
+          minWidth: 0,
+          overflow: 'hidden',
           '&:hover': {
             bgcolor: 'rgba(0, 0, 0, 0.8)',
             color: 'primary.main'

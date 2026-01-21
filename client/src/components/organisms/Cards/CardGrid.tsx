@@ -17,12 +17,23 @@ const DEFAULT_MIN_ITEM_WIDTH: Partial<Record<Breakpoint, number>> = {
   xl: 250,  // auto-fill on extra large
 };
 
+// Default max width to prevent cards from getting too large with few items
+// Keeps cards consistent size regardless of how many are displayed
+const DEFAULT_MAX_ITEM_WIDTH: Partial<Record<Breakpoint, number>> = {
+  xs: 140,  // Cap on mobile - slightly larger than min (120)
+  sm: 160,  // Cap on tablet - slightly larger than min (140)
+  md: 220,  // Cap on medium - slightly larger than min (180)
+  lg: 260,  // Cap on large - slightly larger than min (220)
+  xl: 300,  // Cap on extra large - slightly larger than min (250)
+};
+
 interface CardGridProps {
   cards: Card[];
   groupId: string;
   context: CardContext;
   spacing?: ResponsiveValue<number>;
   minItemWidth?: ResponsiveValue<number>;
+  maxItemWidth?: ResponsiveValue<number>;
   sx?: SxProps<Theme>;
   enableNavigation?: boolean;
   isLoading?: boolean;
@@ -53,6 +64,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
   context,
   spacing = { xs: 1, sm: 1.5 },
   minItemWidth = DEFAULT_MIN_ITEM_WIDTH,
+  maxItemWidth = DEFAULT_MAX_ITEM_WIDTH,
   sx = {},
   enableNavigation = true,
   isLoading = false,
@@ -123,6 +135,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
       <Box data-card-group={groupId}>
         <ResponsiveGridAutoFit
           minItemWidth={minItemWidth}
+          maxItemWidth={maxItemWidth}
           spacing={spacing}
           sx={sx}
           data-grid-container="true"
@@ -155,6 +168,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
     <Box data-card-group={groupId}>
       <ResponsiveGridAutoFit
         minItemWidth={minItemWidth}
+        maxItemWidth={maxItemWidth}
         spacing={spacing}
         sx={{
           margin: '0 auto',

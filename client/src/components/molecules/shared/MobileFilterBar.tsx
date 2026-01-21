@@ -8,10 +8,10 @@ interface MobileFilterBarProps {
   activeFilterCount: number;
   /** Click handler to open filter drawer */
   onFilterClick: () => void;
-  /** Whether to show grouped card layout */
-  showGroups: boolean;
-  /** Handler for toggling grouped layout */
-  onShowGroupsChange: (showGroups: boolean) => void;
+  /** Whether to show grouped card layout (optional - only needed if showGroupsToggle is true) */
+  showGroups?: boolean;
+  /** Handler for toggling grouped layout (optional - only needed if showGroupsToggle is true) */
+  onShowGroupsChange?: (showGroups: boolean) => void;
   /** Whether the groups toggle should be visible (only when multiple groups exist) */
   showGroupsToggle?: boolean;
   /** Results summary text */
@@ -26,9 +26,9 @@ interface MobileFilterBarProps {
 export const MobileFilterBar: React.FC<MobileFilterBarProps> = ({
   activeFilterCount,
   onFilterClick,
-  showGroups,
+  showGroups = false,
   onShowGroupsChange,
-  showGroupsToggle = true,
+  showGroupsToggle = false,
   resultsSummary
 }) => {
   return (
@@ -71,7 +71,7 @@ export const MobileFilterBar: React.FC<MobileFilterBarProps> = ({
       {/* Right side: Controls */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexShrink: 0 }}>
         {/* Groups toggle chip */}
-        {showGroupsToggle && (
+        {showGroupsToggle && onShowGroupsChange && (
           <Chip
             icon={showGroups ? <ViewModuleIcon /> : <ViewListIcon />}
             label={showGroups ? 'Grouped' : 'Flat'}

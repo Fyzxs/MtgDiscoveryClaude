@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '../../atoms';
 import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
-import { ReleaseDateBadge } from '../../atoms/shared/ReleaseDateBadge';
+import { SetDateBadge } from '../../atoms/shared/SetDateBadge';
 
 interface TopBadgesProps {
   setCode: string;
@@ -23,7 +23,7 @@ export const TopBadges: React.FC<TopBadgesProps> = ({ setCode, releaseDate, comp
       }}
     >
       <SetCodeBadge code={setCode} compact={compact} />
-      {!compact && <ReleaseDateBadge date={releaseDate} />}
+      {!compact && <SetDateBadge date={releaseDate} />}
     </Box>
   );
 };

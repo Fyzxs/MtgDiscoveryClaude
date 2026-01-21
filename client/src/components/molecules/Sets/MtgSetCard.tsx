@@ -5,6 +5,7 @@ import type { MtgSet, SetContext } from '../../../types/set';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 import { SetTitle } from '../../atoms/Sets/SetTitle';
 import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
+import { SetDateBadge } from '../../atoms/shared/SetDateBadge';
 import { CardCountDisplay } from '../../atoms/shared/CardCountDisplay';
 import { CollectionProgressBar } from '../../atoms/shared/CollectionProgressBar';
 import { TopBadges } from './TopBadges';
@@ -32,10 +33,11 @@ const SIZE_CONFIG: Record<SetCardSize, {
   showProgressBar: boolean;
   useWrapDisplay: boolean;
   wrapFontSize: number;
+  showCodeDateAboveIcon: boolean;  // For compact sizes: show set code + date between title and icon
 }> = {
   sm: {
     width: 140,
-    height: 100,
+    height: 115,
     iconSize: 44,
     padding: 0.5,
     titleSize: '0.625rem',
@@ -47,10 +49,11 @@ const SIZE_CONFIG: Record<SetCardSize, {
     showProgressBar: false,
     useWrapDisplay: false,
     wrapFontSize: 9,
+    showCodeDateAboveIcon: true,
   },
   md: {
     width: 160,
-    height: 115,
+    height: 130,
     iconSize: 48,
     padding: 0.75,
     titleSize: '0.6875rem',
@@ -62,6 +65,7 @@ const SIZE_CONFIG: Record<SetCardSize, {
     showProgressBar: false,
     useWrapDisplay: false,
     wrapFontSize: 10,
+    showCodeDateAboveIcon: true,
   },
   lg: {
     width: 200,
@@ -77,6 +81,7 @@ const SIZE_CONFIG: Record<SetCardSize, {
     showProgressBar: true,
     useWrapDisplay: false,
     wrapFontSize: 14,
+    showCodeDateAboveIcon: false,
   },
 };
 
@@ -351,6 +356,20 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                 />
               )}
 
+              {/* Compact sizes: show set code + release date above icon */}
+              {sizeConfig.showCodeDateAboveIcon && (
+                <Box sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 0.5,
+                  my: 0.25
+                }}>
+                  <SetCodeBadge code={set.code} compact />
+                  <SetDateBadge date={set.releasedAt} compact />
+                </Box>
+              )}
+
               {sizeConfig.showIcon && (
                 <SetIconDisplay
                   iconSvgUri={set.iconSvgUri}
@@ -396,9 +415,8 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     </Typography>
                   </>
                 ) : (
-                  // Compact size: [badge] [X/Y] - [Z%] format, no bar
+                  // Compact size: [X/Y] - [Z%] format, no bar (SetCodeBadge shown above icon)
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, flexWrap: 'wrap' }}>
-                    <SetCodeBadge code={set.code} compact />
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -430,7 +448,6 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                   </>
                 ) : (
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, flexWrap: 'wrap' }}>
-                    <SetCodeBadge code={set.code} compact />
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -448,9 +465,8 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                   compact={false}
                 />
               ) : (
-                // Compact: show set code badge with card count
+                // Compact: show card count only (SetCodeBadge shown above icon)
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                  <SetCodeBadge code={set.code} compact />
                   <Typography
                     variant="body2"
                     color="text.secondary"

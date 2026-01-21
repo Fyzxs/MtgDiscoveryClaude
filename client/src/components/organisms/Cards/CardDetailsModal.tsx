@@ -614,15 +614,10 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               {/* Related Cards */}
               {card.allParts && card.allParts.length > 1 && (
                 <>
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                      Related Cards
-                    </Typography>
-                    <RelatedCardsDisplay 
-                      relatedCardIds={card.allParts.map(part => part.id).filter((id): id is string => !!id)}
-                      currentCardId={card.id}
-                    />
-                  </Box>
+                  <RelatedCardsDisplay
+                    relatedCardIds={card.allParts.map(part => part.id).filter((id): id is string => !!id)}
+                    currentCardId={card.id}
+                  />
                   <Divider sx={{ mt: 2 }} />
                 </>
               )}

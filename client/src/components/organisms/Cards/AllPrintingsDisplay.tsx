@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography } from '../../atoms';
 import { ExpandableSection } from '../../molecules';
 import { LoadingContainer, ErrorAlert } from '../../atoms';
-import { MtgCard } from './MtgCard';
-import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
+import { CardGrid } from './CardGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
 import { useCardQueries } from '../../../hooks/useCardQueries';
@@ -127,25 +126,16 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
       )}
       
       {!loading && !hasError && otherCards.length > 0 && (
-        <ResponsiveGridAutoFit 
-          minItemWidth={280} 
+        <CardGrid
+          cards={otherCards}
+          groupId="other-printings"
+          context={{
+            hasCollector,
+            showCollectorInfo: hasCollector
+          }}
           spacing={1.5}
           sx={{ mt: 1 }}
-        >
-          {otherCards.map((card, index) => (
-            <MtgCard
-              key={card.id}
-              card={card}
-              index={index}
-              groupId="all-printings"
-              context={{
-                isOnCardPage: true,
-                hasCollector,
-                showCollectorInfo: hasCollector
-              }}
-            />
-          ))}
-        </ResponsiveGridAutoFit>
+        />
       )}
 
       {!loading && !hasError && otherCards.length === 0 && (

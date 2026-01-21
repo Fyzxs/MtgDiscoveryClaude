@@ -3,10 +3,9 @@ import { Box, Typography, Collapse } from '../../atoms';
 import { useTheme } from '../../atoms';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
-import { CardName, SetLink, PriceDisplay } from '../../atoms';
+import { CardName, SetLink, PriceDisplay, CardDateBadge } from '../../atoms';
 import { CardLinks } from './CardLinks';
 import { CollectionSummary } from './CollectionSummary';
-import { formatReleaseDate } from '../../../utils/dateFormatters';
 import { formatCollectionCount } from '../../../utils/collectionFormatters';
 import { touchTargetStyles } from '../../../styles/touchTargets';
 import type { Card, CardContext } from '../../../types/card';
@@ -83,54 +82,63 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         }}
         className={className}
       >
-        {/* Rarity/Collector # + Collection info row - tablet only */}
-        {!isMobile && (
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-            <RarityCollectorBadge
-              rarity={rarity}
-              collectorNumber={collectorNumber}
-              reserved={reserved}
-            />
-            {context.hasCollector && collectionData && (
-              <CollectionSummary
-                collectionData={collectionData}
-                size="small"
-              />
-            )}
-          </Box>
-        )}
-
-        {/* Card name */}
-        <CardName
-          cardId={cardId}
-          cardName={cardName}
-          onCardClick={onCardClick}
-          sx={{
-            overflow: 'hidden',
-            '& .MuiTypography-root': {
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }
-          }}
-        />
-
-        {/* Artist */}
-        <ArtistLinks
-          artist={artist}
-          artistIds={artistIds}
-          context={context}
-          onArtistClick={onArtistClick}
-        />
-
-        {/* Collection info - mobile only (tablet has it in top row) */}
-        {isMobile && context.hasCollector && collectionData && (
-          <Box sx={{ mt: 0.5 }}>
+        {/* Release date + collection row */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+          {releaseDate && !context.hideReleaseDate && (
+            <CardDateBadge date={releaseDate} />
+          )}
+          {context.hasCollector && collectionData && (
             <CollectionSummary
               collectionData={collectionData}
               size="small"
+            />
+          )}
+        </Box>
+
+        {/* Artist (show on set page between collector info and card name) */}
+        {context.isOnSetPage && (
+          <ArtistLinks
+            artist={artist}
+            artistIds={artistIds}
+            context={context}
+            onArtistClick={onArtistClick}
+          />
+        )}
+
+        {/* Card name or Artist (show artist on card page since name is redundant) */}
+        {context.isOnCardPage ? (
+          <ArtistLinks
+            artist={artist}
+            artistIds={artistIds}
+            context={context}
+            onArtistClick={onArtistClick}
+          />
+        ) : (
+          <CardName
+            cardId={cardId}
+            cardName={cardName}
+            onCardClick={onCardClick}
+            sx={{
+              overflow: 'hidden',
+              '& .MuiTypography-root': {
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }
+            }}
+          />
+        )}
+
+        {/* Set row */}
+        {!context.hideSetInfo && (
+          <Box sx={{ minWidth: 0, mt: 0.25 }}>
+            <SetLink
+              setCode={setCode}
+              setName={setName}
+              rarity={rarity}
+              onSetClick={onSetClick}
             />
           </Box>
         )}
@@ -254,19 +262,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         {/* Release Date Row - now at the top */}
         {releaseDate && !context.hideReleaseDate && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Typography
-              variant="caption"
-              sx={{
-                fontSize: '0.625rem',
-                color: 'grey.300',
-                bgcolor: 'rgba(0, 0, 0, 0.6)',
-                px: 0.75,
-                py: 0.25,
-                borderRadius: 1
-              }}
-            >
-              {formatReleaseDate(releaseDate)}
-            </Typography>
+            <CardDateBadge date={releaseDate} />
           </Box>
         )}
 
