@@ -1,31 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.Artists.Queries.Entities;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 
 internal sealed class ArtistSearchExtToItrMapper : IArtistSearchExtToItrMapper
 {
-    private readonly IArtistNameTrigramDataExtToItrEntityMapper _artistSearchToItrMapper;
+    private readonly IArtistNameTrigramDataExtToItrEntityMapper _mapper;
 
     public ArtistSearchExtToItrMapper() : this(new ArtistNameTrigramDataExtToItrEntityMapper()) { }
 
-    internal ArtistSearchExtToItrMapper(IArtistNameTrigramDataExtToItrEntityMapper artistSearchToItrMapper)
+    internal ArtistSearchExtToItrMapper(IArtistNameTrigramDataExtToItrEntityMapper mapper)
     {
-        _artistSearchToItrMapper = artistSearchToItrMapper;
+        _mapper = mapper;
     }
 
     public async Task<IArtistSearchResultCollectionItrEntity> Map(IEnumerable<ArtistNameTrigramDataExtEntity> source)
     {
-        List<IArtistSearchResultItrEntity> mappedArtists = [];
-        foreach (ArtistNameTrigramDataExtEntity extEntity in source)
-        {
-            IArtistSearchResultItrEntity itrEntity = await _artistSearchToItrMapper.Map(extEntity).ConfigureAwait(false);
-            mappedArtists.Add(itrEntity);
-        }
+        IArtistSearchResultItrEntity[] mappedArtists = await Task.WhenAll(
+            source.Select(extEntity => _mapper.Map(extEntity))
+        ).ConfigureAwait(false);
 
         IArtistSearchResultCollectionItrEntity collection = new ArtistSearchResultCollectionItrEntity
         {

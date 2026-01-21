@@ -7,7 +7,6 @@ using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using TestConvenience.Core.Fakes;

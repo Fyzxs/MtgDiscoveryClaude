@@ -5,10 +5,8 @@ using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.Artists.Apis;
-using Lib.Aggregator.Artists.Queries.Entities;
 using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -18,7 +16,6 @@ namespace Lib.Aggregator.Artists.Queries;
 internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 {
     private readonly IArtistAdapterService _artistAdapterService;
-    private readonly IArtistNameTrigramDataExtToItrEntityMapper _artistSearchToItrMapper;
     private readonly IArtistCardExtToItrEntityMapper _artistCardToItrMapper;
     private readonly IArtistSearchTermItrToXfrMapper _artistSearchItrToXfrMapper;
     private readonly IArtistIdItrToXfrMapper _aristIdToXfrMapper;
@@ -27,7 +24,6 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 
     public QueryArtistAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
-        new ArtistNameTrigramDataExtToItrEntityMapper(),
         new ArtistCardExtToItrEntityMapper(),
         new ArtistSearchTermItrToXfrMapper(),
         new ArtistIdItrToXfrMapper(),
@@ -36,7 +32,6 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
     { }
 
     private QueryArtistAggregatorService(IArtistAdapterService artistAdapterService,
-        IArtistNameTrigramDataExtToItrEntityMapper artistSearchToItrMapper,
         IArtistCardExtToItrEntityMapper artistCardToItrMapper,
         IArtistSearchTermItrToXfrMapper artistSearchItrToXfrMapper,
         IArtistIdItrToXfrMapper aristIdToXfrMapper,
@@ -44,7 +39,6 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         IArtistSearchExtToItrMapper artistSearchResultCollectionMapper)
     {
         _artistAdapterService = artistAdapterService;
-        _artistSearchToItrMapper = artistSearchToItrMapper;
         _artistCardToItrMapper = artistCardToItrMapper;
         _artistSearchItrToXfrMapper = artistSearchItrToXfrMapper;
         _aristIdToXfrMapper = aristIdToXfrMapper;

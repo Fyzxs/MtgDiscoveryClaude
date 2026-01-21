@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.Domain.Artists.Queries;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

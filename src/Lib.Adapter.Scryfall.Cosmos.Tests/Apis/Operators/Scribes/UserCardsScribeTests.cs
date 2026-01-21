@@ -1,5 +1,4 @@
-﻿using System;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;

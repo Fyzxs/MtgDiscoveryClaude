@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.Entities;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 
@@ -8,19 +7,19 @@ namespace Lib.MtgDiscovery.Entry.Commands.Mappers;
 
 internal sealed class UserCardArgsToItrMapper : IUserCardArgsToItrMapper
 {
-    private readonly IUserCardDetailsArgToItrMapper _userCardDetailsMapper;
+    private readonly IUserCardDetailsArgToItrMapper _mapper;
 
     public UserCardArgsToItrMapper() : this(new UserCardDetailsArgToItrMapper())
     { }
 
-    private UserCardArgsToItrMapper(IUserCardDetailsArgToItrMapper userCardDetailsMapper)
+    private UserCardArgsToItrMapper(IUserCardDetailsArgToItrMapper mapper)
     {
-        _userCardDetailsMapper = userCardDetailsMapper;
+        _mapper = mapper;
     }
 
     public async Task<IUserCardItrEntity> Map(IAuthUserArgEntity source1, IUserCardArgEntity source2)
     {
-        IUserCardDetailsItrEntity mappedDetails = await _userCardDetailsMapper.Map(source2.UserCardDetails).ConfigureAwait(false);
+        IUserCardDetailsItrEntity mappedDetails = await _mapper.Map(source2.UserCardDetails).ConfigureAwait(false);
 
         return new UserCardCollectionItrEntity
         {
