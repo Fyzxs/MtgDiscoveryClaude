@@ -1,8 +1,9 @@
 ###
 # Variables
 # @name variables
-@baseUrl = {{$dotenv BASE_URL}}
-@gqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
 
 ### Test Simple Set Query
 # @ref variables
@@ -58,7 +59,7 @@ Content-Type: application/json
 query GetSetsExtended($ids: SetIdsArgEntityInput!) {
   setsById(ids: $ids) {
     __typename
-    ... on SetSuccessResponse {
+    ... on SetsSuccessResponse {
       data {
         id
         code
@@ -72,6 +73,29 @@ query GetSetsExtended($ids: SetIdsArgEntityInput!) {
         cardCount
         digital
         iconSvgUri
+        userCollection {
+          totalCards
+          uniqueCards
+          collecting {
+            setGroupId
+            collecting
+            count
+          }
+          groups {
+            rarity
+            group {
+              nonFoil {
+                cards
+              }
+              foil {
+                cards
+              }
+              etched {
+                cards
+              }
+            }
+          }
+        }
       }
     }
     ... on FailureResponse {
@@ -85,8 +109,9 @@ query GetSetsExtended($ids: SetIdsArgEntityInput!) {
 
 {
   "ids": {
-    "setIds": [
-      "288bd996-960e-448b-a187-9504c1930c2c",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+     "setIds": [
+      "288bd996-960e-448b-a187-9504c1930c2c"
     ]
   }
 }
