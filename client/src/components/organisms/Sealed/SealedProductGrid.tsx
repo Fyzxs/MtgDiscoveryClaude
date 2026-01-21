@@ -74,14 +74,14 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: { xs: 1.5, sm: 2, md: 2.5 },
+        gap: { xs: 1, sm: 1.5, md: 2, lg: 2.5 },
       }}
     >
       {products.map((product) => (
         <Box
           key={product.uuid}
           sx={{
-            width: { xs: 160, sm: 180, md: 200, lg: 220 },
+            width: { xs: 150, sm: 170, md: 190, lg: 210 },
             flexShrink: 0,
           }}
         >
