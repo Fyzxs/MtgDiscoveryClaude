@@ -288,6 +288,13 @@ public class ScryfallGroupingsScraper
             // Apply special case fixes for unsupported search operators
             query = NormalizeUnsupportedQueries(query, setCode);
 
+            // Skip buy-a-box groupings - they're too inconsistent and cards end up in promos anyway
+            if (anchorId == "bab" || query.Contains("is:bab"))
+            {
+                Console.WriteLine($"     - SKIPPED: {displayName} (buy-a-box)");
+                continue;
+            }
+
             Console.WriteLine($"     - {displayName} ({cardCount} cards)");
 
             groupings.Add(new CardGrouping
@@ -399,9 +406,6 @@ public class ScryfallGroupingsScraper
             // Custom mappings for specific is: values to promoType
             switch (isValue)
             {
-                case "bab":
-                    filters.Properties["promoType"] = "buyabox";
-                    break;
                 case "pwdeck":
                     filters.Properties["promoType"] = "planeswalkerdeck";
                     break;
