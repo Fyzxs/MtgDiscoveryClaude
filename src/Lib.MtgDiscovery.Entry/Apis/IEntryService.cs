@@ -10,4 +10,5 @@ public interface IEntryService :
     IUserSetCardsQueryEntryService,
     IUserSetCardsCommandEntryService,
     IUserWishlistCardsEntryService,
-    ISealedProductsEntryService;
+    ISealedProductsEntryService,
+    IUserSealedProductsEntryService;
