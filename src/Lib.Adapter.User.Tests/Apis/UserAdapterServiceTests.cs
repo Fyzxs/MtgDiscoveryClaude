@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 using AwesomeAssertions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.User.Apis;
 using Lib.Adapter.User.Tests.Fakes;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Oufs.User;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestConvenience.Core.Reflection;
@@ -30,14 +30,17 @@ public sealed class UserAdapterServiceTests
     public async Task RegisterUserAsync_WithValidUserInfo_DelegatesToCommandAdapter()
     {
         // Arrange
-        UserInfoExtEntity expectedResult = new()
+        UserSyncOufEntity expectedResult = new()
         {
             UserId = "user123",
             DisplayName = "Test User",
-            SourceId = "auth0123"
+            Email = "test@example.com",
+            CreatedAt = DateTime.UtcNow,
+            LastLoginAt = DateTime.UtcNow,
+            IsFirstLogin = true
         };
 
-        IOperationResponse<UserInfoExtEntity> operationResponse = new OperationResponseFake<UserInfoExtEntity>
+        IOperationResponse<IUserSyncOufEntity> operationResponse = new OperationResponseFake<IUserSyncOufEntity>
         {
             IsSuccess = true,
             ResponseData = expectedResult
@@ -54,7 +57,7 @@ public sealed class UserAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<UserInfoExtEntity> actual = await subject.RegisterUserAsync(userInfo).ConfigureAwait(false);
+        IOperationResponse<IUserSyncOufEntity> actual = await subject.RegisterUserAsync(userInfo).ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(operationResponse);

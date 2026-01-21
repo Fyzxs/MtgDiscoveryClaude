@@ -7,4 +7,5 @@ public interface IUserInfoItrEntity : IItrEntity
     string UserId { get; }
     string UserSourceId { get; }
     string UserNickname { get; }
+    string Email { get; }
 }

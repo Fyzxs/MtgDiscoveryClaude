@@ -16,5 +16,5 @@ public sealed class UserDomainService : IUserDomainService
 
     private UserDomainService(IUserCommandDomainService userDomainOperations) => _userDomainOperations = userDomainOperations;
 
-    public Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _userDomainOperations.RegisterUserAsync(userInfo);
+    public Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _userDomainOperations.RegisterUserAsync(userInfo);
 }

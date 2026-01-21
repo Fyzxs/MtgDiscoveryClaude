@@ -70,6 +70,10 @@ export const REGISTER_USER = gql`
         data {
           userId
           displayName
+          email
+          createdAt
+          lastLoginAt
+          isFirstLogin
         }
         status {
           message
@@ -85,6 +89,9 @@ export const REGISTER_USER = gql`
     }
   }
 `;
+
+// Alias for semantic clarity - this syncs user with backend and returns isFirstLogin
+export const SYNC_USER = REGISTER_USER;
 
 export const GET_USER_INFO = gql`
   query GetUserInfo {

@@ -12,17 +12,16 @@ internal sealed class UserCardsGopherFake : ICosmosGopher
     public bool ShouldReturnExistingRecord { get; init; }
     public UserCardExtEntity ExistingRecord { get; init; } = default!;
 
-    public async Task<OpResponse<T>> ReadAsync<T>(ReadPointItem readPointItem)
+    public Task<OpResponse<T>> ReadAsync<T>(ReadPointItem readPointItem)
     {
         ReadAsyncCallCount++;
         ReadAsyncReadPointItemInput = readPointItem;
-        await Task.CompletedTask.ConfigureAwait(false);
 
         if (ShouldReturnExistingRecord && ExistingRecord is T typedValue)
         {
-            return new OpResponseFake<T>(typedValue, HttpStatusCode.OK);
+            return Task.FromResult<OpResponse<T>>(new OpResponseFake<T>(typedValue, HttpStatusCode.OK));
         }
 
-        return new OpResponseFake<T>(default!, HttpStatusCode.NotFound);
+        return Task.FromResult<OpResponse<T>>(new OpResponseFake<T>(default!, HttpStatusCode.NotFound));
     }
 }

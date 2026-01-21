@@ -16,5 +16,5 @@ internal sealed class UserCommandAggregator : IUserCommandAggregatorService
 
     private UserCommandAggregator(IRegisterUserAggregatorService registerUserOperations) => _registerUserOperations = registerUserOperations;
 
-    public Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _registerUserOperations.Execute(userInfo);
+    public Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _registerUserOperations.Execute(userInfo);
 }

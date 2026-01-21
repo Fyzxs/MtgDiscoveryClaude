@@ -32,7 +32,7 @@ internal static class ApiMutationExtensions
             // Response types for mutations
             .AddType<UserRegistrationResponseModelUnionType>()
             .AddType<UserRegistrationSuccessDataResponseModelType>()
-            .AddType<UserRegistrationOutEntityType>()
+            .AddType<UserSyncOutEntityType>()
             .AddType<AddCardToCollectionResponseModelUnionType>()
             .AddType<CardsSuccessDataResponseModelType>()
             .AddType<ScryfallCardOutEntityType>()

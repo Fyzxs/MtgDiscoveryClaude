@@ -10,18 +10,16 @@ internal sealed class UserCardsScribeFake : ICosmosScribe
     public bool ShouldReturnFailure { get; init; }
     public HttpStatusCode FailureStatusCode { get; init; } = HttpStatusCode.InternalServerError;
 
-    public async Task<OpResponse<T>> UpsertAsync<T>(T item)
+    public Task<OpResponse<T>> UpsertAsync<T>(T item)
     {
         UpsertAsyncCallCount++;
-        await Task.CompletedTask.ConfigureAwait(false);
 
         if (ShouldReturnFailure)
         {
-            return new OpResponseFake<T>(default!, FailureStatusCode);
+            return Task.FromResult<OpResponse<T>>(new OpResponseFake<T>(default!, FailureStatusCode));
         }
 
-        // Return success response with the same item
-        return new OpResponseFake<T>(item, HttpStatusCode.OK);
+        return Task.FromResult<OpResponse<T>>(new OpResponseFake<T>(item, HttpStatusCode.OK));
     }
 }
 

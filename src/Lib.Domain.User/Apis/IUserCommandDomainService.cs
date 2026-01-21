@@ -7,5 +7,5 @@ namespace Lib.Domain.User.Apis;
 
 public interface IUserCommandDomainService
 {
-    Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
+    Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
 }
