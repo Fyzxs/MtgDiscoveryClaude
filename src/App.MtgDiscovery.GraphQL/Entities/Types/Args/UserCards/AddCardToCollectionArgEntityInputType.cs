@@ -8,18 +8,22 @@ public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<AddU
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<AddUserCardArgEntity> descriptor)
     {
-        descriptor.Name("AddCardToCollectionInput");
-        descriptor.Description("Input for adding cards to a user's collection");
+        _ = descriptor.Name("AddCardToCollectionInput");
+        _ = descriptor.Description("Input for adding cards to a user's collection");
 
-        descriptor.Field(x => x.CardId)
+        _ = descriptor.Field(x => x.CardId)
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the card");
 
-        descriptor.Field(x => x.SetId)
+        _ = descriptor.Field(x => x.SetId)
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the set");
 
-        descriptor.Field(x => x.UserCardDetails)
+        _ = descriptor.Field(x => x.UserId)
+            .Type<NonNullType<StringType>>()
+            .Description("The user Id of the user adding the card");
+
+        _ = descriptor.Field(x => x.UserCardDetails)
             .Type<NonNullType<CollectedItemArgEntityInputType>>()
             .Description("The collected item with its finish and count");
     }

@@ -1,5 +1,6 @@
-﻿using System.Security.Claims;
+﻿using App.MtgDiscovery.GraphQL.ErrorHandling;
 using App.MtgDiscovery.GraphQL.Schemas;
+using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,70 +24,89 @@ internal class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Register IConfiguration for DI
-        services.AddSingleton(_configuration);
+        _ = services.AddSingleton(_configuration);
 
-        services.AddCors(options =>
+        _ = services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.AllowAnyOrigin()
+                _ = policy.AllowAnyOrigin()
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
         });
 
-        services.AddLogging();
+        _ = services.AddLogging();
 
         // Register ILogger as a singleton service
-        services.AddSingleton<ILogger>(sp =>
+        _ = services.AddSingleton<ILogger>(sp =>
             sp.GetRequiredService<ILoggerFactory>().CreateLogger("GraphQL"));
 
         // Configure Auth0 JWT Authentication
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.Authority = $"https://{_configuration["Auth0:Domain"]}/";
                 options.Audience = _configuration["Auth0:Audience"];
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = ClaimTypes.NameIdentifier
+                    NameClaimType = "sub", // Auth0 uses "sub" not ClaimTypes.NameIdentifier
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    // Allow both API audiences from the token
+                    ValidAudiences = new[]
+                    {
+                        "api://mtg-discovery", // Primary API audience
+                        "https://dev-63szoyl0kt0p7e5q.us.auth0.com/userinfo", // Auth0 userinfo endpoint
+                        _configuration["Auth0:ClientId"]  // ID token audience (optional, for backwards compat)
+                    }
                 };
             });
 
-        services.AddAuthorization();
+        _ = services.AddAuthorization();
 
         // Register query method classes for DI
         //services.AddScoped<CardQueryMethods>();
         //services.AddScoped<SetQueryMethods>();
         //services.AddScoped<ArtistQueryMethods>();
 
-        services
+        _ = services
             .AddGraphQLServer()
             .AddApiQuery()
             .AddApiMutation()
             .AddSetSchemaExtensions()
             .AddArtistSchemaExtensions()
             .AddAuthorization()
-            .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
+            .AddErrorFilter<HttpStatusCodeErrorFilter>()
+            .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
+            .UseDefaultPipeline()
+            .AddDefaultTransactionScopeHandler()
+            .ModifyOptions(o => o.EnableDefer = true);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
-            app.UseDeveloperExceptionPage();
+            _ = app.UseDeveloperExceptionPage();
         }
 
-        app.UseHttpsRedirection();
-        app.UseRouting();
-        app.UseCors();
+        _ = app.UseHttpsRedirection();
+        _ = app.UseRouting();
+        _ = app.UseCors();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        _ = app.UseAuthentication();
+        _ = app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
+        _ = app.UseEndpoints(endpoints =>
         {
-            endpoints.MapGraphQL();
+            _ = endpoints.MapGraphQL()
+                .WithOptions(new GraphQLServerOptions
+                {
+                    Tool = { Enable = true }
+                });
         });
     }
 }
