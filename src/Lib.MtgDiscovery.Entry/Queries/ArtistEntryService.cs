@@ -2,7 +2,7 @@
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators;
+using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 using Lib.Shared.Abstractions.Actions;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
