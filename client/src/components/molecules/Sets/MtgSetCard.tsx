@@ -195,22 +195,32 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     total={collectionProgress.setTotalCards}
                     percentage={collectionProgress.percentage}
                   />
-                  {collectionProgress.setTotalCards > 0 && (
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ fontSize: '0.75rem', mt: 0.5 }}
-                    >
-                      {collectionProgress.totalCards} cards collected
-                    </Typography>
-                  )}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: '0.75rem', mt: 0.5 }}
+                  >
+                    {collectionProgress.setTotalCards > 0
+                      ? `${collectionProgress.totalCards} cards collected`
+                      : 'not collecting'
+                    }
+                  </Typography>
                 </>
               ) : (
-                <CollectionProgressBar
-                  collected={0}
-                  total={0}
-                  percentage={0}
-                />
+                <>
+                  <CollectionProgressBar
+                    collected={0}
+                    total={0}
+                    percentage={0}
+                  />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: '0.75rem', mt: 0.5 }}
+                  >
+                    not collecting
+                  </Typography>
+                </>
               )
             ) : (
               <CardCountDisplay count={set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} />
