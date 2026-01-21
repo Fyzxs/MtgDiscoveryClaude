@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.Aggregator.User.Apis;
+using Lib.Domain.User.Commands;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -8,12 +8,12 @@ namespace Lib.Domain.User.Apis;
 
 public sealed class UserDomainService : IUserDomainService
 {
-    private readonly IUserAggregatorService _userAggregatorService;
+    private readonly IUserDomainService _userDomainOperations;
 
-    public UserDomainService(ILogger logger) : this(new UserAggregatorService(logger))
+    public UserDomainService(ILogger logger) : this(new CommandUserDomainService(logger))
     { }
 
-    private UserDomainService(IUserAggregatorService userAggregatorService) => _userAggregatorService = userAggregatorService;
+    private UserDomainService(IUserDomainService userDomainOperations) => _userDomainOperations = userDomainOperations;
 
-    public async Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userAggregatorService.RegisterUserAsync(userInfo).ConfigureAwait(false);
+    public Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _userDomainOperations.RegisterUserAsync(userInfo);
 }

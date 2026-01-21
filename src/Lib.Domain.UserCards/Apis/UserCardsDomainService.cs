@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Aggregator.UserCards.Apis;
+using Lib.Domain.UserCards.Commands;
+using Lib.Domain.UserCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -9,22 +10,27 @@ namespace Lib.Domain.UserCards.Apis;
 
 public sealed class UserCardsDomainService : IUserCardsDomainService
 {
-    private readonly IUserCardsAggregatorService _userCardsAggregatorService;
+    private readonly IUserCardsDomainService _queryOperations;
+    private readonly IUserCardsDomainService _commandOperations;
 
-    public UserCardsDomainService(ILogger logger) : this(new UserCardsAggregatorService(logger))
+    public UserCardsDomainService(ILogger logger) : this(new QueryUserCardsDomainService(logger), new CommandUserCardsDomainService(logger))
     { }
 
-    private UserCardsDomainService(IUserCardsAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
+    private UserCardsDomainService(IUserCardsDomainService queryOperations, IUserCardsDomainService commandOperations)
+    {
+        _queryOperations = queryOperations;
+        _commandOperations = commandOperations;
+    }
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => await _userCardsAggregatorService.AddUserCardAsync(userCard).ConfigureAwait(false);
+    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _commandOperations.AddUserCardAsync(userCard);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => await _userCardsAggregatorService.UserCardAsync(userCard).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _queryOperations.UserCardAsync(userCard);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => await _userCardsAggregatorService.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => _queryOperations.UserCardsBySetAsync(userCardsSet);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => await _userCardsAggregatorService.UserCardsByIdsAsync(userCards).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => _queryOperations.UserCardsByIdsAsync(userCards);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => await _userCardsAggregatorService.UserCardsByArtistAsync(userCardsArtist).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _queryOperations.UserCardsByArtistAsync(userCardsArtist);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => await _userCardsAggregatorService.UserCardsByNameAsync(userCardsName).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _queryOperations.UserCardsByNameAsync(userCardsName);
 }
