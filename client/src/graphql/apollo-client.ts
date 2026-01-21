@@ -4,7 +4,7 @@ import { logger } from '../utils/logger';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
-  uri: 'https://localhost:65203/graphql',
+  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || 'https://localhost:65203/graphql',
 });
 
 // Auth0 token getter - will be set by Auth0Provider
