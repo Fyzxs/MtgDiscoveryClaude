@@ -352,7 +352,7 @@ export const SetPage: React.FC = () => {
         artists: initialArtists,  // Use raw initial values, normalize later
         groups: initialGroups,   // Add groups filter
         showGroups: initialValues.showGroups !== undefined ? initialValues.showGroups : true,
-        showDigital: false,
+        formats: [], // Empty means show all (both paper and digital)
         // Collector-specific filters
         collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
         signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
@@ -598,13 +598,11 @@ export const SetPage: React.FC = () => {
 
   // Clear all filters handler
   const handleClearFilters = () => {
-    startTransition(() => {
-      setSearchTerm('');
-      updateFilter('rarities', []);
-      updateFilter('artists', []);
-      updateFilter('groups', []);
-      updateFilter('showGroups', true);
-    });
+    setSearchTerm('');
+    updateFilter('rarities', []);
+    updateFilter('artists', []);
+    updateFilter('groups', []);
+    updateFilter('showGroups', true);
   };
 
   // Calculate current count for results summary
