@@ -26,7 +26,7 @@ This document contains granular, independently implementable tasks for the seale
 ## Phase 1: Cosmos Read Infrastructure
 
 ### Task 1.1: Create SealedProductsBySetId Query Args
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitions/Args/`
 
