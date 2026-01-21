@@ -112,8 +112,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
     if (!hasSpecials) return null;
     const indicators: React.ReactElement[] = [];
     // Order: 📜 → ✍️ → 🎨
-    if (specialTypes.has('artist_proof')) {
-      indicators.push(<EmojiWithTooltip key="artist_proof" emoji="📜">📜</EmojiWithTooltip>);
+    if (specialTypes.has('proof')) {
+      indicators.push(<EmojiWithTooltip key="proof" emoji="📜">📜</EmojiWithTooltip>);
     }
     if (specialTypes.has('signed')) {
       indicators.push(<EmojiWithTooltip key="signed" emoji="✍️">✍️</EmojiWithTooltip>);
@@ -156,10 +156,10 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
 
   const getSpecialCounts = () => {
     const counts: React.ReactElement[] = [];
-    if (specialTypes.has('artist_proof')) {
-      const count = collection.filter(item => item && item.special === 'artist_proof').reduce((sum, item) => sum + item.count, 0);
+    if (specialTypes.has('proof')) {
+      const count = collection.filter(item => item && item.special === 'proof').reduce((sum, item) => sum + item.count, 0);
       counts.push(
-        <span key="artist_proof">
+        <span key="proof">
           <EmojiWithTooltip emoji="📜">📜</EmojiWithTooltip>{count}
         </span>
       );
@@ -320,8 +320,8 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
                 {specialCards.map((card, idx) => (
                   <React.Fragment key={idx}>
                     {idx > 0 && ', '}
-                    <EmojiWithTooltip emoji={card.special === 'artist_proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}>
-                      {card.special === 'artist_proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}
+                    <EmojiWithTooltip emoji={card.special === 'proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}>
+                      {card.special === 'proof' ? '📜' : card.special === 'signed' ? '✍️' : '🎨'}
                     </EmojiWithTooltip> {card.count}
                   </React.Fragment>
                 ))}
@@ -335,14 +335,14 @@ export const CollectionSummary: React.FC<CollectionSummaryProps> = ({
           {hasSpecials && (
             <>
               <Box sx={{ borderBottom: 1, borderColor: 'divider', my: 2 }} />
-              {['artist_proof', 'signed', 'altered'].filter(special =>
+              {['proof', 'signed', 'altered'].filter(special =>
                 collection.some(item => item.special === special)
               ).map((special) => {
                 const totalCount = collection
                   .filter(item => item.special === special)
                   .reduce((sum, item) => sum + item.count, 0);
-                const specialIcon = special === 'artist_proof' ? '📜' : special === 'signed' ? '✍️' : '🎨';
-                const specialName = special === 'artist_proof' ? 'Artist Proof' : special === 'signed' ? 'Signed' : 'Altered';
+                const specialIcon = special === 'proof' ? '📜' : special === 'signed' ? '✍️' : '🎨';
+                const specialName = special === 'proof' ? 'Artist Proof' : special === 'signed' ? 'Signed' : 'Altered';
 
                 return (
                   <Typography key={special} variant="body2" sx={{ mb: 1 }}>

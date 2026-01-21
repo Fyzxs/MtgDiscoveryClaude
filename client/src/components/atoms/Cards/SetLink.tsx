@@ -3,6 +3,7 @@ import Typography from '../Typography';
 import Box from '../Box';
 import { SetIcon } from '../Sets/SetIcon';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
+import { useLinkParams } from '../../../contexts/LinkParamsContext';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface SetLinkProps extends StyledComponentProps {
@@ -10,6 +11,8 @@ interface SetLinkProps extends StyledComponentProps {
   setName?: string;
   rarity?: string;
   onSetClick?: (setCode?: string) => void;
+  /** Additional URL parameters to include in the link */
+  additionalParams?: Record<string, string>;
 }
 
 export const SetLink = ({
@@ -17,14 +20,19 @@ export const SetLink = ({
   setName,
   rarity,
   onSetClick,
-  className
+  className,
+  additionalParams
 }: SetLinkProps) => {
   const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
+  const contextParams = useLinkParams();
+
+  // Use explicit prop if provided, otherwise fall back to context
+  const params = additionalParams ?? contextParams;
 
   if (!setName) return null;
 
   const setPath = `/set/${setCode?.toLowerCase()}`;
-  const href = buildUrlWithCollector(setPath);
+  const href = buildUrlWithCollector(setPath, params);
 
   return (
     <Box className={className}>
@@ -51,7 +59,7 @@ export const SetLink = ({
             onSetClick(setCode);
           } else {
             // Use collector navigation for regular clicks
-            createCollectorClickHandler(setPath)(e);
+            createCollectorClickHandler(setPath, params)(e);
           }
         }}
         sx={{

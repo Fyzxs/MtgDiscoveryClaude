@@ -73,6 +73,9 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         '.MuiCard-root:not(.selected):hover &::before': {
           opacity: 0
         },
+        '.MuiCard-root:focus &::before, .MuiCard-root:focus-within &::before': {
+          opacity: 0
+        },
         '.MuiCard-root.selected &::before': {
           opacity: '0 !important'
         }
@@ -83,7 +86,17 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         {/* Release Date Row - now at the top */}
         {releaseDate && !context.hideReleaseDate && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Typography variant="caption" sx={{ fontSize: '0.625rem', color: 'grey.400' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: '0.625rem',
+                color: 'grey.300',
+                bgcolor: 'rgba(0, 0, 0, 0.6)',
+                px: 0.75,
+                py: 0.25,
+                borderRadius: 1
+              }}
+            >
               {formatReleaseDate(releaseDate)}
             </Typography>
           </Box>
@@ -144,6 +157,8 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
             scryfallUrl={scryfallUrl}
             tcgplayerUrl={tcgplayerUrl}
             cardName={cardName}
+            setCode={setCode}
+            collectorNumber={collectorNumber}
           />
         </Box>
       </Box>

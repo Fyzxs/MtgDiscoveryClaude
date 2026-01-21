@@ -19,6 +19,7 @@ const ArtistSearchPage = lazy(() => import('./components/pages/ArtistSearchPage'
 const ArtistCardsPage = lazy(() => import('./components/pages/ArtistCardsPage'))
 const CardAllPrintingsPage = lazy(() => import('./components/pages/CardAllPrintingsPage'))
 const SignInRedirectPage = lazy(() => import('./components/pages/SignInRedirectPage'))
+const ConventionSigningPage = lazy(() => import('./components/pages/ConventionSigningPage'))
 
 // Initialize global search focus handler (double-tap Shift to focus search)
 void globalSearchFocus;
@@ -133,6 +134,11 @@ function App() {
                   <Route path="/signin-redirect" element={
                     <PageErrorBoundary name="SignInRedirectPage">
                       <SignInRedirectPage />
+                    </PageErrorBoundary>
+                  } />
+                  <Route path="/convention-signing" element={
+                    <PageErrorBoundary name="ConventionSigningPage">
+                      <ConventionSigningPage />
                     </PageErrorBoundary>
                   } />
                   {/* Handle old query param URLs for backwards compatibility */}

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useTransition, useCallback } from 'react'
 import { useUrlState } from './useUrlState';
 import { useFilterState } from './useFilterState';
 import { useCollectorParam } from './useCollectorParam';
+import { useCollectionUpdates } from './useCollectionUpdates';
 import { useCardQueries } from './useCardQueries';
 import { useOptimizedSort } from './useOptimizedSort';
 import { useMinimumLoadingTime } from './useMinimumLoadingTime';
@@ -15,28 +16,21 @@ import {
 import { toPascalCase, getArtistNameInfo } from '../utils/artistUtils';
 import type { Card } from '../types/card';
 
-interface CardsResponse {
-  cardsByArtistName: {
-    __typename: string;
-    data?: Card[];
-    status?: {
-      message: string;
-    };
-  };
-}
+const EMPTY_CARDS_ARRAY: Card[] = [];
 
 /**
  * Custom hook to manage all ArtistCardsPage data, filtering, and state
  * Extracted from ArtistCardsPage to reduce component complexity
  */
 export const useArtistCardsData = (artistName: string | undefined, decodedArtistName: string) => {
-  const { hasCollector } = useCollectorParam();
+  const { hasCollector, collectorId } = useCollectorParam();
 
   // URL state configuration
   const urlStateConfig = {
     search: { default: '' },
     rarities: { default: [] },
     sets: { default: [] },
+    formats: { default: [] },
     sort: { default: 'release-desc' },
     counts: { default: [] },
     signed: { default: [] }
@@ -49,11 +43,14 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
   const { isLoading: isFiltering, showLoading, hideLoading } = useMinimumLoadingTime(400);
   const [isPending, startTransition] = useTransition();
 
-  // Card data fetching
+  // Card data fetching - store cards directly, not wrapped in GraphQL response structure
   const { fetchCardsByArtist } = useCardQueries();
   const [cardsLoading, setCardsLoading] = useState(true);
   const [cardsError, setCardsError] = useState<Error | null>(null);
-  const [cardsData, setCardsData] = useState<CardsResponse | null>(null);
+  const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
+
+  // Listen for collection updates via reusable hook
+  useCollectionUpdates(cards, setCards);
 
   // Load cards effect
   useEffect(() => {
@@ -63,23 +60,11 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
       setCardsLoading(true);
       setCardsError(null);
       try {
-        const cards = await fetchCardsByArtist(decodedArtistName);
-        setCardsData({
-          cardsByArtistName: {
-            __typename: 'CardsByArtistSuccessResponse',
-            data: cards
-          }
-        });
+        const fetchedCards = await fetchCardsByArtist(decodedArtistName);
+        setCards(fetchedCards);
       } catch (err) {
         setCardsError(err as Error);
-        setCardsData({
-          cardsByArtistName: {
-            __typename: 'FailureResponse',
-            status: {
-              message: (err as Error).message
-            }
-          }
-        });
+        setCards(EMPTY_CARDS_ARRAY);
       } finally {
         setCardsLoading(false);
       }
@@ -88,8 +73,7 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
     loadCards();
   }, [artistName, decodedArtistName, fetchCardsByArtist]);
 
-  // Get unique values
-  const cards = useMemo(() => cardsData?.cardsByArtistName?.data || [], [cardsData]);
+  // Get unique values - cards is now directly the Card[] array
   const allRarities = useMemo(() => getUniqueRarities(cards), [cards]);
   const allSetObjects = useMemo(() => getUniqueSets(cards), [cards]);
   const allSets = useMemo(() => allSetObjects.map(set => set.value), [allSetObjects]);
@@ -167,7 +151,7 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
       filters: {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         sets: Array.isArray(initialValues.sets) ? initialValues.sets : (initialValues.sets ? [initialValues.sets] : []),
-        formats: [],
+        formats: Array.isArray(initialValues.formats) ? initialValues.formats : (initialValues.formats ? [initialValues.formats] : []),
         collectionCounts: Array.isArray(initialValues.counts) ? initialValues.counts : (initialValues.counts ? [initialValues.counts] : []),
         signedCards: Array.isArray(initialValues.signed) ? initialValues.signed : (initialValues.signed ? [initialValues.signed] : [])
       }
@@ -176,6 +160,7 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
 
   const selectedRarities = (Array.isArray(filters.rarities) ? filters.rarities : []) as string[];
   const selectedSets = (Array.isArray(filters.sets) ? filters.sets : []) as string[];
+  const selectedFormats = (Array.isArray(filters.formats) ? filters.formats : []) as string[];
 
   // Wrapped versions of setSortBy and updateFilter that use transitions
   const setSortByWithTransition = useCallback((newSortBy: string) => {
@@ -199,7 +184,9 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
     return filterConfig.sortOptions[sortBy] || filterConfig.sortOptions['release-desc'];
   }, [filterConfig.sortOptions, sortBy]);
 
-  const filteredCards = useOptimizedSort(unsortedFilteredCards, sortBy, sortFunction);
+  // Include collector context in sort key to disable caching when in collector mode
+  const sortKey = hasCollector ? `${sortBy}-ctor-${collectorId}` : sortBy;
+  const filteredCards = useOptimizedSort(unsortedFilteredCards, sortKey, sortFunction);
 
   // Get artist name info
   const pascalCasedName = toPascalCase(decodedArtistName);
@@ -215,6 +202,7 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
     {
       rarities: selectedRarities,
       sets: selectedSets,
+      formats: selectedFormats,
       sort: sortBy,
       counts: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
       signed: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]
@@ -222,6 +210,7 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
     {
       rarities: { default: [] },
       sets: { default: [] },
+      formats: { default: [] },
       sort: { default: 'release-desc' },
       counts: { default: [] },
       signed: { default: [] }
@@ -238,7 +227,6 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
   return {
     // Data
     cards,
-    cardsData,
     cardsLoading,
     cardsError,
     // Filter values
