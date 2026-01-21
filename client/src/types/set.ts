@@ -14,6 +14,11 @@ export interface SetGrouping {
   cardCount: number;
   rawQuery: string;
   filters: SetGroupingFilter;
+  finishCounts?: { // NEW: Actual finish availability (stubbed for Phase 1)
+    nonFoil: number;
+    foil: number;
+    etched: number;
+  };
 }
 
 export interface MtgSet {
