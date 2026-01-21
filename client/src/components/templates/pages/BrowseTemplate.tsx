@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Box, type SxProps, type Theme } from '../../atoms';
+import { type SxProps, type Theme } from '../../atoms';
+import { PageContainer, Section } from '../../molecules/layouts';
 
 interface BrowseTemplateProps {
   /** Page header content (title, hero section, etc.) */
@@ -67,7 +68,7 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
   const hasSidebar = Boolean(sidebar);
 
   return (
-    <Container
+    <PageContainer
       maxWidth={maxWidth}
       sx={{
         mt: containerPadding.mt,
@@ -79,8 +80,9 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
     >
       {/* Page Header Section */}
       {hasHeader && (
-        <Box
+        <Section
           component="header"
+          asSection={false}
           sx={{
             mb: hasFilters ? 4 : 3,
             display: 'flex',
@@ -88,11 +90,11 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
           }}
         >
           {header}
-        </Box>
+        </Section>
       )}
 
       {/* Main Layout Container */}
-      <Box sx={{
+      <Section asSection={false} sx={{
         display: hasSidebar ? 'flex' : 'block',
         gap: hasSidebar ? 4 : 0,
         alignItems: 'flex-start'
@@ -100,8 +102,9 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
 
         {/* Sidebar (if present) */}
         {hasSidebar && (
-          <Box
+          <Section
             component="aside"
+            asSection={false}
             sx={{
               flexShrink: 0,
               width: { xs: '100%', md: 280 },
@@ -110,11 +113,11 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
             }}
           >
             {sidebar}
-          </Box>
+          </Section>
         )}
 
         {/* Main Content Area */}
-        <Box sx={{
+        <Section asSection={false} sx={{
           flex: hasSidebar ? 1 : 'none',
           order: { xs: 1, md: 2 },
           width: hasSidebar ? 'auto' : '100%'
@@ -122,9 +125,8 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
 
           {/* Filters Section */}
           {hasFilters && (
-            <Box
-              component="section"
-              aria-label="Filters and search"
+            <Section
+              label="Filters and search"
               sx={{
                 mb: hasSummary ? 3 : 4,
                 display: 'flex',
@@ -132,34 +134,33 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
               }}
             >
               {filters}
-            </Box>
+            </Section>
           )}
 
           {/* Results Summary */}
           {hasSummary && (
-            <Box
-              component="section"
-              aria-label="Results summary"
+            <Section
+              label="Results summary"
               sx={{ mb: 3 }}
             >
               {summary}
-            </Box>
+            </Section>
           )}
 
           {/* Main Content */}
-          <Box
-            component="section"
-            aria-label="Browse results"
+          <Section
+            label="Browse results"
             sx={{ mb: hasPagination ? 4 : 0 }}
           >
             {content}
-          </Box>
+          </Section>
 
           {/* Pagination */}
           {hasPagination && (
-            <Box
+            <Section
               component="nav"
-              aria-label="Pagination"
+              label="Pagination"
+              asSection={false}
               sx={{
                 mt: 4,
                 display: 'flex',
@@ -167,10 +168,10 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
               }}
             >
               {pagination}
-            </Box>
+            </Section>
           )}
-        </Box>
-      </Box>
-    </Container>
+        </Section>
+      </Section>
+    </PageContainer>
   );
 };
