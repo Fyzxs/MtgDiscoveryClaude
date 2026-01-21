@@ -42,5 +42,5 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
 
     public Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => _setsByCodesAdapter.Execute(setCodes);
 
-    public Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(INoArgsXfrEntity noArgs) => _allSetsAdapter.Execute(noArgs);
+    public Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets) => _allSetsAdapter.Execute(allSets);
 }

@@ -9,4 +9,4 @@ namespace Lib.Adapter.Sets.Queries;
 /// Single-method adapter for retrieving all sets.
 /// </summary>
 internal interface IAllSetsAdapter
-    : IOperationResponseService<INoArgsXfrEntity, IEnumerable<ScryfallSetItemExtEntity>>;
+    : IOperationResponseService<IAllSetsXfrEntity, IEnumerable<ScryfallSetItemExtEntity>>;

@@ -4,4 +4,4 @@ using Lib.Shared.Invocation.Services;
 namespace Lib.Aggregator.Sets.Queries;
 
 internal interface IAllSetsAggregatorService
-    : IOperationResponseService<INoArgsItrEntity, ISetItemCollectionOufEntity>;
+    : IOperationResponseService<IAllSetsItrEntity, ISetItemCollectionOufEntity>;

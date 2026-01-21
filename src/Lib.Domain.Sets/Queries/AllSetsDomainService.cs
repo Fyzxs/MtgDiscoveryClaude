@@ -19,5 +19,5 @@ internal sealed class AllSetsDomainService : IAllSetsDomainService
 
     private AllSetsDomainService(ISetAggregatorService setAggregatorService) => _setAggregatorService = setAggregatorService;
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(INoArgsItrEntity input) => await _setAggregatorService.AllSetsAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(IAllSetsItrEntity input) => await _setAggregatorService.AllSetsAsync(input).ConfigureAwait(false);
 }

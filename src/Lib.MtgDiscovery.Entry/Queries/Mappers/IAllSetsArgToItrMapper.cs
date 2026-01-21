@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Mappers;
 
-internal interface INoArgsArgToItrMapper : ICreateMapper<INoArgsArgEntity, INoArgsItrEntity>;
+internal interface IAllSetsArgToItrMapper : ICreateMapper<IAllSetsArgEntity, IAllSetsItrEntity>;

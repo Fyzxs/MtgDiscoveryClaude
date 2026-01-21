@@ -21,17 +21,17 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public class SetQueryMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IOperationResponseToResponseModelMapper<List<ScryfallSetOutEntity>> _setResponseMapper;
+    private readonly IOperationResponseToResponseModelMapper<List<SetItemOutEntity>> _setResponseMapper;
 
     public SetQueryMethods(ILogger logger) : this(
         new EntryService(logger),
-        new OperationResponseToResponseModelMapper<List<ScryfallSetOutEntity>>())
+        new OperationResponseToResponseModelMapper<List<SetItemOutEntity>>())
     {
     }
 
     private SetQueryMethods(
         IEntryService entryService,
-        IOperationResponseToResponseModelMapper<List<ScryfallSetOutEntity>> setResponseMapper)
+        IOperationResponseToResponseModelMapper<List<SetItemOutEntity>> setResponseMapper)
     {
         _entryService = entryService;
         _setResponseMapper = setResponseMapper;
@@ -42,21 +42,21 @@ public class SetQueryMethods
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> SetsById(SetIdsArgEntity ids)
     {
-        IOperationResponse<List<ScryfallSetOutEntity>> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
+        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
         return await _setResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> SetsByCode(SetCodesArgEntity codes)
     {
-        IOperationResponse<List<ScryfallSetOutEntity>> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
+        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
         return await _setResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
-    public async Task<ResponseModel> AllSets()
+    public async Task<ResponseModel> AllSets(AllSetsArgEntity args)
     {
-        IOperationResponse<List<ScryfallSetOutEntity>> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
+        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.AllSetsAsync(args).ConfigureAwait(false);
         return await _setResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

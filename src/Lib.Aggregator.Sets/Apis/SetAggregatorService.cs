@@ -19,5 +19,5 @@ public sealed class SetAggregatorService : ISetAggregatorService
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _querySetAggregatorService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(INoArgsItrEntity noArgs) => await _querySetAggregatorService.AllSetsAsync(noArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets) => await _querySetAggregatorService.AllSetsAsync(allSets).ConfigureAwait(false);
 }
