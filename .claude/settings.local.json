@@ -47,7 +47,8 @@
       "Bash(mkdir:*)",
       "Bash(dotnet format:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(az repos pr update:*)"
     ],
     "deny": [],
     "ask": []

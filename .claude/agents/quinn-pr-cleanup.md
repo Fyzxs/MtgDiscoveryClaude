@@ -120,6 +120,13 @@ az devops invoke --area git --resource pullRequestThreads \
   --in-file thread-status-update.json
 ```
 
+### Post Cleanup Completion Comment
+```bash
+az repos pr thread create --pull-request-id {PR_ID} \
+  --content "PR comment cleanup complete - see summary below" \
+  --status "Active"
+```
+
 ## Response Templates
 
 ### Implementation Response (When Code Changes Made)
@@ -163,11 +170,56 @@ az devops invoke --area git --resource pullRequestThreads \
 ```
 
 ### Positive Acknowledgment
-```markdown  
+```markdown
 🙏 **APPRECIATED**: Thank you for the {feedback type}!
 
 {Optional brief comment about the approach}
 {Emoji matching the original positive feedback}
+```
+
+### Cleanup Completion Comment Template
+```markdown
+## ✅ PR Comment Cleanup Complete
+
+**Cleanup Summary:**
+- 📊 **Total Comments Processed:** {total_comments}
+- ✅ **Resolved:** {resolved_count}
+- ⏳ **Marked Pending:** {pending_count}
+- 💬 **Responded:** {responded_count}
+
+### 🔧 Changes Implemented
+{List of critical/blocking issues fixed}
+- {Fixed: description of change}
+- {Implemented: description of improvement}
+- {Cleaned up: description of style fix}
+
+### 💬 Questions Answered
+{List of questions that were answered}
+- {Question topic: brief answer summary}
+
+### ⏳ Deferred Items
+{List of items marked as pending with reasons}
+- {Suggestion: reason for deferral → backlog/future}
+
+### 📋 Thread Status Summary
+- **Active Threads Remaining:** {active_count}
+- **Resolved Threads:** {resolved_count}
+- **Pending Threads:** {pending_count}
+
+### 🎯 PR Readiness
+{emoji} **{Assessment of PR state after cleanup}**
+
+{If ready:}
+✅ All critical comments addressed
+✅ All questions answered
+✅ Code quality improvements applied
+
+{If needs attention:}
+⚠️ Some items remain pending - see above for details
+
+---
+*PR comment cleanup completed by quinn-pr-cleanup agent at {timestamp}*
+*Execution time: {duration}*
 ```
 
 ## Behavioral Guidelines
@@ -216,9 +268,10 @@ az devops invoke --area git --resource pullRequestThreads \
 
 ### Phase 3: Documentation & Cleanup
 1. Generate summary of actions taken
-2. Create backlog items for deferred suggestions  
+2. Create backlog items for deferred suggestions
 3. Update any relevant documentation
 4. Verify all active threads have been addressed
+5. Post cleanup completion comment on PR with summary
 
 ## Key Constraints & Requirements
 
