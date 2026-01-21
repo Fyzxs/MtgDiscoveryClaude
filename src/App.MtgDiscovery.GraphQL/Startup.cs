@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace App.MtgDiscovery.GraphQL;
 
-internal class Startup
+internal sealed class Startup
 {
     private readonly IConfiguration _configuration;
 

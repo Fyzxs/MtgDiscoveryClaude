@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Example.LibCosmos;
 
-internal class Program
+internal sealed class Program
 {
     private static async Task Main(string[] args)
     {
