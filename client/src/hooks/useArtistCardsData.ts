@@ -3,6 +3,7 @@ import { useUrlState } from './useUrlState';
 import { useFilterState } from './useFilterState';
 import { useCollectorParam } from './useCollectorParam';
 import { useCollectionUpdates } from './useCollectionUpdates';
+import { useWishlistUpdates } from './useWishlistUpdates';
 import { useCardQueries } from './useCardQueries';
 import { useOptimizedSort } from './useOptimizedSort';
 import { useMinimumLoadingTime } from './useMinimumLoadingTime';
@@ -49,8 +50,9 @@ export const useArtistCardsData = (artistName: string | undefined, decodedArtist
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
 
-  // Listen for collection updates via reusable hook
+  // Listen for collection and wishlist updates via reusable hooks
   useCollectionUpdates(cards, setCards);
+  useWishlistUpdates(cards, setCards);
 
   // Load cards effect
   useEffect(() => {

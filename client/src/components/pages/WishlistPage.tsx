@@ -55,9 +55,15 @@ export const WishlistPage: React.FC = () => {
     skip: !hasCollector
   });
 
-  // Cards from wishlist query
+  // Cards from wishlist query - filter out cards with no wishlist count
   const cards = useMemo(() => {
-    return data?.userWishlist?.data || [];
+    const allCards = data?.userWishlist?.data || [];
+    return allCards.filter(card => {
+      if (!card.userWishlist) return false;
+      const wishlistItems = Array.isArray(card.userWishlist) ? card.userWishlist : [card.userWishlist];
+      const totalCount = wishlistItems.reduce((sum, item) => sum + (item.count || 0), 0);
+      return totalCount > 0;
+    });
   }, [data?.userWishlist?.data]);
 
   // Extract unique filter options from cards

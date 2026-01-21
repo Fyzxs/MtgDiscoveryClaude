@@ -25,6 +25,7 @@ export const GET_ALL_SETS = gql`
           groupings {
             id
             cardCounts {
+              total
               nonFoil
               foil
               etched
@@ -43,20 +44,6 @@ export const GET_ALL_SETS = gql`
                 etched
               }
               collectingFinishes
-            }
-            groups {
-              setGroupId
-              group {
-                nonFoil {
-                  cards
-                }
-                foil {
-                  cards
-                }
-                etched {
-                  cards
-                }
-              }
             }
           }
         }

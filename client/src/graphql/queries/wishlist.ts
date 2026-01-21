@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-// Get all wishlisted cards for a specific user - returns full card data with collection/wishlist info
+// Get all wishlisted cards for a specific user - returns full card data with embedded wishlist info
 export const GET_USER_WISHLIST = gql`
   query GetUserWishlist($userId: String!) {
     userWishlist(userId: $userId) {
@@ -8,15 +8,14 @@ export const GET_USER_WISHLIST = gql`
       ... on CardsSuccessResponse {
         data {
           id
-          oracleId
           name
-          lang
-          releasedAt
-          uri
-          scryfallUri
-          layout
-          highResImage
-          imageStatus
+          setId
+          setCode
+          setName
+          artist
+          artistIds
+          collectorNumber
+          rarity
           imageUris {
             small
             normal
@@ -25,51 +24,27 @@ export const GET_USER_WISHLIST = gql`
             artCrop
             borderCrop
           }
-          manaCost
-          cmc
-          typeLine
-          oracleText
-          power
-          toughness
-          colors
-          colorIdentity
-          keywords
-          reserved
-          setId
-          setCode
-          setName
-          setType
-          collectorNumber
-          digital
-          rarity
-          artist
-          artistIds
-          illustrationId
-          borderColor
-          frame
+          cardFaces {
+            name
+            imageUris {
+              small
+              normal
+              large
+              png
+              artCrop
+              borderCrop
+            }
+          }
+          foil
+          nonFoil
+          finishes
           prices {
             usd
             usdFoil
             usdEtched
-            eur
-            eurFoil
-            tix
-          }
-          relatedUris {
-            gatherer
-            tcgplayerInfiniteArticles
-            tcgplayerInfiniteDecks
-            edhrec
           }
           purchaseUris {
             tcgplayer
-            cardmarket
-            cardhoarder
-          }
-          userCollection {
-            finish
-            special
-            count
           }
           userWishlist {
             finish
@@ -81,6 +56,7 @@ export const GET_USER_WISHLIST = gql`
       ... on FailureResponse {
         status {
           message
+          statusCode
         }
       }
     }

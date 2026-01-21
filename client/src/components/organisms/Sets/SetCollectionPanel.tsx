@@ -47,7 +47,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
 
     // Build detailed group information
     const groups: CollectionGroup[] = set.userCollection.collecting.map(collectingGroup => {
-      const groupData = set.userCollection?.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
+      const groupData = set.userCollection?.groups?.find(g => g.setGroupId === collectingGroup.setGroupId);
       const grouping = set.groupings?.find(g => g.id === collectingGroup.setGroupId);
 
       const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
@@ -212,7 +212,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       const finishCounts = grouping?.cardCounts || { total: 0, nonFoil: 0, foil: 0, etched: 0 };
 
       // Check if there are any collected cards for this group (even if not actively collecting)
-      const groupData = set.userCollection?.groups.find(g => g.setGroupId === groupId);
+      const groupData = set.userCollection?.groups?.find(g => g.setGroupId === groupId);
       const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
       const foilCollected = groupData?.group.foil.cards.length || 0;
       const etchedCollected = groupData?.group.etched.cards.length || 0;

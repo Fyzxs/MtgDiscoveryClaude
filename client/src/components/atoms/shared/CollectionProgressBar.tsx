@@ -10,13 +10,16 @@ interface CollectionProgressBarProps {
   percentage: number;
   /** Compact mode for smaller cards */
   compact?: boolean;
+  /** Show tick marks at 5% and 10% intervals */
+  showTicks?: boolean;
 }
 
 export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
   collected,
   total,
   percentage,
-  compact = false
+  compact = false,
+  showTicks = false,
 }) => {
   const theme = useTheme();
   const isNotCollecting = total === 0 && percentage === 0;
@@ -72,6 +75,39 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
             }
           }}
         />
+        {showTicks && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          >
+            {/* Generate tick marks at 5% intervals */}
+            {Array.from({ length: 19 }, (_, i) => {
+              const pct = (i + 1) * 5;
+              const isMajor = pct % 10 === 0;
+              return (
+                <Box
+                  key={pct}
+                  sx={{
+                    position: 'absolute',
+                    left: `${pct}%`,
+                    top: 0,
+                    width: 2,
+                    height: isMajor ? barHeight * 0.8 : barHeight * 0.4,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    boxShadow: '1px 0 0 rgba(255, 255, 255, 0.3)',
+                  }}
+                />
+              );
+            })}
+          </Box>
+        )}
         <Typography
           variant="h6"
           sx={{
@@ -83,7 +119,8 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
             fontWeight: 700,
             color: 'text.primary',
             textShadow: '0 1px 3px rgba(0,0,0,0.8)',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            zIndex: 2,
           }}
         >
           {isNotCollecting

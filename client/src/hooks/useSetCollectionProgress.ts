@@ -37,10 +37,10 @@ interface UserSetCardData {
   collecting: {
     setGroupId: string;
     collecting: boolean;
-    count: number;
-    collectingFinishes: string[];
+    count?: number;
+    collectingFinishes?: string[];
   }[];
-  groups: {
+  groups?: {
     setGroupId: string;
     group: {
       nonFoil: { cards: string[] };
@@ -78,7 +78,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
 
       // Build detailed group information for ALL groups (not just collecting ones)
       const groups: CollectionGroup[] = userSetData.collecting.map(collectingGroup => {
-        const groupData = userSetData.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
+        const groupData = userSetData.groups?.find(g => g.setGroupId === collectingGroup.setGroupId);
 
         const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
         const foilCollected = groupData?.group.foil.cards.length || 0;
@@ -127,7 +127,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
       // Calculate actual cards collected in tracking groups (only those with collecting: true)
       // Only count finishes that the user is collecting
       const collectedInTrackingGroups = collectingGroups.reduce((sum, collectingGroup) => {
-        const groupData = userSetData.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
+        const groupData = userSetData.groups?.find(g => g.setGroupId === collectingGroup.setGroupId);
         if (!groupData) {
           return sum;
         }

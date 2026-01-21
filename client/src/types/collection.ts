@@ -83,7 +83,7 @@ export interface UserSetCardCollectingCounts {
 export interface UserSetCardCollecting {
   setGroupId: string;
   collecting: boolean;
-  counts: UserSetCardCollectingCounts;
+  counts?: UserSetCardCollectingCounts;
   collectingFinishes?: ('nonFoil' | 'foil' | 'etched')[];
 }
 
@@ -107,7 +107,7 @@ export interface UserSetCardCollection {
   totalCards: number;
   uniqueCards: number;
   collecting: UserSetCardCollecting[];
-  groups: UserSetCardCollectionGroup[];
+  groups?: UserSetCardCollectionGroup[];
 }
 
 // Shared types for collection group progress display
