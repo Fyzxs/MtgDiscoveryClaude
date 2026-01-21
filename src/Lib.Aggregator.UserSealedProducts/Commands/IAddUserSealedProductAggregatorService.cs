@@ -2,7 +2,7 @@ using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Services;
 
-namespace Lib.Aggregator.UserSealedProducts.Apis;
+namespace Lib.Aggregator.UserSealedProducts.Commands;
 
-public interface IAddUserSealedProductAggregator
+internal interface IAddUserSealedProductAggregatorService
     : IOperationResponseService<IAddUserSealedProductItrEntity, IUserSealedProductOufEntity>;
