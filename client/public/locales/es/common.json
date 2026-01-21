@@ -1,0 +1,17 @@
+{
+  "search": "Buscar",
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "view": "Ver",
+  "clearAll": "Limpiar Todo",
+  "selectAll": "Seleccionar Todo",
+  "showMore": "Mostrar Más",
+  "showLess": "Mostrar Menos",
+  "backToTop": "Volver Arriba",
+  "doubleClickToExpand": "Doble clic para expandir"
+}

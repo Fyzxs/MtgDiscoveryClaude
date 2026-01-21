@@ -1,6 +1,5 @@
 import React from 'react';
-import { CollectorNumber } from '../../atoms/Cards/CollectorNumber';
-import { RarityBadge } from '../../atoms/Cards/RarityBadge';
+import { CollectorNumber, RarityBadge } from '../../atoms';
 
 interface CollectorInfoProps {
   collectorNumber?: string;

@@ -17,7 +17,7 @@ Adapter Layer → Aggregator Layer → Domain Layer → Shared Layer → Entry L
 
 ### Entity Transformation Flow
 ```
-ArgEntity (App) → ItrEntity (Internal) → XfrEntity (Transfer) → ExtEntity (External) → ItrEntity → OutEntity (App)
+ArgEntity (App) → ItrEntity (Internal) → XfrEntity (Transfer) → ExtEntity (External) → OufEntity → OutEntity (App)
 ```
 
 ---
