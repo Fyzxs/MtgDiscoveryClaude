@@ -499,4 +499,4 @@ client/schema.json
 src/Cli.Sealed.ImageScraper/sealed-images/**
 src/Cli.Sealed.ImageScraper/custom-images/**
 **/appsettings.*.json
-**.mtgjson-cache/**
+**/.mtgjson-cache/**
