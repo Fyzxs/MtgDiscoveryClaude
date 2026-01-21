@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client/react';
 import { ADD_SET_GROUP_TO_USER_SET_CARD } from '../graphql/queries/userCards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useCollectorParam } from './useCollectorParam';
+import { getMockFinishCounts } from '../utils/mockFinishCounts';
 
 interface UseSetGroupToggleResult {
   toggleSetGroup: (
@@ -11,7 +12,8 @@ interface UseSetGroupToggleResult {
     setCode: string,
     setGroupId: string,
     collecting: boolean,
-    selectedFinishes: ('nonFoil' | 'foil' | 'etched')[]
+    selectedFinishes: ('nonFoil' | 'foil' | 'etched')[],
+    cardCount: number
   ) => Promise<void>;
   loading: boolean;
   error: Error | undefined;
@@ -27,28 +29,47 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
     setCode: string,
     setGroupId: string,
     collecting: boolean,
-    selectedFinishes: ('nonFoil' | 'foil' | 'etched')[]
+    selectedFinishes: ('nonFoil' | 'foil' | 'etched')[],
+    cardCount: number
   ) => {
     if (!collectorId) {
       logger.error('No collector ID available');
       return;
     }
 
-    // PHASE 1: STUBBED - Log the call but don't actually mutate
-    logger.warn('[STUB] toggleSetGroup called with finishes:', {
+    // Get finish counts based on set metadata
+    const finishCounts = getMockFinishCounts(setCode, setGroupId, cardCount);
+
+    // Calculate total based on selected finishes
+    let total = 0;
+    if (selectedFinishes.includes('nonFoil')) {
+      total += finishCounts.nonFoil;
+    }
+    if (selectedFinishes.includes('foil')) {
+      total += finishCounts.foil;
+    }
+    if (selectedFinishes.includes('etched')) {
+      total += finishCounts.etched;
+    }
+
+    // Construct counts object
+    const counts = {
+      total,
+      nonFoil: finishCounts.nonFoil,
+      foil: finishCounts.foil,
+      etched: finishCounts.etched
+    };
+
+    logger.info('toggleSetGroup called:', {
       setId,
       setCode,
       setGroupId,
       collecting,
       selectedFinishes,
+      counts,
       collectorId
     });
 
-    // Get count from the mutation - the backend still needs it
-    // TODO Phase 3: Backend will calculate this or we'll pass it differently
-    const count = selectedFinishes.length > 0 ? 1 : 0; // Stub value
-
-    // TODO Phase 3: Replace stub with real mutation that includes selectedFinishes
     try {
       await addSetGroupMutation({
         variables: {
@@ -56,8 +77,8 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
             setId,
             setGroupId,
             collecting,
-            count
-            // TODO Phase 3: Add selectedFinishes to input when backend is ready
+            counts,
+            collectingFinishes: selectedFinishes
           }
         },
         refetchQueries: [
