@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSealedProducts.Apis;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Aggregator.UserSealedProducts.Commands.Mappers;
@@ -41,14 +42,14 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
             ImageUrl = string.Empty
         };
 
-        var extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserSealedProductExtEntity> extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity).ConfigureAwait(false);
 
         if (extResponse.IsFailure)
         {
             return new FailureOperationResponse<IUserSealedProductOufEntity>(extResponse.OuterException);
         }
 
-        IUserSealedProductOufEntity oufEntity = await _oufMapper.Map(extResponse.Value).ConfigureAwait(false);
+        IUserSealedProductOufEntity oufEntity = await _oufMapper.Map(extResponse.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IUserSealedProductOufEntity>(oufEntity);
     }
 

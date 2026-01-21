@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Apis;
@@ -12,6 +12,6 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 /// </summary>
 public interface IUserSealedProductsEntryService
 {
-    Task<IOperationResponse<AddUserSealedProductResultOutEntity>> AddUserSealedProductAsync(IAddUserSealedProductArgsEntity args);
+    Task<IOperationResponse<AddUserSealedProductResultOutEntity>> AddUserSealedProductAsync(IAddUserSealedProductArgEntity args);
     Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(string userId);
 }
