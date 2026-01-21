@@ -496,5 +496,4 @@ client/schema.json
 .claude/state/**
 .env.preview.local
 
-**/appsettings.Local.json
-src/App.MtgDiscovery.GraphQL/appsettings.Local.json
+**/appsettings.*.json
