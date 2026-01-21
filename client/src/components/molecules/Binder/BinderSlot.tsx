@@ -259,7 +259,8 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
         {card && <DeltaBadge itemId={card.id} positioned />}
 
         {/* Collection and Wishlist badges - bottom corners */}
-        {card && hasCollector && (
+        {/* Show counts if there's a collector AND a collector number, or just if there's a collector number */}
+        {card && (hasCollector || card.collectorNumber) && (
           <Box
             sx={{
               position: 'absolute',
