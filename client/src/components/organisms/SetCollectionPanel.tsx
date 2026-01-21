@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { logger } from '../../utils/logger';
 import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../atoms';
 import { useTheme } from '../atoms';
@@ -6,6 +6,8 @@ import type { MtgSet } from '../../types/set';
 import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { ChevronLeftIcon } from '../atoms';
+import { getMockFinishCounts, getDefaultCollectingFinishes } from '../../utils/mockFinishCounts';
+import { useUser } from '../../contexts/UserContext';
 
 // Collection group types
 interface GroupFinishProgress {
@@ -14,6 +16,7 @@ interface GroupFinishProgress {
   total: number;
   percentage: number;
   emoji: string;
+  isSelected: boolean; // NEW: Is this finish being collected?
 }
 
 interface CollectionGroup {
@@ -47,6 +50,11 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
   const theme = useTheme();
   const { hasCollector } = useCollectorParam();
   const { toggleSetGroup } = useSetGroupToggle();
+  const { isAuthenticated } = useUser();
+
+  // Local state to track finish selections (for stubbing Phase 1)
+  // In Phase 3, this will come from the backend
+  const [localFinishSelections, setLocalFinishSelections] = useState<Record<string, ('nonFoil' | 'foil' | 'etched')[]>>({});
 
   // Calculate collection progress from embedded userCollection data
   const collectionProgress = useMemo(() => {
@@ -63,45 +71,64 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       const foilCollected = groupData?.group.foil.cards.length || 0;
       const etchedCollected = groupData?.group.etched.cards.length || 0;
 
-      // TODO: Get actual totals per finish from set metadata
-      // For now, distribute the count evenly across finishes
-      const totalPerFinish = Math.ceil(collectingGroup.count / 3);
+      // Get mock finish counts for this set and group
+      // Use the actual card count from groupings metadata, not collectingGroup.count
+      const mockFinishCounts = getMockFinishCounts(set.code, collectingGroup.setGroupId, grouping?.cardCount || 0);
 
-      const finishes: GroupFinishProgress[] = [
-        {
+      // Get which finishes are being collected
+      // Use local state if available, otherwise use from backend, otherwise default to all
+      const collectingFinishes = localFinishSelections[collectingGroup.setGroupId]
+        // @ts-expect-error - Phase 1 stub: Backend doesn't have collectingFinishes property yet
+        || collectingGroup.collectingFinishes
+        || getDefaultCollectingFinishes(mockFinishCounts);
+
+      const finishes: GroupFinishProgress[] = [];
+
+      // Only show finishes that are available (count > 0)
+      if (mockFinishCounts.nonFoil > 0) {
+        finishes.push({
           finishType: 'nonFoil',
           collected: nonFoilCollected,
-          total: totalPerFinish,
-          percentage: totalPerFinish > 0 ? (nonFoilCollected / totalPerFinish) * 100 : 0,
-          emoji: '🔹'
-        },
-        {
+          total: mockFinishCounts.nonFoil,
+          percentage: mockFinishCounts.nonFoil > 0 ? (nonFoilCollected / mockFinishCounts.nonFoil) * 100 : 0,
+          emoji: '🔹',
+          isSelected: collectingFinishes.includes('nonFoil')
+        });
+      }
+
+      if (mockFinishCounts.foil > 0) {
+        finishes.push({
           finishType: 'foil',
           collected: foilCollected,
-          total: totalPerFinish,
-          percentage: totalPerFinish > 0 ? (foilCollected / totalPerFinish) * 100 : 0,
-          emoji: '✨'
-        },
-        {
+          total: mockFinishCounts.foil,
+          percentage: mockFinishCounts.foil > 0 ? (foilCollected / mockFinishCounts.foil) * 100 : 0,
+          emoji: '✨',
+          isSelected: collectingFinishes.includes('foil')
+        });
+      }
+
+      if (mockFinishCounts.etched > 0) {
+        finishes.push({
           finishType: 'etched',
           collected: etchedCollected,
-          total: totalPerFinish,
-          percentage: totalPerFinish > 0 ? (etchedCollected / totalPerFinish) * 100 : 0,
-          emoji: '⚡'
-        }
-      ];
+          total: mockFinishCounts.etched,
+          percentage: mockFinishCounts.etched > 0 ? (etchedCollected / mockFinishCounts.etched) * 100 : 0,
+          emoji: '⚡',
+          isSelected: collectingFinishes.includes('etched')
+        });
+      }
 
       return {
         setGroupId: collectingGroup.setGroupId,
         displayName: grouping?.displayName || collectingGroup.setGroupId.charAt(0).toUpperCase() + collectingGroup.setGroupId.slice(1),
         isCollecting: collectingGroup.collecting,
-        count: collectingGroup.count,
+        count: grouping?.cardCount || 0,
         finishes
       };
     });
 
     return { groups };
-  }, [hasCollector, set.userCollection, set.groupings]);
+  }, [hasCollector, set.userCollection, set.groupings, set.code, localFinishSelections]);
 
   const handleGroupToggle = async (e: React.ChangeEvent<HTMLInputElement>, groupId: string) => {
     const isCollecting = e.target.checked;
@@ -110,14 +137,61 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
     const grouping = set.groupings?.find(g => g.id === groupId);
     const count = grouping?.cardCount || 0;
 
-    // Mutation will handle refetchQueries and update the cache
-    await toggleSetGroup(set.id, set.code, groupId, isCollecting, count);
+    // Get mock finish counts to determine which finishes are available
+    const mockFinishCounts = getMockFinishCounts(set.code, groupId, count);
+
+    // When checking: select all available finishes by default
+    // When unchecking: clear all finishes
+    const selectedFinishes = isCollecting
+      ? getDefaultCollectingFinishes(mockFinishCounts)
+      : [];
+
+    // Update local state
+    setLocalFinishSelections(prev => ({
+      ...prev,
+      [groupId]: selectedFinishes
+    }));
+
+    // Call stubbed mutation (will be real in Phase 3)
+    // @ts-expect-error - Phase 1 stub: Backend expects 'count' parameter, will be 'selectedFinishes' in Phase 3
+    await toggleSetGroup(set.id, set.code, groupId, isCollecting, selectedFinishes);
 
     // Notify parent that group was toggled (to refresh set card)
     onGroupToggled?.();
   };
 
-  if (hasCollector === false) {
+  const handleFinishToggle = async (groupId: string, finishType: 'nonFoil' | 'foil' | 'etched', isChecked: boolean) => {
+    // Get current selections for this group
+    const currentSelections = localFinishSelections[groupId] || [];
+
+    // Update selections
+    const newSelections = isChecked
+      ? [...currentSelections, finishType]
+      : currentSelections.filter(f => f !== finishType);
+
+    // Update local state
+    setLocalFinishSelections(prev => ({
+      ...prev,
+      [groupId]: newSelections
+    }));
+
+    // If all finishes are unchecked, auto-uncheck the group
+    if (newSelections.length === 0) {
+      // @ts-expect-error - Phase 1 stub: Backend expects 'count' parameter, will be 'selectedFinishes' in Phase 3
+      await toggleSetGroup(set.id, set.code, groupId, false, []);
+      onGroupToggled?.();
+    } else {
+      // Just update the finish selections
+      // @ts-expect-error - Phase 1 stub: Backend expects 'count' parameter, will be 'selectedFinishes' in Phase 3
+      await toggleSetGroup(set.id, set.code, groupId, true, newSelections);
+      onGroupToggled?.();
+    }
+
+    logger.info('[SetCollectionPanel] Finish toggled:', { groupId, finishType, isChecked, newSelections });
+  };
+
+  // Only show panel when collector ID is present in URL
+  if (hasCollector === null || hasCollector === undefined) {
     return null;
   }
 
@@ -147,17 +221,58 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
         };
       }
 
-      // Otherwise, create a default group (not collecting, no progress)
+      // Otherwise, create a default group (not collecting, but may have collected cards)
+      // Get mock finish counts for uncollected groups too (reuse grouping from above)
+      const count = grouping?.cardCount || 0;
+      const mockFinishCounts = getMockFinishCounts(set.code, groupId, count);
+
+      // Check if there are any collected cards for this group (even if not actively collecting)
+      const groupData = set.userCollection?.groups.find(g => g.rarity === groupId);
+      const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
+      const foilCollected = groupData?.group.foil.cards.length || 0;
+      const etchedCollected = groupData?.group.etched.cards.length || 0;
+
+      const defaultFinishes: GroupFinishProgress[] = [];
+
+      if (mockFinishCounts.nonFoil > 0) {
+        defaultFinishes.push({
+          finishType: 'nonFoil',
+          collected: nonFoilCollected,
+          total: mockFinishCounts.nonFoil,
+          percentage: mockFinishCounts.nonFoil > 0 ? (nonFoilCollected / mockFinishCounts.nonFoil) * 100 : 0,
+          emoji: '🔹',
+          isSelected: false
+        });
+      }
+
+      if (mockFinishCounts.foil > 0) {
+        defaultFinishes.push({
+          finishType: 'foil',
+          collected: foilCollected,
+          total: mockFinishCounts.foil,
+          percentage: mockFinishCounts.foil > 0 ? (foilCollected / mockFinishCounts.foil) * 100 : 0,
+          emoji: '✨',
+          isSelected: false
+        });
+      }
+
+      if (mockFinishCounts.etched > 0) {
+        defaultFinishes.push({
+          finishType: 'etched',
+          collected: etchedCollected,
+          total: mockFinishCounts.etched,
+          percentage: mockFinishCounts.etched > 0 ? (etchedCollected / mockFinishCounts.etched) * 100 : 0,
+          emoji: '⚡',
+          isSelected: false
+        });
+      }
+
       return {
         setGroupId: groupId,
         displayName,
         isCollecting: false,
-        count: 0,
-        finishes: [
-          { finishType: 'nonFoil' as const, collected: 0, total: 0, percentage: 0, emoji: '🔹' },
-          { finishType: 'foil' as const, collected: 0, total: 0, percentage: 0, emoji: '✨' },
-          { finishType: 'etched' as const, collected: 0, total: 0, percentage: 0, emoji: '⚡' }
-        ],
+        count,
+        finishes: defaultFinishes,
         originalIndex
       };
     }).sort((a, b) => {
@@ -227,13 +342,15 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
           </Typography>
 
           {displayGroups.map((group) => (
-            <Box key={group.setGroupId} sx={{ mb: 3 }}>
+            <Box key={group.setGroupId} sx={{ mb: 1 }}>
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={group.isCollecting}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleGroupToggle(e, group.setGroupId)}
                     size="small"
+                    disabled={!isAuthenticated}
+                    sx={{ py: 0 }}
                   />
                 }
                 label={
@@ -241,26 +358,36 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
                     {group.displayName}
                   </Typography>
                 }
-                sx={{ mb: 1 }}
+                sx={{ m: 0, py: 0 }}
               />
-              <Box sx={{ ml: 4 }}>
+              {/* Nested finish checkboxes - always show, but disable when group is unchecked */}
+              <Box sx={{ ml: 1 }}>
                 {group.finishes.map((finish) => (
-                  <Box
+                  <FormControlLabel
                     key={finish.finishType}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      mb: 0.5
-                    }}
-                  >
-                    <Typography variant="caption" sx={{ fontSize: '0.75rem', minWidth: '80px' }}>
-                      {finish.emoji} {finish.finishType === 'nonFoil' ? 'Non-foil' : finish.finishType.charAt(0).toUpperCase() + finish.finishType.slice(1)}
-                    </Typography>
-                    <Typography variant="caption" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
-                      {finish.collected}/{finish.total} ({Math.round(finish.percentage)}%)
-                    </Typography>
-                  </Box>
+                    control={
+                      <Checkbox
+                        checked={finish.isSelected}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleFinishToggle(group.setGroupId, finish.finishType, e.target.checked)
+                        }
+                        size="small"
+                        disabled={!isAuthenticated || !group.isCollecting}
+                        sx={{ py: 0 }}
+                      />
+                    }
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
+                          {finish.emoji} {finish.finishType === 'nonFoil' ? 'Non-foil' : finish.finishType.charAt(0).toUpperCase() + finish.finishType.slice(1)}
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
+                          {finish.collected}/{finish.total} ({Math.round(finish.percentage)}%)
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ m: 0, py: 0, ml: 1 }}
+                  />
                 ))}
               </Box>
             </Box>
