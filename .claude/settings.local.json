@@ -32,7 +32,22 @@
       "Bash(npm uninstall:*)",
       "Bash(dotnet restore:*)",
       "Bash(rm:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(chmod:*)",
+      "Bash(./FEATURE_UserCards_Adapter_Implementation_AzDO_Create.sh:*)",
+      "Bash(az boards work-item show:*)",
+      "Bash(az devops configure:*)",
+      "Bash(az boards work-item list:*)",
+      "Bash(az boards query:*)",
+      "Bash(az boards work-item create:*)",
+      "Bash(az devops project list:*)",
+      "Bash(az boards work-item update:*)",
+      "Bash(git push:*)",
+      "Bash(az repos pr create:*)",
+      "Bash(mkdir:*)",
+      "Bash(dotnet format:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
