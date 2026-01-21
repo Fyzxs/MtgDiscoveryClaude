@@ -99,16 +99,16 @@ export const VirtualizedCardGrid: React.FC<VirtualizedCardGridProps> = ({
       <Grid
         columnCount={columnCount}
         columnWidth={CARD_WIDTH + SPACING}
-        height={gridHeight}
         rowCount={rowCount}
         rowHeight={CARD_HEIGHT}
-        width={containerWidth}
-        style={{ 
+        defaultHeight={gridHeight}
+        defaultWidth={containerWidth}
+        cellComponent={Cell}
+        cellProps={{}}
+        style={{
           overflowX: 'hidden',
           backgroundColor: theme.palette.background.default
         }}
-        cellComponent={Cell}
-        cellProps={{}}
       />
     </Box>
   );
