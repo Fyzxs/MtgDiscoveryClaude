@@ -13,6 +13,7 @@ import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWit
 import { useSetPageData } from '../../hooks/useSetPageData';
 import { useSealedProductsData } from '../../hooks/useSealedProductsData';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
+import { useUrlState } from '../../hooks/useUrlState';
 import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
 import { getCollectionCountOptions, getSignedCardsOptions } from '../../utils/cardUtils';
 import type { FilterPanelConfig } from '../../types/filters';
@@ -27,7 +28,23 @@ export const SetPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<SetPageTab>('cards');
+
+  // URL state for tab selection
+  const tabUrlConfig = useMemo(() => ({
+    tab: { default: 'cards' as SetPageTab }
+  }), []);
+
+  const { getInitialValues } = useUrlState({}, tabUrlConfig);
+  const initialTabValue = useMemo(() => {
+    const values = getInitialValues();
+    const tabValue = values.tab as string;
+    return (tabValue === 'cards' || tabValue === 'sealed') ? tabValue as SetPageTab : 'cards';
+  }, [getInitialValues]);
+
+  const [activeTab, setActiveTab] = useState<SetPageTab>(initialTabValue);
+
+  // Sync active tab to URL
+  useUrlState({ tab: activeTab }, tabUrlConfig);
 
   // All data and state management extracted to custom hook
   const {

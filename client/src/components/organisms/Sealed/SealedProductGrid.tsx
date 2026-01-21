@@ -79,7 +79,7 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
           lg: 'repeat(auto-fill, minmax(200px, 1fr))',
         },
         gap: { xs: 1.5, sm: 2 },
-        justifyContent: 'center',
+        justifyItems: 'center',
       }}
     >
       {products.map((product) => (
