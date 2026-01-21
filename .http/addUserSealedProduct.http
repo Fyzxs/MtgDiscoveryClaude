@@ -1,0 +1,139 @@
+###
+# Add User Sealed Product Mutation
+# Frontend: client/src/graphql/mutations/addUserSealedProduct.ts - ADD_USER_SEALED_PRODUCT
+# NOTE: This mutation requires JWT authentication header
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Add Sealed Product to Collection (+1)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+mutation AddUserSealedProduct($args: AddUserSealedProductInput!) {
+  addUserSealedProduct(args: $args) {
+    __typename
+    ... on AddUserSealedProductSuccessResponse {
+      data {
+        productUuid
+        count
+      }
+    }
+    ... on FailureResponse {
+      __typename
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "productUuid": "replace-with-actual-product-uuid",
+    "setId": "replace-with-actual-set-id",
+    "countDelta": 1
+  }
+}
+
+
+### Add 5 Sealed Products to Collection (+5)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+mutation AddUserSealedProduct($args: AddUserSealedProductInput!) {
+  addUserSealedProduct(args: $args) {
+    __typename
+    ... on AddUserSealedProductSuccessResponse {
+      data {
+        productUuid
+        count
+      }
+    }
+    ... on FailureResponse {
+      __typename
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "productUuid": "replace-with-actual-product-uuid",
+    "setId": "replace-with-actual-set-id",
+    "countDelta": 5
+  }
+}
+
+
+### Remove Sealed Product from Collection (-1)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+mutation AddUserSealedProduct($args: AddUserSealedProductInput!) {
+  addUserSealedProduct(args: $args) {
+    __typename
+    ... on AddUserSealedProductSuccessResponse {
+      data {
+        productUuid
+        count
+      }
+    }
+    ... on FailureResponse {
+      __typename
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "productUuid": "replace-with-actual-product-uuid",
+    "setId": "replace-with-actual-set-id",
+    "countDelta": -1
+  }
+}
+
+
+### Remove All (Set to 0) - Use negative of current count
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+mutation AddUserSealedProduct($args: AddUserSealedProductInput!) {
+  addUserSealedProduct(args: $args) {
+    __typename
+    ... on AddUserSealedProductSuccessResponse {
+      data {
+        productUuid
+        count
+      }
+    }
+    ... on FailureResponse {
+      __typename
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "productUuid": "replace-with-actual-product-uuid",
+    "setId": "replace-with-actual-set-id",
+    "countDelta": -999
+  }
+}
