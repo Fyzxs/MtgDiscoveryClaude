@@ -50,6 +50,14 @@ class GlobalCardEntryHandler {
       return;
     }
 
+    // CRITICAL: Block all collection keyboard shortcuts if no collector ID in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const collectorId = urlParams.get('ctor');
+    if (!collectorId) {
+      // Silently ignore - no error message, just don't process
+      return;
+    }
+
     // Find selected card via DOM
     const selectedCard = document.querySelector('[data-selected="true"][data-card-id]');
     if (!selectedCard) return;
