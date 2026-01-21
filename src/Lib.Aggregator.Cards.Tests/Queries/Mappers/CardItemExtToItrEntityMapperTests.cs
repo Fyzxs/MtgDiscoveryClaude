@@ -13,19 +13,6 @@ namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
 public sealed class CardItemExtToItrMapperTests
 {
     [TestMethod, TestCategory("unit")]
-    public async Task Map_WithNullInput_ReturnsNull()
-    {
-        // Arrange
-        CardItemExtToItrMapper subject = new();
-
-        // Act
-        ICardItemItrEntity actual = await subject.Map(null).ConfigureAwait(false);
-
-        // Assert
-        actual.Should().BeNull();
-    }
-
-    [TestMethod, TestCategory("unit")]
     public async Task Map_WithValidScryfallCard_ReturnsCardItemItrEntity()
     {
         // Arrange

@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Aggregator.Cards.Queries.Entities;
 using Lib.Shared.DataModels.Entities;
