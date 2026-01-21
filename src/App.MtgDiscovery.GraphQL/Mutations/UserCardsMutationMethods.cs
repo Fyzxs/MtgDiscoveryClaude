@@ -7,7 +7,8 @@ using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Outs.UserCards;
+using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -29,12 +30,12 @@ public sealed class UserCardsMutationMethods
     }
 
     [Authorize]
-    [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
+    [GraphQLType(typeof(AddCardToCollectionResponseModelUnionType))]
     public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        IOperationResponse<UserCardOutEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -45,6 +46,6 @@ public sealed class UserCardsMutationMethods
             }
         };
 
-        return new SuccessDataResponseModel<UserCardOutEntity>() { Data = response.ResponseData };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
 }
