@@ -13,10 +13,7 @@ internal sealed class ScryfallSetToCosmosMapper : IScryfallSetToCosmosMapper
     {
     }
 
-    private ScryfallSetToCosmosMapper(ISetGroupingsLoader groupingsLoader)
-    {
-        _groupingsLoader = groupingsLoader;
-    }
+    private ScryfallSetToCosmosMapper(ISetGroupingsLoader groupingsLoader) => _groupingsLoader = groupingsLoader;
 
     public ScryfallSetItemExtEntity Map(IScryfallSet scryfallSet)
     {

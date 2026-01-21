@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.Shared.Abstractions.Actions;
+using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
@@ -7,7 +7,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 
-internal sealed class ArtistIdArgEntityValidatorContainer : ValidatorActionContainer<IArtistIdArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>, IArtistIdArgEntityValidator
+internal sealed class ArtistIdArgEntityValidatorContainer : ValidatorActionContainer<IArtistIdArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>, IArtistIdArgEntityValidator
 {
     public ArtistIdArgEntityValidatorContainer() : base([
             new IsNotNullArtistIdArgEntityValidator(),
@@ -15,7 +15,7 @@ internal sealed class ArtistIdArgEntityValidatorContainer : ValidatorActionConta
         ])
     { }
 }
-internal sealed class IsNotNullArtistIdArgEntityValidator : OperationResponseValidator<IArtistIdArgEntity, ICardItemCollectionItrEntity>
+internal sealed class IsNotNullArtistIdArgEntityValidator : OperationResponseValidator<IArtistIdArgEntity, ICardItemCollectionOufEntity>
 {
     public IsNotNullArtistIdArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -31,7 +31,7 @@ internal sealed class IsNotNullArtistIdArgEntityValidator : OperationResponseVal
     }
 }
 
-internal sealed class HasValidArtistIdArgEntityValidator : OperationResponseValidator<IArtistIdArgEntity, ICardItemCollectionItrEntity>
+internal sealed class HasValidArtistIdArgEntityValidator : OperationResponseValidator<IArtistIdArgEntity, ICardItemCollectionOufEntity>
 {
     public HasValidArtistIdArgEntityValidator() : base(new Validator(), new Message())
     { }

@@ -101,14 +101,9 @@ public sealed class HttpScryfallCollectionTests
     // Test DTOs and models
     private sealed class TestDto : IScryfallDto
     {
-        private readonly dynamic _data;
+        public TestDto(dynamic data) => Data = data;
 
-        public TestDto(dynamic data)
-        {
-            _data = data;
-        }
-
-        public dynamic Data => _data;
+        public dynamic Data { get; }
     }
 
     private sealed class TestDomainModel

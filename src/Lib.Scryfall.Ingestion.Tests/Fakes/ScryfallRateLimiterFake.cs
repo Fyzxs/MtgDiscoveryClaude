@@ -21,8 +21,5 @@ internal sealed class RateLimitTokenFake : IRateLimitToken
     public DateTime AcquiredAt { get; init; } = DateTime.UtcNow;
     public int DisposeInvokeCount { get; private set; }
 
-    public void Dispose()
-    {
-        DisposeInvokeCount++;
-    }
+    public void Dispose() => DisposeInvokeCount++;
 }

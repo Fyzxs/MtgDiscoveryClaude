@@ -1,98 +1,45 @@
-﻿using System.Threading.Tasks;
-using Lib.Domain.Cards.Apis;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
-using Lib.Shared.Abstractions.Actions;
+using Lib.MtgDiscovery.Entry.Queries.Cards;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
+
 namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class CardEntryService : ICardEntryService
 {
-    private readonly ICardDomainService _cardDomainService;
-    private readonly ICardIdsArgEntityValidator _validator;
-    private readonly ISetCodeArgEntityValidator _setCodeValidator;
-    private readonly ICardNameArgEntityValidator _cardNameValidator;
-    private readonly ICardSearchTermArgEntityValidator _searchTermValidator;
-    private readonly ICardsArgsToItrMapper _mapper;
-    private readonly ISetCodeArgsToItrMapper _setCodeMapper;
-    private readonly ICardNameArgsToItrMapper _cardNameMapper;
-    private readonly ICardSearchTermArgsToItrMapper _searchTermMapper;
+    private readonly ICardsByIdsEntryService _cardsByIds;
+    private readonly ICardsBySetCodeEntryService _cardsBySetCode;
+    private readonly ICardsByNameEntryService _cardsByName;
+    private readonly ICardNameSearchEntryService _cardNameSearch;
 
     public CardEntryService(ILogger logger) : this(
-        new CardDomainService(logger),
-        new CardIdsArgEntityValidatorContainer(),
-        new SetCodeArgEntityValidatorContainer(),
-        new CardNameArgEntityValidatorContainer(),
-        new CardSearchTermArgEntityValidatorContainer(),
-        new CardsArgsToItrMapper(),
-        new SetCodeArgsToItrMapper(),
-        new CardNameArgsToItrMapper(),
-        new CardSearchTermArgsToItrMapper())
+        new CardsByIdsEntryService(logger),
+        new CardsBySetCodeEntryService(logger),
+        new CardsByNameEntryService(logger),
+        new CardNameSearchEntryService(logger))
     { }
 
     private CardEntryService(
-        ICardDomainService cardDomainService,
-        ICardIdsArgEntityValidator validator,
-        ISetCodeArgEntityValidator setCodeValidator,
-        ICardNameArgEntityValidator cardNameValidator,
-        ICardSearchTermArgEntityValidator searchTermValidator,
-        ICardsArgsToItrMapper mapper,
-        ISetCodeArgsToItrMapper setCodeMapper,
-        ICardNameArgsToItrMapper cardNameMapper,
-        ICardSearchTermArgsToItrMapper searchTermMapper)
+        ICardsByIdsEntryService cardsByIds,
+        ICardsBySetCodeEntryService cardsBySetCode,
+        ICardsByNameEntryService cardsByName,
+        ICardNameSearchEntryService cardNameSearch)
     {
-        _cardDomainService = cardDomainService;
-        _validator = validator;
-        _setCodeValidator = setCodeValidator;
-        _cardNameValidator = cardNameValidator;
-        _searchTermValidator = searchTermValidator;
-        _mapper = mapper;
-        _setCodeMapper = setCodeMapper;
-        _cardNameMapper = cardNameMapper;
-        _searchTermMapper = searchTermMapper;
+        _cardsByIds = cardsByIds;
+        _cardsBySetCode = cardsBySetCode;
+        _cardsByName = cardsByName;
+        _cardNameSearch = cardNameSearch;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
-    {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => await _cardsByIds.Execute(args).ConfigureAwait(false);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(ISetCodeArgEntity setCode) => await _cardsBySetCode.Execute(setCode).ConfigureAwait(false);
 
-        ICardIdsItrEntity mappedArgs = await _mapper.Map(args).ConfigureAwait(false);
-        return await _cardDomainService.CardsByIdsAsync(mappedArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(ICardNameArgEntity cardName) => await _cardsByName.Execute(cardName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
-    {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _setCodeValidator.Validate(setCode).ConfigureAwait(false);
-
-        if (result.IsNotValid()) return result.FailureStatus();
-
-        ISetCodeItrEntity mappedArgs = await _setCodeMapper.Map(setCode).ConfigureAwait(false);
-        return await _cardDomainService.CardsBySetCodeAsync(mappedArgs).ConfigureAwait(false);
-    }
-
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
-    {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _cardNameValidator.Validate(cardName).ConfigureAwait(false);
-
-        if (result.IsNotValid()) return result.FailureStatus();
-
-        ICardNameItrEntity mappedArgs = await _cardNameMapper.Map(cardName).ConfigureAwait(false);
-        return await _cardDomainService.CardsByNameAsync(mappedArgs).ConfigureAwait(false);
-    }
-
-    public async Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
-    {
-        IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
-
-        if (result.IsNotValid()) return result.FailureStatus();
-
-        ICardSearchTermItrEntity mappedArgs = await _searchTermMapper.Map(searchTerm).ConfigureAwait(false);
-        return await _cardDomainService.CardNameSearchAsync(mappedArgs).ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm) => await _cardNameSearch.Execute(searchTerm).ConfigureAwait(false);
 }

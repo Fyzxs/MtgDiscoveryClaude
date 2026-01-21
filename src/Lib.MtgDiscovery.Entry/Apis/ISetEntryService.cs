@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lib.Shared.DataModels.Entities.Outs.Sets;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface ISetEntryService
 {
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds);
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes);
-    Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync();
+    Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity setIds);
+    Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity setCodes);
+    Task<IOperationResponse<List<ScryfallSetOutEntity>>> AllSetsAsync();
 }

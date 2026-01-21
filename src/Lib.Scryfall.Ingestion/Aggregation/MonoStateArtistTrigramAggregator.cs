@@ -41,13 +41,7 @@ internal sealed class MonoStateArtistTrigramAggregator : IArtistTrigramAggregato
         }
     }
 
-    public IEnumerable<IArtistTrigramAggregate> GetTrigrams()
-    {
-        return s_trigrams.Values.ToList();
-    }
+    public IEnumerable<IArtistTrigramAggregate> GetTrigrams() => s_trigrams.Values.ToList();
 
-    public void Clear()
-    {
-        s_trigrams.Clear();
-    }
+    public void Clear() => s_trigrams.Clear();
 }

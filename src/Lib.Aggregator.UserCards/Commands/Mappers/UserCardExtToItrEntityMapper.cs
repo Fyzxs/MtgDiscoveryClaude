@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.UserCards.Entities;
 using Lib.Shared.DataModels.Entities.Itrs;
 
@@ -14,23 +12,20 @@ namespace Lib.Aggregator.UserCards.Commands.Mappers;
 /// </summary>
 internal sealed class UserCardExtToItrEntityMapper : IUserCardExtToItrEntityMapper
 {
-    private readonly IUserCardDetailsExtToItrMapper _mapper;
+    private readonly IUserCardDetailsExtToOufMapper _mapper;
 
-    public UserCardExtToItrEntityMapper() : this(new UserCardDetailsExtToItrMapper())
+    public UserCardExtToItrEntityMapper() : this(new UserCardDetailsExtToOufMapper())
     { }
 
-    internal UserCardExtToItrEntityMapper(IUserCardDetailsExtToItrMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    internal UserCardExtToItrEntityMapper(IUserCardDetailsExtToOufMapper mapper) => _mapper = mapper;
 
-    public async Task<IUserCardItrEntity> Map([NotNull] UserCardExtEntity source)
+    public async Task<IUserCardOufEntity> Map([NotNull] UserCardExtEntity source)
     {
-        IUserCardDetailsItrEntity[] mappedDetails = await Task.WhenAll(
+        IUserCardDetailsOufEntity[] mappedDetails = await Task.WhenAll(
             source.CollectedList.Select(detail => _mapper.Map(detail))
         ).ConfigureAwait(false);
 
-        return new UserCardItrEntity
+        return new UserCardOufEntity
         {
             UserId = source.UserId,
             CardId = source.CardId,

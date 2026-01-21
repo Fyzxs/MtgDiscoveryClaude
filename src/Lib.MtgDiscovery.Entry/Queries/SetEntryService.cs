@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using Lib.Domain.Sets.Apis;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.Sets;
-using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Queries.Sets;
+using Lib.Shared.DataModels.Entities.Outs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -12,56 +11,29 @@ namespace Lib.MtgDiscovery.Entry.Queries;
 
 internal sealed class SetEntryService : ISetEntryService
 {
-    private readonly ISetDomainService _setDomainService;
-    private readonly ISetIdsArgEntityValidator _idsValidator;
-    private readonly ISetCodesArgEntityValidator _codesValidator;
-    private readonly ISetIdsArgsToItrMapper _idsMapper;
-    private readonly ISetCodesArgsToItrMapper _codesMapper;
+    private readonly ISetsByIdsEntryService _setsByIds;
+    private readonly ISetsByCodeEntryService _setsByCode;
+    private readonly IAllSetsEntryService _allSets;
 
     public SetEntryService(ILogger logger) : this(
-        new SetDomainService(logger),
-        new SetIdsArgEntityValidatorContainer(),
-        new SetCodesArgEntityValidatorContainer(),
-        new SetIdsArgsToItrMapper(),
-        new SetCodesArgsToItrMapper())
+        new SetsByIdsEntryService(logger),
+        new SetsByCodeEntryService(logger),
+        new AllSetsEntryService(logger))
     { }
 
     private SetEntryService(
-        ISetDomainService setDomainService,
-        ISetIdsArgEntityValidator idsValidator,
-        ISetCodesArgEntityValidator codesValidator,
-        ISetIdsArgsToItrMapper idsMapper,
-        ISetCodesArgsToItrMapper codesMapper)
+        ISetsByIdsEntryService setsByIds,
+        ISetsByCodeEntryService setsByCode,
+        IAllSetsEntryService allSets)
     {
-        _setDomainService = setDomainService;
-        _idsValidator = idsValidator;
-        _codesValidator = codesValidator;
-        _idsMapper = idsMapper;
-        _codesMapper = codesMapper;
+        _setsByIds = setsByIds;
+        _setsByCode = setsByCode;
+        _allSets = allSets;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity args)
-    {
-        IValidatorActionResult<IOperationResponse<ISetItemCollectionItrEntity>> result = await _idsValidator.Validate(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity args) => await _setsByIds.Execute(args).ConfigureAwait(false);
 
-        if (result.IsNotValid()) return result.FailureStatus();
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity args) => await _setsByCode.Execute(args).ConfigureAwait(false);
 
-        ISetIdsItrEntity mappedArgs = await _idsMapper.Map(args).ConfigureAwait(false);
-        return await _setDomainService.SetsAsync(mappedArgs).ConfigureAwait(false);
-    }
-
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity args)
-    {
-        IValidatorActionResult<IOperationResponse<ISetItemCollectionItrEntity>> result = await _codesValidator.Validate(args).ConfigureAwait(false);
-
-        if (result.IsNotValid()) return result.FailureStatus();
-
-        ISetCodesItrEntity mappedArgs = await _codesMapper.Map(args).ConfigureAwait(false);
-        return await _setDomainService.SetsByCodeAsync(mappedArgs).ConfigureAwait(false);
-    }
-
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
-    {
-        return await _setDomainService.AllSetsAsync().ConfigureAwait(false);
-    }
+    public async Task<IOperationResponse<List<ScryfallSetOutEntity>>> AllSetsAsync() => await _allSets.Execute(new NoArgsEntity()).ConfigureAwait(false);
 }

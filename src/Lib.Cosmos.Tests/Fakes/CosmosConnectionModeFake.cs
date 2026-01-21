@@ -7,10 +7,7 @@ internal sealed class CosmosConnectionModeFake : CosmosConnectionMode
 {
     private readonly ConnectionMode _connectionMode;
 
-    public CosmosConnectionModeFake(ConnectionMode connectionMode)
-    {
-        _connectionMode = connectionMode;
-    }
+    public CosmosConnectionModeFake(ConnectionMode connectionMode) => _connectionMode = connectionMode;
 
     public override ConnectionMode AsSystemType() => _connectionMode;
 }

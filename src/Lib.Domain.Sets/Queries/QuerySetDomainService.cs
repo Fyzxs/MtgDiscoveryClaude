@@ -16,9 +16,9 @@ internal sealed class QuerySetDomainService : ISetDomainService
 
     private QuerySetDomainService(ISetAggregatorService setAggregatorService) => _setAggregatorService = setAggregatorService;
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity setIds) => await _setAggregatorService.SetsAsync(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds) => await _setAggregatorService.SetsAsync(setIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _setAggregatorService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _setAggregatorService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync() => await _setAggregatorService.AllSetsAsync().ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync() => await _setAggregatorService.AllSetsAsync().ConfigureAwait(false);
 }

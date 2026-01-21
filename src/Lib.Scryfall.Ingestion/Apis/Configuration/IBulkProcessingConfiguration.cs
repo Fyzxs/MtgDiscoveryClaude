@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Lib.Scryfall.Ingestion.Apis.Configuration;
 
@@ -9,4 +10,5 @@ public interface IBulkProcessingConfiguration
     bool ProcessRulings { get; }
     bool SetsOnly { get; }
     IReadOnlyCollection<string> SetCodesToProcess { get; }
+    DateTime? SetsReleasedAfter { get; }
 }
