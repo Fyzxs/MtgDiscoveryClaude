@@ -32,21 +32,21 @@ internal sealed class CardItemsProcessor : ICardProcessor
 
     public async Task ProcessAsync(IScryfallCard card)
     {
-        ScryfallCardItem cardItem = _mapper.Map(card.Data());
-        OpResponse<ScryfallCardItem> response = await _scribe.UpsertAsync(cardItem).ConfigureAwait(false);
+        ScryfallCardExtArg cardItem = _mapper.Map(card.Data());
+        OpResponse<ScryfallCardExtArg> response = await _scribe.UpsertAsync(cardItem).ConfigureAwait(false);
 
         LogSuccess(card, response);
         LogFailure(card, response);
     }
 
-    private void LogSuccess(IScryfallCard card, OpResponse<ScryfallCardItem> response)
+    private void LogSuccess(IScryfallCard card, OpResponse<ScryfallCardExtArg> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogCardItemStored(card.Id());
     }
 
-    private void LogFailure(IScryfallCard card, OpResponse<ScryfallCardItem> response)
+    private void LogFailure(IScryfallCard card, OpResponse<ScryfallCardExtArg> response)
     {
         if (response.IsSuccessful()) return;
 

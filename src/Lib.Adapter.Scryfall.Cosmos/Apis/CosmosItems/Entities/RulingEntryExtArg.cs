@@ -1,9 +1,10 @@
 ﻿using System;
+using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 
-public sealed class RulingEntryItem
+public sealed class RulingEntryExtArg : CosmosEntity
 {
     [JsonProperty("source")]
     public string Source { get; init; }

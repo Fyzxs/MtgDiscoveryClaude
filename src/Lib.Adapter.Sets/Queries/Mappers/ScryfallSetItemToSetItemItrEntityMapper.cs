@@ -11,7 +11,7 @@ namespace Lib.Adapter.Sets.Queries.Mappers;
 
 internal sealed class ScryfallSetItemToSetItemItrEntityMapper : IScryfallSetItemToSetItemItrEntityMapper
 {
-    public Task<ISetItemItrEntity> Map(ScryfallSetItem scryfallSetItem)
+    public Task<ISetItemItrEntity> Map(ScryfallSetExtArg scryfallSetItem)
     {
         dynamic data = scryfallSetItem.Data;
         ICollection<ISetGroupingItrEntity> groupings = Groupings(data);

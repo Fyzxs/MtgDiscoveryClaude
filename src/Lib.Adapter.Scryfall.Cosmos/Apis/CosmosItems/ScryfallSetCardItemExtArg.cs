@@ -2,9 +2,9 @@
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
-public sealed class ScryfallSetItem : CosmosItem, IScryfallPayload
+public sealed class ScryfallSetCardItemExtArg : CosmosItem, IScryfallPayload
 {
     public override string Id => Data.id;
-    public override string Partition => Data.id;
+    public override string Partition => Data.set_id;
     public dynamic Data { get; init; }
 }

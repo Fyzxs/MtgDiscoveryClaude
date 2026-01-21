@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Lib.Cosmos.Apis;
+using Newtonsoft.Json;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 
 /// <summary>
 /// Represents a specific version of a collected card with its finish and quantity.
 /// </summary>
-public sealed class CollectedItem
+public sealed class CollectedCardInfoExtArg : CosmosEntity
 {
     /// <summary>
     /// The finish type of the card (e.g., "nonfoil", "foil", "etched").

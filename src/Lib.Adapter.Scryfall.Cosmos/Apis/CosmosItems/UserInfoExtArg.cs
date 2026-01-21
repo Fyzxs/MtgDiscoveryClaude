@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 
-public sealed class UserInfoItem : CosmosItem
+public sealed class UserInfoExtArg : CosmosItem
 {
     public override string Id => UserId;
     public override string Partition => UserId;

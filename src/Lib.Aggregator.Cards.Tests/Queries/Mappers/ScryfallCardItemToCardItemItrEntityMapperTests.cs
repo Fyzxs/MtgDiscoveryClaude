@@ -65,7 +65,7 @@ public sealed class ScryfallCardItemToCardItemItrEntityMapperTests
             ["story_spotlight"] = false
         };
 
-        ScryfallCardItem scryfallCard = FakeScryfallCardItemFactory.Create(testData);
+        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(testData);
         ScryfallCardItemToCardItemItrEntityMapper subject = new();
 
         // Act
@@ -92,7 +92,7 @@ public sealed class ScryfallCardItemToCardItemItrEntityMapperTests
     public void Map_WithEmptyData_ReturnsEntityWithNullProperties()
     {
         // Arrange
-        ScryfallCardItem scryfallCard = FakeScryfallCardItemFactory.Create(new JObject());
+        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(new JObject());
         ScryfallCardItemToCardItemItrEntityMapper subject = new();
 
         // Act
@@ -114,7 +114,7 @@ public sealed class ScryfallCardItemToCardItemItrEntityMapperTests
     public void Map_ReturnsNewInstanceEachTime()
     {
         // Arrange
-        ScryfallCardItem scryfallCard = FakeScryfallCardItemFactory.Create(new JObject { ["id"] = "test-id" });
+        ScryfallCardExtArg scryfallCard = FakeScryfallCardItemFactory.Create(new JObject { ["id"] = "test-id" });
         ScryfallCardItemToCardItemItrEntityMapper subject = new();
 
         // Act
