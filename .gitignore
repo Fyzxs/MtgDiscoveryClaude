@@ -497,4 +497,5 @@ client/schema.json
 .env.preview.local
 
 src/Cli.Sealed.ImageScraper/sealed-images/**
+src/Cli.Sealed.ImageScraper/custom-images/**
 **/appsettings.*.json
