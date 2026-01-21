@@ -63,7 +63,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             _artistTrigramAggregator.TrackArtist(artistId, artist.ArtistNames());
 
             // Write ArtistItem (main artist record)
-            ArtistAggregateExtArg artistData = new()
+            ArtistAggregateExtEntity artistData = new()
             {
                 ArtistId = artistId,
                 ArtistNames = artist.ArtistNames(),
@@ -81,7 +81,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             // Write ArtistCard relationships (artist to each card)
             foreach (dynamic card in artist.Cards())
             {
-                ScryfallArtistCardExtArg artistCard = new()
+                ScryfallArtistCardExtEntity artistCard = new()
                 {
                     ArtistId = artistId,
                     Data = card
@@ -92,7 +92,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             // Write ArtistSet relationships (artist to each set)
             foreach (string setId in artist.SetIds())
             {
-                ScryfallArtistSetExtArg artistSetItem = new()
+                ScryfallArtistSetExtEntity artistSetItem = new()
                 {
                     ArtistId = artistId,
                     SetId = setId
@@ -104,7 +104,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             // Write SetArtist relationships (set to each artist)
             foreach (string setId in artist.SetIds())
             {
-                ScryfallSetArtistExtArg setArtistItem = new()
+                ScryfallSetArtistExtEntity setArtistItem = new()
                 {
                     ArtistId = artistId,
                     SetId = setId
@@ -136,11 +136,11 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             string trigram = aggregate.Trigram();
             _dashboard.UpdateProgress("Artist Trigrams:", current, trigramCount, "Writing Trigram", trigram);
 
-            ArtistNameTrigramExtArg entity = new()
+            ArtistNameTrigramExtEntity entity = new()
             {
                 Trigram = aggregate.Trigram(),
-                Artists = new Collection<ArtistNameTrigramDataExtArg>(
-                    [.. aggregate.Entries().Select(entry => new ArtistNameTrigramDataExtArg
+                Artists = new Collection<ArtistNameTrigramDataExtEntity>(
+                    [.. aggregate.Entries().Select(entry => new ArtistNameTrigramDataExtEntity
                     {
                         ArtistId = entry.ArtistId(),
                         Name = entry.Name(),

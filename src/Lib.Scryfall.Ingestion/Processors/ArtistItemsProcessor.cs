@@ -32,7 +32,7 @@ internal sealed class ArtistItemsProcessor : IArtistProcessor
         string artistId = artist.ArtistId();
         IEnumerable<string> artistNames = [.. artist.ArtistNames()];
 
-        ArtistAggregateExtArg data = new()
+        ArtistAggregateExtEntity data = new()
         {
             ArtistId = artistId,
             ArtistNames = artistNames,

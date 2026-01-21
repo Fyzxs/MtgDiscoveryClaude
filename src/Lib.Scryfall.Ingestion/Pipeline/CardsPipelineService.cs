@@ -20,7 +20,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
     private readonly ScryfallCardItemsScribe _cardScribe;
     private readonly ScryfallCardsByNameScribe _cardsByNameScribe;
     private readonly ScryfallSetCardsScribe _setCardsScribe;
-    private readonly IScryfallCardToSetCardMapper _setCardMapper;
+    private readonly ISetCardItemDynamicToExtMapper _setCardMapper;
     private readonly ICardNameGuidGenerator _guidGenerator;
     private readonly IIngestionDashboard _dashboard;
     private readonly IBulkProcessingConfiguration _config;
@@ -36,7 +36,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
         _cardScribe = cardScribe;
         _cardsByNameScribe = new ScryfallCardsByNameScribe(logger);
         _setCardsScribe = new ScryfallSetCardsScribe(logger);
-        _setCardMapper = new ScryfallCardToSetCardMapper();
+        _setCardMapper = new SetCardItemDynamicToExtMapper();
         _guidGenerator = new CardNameGuidGenerator();
         _dashboard = dashboard;
         _config = config;
@@ -100,7 +100,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             _dashboard.UpdateProgress("Cards:", current, total, "Writing", $"[{setCode}] {cardName}");
 
             // Write the card item
-            ScryfallCardExtArg cardItem = new()
+            ScryfallCardItemExtEntity cardItem = new()
             {
                 Data = card.Data()
             };
@@ -108,7 +108,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
 
             // Write the card by name (for name-based lookups)
             CardNameGuid nameGuid = _guidGenerator.GenerateGuid((string)card.Data().name);
-            ScryfallCardByNameExtArg cardByNameItem = new()
+            ScryfallCardByNameExtEntity cardByNameItem = new()
             {
                 NameGuid = nameGuid.AsSystemType().ToString(),
                 Data = card.Data()
@@ -116,7 +116,7 @@ internal sealed class CardsPipelineService : ICardsPipelineService
             await _cardsByNameScribe.UpsertAsync(cardByNameItem).ConfigureAwait(false);
 
             // Write the set-card relationship
-            ScryfallSetCardItemExtArg setCardItem = _setCardMapper.Map(card.Data());
+            ScryfallSetCardItemExtEntity setCardItem = _setCardMapper.Map(card.Data());
             await _setCardsScribe.UpsertAsync(setCardItem).ConfigureAwait(false);
         }
 

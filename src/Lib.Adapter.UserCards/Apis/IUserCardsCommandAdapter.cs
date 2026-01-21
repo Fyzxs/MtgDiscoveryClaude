@@ -30,5 +30,5 @@ public interface IUserCardsCommandAdapter
     /// </summary>
     /// <param name="userCard">The user card collection information to add</param>
     /// <returns>The added user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard);
+    Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard);
 }

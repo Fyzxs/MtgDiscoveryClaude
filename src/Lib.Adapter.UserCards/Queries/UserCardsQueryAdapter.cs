@@ -23,41 +23,41 @@ namespace Lib.Adapter.UserCards.Queries;
 /// </summary>
 internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
 {
-    private readonly ICosmosInquisition<UserCardItemsBySetExtArgs> _userCardsInquisition;
-    private readonly IUserCardCollectionItrEntityMapper _mapper;
+    private readonly ICosmosInquisition<UserCardItemsBySetExtEntitys> _userCardsInquisition;
+    private readonly IUserCardExtToItrMapper _mapper;
 
     public UserCardsQueryAdapter(ILogger logger) : this(
         new UserCardItemsBySetInquisition(logger),
-        new UserCardCollectionItrEntityMapper())
+        new UserCardExtToItrMapper())
     { }
 
     private UserCardsQueryAdapter(
-        ICosmosInquisition<UserCardItemsBySetExtArgs> userCardsInquisition,
-        IUserCardCollectionItrEntityMapper mapper)
+        ICosmosInquisition<UserCardItemsBySetExtEntitys> userCardsInquisition,
+        IUserCardExtToItrMapper mapper)
     {
         _userCardsInquisition = userCardsInquisition;
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
     {
         //TODO: This needs to be a mapper
-        UserCardItemsBySetExtArgs args = new() { SetId = userCardsSet.SetId, UserId = userCardsSet.UserId };
+        UserCardItemsBySetExtEntitys args = new() { SetId = userCardsSet.SetId, UserId = userCardsSet.UserId };
 
-        OpResponse<IEnumerable<UserCardExtArg>> response = await _userCardsInquisition.QueryAsync<UserCardExtArg>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsInquisition.QueryAsync<UserCardExtEntity>(args).ConfigureAwait(false);
 
         if (response.IsSuccessful() is false)
         {
-            return new FailureOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>(
+            return new FailureOperationResponse<IEnumerable<IUserCardItrEntity>>(
                 new UserCardsAdapterException($"Failed to retrieve [user={userCardsSet.UserId}] cards for [set]{userCardsSet.SetId}]", response.Exception()));
         }
 
         //TODO: This needs a 'wrapper' mapper to handle the collection aspect.
-        IEnumerable<IUserCardCollectionItrEntity> userCards = response.Value
+        IEnumerable<IUserCardItrEntity> userCards = response.Value
             .Select(x => _mapper.Map(x))
             .Select(x => x.Result)
             .Where(x => x is not null);
 
-        return new SuccessOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>(userCards);
+        return new SuccessOperationResponse<IEnumerable<IUserCardItrEntity>>(userCards);
     }
 }

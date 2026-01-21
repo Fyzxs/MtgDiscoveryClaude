@@ -16,5 +16,5 @@ public interface IUserCardsQueryEntryService
     /// </summary>
     /// <param name="setArgs">Arguments containing the set ID and user ID to query</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs);
+    Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetArgEntity setArgs);
 }

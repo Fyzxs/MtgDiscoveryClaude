@@ -18,7 +18,7 @@ internal sealed class ScryfallSetToCosmosMapper : IScryfallSetToCosmosMapper
         _groupingsLoader = groupingsLoader;
     }
 
-    public ScryfallSetExtArg Map(IScryfallSet scryfallSet)
+    public ScryfallSetItemExtEntity Map(IScryfallSet scryfallSet)
     {
         dynamic data = scryfallSet.Data();
         string setCode = scryfallSet.Code();
@@ -33,7 +33,7 @@ internal sealed class ScryfallSetToCosmosMapper : IScryfallSetToCosmosMapper
             data = dataObject;
         }
 
-        return new ScryfallSetExtArg
+        return new ScryfallSetItemExtEntity
         {
             Data = data
         };

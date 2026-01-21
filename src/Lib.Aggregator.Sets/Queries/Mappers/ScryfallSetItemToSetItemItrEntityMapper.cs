@@ -10,7 +10,7 @@ namespace Lib.Aggregator.Sets.Queries.Mappers;
 
 internal sealed class ScryfallSetItemToSetItemItrEntityMapper
 {
-    public ISetItemItrEntity Map(ScryfallSetExtArg scryfallSetItem)
+    public ISetItemItrEntity Map(ScryfallSetItemExtEntity scryfallSetItem)
     {
         dynamic data = scryfallSetItem.Data;
         ICollection<ISetGroupingItrEntity> groupings = Groupings(data);

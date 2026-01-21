@@ -30,5 +30,5 @@ public interface IUserCardsQueryAdapter
     /// </summary>
     /// <param name="userCardsSet">The user cards set entity containing userId and setId</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet);
+    Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet);
 }

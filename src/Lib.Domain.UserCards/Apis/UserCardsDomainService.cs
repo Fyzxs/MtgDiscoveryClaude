@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Shared.DataModels.Entities;
-using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -17,12 +16,12 @@ public sealed class UserCardsDomainService : IUserCardsDomainService
 
     private UserCardsDomainService(IUserCardsAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
+    public async Task<IOperationResponse<IUserCardItrEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
     {
         return await _userCardsAggregatorService.AddUserCardAsync(userCard).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserCardItrEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
     {
         return await _userCardsAggregatorService.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
     }

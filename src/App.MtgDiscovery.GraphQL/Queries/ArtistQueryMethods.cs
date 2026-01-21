@@ -18,14 +18,14 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class ArtistQueryMethods
 {
-    private readonly IScryfallCardMapper _scryfallCardMapper;
+    private readonly ICardItemItrToOutMapper _scryfallCardMapper;
     private readonly IEntryService _entryService;
 
-    public ArtistQueryMethods(ILogger logger) : this(new ScryfallCardMapper(), new EntryService(logger))
+    public ArtistQueryMethods(ILogger logger) : this(new CardItemItrToOutMapper(), new EntryService(logger))
     {
     }
 
-    private ArtistQueryMethods(IScryfallCardMapper scryfallCardMapper, IEntryService entryService)
+    private ArtistQueryMethods(ICardItemItrToOutMapper scryfallCardMapper, IEntryService entryService)
     {
         _scryfallCardMapper = scryfallCardMapper;
         _entryService = entryService;
@@ -69,15 +69,15 @@ public class ArtistQueryMethods
             }
         };
 
-        List<ScryfallCardOutEntity> results = [];
+        List<CardItemOutEntity> results = [];
 
         foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
         {
-            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
+            CardItemOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
             results.Add(outEntity);
         }
 
-        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results };
     }
 
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
@@ -94,14 +94,14 @@ public class ArtistQueryMethods
             }
         };
 
-        List<ScryfallCardOutEntity> results = [];
+        List<CardItemOutEntity> results = [];
 
         foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
         {
-            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
+            CardItemOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
             results.Add(outEntity);
         }
 
-        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = results };
     }
 }

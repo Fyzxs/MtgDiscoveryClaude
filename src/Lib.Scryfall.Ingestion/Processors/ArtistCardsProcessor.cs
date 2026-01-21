@@ -36,25 +36,25 @@ internal sealed class ArtistCardsProcessor : ICardProcessor
 
     private async Task ProcessArtistCard(string artistId, IScryfallCard card)
     {
-        ScryfallArtistCardExtArg artistCard = new()
+        ScryfallArtistCardExtEntity artistCard = new()
         {
             ArtistId = artistId,
             Data = card.Data()
         };
-        OpResponse<ScryfallArtistCardExtArg> response = await _scribe.UpsertAsync(artistCard).ConfigureAwait(false);
+        OpResponse<ScryfallArtistCardExtEntity> response = await _scribe.UpsertAsync(artistCard).ConfigureAwait(false);
 
         LogSuccess(artistId, card, response);
         LogFailure(artistId, card, response);
     }
 
-    private void LogSuccess(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCardExtArg> response)
+    private void LogSuccess(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCardExtEntity> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogArtistCardStored(artistId, card.Id());
     }
 
-    private void LogFailure(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCardExtArg> response)
+    private void LogFailure(string artistId, IScryfallCard card, OpResponse<ScryfallArtistCardExtEntity> response)
     {
         if (response.IsSuccessful()) return;
 
