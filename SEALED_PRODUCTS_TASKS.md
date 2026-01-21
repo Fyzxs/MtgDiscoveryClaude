@@ -789,7 +789,7 @@ internal sealed class SealedProductsBySetCodeItrToXfrMapper : ISealedProductsByS
 ---
 
 ### Task 4.3: Create SealedProductsBySetCodeAggregator
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 3.7, 4.2
 **Location:** `src/Lib.Aggregator.SealedProducts/Apis/Queries/`
 
@@ -858,7 +858,7 @@ internal sealed class SealedProductsBySetCodeAggregator : ISealedProductsBySetCo
 ---
 
 ### Task 4.4: Create SealedProductsAggregatorService
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 4.3
 **Location:** `src/Lib.Aggregator.SealedProducts/Apis/`
 
