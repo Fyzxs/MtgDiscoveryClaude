@@ -1,0 +1,47 @@
+###
+# Get Sealed Products By Set Code Query
+# Frontend: client/src/graphql/queries/sealedProducts.ts - GET_SEALED_PRODUCTS_BY_SET_CODE (pending)
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get Sealed Products by Set Code
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput!) {
+  sealedProductsBySetCode(args: $args) {
+    __typename
+    ... on SealedProductsSuccessResponse {
+      data {
+        uuid
+        setId
+        setCode
+        setName
+        name
+        category
+        subtype
+        cardCount
+        releaseDate
+        tcgplayerProductId
+        imageUrl
+        purchaseUrlTcgplayer
+        purchaseUrlCardmarket
+        purchaseUrlCardKingdom
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "setCode": "mkm"
+  }
+}
