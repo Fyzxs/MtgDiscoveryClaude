@@ -2,7 +2,7 @@
 
 namespace Lib.MtgDiscovery.Entry.Entities;
 
-internal interface IAddCardToCollectionArgsEntity
+public interface IAddCardToCollectionArgsEntity
 {
     IAuthUserArgEntity AuthUser { get; }
     IAddUserCardArgEntity AddUserCard { get; }

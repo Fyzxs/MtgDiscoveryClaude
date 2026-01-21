@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.UserCards.Apis;
-using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Aggregator.UserCards.Apis;
-using Lib.Aggregator.UserCards.Queries.Mappers;
+using Lib.Aggregator.UserCards.Queries.UserCard;
+using Lib.Aggregator.UserCards.Queries.UserCardsByArtist;
+using Lib.Aggregator.UserCards.Queries.UserCardsByIds;
+using Lib.Aggregator.UserCards.Queries.UserCardsByName;
+using Lib.Aggregator.UserCards.Queries.UserCardsBySet;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -13,111 +14,43 @@ namespace Lib.Aggregator.UserCards.Queries;
 
 internal sealed class UserCardsQueryAggregator : IUserCardsAggregatorService
 {
-    private readonly IUserCardsAdapterService _userCardsAdapterService;
-    private readonly ICollectionUserCardExtToItrMapper _collectionMapper;
-    private readonly IUserCardsSetItrToXfrMapper _userCardsSetItrToXfrMapper;
-    private readonly IUserCardItrToXfrMapper _userCardItrToXfrMapper;
-    private readonly IUserCardsByIdsItrToXfrMapper _userCardsByIdsItrToXfrMapper;
-    private readonly IUserCardsArtistItrToXfrMapper _userCardsArtistItrToXfrMapper;
-    private readonly IUserCardsNameItrToXfrMapper _userCardsNameItrToXfrMapper;
+    private readonly IUserCardAggregatorService _userCardOperations;
+    private readonly IUserCardsBySetAggregatorService _userCardsBySetOperations;
+    private readonly IUserCardsByIdsAggregatorService _userCardsByIdsOperations;
+    private readonly IUserCardsByArtistAggregatorService _userCardsByArtistOperations;
+    private readonly IUserCardsByNameAggregatorService _userCardsByNameOperations;
 
     public UserCardsQueryAggregator(ILogger logger) : this(
-        new UserCardsAdapterService(logger),
-        new CollectionUserCardExtToItrMapper(),
-        new UserCardsSetItrToXfrMapper(),
-        new UserCardItrToXfrMapper(),
-        new UserCardsByIdsItrToXfrMapper(),
-        new UserCardsArtistItrToXfrMapper(),
-        new UserCardsNameItrToXfrMapper())
+        new UserCardAggregatorService(logger),
+        new UserCardsBySetAggregatorService(logger),
+        new UserCardsByIdsAggregatorService(logger),
+        new UserCardsByArtistAggregatorService(logger),
+        new UserCardsByNameAggregatorService(logger))
     { }
 
     private UserCardsQueryAggregator(
-        IUserCardsAdapterService userCardsAdapterService,
-        ICollectionUserCardExtToItrMapper collectionMapper,
-        IUserCardsSetItrToXfrMapper userCardsSetItrToXfrMapper,
-        IUserCardItrToXfrMapper userCardItrToXfrMapper,
-        IUserCardsByIdsItrToXfrMapper userCardsByIdsItrToXfrMapper,
-        IUserCardsArtistItrToXfrMapper userCardsArtistItrToXfrMapper,
-        IUserCardsNameItrToXfrMapper userCardsNameItrToXfrMapper)
+        IUserCardAggregatorService userCardOperations,
+        IUserCardsBySetAggregatorService userCardsBySetOperations,
+        IUserCardsByIdsAggregatorService userCardsByIdsOperations,
+        IUserCardsByArtistAggregatorService userCardsByArtistOperations,
+        IUserCardsByNameAggregatorService userCardsByNameOperations)
     {
-        _userCardsAdapterService = userCardsAdapterService;
-        _collectionMapper = collectionMapper;
-        _userCardsSetItrToXfrMapper = userCardsSetItrToXfrMapper;
-        _userCardItrToXfrMapper = userCardItrToXfrMapper;
-        _userCardsByIdsItrToXfrMapper = userCardsByIdsItrToXfrMapper;
-        _userCardsArtistItrToXfrMapper = userCardsArtistItrToXfrMapper;
-        _userCardsNameItrToXfrMapper = userCardsNameItrToXfrMapper;
+        _userCardOperations = userCardOperations;
+        _userCardsBySetOperations = userCardsBySetOperations;
+        _userCardsByIdsOperations = userCardsByIdsOperations;
+        _userCardsByArtistOperations = userCardsByArtistOperations;
+        _userCardsByNameOperations = userCardsByNameOperations;
     }
 
-    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => throw new System.NotImplementedException();
+    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => throw new System.NotImplementedException("Use UserCardsCommandAggregator");
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard)
-    {
-        IUserCardXfrEntity xfrEntity = await _userCardItrToXfrMapper.Map(userCard).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardAsync(xfrEntity).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _userCardOperations.UserCardAsync(userCard);
 
-        if (response.IsFailure)
-        {
-            return new FailureOperationResponse<IEnumerable<IUserCardOufEntity>>(response.OuterException);
-        }
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => _userCardsBySetOperations.UserCardsBySetAsync(userCardsSet);
 
-        IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
-    }
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => _userCardsByIdsOperations.UserCardsByIdsAsync(userCards);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
-    {
-        IUserCardsSetXfrEntity xfrEntity = await _userCardsSetItrToXfrMapper.Map(userCardsSet).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsBySetAsync(xfrEntity).ConfigureAwait(false);
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => _userCardsByArtistOperations.UserCardsByArtistAsync(userCardsArtist);
 
-        if (response.IsFailure)
-        {
-            return new FailureOperationResponse<IEnumerable<IUserCardOufEntity>>(response.OuterException);
-        }
-
-        IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
-    }
-
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards)
-    {
-        IUserCardsByIdsXfrEntity xfrEntity = await _userCardsByIdsItrToXfrMapper.Map(userCards).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsByIdsAsync(xfrEntity).ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureOperationResponse<IEnumerable<IUserCardOufEntity>>(response.OuterException);
-        }
-
-        IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
-    }
-
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist)
-    {
-        IUserCardsArtistXfrEntity xfrEntity = await _userCardsArtistItrToXfrMapper.Map(userCardsArtist).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsByArtistAsync(xfrEntity).ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureOperationResponse<IEnumerable<IUserCardOufEntity>>(response.OuterException);
-        }
-
-        IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
-    }
-
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName)
-    {
-        IUserCardsNameXfrEntity xfrEntity = await _userCardsNameItrToXfrMapper.Map(userCardsName).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsByNameAsync(xfrEntity).ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureOperationResponse<IEnumerable<IUserCardOufEntity>>(response.OuterException);
-        }
-
-        IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
-    }
+    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => _userCardsByNameOperations.UserCardsByNameAsync(userCardsName);
 }

@@ -9,6 +9,6 @@ internal sealed class UserCardItrEntity : IUserCardItrEntity
     public string CardId { get; init; }
     public string SetId { get; init; }
     public IEnumerable<string> ArtistIds { get; init; }
-    public string CardName { get; init; }
+    public string CardNameGuid { get; init; }
     public IUserCardDetailsItrEntity Details { get; init; }
 }

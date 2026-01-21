@@ -35,7 +35,7 @@ internal sealed class SetItemsProcessor : ISetProcessor
 
     public async Task ProcessAsync(IScryfallSet set)
     {
-        ScryfallSetItemExtEntity setItem = _mapper.Map(set);
+        ScryfallSetItemExtEntity setItem = await _mapper.Map(set).ConfigureAwait(false);
         OpResponse<ScryfallSetItemExtEntity> response = await _scribe.UpsertAsync(setItem).ConfigureAwait(false);
 
         LogSuccess(set, response);

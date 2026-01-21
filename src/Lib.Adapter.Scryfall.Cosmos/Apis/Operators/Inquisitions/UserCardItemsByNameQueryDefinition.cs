@@ -5,5 +5,5 @@ namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 
 public sealed class UserCardItemsByNameQueryDefinition : InquiryDefinition
 {
-    public override QueryDefinition AsSystemType() => new("SELECT * FROM c WHERE c.user_id = @userId AND c.card_name = @cardName");
+    public override QueryDefinition AsSystemType() => new("SELECT * FROM c WHERE c.user_id = @userId AND c.card_name_guid = @cardNameGuid");
 }

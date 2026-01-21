@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -27,7 +27,7 @@ internal sealed class AddUserCardXfrToExtMapper : IAddUserCardXfrToExtMapper
             CardId = source.CardId,
             SetId = source.SetId,
             ArtistIds = source.ArtistIds,
-            CardName = source.CardName,
+            CardNameGuid = source.CardNameGuid,
             CollectedList = [collectedItem]
         };
 

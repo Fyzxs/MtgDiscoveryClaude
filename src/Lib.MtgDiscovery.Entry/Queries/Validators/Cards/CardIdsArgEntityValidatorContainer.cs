@@ -1,17 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Lib.MtgDiscovery.Entry.Apis;
+﻿using Lib.MtgDiscovery.Entry.Apis;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
-using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
-
-/// <summary>
-/// Validator interface for CardIds argument entities.
-/// </summary>
-internal interface ICardIdsArgEntityValidator : IValidatorAction<ICardIdsArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>;
 
 /// <summary>
 /// Container composing multiple validation rules for CardIds arguments.
@@ -46,78 +38,4 @@ internal sealed class CardIdsArgEntityValidatorContainer : ValidatorActionContai
             new ValidCardIdsArgEntityValidator(),
         ])
     { }
-}
-
-/// <summary>
-/// Validates that the CardIds argument entity is not null.
-/// 
-/// Structure Pattern: Validator + Nested Types
-///   - Validator: Typed behavior (not Func) for OOP and testability
-///   - Message: Typed message (not string) following No Primitives
-///   - Both are immutable and never change after creation
-/// 
-/// This class should NEVER change. If different validation is needed, create a new class.
-/// </summary>
-internal sealed class IsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
-{
-    public IsNotNullCardIdsArgEntityValidator() : base(new Validator(), new Message())
-    { }
-
-    public sealed class Validator : IValidator<ICardIdsArgEntity>
-    {
-        public Task<bool> IsValid(ICardIdsArgEntity arg) => Task.FromResult(arg is not null);
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "Provided object is null";
-    }
-}
-
-internal sealed class IdsNotNullCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
-{
-    public IdsNotNullCardIdsArgEntityValidator() : base(new Validator(), new Message())
-    { }
-
-    public sealed class Validator : IValidator<ICardIdsArgEntity>
-    {
-        public Task<bool> IsValid(ICardIdsArgEntity arg) => Task.FromResult(arg.CardIds is not null);
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "Provided list is null";
-    }
-}
-
-internal sealed class HasIdsCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
-{
-    public HasIdsCardIdsArgEntityValidator() : base(new Validator(), new Message())
-    { }
-
-    public sealed class Validator : IValidator<ICardIdsArgEntity>
-    {
-        public Task<bool> IsValid(ICardIdsArgEntity arg) => Task.FromResult(0 < arg.CardIds.Count);
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "Provided list is empty";
-    }
-}
-
-internal sealed class ValidCardIdsArgEntityValidator : OperationResponseValidator<ICardIdsArgEntity, ICardItemCollectionOufEntity>
-{
-    public ValidCardIdsArgEntityValidator() : base(new Validator(), new Message())
-    { }
-
-    public sealed class Validator : IValidator<ICardIdsArgEntity>
-    {
-        public Task<bool> IsValid(ICardIdsArgEntity arg) => Task.FromResult(arg.CardIds.All(id => id.IzNotNullOrWhiteSpace()));
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "Provided list has invalid entries";
-    }
 }
