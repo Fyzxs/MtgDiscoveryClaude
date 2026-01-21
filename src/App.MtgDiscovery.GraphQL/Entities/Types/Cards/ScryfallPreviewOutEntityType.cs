@@ -1,5 +1,5 @@
 ﻿using HotChocolate.Types;
-using Lib.Shared.DataModels.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 

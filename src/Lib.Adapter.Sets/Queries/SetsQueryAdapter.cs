@@ -10,6 +10,7 @@ using Lib.Adapter.Sets.Apis;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Exceptions;
 using Lib.Adapter.Sets.Queries.Entities;
+using Lib.Adapter.Sets.Queries.Mappers;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
@@ -29,37 +30,43 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
     private readonly ICosmosGopher _setGopher;
     private readonly ICosmosGopher _setCodeIndexGopher;
     private readonly ICosmosInquisition _allSetsInquisition;
+    private readonly ICollectionSetIdToReadPointItemMapper _setIdToReadPointMapper;
+    private readonly ICollectionSetCodeToReadPointItemMapper _setCodeToReadPointMapper;
+    private readonly ICollectionStringToSetIdsXfrMapper _stringToSetIdsXfrMapper;
 
     public SetsQueryAdapter(ILogger logger) : this(
         new ScryfallSetItemsGopher(logger),
         new ScryfallSetCodeIndexGopher(logger),
-        new AllSetItemsInquisition(logger))
+        new AllSetItemsInquisition(logger),
+        new CollectionSetIdToReadPointItemMapper(),
+        new CollectionSetCodeToReadPointItemMapper(),
+        new CollectionStringToSetIdsXfrMapper())
     { }
 
     private SetsQueryAdapter(
         ICosmosGopher setGopher,
         ICosmosGopher setCodeIndexGopher,
-        ICosmosInquisition allSetsInquisition)
+        ICosmosInquisition allSetsInquisition,
+        ICollectionSetIdToReadPointItemMapper setIdToReadPointMapper,
+        ICollectionSetCodeToReadPointItemMapper setCodeToReadPointMapper,
+        ICollectionStringToSetIdsXfrMapper stringToSetIdsXfrMapper)
     {
         _setGopher = setGopher;
         _setCodeIndexGopher = setCodeIndexGopher;
         _allSetsInquisition = allSetsInquisition;
+        _setIdToReadPointMapper = setIdToReadPointMapper;
+        _setCodeToReadPointMapper = setCodeToReadPointMapper;
+        _stringToSetIdsXfrMapper = stringToSetIdsXfrMapper;
     }
 
     public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync([NotNull] ISetIdsXfrEntity setIds)
     {
-        // Extract primitives for external system interface
         IEnumerable<string> setIdList = setIds.SetIds;
-        List<Task<OpResponse<ScryfallSetItemExtEntity>>> tasks = [];
+        ICollection<ReadPointItem> readPoints = await _setIdToReadPointMapper.Map(setIdList).ConfigureAwait(false);
 
-        foreach (string setId in setIdList)
+        List<Task<OpResponse<ScryfallSetItemExtEntity>>> tasks = [];
+        foreach (ReadPointItem readPoint in readPoints)
         {
-            //TODO: Technically this should be a Mapper. Take the collection in, return a collection of ReadPointItems
-            ReadPointItem readPoint = new()
-            {
-                Id = new ProvidedCosmosItemId(setId),
-                Partition = new ProvidedPartitionKeyValue(setId)
-            };
             tasks.Add(_setGopher.ReadAsync<ScryfallSetItemExtEntity>(readPoint));
         }
 
@@ -77,15 +84,11 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
     {
         // Extract primitives for external system interface
         IEnumerable<string> setCodeList = setCodes.SetCodes;
-        List<Task<OpResponse<ScryfallSetCodeIndexExtEntity>>> indexTasks = [];
+        ICollection<ReadPointItem> readPoints = await _setCodeToReadPointMapper.Map(setCodeList).ConfigureAwait(false);
 
-        foreach (string setCode in setCodeList)
+        List<Task<OpResponse<ScryfallSetCodeIndexExtEntity>>> indexTasks = [];
+        foreach (ReadPointItem readPoint in readPoints)
         {
-            ReadPointItem readPoint = new()
-            {
-                Id = new ProvidedCosmosItemId(setCode),
-                Partition = new ProvidedPartitionKeyValue(setCode)
-            };
             indexTasks.Add(_setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint));
         }
 
@@ -100,8 +103,7 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
             return new SuccessOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>([]);
         }
 
-        //TODO: Should be a mapper
-        ISetIdsXfrEntity setIdsEntity = new SetIdsXfrEntity { SetIds = setIds };
+        ISetIdsXfrEntity setIdsEntity = await _stringToSetIdsXfrMapper.Map(setIds).ConfigureAwait(false);
         return await SetsByIdsAsync(setIdsEntity).ConfigureAwait(false);
     }
 
