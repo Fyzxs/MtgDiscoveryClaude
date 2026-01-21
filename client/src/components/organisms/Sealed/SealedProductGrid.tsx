@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { SealedProductCard } from '../../atoms/Sealed/SealedProductCard';
-import { useSealedProductCollection } from '../../../hooks/useSealedProductCollection';
+import { useSealedProductGridNavigation } from '../../../hooks/useSealedProductGridNavigation';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
 
 interface SealedProductGridProps {
@@ -17,11 +17,11 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
   error = null,
   onProductClick,
 }) => {
-  const { updateQuantity, isUpdating } = useSealedProductCollection();
-
-  const handleQuantityChange = async (uuid: string, setId: string, delta: number) => {
-    await updateQuantity(uuid, setId, delta);
-  };
+  // Enable keyboard navigation
+  const { handleKeyDown } = useSealedProductGridNavigation({
+    totalItems: products.length,
+    enabled: !loading && !error && products.length > 0
+  });
   if (loading) {
     return (
       <Box
@@ -76,14 +76,18 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
 
   return (
     <Box
+      data-sealed-products-grid
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
       sx={{
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
         gap: { xs: 1, sm: 1.5, md: 2, lg: 2.5 },
+        outline: 'none', // Remove focus outline on container
       }}
     >
-      {products.map((product) => (
+      {products.map((product, index) => (
         <Box
           key={product.uuid}
           sx={{
@@ -93,10 +97,8 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
         >
           <SealedProductCard
             product={product}
+            index={index}
             onProductClick={onProductClick}
-            userQuantity={product.userQuantity}
-            onQuantityChange={handleQuantityChange}
-            isUpdating={isUpdating}
           />
         </Box>
       ))}
