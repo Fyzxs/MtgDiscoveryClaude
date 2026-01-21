@@ -1,5 +1,5 @@
 ---
-name: quinn-coder
+name: quinn-code-writer
 description: Write code Quinn's way.
 color: cyan
 model: opus
