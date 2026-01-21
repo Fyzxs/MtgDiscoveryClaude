@@ -17,8 +17,9 @@ internal sealed class ScryfallListPagingFake<T> : IScryfallListPaging<T> where T
         ItemsInvokeCount++;
         foreach (T item in ItemsResult)
         {
-            await Task.CompletedTask.ConfigureAwait(false);
             yield return item;
         }
+
+        await Task.CompletedTask.ConfigureAwait(false);
     }
 }

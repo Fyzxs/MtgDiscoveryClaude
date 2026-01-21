@@ -7,22 +7,41 @@ interface Auth0TokenProviderProps {
   children: React.ReactNode;
 }
 
+/**
+ * Provides Auth0 token getter to Apollo Client for authenticated requests.
+ *
+ * This component:
+ * - Registers a token getter with Apollo Client when authenticated
+ * - Signals token ready state for legacy useUserSync hook
+ * - Uses Auth0's useRefreshTokens for silent token renewal (FR-011)
+ * - Token acquisition is handled per-request by Apollo's auth link
+ *
+ * Note: Auth state management is handled by AuthStateContext, not this provider.
+ */
 export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children }) => {
-  const { getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
   const tokenGetterRegistered = useRef(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
+      // Skip if still loading Auth0 state
       if (isLoading) {
         return;
       }
 
+      // Clear token getter if not authenticated
       if (isAuthenticated === false) {
+        tokenGetterRegistered.current = false;
         setTokenReadyState(false);
         return;
       }
 
-      // Step 1: Register the token getter FIRST (before signaling ready)
+      // Only register once per authentication session
+      if (tokenGetterRegistered.current) {
+        return;
+      }
+
+      // Register token getter for Apollo Client
       const getToken = async (): Promise<string | null> => {
         try {
           const accessToken = await getAccessTokenSilently({
@@ -41,33 +60,25 @@ export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children
       tokenGetterRegistered.current = true;
       logger.debug('Auth0TokenProvider - Token getter registered');
 
-      // Step 2: Verify we can get a token before signaling ready
+      // Verify token and signal ready state for legacy useUserSync
       try {
         const accessToken = await getAccessTokenSilently({
           authorizationParams: {
             audience: "api://mtg-discovery"
           }
         });
-
         if (accessToken) {
-          logger.debug('Auth0TokenProvider - Access token verified, signaling ready');
+          logger.debug('Auth0TokenProvider - Token verified, signaling ready');
           setTokenReadyState(true);
         }
       } catch (error) {
-        // Check if this is a missing refresh token error
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        if (errorMessage.includes('Missing Refresh Token') || errorMessage.includes('login_required')) {
-          logger.warn('Auth0TokenProvider - Session expired, re-authenticating...');
-          loginWithRedirect();
-          return;
-        }
-        logger.error('Auth0TokenProvider - Failed to get access token:', error);
+        logger.error('Auth0TokenProvider - Token verification failed:', error);
         setTokenReadyState(false);
       }
     };
 
     initializeAuth();
-  }, [getAccessTokenSilently, isAuthenticated, isLoading, loginWithRedirect]);
+  }, [getAccessTokenSilently, isAuthenticated, isLoading]);
 
   return <>{children}</>;
 };

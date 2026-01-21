@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
         domain={import.meta.env.VITE_AUTH0_DOMAIN}
         clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
         authorizationParams={{
-          redirect_uri: `${window.location.origin}/signin-redirect`,
+          redirect_uri: `${window.location.origin}/auth/callback`,
           audience: "api://mtg-discovery",
           scope: "openid profile email offline_access"
         }}

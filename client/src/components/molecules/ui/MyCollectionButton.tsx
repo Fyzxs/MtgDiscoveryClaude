@@ -14,6 +14,11 @@ export const MyCollectionButton: React.FC = () => {
 
   const handleMyCollection = () => {
     if (userProfile?.id) {
+      // If on homepage, redirect to /sets with ctor param
+      if (location.pathname === '/') {
+        navigate(`/sets?ctor=${userProfile.id}`);
+        return;
+      }
       const searchParams = new URLSearchParams(location.search);
       searchParams.set('ctor', userProfile.id);
       const newUrl = `${location.pathname}?${searchParams.toString()}`;

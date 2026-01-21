@@ -11,6 +11,9 @@ import { SealedCollectionProvider } from './contexts/SealedCollectionContext'
 import { WishlistProvider } from './contexts/WishlistContext'
 import { EntryModeProvider } from './contexts/EntryModeContext'
 import { UserProvider } from './contexts/UserContext'
+import { ToastProvider } from './contexts/ToastContext'
+import { AuthStateProvider } from './contexts/AuthStateContext'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { I18nProvider } from './components/providers/I18nProvider'
 import { globalSearchFocus } from './utils/globalSearchFocusHandler'
 
@@ -22,7 +25,7 @@ const CardSearchPage = lazy(() => import('./components/pages/CardSearchPage'))
 const ArtistSearchPage = lazy(() => import('./components/pages/ArtistSearchPage'))
 const ArtistCardsPage = lazy(() => import('./components/pages/ArtistCardsPage'))
 const CardAllPrintingsPage = lazy(() => import('./components/pages/CardAllPrintingsPage'))
-const SignInRedirectPage = lazy(() => import('./components/pages/SignInRedirectPage'))
+const AuthCallbackPage = lazy(() => import('./components/pages/AuthCallbackPage'))
 const ConventionSigningPage = lazy(() => import('./components/pages/ConventionSigningPage'))
 const WishlistPage = lazy(() => import('./components/pages/WishlistPage'))
 
@@ -97,11 +100,13 @@ function App() {
     <I18nProvider>
       <UserProvider>
         <BrowserRouter>
-          <EntryModeProvider>
-            <CollectionProvider>
-              <SealedCollectionProvider>
-                <WishlistProvider>
-                  <Layout>
+          <ToastProvider>
+            <AuthStateProvider>
+              <EntryModeProvider>
+                <CollectionProvider>
+                  <SealedCollectionProvider>
+                    <WishlistProvider>
+                      <Layout>
               <Suspense fallback={<PageLoadingFallback />}>
                 <Routes>
                   <Route path="/" element={
@@ -121,7 +126,9 @@ function App() {
                   } />
                   <Route path="/set/binder/:setCode" element={
                     <PageErrorBoundary name="BinderPage">
-                      <BinderPage />
+                      <ProtectedRoute>
+                        <BinderPage />
+                      </ProtectedRoute>
                     </PageErrorBoundary>
                   } />
                   <Route path="/search/cards" element={
@@ -144,9 +151,11 @@ function App() {
                       <CardAllPrintingsPage />
                     </PageErrorBoundary>
                   } />
-                  <Route path="/signin-redirect" element={
-                    <PageErrorBoundary name="SignInRedirectPage">
-                      <SignInRedirectPage />
+                  {/* Legacy route - redirect to new auth callback */}
+                  <Route path="/signin-redirect" element={<Navigate to="/auth/callback" replace />} />
+                  <Route path="/auth/callback" element={
+                    <PageErrorBoundary name="AuthCallbackPage">
+                      <AuthCallbackPage />
                     </PageErrorBoundary>
                   } />
                   <Route path="/convention-signing" element={
@@ -156,18 +165,22 @@ function App() {
                   } />
                   <Route path="/wishlist" element={
                     <PageErrorBoundary name="WishlistPage">
-                      <WishlistPage />
+                      <ProtectedRoute>
+                        <WishlistPage />
+                      </ProtectedRoute>
                     </PageErrorBoundary>
                   } />
                   {/* Handle old query param URLs for backwards compatibility */}
                   <Route path="*" element={<LegacyRedirect />} />
                 </Routes>
               </Suspense>
-                  </Layout>
-                </WishlistProvider>
-              </SealedCollectionProvider>
-            </CollectionProvider>
-          </EntryModeProvider>
+                      </Layout>
+                    </WishlistProvider>
+                  </SealedCollectionProvider>
+                </CollectionProvider>
+              </EntryModeProvider>
+            </AuthStateProvider>
+          </ToastProvider>
         </BrowserRouter>
       </UserProvider>
     </I18nProvider>

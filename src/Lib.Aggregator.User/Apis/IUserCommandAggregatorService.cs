@@ -7,5 +7,5 @@ namespace Lib.Aggregator.User.Apis;
 
 public interface IUserCommandAggregatorService
 {
-    Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
+    Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
 }

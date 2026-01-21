@@ -13,7 +13,8 @@ internal sealed class AuthUserArgToItrMapper : IAuthUserArgToItrMapper
         {
             UserId = args.UserId,
             UserSourceId = args.SourceId,
-            UserNickname = args.DisplayName
+            UserNickname = args.DisplayName,
+            Email = args.Email
         });
     }
 }

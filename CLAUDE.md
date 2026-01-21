@@ -635,3 +635,11 @@ az repos pr show --id <pr-id>
 
 @CLAUDE.sessions.md
 - Never run the systems being built.
+
+## Active Technologies
+- TypeScript (React 19, modern ES2020+) (001-auth-refactoring)
+- C# .NET 10.0 (backend), TypeScript/React 19 (frontend) + HotChocolate (GraphQL), Auth0 React SDK, Apollo Client, Material-UI (002-auth-flow-refactor)
+- Azure Cosmos DB (user data via existing UserInfoExtEntity) (002-auth-flow-refactor)
+
+## Recent Changes
+- 001-auth-refactoring: Added TypeScript (React 19, modern ES2020+)

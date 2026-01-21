@@ -23,9 +23,10 @@ internal sealed class NullScryfallSet : IScryfallSet
     public IAsyncEnumerable<IScryfallCard> Cards() => EmptyCards();
     public Url SearchUri() => new ProvidedUrl(string.Empty);
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators - yield break requires async signature
     private static async IAsyncEnumerable<IScryfallCard> EmptyCards()
     {
-        await Task.CompletedTask.ConfigureAwait(false);
         yield break;
     }
+#pragma warning restore CS1998
 }

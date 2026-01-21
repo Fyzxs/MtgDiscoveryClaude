@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.User.Apis;
-using Lib.Aggregator.User.Commands.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.User;
 using Lib.Shared.Invocation.Operations;
@@ -13,31 +11,24 @@ namespace Lib.Aggregator.User.Commands;
 internal sealed class RegisterUserAggregatorService : IRegisterUserAggregatorService
 {
     private readonly IUserAdapterService _userAdapterService;
-    private readonly IUserInfoExtToItrEntityMapper _userInfoMapper;
 
-    public RegisterUserAggregatorService(ILogger logger) : this(
-        new UserAdapterService(logger),
-        new UserInfoExtToItrEntityMapper())
+    public RegisterUserAggregatorService(ILogger logger) : this(new UserAdapterService(logger))
     { }
 
-    private RegisterUserAggregatorService(
-        IUserAdapterService userAdapterService,
-        IUserInfoExtToItrEntityMapper userInfoMapper)
-    {
+    private RegisterUserAggregatorService(IUserAdapterService userAdapterService) =>
         _userAdapterService = userAdapterService;
-        _userInfoMapper = userInfoMapper;
-    }
 
-    public async Task<IOperationResponse<IUserInfoOufEntity>> Execute([NotNull] IUserInfoItrEntity input)
+    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute([NotNull] IUserInfoItrEntity input)
     {
-        IOperationResponse<UserInfoExtEntity> response = await _userAdapterService.RegisterUserAsync(input).ConfigureAwait(false);
+        IOperationResponse<IUserSyncOufEntity> response = await _userAdapterService
+            .RegisterUserAsync(input)
+            .ConfigureAwait(false);
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<IUserInfoOufEntity>(response.OuterException);
+            return new FailureOperationResponse<IUserSyncOufEntity>(response.OuterException);
         }
 
-        IUserInfoOufEntity mappedUserInfo = await _userInfoMapper.Map(response.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<IUserInfoOufEntity>(mappedUserInfo);
+        return new SuccessOperationResponse<IUserSyncOufEntity>(response.ResponseData);
     }
 }
