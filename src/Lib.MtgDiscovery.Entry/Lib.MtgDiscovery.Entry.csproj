@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj" />
     <ProjectReference Include="..\Lib.Domain.UserWishlistCards\Lib.Domain.UserWishlistCards.csproj" />
     <ProjectReference Include="..\Lib.Domain.SealedProducts\Lib.Domain.SealedProducts.csproj" />
+    <ProjectReference Include="..\Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj" />
   </ItemGroup>
 
 </Project>
