@@ -25,7 +25,8 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
         "booster_case",
         "bundle_case",
         "deck_box",
-        "deck"
+        "deck",
+        "subset"
     };
 
     private readonly IReadOnlyList<string> _setCodes;

@@ -26,7 +26,8 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
         "booster_case",
         "bundle_case",
         "deck_box",
-        "deck"
+        "deck",
+        "subset"
     };
 
     private readonly IReadOnlyList<string> _setCodes;
