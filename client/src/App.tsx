@@ -12,6 +12,8 @@ import { AppCard as Card } from './components/atoms/shared/AppCard'
 import { AppButton as Button } from './components/atoms/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/ErrorBoundaries'
+import { CollectionProvider } from './contexts/CollectionContext'
+import { UserProvider } from './contexts/UserContext'
 function HomePage() {
   const navigate = useNavigate();
   
@@ -54,54 +56,58 @@ function HomePage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={
-            <PageErrorBoundary name="HomePage">
-              <HomePage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/sets" element={
-            <PageErrorBoundary name="AllSetsPage">
-              <AllSetsPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/set/:setCode" element={
-            <PageErrorBoundary name="SetPage">
-              <SetPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/search/cards" element={
-            <PageErrorBoundary name="CardSearchPage">
-              <CardSearchPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/search/artists" element={
-            <PageErrorBoundary name="ArtistSearchPage">
-              <ArtistSearchPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/artists/:artistName" element={
-            <PageErrorBoundary name="ArtistCardsPage">
-              <ArtistCardsPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/card/:cardName" element={
-            <PageErrorBoundary name="CardAllPrintingsPage">
-              <CardAllPrintingsPage />
-            </PageErrorBoundary>
-          } />
-          <Route path="/signin-redirect" element={
-            <PageErrorBoundary name="SignInRedirectPage">
-              <SignInRedirectPage />
-            </PageErrorBoundary>
-          } />
-          {/* Handle old query param URLs for backwards compatibility */}
-          <Route path="*" element={<LegacyRedirect />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <UserProvider>
+      <CollectionProvider>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+            <Route path="/" element={
+              <PageErrorBoundary name="HomePage">
+                <HomePage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/sets" element={
+              <PageErrorBoundary name="AllSetsPage">
+                <AllSetsPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/set/:setCode" element={
+              <PageErrorBoundary name="SetPage">
+                <SetPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/search/cards" element={
+              <PageErrorBoundary name="CardSearchPage">
+                <CardSearchPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/search/artists" element={
+              <PageErrorBoundary name="ArtistSearchPage">
+                <ArtistSearchPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/artists/:artistName" element={
+              <PageErrorBoundary name="ArtistCardsPage">
+                <ArtistCardsPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/card/:cardName" element={
+              <PageErrorBoundary name="CardAllPrintingsPage">
+                <CardAllPrintingsPage />
+              </PageErrorBoundary>
+            } />
+            <Route path="/signin-redirect" element={
+              <PageErrorBoundary name="SignInRedirectPage">
+                <SignInRedirectPage />
+              </PageErrorBoundary>
+            } />
+            {/* Handle old query param URLs for backwards compatibility */}
+            <Route path="*" element={<LegacyRedirect />} />
+          </Routes>
+        </Layout>
+        </BrowserRouter>
+      </CollectionProvider>
+    </UserProvider>
   )
 }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCardCache } from '../hooks/useCardCache';
+import type { Card } from '../types/card';
 import {
   Container,
   Typography,
@@ -9,10 +10,8 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
-import { GET_CARDS_BY_NAME } from '../graphql/queries/cards';
 import { CardGrid } from '../components/organisms/CardGrid';
 import { useCardFiltering } from '../hooks/useCardFiltering';
 import { CardFilterPanel } from '../components/molecules/shared/CardFilterPanel';
@@ -20,55 +19,17 @@ import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS } from '..
 import { CollectorFiltersSection } from '../components/molecules/shared/CollectorFiltersSection';
 import {
   getCollectionCountOptions,
-  getSignedCardsOptions,
-  createCardFilterFunctions
+  getSignedCardsOptions
 } from '../utils/cardUtils';
 import { handleGraphQLError, globalLoadingManager } from '../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../components/ErrorBoundaries';
 import { useCollectorParam } from '../hooks/useCollectorParam';
 
 
-interface CardData {
-  id: string;
-  name: string;
-  setCode: string;
-  setName: string;
-  releasedAt: string;
-  collectorNumber: string;
-  rarity: string;
-  artist: string;
-  digital?: boolean;
-  prices: {
-    usd: string | null;
-    usdFoil: string | null;
-  };
-  imageUris?: {
-    normal: string;
-    large: string;
-    small: string;
-  };
-  cardFaces?: Array<{
-    imageUris?: {
-      normal: string;
-      large: string;
-      small: string;
-    };
-  }>;
-  userCollection?: Array<{
-    finish: string;
-    special: string;
-    count: number;
-  }> | {
-    finish: string;
-    special: string;
-    count: number;
-  };
-}
-
 interface CardsResponse {
   cardsByName: {
     __typename: string;
-    data?: CardData[];
+    data?: Card[];
     status?: {
       message: string;
     };
@@ -83,7 +44,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   const [retryCount, setRetryCount] = useState(0);
 
   // Check if we have a collector parameter
-  const { hasCollector, collectorId } = useCollectorParam();
+  const { hasCollector } = useCollectorParam();
 
   // Use card cache for fetching cards by name
   const { fetchCardsByName } = useCardCache();

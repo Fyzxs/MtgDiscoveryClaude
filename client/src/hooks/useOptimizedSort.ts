@@ -31,24 +31,35 @@ export function useOptimizedSort(
   
   return useMemo(() => {
     if (!data || data.length === 0) return [];
-    
-    // Small arrays don't need caching optimization
-    if (data.length < 100) {
+
+    // Disable caching if sortKey contains collector context (ctor)
+    // Collection data changes without changing card IDs, breaking hash-based cache
+    const hasCollectorContext = sortKey.includes('ctor');
+
+    // Small arrays don't need caching optimization, or if collector context present
+    if (data.length < 100 || hasCollectorContext) {
       return [...data].sort(sortFn);
     }
-    
+
     // Generate cache key and data hash
     const dataHash = generateDataHash(data);
     const cacheKey = `${sortKey}-${dataHash}`;
     const cached = cacheRef.current[cacheKey];
     
     // Return cached result if data hasn't changed and cache is recent (within 5 minutes)
-    if (cached && 
-        cached.dataHash === dataHash && 
+    if (cached &&
+        cached.dataHash === dataHash &&
         (Date.now() - cached.timestamp) < 300000) {
+      console.log(`[useOptimizedSort] Cache HIT for key: ${cacheKey}`);
+      console.log('[useOptimizedSort] Returning cached cards - first card:', cached.result[0]);
+      console.log('[useOptimizedSort] Cached card userCollection:', (cached.result[0] as any)?.userCollection);
       return cached.result;
     }
-    
+
+    console.log(`[useOptimizedSort] Cache MISS for key: ${cacheKey}`);
+    console.log('[useOptimizedSort] Input data - first card:', data[0]);
+    console.log('[useOptimizedSort] Input card userCollection:', (data[0] as any)?.userCollection);
+
     // Perform sort operation
     console.log(`Sorting ${data.length} cards with key: ${sortKey}`);
     const startTime = performance.now();

@@ -7,10 +7,22 @@ const httpLink = createHttpLink({
 
 // Auth0 token getter - will be set by Auth0Provider
 let getAuth0Token: (() => Promise<string | null>) | null = null;
+let isTokenReady = false;
 
 // Function to set the token getter from React context
 export const setAuth0TokenGetter = (tokenGetter: () => Promise<string | null>) => {
   getAuth0Token = tokenGetter;
+};
+
+// Function to set the token ready state
+export const setTokenReadyState = (ready: boolean) => {
+  isTokenReady = ready;
+  console.log('Apollo Client - Token ready state:', ready);
+};
+
+// Function to check if token is ready
+export const getTokenReadyState = (): boolean => {
+  return isTokenReady;
 };
 
 const authLink = setContext(async (_, { headers }) => {
@@ -29,7 +41,7 @@ const authLink = setContext(async (_, { headers }) => {
       console.error('Auth0 ID token acquisition failed:', error);
     }
   }
-  
+
   return { headers };
 });
 

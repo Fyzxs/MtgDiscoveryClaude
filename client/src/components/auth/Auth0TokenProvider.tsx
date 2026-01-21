@@ -1,34 +1,70 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { setAuth0TokenGetter } from '../../graphql/apollo-client';
+import { setAuth0TokenGetter, setTokenReadyState } from '../../graphql/apollo-client';
 
 interface Auth0TokenProviderProps {
   children: React.ReactNode;
 }
 
 export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children }) => {
-  const { getIdTokenClaims, isAuthenticated } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
+  const [tokenReady, setTokenReady] = useState(false);
+
+  useEffect(() => {
+    const initializeToken = async () => {
+      if (isLoading) {
+        return;
+      }
+
+      if (isAuthenticated === false) {
+        setTokenReady(false);
+        setTokenReadyState(false);
+        return;
+      }
+
+      try {
+        const accessToken = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: "api://mtg-discovery"
+          }
+        });
+
+        if (accessToken) {
+          console.log('Auth0TokenProvider - Access token acquired successfully');
+          setTokenReady(true);
+          setTokenReadyState(true);
+        }
+      } catch (error) {
+        console.error('Auth0TokenProvider - Failed to get access token:', error);
+        setTokenReady(false);
+        setTokenReadyState(false);
+      }
+    };
+
+    initializeToken();
+  }, [getAccessTokenSilently, isAuthenticated, isLoading]);
 
   useEffect(() => {
     const getToken = async (): Promise<string | null> => {
-      if (!isAuthenticated) {
+      if (tokenReady === false) {
         return null;
       }
-      
+
       try {
-        const idTokenClaims = await getIdTokenClaims();
-        const idToken = idTokenClaims?.__raw;
-        return idToken || null;
+        const accessToken = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: "api://mtg-discovery"
+          }
+        });
+        return accessToken || null;
       } catch (error) {
-        console.error('Failed to get Auth0 ID token:', error);
+        console.error('Failed to get Auth0 access token:', error);
         return null;
       }
     };
 
-    // Set the token getter in Apollo Client
     setAuth0TokenGetter(getToken);
-  }, [getIdTokenClaims, isAuthenticated]);
-
+  }, [getAccessTokenSilently, tokenReady]);
 
   return <>{children}</>;
 };
