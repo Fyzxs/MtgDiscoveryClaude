@@ -42,7 +42,7 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
         OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
 
         UserSetCardExtEntity existingRecord = _resolver.Resolve(readResponse, input);
-        UserSetCardExtEntity updatedRecord = _integrator.Integrate(existingRecord, input);
+        UserSetCardExtEntity updatedRecord = await _integrator.Integrate(existingRecord, input).ConfigureAwait(false);
 
         OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
 

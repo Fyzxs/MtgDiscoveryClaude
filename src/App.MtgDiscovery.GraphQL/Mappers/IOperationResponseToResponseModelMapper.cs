@@ -1,4 +1,4 @@
-﻿using Lib.Shared.Abstractions.Mappers;
+﻿using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 

@@ -1,6 +1,6 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
-using Lib.Shared.Abstractions.Mappers;
+using Lib.Shared.Abstractions.Actions.Mappers;
 
 namespace Lib.Adapter.UserCards.Commands.Mappers;
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Lib.Shared.Abstractions.Mappers;
+namespace Lib.Shared.Abstractions.Actions.Mappers;
 
 /// <summary>
 /// Defines a mapper that creates a new instance of <typeparamref name="TResult"/> from a single source object.

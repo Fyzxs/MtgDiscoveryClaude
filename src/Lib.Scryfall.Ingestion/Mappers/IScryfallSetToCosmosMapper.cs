@@ -1,6 +1,6 @@
 ﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Scryfall.Shared.Apis.Models;
-using Lib.Shared.Abstractions.Mappers;
+using Lib.Shared.Abstractions.Actions.Mappers;
 
 namespace Lib.Scryfall.Ingestion.Mappers;
 

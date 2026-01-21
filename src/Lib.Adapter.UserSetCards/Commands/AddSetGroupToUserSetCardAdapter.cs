@@ -43,7 +43,7 @@ internal sealed class AddSetGroupToUserSetCardAdapter : IAddSetGroupToUserSetCar
         OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
 
         UserSetCardExtEntity existingRecord = _setGroupResolver.Resolve(readResponse, input);
-        UserSetCardExtEntity updatedRecord = _setGroupIntegrator.Integrate(existingRecord, input);
+        UserSetCardExtEntity updatedRecord = await _setGroupIntegrator.Integrate(existingRecord, input).ConfigureAwait(false);
 
         OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
 

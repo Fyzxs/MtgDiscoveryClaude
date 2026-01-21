@@ -2,7 +2,7 @@
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
-using Lib.Shared.Abstractions.Resolvers;
+using Lib.Shared.Abstractions.Actions.Resolvers;
 
 namespace Lib.Adapter.UserSetCards.Commands.Resolvers;
 

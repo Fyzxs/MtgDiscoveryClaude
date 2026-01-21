@@ -1,4 +1,4 @@
-﻿using Lib.Shared.Abstractions.Mappers;
+﻿using Lib.Shared.Abstractions.Actions.Mappers;
 
 namespace Cli.MtgDiscovery.DataMigration.Mapping;
 
