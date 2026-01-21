@@ -14,12 +14,15 @@ namespace Lib.Domain.UserSealedProducts.Commands;
 /// </summary>
 internal sealed class AddUserSealedProductDomainService : IAddUserSealedProductDomainService
 {
-    private readonly IAddUserSealedProductAggregator _aggregator;
+    private readonly IUserSealedProductsAggregatorService _aggregator;
 
-    public AddUserSealedProductDomainService(ILogger logger) : this(new AddUserSealedProductAggregator(logger))
+    public AddUserSealedProductDomainService(ILogger logger) : this(
+        new UserSealedProductsAggregatorService(logger))
     { }
 
-    private AddUserSealedProductDomainService(IAddUserSealedProductAggregator aggregator) => _aggregator = aggregator;
+    private AddUserSealedProductDomainService(IUserSealedProductsAggregatorService aggregator) =>
+        _aggregator = aggregator;
 
-    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input) => await _aggregator.Execute(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input) =>
+        await _aggregator.AddUserSealedProductAsync(input).ConfigureAwait(false);
 }
