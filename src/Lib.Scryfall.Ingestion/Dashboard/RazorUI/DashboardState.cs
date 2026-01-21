@@ -6,12 +6,13 @@ using System.Threading;
 
 namespace Lib.Scryfall.Ingestion.Dashboard.RazorUI;
 #pragma warning disable IDE0032 // Use auto property
-internal sealed class DashboardState
+internal sealed class DashboardState : IDisposable
 {
     private readonly Lock _lock = new();
     private readonly Queue<string> _recentLogs = new(3);
     private readonly Dictionary<string, int> _completedCounts = [];
     private readonly Stopwatch _stopwatch = new();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     private string _progressType = string.Empty;
     private int _progressCurrent;
@@ -251,4 +252,37 @@ internal sealed class DashboardState
             _completionMessage = message ?? string.Empty;
         }
     }
+
+    public CancellationToken GetCancellationToken()
+    {
+        lock (_lock)
+        {
+            return _cancellationTokenSource.Token;
+        }
+    }
+
+    public void RequestCancellation()
+    {
+        lock (_lock)
+        {
+            if (_cancellationTokenSource.IsCancellationRequested is false)
+            {
+                _cancellationTokenSource.Cancel();
+                AddLog("Cancellation requested by user");
+            }
+        }
+    }
+
+    public bool IsCancellationRequested
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _cancellationTokenSource.Token.IsCancellationRequested;
+            }
+        }
+    }
+
+    public void Dispose() => _cancellationTokenSource.Dispose();
 }
