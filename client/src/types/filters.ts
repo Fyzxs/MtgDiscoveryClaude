@@ -121,13 +121,13 @@ export interface FilterPanelConfig {
  * Filter state for managing filters
  */
 export interface FilterState {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
  * Filter function type
  */
-export type FilterFunction<T> = (item: T, value: any) => boolean;
+export type FilterFunction<T> = (item: T, value: unknown) => boolean;
 
 /**
  * Sort function type

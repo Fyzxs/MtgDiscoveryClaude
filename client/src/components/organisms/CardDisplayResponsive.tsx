@@ -12,7 +12,6 @@ import { ManaCost } from '../molecules/Cards/ManaCost';
 import { useLongPress } from '../../hooks/useLongPress';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import { useHapticFeedback } from '../../hooks/useHapticFeedback';
-import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { getRarityColor } from '../../theme';
 
 interface CardDisplayProps {
@@ -45,7 +44,6 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
   sx = {},
 }) => {
   const theme = useTheme();
-  const { isMobile, isTablet } = useResponsiveBreakpoints();
   const { triggerHaptic } = useHapticFeedback({ enabled: enableHapticFeedback });
 
   const [isHovered, setIsHovered] = useState(false);

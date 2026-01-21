@@ -1,5 +1,5 @@
 import React, { useDeferredValue, useState, useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, type SxProps, type Theme } from '@mui/material';
 import { ResponsiveGridAutoFit } from '../atoms/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';
@@ -11,7 +11,7 @@ interface CardGridProps {
   context: CardContext;
   spacing?: number;
   minItemWidth?: number;
-  sx?: any;
+  sx?: SxProps<Theme>;
   enableNavigation?: boolean;
   isLoading?: boolean;
   onArtistClick?: (artistName: string, artistId?: string) => void;

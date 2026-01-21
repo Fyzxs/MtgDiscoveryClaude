@@ -20,7 +20,7 @@ import { I18nProvider } from './components/providers/I18nProvider'
 import { globalSearchFocus } from './utils/globalSearchFocusHandler'
 
 // Initialize global search focus handler (double-tap Shift to focus search)
-globalSearchFocus;
+void globalSearchFocus;
 function HomePage() {
   const navigate = useNavigate();
 

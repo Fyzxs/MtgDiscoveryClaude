@@ -96,7 +96,7 @@ class DirectDomOverlay {
       try {
         const overlay = this.createOverlay(cardId);
         this.overlays.set(cardId, overlay);
-      } catch (e) {
+      } catch {
         // Card might not be ready yet
       }
     }

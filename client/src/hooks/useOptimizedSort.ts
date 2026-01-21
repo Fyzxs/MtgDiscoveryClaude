@@ -61,7 +61,7 @@ export function useOptimizedSort(
         (Date.now() - cached.timestamp) < 300000) {
       console.log(`[useOptimizedSort] Cache HIT for key: ${cacheKey}`);
       console.log('[useOptimizedSort] Returning cached cards - first card:', cached.result[0]);
-      console.log('[useOptimizedSort] Cached card userCollection:', (cached.result[0] as any)?.userCollection);
+      console.log('[useOptimizedSort] Cached card userCollection:', cached.result[0]?.userCollection);
       return cached.result;
     }
 
@@ -71,7 +71,7 @@ export function useOptimizedSort(
       console.log(`[useOptimizedSort] Cache MISS for key: ${cacheKey}`);
     }
     console.log('[useOptimizedSort] Input data - first card:', data[0]);
-    console.log('[useOptimizedSort] Input card userCollection:', (data[0] as any)?.userCollection);
+    console.log('[useOptimizedSort] Input card userCollection:', data[0]?.userCollection);
 
     // Perform sort operation
     console.log(`Sorting ${data.length} cards with key: ${sortKey}`);

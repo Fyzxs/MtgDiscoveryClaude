@@ -29,7 +29,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
 }) => {
   const [collectionProgress, setCollectionProgress] = useState<SetCollectionProgress | undefined>(undefined);
   const theme = useTheme();
-  const { hasCollector, collectorId } = useCollectorParam();
+  const { hasCollector } = useCollectorParam();
   const { getCollectionProgress } = useSetCollectionProgress();
   const { toggleSetGroup } = useSetGroupToggle();
 

@@ -1,12 +1,16 @@
 import { domOverlay } from './directDomOverlay';
-import type { CardFinish, CardSpecial, CollectionEntryState } from '../types/collection';
+import type { CardFinish, CardSpecial, CollectionEntryState, CardCollectionUpdate } from '../types/collection';
 import { perfMonitor } from './performanceMonitor';
 
 interface CardHandler {
   cardId: string;
   availableFinishes: CardFinish[];
-  onSubmit: (update: any) => Promise<void>;
+  onSubmit: (update: CardCollectionUpdate) => Promise<void>;
   onFlashInvalid: () => void;
+}
+
+interface WindowWithTempData extends Window {
+  __tempUpdateData?: CardCollectionUpdate;
 }
 
 class GlobalCardEntryHandler {
@@ -119,7 +123,7 @@ class GlobalCardEntryHandler {
     const handler = this.handlers.get(cardId);
     if (!handler) return;
 
-    let state = { ...this.entryStates.get(cardId)! };
+    const state = { ...this.entryStates.get(cardId)! };
 
     // Number keys
     if (key >= '0' && key <= '9') {
@@ -213,7 +217,7 @@ class GlobalCardEntryHandler {
     perfMonitor.measure('submit-prepare-data', () => {
       const count = parseInt(state.count || '0');
       const finalCount = state.isNegative ? -count : count;
-      (window as any).__tempUpdateData = {
+      (window as WindowWithTempData).__tempUpdateData = {
         cardId,
         count: finalCount,
         finish: state.finish,
@@ -221,8 +225,8 @@ class GlobalCardEntryHandler {
       };
     });
 
-    const updateData = (window as any).__tempUpdateData;
-    delete (window as any).__tempUpdateData;
+    const updateData = (window as WindowWithTempData).__tempUpdateData!;
+    delete (window as WindowWithTempData).__tempUpdateData;
 
     // Get card element for instant state updates
     const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
