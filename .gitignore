@@ -497,3 +497,4 @@ client/schema.json
 .env.preview.local
 
 **/appsettings.Local.json
+src/App.MtgDiscovery.GraphQL/appsettings.Local.json
