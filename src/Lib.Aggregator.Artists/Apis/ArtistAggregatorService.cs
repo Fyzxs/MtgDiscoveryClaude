@@ -8,12 +8,12 @@ namespace Lib.Aggregator.Artists.Apis;
 
 public sealed class ArtistAggregatorService : IArtistAggregatorService
 {
-    private readonly IArtistAggregatorService _artistAggregatorOperations;
+    private readonly IArtistsQueryAggregatorService _artistAggregatorOperations;
 
     public ArtistAggregatorService(ILogger logger) : this(new ArtistsQueryAggregator(logger))
     { }
 
-    private ArtistAggregatorService(IArtistAggregatorService artistAggregatorOperations) => _artistAggregatorOperations = artistAggregatorOperations;
+    private ArtistAggregatorService(IArtistsQueryAggregatorService artistAggregatorOperations) => _artistAggregatorOperations = artistAggregatorOperations;
 
     public Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistAggregatorOperations.ArtistSearchAsync(searchTerm);
 
