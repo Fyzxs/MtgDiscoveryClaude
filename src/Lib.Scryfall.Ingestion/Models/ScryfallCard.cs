@@ -54,26 +54,14 @@ internal sealed class ScryfallCard : IScryfallCard
 
         if (string.IsNullOrEmpty(groupId) is false)
         {
-            JObject dataObject = _dto.Data as JObject;
-            dataObject?["set_group_id"] = groupId;
+            _dto.Data.set_group_id = groupId;
         }
 
         _isEnriched = true;
         return _dto.Data;
     }
 
-    private static string GetSetCode(dynamic data)
-    {
-        if (data is JObject jobj)
-        {
-            if (jobj.TryGetValue("set", out JToken token))
-            {
-                return token.ToString();
-            }
-        }
-
-        return null;
-    }
+    private static string GetSetCode(dynamic data) => data.set;
 
     public IScryfallSet Set() => _set;
 
