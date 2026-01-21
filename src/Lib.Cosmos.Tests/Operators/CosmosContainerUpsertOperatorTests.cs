@@ -5,6 +5,7 @@ using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Cosmos.Operators;
 using Lib.Cosmos.Tests.Fakes;
+using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 
