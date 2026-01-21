@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
@@ -118,7 +118,11 @@ export const AllSetsPage: React.FC = () => {
             config={{
               search: {
                 value: searchTerm,
-                onChange: setSearchTerm,
+                onChange: (value: string) => {
+                  startTransition(() => {
+                    setSearchTerm(value);
+                  });
+                },
                 placeholder: 'Search sets...',
                 debounceMs: 300
               },

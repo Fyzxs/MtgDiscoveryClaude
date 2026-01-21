@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { useCardCache } from '../../hooks/useCardCache';
@@ -598,11 +598,13 @@ export const SetPage: React.FC = () => {
 
   // Clear all filters handler
   const handleClearFilters = () => {
-    setSearchTerm('');
-    updateFilter('rarities', []);
-    updateFilter('artists', []);
-    updateFilter('groups', []);
-    updateFilter('showGroups', true);
+    startTransition(() => {
+      setSearchTerm('');
+      updateFilter('rarities', []);
+      updateFilter('artists', []);
+      updateFilter('groups', []);
+      updateFilter('showGroups', true);
+    });
   };
 
   // Calculate current count for results summary
@@ -629,7 +631,11 @@ export const SetPage: React.FC = () => {
       filters={
         <SetPageFilters
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={(value: string) => {
+            startTransition(() => {
+              setSearchTerm(value);
+            });
+          }}
           sortBy={sortBy}
           onSortChange={handleSortChange}
           selectedRarities={selectedRarities}
@@ -652,7 +658,6 @@ export const SetPage: React.FC = () => {
           onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
           onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
           onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
-          initialSearch={initialValues.search || ''}
         />
       }
       cardDisplay={
