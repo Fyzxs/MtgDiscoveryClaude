@@ -22,7 +22,7 @@
 /// at the layer boundary, following MicroObjects principles. The adapter implementation
 /// handles internal primitive extraction when needed for external system calls.
 /// </summary>
-public interface IUserAdapterService : IUserPersistenceAdapter
+public interface IUserAdapterService : IUserCommandAdapter
 {
     // All method signatures inherited from IUserPersistenceAdapter
     // Future specialized interfaces (IUserCacheAdapter, IUserMetricsAdapter, etc.) 
