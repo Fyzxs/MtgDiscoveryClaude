@@ -46,7 +46,7 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
         color="text.secondary"
         sx={{ fontSize: '0.75rem', mb: 0.5, textAlign: 'center' }}
       >
-        {isNotCollecting ? 'No groups selected' : `${collected} of ${total} set cards`}
+        {isNotCollecting ? `${collected} unique cards` : `${collected} of ${total} set cards`}
       </Typography>
       <Box sx={{ position: 'relative', width: '100%' }}>
         <LinearProgress
@@ -72,10 +72,11 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
             fontSize: isNotCollecting ? '0.875rem' : '1rem',
             fontWeight: 700,
             color: 'text.primary',
-            textShadow: '0 1px 3px rgba(0,0,0,0.8)'
+            textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+            whiteSpace: 'nowrap'
           }}
         >
-          {isNotCollecting ? 'Not Collecting' : `${Math.round(percentage)}%`}
+          {isNotCollecting ? 'No groups selected' : `${Math.round(percentage)}%`}
         </Typography>
       </Box>
     </Box>
