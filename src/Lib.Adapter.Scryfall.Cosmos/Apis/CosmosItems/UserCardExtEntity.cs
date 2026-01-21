@@ -29,6 +29,18 @@ public sealed class UserCardExtEntity : CosmosItem
     public string SetId { get; init; }
 
     /// <summary>
+    /// The artist IDs for this card (used for efficient querying by artist).
+    /// </summary>
+    [JsonProperty("artist_ids")]
+    public IEnumerable<string> ArtistIds { get; init; } = [];
+
+    /// <summary>
+    /// The name of the card (used for efficient querying by name).
+    /// </summary>
+    [JsonProperty("card_name")]
+    public string CardName { get; init; }
+
+    /// <summary>
     /// The list of collected versions of this card with quantities and finishes.
     /// </summary>
     [JsonProperty("collected")]

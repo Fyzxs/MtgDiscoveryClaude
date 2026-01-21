@@ -11,6 +11,7 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
+using Lib.Adapter.UserCards.Commands.Mappers;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
@@ -23,18 +24,22 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 {
     private readonly ICosmosGopher _userCardsGopher;
     private readonly ICosmosScribe _userCardsScribe;
+    private readonly IAddUserCardXfrToExtMapper _addUserCardMapper;
 
     public UserCardsCommandAdapter(ILogger logger) : this(
         new UserCardsGopher(logger),
-        new UserCardsScribe(logger))
+        new UserCardsScribe(logger),
+        new AddUserCardXfrToExtMapper())
     { }
 
     internal UserCardsCommandAdapter(
         ICosmosGopher userCardsGopher,
-        ICosmosScribe userCardsScribe)
+        ICosmosScribe userCardsScribe,
+        IAddUserCardXfrToExtMapper addUserCardMapper)
     {
         _userCardsGopher = userCardsGopher;
         _userCardsScribe = userCardsScribe;
+        _addUserCardMapper = addUserCardMapper;
     }
 
     public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard)
@@ -58,7 +63,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         else
         {
             // Step 3: Create new item if none exists
-            itemToUpsert = MapUserCardToExtEntity(addUserCard);
+            itemToUpsert = await _addUserCardMapper.Map(addUserCard).ConfigureAwait(false);
         }
 
         // Step 4: Upsert the merged/new item
@@ -112,37 +117,15 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             };
         }
 
-        // Return updated item
+        // Return updated item - preserve existing metadata or use new data if metadata missing
         return new UserCardExtEntity
         {
             UserId = existing.UserId,
             CardId = existing.CardId,
             SetId = existing.SetId,
+            ArtistIds = existing.ArtistIds?.Any() == true ? existing.ArtistIds : newData.ArtistIds,
+            CardName = string.IsNullOrEmpty(existing.CardName) is false ? existing.CardName : newData.CardName,
             CollectedList = [.. mergedItems.Values]
-        };
-    }
-
-    //TODO: Mapper
-    private static UserCardExtEntity MapUserCardToExtEntity(IAddUserCardXfrEntity addUserCard)
-    {
-        IUserCardDetailsXfrEntity item = addUserCard.Details;
-
-        // Note: setGroupId from item is used to update UserSetCards aggregation
-        // but is NOT persisted in the UserCard record itself
-        UserCardDetailsExtEntity collectedItem = new()
-        {
-            Finish = item.Finish,
-            Special = item.Special,
-            Count = item.Count
-            // setGroupId intentionally omitted - used for aggregation only
-        };
-
-        return new UserCardExtEntity
-        {
-            UserId = addUserCard.UserId,
-            CardId = addUserCard.CardId,
-            SetId = addUserCard.SetId,
-            CollectedList = [collectedItem]
         };
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserCards.Apis;
+using Lib.MtgDiscovery.Entry.Commands.Entities;
 using Lib.MtgDiscovery.Entry.Commands.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.Validators;
 using Lib.MtgDiscovery.Entry.Entities;
@@ -55,17 +56,35 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardAsync(itrEntity).ConfigureAwait(false);
-        if (addResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
-
-        // Fetch the complete card details
-        ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [addResponse.ResponseData.CardId] };
+        // Fetch card details first to extract artist_ids and card_name
+        ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [input.AddUserCard.CardId] };
         IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
         if (cardResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 
         List<CardItemOutEntity> cards = await _cardItemOufToOutMapper.Map(cardResponse.ResponseData).ConfigureAwait(false);
         if (cards.Count == 0) return new FailureOperationResponse<List<CardItemOutEntity>>(new Lib.Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
+
+        // Extract card metadata
+        CardItemOutEntity cardItem = cards[0];
+        IEnumerable<string> artistIds = cardItem.ArtistIds ?? [];
+        string cardName = cardItem.Name;
+
+        // Map user card args to ITR entity with card metadata
+        IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);
+
+        // Create updated entity with artist metadata
+        UserCardCollectionItrEntity enrichedEntity = new()
+        {
+            UserId = itrEntity.UserId,
+            CardId = itrEntity.CardId,
+            SetId = itrEntity.SetId,
+            ArtistIds = artistIds,
+            CardName = cardName,
+            Details = itrEntity.Details
+        };
+
+        IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardAsync(enrichedEntity).ConfigureAwait(false);
+        if (addResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 
         // Map the user collection data to the card
         UserCardOutEntity userCardOut = await _userCardOufToOutMapper.Map(addResponse.ResponseData).ConfigureAwait(false);
