@@ -29,7 +29,7 @@ public sealed class ArtistAdapterService : IArtistAdapterService
 {
     private readonly IArtistQueryAdapter _artistQueryAdapter;
 
-    public ArtistAdapterService(ILogger logger) : this(new ArtistCosmosQueryAdapter(logger))
+    public ArtistAdapterService(ILogger logger) : this(new ArtistsQueryAdapter(logger))
     { }
 
     private ArtistAdapterService(IArtistQueryAdapter artistQueryAdapter) => _artistQueryAdapter = artistQueryAdapter;
