@@ -1,5 +1,5 @@
 import React from 'react';
-import Box from '../Box';
+import Box from '../mui-wrappers/Box';
 import type { SxProps } from '@mui/material';
 import type { Theme } from '../types';
 import type { StyledComponentProps } from '../../../types/components';

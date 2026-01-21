@@ -4,7 +4,7 @@ import { useTheme } from '../../atoms';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
-import { KeyboardIcon, CloseIcon } from '../../atoms/Icons';
+import { KeyboardIcon, CloseIcon } from '../../atoms';
 
 export const QuickEntryKeysFab: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);

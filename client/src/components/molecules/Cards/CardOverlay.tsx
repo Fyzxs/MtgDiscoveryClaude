@@ -3,7 +3,8 @@ import { Box, Typography, Collapse } from '../../atoms';
 import { useTheme } from '../../atoms';
 import { RarityCollectorBadge } from './RarityCollectorBadge';
 import { ArtistLinks } from './ArtistLinks';
-import { CardName, SetLink, PriceDisplay, ItemDateBadge } from '../../atoms';
+import { CardName, SetLink, PriceDisplay } from '../../atoms';
+import { DateBadge } from '../shared/badges';
 import { CardLinks } from './CardLinks';
 import { CollectionSummary } from './CollectionSummary';
 import { WishlistSummary } from './WishlistSummary';
@@ -87,7 +88,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         {/* Release date + collection/wishlist row */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
           {releaseDate && !context.hideReleaseDate && (
-            <ItemDateBadge date={releaseDate} />
+            <DateBadge variant="text" date={releaseDate} />
           )}
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
             {context.hasCollector && collectionData && (
@@ -272,7 +273,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         {/* Release Date Row - now at the top */}
         {releaseDate && !context.hideReleaseDate && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <ItemDateBadge date={releaseDate} />
+            <DateBadge variant="text" date={releaseDate} />
           </Box>
         )}
 

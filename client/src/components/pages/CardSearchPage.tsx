@@ -4,7 +4,7 @@ import { Heading, BodyText } from '../molecules/text';
 import { Section } from '../molecules/layouts';
 import { LoadingIndicator } from '../molecules/feedback';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
-import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
+import { SearchInput } from '../molecules/shared/SearchInput';
 import { CardSearchResults } from '../organisms/Cards/CardSearchResults';
 import { CARD_NAME_SEARCH } from '../../graphql/queries/cardNameSearch';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
@@ -41,16 +41,19 @@ export const CardSearchPage: React.FC = React.memo(() => {
   const handleSearchChange = useCallback((value: string) => {
     startTransition(() => {
       setSearchTerm(value);
-      if (value.length >= 3) {
-        searchCards({
-          variables: {
-            searchTerm: {
-              searchTerm: value
-            }
-          }
-        });
-      }
     });
+  }, []);
+
+  const handleSearch = useCallback((value: string) => {
+    if (value.length >= 3) {
+      searchCards({
+        variables: {
+          searchTerm: {
+            searchTerm: value
+          }
+        }
+      });
+    }
   }, [searchCards]);
 
   // Determine display states
@@ -65,11 +68,11 @@ export const CardSearchPage: React.FC = React.memo(() => {
       <Heading variant="h4" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
         Card Search
       </Heading>
-      <DebouncedSearchInput
+      <SearchInput
         value={searchTerm}
         onChange={handleSearchChange}
-        placeholder="Enter card name..."
-        debounceMs={500}
+        onEnter={handleSearch}
+        placeholder="Enter card name and press Enter..."
         fullWidth
         disabled={loading}
       />
@@ -92,7 +95,7 @@ export const CardSearchPage: React.FC = React.memo(() => {
     if (showInitialState) {
       return (
         <BodyText variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
-          Search by Card Name - Enter at least 3 characters to search
+          Search by Card Name - Enter at least 3 characters and press Enter to search
         </BodyText>
       );
     }

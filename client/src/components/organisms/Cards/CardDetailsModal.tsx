@@ -14,7 +14,8 @@ import { ModalErrorBoundary } from '../../utils/ErrorBoundaries';
 import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
 import { CollectionSummary, WishlistSummary, ModalContainer, ManaCost } from '../../molecules';
-import { RarityBadge, PriceDisplay } from '../../atoms';
+import { PriceDisplay } from '../../atoms';
+import { AppBadge } from '../../molecules/shared/badges';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
 import { AllPrintingsDisplay } from './AllPrintingsDisplay';
@@ -24,7 +25,7 @@ import { CardBadges } from '../../molecules/Cards/CardBadges';
 import { SetLink } from '../../atoms';
 import { ArtistLinks } from '../../molecules';
 import { CardName } from '../../atoms';
-import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../../atoms/Icons';
+import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../../atoms';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import { CardDetailsSheet } from './CardDetailsSheet';
 
@@ -290,7 +291,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   {card.typeLine}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                  {card.rarity && <RarityBadge rarity={card.rarity} />}
+                  {card.rarity && <AppBadge variant="rarity" rarity={card.rarity} />}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <SetLink
                       setCode={card.setCode}

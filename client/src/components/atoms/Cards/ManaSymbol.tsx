@@ -1,4 +1,4 @@
-import Box from '../Box';
+import Box from '../mui-wrappers/Box';
 
 interface ManaSymbolProps {
   symbol: string;
