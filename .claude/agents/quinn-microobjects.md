@@ -1,6 +1,6 @@
 ---
 name: quinn-microbjects
-description: Write code Quinn's way.
+description: Write code the microobjects way.
 model: opus
 ---
 
