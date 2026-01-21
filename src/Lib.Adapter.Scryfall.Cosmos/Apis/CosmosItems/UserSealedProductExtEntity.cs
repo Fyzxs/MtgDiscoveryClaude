@@ -9,13 +9,16 @@ public sealed class UserSealedProductExtEntity : CosmosItem
     public override string Id => ProductUuid;
 
     [JsonProperty("partition")]
-    public override string Partition => CollectionId;
+    public override string Partition => UserId;
 
-    [JsonProperty("collection_id")]
-    public string CollectionId { get; init; }
+    [JsonProperty("user_id")]
+    public string UserId { get; init; }
 
     [JsonProperty("product_uuid")]
     public string ProductUuid { get; init; }
+
+    [JsonProperty("set_id")]
+    public string SetId { get; init; }
 
     [JsonProperty("count")]
     public int Count { get; init; }
@@ -29,8 +32,32 @@ public sealed class UserSealedProductExtEntity : CosmosItem
     [JsonProperty("category")]
     public string Category { get; init; }
 
+    [JsonProperty("subtype")]
+    public string Subtype { get; init; }
+
     [JsonProperty("image_url")]
     public string ImageUrl { get; init; }
+
+    [JsonProperty("release_date")]
+    public string ReleaseDate { get; init; }
+
+    [JsonProperty("set_name")]
+    public string SetName { get; init; }
+
+    [JsonProperty("tcgplayer_product_id")]
+    public string TcgplayerProductId { get; init; }
+
+    [JsonProperty("purchase_url_tcgplayer")]
+    public string PurchaseUrlTcgplayer { get; init; }
+
+    [JsonProperty("purchase_url_cardmarket")]
+    public string PurchaseUrlCardmarket { get; init; }
+
+    [JsonProperty("purchase_url_cardkingdom")]
+    public string PurchaseUrlCardKingdom { get; init; }
+
+    [JsonProperty("card_count")]
+    public int? CardCount { get; init; }
 
     [JsonProperty("updated_at")]
     public string UpdatedAt { get; init; }

@@ -1,17 +1,13 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
-using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.UserSealedProducts.Commands;
 
-/// <summary>
-/// Single-method service for adding a user sealed product to the collection.
-/// Delegates to aggregator layer for data persistence.
-/// Future: Could add business rules such as maximum quantity limits or product validation.
-/// </summary>
 internal sealed class AddUserSealedProductDomainService : IAddUserSealedProductDomainService
 {
     private readonly IUserSealedProductsAggregatorService _aggregator;
@@ -23,6 +19,6 @@ internal sealed class AddUserSealedProductDomainService : IAddUserSealedProductD
     private AddUserSealedProductDomainService(IUserSealedProductsAggregatorService aggregator) =>
         _aggregator = aggregator;
 
-    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input) =>
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input) =>
         await _aggregator.AddUserSealedProductAsync(input).ConfigureAwait(false);
 }
