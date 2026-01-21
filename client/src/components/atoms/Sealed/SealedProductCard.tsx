@@ -4,6 +4,8 @@ import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
+import { SealedCollectionBadge } from './SealedCollectionBadge';
+import { SealedProductCollectionEntry } from '../../molecules/Sealed/SealedProductCollectionEntry';
 
 // COMING_SOON placeholder image - shown while product image loads
 const COMING_SOON_URL = '/coming-soon.png';
@@ -11,6 +13,10 @@ const COMING_SOON_URL = '/coming-soon.png';
 interface SealedProductCardProps {
   product: SealedProduct;
   onProductClick?: (product: SealedProduct) => void;
+  // Collection tracking props
+  userQuantity?: number;
+  onQuantityChange?: (uuid: string, setId: string, delta: number) => void;
+  isUpdating?: boolean;
 }
 
 const formatCategory = (category: string | undefined): string => {
@@ -44,10 +50,14 @@ const getCategoryColor = (category: string | undefined): string => {
 export const SealedProductCard: React.FC<SealedProductCardProps> = ({
   product,
   onProductClick,
+  userQuantity = 0,
+  onQuantityChange,
+  isUpdating = false,
 }) => {
   const theme = useTheme();
   const categoryColor = getCategoryColor(product.category);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [entryOpen, setEntryOpen] = useState(false);
 
   // Lazy load images as they approach viewport
   const { ref: lazyRef, hasBeenInView } = useLazyLoad({
@@ -62,7 +72,17 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
     ? formatCategory(product.subtype)
     : formatCategory(product.category);
 
+  const handleBadgeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEntryOpen(true);
+  };
+
+  const handleQuantityChange = (delta: number) => {
+    onQuantityChange?.(product.uuid, product.setId, delta);
+  };
+
   return (
+    <>
     <Box
       ref={lazyRef}
       sx={{
@@ -106,6 +126,61 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           overflow: 'hidden',
         }}
       >
+        {/* Collection Badge - Top-left, shows when owned */}
+        {onQuantityChange && (
+          <SealedCollectionBadge
+            quantity={userQuantity}
+            onClick={handleBadgeClick}
+            isUpdating={isUpdating}
+          />
+        )}
+
+        {/* Type Badge (subtype or category) */}
+        {badgeLabel && (
+          <Chip
+            label={badgeLabel}
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: onQuantityChange && userQuantity > 0 ? { xs: 32, sm: 36 } : { xs: 6, sm: 8 },
+              left: { xs: 6, sm: 8 },
+              bgcolor: alpha(categoryColor, 0.9),
+              color: 'white',
+              fontSize: { xs: '0.6rem', sm: '0.65rem' },
+              fontWeight: 600,
+              height: { xs: 18, sm: 20 },
+              zIndex: 2,
+              '& .MuiChip-label': {
+                px: 1,
+              },
+            }}
+          />
+        )}
+
+        {/* Add "+" overlay on hover for non-owned (desktop only) */}
+        {onQuantityChange && userQuantity === 0 && (
+          <Box
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              position: 'absolute',
+              inset: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(0, 0, 0, 0.6)',
+              opacity: 0,
+              '&:hover': { opacity: 1 },
+              transition: 'opacity 0.2s',
+              cursor: 'pointer',
+              zIndex: 2,
+            }}
+            onClick={handleBadgeClick}
+          >
+            <Typography variant="h2" sx={{ color: 'white', userSelect: 'none' }}>
+              +
+            </Typography>
+          </Box>
+        )}
+
         {/* Product image - fades in over COMING_SOON background when loaded */}
         {product.imageUrl && hasBeenInView && (
           <Box
@@ -127,28 +202,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
-            }}
-          />
-        )}
-
-        {/* Type Badge (subtype or category) */}
-        {badgeLabel && (
-          <Chip
-            label={badgeLabel}
-            size="small"
-            sx={{
-              position: 'absolute',
-              top: { xs: 6, sm: 8 },
-              left: { xs: 6, sm: 8 },
-              bgcolor: alpha(categoryColor, 0.9),
-              color: 'white',
-              fontSize: { xs: '0.6rem', sm: '0.65rem' },
-              fontWeight: 600,
-              height: { xs: 18, sm: 20 },
-              zIndex: 2,
-              '& .MuiChip-label': {
-                px: 1,
-              },
             }}
           />
         )}
@@ -215,5 +268,18 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         </Stack>
       )}
     </Box>
+
+    {/* Collection Entry Modal */}
+    {onQuantityChange && (
+      <SealedProductCollectionEntry
+        productName={product.name}
+        currentQuantity={userQuantity}
+        onQuantityChange={handleQuantityChange}
+        open={entryOpen}
+        onClose={() => setEntryOpen(false)}
+        isUpdating={isUpdating}
+      />
+    )}
+    </>
   );
 };
