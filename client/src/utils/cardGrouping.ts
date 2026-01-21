@@ -6,17 +6,17 @@ import type { SetGrouping } from '../types/set';
  */
 export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean {
   const { filters } = grouping;
-  
-  
+
+
   // Check collector number range if specified
   if (filters.collectorNumberRange) {
     const { min, max, orConditions } = filters.collectorNumberRange;
     const cardNumber = card.collectorNumber;
-    
+
     if (!cardNumber) return false;
-    
+
     let matchesRange = false;
-    
+
     // Check if card matches the min-max range
     if (min !== null && max !== null) {
       // For range matching, we ALWAYS extract just the numeric part
@@ -26,20 +26,20 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         const match = cn.match(/^(\d+)/);
         return match ? parseInt(match[1], 10) : 0;
       };
-      
+
       const cardNum = getNumericValue(cardNumber);
       const minNum = getNumericValue(min);
       const maxNum = getNumericValue(max);
-      
+
       matchesRange = cardNum >= minNum && cardNum <= maxNum;
     }
-    
+
     // Check if card matches any of the OR conditions (specific collector numbers)
     let matchesOrCondition = false;
     if (orConditions && orConditions.length > 0) {
       // Normalize the card's collector number for comparison
       const normalizedCardNumber = cardNumber.toLowerCase().trim();
-      
+
       // Check if the card's collector number matches any of the OR conditions
       matchesOrCondition = orConditions.some(cn => {
         const normalizedCondition = cn.toLowerCase().trim();
@@ -47,15 +47,15 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         return matches;
       });
     }
-    
+
     // Card must match either the range OR one of the specific collector numbers
     const passesCollectorCheck = matchesRange || matchesOrCondition;
-    
+
     if (!passesCollectorCheck) {
       return false;
     }
   }
-  
+
   // Helper function to convert snake_case to camelCase
   const snakeToCamel = (str: string): string => {
     return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
@@ -92,10 +92,14 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
         // Direct property match or array contains
         // Handle special property mappings first
         let cardValue: any;
-        
+
         if (key === 'date') {
           // Map 'date' property to card's releasedAt field
           cardValue = card.releasedAt;
+        } else if (key === 'frame') {
+          // Frame filters should always check frameEffects array, not the direct frame property
+          // The card's frame property (e.g., "2015") is unrelated to frame filters (e.g., "extendedart")
+          cardValue = undefined;
         } else {
           // Try both the original key and the camelCase version
           cardValue = (card as any)[key];
@@ -105,7 +109,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
             cardValue = (card as any)[camelKey];
           }
         }
-        
+
         // Check direct property
         if (cardValue !== undefined) {
           // Boolean comparison
@@ -120,11 +124,11 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
           else if (cardValue !== value) {
             return false;
           }
-        } 
+        }
         // Check in array properties (finishes, frameEffects, promoTypes)
         else {
           let found = false;
-          
+
           // When value is boolean true, check if the key exists in arrays
           // When value is string, check if the value exists in arrays
           if (typeof value === 'boolean' && value === true) {
@@ -133,12 +137,12 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
             if (card.finishes && Array.isArray(card.finishes)) {
               found = card.finishes.some(f => f.toLowerCase() === key.toLowerCase());
             }
-            
+
             // Check in frameEffects array
             if (!found && card.frameEffects && Array.isArray(card.frameEffects)) {
               found = card.frameEffects.some(f => f.toLowerCase() === key.toLowerCase());
             }
-            
+
             // Check in promoTypes array
             if (!found && card.promoTypes && Array.isArray(card.promoTypes)) {
               found = card.promoTypes.some(p => p.toLowerCase() === key.toLowerCase());
@@ -149,18 +153,18 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
             if (card.finishes && Array.isArray(card.finishes)) {
               found = card.finishes.some(f => f.toLowerCase() === String(value).toLowerCase());
             }
-            
+
             // Check in frameEffects array
             if (!found && card.frameEffects && Array.isArray(card.frameEffects)) {
               found = card.frameEffects.some(f => f.toLowerCase() === String(value).toLowerCase());
             }
-            
+
             // Check in promoTypes array
             if (!found && card.promoTypes && Array.isArray(card.promoTypes)) {
               found = card.promoTypes.some(p => p.toLowerCase() === String(value).toLowerCase());
             }
           }
-          
+
           // Check special properties that map to arrays
           if (!found) {
             // Map special property names to array fields
@@ -170,7 +174,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
               found = card.borderColor.toLowerCase() === String(value).toLowerCase();
             }
           }
-          
+
           // For boolean false values, we want NOT found
           if (typeof value === 'boolean' && !value) {
             if (found) return false;
@@ -181,7 +185,7 @@ export function cardMatchesGrouping(card: Card, grouping: SetGrouping): boolean 
       }
     }
   }
-  
+
   // If we reach here, the card passed all filters (or there were no filters)
   return true;
 }
@@ -195,36 +199,36 @@ export function groupCardsBySetGroupings(
 ): Map<string, Card[]> {
   const grouped = new Map<string, Card[]>();
   const assignedCards = new Set<string>();
-  
+
   if (groupings && groupings.length > 0) {
     // Sort groupings by order (reverse - process from highest to lowest)
     const sortedGroupings = [...groupings].sort((a, b) => b.order - a.order);
-    
+
     // Assign cards to groups (processing backwards through the groups)
     for (const grouping of sortedGroupings) {
       const groupCards: Card[] = [];
-      
+
       for (const card of cards) {
         // Skip if card already assigned to a group
         if (assignedCards.has(card.id)) continue;
-        
+
         if (cardMatchesGrouping(card, grouping)) {
           groupCards.push(card);
           assignedCards.add(card.id);
         }
       }
-      
+
       // Add group even if empty (for debugging)
       grouped.set(grouping.id, groupCards);
     }
   }
-  
+
   // Add remaining unassigned cards to default "Cards" group
   const unassignedCards = cards.filter(card => !assignedCards.has(card.id));
   if (unassignedCards.length > 0 || grouped.size === 0) {
     grouped.set('default-cards', unassignedCards);
   }
-  
+
   return grouped;
 }
 
@@ -233,7 +237,7 @@ export function groupCardsBySetGroupings(
  */
 export function getGroupDisplayName(groupId: string, groupings?: SetGrouping[]): string {
   if (groupId === 'default-cards') return 'Cards';
-  
+
   const grouping = groupings?.find(g => g.id === groupId);
   return grouping?.displayName || 'Cards';
 }
@@ -243,7 +247,7 @@ export function getGroupDisplayName(groupId: string, groupings?: SetGrouping[]):
  */
 export function getGroupOrder(groupId: string, groupings?: SetGrouping[]): number {
   if (groupId === 'default-cards') return 999999; // Put default group last
-  
+
   const grouping = groupings?.find(g => g.id === groupId);
   return grouping?.order ?? 999999;
 }
