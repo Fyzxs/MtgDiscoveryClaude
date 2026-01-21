@@ -1456,7 +1456,7 @@ SealedProductsEntryService = sealedProductsEntryService;
 ## Phase 7: GraphQL Layer
 
 ### Task 7.1: Create SealedProducts GraphQL ArgEntity
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 2.1
 **Location:** `src/App.MtgDiscovery.GraphQL/Entities/Args/SealedProducts/`
 
@@ -1484,7 +1484,7 @@ public sealed class GetSealedProductsBySetCodeArgEntity : ISealedProductsBySetCo
 ---
 
 ### Task 7.2: Create SealedProducts Args Mapper
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 7.1
 **Location:** `src/App.MtgDiscovery.GraphQL/Actions/Mappers/`
 
@@ -1528,7 +1528,7 @@ internal sealed class GetSealedProductsBySetCodeArgsMapper : IGetSealedProductsB
 ---
 
 ### Task 7.3: Create SealedProductType
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 6.1
 **Location:** `src/App.MtgDiscovery.GraphQL/Entities/Types/SealedProducts/`
 
@@ -1575,7 +1575,7 @@ public sealed class SealedProductType : ObjectType<SealedProductOutEntity>
 ---
 
 ### Task 7.4: Create SealedProducts ResponseModel Types
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 7.3
 **Location:** `src/App.MtgDiscovery.GraphQL/Entities/Types/ResponseModels/`
 
@@ -1631,7 +1631,7 @@ public sealed class SealedProductsResponseModelUnionType
 ---
 
 ### Task 7.5: Create SealedProductsQueryMethods
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 6.8, 7.2, 7.4
 **Location:** `src/App.MtgDiscovery.GraphQL/Queries/`
 
@@ -1687,7 +1687,7 @@ public sealed class SealedProductsQueryMethods
 ---
 
 ### Task 7.6: Register GraphQL Types in Startup
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 7.5
 **Location:** `src/App.MtgDiscovery.GraphQL/Startup.cs`
 

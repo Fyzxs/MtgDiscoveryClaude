@@ -98,6 +98,7 @@ internal sealed class Startup
             .AddApiMutation()
             .AddSetSchemaExtensions()
             .AddArtistSchemaExtensions()
+            .AddSealedProductsSchemaExtensions()
             .AddAuthorization()
             .AddErrorFilter<HttpStatusCodeErrorFilter>()
             .ModifyRequestOptions(opt =>
