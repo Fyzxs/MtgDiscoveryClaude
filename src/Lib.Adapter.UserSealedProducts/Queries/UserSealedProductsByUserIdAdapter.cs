@@ -22,10 +22,10 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
         ICosmosInquisitor userSealedProductsInquisitor) =>
         _userSealedProductsInquisitor = userSealedProductsInquisitor;
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string userId)
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string collectionId)
     {
         QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c");
-        PartitionKey partitionKey = new PartitionKey(userId);
+        PartitionKey partitionKey = new PartitionKey(collectionId);
 
         OpResponse<IEnumerable<UserSealedProductExtEntity>> response =
             await _userSealedProductsInquisitor.QueryAsync<UserSealedProductExtEntity>(queryDefinition, partitionKey)

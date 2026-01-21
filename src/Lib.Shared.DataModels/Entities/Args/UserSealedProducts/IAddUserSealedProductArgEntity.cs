@@ -3,13 +3,21 @@ namespace Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
 /// <summary>
 /// Represents the argument entity for adding or updating a user's sealed product collection entry.
 /// Used when a user adds, removes, or modifies their sealed product inventory.
+/// Includes both UserId (from JWT) and CollectionId (from client) for authorization validation.
 /// </summary>
 public interface IAddUserSealedProductArgEntity : Abstractions.IArgEntity
 {
     /// <summary>
-    /// The unique identifier of the user who owns this sealed product collection entry.
+    /// The unique identifier of the authenticated user (extracted from JWT token).
+    /// Used to validate that the user has permission to modify the specified collection.
     /// </summary>
     string UserId { get; }
+
+    /// <summary>
+    /// The unique identifier of the collection being modified (provided by client).
+    /// The backend validates that UserId has permission to access this collection.
+    /// </summary>
+    string CollectionId { get; }
 
     /// <summary>
     /// The unique identifier (UUID) of the sealed product being added to the collection.

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 
 // TODO: Replace with actual generated types after running codegen
 // import { useAddUserSealedProductMutation } from '../generated/graphql';
@@ -97,10 +97,11 @@ export function useSealedProductCollection(): UseSealedProductCollectionReturn {
     ): Promise<boolean> => {
       // Track original value for rollback on error
       let originalQuantity: number | null = null;
+      let cacheId: string | undefined;
 
       try {
         // Step 1: Optimistically update Apollo cache
-        const cacheId = apolloClient.cache.identify({
+        cacheId = apolloClient.cache.identify({
           __typename: 'SealedProduct',
           uuid: productUuid,
         });
