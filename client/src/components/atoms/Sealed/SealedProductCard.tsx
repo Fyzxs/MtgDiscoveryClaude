@@ -67,6 +67,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
     <Box
       ref={lazyRef}
       sx={{
+        position: 'relative',
         width: '100%',
         // Mobile/tablet: image-only height, Desktop: include info section
         height: {
