@@ -12,10 +12,11 @@ public sealed class UserCardsByIdsArgEntityInputType : InputObjectType<UserCards
             .Description("Input for querying user cards by card IDs");
 
         _ = descriptor.Field(x => x.UserId)
+            .Name("userId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the user");
-
         _ = descriptor.Field(x => x.CardIds)
+            .Name("cardIds")
             .Type<NonNullType<ListType<NonNullType<StringType>>>>()
             .Description("The collection of card IDs to query");
     }

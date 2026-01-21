@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.User;
 
@@ -12,10 +12,11 @@ public sealed class UserRegistrationOutEntityType : ObjectType<UserRegistrationO
             .Description("A user registration result");
 
         descriptor.Field(f => f.UserId)
+            .Name("userId")
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier for the user");
-
         descriptor.Field(f => f.DisplayName)
+            .Name("displayName")
             .Type<NonNullType<StringType>>()
             .Description("The display name of the user");
     }
