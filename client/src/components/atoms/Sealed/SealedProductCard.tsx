@@ -1,22 +1,19 @@
 import React, { useRef, useCallback } from 'react';
-import { Box, Typography, Chip, Stack, Card as MuiCard } from '@mui/material';
+import { Box, Stack, Card as MuiCard, Chip, Typography } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
-import { LastDeltaBadge } from '../Cards/LastDeltaBadge';
+import { LastDeltaBadge } from './LastDeltaBadge';
 import { useSealedCollection } from '../../../contexts/SealedCollectionContext';
 import { useSealedProductCollectionActions } from '../../../hooks/useSealedProductCollectionActions';
 import { useSealedProductInteractions } from '../../../hooks/useSealedProductInteractions';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
+import { SealedProductOverlay } from '../../molecules/Sealed/SealedProductOverlay';
+import { SealedCollectionSummary } from '../../molecules/Sealed/SealedCollectionSummary';
+import type { SealedProductContext } from '../../../types/sealedProduct';
 
 // COMING_SOON placeholder image - shown while product image loads
 const COMING_SOON_URL = '/coming-soon.png';
-
-interface SealedProductCardProps {
-  product: SealedProduct;
-  index: number;
-  onProductClick?: (product: SealedProduct) => void;
-}
 
 const formatCategory = (category: string | undefined): string => {
   if (!category) {
@@ -46,13 +43,21 @@ const getCategoryColor = (category: string | undefined): string => {
   }
 };
 
+interface SealedProductCardProps {
+  product: SealedProduct;
+  index: number;
+  context?: SealedProductContext;
+  onProductClick?: (product: SealedProduct) => void;
+}
+
+
 export const SealedProductCard: React.FC<SealedProductCardProps> = ({
   product,
   index,
+  context = {},
   onProductClick,
 }) => {
   const theme = useTheme();
-  const categoryColor = getCategoryColor(product.category);
   const [imageLoaded, setImageLoaded] = React.useState(false);
   const productRef = useRef<HTMLDivElement>(null);
   const { getLastDelta, lastDeltaVersion } = useSealedCollection();
@@ -88,11 +93,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
 
   const hasPurchaseLinks = product.purchaseUrlTcgplayer || product.purchaseUrlCardmarket || product.purchaseUrlCardKingdom;
 
-  // Determine badge label: use subtype if available and not "default", otherwise use category
-  const badgeLabel = product.subtype && product.subtype.toLowerCase() !== 'default'
-    ? formatCategory(product.subtype)
-    : formatCategory(product.category);
-
   // Wrap handleProductClick to pass product and onProductClick
   const handleClick = useCallback((e: React.MouseEvent) => {
     handleProductClick(e, onProductClick, product);
@@ -100,6 +100,13 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
 
   // Get last delta for badge
   const lastDelta = getLastDelta(product.uuid);
+
+  // Determine badge label: use subtype if available and not "default", otherwise use category
+  const badgeLabel = product.subtype && product.subtype.toLowerCase() !== 'default'
+    ? formatCategory(product.subtype)
+    : formatCategory(product.category);
+
+  const categoryColor = getCategoryColor(product.category);
 
   // Quantity for display
   const quantity = product.userQuantity || 0;
@@ -139,7 +146,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         '&:hover': {
           transform: 'translateY(-4px)',
           boxShadow: theme.shadows[8],
-          borderColor: alpha(categoryColor, 0.5),
         },
         // Selected state
         '&[data-selected="true"]': {
@@ -197,15 +203,15 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           />
         )}
 
-        {/* Type Badge (subtype or category) */}
-        {badgeLabel && (
+        {/* Type Badge (subtype or category) - Fixed position at top-right */}
+        {badgeLabel && !context.hideCategory && (
           <Chip
             label={badgeLabel}
             size="small"
             sx={{
               position: 'absolute',
-              top: lastDelta !== undefined ? { xs: 32, sm: 36 } : { xs: 6, sm: 8 },
-              left: { xs: 6, sm: 8 },
+              top: { xs: 6, sm: 8 },
+              right: { xs: 6, sm: 8 },
               bgcolor: alpha(categoryColor, 0.9),
               color: 'white',
               fontSize: { xs: '0.6rem', sm: '0.65rem' },
@@ -243,9 +249,16 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             }}
           />
         )}
+
+        {/* Sealed Product Overlay - Only category and release date */}
+        <SealedProductOverlay
+          releaseDate={product.releaseDate}
+          context={context}
+          variant="full"
+        />
       </Box>
 
-      {/* Product Info */}
+      {/* Product Info - Grey box below image */}
       <Box
         sx={{
           p: { xs: 1, sm: 1.5 },
@@ -253,7 +266,8 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 0.5,
         }}
       >
         {/* Product Name - 2-line truncation */}
@@ -274,18 +288,15 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
           {product.name}
         </Typography>
 
-        {/* Quantity Display - Always show when userQuantity data is available */}
-        <Typography
-          sx={{
-            fontSize: { xs: '0.7rem', sm: '0.75rem' },
-            color: quantity > 0 ? 'success.main' : 'error.main',
-            textAlign: 'center',
-            mt: 0.5,
-            fontWeight: 600,
-          }}
-        >
-          {quantity > 0 ? `Qty: ${quantity}` : '⭕'}
-        </Typography>
+        {/* Collection Badge - Always show when hasCollector */}
+        {context.hasCollector && (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <SealedCollectionSummary
+              quantity={quantity}
+              size="small"
+            />
+          </Box>
+        )}
       </Box>
 
       {/* Purchase Links - Desktop only */}

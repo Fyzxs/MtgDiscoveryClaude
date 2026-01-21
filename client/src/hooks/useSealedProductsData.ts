@@ -90,5 +90,27 @@ export const useSealedProductsData = (
     fetchSealedProducts();
   }, [setCode, isActive, apolloClient, collectorId]);
 
+  // Listen for collection updates and sync state from Apollo cache
+  useEffect(() => {
+    const handleCollectionUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ productUuid: string; setId: string; userQuantity: number }>;
+      const { productUuid, userQuantity } = customEvent.detail;
+
+      console.log('[SealedProducts] Collection update event:', { productUuid, userQuantity });
+
+      // Update local state to trigger re-render
+      setSealedProducts(prevProducts =>
+        prevProducts.map(product =>
+          product.uuid === productUuid
+            ? { ...product, userQuantity }
+            : product
+        )
+      );
+    };
+
+    window.addEventListener('collection-updated', handleCollectionUpdate);
+    return () => window.removeEventListener('collection-updated', handleCollectionUpdate);
+  }, []);
+
   return { sealedProducts, loading, error };
 };

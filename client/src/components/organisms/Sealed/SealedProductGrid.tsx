@@ -3,11 +3,14 @@ import { Box, Typography, CircularProgress } from '@mui/material';
 import { SealedProductCard } from '../../atoms/Sealed/SealedProductCard';
 import { useSealedProductGridNavigation } from '../../../hooks/useSealedProductGridNavigation';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
+import type { SealedProductContext } from '../../../types/sealedProduct';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
 
 interface SealedProductGridProps {
   products: SealedProduct[];
   loading?: boolean;
   error?: Error | null;
+  context?: SealedProductContext;
   onProductClick?: (product: SealedProduct) => void;
 }
 
@@ -15,13 +18,22 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
   products,
   loading = false,
   error = null,
+  context: providedContext,
   onProductClick,
 }) => {
+  const { collectorId } = useCollectorParam();
   // Enable keyboard navigation
   const { handleKeyDown } = useSealedProductGridNavigation({
     totalItems: products.length,
     enabled: !loading && !error && products.length > 0
   });
+
+  // Build context with user collector status
+  const context: SealedProductContext = {
+    ...providedContext,
+    hasCollector: Boolean(collectorId)
+  };
+
   if (loading) {
     return (
       <Box
@@ -98,6 +110,7 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
           <SealedProductCard
             product={product}
             index={index}
+            context={context}
             onProductClick={onProductClick}
           />
         </Box>
