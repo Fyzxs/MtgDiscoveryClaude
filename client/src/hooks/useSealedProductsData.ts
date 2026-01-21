@@ -17,6 +17,7 @@ export interface SealedProduct {
   purchaseUrlTcgplayer?: string;
   purchaseUrlCardmarket?: string;
   purchaseUrlCardKingdom?: string;
+  userQuantity?: number;
 }
 
 interface SealedProductsResponse {

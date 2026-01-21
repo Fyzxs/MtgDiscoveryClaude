@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { SealedProductCard } from '../../atoms/Sealed/SealedProductCard';
+import { useSealedProductCollection } from '../../../hooks/useSealedProductCollection';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
 
 interface SealedProductGridProps {
@@ -16,6 +17,11 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
   error = null,
   onProductClick,
 }) => {
+  const { updateQuantity, isUpdating } = useSealedProductCollection();
+
+  const handleQuantityChange = async (uuid: string, setId: string, delta: number) => {
+    await updateQuantity(uuid, setId, delta);
+  };
   if (loading) {
     return (
       <Box
@@ -88,6 +94,9 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
           <SealedProductCard
             product={product}
             onProductClick={onProductClick}
+            userQuantity={product.userQuantity}
+            onQuantityChange={handleQuantityChange}
+            isUpdating={isUpdating}
           />
         </Box>
       ))}
