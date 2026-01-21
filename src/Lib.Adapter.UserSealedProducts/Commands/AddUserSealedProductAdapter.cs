@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Mappers.UserSealedProducts;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
@@ -22,26 +23,33 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 {
     private readonly ICosmosGopher _sealedProductsGopher;
     private readonly UserSealedProductsScribe _userSealedProductsScribe;
-    private readonly IUserSealedProductMapper _mapper;
+    private readonly IUserSealedProductReadPointMapper _readPointMapper;
+    private readonly IUserSealedProductOufMapper _oufMapper;
 
     public AddUserSealedProductAdapter(ILogger logger)
-        : this(new SealedProductsGopher(logger), new UserSealedProductsScribe(logger), new UserSealedProductMapper())
+        : this(
+            new SealedProductsGopher(logger),
+            new UserSealedProductsScribe(logger),
+            new UserSealedProductReadPointMapper(),
+            new UserSealedProductOufMapper())
     { }
 
     private AddUserSealedProductAdapter(
         ICosmosGopher sealedProductsGopher,
         UserSealedProductsScribe userSealedProductsScribe,
-        IUserSealedProductMapper mapper)
+        IUserSealedProductReadPointMapper readPointMapper,
+        IUserSealedProductOufMapper oufMapper)
     {
         _sealedProductsGopher = sealedProductsGopher;
         _userSealedProductsScribe = userSealedProductsScribe;
-        _mapper = mapper;
+        _readPointMapper = readPointMapper;
+        _oufMapper = oufMapper;
     }
 
     public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(
         [NotNull] IUserSealedProductXfrEntity input)
     {
-        ReadPointItem productReadPoint = _mapper.MapToReadPoint(input.ProductUuid, input.SetId);
+        ReadPointItem productReadPoint = await _readPointMapper.Map(input.ProductUuid, input.SetId).ConfigureAwait(false);
 
         OpResponse<SealedProductExtEntity> productResponse =
             await _sealedProductsGopher.ReadAsync<SealedProductExtEntity>(productReadPoint).ConfigureAwait(false);
@@ -79,18 +87,8 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
 
         UserSealedProductExtEntity result = upsertResponse.Value;
 
-        IUserSealedProductOufEntity oufEntity = new UserSealedProductOufEntity
-        {
-            ProductUuid = result.ProductUuid,
-            Count = result.Count
-        };
+        IUserSealedProductOufEntity oufEntity = await _oufMapper.Map(result).ConfigureAwait(false);
 
         return new SuccessOperationResponse<IUserSealedProductOufEntity>(oufEntity);
     }
-}
-
-internal sealed class UserSealedProductOufEntity : IUserSealedProductOufEntity
-{
-    public string ProductUuid { get; init; }
-    public int Count { get; init; }
 }
