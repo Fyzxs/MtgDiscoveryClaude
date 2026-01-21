@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.ErrorTracking;
+﻿namespace Cli.MtgDiscovery.DataMigration.ErrorTracking;
 
-public sealed class MigrationError
+internal sealed class MigrationError
 {
     public required string OldCardId { get; init; }
     public required string ScryfallId { get; init; }

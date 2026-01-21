@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.Configuration;
+﻿namespace Cli.MtgDiscovery.DataMigration.Configuration;
 
-public sealed class MigrationConfiguration
+internal sealed class MigrationConfiguration
 {
     public required string SourceCollectorId { get; init; }
     public required string TargetUserId { get; init; }

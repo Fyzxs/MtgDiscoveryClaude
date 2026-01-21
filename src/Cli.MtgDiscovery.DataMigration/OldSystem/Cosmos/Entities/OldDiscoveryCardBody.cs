@@ -1,21 +1,21 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 
-public sealed class OldDiscoveryCardBody
+internal sealed class OldDiscoveryCardBody
 {
     [JsonProperty("scryfall_id")]
-    public required string scryfall_id { get; init; }
+    public required string ScryfallId { get; init; }
 
     [JsonProperty("set_id")]
-    public required string set_id { get; init; }
+    public required string SetId { get; init; }
 
     [JsonProperty("foil")]
-    public required bool foil { get; init; }
+    public required bool Foil { get; init; }
 
     [JsonProperty("nonfoil")]
-    public required bool nonfoil { get; init; }
+    public required bool Nonfoil { get; init; }
 
     [JsonProperty("etched")]
-    public required bool etched { get; init; }
+    public required bool Etched { get; init; }
 }

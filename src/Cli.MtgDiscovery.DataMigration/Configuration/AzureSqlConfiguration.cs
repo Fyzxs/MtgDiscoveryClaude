@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.Configuration;
+﻿namespace Cli.MtgDiscovery.DataMigration.Configuration;
 
-public sealed class AzureSqlConfiguration
+internal sealed class AzureSqlConfiguration
 {
     public required string ConnectionString { get; init; }
 }

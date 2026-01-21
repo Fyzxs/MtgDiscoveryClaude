@@ -1,6 +1,6 @@
-namespace Cli.MtgDiscovery.DataMigration.Migration;
+﻿namespace Cli.MtgDiscovery.DataMigration.Migration;
 
-public sealed class MigrationResult
+internal sealed class MigrationResult
 {
     public required int TotalRecords { get; init; }
     public required int SuccessfulMigrations { get; init; }
