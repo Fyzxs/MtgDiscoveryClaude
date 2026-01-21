@@ -21,17 +21,46 @@ public sealed class ScryfallBulkIngestionApplication : ExampleApplication
         IDashboardFactory dashboardFactory = new DashboardFactory();
         IIngestionDashboard dashboard = dashboardFactory.Create(logger);
 
-        try
+        // Check if this is a RazorConsole dashboard
+        if (dashboard is Lib.Scryfall.Ingestion.Dashboard.RazorConsoleDashboard razorDashboard)
         {
-            // Run the actual bulk ingestion - dashboard implements ILogger
-            IBulkIngestionService bulkIngestionService = new BulkIngestionService(dashboard, dashboard);
-            await bulkIngestionService.IngestBulkDataAsync().ConfigureAwait(false);
+            // For RazorConsole: Run ingestion in background, UI on main thread
+            Task ingestionTask = Task.Run(async () =>
+            {
+                try
+                {
+                    IBulkIngestionService bulkIngestionService = new BulkIngestionService(dashboard, dashboard);
+                    await bulkIngestionService.IngestBulkDataAsync().ConfigureAwait(false);
+                }
+#pragma warning disable CA1031 // Swallow exception to pass to UI
+                catch (Exception ex)
+#pragma warning restore CA1031
+                {
+                    logger.LogError(ex, "Fatal error during bulk ingestion");
+                    dashboard.Complete($"Ingestion failed: {ex.Message}");
+                }
+            });
+
+            // Run RazorConsole UI on main thread (blocking)
+            await razorDashboard.RunUIAsync().ConfigureAwait(false);
+
+            // Wait for ingestion to complete
+            await ingestionTask.ConfigureAwait(false);
         }
-        catch (Exception ex)
+        else
         {
-            logger.LogError(ex, "Fatal error during bulk ingestion");
-            dashboard.Complete($"Ingestion failed: {ex.Message}");
-            throw;
+            // For regular dashboard: Run normally
+            try
+            {
+                IBulkIngestionService bulkIngestionService = new BulkIngestionService(dashboard, dashboard);
+                await bulkIngestionService.IngestBulkDataAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Fatal error during bulk ingestion");
+                dashboard.Complete($"Ingestion failed: {ex.Message}");
+                throw;
+            }
         }
     }
 

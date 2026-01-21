@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -119,7 +118,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
                 Data = set.Data()
             };
 
-            await _setScribe.UpsertAsync(entity).ConfigureAwait(false);
+            _ = await _setScribe.UpsertAsync(entity).ConfigureAwait(false);
 
             // Write SetCodeIndex (mapping set code to set ID)
             ScryfallSetCodeIndexExtEntity codeIndex = new()
@@ -127,7 +126,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
                 SetCode = set.Code(),
                 SetId = set.Id()
             };
-            await _setCodeIndexScribe.UpsertAsync(codeIndex).ConfigureAwait(false);
+            _ = await _setCodeIndexScribe.UpsertAsync(codeIndex).ConfigureAwait(false);
 
             // Write SetAssociation if this set has a parent
             if (set.HasParentSet())
@@ -139,7 +138,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
                     SetCode = set.Code(),
                     SetName = set.Name()
                 };
-                await _setParentAssociationsScribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
+                _ = await _setParentAssociationsScribe.UpsertAsync(parentAssociationItem).ConfigureAwait(false);
             }
 
             _dashboard.AddCompletedSet(set.Name());
