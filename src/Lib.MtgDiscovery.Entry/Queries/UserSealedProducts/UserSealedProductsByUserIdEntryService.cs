@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lib.Domain.UserSealedProducts.Queries;
+using Lib.Domain.UserSealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.UserSealedProducts;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
@@ -15,18 +15,18 @@ namespace Lib.MtgDiscovery.Entry.Queries.UserSealedProducts;
 /// </summary>
 internal sealed class UserSealedProductsByUserIdEntryService : IUserSealedProductsByUserIdEntryService
 {
-    private readonly IUserSealedProductsByUserIdDomainService _domainService;
+    private readonly IUserSealedProductsQueryDomainService _domainService;
     private readonly IUserIdItrValidator _validator;
 
     public UserSealedProductsByUserIdEntryService(ILogger logger)
         : this(
-            new UserSealedProductsByUserIdDomainService(logger),
+            new UserSealedProductsDomainService(logger),
             new UserIdItrValidatorContainer())
     {
     }
 
     private UserSealedProductsByUserIdEntryService(
-        IUserSealedProductsByUserIdDomainService domainService,
+        IUserSealedProductsQueryDomainService domainService,
         IUserIdItrValidator validator)
     {
         _domainService = domainService;
@@ -41,6 +41,6 @@ internal sealed class UserSealedProductsByUserIdEntryService : IUserSealedProduc
         IValidatorActionResult<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> validatorResult = await _validator.Validate(userIdItr).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return validatorResult.FailureStatus();
 
-        return await _domainService.Execute(userIdItr).ConfigureAwait(false);
+        return await _domainService.UserSealedProductsByUserIdAsync(userIdItr).ConfigureAwait(false);
     }
 }
