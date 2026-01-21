@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis;
+using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Aggregator.Sets.Apis;
 using Lib.Aggregator.Sets.Entities;
 using Lib.Aggregator.Sets.Exceptions;
@@ -16,23 +17,32 @@ internal sealed class QuerySetAggregatorService : ISetAggregatorService
 {
     private readonly ISetAdapterService _setAdapterService;
     private readonly ICollectionSetItemExtToItrMapper _setItemMapper;
+    private readonly ISetIdsItrToXfrMapper _setIdsItrToXfrMapper;
+    private readonly ISetCodesItrToXfrMapper _setCodesItrToXfrMapper;
 
     public QuerySetAggregatorService(ILogger logger) : this(
         new SetAdapterService(logger),
-        new CollectionSetItemExtToItrMapper())
+        new CollectionSetItemExtToItrMapper(),
+        new SetIdsItrToXfrMapper(),
+        new SetCodesItrToXfrMapper())
     { }
 
     private QuerySetAggregatorService(
         ISetAdapterService setAdapterService,
-        ICollectionSetItemExtToItrMapper setItemMapper)
+        ICollectionSetItemExtToItrMapper setItemMapper,
+        ISetIdsItrToXfrMapper setIdsItrToXfrMapper,
+        ISetCodesItrToXfrMapper setCodesItrToXfrMapper)
     {
         _setAdapterService = setAdapterService;
         _setItemMapper = setItemMapper;
+        _setIdsItrToXfrMapper = setIdsItrToXfrMapper;
+        _setCodesItrToXfrMapper = setCodesItrToXfrMapper;
     }
 
     public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsAsync(ISetIdsItrEntity args)
     {
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetSetsByIdsAsync(args).ConfigureAwait(false);
+        ISetIdsXfrEntity xfrEntity = await _setIdsItrToXfrMapper.Map(args).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetSetsByIdsAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -46,7 +56,8 @@ internal sealed class QuerySetAggregatorService : ISetAggregatorService
 
     public async Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesItrEntity args)
     {
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetSetsByCodesAsync(args).ConfigureAwait(false);
+        ISetCodesXfrEntity xfrEntity = await _setCodesItrToXfrMapper.Map(args).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.GetSetsByCodesAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
