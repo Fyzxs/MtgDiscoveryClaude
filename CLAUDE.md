@@ -635,3 +635,9 @@ az repos pr show --id <pr-id>
 
 @CLAUDE.sessions.md
 - Never run the systems being built.
+
+## Active Technologies
+- TypeScript (React 19, modern ES2020+) (001-auth-refactoring)
+
+## Recent Changes
+- 001-auth-refactoring: Added TypeScript (React 19, modern ES2020+)
