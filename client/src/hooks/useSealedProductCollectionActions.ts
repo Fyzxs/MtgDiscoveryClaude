@@ -3,6 +3,7 @@ import type { RefObject } from 'react';
 import { useSealedCollection } from '../contexts/SealedCollectionContext';
 import { useSealedProductCollectionEntry } from '../hooks/useSealedProductCollectionEntry';
 import type { SealedProductCollectionUpdate } from '../contexts/SealedCollectionContext';
+import type { SealedProductOverlayState } from '../hooks/useSealedProductCollectionEntry';
 
 interface SealedProductCollectionActionsProps {
   productUuid: string;
@@ -52,7 +53,7 @@ export const useSealedProductCollectionActions = ({
   }, [productName]);
 
   // Collection entry hook
-  useSealedProductCollectionEntry({
+  const { overlayState } = useSealedProductCollectionEntry({
     productUuid,
     setId,
     isSelected,
@@ -60,6 +61,7 @@ export const useSealedProductCollectionActions = ({
   });
 
   return {
-    handleSealedProductSubmit
+    handleSealedProductSubmit,
+    overlayState
   };
 };
