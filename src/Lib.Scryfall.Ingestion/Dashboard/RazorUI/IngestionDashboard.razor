@@ -79,7 +79,7 @@
             @if (State.IsComplete)
             {
                 <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
-                    <Markup Content=" Press [X] to Exit " Foreground="@Color.White" />
+                    <Markup Content=" Exiting in 2 seconds... (or press [X] to exit now) " Foreground="@Color.White" />
                 </Border>
             }
             else
@@ -109,6 +109,13 @@
             }
 
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+
+            // Auto-exit after showing completion message
+            if (State.IsComplete)
+            {
+                await Task.Delay(2000).ConfigureAwait(false);
+                Environment.Exit(0);
+            }
         });
 
         // Start key listener task
