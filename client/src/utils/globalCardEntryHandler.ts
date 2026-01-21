@@ -219,8 +219,8 @@ class GlobalCardEntryHandler {
       const specialMap: Record<string, CardSpecial> = {
         'g': 'signed',
         'i': 'signed',
-        'r': 'artist-proof',
-        'p': 'artist-proof',
+        'r': 'proof',
+        'p': 'proof',
         't': 'altered',
         'm': 'altered'
       };
@@ -248,6 +248,36 @@ class GlobalCardEntryHandler {
     if (state.count === '') {
       handler.onFlashInvalid();
       return;
+    }
+
+    let count = parseInt(state.count, 10);
+    if (state.isNegative) {
+      count = -count;
+    }
+
+    // Capture values BEFORE resetting
+    const finish = state.finish;
+    const special = state.special;
+
+    // Hide overlay immediately for instant feedback
+    this.reset(cardId);
+
+    // Submit the update (async - happens in background)
+    perfMonitor.start('card-entry-submit');
+    try {
+      await handler.onSubmit({
+        cardId: handler.cardId,
+        count,
+        finish,
+        special,
+        setId: '', // Will be filled in by the onSubmit handler
+        setCode: '',
+        setGroupId: null
+      });
+    } catch (error) {
+      logger.error('Failed to submit card entry:', error);
+    } finally {
+      perfMonitor.end('card-entry-submit');
     }
 
     let count = parseInt(state.count, 10);

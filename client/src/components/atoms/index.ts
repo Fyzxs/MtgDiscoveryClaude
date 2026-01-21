@@ -5,80 +5,80 @@
 // Import these instead of @mui/material directly
 
 // Layout Components
-export { default as Box } from './Box';
-export { default as Container } from './Container';
-export { default as Stack } from './Stack';
-export { default as Paper } from './Paper';
-export { default as Divider } from './Divider';
-export { default as Grid } from './Grid';
+export { default as Box } from './mui-wrappers/Box';
+export { default as Container } from './mui-wrappers/Container';
+export { default as Stack } from './mui-wrappers/Stack';
+export { default as Paper } from './mui-wrappers/Paper';
+export { default as Divider } from './mui-wrappers/Divider';
+export { default as Grid } from './mui-wrappers/Grid';
 
 // Typography
-export { default as Typography } from './Typography';
+export { default as Typography } from './mui-wrappers/Typography';
 
 // Navigation
-export { default as AppBar } from './AppBar';
-export { default as Toolbar } from './Toolbar';
-export { default as Menu } from './Menu';
+export { default as AppBar } from './mui-wrappers/AppBar';
+export { default as Toolbar } from './mui-wrappers/Toolbar';
+export { default as Menu } from './mui-wrappers/Menu';
 
 // Buttons
-export { default as Button } from './Button';
-export { default as IconButton } from './IconButton';
-export { default as Fab } from './Fab';
-export { default as ToggleButton } from './ToggleButton';
-export { default as ToggleButtonGroup } from './ToggleButtonGroup';
+export { default as Button } from './mui-wrappers/Button';
+export { default as IconButton } from './mui-wrappers/IconButton';
+export { default as Fab } from './mui-wrappers/Fab';
+export { default as ToggleButton } from './mui-wrappers/ToggleButton';
+export { default as ToggleButtonGroup } from './mui-wrappers/ToggleButtonGroup';
 
 // Form Components
-export { default as TextField } from './TextField';
-export { default as Select } from './Select';
-export { default as Checkbox } from './Checkbox';
-export { default as Switch } from './Switch';
-export { default as FormControl } from './FormControl';
-export { default as FormControlLabel } from './FormControlLabel';
-export { default as InputLabel } from './InputLabel';
-export { default as InputAdornment } from './InputAdornment';
-export { default as MenuItem } from './MenuItem';
-export { default as Autocomplete } from './Autocomplete';
+export { default as TextField } from './mui-wrappers/TextField';
+export { default as Select } from './mui-wrappers/Select';
+export { default as Checkbox } from './mui-wrappers/Checkbox';
+export { default as Switch } from './mui-wrappers/Switch';
+export { default as FormControl } from './mui-wrappers/FormControl';
+export { default as FormControlLabel } from './mui-wrappers/FormControlLabel';
+export { default as InputLabel } from './mui-wrappers/InputLabel';
+export { default as InputAdornment } from './mui-wrappers/InputAdornment';
+export { default as MenuItem } from './mui-wrappers/MenuItem';
+export { default as Autocomplete } from './mui-wrappers/Autocomplete';
 
 // Feedback
-export { default as Alert } from './Alert';
-export { default as CircularProgress } from './CircularProgress';
-export { default as LinearProgress } from './LinearProgress';
-export { default as Skeleton } from './Skeleton';
+export { default as Alert } from './mui-wrappers/Alert';
+export { default as CircularProgress } from './mui-wrappers/CircularProgress';
+export { default as LinearProgress } from './mui-wrappers/LinearProgress';
+export { default as Skeleton } from './mui-wrappers/Skeleton';
 
 // Dialog Components
-export { default as Dialog } from './Dialog';
-export { default as DialogTitle } from './DialogTitle';
-export { default as DialogContent } from './DialogContent';
-export { default as DialogActions } from './DialogActions';
+export { default as Dialog } from './mui-wrappers/Dialog';
+export { default as DialogTitle } from './mui-wrappers/DialogTitle';
+export { default as DialogContent } from './mui-wrappers/DialogContent';
+export { default as DialogActions } from './mui-wrappers/DialogActions';
 
 // List Components
-export { default as List } from './List';
-export { default as ListItem } from './ListItem';
-export { default as ListItemButton } from './ListItemButton';
-export { default as ListItemIcon } from './ListItemIcon';
-export { default as ListItemText } from './ListItemText';
+export { default as List } from './mui-wrappers/List';
+export { default as ListItem } from './mui-wrappers/ListItem';
+export { default as ListItemButton } from './mui-wrappers/ListItemButton';
+export { default as ListItemIcon } from './mui-wrappers/ListItemIcon';
+export { default as ListItemText } from './mui-wrappers/ListItemText';
 
 // Card Components
-export { default as Card } from './Card';
-export { default as CardMedia } from './CardMedia';
-export { default as CardContent } from './CardContent';
-export { default as CardActionArea } from './CardActionArea';
+export { default as Card } from './mui-wrappers/Card';
+export { default as CardMedia } from './mui-wrappers/CardMedia';
+export { default as CardContent } from './mui-wrappers/CardContent';
+export { default as CardActionArea } from './mui-wrappers/CardActionArea';
 
 // Other Components
-export { default as Badge } from './Badge';
-export { default as Chip } from './Chip';
-export { default as Drawer } from './Drawer';
-export { default as SwipeableDrawer } from './SwipeableDrawer';
-export { default as Link } from './Link';
-export { default as Tooltip } from './Tooltip';
-export { default as Modal } from './Modal';
-export { default as Collapse } from './Collapse';
-export { default as Icon } from './Icon';
-export { default as Zoom } from './Zoom';
-export { default as Popover } from './Popover';
+export { default as Badge } from './mui-wrappers/Badge';
+export { default as Chip } from './mui-wrappers/Chip';
+export { default as Drawer } from './mui-wrappers/Drawer';
+export { default as SwipeableDrawer } from './mui-wrappers/SwipeableDrawer';
+export { default as Link } from './mui-wrappers/Link';
+export { default as Tooltip } from './mui-wrappers/Tooltip';
+export { default as Modal } from './mui-wrappers/Modal';
+export { default as Collapse } from './mui-wrappers/Collapse';
+export { default as Icon } from './mui-wrappers/Icon';
+export { default as Zoom } from './mui-wrappers/Zoom';
+export { default as Popover } from './mui-wrappers/Popover';
 
 // Icons
-export * from './Icons';
+export * from './mui-wrappers/Icons';
 
 // Export all prop types
 export type {
@@ -175,3 +175,9 @@ export * from './shared';
 
 // Layout Atoms
 export * from './layouts';
+
+// Accessibility Atoms
+export * from './accessibility';
+
+// Binder Atoms
+export * from './Binder';

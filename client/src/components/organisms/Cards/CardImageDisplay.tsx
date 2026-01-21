@@ -3,7 +3,7 @@ import { Box, IconButton, Tooltip, Skeleton, type SxProps, type Theme } from '..
 import type { Card } from '../../../types/card';
 import { imageCache } from '../../../utils/imageCache';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
-import { FlipIcon } from '../../atoms/Icons';
+import { FlipIcon } from '../../atoms';
 
 interface CardImageDisplayProps {
   card: Card;

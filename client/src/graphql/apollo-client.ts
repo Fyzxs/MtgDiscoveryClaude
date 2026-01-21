@@ -3,8 +3,11 @@ import { onError } from '@apollo/client/link/error';
 import { logger } from '../utils/logger';
 import { setContext } from '@apollo/client/link/context';
 
+// In development, use the Vite proxy to avoid CORS issues with self-signed certs
+// In production, use the environment variable or default endpoint
 const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT || 'https://localhost:65203/graphql',
+  uri: import.meta.env.VITE_GRAPHQL_ENDPOINT ||
+       (import.meta.env.DEV ? '/graphql' : 'https://localhost:65203/graphql'),
 });
 
 // Auth0 token getter - will be set by Auth0Provider

@@ -1,5 +1,5 @@
 import React from 'react';
-import Typography from '../Typography';
+import Typography from '../mui-wrappers/Typography';
 
 interface CardCountDisplayProps {
   count: number;

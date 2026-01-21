@@ -1,4 +1,5 @@
 export { ArtistLinks } from './ArtistLinks';
+export { BadgePill } from './BadgePill';
 export { CardBadges } from './CardBadges';
 export { CardImage } from './CardImage';
 export { CardLinks } from './CardLinks';

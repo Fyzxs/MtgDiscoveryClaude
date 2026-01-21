@@ -3,7 +3,7 @@ import { Card as MuiCard, Box } from '../../atoms';
 import type { Card, CardContext } from '../../../types/card';
 import { CardImageDisplay } from './CardImageDisplay';
 import { ZoomIndicator } from '../../atoms/Cards/ZoomIndicator';
-import { LastDeltaBadge } from '../../atoms/Cards/LastDeltaBadge';
+import { DeltaBadge } from '../../molecules/shared/badges';
 import { CardOverlay } from '../../molecules/Cards/CardOverlay';
 import { CollectionEntryOverlay } from '../../molecules/Cards/CollectionEntryOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
@@ -122,7 +122,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
       )}
 
       {/* Last modification delta badge */}
-      <LastDeltaBadge cardId={card.id} />
+      <DeltaBadge itemId={card.id} positioned />
 
       {displaySettings.showZoomIndicator && (
         <ZoomIndicator

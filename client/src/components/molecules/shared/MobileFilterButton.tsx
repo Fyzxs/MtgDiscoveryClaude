@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Badge, Typography } from '../../atoms';
-import { TuneIcon } from '../../atoms/Icons';
+import { TuneIcon } from '../../atoms';
 
 interface MobileFilterButtonProps {
   /** Number of active filters */

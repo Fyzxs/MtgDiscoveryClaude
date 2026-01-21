@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Typography, ToggleButton, ToggleButtonGroup, Tooltip } from '../../atoms';
-import { NavigateBeforeIcon, NavigateNextIcon, SortByAlphaIcon, FormatListNumberedIcon, LooksOneIcon, LooksTwoIcon } from '../../atoms/Icons';
+import { NavigateBeforeIcon, NavigateNextIcon, SortByAlphaIcon, FormatListNumberedIcon, LooksOneIcon, LooksTwoIcon } from '../../atoms';
 import type { BinderSortBy } from '../../../hooks/useBinderPageData';
 
 export type BinderViewMode = 'single' | 'book';

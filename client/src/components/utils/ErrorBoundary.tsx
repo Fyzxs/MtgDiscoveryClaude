@@ -1,8 +1,7 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
-import { Box, Alert, Button, Typography, Stack } from '../atoms';
+import { Box, Alert, Button, Typography, Stack, RefreshIcon, ErrorOutlineIcon } from '../atoms';
 import { logger, errorTracking } from '../../utils/logger';
-import { RefreshIcon, ErrorOutlineIcon } from '../atoms/Icons';
 
 interface ErrorBoundaryProps {
   children: ReactNode;

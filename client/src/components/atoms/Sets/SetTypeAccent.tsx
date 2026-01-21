@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import Box from '../mui-wrappers/Box';
 import { getSetTypeColor } from '../../../constants/setTypeColors';
 
 interface SetTypeAccentProps {

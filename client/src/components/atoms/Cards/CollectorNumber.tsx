@@ -1,5 +1,5 @@
-import Box from '../Box';
-import Typography from '../Typography';
+import Box from '../mui-wrappers/Box';
+import Typography from '../mui-wrappers/Typography';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface CollectorNumberProps extends StyledComponentProps {

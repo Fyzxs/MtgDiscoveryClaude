@@ -1,6 +1,6 @@
 import React from 'react';
-import Typography from '../Typography';
-import { DarkBadge } from './DarkBadge';
+import Typography from '../mui-wrappers/Typography';
+import { DarkBadge } from '../shared/DarkBadge';
 import type { PriceDisplayProps as StandardPriceProps } from '../../../types/components';
 import type { SxProps, Theme } from '@mui/material';
 

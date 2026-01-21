@@ -3,7 +3,7 @@ import { Box, useTheme } from '../../atoms';
 import type { SxProps, Theme } from '../../atoms';
 import type { Card, CardContext } from '../../../types/card';
 import { CardImageDisplay } from './CardImageDisplay';
-import { PriceDisplay } from '../../atoms/shared/PriceDisplay';
+import { PriceDisplay } from '../../atoms';
 import { CollectorInfo } from '../../molecules/Cards/CollectorInfo';
 import { CardMetadata } from '../../molecules/Cards/CardMetadata';
 import { ArtistLinks } from '../../molecules/Cards/ArtistLinks';

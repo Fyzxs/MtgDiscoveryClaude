@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '../../atoms';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
-import { CollectionsBookmarkIcon, VisibilityOffIcon } from '../../atoms/Icons';
+import { CollectionsBookmarkIcon, VisibilityOffIcon } from '../../atoms';
 
 export const MyCollectionButton: React.FC = () => {
   const { userProfile } = useUser();

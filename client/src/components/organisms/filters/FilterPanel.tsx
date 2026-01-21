@@ -9,7 +9,7 @@ import {
   FormControlLabel,
   Switch
 } from '../../atoms';
-import { DebouncedSearchInput } from '../../molecules/shared/DebouncedSearchInput';
+import { SearchInput } from '../../molecules/shared/SearchInput';
 import { MultiSelectDropdown } from '../../molecules/shared/MultiSelectDropdown';
 import { SortDropdown } from '../../molecules/shared/SortDropdown';
 import { CollectorFiltersSection } from '../../molecules/shared/CollectorFiltersSection';
@@ -63,7 +63,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
           {/* Search Input */}
           {search && (
             <Grid size={{ xs: 12, sm: 'auto' }} role="searchbox">
-              <DebouncedSearchInput
+              <SearchInput
                 value={search.value}
                 onChange={search.onChange}
                 placeholder={search.placeholder}
@@ -232,7 +232,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
         >
           {/* Search Input */}
           {search && (
-            <DebouncedSearchInput
+            <SearchInput
               value={search.value}
               onChange={search.onChange}
               placeholder={search.placeholder}

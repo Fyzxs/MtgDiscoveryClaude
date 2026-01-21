@@ -72,6 +72,7 @@ public interface ISealedProductItrEntity : IItrEntity
     string Subtype { get; }
     int? CardCount { get; }
     string ReleaseDate { get; }
+    string ScgId { get; }  // Star City Games ID - used for image URLs and filtering
     string TcgplayerProductId { get; }
     string ImageUrl { get; }
     string PurchaseUrlTcgplayer { get; }
@@ -147,6 +148,9 @@ public sealed class SealedProductExtEntity : CosmosItem
 
     [JsonProperty("release_date")]
     public string ReleaseDate { get; init; }
+
+    [JsonProperty("scg_id")]
+    public string ScgId { get; init; }  // Star City Games ID - used for image URL construction
 
     [JsonProperty("tcgplayer_product_id")]
     public string TcgplayerProductId { get; init; }
@@ -266,6 +270,9 @@ public sealed class UserSealedProductExtEntity : CosmosItem
 
     [JsonProperty("subtype")]
     public string Subtype { get; init; }
+
+    [JsonProperty("scg_id")]
+    public string ScgId { get; init; }  // Star City Games ID - for image URL
 
     [JsonProperty("tcgplayer_product_id")]
     public string TcgplayerProductId { get; init; }
@@ -509,6 +516,7 @@ public sealed class SealedProductOutEntity
     public string Subtype { get; init; }
     public int? CardCount { get; init; }
     public string ReleaseDate { get; init; }
+    public string ScgId { get; init; }  // Star City Games ID - for image URL
     public string TcgplayerProductId { get; init; }
     public string ImageUrl { get; init; }
     public string PurchaseUrlTcgplayer { get; init; }
@@ -648,6 +656,18 @@ public sealed class MtgJsonSealedProductDto
 }
 ```
 
+**MtgJsonIdentifiersDto.cs:**
+```csharp
+public sealed class MtgJsonIdentifiersDto
+{
+    [JsonProperty("scgId")]
+    public string ScgId { get; init; }  // Star City Games ID - REQUIRED for filtering
+
+    [JsonProperty("tcgplayerProductId")]
+    public string TcgplayerProductId { get; init; }
+}
+```
+
 **Acceptance Criteria:**
 - [ ] DTOs match MTGJSON structure exactly
 - [ ] All JsonProperty attributes use camelCase (MTGJSON format)
@@ -672,18 +692,21 @@ SealedProductIngestionService.cs
 **Ingestion Flow:**
 1. Fetch `https://mtgjson.com/api/v5/{SET_CODE}.json`
 2. Deserialize, extract `sealedProduct[]` array
-3. **Lookup setId** from `SetCodeToIdAssociations` using set code
-4. Map each product to `SealedProductExtEntity`:
+3. **Filter:** Skip products where `category` ends with `_case` (e.g., `booster_case`, `bundle_case`)
+4. **Lookup setId** from `SetCodeToIdAssociations` using set code
+5. Map each product to `SealedProductExtEntity`:
    - `SetId` = looked up Scryfall GUID
-   - `SetCode` = original MTGJSON code
-   - `ImageUrl` = `https://tcgplayer-cdn.tcgplayer.com/product/{tcgplayerProductId}_in_400x400.jpg`
-5. Upsert to `SealedProducts` container
+   - `SetCode` = original MTGJSON code (lowercase)
+   - `Uuid` = from MTGJSON `uuid`
+   - `ImageUrl` = `https://raw.githubusercontent.com/fyzxs/mtgsealedimgs/main/sealed/{setCode}/{uuid}.jpg`
+6. Upsert to `SealedProducts` container
 
 **Acceptance Criteria:**
 - [ ] Fetches from MTGJSON API
+- [ ] Filters out `*_case` category products
 - [ ] Performs setCode→setId lookup
-- [ ] Computes TCGPlayer image URL
-- [ ] Handles missing identifiers gracefully
+- [ ] Computes GitHub image URL using uuid
+- [ ] Handles missing data gracefully
 
 ---
 
@@ -733,6 +756,7 @@ export interface SealedProduct {
   subtype?: string;
   cardCount?: number;
   releaseDate?: string;
+  scgId: string;  // Star City Games ID - required, used for image URLs
   tcgplayerProductId?: string;
   imageUrl?: string;
   purchaseUrlTcgplayer?: string;
@@ -776,6 +800,7 @@ export const GET_SEALED_PRODUCTS_BY_SET_CODE = gql`
           subtype
           cardCount
           releaseDate
+          scgId
           tcgplayerProductId
           imageUrl
           purchaseUrlTcgplayer
@@ -936,7 +961,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
 ```
 
 **Acceptance Criteria:**
-- [ ] Displays product image from TCGPlayer CDN
+- [ ] Displays product image from GitHub (fyzxs/mtgsealedimgs)
 - [ ] Shows category badge
 - [ ] Handles missing images gracefully
 - [ ] Follows existing card display patterns
@@ -1038,7 +1063,7 @@ const { sealedProducts, loading: sealedLoading } = useSealedProductsData(
 ### Data Ingestion
 - [ ] CLI imports MKM sealed products
 - [ ] Data visible in Cosmos DB
-- [ ] TCGPlayer image URLs load correctly
+- [ ] GitHub image URLs load correctly
 
 ### Frontend
 - [ ] `npm run codegen` succeeds
@@ -1067,15 +1092,21 @@ const { sealedProducts, loading: sealedLoading } = useSealedProductsData(
 
 **MTGJSON API:** `https://mtgjson.com/api/v5/{SET_CODE}.json`
 
-**TCGPlayer Image URL:** `https://tcgplayer-cdn.tcgplayer.com/product/{tcgplayerProductId}_in_400x400.jpg`
+**GitHub Image URL:** `https://raw.githubusercontent.com/fyzxs/mtgsealedimgs/main/sealed/{setCode}/{uuid}.jpg`
 
-**Category Values:**
+Example: `https://raw.githubusercontent.com/fyzxs/mtgsealedimgs/main/sealed/mkm/a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg`
+
+**Note:** The scraper converts any PNG images to JPG format before uploading.
+
+**Category Values (included):**
 - `booster_pack` - Single booster pack
 - `booster_box` - Box containing multiple booster packs
-- `booster_case` - Case containing multiple booster boxes
 - `bundle` - Collection with cards and accessories
-- `bundle_case` - Case containing multiple bundles
 - `box_set` - Complete set (MTGO redemption)
 - `limited_aid_tool` - Limited format product (prerelease kits)
+
+**Category Values (excluded - `*_case`):**
+- `booster_case` - Case containing multiple booster boxes
+- `bundle_case` - Case containing multiple bundles
 
 **IMPORTANT:** MTGJSON does NOT include Scryfall set IDs. Use `SetCodeToIdAssociations` container to lookup setId from setCode.
