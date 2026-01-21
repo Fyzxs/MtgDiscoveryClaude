@@ -39,5 +39,9 @@ public sealed class UserSetCardOutEntityType : ObjectType<UserSetCardOutEntity>
 
                 return parent.Groups.Select(kvp => new UserSetCardGroupKeyValue { Key = kvp.Key, Value = kvp.Value }).ToList();
             });
+
+        descriptor.Field(f => f.GroupsCollecting)
+            .Type<NonNullType<ListType<NonNullType<StringType>>>>()
+            .Description("Set group IDs that the user is actively collecting");
     }
 }

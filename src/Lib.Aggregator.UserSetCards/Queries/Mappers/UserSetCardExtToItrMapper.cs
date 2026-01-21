@@ -32,7 +32,8 @@ internal sealed class UserSetCardExtToItrMapper : IUserSetCardExtToItrMapper
             SetId = userSetCardExt.SetId,
             TotalCards = userSetCardExt.TotalCards,
             UniqueCards = userSetCardExt.UniqueCards,
-            Groups = mappedGroups
+            Groups = mappedGroups,
+            GroupsCollecting = userSetCardExt.GroupsCollecting?.ToList() ?? []
         };
     }
 }
