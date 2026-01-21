@@ -213,6 +213,7 @@ dotnet_code_quality.CA1852.ignore_internalsvisibleto = true
 dotnet_diagnostic.IDE0028.severity = error
 dotnet_diagnostic.IDE0062.severity = none
 dotnet_diagnostic.IDE1006.severity = error
+dotnet_diagnostic.IDE0045.severity = none # if-else to ?:
 
 # Defining the 'public_symbols' symbol group
 dotnet_naming_symbols.public_symbols.applicable_kinds           = property,method,field,event,delegate
