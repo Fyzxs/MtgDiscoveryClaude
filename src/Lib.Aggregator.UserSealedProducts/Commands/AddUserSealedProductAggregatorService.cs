@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using Lib.Adapter.UserSealedProducts.Apis;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
-using Lib.Adapter.UserSealedProducts.Commands;
+using Lib.Aggregator.UserSealedProducts.Commands.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
@@ -10,14 +11,21 @@ namespace Lib.Aggregator.UserSealedProducts.Commands;
 
 internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProductAggregatorService
 {
-    private readonly IAddUserSealedProductAdapter _adapter;
+    private readonly IUserSealedProductsCommandAdapter _adapter;
+    private readonly IUserSealedProductOufMapper _oufMapper;
 
     public AddUserSealedProductAggregatorService(ILogger logger) : this(
-        new AddUserSealedProductAdapter(logger))
+        new UserSealedProductsAdapterService(logger),
+        new UserSealedProductOufMapper())
     { }
 
-    private AddUserSealedProductAggregatorService(IAddUserSealedProductAdapter adapter) =>
+    private AddUserSealedProductAggregatorService(
+        IUserSealedProductsCommandAdapter adapter,
+        IUserSealedProductOufMapper oufMapper)
+    {
         _adapter = adapter;
+        _oufMapper = oufMapper;
+    }
 
     public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input)
     {
@@ -33,7 +41,15 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
             ImageUrl = string.Empty
         };
 
-        return await _adapter.Execute(xfrEntity).ConfigureAwait(false);
+        var extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity).ConfigureAwait(false);
+
+        if (extResponse.IsFailure)
+        {
+            return new FailureOperationResponse<IUserSealedProductOufEntity>(extResponse.OuterException);
+        }
+
+        IUserSealedProductOufEntity oufEntity = await _oufMapper.Map(extResponse.Value).ConfigureAwait(false);
+        return new SuccessOperationResponse<IUserSealedProductOufEntity>(oufEntity);
     }
 
     private sealed class UserSealedProductXfrEntity : IUserSealedProductXfrEntity
