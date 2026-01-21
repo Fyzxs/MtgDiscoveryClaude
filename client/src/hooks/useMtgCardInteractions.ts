@@ -57,27 +57,8 @@ export const useMtgCardInteractions = ({
 
     const cardElement = e.currentTarget as HTMLElement;
 
-    // Handle tap-to-expand behavior on mobile/tablet
+    // Handle tap behavior on mobile/tablet - single tap opens modal
     if (overlayBehavior === 'tap') {
-      // If overlay is not expanded, expand it (first tap)
-      if (!overlayExpanded) {
-        setOverlayExpanded(true);
-
-        // Clear ALL selections across ALL card groups on the page
-        const allSelected = document.querySelectorAll('[data-selected="true"]');
-        allSelected.forEach(selected => {
-          if (selected !== cardElement) {
-            selected.setAttribute('data-selected', 'false');
-          }
-        });
-
-        // Select this card
-        cardElement.setAttribute('data-selected', 'true');
-        cardElement.focus();
-        return;
-      }
-
-      // Second tap - open modal
       setModalOpen(true);
       return;
     }
@@ -112,6 +93,8 @@ export const useMtgCardInteractions = ({
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
+    // Reset overlay state so next tap starts fresh
+    setOverlayExpanded(false);
   }, []);
 
   const handleOverlayToggle = useCallback(() => {

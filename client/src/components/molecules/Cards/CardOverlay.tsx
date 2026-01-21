@@ -11,6 +11,7 @@ import { formatCollectionCount } from '../../../utils/collectionFormatters';
 import { touchTargetStyles } from '../../../styles/touchTargets';
 import type { Card, CardContext } from '../../../types/card';
 import type { OverlayVariant } from '../../../hooks/useCardDisplaySettings';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 interface CardOverlayProps {
   card: Card;
@@ -46,6 +47,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   collectionCount = 0
 }) => {
   const theme = useTheme();
+  const { isMobile } = useResponsiveBreakpoints();
 
   // Extract properties from card object
   const cardId = card.id;
@@ -63,7 +65,10 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const tcgplayerUrl = card.purchaseUris?.tcgplayer;
   const collectionData = card.userCollection;
 
-  // Minimal variant - mobile collapsed state
+  // Shared gradient for consistent look across all breakpoints
+  const overlayGradient = 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.2) 85%, transparent 100%)';
+
+  // Minimal variant - mobile/tablet: simplified overlay
   if (variant === 'minimal') {
     return (
       <Box
@@ -73,76 +78,62 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           left: 0,
           right: 0,
           zIndex: 10,
-          background: theme.mtg.gradients.minimalOverlay,
+          background: overlayGradient,
+          p: 1,
         }}
         className={className}
       >
-        <Box sx={{
-          p: 1,
-          ...touchTargetStyles.minimum,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 0.5,
-        }}>
-          {/* Collection count + Card name - always visible */}
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-          }}>
-            {context.hasCollector && (
-              <Typography
-                component="span"
-                sx={{
-                  fontWeight: 'bold',
-                  minWidth: 20,
-                  fontSize: '0.875rem',
-                }}
-              >
-                {formatCollectionCount(collectionCount)}
-              </Typography>
-            )}
-            <Typography
-              noWrap
-              sx={{
-                flex: 1,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                fontSize: '0.75rem',
-                fontWeight: 500,
-              }}
-            >
-              {cardName}
-            </Typography>
-          </Box>
-
-          {/* Expanded content */}
-          <Collapse in={expanded}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, pt: 0.5 }}>
-              {/* Artist */}
-              <ArtistLinks
-                artist={artist}
-                artistIds={artistIds}
-                context={context}
-                onArtistClick={onArtistClick}
+        {/* Rarity/Collector # + Collection info row - tablet only */}
+        {!isMobile && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+            <RarityCollectorBadge
+              rarity={rarity}
+              collectorNumber={collectorNumber}
+              reserved={reserved}
+            />
+            {context.hasCollector && collectionData && (
+              <CollectionSummary
+                collectionData={collectionData}
+                size="small"
               />
+            )}
+          </Box>
+        )}
 
-              {/* Set + Price row */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Typography variant="caption" sx={{ color: 'grey.300', fontSize: '0.625rem' }}>
-                    {setCode?.toUpperCase()} #{collectorNumber}
-                  </Typography>
-                </Box>
-                <PriceDisplay
-                  price={price}
-                  currency="usd"
-                  sx={{ fontSize: '0.75rem' }}
-                />
-              </Box>
-            </Box>
-          </Collapse>
-        </Box>
+        {/* Card name */}
+        <CardName
+          cardId={cardId}
+          cardName={cardName}
+          onCardClick={onCardClick}
+          sx={{
+            overflow: 'hidden',
+            '& .MuiTypography-root': {
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }
+          }}
+        />
+
+        {/* Artist */}
+        <ArtistLinks
+          artist={artist}
+          artistIds={artistIds}
+          context={context}
+          onArtistClick={onArtistClick}
+        />
+
+        {/* Collection info - mobile only (tablet has it in top row) */}
+        {isMobile && context.hasCollector && collectionData && (
+          <Box sx={{ mt: 0.5 }}>
+            <CollectionSummary
+              collectionData={collectionData}
+              size="small"
+            />
+          </Box>
+        )}
       </Box>
     );
   }
@@ -157,7 +148,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           left: 0,
           right: 0,
           zIndex: 10,
-          background: theme.mtg.gradients.cardOverlay,
+          background: overlayGradient,
         }}
         className={className}
       >
@@ -231,7 +222,6 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         bottom: 0,
         left: 0,
         right: 0,
-        pt: 7,
         zIndex: 10,
         opacity: 1,
         transition: 'none',
@@ -242,7 +232,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
           left: 0,
           right: 0,
           bottom: 0,
-          background: theme.mtg.gradients.cardOverlay,
+          background: overlayGradient,
           opacity: isSelected ? 0 : 1,
           transition: 'none',
           pointerEvents: 'none',
@@ -260,7 +250,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
       }}
       className={className}
     >
-      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <Box sx={{ px: 2, pt: 1, pb: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
         {/* Release Date Row - now at the top */}
         {releaseDate && !context.hideReleaseDate && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -307,11 +297,13 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
 
         {/* Card Name */}
         {!context.isOnCardPage && (
-          <CardName
-            cardId={cardId}
-            cardName={cardName}
-            onCardClick={onCardClick}
-          />
+          <Box sx={{ mb: -0.5 }}>
+            <CardName
+              cardId={cardId}
+              cardName={cardName}
+              onCardClick={onCardClick}
+            />
+          </Box>
         )}
 
         {/* Set Name with Icon */}
@@ -325,7 +317,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         )}
 
         {/* Price and Links Row */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.5 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <PriceDisplay
             price={price}
             currency="usd"

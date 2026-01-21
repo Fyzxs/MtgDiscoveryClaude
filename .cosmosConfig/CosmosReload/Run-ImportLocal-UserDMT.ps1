@@ -1,0 +1,72 @@
+# Run DMT to import User data from Azure Cosmos to LOCAL Cosmos
+# This script runs the DMT tool to copy UserCards and UserSetCards from Azure to local
+
+$dmtPath = "$PSScriptRoot\.dmt\dmt.exe"
+
+$userFiles = @(
+    "dmt-LOCAL-UserCards.json",
+    "dmt-LOCAL-UserSetCards.json"
+)
+
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "Importing USER data from AZURE to LOCAL" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Source: Azure Cosmos (cosmos-mtg-dev-wcus-01)" -ForegroundColor Yellow
+Write-Host "Sink:   Local Cosmos (localhost:8081)" -ForegroundColor Yellow
+Write-Host ""
+
+$successCount = 0
+$failCount = 0
+$totalCount = $userFiles.Count
+
+foreach ($fileName in $userFiles) {
+    $jsonFile = Join-Path -Path $PSScriptRoot -ChildPath $fileName
+
+    if (-not (Test-Path $jsonFile)) {
+        Write-Host "WARNING: File not found: $fileName" -ForegroundColor Yellow
+        $failCount++
+        continue
+    }
+
+    Write-Host "Processing: $fileName" -ForegroundColor Yellow
+    Write-Host "-----------------------------------" -ForegroundColor Gray
+
+    $startTime = Get-Date
+
+    try {
+        & $dmtPath --settings $jsonFile
+
+        if ($LASTEXITCODE -eq 0) {
+            $successCount++
+            Write-Host "SUCCESS: $fileName" -ForegroundColor Green
+        } else {
+            $failCount++
+            Write-Host "FAILED: $fileName (Exit code: $LASTEXITCODE)" -ForegroundColor Red
+        }
+    }
+    catch {
+        $failCount++
+        Write-Host "ERROR: $fileName - $_" -ForegroundColor Red
+    }
+
+    $elapsed = (Get-Date) - $startTime
+    Write-Host "Time: $($elapsed.ToString('mm\:ss'))" -ForegroundColor Gray
+    Write-Host ""
+}
+
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "Summary" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "Total:   $totalCount" -ForegroundColor White
+Write-Host "Success: $successCount" -ForegroundColor Green
+Write-Host "Failed:  $failCount" -ForegroundColor Red
+Write-Host ""
+
+if ($failCount -gt 0) {
+    Write-Host "Some operations failed!" -ForegroundColor Red
+    exit 1
+} else {
+    Write-Host "All operations completed successfully!" -ForegroundColor Green
+    exit 0
+}

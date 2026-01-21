@@ -80,13 +80,13 @@ export const responsiveFontSizes = {
   },
 };
 
-// Layout container sizes
+// Layout container sizes (aligned with MUI breakpoints)
 export const containerSizes = {
-  mobile: '100%',
-  tablet: '768px',
-  desktop: '1024px',
-  wide: '1440px',
-  max: '1920px',
+  mobile: '100%',    // xs: 0-599px
+  tablet: '600px',   // sm: 600-899px
+  desktop: '900px',  // md: 900-1199px
+  wide: '1200px',    // lg: 1200-1535px
+  max: '1536px',     // xl: 1536px+
 };
 
 // Grid configurations for different screen sizes

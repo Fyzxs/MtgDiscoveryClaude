@@ -9,19 +9,20 @@ import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { EmptyState } from '../molecules/shared/EmptyState';
 import { CollectionStatsSummary } from '../molecules/shared/CollectionStatsSummary';
 import { CollapsibleStatsSummary } from '../molecules/shared/CollapsibleStatsSummary';
-import { EdgeDrawer } from '../molecules/shared/EdgeDrawer';
+import { MobileFilterBar } from '../molecules/shared/MobileFilterBar';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
-import { SortDropdown, type SortOption } from '../molecules/shared/SortDropdown';
-import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
+import type { SortOption } from '../molecules/shared/SortDropdown';
 import { useUrlFilterState, createUrlFilterConfig } from '../../hooks/useUrlFilterState';
 import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 import { GraphQLQueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { FilterPanel } from '../organisms/filters/FilterPanel';
+import { FilterDrawer } from '../organisms/filters/FilterDrawer';
 import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { CardGridErrorBoundary } from '../utils/ErrorBoundaries';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
 import type { MtgSet } from '../../types/set';
+import type { FilterPanelConfig } from '../../types/filters';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 
@@ -168,10 +169,70 @@ export const AllSetsPage: React.FC = () => {
   // Calculate active filter count for mobile drawer badge
   const activeFilterCount = useMemo(() => {
     let count = 0;
+    if (searchTerm) count++;
     if (selectedSetTypes.length > 0) count++;
     if (selectedCollectionStatuses.length > 0) count++;
     return count;
-  }, [selectedSetTypes, selectedCollectionStatuses]);
+  }, [searchTerm, selectedSetTypes, selectedCollectionStatuses]);
+
+  // Build filter config for both desktop and mobile drawer
+  const filterPanelConfig: FilterPanelConfig = useMemo(() => ({
+    search: {
+      value: searchTerm,
+      onChange: (value: string) => {
+        startTransition(() => {
+          setSearchTerm(value);
+        });
+      },
+      placeholder: 'Search sets...',
+      debounceMs: 300,
+      fullWidth: useCompactUI
+    },
+    multiSelects: [
+      {
+        key: 'setTypes',
+        value: selectedSetTypes,
+        onChange: handleSetTypeChange,
+        options: setTypes,
+        label: 'Set Types',
+        placeholder: 'All Types',
+        fullWidth: useCompactUI
+      }
+    ],
+    sort: {
+      value: sortBy,
+      onChange: handleSortChange,
+      options: sortOptions,
+      fullWidth: useCompactUI
+    },
+    collectorFilters: hasCollector ? {
+      collectionStatus: {
+        key: 'collectionStatus',
+        value: selectedCollectionStatuses,
+        onChange: handleCollectionStatusChange,
+        options: ['not-started', 'in-progress', 'completed'],
+        label: 'Collection Status',
+        placeholder: 'All Statuses',
+        minWidth: useCompactUI ? undefined : 180,
+        fullWidth: useCompactUI
+      }
+    } : undefined
+  }), [searchTerm, setSearchTerm, selectedSetTypes, handleSetTypeChange, setTypes, sortBy, handleSortChange, sortOptions, hasCollector, selectedCollectionStatuses, handleCollectionStatusChange, useCompactUI]);
+
+  // Toggle filter drawer
+  const handleFilterDrawerToggle = useCallback(() => {
+    setFilterDrawerOpen(prev => !prev);
+  }, []);
+
+  // Clear all filters
+  const handleClearFilters = useCallback(() => {
+    setSearchTerm('');
+    updateFilter('setTypes', []);
+    updateFilter('collectionStatus', []);
+  }, [setSearchTerm, updateFilter]);
+
+  // Results summary text for mobile bar
+  const resultsSummary = `${filteredSets.length} of ${sets.length} sets`;
 
   return (
     <GraphQLQueryStateContainer
@@ -180,6 +241,18 @@ export const AllSetsPage: React.FC = () => {
       data={data?.allSets}
       failureTypeName="FailureResponse"
     >
+      {/* Mobile/Tablet: Sticky filter bar at top */}
+      {useCompactUI && (
+        <MobileFilterBar
+          activeFilterCount={activeFilterCount}
+          onFilterClick={handleFilterDrawerToggle}
+          showGroups={false}
+          onShowGroupsChange={() => {}}
+          showGroupsToggle={false}
+          resultsSummary={resultsSummary}
+        />
+      )}
+
       <BrowseTemplate
         maxWidth={false}
         header={
@@ -204,62 +277,28 @@ export const AllSetsPage: React.FC = () => {
         }
         filters={
           useCompactUI ? (
-            // Mobile/Tablet: Edge drawer tab is always visible - no inline content needed
+            // Mobile/Tablet: No inline filters - using sticky bar + drawer
             null
           ) : (
             // Desktop: Full FilterPanel inline
             <FilterControlsWithLoading isLoading={isFiltering || isPending}>
               <FilterPanel
-                config={{
-                  search: {
-                    value: searchTerm,
-                    onChange: (value: string) => {
-                      startTransition(() => {
-                        setSearchTerm(value);
-                      });
-                    },
-                    placeholder: 'Search sets...',
-                    debounceMs: 300
-                  },
-                  multiSelects: [
-                    {
-                      key: 'setTypes',
-                      value: selectedSetTypes,
-                      onChange: handleSetTypeChange,
-                      options: setTypes,
-                      label: 'Set Types',
-                      placeholder: 'All Types'
-                    }
-                  ],
-                  sort: {
-                    value: sortBy,
-                    onChange: handleSortChange,
-                    options: sortOptions
-                  },
-                  collectorFilters: hasCollector ? {
-                    collectionStatus: {
-                      key: 'collectionStatus',
-                      value: selectedCollectionStatuses,
-                      onChange: handleCollectionStatusChange,
-                      options: ['not-started', 'in-progress', 'completed'],
-                      label: 'Collection Status',
-                      placeholder: 'All Statuses',
-                      minWidth: 180
-                    }
-                  } : undefined
-                }}
+                config={filterPanelConfig}
                 layout="horizontal"
               />
             </FilterControlsWithLoading>
           )
         }
         summary={
-          <ResultsSummary
-            current={filteredSets.length}
-            total={sets.length}
-            label="sets"
-            textAlign="center"
-          />
+          // Only show summary on desktop (mobile has it in the sticky bar)
+          useCompactUI ? null : (
+            <ResultsSummary
+              current={filteredSets.length}
+              total={sets.length}
+              label="sets"
+              textAlign="center"
+            />
+          )
         }
         content={
           <>
@@ -302,58 +341,16 @@ export const AllSetsPage: React.FC = () => {
         }
       />
 
-      {/* Mobile/Tablet Edge Drawer for filters */}
+      {/* Mobile/Tablet: Bottom sheet filter drawer */}
       {useCompactUI && (
-        <EdgeDrawer
+        <FilterDrawer
           open={filterDrawerOpen}
-          onOpen={() => setFilterDrawerOpen(true)}
-          onClose={() => setFilterDrawerOpen(false)}
-          tabLabel="Filter"
-          activeCount={activeFilterCount + (searchTerm ? 1 : 0)}
-          title="Search & Filter"
-        >
-          <FilterPanel
-            config={{
-              search: {
-                value: searchTerm,
-                onChange: (value: string) => {
-                  startTransition(() => {
-                    setSearchTerm(value);
-                  });
-                },
-                placeholder: 'Search sets...',
-                debounceMs: 300
-              },
-              multiSelects: [
-                {
-                  key: 'setTypes',
-                  value: selectedSetTypes,
-                  onChange: handleSetTypeChange,
-                  options: setTypes,
-                  label: 'Set Types',
-                  placeholder: 'All Types'
-                }
-              ],
-              sort: {
-                value: sortBy,
-                onChange: handleSortChange,
-                options: sortOptions
-              },
-              collectorFilters: hasCollector ? {
-                collectionStatus: {
-                  key: 'collectionStatus',
-                  value: selectedCollectionStatuses,
-                  onChange: handleCollectionStatusChange,
-                  options: ['not-started', 'in-progress', 'completed'],
-                  label: 'Collection Status',
-                  placeholder: 'All Statuses',
-                  minWidth: 180
-                }
-              } : undefined
-            }}
-            layout="vertical"
-          />
-        </EdgeDrawer>
+          onClose={handleFilterDrawerToggle}
+          config={filterPanelConfig}
+          title="Filter Sets"
+          activeFilterCount={activeFilterCount}
+          onClear={handleClearFilters}
+        />
       )}
 
       {/* Back to Top Button - positioned fixed outside template */}

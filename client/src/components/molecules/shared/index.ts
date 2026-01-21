@@ -9,6 +9,8 @@ export { ExpandableSection } from './ExpandableSection';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
 export { FilterControlsWithLoading } from './FilterControlsWithLoading';
 export { LanguageSwitcher } from './LanguageSwitcher';
+export { MobileFilterBar } from './MobileFilterBar';
+export { MobileFilterButton } from './MobileFilterButton';
 export { ModalContainer } from './ModalContainer';
 export { MultiSelectDropdown } from './MultiSelectDropdown';
 export { NavigationArrows } from './NavigationArrows';
