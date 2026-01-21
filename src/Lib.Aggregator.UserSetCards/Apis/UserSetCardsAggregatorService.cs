@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Commands;
 using Lib.Aggregator.UserSetCards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
@@ -15,7 +16,8 @@ public sealed class UserSetCardsAggregatorService : IUserSetCardsAggregatorServi
     public UserSetCardsAggregatorService(ILogger logger) : this(
         new UserSetCardsQueryAggregator(logger),
         new UserSetCardsCommandAggregator(logger))
-    { }
+    {
+    }
 
     private UserSetCardsAggregatorService(
         IUserSetCardsQueryAggregator queryOperations,
@@ -25,7 +27,12 @@ public sealed class UserSetCardsAggregatorService : IUserSetCardsAggregatorServi
         _commandOperations = commandOperations;
     }
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => _queryOperations.GetUserSetCardByUserAndSetAsync(userSetCard);
+    public Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
+        _queryOperations.GetUserSetCardByUserAndSetAsync(userSetCard);
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _commandOperations.AddSetGroupToUserSetCardAsync(entity);
+    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
+        _queryOperations.GetAllUserSetCardsAsync(userSetCards);
+
+    public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) =>
+        _commandOperations.AddSetGroupToUserSetCardAsync(entity);
 }

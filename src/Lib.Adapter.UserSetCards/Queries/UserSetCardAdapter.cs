@@ -15,14 +15,14 @@ namespace Lib.Adapter.UserSetCards.Queries;
 /// Retrieves user set card data from Cosmos DB storage.
 /// Returns empty defaults if record not found.
 /// </summary>
-internal sealed class GetUserSetCardAdapter : IGetUserSetCardAdapter
+internal sealed class UserSetCardAdapter : IUserSetCardAdapter
 {
     private readonly ICosmosGopher _userSetCardsGopher;
     private readonly IUserSetCardsGetXfrToExtMapper _readPointMapper;
 
-    public GetUserSetCardAdapter(ILogger logger) : this(new UserSetCardsGopher(logger), new UserSetCardsGetXfrToExtMapper()) { }
+    public UserSetCardAdapter(ILogger logger) : this(new UserSetCardsGopher(logger), new UserSetCardsGetXfrToExtMapper()) { }
 
-    private GetUserSetCardAdapter(ICosmosGopher userSetCardsGopher, IUserSetCardsGetXfrToExtMapper readPointMapper)
+    private UserSetCardAdapter(ICosmosGopher userSetCardsGopher, IUserSetCardsGetXfrToExtMapper readPointMapper)
     {
         _userSetCardsGopher = userSetCardsGopher;
         _readPointMapper = readPointMapper;

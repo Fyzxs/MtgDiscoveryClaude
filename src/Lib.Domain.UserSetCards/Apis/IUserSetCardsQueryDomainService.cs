@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
@@ -12,4 +13,11 @@ public interface IUserSetCardsQueryDomainService
     /// <param name="userSetCard">The user set card entity containing userId and setId</param>
     /// <returns>User set card collection summary wrapped in an operation response</returns>
     Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard);
+
+    /// <summary>
+    /// Retrieves all user set card collection summaries for a specific user.
+    /// </summary>
+    /// <param name="userSetCards">The entity containing userId</param>
+    /// <returns>Collection of user set card summaries wrapped in an operation response</returns>
+    Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards);
 }
