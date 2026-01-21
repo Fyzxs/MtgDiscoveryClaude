@@ -72,6 +72,9 @@ export const mtgCardPropsComparison = (
   // Collection data changes (critical for collector view)
   if (prevProps.card.userCollection !== nextProps.card.userCollection) return false;
 
+  // Wishlist data changes (critical for collector view)
+  if (prevProps.card.userWishlist !== nextProps.card.userWishlist) return false;
+
   // If we get here, props are effectively the same
   return true;
 };

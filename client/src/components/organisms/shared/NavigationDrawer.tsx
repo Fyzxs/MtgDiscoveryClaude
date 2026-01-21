@@ -12,7 +12,7 @@ import {
   TextField,
   InputAdornment
 } from '../../atoms';
-import { CloseIcon, SearchIcon, CollectionsBookmarkIcon, NavigateNextIcon } from '../../atoms/Icons';
+import { CloseIcon, SearchIcon, CollectionsBookmarkIcon, NavigateNextIcon, FavoriteBorderIcon, HotelIcon } from '../../atoms/Icons';
 import { useTheme } from '../../atoms';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
@@ -34,9 +34,10 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', path: '/' },
   { label: 'All Sets', path: '/sets', icon: <CollectionsBookmarkIcon /> },
+  { label: 'Wishlist', path: '/wishlist', icon: <FavoriteBorderIcon />, requiresCollector: true },
+  { label: 'Convention Signing', path: '/convention-signing', icon: <HotelIcon />, requiresCollector: true },
   { label: 'Search Cards', path: '/search/cards', icon: <SearchIcon /> },
   { label: 'Search Artists', path: '/search/artists', icon: <SearchIcon /> },
-  { label: 'Convention Signing', path: '/convention-signing', requiresCollector: true, hideOnMobile: true },
 ];
 
 /**

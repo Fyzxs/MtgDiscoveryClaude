@@ -12,6 +12,8 @@ import {
   Box,
   alpha,
   useTheme,
+  TextField,
+  Autocomplete,
   type SelectChangeEvent
 } from '../../atoms';
 import type { MultiSelectOption } from '../../../types/filters';
@@ -33,6 +35,7 @@ interface MultiSelectDropdownProps extends StyledComponentProps {
   fullWidth?: boolean;
   loading?: boolean;
   disabled?: boolean;
+  searchable?: boolean; // When true, uses Autocomplete with search capability
 }
 
 const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
@@ -47,6 +50,7 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
   fullWidth = false,
   loading = false,
   disabled = false,
+  searchable = false,
   sx = {}
 }) => {
   const theme = useTheme();
@@ -62,6 +66,74 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
     return opt;
   });
 
+  // Show skeleton when loading
+  if (loading) {
+    return (
+      <FormControl
+        fullWidth={fullWidth}
+        sx={{ minWidth, ...sx }}
+      >
+        <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
+      </FormControl>
+    );
+  }
+
+  // Searchable mode uses Autocomplete
+  if (searchable) {
+    return (
+      <Autocomplete
+        multiple
+        options={normalizedOptions}
+        value={normalizedOptions.filter(opt => value.includes(opt.value))}
+        onChange={(_, newValue) => {
+          onChange(newValue.map(v => v.value));
+        }}
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, val) => option.value === val.value}
+        disabled={disabled}
+        limitTags={maxDisplay}
+        getLimitTagsText={(more) => `+${more}`}
+        sx={{ minWidth, ...sx }}
+        fullWidth={fullWidth}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={label}
+            placeholder={value.length === 0 ? placeholder : undefined}
+          />
+        )}
+        renderTags={(tagValue, getTagProps) =>
+          tagValue.map((option, index) => {
+            const { key, ...chipProps } = getTagProps({ index });
+            return (
+              <Chip
+                key={key}
+                size="small"
+                label={option.label}
+                color={option.chipColor || 'primary'}
+                {...chipProps}
+              />
+            );
+          })
+        }
+        renderOption={(props, option, { selected }) => {
+          const { key, ...otherProps } = props;
+          return (
+            <li key={key} {...otherProps}>
+              <Chip
+                size="small"
+                label={option.label}
+                color={selected ? (option.chipColor || 'primary') : 'default'}
+                sx={{ mr: 1 }}
+              />
+            </li>
+          );
+        }}
+      />
+    );
+  }
+
+  // Standard Select mode
   const handleChange = (event: SelectChangeEvent<string[]>) => {
     const val = event.target.value;
     // Check if CLEAR_ALL was selected
@@ -92,18 +164,6 @@ const MultiSelectDropdownComponent: React.FC<MultiSelectDropdownProps> = ({
 
     return `${selected.length} selected`;
   };
-
-  // Show skeleton when loading
-  if (loading) {
-    return (
-      <FormControl
-        fullWidth={fullWidth}
-        sx={{ minWidth, ...sx }}
-      >
-        <Skeleton variant="rectangular" height={56} sx={{ borderRadius: 1 }} />
-      </FormControl>
-    );
-  }
 
   return (
     <FormControl

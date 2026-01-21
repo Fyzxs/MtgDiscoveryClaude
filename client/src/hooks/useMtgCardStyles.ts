@@ -15,6 +15,12 @@ export const flashError = keyframes`
   50% { opacity: 0.6; }
 `;
 
+// Flash animation for wishlist - light blue with heart
+export const flashWishlist = keyframes`
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.55; }
+`;
+
 // Subtle pulse for submitting state
 export const submitPulse = keyframes`
   0%, 100% { opacity: 0.15; }
@@ -71,7 +77,7 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
       }
     },
     // Flash overlay using pseudo-element (CSS-only, no React state)
-    '&[data-flash="success"]::after, &[data-flash="error"]::after': {
+    '&[data-flash="success"]::after, &[data-flash="error"]::after, &[data-flash="wishlist"]::after': {
       content: '""',
       position: 'absolute',
       top: 0,
@@ -88,6 +94,11 @@ export const useMtgCardStyles = ({ card }: MtgCardStylesProps) => {
     '&[data-flash="error"]::after': {
       backgroundColor: theme.palette.error.main,
       animation: `${flashError} 0.3s ease-in-out 3`,
+    },
+    // Wishlist flash - light blue color
+    '&[data-flash="wishlist"]::after': {
+      backgroundColor: '#64b5f6', // Light blue - theme.palette.info.light equivalent
+      animation: `${flashWishlist} 0.3s ease-in-out 3`,
     },
     '&:focus': {
       outline: 'none'

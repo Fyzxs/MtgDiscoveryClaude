@@ -86,25 +86,26 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
       options: uniqueSets,
       value: filters.sets || [],
       onChange: (value: string[]) => onFilterChange('sets', value),
-      placeholder: 'All Sets'
+      placeholder: 'All Sets',
+      searchable: true
     });
   }
-  
+
   // Add rarity filter
   if (hasMultipleRarities) {
     multiSelects.push({
       key: 'rarities',
       label: 'Rarity',
-      options: uniqueRarities.map(r => ({ 
-        value: r, 
-        label: r.charAt(0).toUpperCase() + r.slice(1) 
+      options: uniqueRarities.map(r => ({
+        value: r,
+        label: r.charAt(0).toUpperCase() + r.slice(1)
       })),
       value: filters.rarities || [],
       onChange: (value: string[]) => onFilterChange('rarities', value),
       placeholder: 'All Rarities'
     });
   }
-  
+
   // Add artist filter
   if (hasMultipleArtists) {
     multiSelects.push({
@@ -113,7 +114,8 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
       options: uniqueArtists.map(a => ({ value: a, label: a })),
       value: filters.artists || [],
       onChange: (value: string[]) => onFilterChange('artists', value),
-      placeholder: 'All Artists'
+      placeholder: 'All Artists',
+      searchable: true
     });
   }
 
@@ -170,6 +172,7 @@ export const CardFilterPanel: React.FC<CardFilterPanelProps> = ({
             placeholder={select.placeholder}
             minWidth={200}
             fullWidth={false}
+            searchable={select.searchable}
           />
         ))}
 

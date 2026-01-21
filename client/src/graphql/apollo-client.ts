@@ -11,15 +11,32 @@ const httpLink = createHttpLink({
 let getAuth0Token: (() => Promise<string | null>) | null = null;
 let isTokenReady = false;
 
+// Event subscribers for token ready state changes
+type TokenReadyCallback = (ready: boolean) => void;
+const tokenReadySubscribers: Set<TokenReadyCallback> = new Set();
+
 // Function to set the token getter from React context
 export const setAuth0TokenGetter = (tokenGetter: () => Promise<string | null>) => {
   getAuth0Token = tokenGetter;
+  logger.debug('Apollo Client - Token getter registered');
 };
 
 // Function to set the token ready state
 export const setTokenReadyState = (ready: boolean) => {
+  const previousState = isTokenReady;
   isTokenReady = ready;
   logger.debug('Apollo Client - Token ready state:', ready);
+
+  // Notify all subscribers if state changed
+  if (previousState !== ready) {
+    tokenReadySubscribers.forEach(callback => {
+      try {
+        callback(ready);
+      } catch (error) {
+        logger.error('Apollo Client - Error in token ready callback:', error);
+      }
+    });
+  }
 };
 
 // Function to check if token is ready
@@ -27,24 +44,44 @@ export const getTokenReadyState = (): boolean => {
   return isTokenReady;
 };
 
-const authLink = setContext(async (_, { headers }) => {
-  if (getAuth0Token) {
-    try {
-      const tokenStart = performance.now();
-      const idToken = await getAuth0Token();
-      const tokenEnd = performance.now();
-      logger.debug(`[AUTH] Token acquisition took ${tokenEnd - tokenStart}ms`);
-      if (idToken) {
-        return {
-          headers: {
-            ...headers,
-            authorization: `Bearer ${idToken}`
-          }
-        };
-      }
-    } catch (error) {
-      logger.error('Auth0 ID token acquisition failed:', error);
+// Subscribe to token ready state changes
+export const subscribeToTokenReady = (callback: TokenReadyCallback): (() => void) => {
+  tokenReadySubscribers.add(callback);
+  // Immediately call with current state
+  callback(isTokenReady);
+  // Return unsubscribe function
+  return () => {
+    tokenReadySubscribers.delete(callback);
+  };
+};
+
+const authLink = setContext(async (operation, { headers }) => {
+  const operationName = operation.operationName || 'unknown';
+
+  if (getAuth0Token === null) {
+    logger.warn(`[AUTH] Request "${operationName}" - No token getter registered, sending without auth`);
+    return { headers };
+  }
+
+  try {
+    const tokenStart = performance.now();
+    const idToken = await getAuth0Token();
+    const tokenEnd = performance.now();
+    logger.debug(`[AUTH] Request "${operationName}" - Token acquisition took ${tokenEnd - tokenStart}ms, got token: ${idToken ? 'yes' : 'no'}`);
+
+    if (idToken) {
+      logger.debug(`[AUTH] Request "${operationName}" - Attaching Bearer token`);
+      return {
+        headers: {
+          ...headers,
+          authorization: `Bearer ${idToken}`
+        }
+      };
     }
+
+    logger.warn(`[AUTH] Request "${operationName}" - Token getter returned null/empty`);
+  } catch (error) {
+    logger.error(`[AUTH] Request "${operationName}" - Token acquisition failed:`, error);
   }
 
   return { headers };
@@ -117,6 +154,32 @@ export const apolloClient = new ApolloClient({
             },
           },
         },
+      },
+      // Prevent normalization of Set-related nested objects to avoid cache merging issues
+      // These types don't have unique IDs, so they should be embedded in their parent
+      SetGrouping: {
+        keyFields: false,
+      },
+      SetGroupingFinishCounts: {
+        keyFields: false,
+      },
+      SetInformationOutEntity: {
+        keyFields: false,
+      },
+      UserSetCardCollecting: {
+        keyFields: false,
+      },
+      FinishCounts: {
+        keyFields: false,
+      },
+      UserSetCardCollectionGroup: {
+        keyFields: false,
+      },
+      UserSetCardGroup: {
+        keyFields: false,
+      },
+      UserSetCardFinishGroup: {
+        keyFields: false,
       },
     },
   }),

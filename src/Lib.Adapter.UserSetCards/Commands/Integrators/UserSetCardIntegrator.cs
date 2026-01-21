@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
@@ -27,15 +28,59 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
     private UserSetCardExtEntity ApplyCardCountChange(UserSetCardExtEntity record, IAddCardToSetXfrEntity entity)
     {
         Dictionary<string, UserSetCardFinishGroupExtEntity> finishGroups = _groupResolver.Resolve(record, entity);
+        int uniqueCardDelta = UpdateCardToGroup(finishGroups, entity);
 
         return new UserSetCardExtEntity
         {
             UserId = record.UserId,
             SetId = record.SetId,
             TotalCards = Math.Max(0, record.TotalCards + entity.Count),
-            UniqueCards = Math.Max(0, record.UniqueCards + UpdateCardToGroup(finishGroups, entity)),
+            UniqueCards = Math.Max(0, record.UniqueCards + uniqueCardDelta),
             Groups = record.Groups,
-            Collecting = record.Collecting
+            Collecting = UpdateCollectingCounts(record.Collecting, entity, uniqueCardDelta)
+        };
+    }
+
+    private ICollection<UserSetCardCollectingExtEntity> UpdateCollectingCounts(
+        ICollection<UserSetCardCollectingExtEntity> collecting,
+        IAddCardToSetXfrEntity entity,
+        int uniqueCardDelta)
+    {
+        if (collecting == null || collecting.Count == 0) return collecting;
+
+        return collecting.Select(c => UpdateCollectingEntry(c, entity, uniqueCardDelta)).ToList();
+    }
+
+    private UserSetCardCollectingExtEntity UpdateCollectingEntry(
+        UserSetCardCollectingExtEntity entry,
+        IAddCardToSetXfrEntity entity,
+        int uniqueCardDelta)
+    {
+        if (entry.SetGroupId != entity.SetGroupId) return entry;
+        if (entry.Collecting is false) return entry;
+
+        string finishTypeLower = entity.FinishType.ToLowerInvariant();
+        FinishCountsExtEntity currentCounts = entry.Counts ?? new FinishCountsExtEntity();
+
+        int nonFoilDelta = finishTypeLower == "nonfoil" ? uniqueCardDelta : 0;
+        int foilDelta = finishTypeLower == "foil" ? uniqueCardDelta : 0;
+        int etchedDelta = finishTypeLower == "etched" ? uniqueCardDelta : 0;
+
+        FinishCountsExtEntity newCounts = new()
+        {
+            NonFoil = Math.Max(0, currentCounts.NonFoil + nonFoilDelta),
+            Foil = Math.Max(0, currentCounts.Foil + foilDelta),
+            Etched = Math.Max(0, currentCounts.Etched + etchedDelta),
+            Total = Math.Max(0, currentCounts.Total + uniqueCardDelta)
+        };
+
+        return new UserSetCardCollectingExtEntity
+        {
+            SetGroupId = entry.SetGroupId,
+            Collecting = entry.Collecting,
+            Count = entry.Count,
+            Counts = newCounts,
+            CollectingFinishes = entry.CollectingFinishes
         };
     }
 

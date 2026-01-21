@@ -7,6 +7,8 @@ import { AppButton as Button } from './components/molecules/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/utils/ErrorBoundaries'
 import { CollectionProvider } from './contexts/CollectionContext'
+import { WishlistProvider } from './contexts/WishlistContext'
+import { EntryModeProvider } from './contexts/EntryModeContext'
 import { UserProvider } from './contexts/UserContext'
 import { I18nProvider } from './components/providers/I18nProvider'
 import { globalSearchFocus } from './utils/globalSearchFocusHandler'
@@ -21,6 +23,7 @@ const ArtistCardsPage = lazy(() => import('./components/pages/ArtistCardsPage'))
 const CardAllPrintingsPage = lazy(() => import('./components/pages/CardAllPrintingsPage'))
 const SignInRedirectPage = lazy(() => import('./components/pages/SignInRedirectPage'))
 const ConventionSigningPage = lazy(() => import('./components/pages/ConventionSigningPage'))
+const WishlistPage = lazy(() => import('./components/pages/WishlistPage'))
 
 // Initialize global search focus handler (double-tap Shift to focus search)
 void globalSearchFocus;
@@ -93,8 +96,10 @@ function App() {
     <I18nProvider>
       <UserProvider>
         <BrowserRouter>
-          <CollectionProvider>
-            <Layout>
+          <EntryModeProvider>
+            <CollectionProvider>
+              <WishlistProvider>
+                <Layout>
               <Suspense fallback={<PageLoadingFallback />}>
                 <Routes>
                   <Route path="/" element={
@@ -147,12 +152,19 @@ function App() {
                       <ConventionSigningPage />
                     </PageErrorBoundary>
                   } />
+                  <Route path="/wishlist" element={
+                    <PageErrorBoundary name="WishlistPage">
+                      <WishlistPage />
+                    </PageErrorBoundary>
+                  } />
                   {/* Handle old query param URLs for backwards compatibility */}
                   <Route path="*" element={<LegacyRedirect />} />
                 </Routes>
               </Suspense>
-            </Layout>
-          </CollectionProvider>
+                </Layout>
+              </WishlistProvider>
+            </CollectionProvider>
+          </EntryModeProvider>
         </BrowserRouter>
       </UserProvider>
     </I18nProvider>

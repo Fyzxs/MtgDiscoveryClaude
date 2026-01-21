@@ -176,6 +176,11 @@ export const GET_CARDS_BY_NAME = gql`
             special
             count
           }
+          userWishlist {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
@@ -363,6 +368,11 @@ export const GET_CARDS_BY_SET_CODE = gql`
             special
             count
           }
+          userWishlist {
+            finish
+            special
+            count
+          }
         }
       }
       ... on FailureResponse {
@@ -440,6 +450,11 @@ export const GET_CARDS_BY_IDS = gql`
             cardhoarder
           }
           userCollection {
+            finish
+            special
+            count
+          }
+          userWishlist {
             finish
             special
             count
@@ -627,6 +642,11 @@ export const GET_CARDS_BY_ARTIST = gql`
           attractions
           setGroupId
           userCollection {
+            finish
+            special
+            count
+          }
+          userWishlist {
             finish
             special
             count

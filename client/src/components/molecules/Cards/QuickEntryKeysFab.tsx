@@ -18,7 +18,8 @@ export const QuickEntryKeysFab: React.FC = () => {
     const pathname = location.pathname;
     return pathname.includes('/set/') ||
       pathname.includes('/artists/') ||
-      pathname.includes('/card/');
+      pathname.includes('/card/') ||
+      pathname.includes('/wishlist');
   };
 
   // Check if ctor parameter is in URL
@@ -37,6 +38,7 @@ export const QuickEntryKeysFab: React.FC = () => {
     { keys: 'G/I', description: 'Signed' },
     { keys: 'R/P', description: 'Artist Proof' },
     { keys: 'T/M', description: 'Modified/Altered' },
+    { keys: 'Q/Y', description: 'Toggle Wishlist Mode' },
     { keys: 'X', description: 'Negate Quantity' },
     { keys: 'Enter', description: 'Confirm' },
     { keys: 'Esc', description: 'Cancel' }

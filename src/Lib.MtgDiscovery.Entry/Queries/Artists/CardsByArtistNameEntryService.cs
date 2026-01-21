@@ -22,6 +22,7 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
     private readonly IArtistNameArgToItrMapper _artistNameArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly IUserWishlistCardByIdsEnrichment _userWishlistCardEnrichment;
     private readonly IArtistNameArgToUserCardsArtistContextCollectionMapper _artistContextCollectionMapper;
 
     public CardsByArtistNameEntryService(ILogger logger) : this(
@@ -30,6 +31,7 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         new ArtistNameArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
         new UserCardEnrichment(logger),
+        new UserWishlistCardByIdsEnrichment(logger),
         new ArtistNameArgToUserCardsArtistContextCollectionMapper())
     { }
 
@@ -39,6 +41,7 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         IArtistNameArgToItrMapper artistNameArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
         IUserCardEnrichment userCardEnrichment,
+        IUserWishlistCardByIdsEnrichment userWishlistCardEnrichment,
         IArtistNameArgToUserCardsArtistContextCollectionMapper artistContextCollectionMapper)
     {
         _artistDomainService = artistDomainService;
@@ -46,6 +49,7 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         _artistNameArgToItrMapper = artistNameArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardEnrichment = userCardEnrichment;
+        _userWishlistCardEnrichment = userWishlistCardEnrichment;
         _artistContextCollectionMapper = artistContextCollectionMapper;
     }
 
@@ -72,6 +76,8 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
                 await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
             }
         }
+
+        await _userWishlistCardEnrichment.Enrich(outEntities, artistName).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

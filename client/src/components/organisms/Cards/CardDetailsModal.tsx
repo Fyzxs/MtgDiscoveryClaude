@@ -13,7 +13,7 @@ import { getLegalityColor } from '../../../theme';
 import { ModalErrorBoundary } from '../../utils/ErrorBoundaries';
 import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
-import { CollectionSummary, ModalContainer, ManaCost } from '../../molecules';
+import { CollectionSummary, WishlistSummary, ModalContainer, ManaCost } from '../../molecules';
 import { RarityBadge, PriceDisplay } from '../../atoms';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
@@ -351,16 +351,29 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
               <Divider />
 
-              {/* Collection */}
+              {/* Collection & Wishlist */}
               {hasCollector && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    Collection:
-                  </Typography>
-                  <CollectionSummary
-                    collectionData={card?.userCollection}
-                    size="medium"
-                  />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Collection:
+                    </Typography>
+                    <CollectionSummary
+                      collectionData={card?.userCollection}
+                      size="medium"
+                    />
+                  </Box>
+                  {card?.userWishlist && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        Wishlist:
+                      </Typography>
+                      <WishlistSummary
+                        wishlistData={card.userWishlist}
+                        size="medium"
+                      />
+                    </Box>
+                  )}
                 </Box>
               )}
 

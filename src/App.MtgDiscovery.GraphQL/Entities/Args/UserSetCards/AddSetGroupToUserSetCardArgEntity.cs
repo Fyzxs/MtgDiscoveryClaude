@@ -5,6 +5,7 @@ namespace App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
 
 public sealed class AddSetGroupToUserSetCardArgEntity : IAddSetGroupToUserSetCardArgEntity
 {
+    public string UserId { get; init; }
     public string SetId { get; init; }
     public string SetGroupId { get; init; }
     public bool Collecting { get; init; }

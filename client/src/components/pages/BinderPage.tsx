@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Box, Typography, Button } from '../atoms';
-import { ArrowBackIcon } from '../atoms/Icons';
+import { useParams } from 'react-router-dom';
+import { Box } from '../atoms';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { BinderView, BinderControls } from '../organisms/Binder';
 import type { BinderViewMode } from '../organisms/Binder/BinderControls';
@@ -18,8 +17,6 @@ import { useCollectorParam } from '../../hooks/useCollectorParam';
  */
 export const BinderPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
   const { hasCollector } = useCollectorParam();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
 
@@ -34,7 +31,6 @@ export const BinderPage: React.FC = () => {
 
   const {
     setInfo,
-    setName,
     binderCards,
     collectedCardIds,
     getPageCards,
@@ -70,11 +66,6 @@ export const BinderPage: React.FC = () => {
     enabled: true
   });
 
-  // Handle navigation back to set page
-  const handleBackToSet = () => {
-    navigate(`/set/${setCode}${location.search}`);
-  };
-
 
   // Loading state
   if (isLoading) {
@@ -99,72 +90,72 @@ export const BinderPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      {/* Header */}
+    <Box
+      data-component="binder-page"
+      sx={{
+        // Use CSS Grid for precise viewport fitting on desktop
+        // Height: 100dvh - header(64px) - footer(48px) = 100dvh - 112px
+        display: { xs: 'block', lg: 'grid' },
+        gridTemplateRows: { lg: 'auto auto 1fr' },
+        height: { xs: 'auto', lg: 'calc(100dvh - 112px)' },
+        maxHeight: { xs: 'none', lg: 'calc(100dvh - 112px)' },
+        overflow: 'hidden',
+        py: 2,
+        px: { xs: 1, sm: 2, md: 3 }
+      }}
+    >
+      {/* Header - fixed size */}
       <Box
+        data-component="binder-header"
         sx={{
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 2,
-          mb: 3
+          justifyContent: 'center',
+          mb: 1
         }}
       >
-        {/* Back button */}
-        <Button
-          variant="text"
-          startIcon={<ArrowBackIcon />}
-          onClick={handleBackToSet}
-          sx={{ alignSelf: 'flex-start' }}
-        >
-          Back to Set
-        </Button>
-
-        {/* Set card */}
+        {/* Set card - click navigates back to set */}
         {setInfo && (
-          <MtgSetCard set={setInfo} />
+          <MtgSetCard set={setInfo} expanded />
         )}
-
-        {/* Title */}
-        <Typography variant="h5" component="h1" sx={{ textAlign: 'center' }}>
-          Binder View
-        </Typography>
-
-        {/* Stats */}
-        <Typography variant="body2" color="text.secondary">
-          {effectiveHasCollector
-            ? `${collectedCardIds.size} of ${binderCards.length} cards collected`
-            : `${binderCards.length} cards`}
-          {' '}({totalPages} page{totalPages !== 1 ? 's' : ''})
-        </Typography>
       </Box>
 
-      {/* Controls */}
-      <BinderControls
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPrev={handlePrev}
-        onNext={handleNext}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        canUseBookMode={canUseBookMode}
-      />
+      {/* Controls - fixed size */}
+      <Box data-component="binder-controls">
+        <BinderControls
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPrev={handlePrev}
+          onNext={handleNext}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          canUseBookMode={canUseBookMode}
+        />
+      </Box>
 
-      {/* Binder view */}
-      <BinderView
-        cards={binderCards}
-        collectedCardIds={collectedCardIds}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        bookMode={useBookMode}
-        onPageChange={goToPage}
-        onNext={handleNext}
-        onPrev={handlePrev}
-        getPageCards={getPageCards}
-        hasCollector={effectiveHasCollector}
-      />
+      {/* Binder view - fills remaining grid row */}
+      <Box
+        data-component="binder-view-container"
+        sx={{
+          minHeight: { xs: 500, lg: 0 },
+          height: { lg: '100%' },
+          overflow: 'hidden'
+        }}
+      >
+        <BinderView
+          cards={binderCards}
+          collectedCardIds={collectedCardIds}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          bookMode={useBookMode}
+          onPageChange={goToPage}
+          onNext={handleNext}
+          onPrev={handlePrev}
+          getPageCards={getPageCards}
+          hasCollector={effectiveHasCollector}
+        />
+      </Box>
     </Box>
   );
 };

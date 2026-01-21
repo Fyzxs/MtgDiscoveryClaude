@@ -36,12 +36,14 @@ export { default as ZoomInIcon } from '@mui/icons-material/ZoomIn';
 export { default as CircleIcon } from '@mui/icons-material/Circle';
 export { default as CircleOutlinedIcon } from '@mui/icons-material/CircleOutlined';
 export { default as ErrorOutlineIcon } from '@mui/icons-material/ErrorOutline';
+export { default as FavoriteBorderIcon } from '@mui/icons-material/FavoriteBorder';
 export { default as HelpOutlineIcon } from '@mui/icons-material/HelpOutline';
 export { default as RemoveCircleIcon } from '@mui/icons-material/RemoveCircle';
 export { default as WarningIcon } from '@mui/icons-material/Warning';
 
 // Content Icons
 export { default as CollectionsBookmarkIcon } from '@mui/icons-material/CollectionsBookmark';
+export { default as HotelIcon } from '@mui/icons-material/Hotel';
 export { default as FormatListNumberedIcon } from '@mui/icons-material/FormatListNumbered';
 export { default as ImageNotSupportedIcon } from '@mui/icons-material/ImageNotSupported';
 export { default as KeyboardIcon } from '@mui/icons-material/Keyboard';
