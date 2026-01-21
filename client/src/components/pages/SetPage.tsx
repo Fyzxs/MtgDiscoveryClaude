@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Tabs, Tab } from '@mui/material';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Box, Tabs, Tab, Button } from '@mui/material';
+import { MenuBookIcon } from '../atoms/Icons';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
@@ -28,6 +29,8 @@ type SetPageTab = 'cards' | 'sealed';
  */
 export const SetPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
@@ -121,6 +124,11 @@ export const SetPage: React.FC = () => {
   const handleShowGroupsChange = useCallback((value: boolean) => {
     updateFilter('showGroups', value);
   }, [updateFilter]);
+
+  // Handler for Binder View button
+  const handleBinderClick = useCallback(() => {
+    navigate(`/set/binder/${setCode}${location.search}`);
+  }, [navigate, setCode, location.search]);
 
   // Build filter config for mobile drawer (mirrors SetPageFilters logic)
   const filterConfig: FilterPanelConfig = useMemo(() => {
@@ -310,6 +318,18 @@ export const SetPage: React.FC = () => {
                   resultsSummary={resultsSummary}
                 />
               )}
+
+              {/* Binder View Button - Above filters */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<MenuBookIcon />}
+                  onClick={handleBinderClick}
+                >
+                  Binder View
+                </Button>
+              </Box>
 
               {/* Filters Section */}
               {useMobileLayout === false && (

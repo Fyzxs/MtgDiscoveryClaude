@@ -88,17 +88,6 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
                 </Box>
               )}
             </Box>
-
-            {/* Binder View button */}
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<MenuBookIcon />}
-              onClick={handleBinderClick}
-              sx={{ mt: 1 }}
-            >
-              Binder View
-            </Button>
           </Box>
         </SectionErrorBoundary>
       )}
