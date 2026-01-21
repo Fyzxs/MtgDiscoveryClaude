@@ -3,7 +3,7 @@ import { Box, Typography, IconButton, Tooltip } from '../atoms';
 import { ContentCopyIcon } from '../atoms/Icons';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { SetCollectionPanel } from './SetCollectionPanel';
-import { SectionErrorBoundary } from '../ErrorBoundaries';
+import { SectionErrorBoundary } from '../utils/ErrorBoundaries';
 import type { MtgSet } from '../../types/set';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 

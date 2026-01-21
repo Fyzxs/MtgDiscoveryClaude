@@ -5,7 +5,7 @@ import { Container, Typography, Box, CircularProgress } from './components/atoms
 import { AppCard as Card } from './components/molecules/shared/AppCard'
 import { AppButton as Button } from './components/molecules/shared/AppButton'
 import { Layout } from './components/templates/Layout'
-import { PageErrorBoundary } from './components/ErrorBoundaries'
+import { PageErrorBoundary } from './components/utils/ErrorBoundaries'
 import { CollectionProvider } from './contexts/CollectionContext'
 import { UserProvider } from './contexts/UserContext'
 import { I18nProvider } from './components/providers/I18nProvider'

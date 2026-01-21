@@ -143,7 +143,6 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
                 hasCollector,
                 showCollectorInfo: hasCollector
               }}
-              collectionData={card.userCollection}
             />
           ))}
         </ResponsiveGridAutoFit>

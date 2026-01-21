@@ -10,7 +10,7 @@ import {
   Tooltip
 } from '../atoms';
 import { getLegalityColor } from '../../theme';
-import { ModalErrorBoundary } from '../ErrorBoundaries';
+import { ModalErrorBoundary } from '../utils/ErrorBoundaries';
 import type { Card } from '../../types/card';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { CollectionSummary, ModalContainer, ManaCost } from '../molecules';
