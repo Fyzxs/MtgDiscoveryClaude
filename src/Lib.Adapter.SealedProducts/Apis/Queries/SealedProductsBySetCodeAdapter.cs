@@ -74,7 +74,8 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
                 new SealedProductsAdapterException($"Failed to retrieve sealed products for set '{setCodeValue}'", productsResponse.Exception()));
         }
 
-        IEnumerable<ISealedProductOufEntity> mappedProducts = productsResponse.Value.Select(_mapper.Map);
+        IEnumerable<ISealedProductOufEntity> mappedProducts = await Task.WhenAll(
+            productsResponse.Value.Select(p => _mapper.Map(p))).ConfigureAwait(false);
 
         return new SuccessOperationResponse<IEnumerable<ISealedProductOufEntity>>(mappedProducts);
     }
