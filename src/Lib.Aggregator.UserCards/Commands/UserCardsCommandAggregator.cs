@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
-using Lib.Aggregator.UserCards.Commands.AddUserCard;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
