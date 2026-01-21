@@ -25,8 +25,13 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
         "booster_case",
         "bundle_case",
         "deck_box",
-        "deck",
         "subset"
+    };
+
+    private static readonly HashSet<string> s_excludedSubtypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "secret_lair_bundle",
+        "duel"
     };
 
     private readonly IReadOnlyList<string> _setCodes;
@@ -186,6 +191,11 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
         foreach (MtgJsonSealedProductDto product in set.SealedProduct)
         {
             if (string.IsNullOrEmpty(product.Category) is false && s_excludedCategories.Contains(product.Category))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(product.Subtype) is false && s_excludedSubtypes.Contains(product.Subtype))
             {
                 continue;
             }
