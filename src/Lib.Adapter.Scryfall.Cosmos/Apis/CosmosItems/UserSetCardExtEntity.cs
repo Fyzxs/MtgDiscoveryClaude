@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
@@ -26,8 +26,8 @@ public sealed class UserSetCardExtEntity : CosmosItem
     public int UniqueCards { get; init; }
 
     [JsonProperty("collecting")]
-    public ICollection<string> Collecting { get; init; } = new List<string>();
+    public ICollection<string> Collecting { get; init; } = [];
 
     [JsonProperty("groups")]
-    public Dictionary<string, UserSetCardGroupExtEntity> Groups { get; init; } = new();
+    public Dictionary<string, UserSetCardGroupExtEntity> Groups { get; init; } = [];
 }

@@ -1,4 +1,4 @@
-namespace App.MtgDiscovery.GraphQL.Entities.Types.User;
+﻿namespace App.MtgDiscovery.GraphQL.Entities.Types.User;
 
 public sealed class UserInfoOutEntity
 {

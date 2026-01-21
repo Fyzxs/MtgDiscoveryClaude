@@ -99,7 +99,7 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
             Preview = MapPreview(source.Preview),
             ProducedMana = source.ProducedMana,
             AttractionLights = source.AttractionLights,
-            UserCollection = new List<CollectedItemOutEntity>() // Default to empty collection
+            UserCollection = [] // Default to empty collection
         };
 
         return Task.FromResult(result);

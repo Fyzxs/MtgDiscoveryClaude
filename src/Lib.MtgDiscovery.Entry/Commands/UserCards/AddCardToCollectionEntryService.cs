@@ -61,7 +61,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         if (addResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 
         // Fetch the complete card details
-        ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = new[] { addResponse.ResponseData.CardId } };
+        ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [addResponse.ResponseData.CardId] };
         IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
         if (cardResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 

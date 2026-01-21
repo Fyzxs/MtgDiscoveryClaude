@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers.Definitions;
+﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers.Definitions;
 using Lib.Cosmos.Apis;
 using Microsoft.Extensions.Logging;
 

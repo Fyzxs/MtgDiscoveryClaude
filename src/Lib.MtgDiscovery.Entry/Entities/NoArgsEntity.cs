@@ -1,3 +1,3 @@
-namespace Lib.MtgDiscovery.Entry.Entities;
+﻿namespace Lib.MtgDiscovery.Entry.Entities;
 
 internal sealed class NoArgsEntity;
