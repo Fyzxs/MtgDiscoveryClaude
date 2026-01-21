@@ -1,7 +1,6 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useCollectorParam } from './useCollectorParam';
-import { cardCacheManager } from '../services/CardCacheManager';
 import {
   GET_CARDS_BY_SET_CODE,
   GET_CARDS_BY_NAME,
@@ -9,137 +8,121 @@ import {
   GET_CARDS_BY_ARTIST
 } from '../graphql/queries/cards';
 import type { Card } from '../types/card';
-import type { CollectorCardData } from '../services/CardCacheManager';
 
 /**
- * Hook that provides card cache operations with GraphQL integration
- * Encapsulates all Apollo Client calls so consumers don't need to handle them
+ * Collection card data interface for updates
+ */
+export interface CollectorCardData {
+  cardId: string;
+  finish: 'nonfoil' | 'foil' | 'etched';
+  special: 'none' | 'artist_proof' | 'signed' | 'altered';
+  count: number;
+}
+
+/**
+ * Hook that provides card fetching operations using Apollo Client cache
+ * All queries use cache-first policy to minimize network requests
  */
 export function useCardCache() {
   const apolloClient = useApolloClient();
   const { hasCollector, collectorId } = useCollectorParam();
 
   /**
-   * Fetch a single card by ID through the cache
+   * Fetch a single card by ID through Apollo cache
    */
   const fetchCard = useCallback(async (cardId: string): Promise<Card> => {
-    return cardCacheManager.fetchCard(
-      cardId,
-      async () => {
-        const response = await apolloClient.query({
-          query: GET_CARDS_BY_IDS,
-          variables: {
-            ids: {
-              cardIds: [cardId],
-              ...(hasCollector && collectorId ? { userId: collectorId } : {})
-            }
-          }
-        });
-
-        const data = (response.data as any)?.cardsById?.data;
-        if (data?.[0]) {
-          return data[0];
+    const response = await apolloClient.query({
+      query: GET_CARDS_BY_IDS,
+      variables: {
+        ids: {
+          cardIds: [cardId],
+          ...(hasCollector && collectorId ? { userId: collectorId } : {})
         }
-        throw new Error(`Card ${cardId} not found`);
       },
-      hasCollector ? collectorId : null
-    );
+      fetchPolicy: 'cache-first'
+    });
+
+    const data = (response.data as any)?.cardsById?.data;
+    if (data?.[0]) {
+      return data[0];
+    }
+    throw new Error(`Card ${cardId} not found`);
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
-   * Fetch multiple cards by IDs through the cache
+   * Fetch multiple cards by IDs through Apollo cache
    */
   const fetchCards = useCallback(async (cardIds: string[]): Promise<Card[]> => {
-    return cardCacheManager.fetchCards(
-      cardIds,
-      async (missingIds) => {
-        const response = await apolloClient.query({
-          query: GET_CARDS_BY_IDS,
-          variables: {
-            ids: {
-              cardIds: missingIds,
-              ...(hasCollector && collectorId ? { userId: collectorId } : {})
-            }
-          }
-        });
-
-        return (response.data as any)?.cardsById?.data || [];
+    const response = await apolloClient.query({
+      query: GET_CARDS_BY_IDS,
+      variables: {
+        ids: {
+          cardIds,
+          ...(hasCollector && collectorId ? { userId: collectorId } : {})
+        }
       },
-      hasCollector ? collectorId : null
-    );
+      fetchPolicy: 'cache-first'
+    });
+
+    return (response.data as any)?.cardsById?.data || [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
-   * Fetch all cards in a set through the cache
+   * Fetch all cards in a set through Apollo cache
    */
   const fetchSetCards = useCallback(async (setCode: string): Promise<Card[]> => {
-    return cardCacheManager.fetchSetCards(
-      setCode,
-      async () => {
-        const response = await apolloClient.query({
-          query: GET_CARDS_BY_SET_CODE,
-          variables: {
-            setCode: {
-              setCode,
-              ...(hasCollector && collectorId ? { userId: collectorId } : {})
-            }
-          }
-        });
-
-        const data = (response.data as any)?.cardsBySetCode?.data;
-        if (data) {
-          return data;
+    const response = await apolloClient.query({
+      query: GET_CARDS_BY_SET_CODE,
+      variables: {
+        setCode: {
+          setCode,
+          ...(hasCollector && collectorId ? { userId: collectorId } : {})
         }
-        return [];
       },
-      hasCollector ? collectorId : null
-    );
+      fetchPolicy: 'cache-first'
+    });
+
+    const data = (response.data as any)?.cardsBySetCode?.data;
+    if (data) {
+      return data;
+    }
+    return [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
-   * Fetch cards by name through the cache
+   * Fetch cards by name through Apollo cache
    */
   const fetchCardsByName = useCallback(async (cardName: string): Promise<Card[]> => {
-    return cardCacheManager.fetchCardsByName(
-      cardName,
-      async () => {
-        const response = await apolloClient.query({
-          query: GET_CARDS_BY_NAME,
-          variables: {
-            cardName: {
-              cardName,
-              ...(hasCollector && collectorId ? { userId: collectorId } : {})
-            }
-          }
-        });
-
-        return (response.data as any)?.cardsByName?.data || [];
+    const response = await apolloClient.query({
+      query: GET_CARDS_BY_NAME,
+      variables: {
+        cardName: {
+          cardName,
+          ...(hasCollector && collectorId ? { userId: collectorId } : {})
+        }
       },
-      hasCollector ? collectorId : null
-    );
+      fetchPolicy: 'cache-first'
+    });
+
+    return (response.data as any)?.cardsByName?.data || [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
-   * Fetch cards by artist through the cache
+   * Fetch cards by artist through Apollo cache
    */
   const fetchCardsByArtist = useCallback(async (artistName: string): Promise<Card[]> => {
-    return cardCacheManager.fetchCardsByArtist(
-      artistName,
-      async () => {
-        const response = await apolloClient.query({
-          query: GET_CARDS_BY_ARTIST,
-          variables: {
-            artistName: {
-              artistName,
-              ...(hasCollector && collectorId ? { userId: collectorId } : {})
-            }
-          }
-        });
-
-        return (response.data as any)?.cardsByArtistName?.data || [];
+    const response = await apolloClient.query({
+      query: GET_CARDS_BY_ARTIST,
+      variables: {
+        artistName: {
+          artistName,
+          ...(hasCollector && collectorId ? { userId: collectorId } : {})
+        }
       },
-      hasCollector ? collectorId : null
-    );
+      fetchPolicy: 'cache-first'
+    });
+
+    return (response.data as any)?.cardsByArtistName?.data || [];
   }, [apolloClient, hasCollector, collectorId]);
 
   /**
@@ -147,40 +130,22 @@ export function useCardCache() {
    * TODO: Implement when UPDATE_COLLECTION mutation is available
    */
   const updateCollectorCard = useCallback(async (
-    collectorData: CollectorCardData
+    _collectorData: CollectorCardData
   ): Promise<Card> => {
     if (!hasCollector || !collectorId) {
       throw new Error('No collector context available');
     }
 
-    return cardCacheManager.updateCollectorCardData(
-      collectorData,
-      collectorId,
-      async () => {
-        // TODO: Call UPDATE_COLLECTION mutation when available
-        // const response = await apolloClient.mutate({
-        //   mutation: UPDATE_COLLECTION,
-        //   variables: {
-        //     cardId: collectorData.cardId,
-        //     collectorId,
-        //     finish: collectorData.finish,
-        //     special: collectorData.special,
-        //     count: collectorData.count
-        //   }
-        // });
-        // return response.data?.updateCollection?.card;
-
-        throw new Error('UPDATE_COLLECTION mutation not yet implemented');
-      }
-    );
-  }, [apolloClient, hasCollector, collectorId]);
+    // TODO: Call UPDATE_COLLECTION mutation when available
+    throw new Error('UPDATE_COLLECTION mutation not yet implemented');
+  }, [hasCollector, collectorId]);
 
   /**
-   * Clear the entire cache (useful for logout, etc.)
+   * Clear the Apollo cache (useful for logout, etc.)
    */
   const clearCache = useCallback(() => {
-    cardCacheManager.clear();
-  }, []);
+    apolloClient.cache.reset();
+  }, [apolloClient]);
 
   return {
     fetchCard,
@@ -194,6 +159,3 @@ export function useCardCache() {
     collectorId
   };
 }
-
-// Re-export for convenience
-export type { CollectorCardData } from '../services/CardCacheManager';
