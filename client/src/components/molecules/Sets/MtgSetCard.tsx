@@ -81,15 +81,19 @@ interface MtgSetCardProps {
   className?: string;
   /** Explicit size override - if not provided, determined by breakpoint */
   size?: SetCardSize;
+  /** Show expanded/detailed view by default (normally shown on hover) */
+  expanded?: boolean;
 }
 
 export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   set,
   onSetClick,
   className = '',
-  size: explicitSize
+  size: explicitSize,
+  expanded = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const showExpanded = expanded || isHovered;
   const theme = useTheme();
   const { buildUrlWithCollector, createCollectorClickHandler } = useCollectorNavigation();
   const { hasCollector } = useCollectorParam();
@@ -319,9 +323,9 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
         alignItems: 'center',
         p: 1.5,
         pt: 2,
-        opacity: isHovered ? 0 : 1,
+        opacity: showExpanded ? 0 : 1,
         transition: 'opacity 0.25s ease',
-        pointerEvents: isHovered ? 'none' : 'auto',
+        pointerEvents: showExpanded ? 'none' : 'auto',
       }}
     >
       {/* Progress ring with icon */}
@@ -391,10 +395,10 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           flexDirection: 'column',
           alignItems: 'center',
           p: 1.5,
-          opacity: isHovered ? 1 : 0,
-          transform: isHovered ? 'translateY(0)' : 'translateY(10px)',
+          opacity: showExpanded ? 1 : 0,
+          transform: showExpanded ? 'translateY(0)' : 'translateY(10px)',
           transition: 'all 0.25s ease',
-          pointerEvents: isHovered ? 'auto' : 'none',
+          pointerEvents: showExpanded ? 'auto' : 'none',
         }}
       >
         {/* Watermark icon behind content */}
@@ -480,11 +484,11 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
             zIndex: 1,
           }}
         >
-          {hasCollector && collectionProgress ? (
+          {isTracking ? (
             <>
               <CollectionProgressBar
-                collected={collectionProgress.uniqueCards}
-                total={collectionProgress.setTotalCards}
+                collected={collectionProgress!.uniqueCards}
+                total={collectionProgress!.setTotalCards}
                 percentage={percentage}
                 compact
                 showTicks
@@ -504,7 +508,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     tracked
                   </Typography>
                   <Typography sx={{ fontSize: '0.625rem', color: 'text.primary', fontWeight: 500 }}>
-                    {collectionProgress.uniqueCards} / {collectionProgress.setTotalCards}
+                    {collectionProgress!.uniqueCards} / {collectionProgress!.setTotalCards}
                   </Typography>
                 </Box>
                 <Typography sx={{ color: 'grey.600', alignSelf: 'center' }}>•</Typography>
@@ -513,7 +517,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     total
                   </Typography>
                   <Typography sx={{ fontSize: '0.625rem', color: 'text.primary', fontWeight: 500 }}>
-                    {collectionProgress.totalCards}
+                    {collectionProgress!.totalCards}
                   </Typography>
                 </Box>
               </Box>
@@ -521,7 +525,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           ) : (
             <Box sx={{ textAlign: 'center' }}>
               <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
-                {totalInSet} cards
+                {set.userCollection?.uniqueCards || 0} of {totalInSet} unique cards
               </Typography>
               {(set.digital || set.foilOnly) && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mt: 0.5 }}>

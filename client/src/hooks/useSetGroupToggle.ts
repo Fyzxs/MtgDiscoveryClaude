@@ -43,24 +43,13 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
       return;
     }
 
-    // Calculate total based on selected finishes
-    let total = 0;
-    if (selectedFinishes.includes('nonFoil')) {
-      total += finishCounts.nonFoil;
-    }
-    if (selectedFinishes.includes('foil')) {
-      total += finishCounts.foil;
-    }
-    if (selectedFinishes.includes('etched')) {
-      total += finishCounts.etched;
-    }
-
-    // Construct counts object
+    // When toggling collection, counts should be 0 - these represent collected cards, not available cards
+    // The finishCounts parameter represents what's available in the set, not what the user has collected
     const counts = {
-      total,
-      nonFoil: finishCounts.nonFoil,
-      foil: finishCounts.foil,
-      etched: finishCounts.etched
+      total: 0,
+      nonFoil: 0,
+      foil: 0,
+      etched: 0
     };
 
     logger.info('toggleSetGroup called:', {
