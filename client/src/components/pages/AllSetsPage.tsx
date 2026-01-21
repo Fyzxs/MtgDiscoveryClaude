@@ -47,7 +47,7 @@ export const AllSetsPage: React.FC = () => {
     searchTerm,
     sortBy,
     filters,
-    filteredData: filteredSets,
+    filteredData: unsortedSets,
     setSearchTerm,
     setSortBy,
     updateFilter
@@ -60,8 +60,16 @@ export const AllSetsPage: React.FC = () => {
       filters: { setTypes: [] }
     }
   );
-  
+
   const selectedSetTypes = (Array.isArray(filters.setTypes) ? filters.setTypes : []) as string[];
+
+  // Apply sorting to filtered sets
+  const filteredSets = useMemo(() => {
+    if (!unsortedSets || unsortedSets.length === 0) return [];
+    const sortFn = filterConfig.sortOptions?.[sortBy as keyof typeof filterConfig.sortOptions];
+    if (!sortFn) return unsortedSets;
+    return [...unsortedSets].sort(sortFn);
+  }, [unsortedSets, sortBy, filterConfig.sortOptions]);
 
   // Get unique set types from data
   const getUniqueSetTypes = (sets: MtgSet[]): string[] => {
