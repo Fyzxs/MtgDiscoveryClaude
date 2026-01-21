@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Tabs, Tab, Chip } from '@mui/material';
-import { ViewListIcon, ViewModuleIcon } from '../atoms/Icons';
+import { Box, Tabs, Tab } from '@mui/material';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
@@ -310,25 +309,6 @@ export const SetPage: React.FC = () => {
                   showGroupsToggle={hasMultipleGroups}
                   resultsSummary={resultsSummary}
                 />
-              )}
-
-              {/* Binder View Button - Desktop only, above filters */}
-              {useMobileLayout === false && hasMultipleGroups && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                  <Chip
-                    icon={filters.showGroups !== false ? <ViewModuleIcon /> : <ViewListIcon />}
-                    label={filters.showGroups !== false ? 'Grouped' : 'Flat'}
-                    onClick={() => handleShowGroupsChange(!(filters.showGroups !== false))}
-                    variant={filters.showGroups !== false ? 'filled' : 'outlined'}
-                    color={filters.showGroups !== false ? 'primary' : 'default'}
-                    sx={{
-                      minHeight: 36,
-                      '& .MuiChip-icon': {
-                        fontSize: '1.1rem'
-                      }
-                    }}
-                  />
-                </Box>
               )}
 
               {/* Filters Section */}
