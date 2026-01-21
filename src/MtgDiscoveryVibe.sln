@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.UserDataRe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.ImageScraper", "Cli.Sealed.ImageScraper\Cli.Sealed.ImageScraper.csproj", "{B8C9D0E1-F2A3-4B5C-6D7E-8F90A1B2C3D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.Ingestion", "Cli.Sealed.Ingestion\Cli.Sealed.Ingestion.csproj", "{60163036-BE1C-4B52-9CE3-D33C7D7C8597}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
