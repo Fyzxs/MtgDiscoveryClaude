@@ -22,6 +22,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
     private readonly IArtistSearchTermItrToXfrMapper _artistSearchItrToXfrMapper;
     private readonly IArtistIdItrToXfrMapper _aristIdToXfrMapper;
     private readonly IArtistNameItrToXfrMapper _artistNameToXfrMapper;
+    private readonly IArtistSearchExtToItrMapper _artistSearchResultCollectionMapper;
 
     public QueryArtistAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
@@ -29,7 +30,8 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         new ArtistCardExtToItrEntityMapper(),
         new ArtistSearchTermItrToXfrMapper(),
         new ArtistIdItrToXfrMapper(),
-        new ArtistNameItrToXfrMapper())
+        new ArtistNameItrToXfrMapper(),
+        new ArtistSearchExtToItrMapper())
     { }
 
     private QueryArtistAggregatorService(IArtistAdapterService artistAdapterService,
@@ -37,7 +39,8 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         IArtistCardExtToItrEntityMapper artistCardToItrMapper,
         IArtistSearchTermItrToXfrMapper artistSearchItrToXfrMapper,
         IArtistIdItrToXfrMapper aristIdToXfrMapper,
-        IArtistNameItrToXfrMapper artistNameToXfrMapper)
+        IArtistNameItrToXfrMapper artistNameToXfrMapper,
+        IArtistSearchExtToItrMapper artistSearchResultCollectionMapper)
     {
         _artistAdapterService = artistAdapterService;
         _artistSearchToItrMapper = artistSearchToItrMapper;
@@ -45,6 +48,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         _artistSearchItrToXfrMapper = artistSearchItrToXfrMapper;
         _aristIdToXfrMapper = aristIdToXfrMapper;
         _artistNameToXfrMapper = artistNameToXfrMapper;
+        _artistSearchResultCollectionMapper = artistSearchResultCollectionMapper;
     }
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
@@ -57,19 +61,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
             return new FailureOperationResponse<IArtistSearchResultCollectionItrEntity>(adapterResponse.OuterException);
         }
 
-        //TODO: Encapsulate in collection mapper
-        List<IArtistSearchResultItrEntity> mappedArtists = [];
-        foreach (ArtistNameTrigramDataExtEntity extEntity in adapterResponse.ResponseData)
-        {
-            IArtistSearchResultItrEntity itrEntity = await _artistSearchToItrMapper.Map(extEntity).ConfigureAwait(false);
-            mappedArtists.Add(itrEntity);
-        }
-
-        IArtistSearchResultCollectionItrEntity collection = new ArtistSearchResultCollectionItrEntity
-        {
-            Artists = mappedArtists
-        };
-
+        IArtistSearchResultCollectionItrEntity collection = await _artistSearchResultCollectionMapper.Map(adapterResponse.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IArtistSearchResultCollectionItrEntity>(collection);
     }
 
