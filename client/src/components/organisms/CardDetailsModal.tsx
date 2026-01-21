@@ -344,7 +344,6 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   <CollectionSummary
                     collectionData={card?.userCollection}
                     size="medium"
-                    card={card}
                   />
                 </Box>
               )}

@@ -22,20 +22,25 @@ class DirectDomOverlay {
         width: 100% !important;
         height: 33% !important;
         background: rgba(0, 0, 0, 0.95) !important;
-        backdrop-filter: blur(8px) !important;
+        backdrop-filter: blur(4px) !important;
         border-top: 2px solid #1976d2 !important;
         z-index: 1000 !important;
-        display: none !important;
+        display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         font-family: "Roboto","Helvetica","Arial",sans-serif !important;
-        pointer-events: auto !important;
+        pointer-events: none !important;
         box-sizing: border-box !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        will-change: opacity !important;
       }
 
       .direct-dom-overlay.visible {
-        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
       }
 
       .direct-dom-overlay.flash {
@@ -49,6 +54,7 @@ class DirectDomOverlay {
         color: #1976d2 !important;
         line-height: 1 !important;
         margin-bottom: 8px !important;
+        will-change: contents !important;
       }
 
       .dom-overlay-count.negative {
@@ -60,6 +66,7 @@ class DirectDomOverlay {
         align-items: center !important;
         gap: 16px !important;
         height: 2rem !important;
+        will-change: contents !important;
       }
 
       .dom-overlay-finish {
@@ -114,7 +121,13 @@ class DirectDomOverlay {
   hide(cardId: string) {
     const overlay = this.overlays.get(cardId);
     if (overlay) {
+      const start = performance.now();
+      // PERFORMANCE: Opacity/visibility change - GPU-accelerated, no layout shift
       overlay.classList.remove('visible');
+      const duration = performance.now() - start;
+      if (duration > 1) {
+        console.warn(`[DirectDomOverlay] Hide took ${duration.toFixed(2)}ms for card: ${cardId}`);
+      }
     }
   }
 

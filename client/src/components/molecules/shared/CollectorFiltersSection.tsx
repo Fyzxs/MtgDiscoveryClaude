@@ -2,8 +2,7 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Grid,
-  Divider
+  Grid
 } from '@mui/material';
 import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
 import type { CollectorFiltersConfig } from '../../../types/filters';
