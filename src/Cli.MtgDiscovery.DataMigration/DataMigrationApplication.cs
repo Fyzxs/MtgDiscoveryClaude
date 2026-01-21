@@ -9,11 +9,13 @@ using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Operators;
 using Cli.MtgDiscovery.DataMigration.SuccessTracking;
 using Example.Core;
-using Lib.Aggregator.UserCards;
-using Lib.Domain.Cards;
-using Lib.Domain.UserCards;
+using Lib.Aggregator.UserCards.Apis;
+using Lib.Domain.Cards.Apis;
+using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Commands;
 using Lib.Universal.Configurations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Cli.MtgDiscovery.DataMigration;
@@ -25,91 +27,154 @@ internal sealed class DataMigrationApplication : ExampleApplication
         ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
         {
             builder.AddConsole();
-            builder.SetMinimumLevel(LogLevel.Information);
+            builder.SetMinimumLevel(LogLevel.Debug);
         });
 
         ILogger logger = loggerFactory.CreateLogger<DataMigrationApplication>();
 
-        logger.LogInformation("Starting Data Migration Tool");
+        try
+        {
+            logger.LogInformation("Starting Data Migration Tool");
 
-        MigrationConfiguration migrationConfig = MonoStateConfig.CurrentConfiguration
-            .GetSection("MigrationConfiguration")
-            .Get<MigrationConfiguration>();
+            logger.LogDebug("Checking if configuration is available...");
+            if (MonoStateConfig.CurrentConfiguration is null)
+            {
+                logger.LogError("MonoStateConfig.CurrentConfiguration is null!");
+                throw new InvalidOperationException("Configuration was not initialized");
+            }
 
-        AzureSqlConfiguration sqlConfig = MonoStateConfig.CurrentConfiguration
-            .GetSection("AzureSqlConfiguration")
-            .Get<AzureSqlConfiguration>();
+            logger.LogDebug("Attempting to load MigrationConfiguration section...");
+            IConfigurationSection migrationSection = MonoStateConfig.CurrentConfiguration.GetSection("MigrationConfiguration");
 
-        ICollectorDataReader sqlReader = new CollectorDataReader(
-            loggerFactory.CreateLogger<CollectorDataReader>(),
-            sqlConfig);
+            logger.LogDebug("MigrationConfiguration section exists: {Exists}", migrationSection.Exists());
+            logger.LogDebug("MigrationConfiguration section path: {Path}", migrationSection.Path);
+            logger.LogDebug("MigrationConfiguration section key: {Key}", migrationSection.Key);
 
-        DiscoveryCardGopher cosmosGopher = new DiscoveryCardGopher(
-            loggerFactory.CreateLogger<DiscoveryCardGopher>());
+            // Log all children
+            foreach (IConfigurationSection child in migrationSection.GetChildren())
+            {
+                logger.LogDebug("MigrationConfiguration child: {Key} = {Value}", child.Key, child.Value);
+            }
 
-        ICardDomainService cardDomainService = new CardDomainService(
-            loggerFactory.CreateLogger<CardDomainService>());
+            MigrationConfiguration migrationConfig = migrationSection.Get<MigrationConfiguration>();
 
-        INewSystemCardLookup cardLookup = new NewSystemCardLookup(
-            loggerFactory.CreateLogger<NewSystemCardLookup>(),
-            cardDomainService);
+            AzureSqlConfiguration sqlConfig = MonoStateConfig.CurrentConfiguration
+                .GetSection("AzureSqlConfiguration")
+                .Get<AzureSqlConfiguration>();
 
-        IUserCardsAggregatorService userCardsAggregator = new UserCardsAggregatorService(
-            loggerFactory.CreateLogger<UserCardsAggregatorService>());
+            if (migrationConfig is null || sqlConfig is null)
+            {
+                logger.LogError("Configuration is missing");
+                throw new InvalidOperationException("Configuration is missing");
+            }
 
-        IUserCardsDomainService userCardsDomain = new UserCardsDomainService(
-            loggerFactory.CreateLogger<UserCardsDomainService>(),
-            userCardsAggregator);
+            logger.LogInformation("Configuration loaded successfully");
+            logger.LogInformation("Source Collector ID: '{CollectorId}' (Length: {Length})", migrationConfig.SourceCollectorId, migrationConfig.SourceCollectorId?.Length ?? 0);
+            logger.LogInformation("Target User ID: '{UserId}' (Length: {Length})", migrationConfig.TargetUserId, migrationConfig.TargetUserId?.Length ?? 0);
+            logger.LogInformation("Error Output Path: '{Path}'", migrationConfig.ErrorOutputPath);
+            logger.LogInformation("Success Output Path: '{Path}'", migrationConfig.SuccessOutputPath);
+            logger.LogDebug("SQL Connection String: {ConnectionString}", sqlConfig.ConnectionString.Substring(0, Math.Min(50, sqlConfig.ConnectionString.Length)) + "...");
 
-        IUserCardsEntryService userCardsEntry = new UserCardsEntryService(
-            loggerFactory.CreateLogger<UserCardsEntryService>(),
-            userCardsDomain);
+            if (string.IsNullOrWhiteSpace(migrationConfig.SourceCollectorId))
+            {
+                logger.LogError("SourceCollectorId is null or empty in configuration");
+                throw new InvalidOperationException("SourceCollectorId must be configured in MigrationConfiguration section");
+            }
 
-        INewSystemCardAdder cardAdder = new NewSystemCardAdder(
-            loggerFactory.CreateLogger<NewSystemCardAdder>(),
-            userCardsEntry);
+            if (string.IsNullOrWhiteSpace(migrationConfig.TargetUserId))
+            {
+                logger.LogError("TargetUserId is null or empty in configuration");
+                throw new InvalidOperationException("TargetUserId must be configured in MigrationConfiguration section");
+            }
 
-        ILogger mapperLogger = loggerFactory.CreateLogger("OldToNewCardMapper");
+            logger.LogInformation("Creating SQL data reader...");
+            ICollectorDataReader sqlReader = new CollectorDataReader(
+                loggerFactory.CreateLogger<CollectorDataReader>(),
+                sqlConfig);
 
-        IOldFinishMapper finishMapper = new OldFinishMapper(mapperLogger);
+            logger.LogInformation("Creating Cosmos DB gopher...");
+            DiscoveryCardGopher cosmosGopher = new DiscoveryCardGopher(
+                loggerFactory.CreateLogger<DiscoveryCardGopher>());
 
-        IOldSpecialMapper specialMapper = new OldSpecialMapper(mapperLogger);
+            logger.LogInformation("Creating card domain service...");
+            ICardDomainService cardDomainService = new CardDomainService(
+                loggerFactory.CreateLogger<CardDomainService>());
 
-        IOldToNewCardMapper cardMapper = new OldToNewCardMapper(
-            mapperLogger,
-            finishMapper,
-            specialMapper);
+            logger.LogInformation("Creating card lookup service...");
+            INewSystemCardLookup cardLookup = new NewSystemCardLookup(
+                loggerFactory.CreateLogger<NewSystemCardLookup>(),
+                cardDomainService);
 
-        IErrorLogger errorLogger = new CsvErrorLogger(
-            loggerFactory.CreateLogger<CsvErrorLogger>(),
-            migrationConfig);
+            logger.LogInformation("Creating user cards aggregator...");
+            IUserCardsAggregatorService userCardsAggregator = new UserCardsAggregatorService(
+                loggerFactory.CreateLogger<UserCardsAggregatorService>());
 
-        ISuccessLogger successLogger = new CsvSuccessLogger(
-            loggerFactory.CreateLogger<CsvSuccessLogger>(),
-            migrationConfig);
+            logger.LogInformation("Creating entry service...");
+            IEntryService entryService = new EntryService(loggerFactory.CreateLogger<EntryService>());
 
-        IMigrationProgressTracker progressTracker = new MigrationProgressTracker(
-            loggerFactory.CreateLogger<MigrationProgressTracker>());
+            logger.LogInformation("Creating card adder...");
+            INewSystemCardAdder cardAdder = new NewSystemCardAdder(
+                loggerFactory.CreateLogger<NewSystemCardAdder>(),
+                entryService);
 
-        IMigrationOrchestrator orchestrator = new MigrationOrchestrator(
-            loggerFactory.CreateLogger<MigrationOrchestrator>(),
-            migrationConfig,
-            sqlReader,
-            cosmosGopher,
-            cardLookup,
-            cardAdder,
-            cardMapper,
-            errorLogger,
-            successLogger,
-            progressTracker);
+            logger.LogInformation("Creating mappers and loggers...");
+            ILogger mapperLogger = loggerFactory.CreateLogger("OldToNewCardMapper");
 
-        MigrationResult result = await orchestrator.ExecuteMigrationAsync().ConfigureAwait(false);
+            IOldFinishMapper finishMapper = new OldFinishMapper(mapperLogger);
+            IOldSpecialMapper specialMapper = new OldSpecialMapper(mapperLogger);
+            IOldToNewCardMapper cardMapper = new OldToNewCardMapper(
+                mapperLogger,
+                finishMapper,
+                specialMapper);
 
-        logger.LogInformation(
-            "Migration completed. Total: {Total}, Success: {Success}, Not Found: {NotFound}, Errors: {Errors}",
-            result.TotalRecords,
-            result.SuccessfulMigrations,
-            result.CardsNotFound,
-            result.OtherErrors);
+            IErrorLogger errorLogger = new CsvErrorLogger(
+                loggerFactory.CreateLogger<CsvErrorLogger>(),
+                migrationConfig);
+
+            ISuccessLogger successLogger = new CsvSuccessLogger(
+                loggerFactory.CreateLogger<CsvSuccessLogger>(),
+                migrationConfig);
+
+            IMigrationProgressTracker progressTracker = new MigrationProgressTracker(
+                loggerFactory.CreateLogger<MigrationProgressTracker>());
+
+            logger.LogInformation("Creating migration orchestrator...");
+            IMigrationOrchestrator orchestrator = new MigrationOrchestrator(
+                loggerFactory.CreateLogger<MigrationOrchestrator>(),
+                migrationConfig,
+                sqlReader,
+                cosmosGopher,
+                cardLookup,
+                cardAdder,
+                cardMapper,
+                errorLogger,
+                successLogger,
+                progressTracker);
+
+            logger.LogInformation("Starting migration execution...");
+            MigrationResult result = await orchestrator.ExecuteMigrationAsync().ConfigureAwait(false);
+
+            logger.LogInformation(
+                "Migration completed. Total: {Total}, Success: {Success}, Not Found: {NotFound}, Errors: {Errors}",
+                result.TotalRecords,
+                result.SuccessfulMigrations,
+                result.CardsNotFound,
+                result.OtherErrors);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Fatal error during migration execution");
+            logger.LogError("Exception Type: {Type}", ex.GetType().FullName);
+            logger.LogError("Exception Message: {Message}", ex.Message);
+            logger.LogError("Stack Trace: {StackTrace}", ex.StackTrace);
+
+            if (ex.InnerException != null)
+            {
+                logger.LogError("Inner Exception Type: {Type}", ex.InnerException.GetType().FullName);
+                logger.LogError("Inner Exception Message: {Message}", ex.InnerException.Message);
+            }
+
+            throw;
+        }
     }
 }
