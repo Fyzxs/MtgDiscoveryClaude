@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { logger } from '../../utils/logger';
 import { useParams } from 'react-router-dom';
-import { useCardCache } from '../../hooks/useCardCache';
+import { useCardQueries } from '../../hooks/useCardQueries';
 import type { Card } from '../../types/card';
 import {
   Container,
@@ -50,7 +51,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   const { hasCollector } = useCollectorParam();
 
   // Use card cache for fetching cards by name
-  const { fetchCardsByName } = useCardCache();
+  const { fetchCardsByName } = useCardQueries();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<CardsSuccessResponse | null>(null);
@@ -123,7 +124,7 @@ export const CardAllPrintingsPage: React.FC = () => {
     try {
       await refetch();
     } catch (retryError) {
-      console.error('Retry failed:', retryError);
+      logger.error('Retry failed:', retryError);
     }
   };
 
@@ -284,4 +285,4 @@ export const CardAllPrintingsPage: React.FC = () => {
       </AppErrorBoundary>
     </Container>
   );
-};
+};export default CardAllPrintingsPage;

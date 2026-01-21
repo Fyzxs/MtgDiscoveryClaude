@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { setAuth0TokenGetter, setTokenReadyState } from '../../graphql/apollo-client';
+import { logger } from '../../utils/logger';
 
 interface Auth0TokenProviderProps {
   children: React.ReactNode;
@@ -30,12 +31,12 @@ export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children
         });
 
         if (accessToken) {
-          console.log('Auth0TokenProvider - Access token acquired successfully');
+          logger.debug('Auth0TokenProvider - Access token acquired successfully');
           setTokenReady(true);
           setTokenReadyState(true);
         }
       } catch (error) {
-        console.error('Auth0TokenProvider - Failed to get access token:', error);
+        logger.error('Auth0TokenProvider - Failed to get access token:', error);
         setTokenReady(false);
         setTokenReadyState(false);
       }
@@ -58,7 +59,7 @@ export const Auth0TokenProvider: React.FC<Auth0TokenProviderProps> = ({ children
         });
         return accessToken || null;
       } catch (error) {
-        console.error('Failed to get Auth0 access token:', error);
+        logger.error('Failed to get Auth0 access token:', error);
         return null;
       }
     };

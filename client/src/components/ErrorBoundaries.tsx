@@ -2,6 +2,7 @@ import React from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import type { ReactNode, ErrorInfo } from 'react';
 import { Box, Typography } from '@mui/material';
+import { logger } from '../utils/logger';
 
 type ErrorBoundaryLevel = 'page' | 'section' | 'component';
 type ErrorBoundaryVariant = 'default' | 'modal' | 'card-grid';
@@ -47,7 +48,7 @@ export const AppErrorBoundary: React.FC<AppErrorBoundaryProps> = ({
           level: 'component' as const,
           isolate: true,
           onError: (error: Error, errorInfo: ErrorInfo) => {
-            console.error('Modal error:', error, errorInfo);
+            logger.error('Modal error:', error, errorInfo);
             if (onClose) {
               setTimeout(onClose, 2000);
             }

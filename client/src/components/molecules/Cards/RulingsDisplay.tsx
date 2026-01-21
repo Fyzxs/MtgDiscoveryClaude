@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '../../../utils/logger';
 import { Box, Typography } from '@mui/material';
 import { ExpandableSection } from '../../molecules/shared/ExpandableSection';
 import { LoadingContainer, ErrorAlert } from '../../atoms';
@@ -51,7 +52,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
           retryDelay: 1000,
           timeout: 8000,
           onRetry: (attemptNumber, error) => {
-            console.log(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.message);
+            logger.debug(`Retrying rulings fetch (attempt ${attemptNumber}):`, error.message);
           }
         });
         
@@ -63,7 +64,7 @@ export const RulingsDisplay: React.FC<RulingsDisplayProps> = ({ rulingsUri }) =>
         });
         setRulings(sortedRulings);
       } catch (err) {
-        console.error('Error fetching rulings:', err);
+        logger.error('Error fetching rulings:', err);
         const networkError = err as Error & { userMessage?: string };
         if (networkError.userMessage) {
           setError(networkError.userMessage);

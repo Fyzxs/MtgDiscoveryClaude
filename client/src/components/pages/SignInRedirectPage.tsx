@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { logger } from '../../utils/logger';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
@@ -40,7 +41,7 @@ export const SignInRedirectPage: React.FC = () => {
     const checkTokenReady = () => {
       const ready = getTokenReadyState();
       if (ready !== tokenReady) {
-        console.log('SignInRedirectPage - Token ready state changed:', ready);
+        logger.debug('SignInRedirectPage - Token ready state changed:', ready);
         setTokenReady(ready);
       }
     };
@@ -118,7 +119,7 @@ export const SignInRedirectPage: React.FC = () => {
         }
 
       } catch (registrationError) {
-        console.error('User registration error:', registrationError);
+        logger.error('User registration error:', registrationError);
         setSetupStatus('error');
         setStatusMessage('Error registering your account. Please try again.');
       }
@@ -185,4 +186,4 @@ export const SignInRedirectPage: React.FC = () => {
       </Box>
     </Container>
   );
-};
+};export default SignInRedirectPage;

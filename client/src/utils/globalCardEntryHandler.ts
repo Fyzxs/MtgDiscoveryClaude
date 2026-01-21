@@ -1,4 +1,5 @@
 import { domOverlay } from './directDomOverlay';
+import { logger } from './logger';
 import type { CardFinish, CardSpecial, CollectionEntryState, CardCollectionUpdate } from '../types/collection';
 import { perfMonitor } from './performanceMonitor';
 
@@ -256,7 +257,7 @@ class GlobalCardEntryHandler {
 
     // Fire-and-forget the submission - don't block UI
     handler.onSubmit(updateData).catch(error => {
-      console.error('[GlobalCardEntry] Submission failed:', error);
+      logger.error('[GlobalCardEntry] Submission failed:', error);
       // Error handling happens in CollectionContext (toast)
     });
   }

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useRef, useCallback, useState } from 'react';
+import { logger } from '../utils/logger';
 import { NotificationToastStack } from '../components/organisms/NotificationToastStack';
 import type { NotificationToastStackRef } from '../components/organisms/NotificationToastStack';
 import type { CardCollectionUpdate } from '../types/collection';
@@ -148,12 +149,12 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
 
       // Execute mutation in background (UI already updated above)
       perfMonitor.start('collection-mutation');
-      console.time('APOLLO_MUTATION');
+      // console.time('APOLLO_MUTATION');
       const mutationStart = performance.now();
       const result = await addCardToCollection({ variables });
       const mutationEnd = performance.now();
-      console.timeEnd('APOLLO_MUTATION');
-      console.log(`[TIMING] Mutation took ${mutationEnd - mutationStart}ms`);
+      // // console.timeEnd('APOLLO_MUTATION');
+      logger.debug(`[TIMING] Mutation took ${mutationEnd - mutationStart}ms`);
       perfMonitor.end('collection-mutation');
 
       perfMonitor.end('collection-update-total');
@@ -193,7 +194,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       }
     } catch (error) {
       perfMonitor.end('collection-update-total');
-      console.error('Collection update failed:', error);
+      logger.error('Collection update failed:', error);
 
       let errorMessage = 'Update failed';
       if (error instanceof Error) {

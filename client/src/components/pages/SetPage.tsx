@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
-import { useCardCache } from '../../hooks/useCardCache';
+import { useCardQueries } from '../../hooks/useCardQueries';
 import {
   Container,
   Alert
@@ -26,6 +26,7 @@ import { SetPageTemplate } from '../templates/SetPageTemplate';
 import { SetPageHeader } from '../organisms/SetPageHeader';
 import { SetPageFilters } from '../organisms/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/SetPageCardDisplay';
+import { logger } from '../../utils/logger';
 
 interface CardsSuccessResponse {
   cardsBySetCode: {
@@ -66,7 +67,7 @@ interface CardGroupConfig {
 const EMPTY_CARDS_ARRAY: Card[] = [];
 
 export const SetPage: React.FC = () => {
-  console.log('SetPage component rendering');
+  logger.debug('SetPage component rendering');
 
   // Get set code from route params
   const { setCode } = useParams<{ setCode: string }>();
@@ -95,7 +96,7 @@ export const SetPage: React.FC = () => {
   const [initialValues] = useState(() => getInitialValues());
 
   // Use card cache for fetching cards
-  const { fetchSetCards } = useCardCache();
+  const { fetchSetCards } = useCardQueries();
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cardsData, setCardsData] = useState<CardsSuccessResponse | null>(null);
@@ -104,7 +105,7 @@ export const SetPage: React.FC = () => {
   // Keep ref in sync with state
   useEffect(() => {
     cardsDataRef.current = cardsData;
-    console.log('[SetPage] cardsData state updated, card count:', cardsData?.cardsBySetCode?.data?.length || 0);
+    logger.debug('[SetPage] cardsData state updated, card count:', cardsData?.cardsBySetCode?.data?.length || 0);
   }, [cardsData]);
 
   useEffect(() => {
@@ -147,8 +148,8 @@ export const SetPage: React.FC = () => {
   useEffect(() => {
     const handleCollectionUpdate = (event: Event) => {
       const detail = (event as CustomEvent).detail;
-      console.log('[SetPage] Collection updated event detail:', detail);
-      console.log('[SetPage] userCollection from event:', detail.userCollection);
+      logger.debug('[SetPage] Collection updated event detail:', detail);
+      logger.debug('[SetPage] userCollection from event:', detail.userCollection);
 
       // Defer the heavy array operations to avoid blocking UI
       queueMicrotask(() => {
@@ -156,11 +157,11 @@ export const SetPage: React.FC = () => {
         const currentData = cardsDataRef.current;
 
         if (!currentData?.cardsBySetCode?.data) {
-          console.log('[SetPage] No cards data to update');
+          logger.debug('[SetPage] No cards data to update');
           return;
         }
 
-        console.log('[SetPage] Searching for card in', currentData.cardsBySetCode.data.length, 'cards');
+        logger.debug('[SetPage] Searching for card in', currentData.cardsBySetCode.data.length, 'cards');
         let foundCard = false;
 
         // Force a completely new array with new card object
@@ -169,9 +170,9 @@ export const SetPage: React.FC = () => {
         for (const card of currentData.cardsBySetCode.data) {
           if (card.id === detail.cardId) {
             foundCard = true;
-            console.log('[SetPage] ✅ Found and updating card:', card.name);
-            console.log('[SetPage] Old userCollection:', card.userCollection);
-            console.log('[SetPage] New userCollection:', detail.userCollection);
+            logger.debug('[SetPage] ✅ Found and updating card:', card.name);
+            logger.debug('[SetPage] Old userCollection:', card.userCollection);
+            logger.debug('[SetPage] New userCollection:', detail.userCollection);
 
             try {
               // Create a completely new card object
@@ -179,11 +180,11 @@ export const SetPage: React.FC = () => {
                 ...card,
                 userCollection: detail.userCollection
               };
-              console.log('[SetPage] Created updatedCard successfully');
+              logger.debug('[SetPage] Created updatedCard successfully');
               updatedCards.push(updatedCard);
-              console.log('[SetPage] Pushed updated card, array now has', updatedCards.length, 'cards');
+              logger.debug('[SetPage] Pushed updated card, array now has', updatedCards.length, 'cards');
             } catch (err) {
-              console.error('[SetPage] Error creating updated card:', err);
+              logger.error('[SetPage] Error creating updated card:', err);
             }
           } else {
             updatedCards.push(card);
@@ -191,18 +192,18 @@ export const SetPage: React.FC = () => {
         }
 
         if (!foundCard) {
-          console.log('[SetPage] ❌ Card not found with ID:', detail.cardId);
-          console.log('[SetPage] First 3 card IDs:', currentData.cardsBySetCode.data.slice(0, 3).map(c => c.id));
+          logger.debug('[SetPage] ❌ Card not found with ID:', detail.cardId);
+          logger.debug('[SetPage] First 3 card IDs:', currentData.cardsBySetCode.data.slice(0, 3).map(c => c.id));
         }
 
-        console.log('[SetPage] Updated cards array, triggering re-render');
+        logger.debug('[SetPage] Updated cards array, triggering re-render');
         const newState = {
           cardsBySetCode: {
             __typename: 'CardsSuccessResponse',
             data: updatedCards
           }
         };
-        console.log('[SetPage] Setting new state with', updatedCards.length, 'cards');
+        logger.debug('[SetPage] Setting new state with', updatedCards.length, 'cards');
         setCardsData(newState);
       });
     };
@@ -459,7 +460,7 @@ export const SetPage: React.FC = () => {
 
   // Debug logging for query errors
   if (cardsError) {
-    console.error('SetPage: cardsError=', cardsError);
+    logger.error('SetPage: cardsError=', cardsError);
   }
 
   // Stable computation of all card groups (independent of sorting/filtering)
@@ -665,4 +666,4 @@ export const SetPage: React.FC = () => {
       }
     />
   );
-};
+};export default SetPage;
