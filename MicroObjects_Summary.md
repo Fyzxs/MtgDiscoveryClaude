@@ -8,7 +8,7 @@
 ### Object Design
 - **No Getters/Setters** - Expose behavior, not data
 - **Be Immutable** - Use `private readonly` fields, return new instances for changes
-- **Interface Everything** - 1:1 interface for every class
+- **Interface Everything** - Every non-primitive-obsession class should have an interface in it's heirarchy
 - **No Logic in Constructors** - Only assign dependencies to fields
 
 ### Dependencies & Coupling
