@@ -13,10 +13,7 @@ internal sealed class CollectionCardByNameExtToItrMapper : ICollectionCardByName
     public CollectionCardByNameExtToItrMapper() : this(new CardByNameExtToItrMapper())
     { }
 
-    private CollectionCardByNameExtToItrMapper(ICardByNameExtToItrMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private CollectionCardByNameExtToItrMapper(ICardByNameExtToItrMapper mapper) => _mapper = mapper;
 
     public async Task<IEnumerable<ICardItemItrEntity>> Map(IEnumerable<ScryfallCardByNameExtEntity> source)
     {

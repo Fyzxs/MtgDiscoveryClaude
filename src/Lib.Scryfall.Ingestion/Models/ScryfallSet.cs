@@ -29,8 +29,5 @@ internal sealed class ScryfallSet : IScryfallSet
     public string ParentSetCode() => _dto.Data.parent_set_code;
     public bool HasParentSet() => _dto.Data.parent_set_code != null;
 
-    public IAsyncEnumerable<IScryfallCard> Cards()
-    {
-        return new HttpScryfallCardCollection(this, _cardListPagingLogger);
-    }
+    public IAsyncEnumerable<IScryfallCard> Cards() => new HttpScryfallCardCollection(this, _cardListPagingLogger);
 }

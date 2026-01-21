@@ -7,10 +7,7 @@ internal sealed class ProvidedScryfallSearchUri : IScryfallSearchUri
 {
     private readonly Url _url;
 
-    public ProvidedScryfallSearchUri(Url url)
-    {
-        _url = url;
-    }
+    public ProvidedScryfallSearchUri(Url url) => _url = url;
 
     public Url SearchUri() => _url;
 }

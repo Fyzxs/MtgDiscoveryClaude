@@ -13,38 +13,17 @@ internal sealed class ConfigScryfallProcessingConfig : IScryfallProcessingConfig
         _config = config;
     }
 
-    public MaxSetsToProcess MaxSets()
-    {
-        return new ConfigMaxSetsToProcess($"{_parentKey}:{IScryfallProcessingConfig.MaxSetsKey}", _config);
-    }
+    public MaxSetsToProcess MaxSets() => new ConfigMaxSetsToProcess($"{_parentKey}:{IScryfallProcessingConfig.MaxSetsKey}", _config);
 
-    public SpecificSetCodes SpecificSets()
-    {
-        return new ConfigSpecificSetCodes($"{_parentKey}:{IScryfallProcessingConfig.SpecificSetsKey}", _config);
-    }
+    public SpecificSetCodes SpecificSets() => new ConfigSpecificSetCodes($"{_parentKey}:{IScryfallProcessingConfig.SpecificSetsKey}", _config);
 
-    public ReleasedAfterDate SetsReleasedAfter()
-    {
-        return new ConfigReleasedAfterDate($"{_parentKey}:{IScryfallProcessingConfig.SetsReleasedAfterKey}", _config);
-    }
+    public ReleasedAfterDate SetsReleasedAfter() => new ConfigReleasedAfterDate($"{_parentKey}:{IScryfallProcessingConfig.SetsReleasedAfterKey}", _config);
 
-    public SetBatchSize SetBatchSize()
-    {
-        return new ConfigSetBatchSize($"{_parentKey}:{IScryfallProcessingConfig.SetBatchSizeKey}", _config);
-    }
+    public SetBatchSize SetBatchSize() => new ConfigSetBatchSize($"{_parentKey}:{IScryfallProcessingConfig.SetBatchSizeKey}", _config);
 
-    public ProcessSetsInReverse ProcessSetsInReverse()
-    {
-        return new ConfigProcessSetsInReverse($"{_parentKey}:{IScryfallProcessingConfig.ProcessSetsInReverseKey}", _config);
-    }
+    public ProcessSetsInReverse ProcessSetsInReverse() => new ConfigProcessSetsInReverse($"{_parentKey}:{IScryfallProcessingConfig.ProcessSetsInReverseKey}", _config);
 
-    public AlwaysDownloadImages AlwaysDownloadImages()
-    {
-        return new ConfigAlwaysDownloadImages($"{_parentKey}:{IScryfallProcessingConfig.AlwaysDownloadImagesKey}", _config);
-    }
+    public AlwaysDownloadImages AlwaysDownloadImages() => new ConfigAlwaysDownloadImages($"{_parentKey}:{IScryfallProcessingConfig.AlwaysDownloadImagesKey}", _config);
 
-    public ProcessOnlySetItems ProcessOnlySetItems()
-    {
-        return new ConfigProcessOnlySetItems($"{_parentKey}:{IScryfallProcessingConfig.ProcessOnlySetItemsKey}", _config);
-    }
+    public ProcessOnlySetItems ProcessOnlySetItems() => new ConfigProcessOnlySetItems($"{_parentKey}:{IScryfallProcessingConfig.ProcessOnlySetItemsKey}", _config);
 }

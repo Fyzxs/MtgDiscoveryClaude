@@ -13,10 +13,7 @@ internal sealed class CollectionSetItemOufToOutMapper : ICollectionSetItemOufToO
     public CollectionSetItemOufToOutMapper() : this(new SetItemOufToOutMapper())
     { }
 
-    private CollectionSetItemOufToOutMapper(ISetItemOufToOutMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private CollectionSetItemOufToOutMapper(ISetItemOufToOutMapper mapper) => _mapper = mapper;
 
     public async Task<List<ScryfallSetOutEntity>> Map(ISetItemCollectionOufEntity collection)
     {

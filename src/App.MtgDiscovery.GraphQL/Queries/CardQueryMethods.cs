@@ -21,10 +21,7 @@ public class CardQueryMethods
     {
     }
 
-    private CardQueryMethods(IEntryService entryService)
-    {
-        _entryService = entryService;
-    }
+    private CardQueryMethods(IEntryService entryService) => _entryService = entryService;
 
     public string Test() => "Card query endpoint is working!";
 
@@ -33,14 +30,17 @@ public class CardQueryMethods
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByIdsAsync(ids).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
@@ -50,14 +50,17 @@ public class CardQueryMethods
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
@@ -67,14 +70,17 @@ public class CardQueryMethods
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByNameAsync(cardName).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
     }
@@ -84,14 +90,17 @@ public class CardQueryMethods
     {
         IOperationResponse<List<CardNameSearchResultOutEntity>> response = await _entryService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
 
-        if (response.IsFailure) return new FailureResponseModel()
+        if (response.IsFailure)
         {
-            Status = new StatusDataModel()
+            return new FailureResponseModel()
             {
-                Message = response.OuterException.StatusMessage,
-                StatusCode = response.OuterException.StatusCode
-            }
-        };
+                Status = new StatusDataModel()
+                {
+                    Message = response.OuterException.StatusMessage,
+                    StatusCode = response.OuterException.StatusCode
+                }
+            };
+        }
 
         return new SuccessDataResponseModel<List<CardNameSearchResultOutEntity>>() { Data = response.ResponseData };
     }

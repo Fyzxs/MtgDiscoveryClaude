@@ -36,10 +36,7 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
         _logger = logger;
     }
 
-    public void TrackCard(IScryfallCard card)
-    {
-        _aggregator.Track(card);
-    }
+    public void TrackCard(IScryfallCard card) => _aggregator.Track(card);
 
     public async Task WriteTrigramsAsync()
     {

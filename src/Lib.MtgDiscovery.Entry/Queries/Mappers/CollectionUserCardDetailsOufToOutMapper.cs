@@ -12,10 +12,7 @@ internal sealed class CollectionUserCardDetailsOufToOutMapper : ICollectionUserC
 
     public CollectionUserCardDetailsOufToOutMapper() : this(new UserCardDetailsOufToOutMapper())
     { }
-    private CollectionUserCardDetailsOufToOutMapper(IUserCardDetailsOufToOutMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    private CollectionUserCardDetailsOufToOutMapper(IUserCardDetailsOufToOutMapper mapper) => _mapper = mapper;
 
     public async Task<ICollection<CollectedItemOutEntity>> Map(IEnumerable<IUserCardDetailsOufEntity> source)
     {

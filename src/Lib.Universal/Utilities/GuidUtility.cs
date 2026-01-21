@@ -109,8 +109,5 @@ public static class GuidUtility
         SwapBytes(guid, 6, 7);
     }
 
-    private static void SwapBytes(byte[] guid, int left, int right)
-    {
-        (guid[right], guid[left]) = (guid[left], guid[right]);
-    }
+    private static void SwapBytes(byte[] guid, int left, int right) => (guid[right], guid[left]) = (guid[left], guid[right]);
 }

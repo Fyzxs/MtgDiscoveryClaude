@@ -52,8 +52,5 @@ public sealed class BulkIngestionService : IBulkIngestionService
         _orchestrator = new BulkIngestionOrchestrator(dashboard, setsPipeline, rulingsPipeline, cardsPipeline, artistsPipeline, trigramsPipeline, config);
     }
 
-    public async Task IngestBulkDataAsync()
-    {
-        await _orchestrator.OrchestrateBulkIngestionAsync().ConfigureAwait(false);
-    }
+    public async Task IngestBulkDataAsync() => await _orchestrator.OrchestrateBulkIngestionAsync().ConfigureAwait(false);
 }

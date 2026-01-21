@@ -16,10 +16,7 @@ internal class Startup
 {
     private readonly IConfiguration _configuration;
 
-    public Startup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
+    public Startup(IConfiguration configuration) => _configuration = configuration;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -56,12 +53,12 @@ internal class Startup
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     // Allow both API audiences from the token
-                    ValidAudiences = new[]
-                    {
+                    ValidAudiences =
+                    [
                         "api://mtg-discovery", // Primary API audience
                         "https://dev-63szoyl0kt0p7e5q.us.auth0.com/userinfo", // Auth0 userinfo endpoint
                         _configuration["Auth0:ClientId"]  // ID token audience (optional, for backwards compat)
-                    }
+                    ]
                 };
             });
 

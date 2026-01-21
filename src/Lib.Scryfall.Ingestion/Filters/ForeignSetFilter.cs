@@ -13,10 +13,7 @@ internal sealed class ForeignSetFilter : IScryfallSetFilter
 
     private readonly ILogger _logger;
 
-    public ForeignSetFilter(ILogger logger)
-    {
-        _logger = logger;
-    }
+    public ForeignSetFilter(ILogger logger) => _logger = logger;
 
     public bool ShouldInclude(IScryfallSet set)
     {

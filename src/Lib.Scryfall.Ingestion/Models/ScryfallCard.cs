@@ -71,6 +71,7 @@ internal sealed class ScryfallCard : IScryfallCard
                 return token.ToString();
             }
         }
+
         return null;
     }
 
