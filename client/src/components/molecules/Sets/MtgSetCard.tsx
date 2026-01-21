@@ -226,7 +226,9 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
               collectionProgress ? (
                 <>
                   <CollectionProgressBar
-                    collected={collectionProgress.uniqueCards}
+                    collected={collectionProgress.setTotalCards > 0
+                      ? collectionProgress.uniqueCards
+                      : set.userCollection?.uniqueCards || 0}
                     total={collectionProgress.setTotalCards}
                     percentage={collectionProgress.percentage}
                   />
@@ -236,15 +238,16 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     sx={{ fontSize: '0.75rem', mt: 0.5 }}
                   >
                     {collectionProgress.setTotalCards > 0
-                      ? `${collectionProgress.totalCards} cards collected`
-                      : `${set.userCollection?.totalCards || 0} cards entered`
+                      ? `${collectionProgress.totalCards} collected`
+                      : `${set.userCollection?.totalCards || 0} entered`
                     }
+                    {` (${set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} in set)`}
                   </Typography>
                 </>
               ) : (
                 <>
                   <CollectionProgressBar
-                    collected={0}
+                    collected={set.userCollection?.uniqueCards || 0}
                     total={0}
                     percentage={0}
                   />
@@ -253,7 +256,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     color="text.secondary"
                     sx={{ fontSize: '0.75rem', mt: 0.5 }}
                   >
-                    {set.userCollection?.totalCards || 0} cards entered
+                    {`${set.userCollection?.totalCards || 0} entered (${set.printedSize && set.printedSize > 0 ? set.printedSize : set.cardCount} in set)`}
                   </Typography>
                 </>
               )

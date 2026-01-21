@@ -46,7 +46,7 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
         color="text.secondary"
         sx={{ fontSize: '0.75rem', mb: 0.5, textAlign: 'center' }}
       >
-        {isNotCollecting ? `${collected} unique cards` : `${collected} of ${total} set cards`}
+        {isNotCollecting ? `${collected} unique` : `${collected} of ${total} set cards`}
       </Typography>
       <Box sx={{ position: 'relative', width: '100%' }}>
         <LinearProgress

@@ -7,6 +7,12 @@ export interface SetGroupingFilter {
   properties?: Record<string, unknown>;
 }
 
+export interface SetGroupingCardCounts {
+  nonFoil: number;
+  foil: number;
+  etched: number;
+}
+
 export interface SetGrouping {
   id: string;
   displayName: string;
@@ -14,11 +20,7 @@ export interface SetGrouping {
   cardCount: number;
   rawQuery: string;
   filters: SetGroupingFilter;
-  finishCounts?: { // NEW: Actual finish availability (stubbed for Phase 1)
-    nonFoil: number;
-    foil: number;
-    etched: number;
-  };
+  cardCounts?: SetGroupingCardCounts;
 }
 
 export interface MtgSet {
