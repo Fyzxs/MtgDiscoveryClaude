@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormControlLabel, Switch } from '../../atoms';
 import { FilterPanel } from '../filters/FilterPanel';
 import { FilterErrorBoundary } from '../../utils/ErrorBoundaries';
 import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../../config/cardSortOptions';
@@ -157,20 +156,6 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
             }),
             minWidth: 200
           },
-          customFilters: cardGroups.filter(g => g.cards.length > 0).length > 1 ? [
-            <FormControlLabel
-              key="show-groups-toggle"
-              control={
-                <Switch
-                  checked={showGroups !== false}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onShowGroupsChange(e.target.checked)}
-                  size="small"
-                />
-              }
-              label="Show Card Groups"
-              sx={{ minWidth: 150 }}
-            />
-          ] : [],
           collectorFilters: hasCollector ? {
             collectionCounts: {
               key: 'collectionCounts',
