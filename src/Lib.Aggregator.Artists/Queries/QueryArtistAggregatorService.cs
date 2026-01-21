@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
+using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.Artists.Apis;
-using Lib.Aggregator.Artists.Entities;
-using Lib.Aggregator.Artists.Mappers;
+using Lib.Aggregator.Artists.Queries.Entities;
+using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -17,39 +17,51 @@ namespace Lib.Aggregator.Artists.Queries;
 internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 {
     private readonly IArtistAdapterService _artistAdapterService;
-    private readonly IArtistNameTrigramDataExtToItrEntityMapper _artistSearchMapper;
-    private readonly IArtistCardExtToItrEntityMapper _artistCardMapper;
+    private readonly IArtistNameTrigramDataExtToItrEntityMapper _artistSearchToItrMapper;
+    private readonly IArtistCardExtToItrEntityMapper _artistCardToItrMapper;
+    private readonly IArtistSearchTermItrToXfrMapper _artistSearchItrToXfrMapper;
+    private readonly IArtistIdItrToXfrMapper _aristIdToXfrMapper;
+    private readonly IArtistNameItrToXfrMapper _artistNameToXfrMapper;
 
     public QueryArtistAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
         new ArtistNameTrigramDataExtToItrEntityMapper(),
-        new ArtistCardExtToItrEntityMapper())
+        new ArtistCardExtToItrEntityMapper(),
+        new ArtistSearchTermItrToXfrMapper(),
+        new ArtistIdItrToXfrMapper(),
+        new ArtistNameItrToXfrMapper())
     { }
 
-    private QueryArtistAggregatorService(
-        IArtistAdapterService artistAdapterService,
-        IArtistNameTrigramDataExtToItrEntityMapper artistSearchMapper,
-        IArtistCardExtToItrEntityMapper artistCardMapper)
+    private QueryArtistAggregatorService(IArtistAdapterService artistAdapterService,
+        IArtistNameTrigramDataExtToItrEntityMapper artistSearchToItrMapper,
+        IArtistCardExtToItrEntityMapper artistCardToItrMapper,
+        IArtistSearchTermItrToXfrMapper artistSearchItrToXfrMapper,
+        IArtistIdItrToXfrMapper aristIdToXfrMapper,
+        IArtistNameItrToXfrMapper artistNameToXfrMapper)
     {
         _artistAdapterService = artistAdapterService;
-        _artistSearchMapper = artistSearchMapper;
-        _artistCardMapper = artistCardMapper;
+        _artistSearchToItrMapper = artistSearchToItrMapper;
+        _artistCardToItrMapper = artistCardToItrMapper;
+        _artistSearchItrToXfrMapper = artistSearchItrToXfrMapper;
+        _aristIdToXfrMapper = aristIdToXfrMapper;
+        _artistNameToXfrMapper = artistNameToXfrMapper;
     }
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
     {
-        IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>> adapterResponse = await _artistAdapterService.SearchArtistsAsync(searchTerm).ConfigureAwait(false);
+        IArtistSearchTermXrfEntity mappedEntity = await _artistSearchItrToXfrMapper.Map(searchTerm).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>> adapterResponse = await _artistAdapterService.SearchArtistsAsync(mappedEntity).ConfigureAwait(false);
 
-        if (adapterResponse.IsSuccess is false)
+        if (adapterResponse.IsFailure)
         {
             return new FailureOperationResponse<IArtistSearchResultCollectionItrEntity>(adapterResponse.OuterException);
         }
 
-        // Map ExtEntity to ItrEntity
+        //TODO: Encapsulate in collection mapper
         List<IArtistSearchResultItrEntity> mappedArtists = [];
         foreach (ArtistNameTrigramDataExtEntity extEntity in adapterResponse.ResponseData)
         {
-            IArtistSearchResultItrEntity itrEntity = await _artistSearchMapper.Map(extEntity).ConfigureAwait(false);
+            IArtistSearchResultItrEntity itrEntity = await _artistSearchToItrMapper.Map(extEntity).ConfigureAwait(false);
             mappedArtists.Add(itrEntity);
         }
 
@@ -63,9 +75,10 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId)
     {
-        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.GetCardsByArtistIdAsync(artistId).ConfigureAwait(false);
+        IArtistIdXfrEntity xfrEntity = await _aristIdToXfrMapper.Map(artistId).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistIdAsync(xfrEntity).ConfigureAwait(false);
 
-        if (adapterResponse.IsSuccess is false)
+        if (adapterResponse.IsFailure)
         {
             return new FailureOperationResponse<ICardItemCollectionItrEntity>(adapterResponse.OuterException);
         }
@@ -74,7 +87,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         List<ICardItemItrEntity> mappedCards = [];
         foreach (ScryfallArtistCardExtEntity extEntity in adapterResponse.ResponseData)
         {
-            ICardItemItrEntity itrEntity = await _artistCardMapper.Map(extEntity).ConfigureAwait(false);
+            ICardItemItrEntity itrEntity = await _artistCardToItrMapper.Map(extEntity).ConfigureAwait(false);
             mappedCards.Add(itrEntity);
         }
 
@@ -88,9 +101,10 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
 
     public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
     {
-        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.GetCardsByArtistNameAsync(artistName).ConfigureAwait(false);
+        IArtistNameXfrEntity xfrEntity = await _artistNameToXfrMapper.Map(artistName).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistNameAsync(xfrEntity).ConfigureAwait(false);
 
-        if (adapterResponse.IsSuccess is false)
+        if (adapterResponse.IsFailure)
         {
             return new FailureOperationResponse<ICardItemCollectionItrEntity>(adapterResponse.OuterException);
         }
@@ -99,7 +113,7 @@ internal sealed class QueryArtistAggregatorService : IArtistAggregatorService
         List<ICardItemItrEntity> mappedCards = [];
         foreach (ScryfallArtistCardExtEntity extEntity in adapterResponse.ResponseData)
         {
-            ICardItemItrEntity itrEntity = await _artistCardMapper.Map(extEntity).ConfigureAwait(false);
+            ICardItemItrEntity itrEntity = await _artistCardToItrMapper.Map(extEntity).ConfigureAwait(false);
             mappedCards.Add(itrEntity);
         }
 
