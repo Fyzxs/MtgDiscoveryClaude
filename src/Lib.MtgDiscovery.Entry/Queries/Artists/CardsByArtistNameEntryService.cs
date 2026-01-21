@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
+using Lib.MtgDiscovery.Entry.Queries.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -18,24 +19,28 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
     private readonly IArtistNameArgEntityValidator _artistNameArgEntityValidator;
     private readonly IArtistNameArgToItrMapper _artistNameArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
+    private readonly IUserCardEnrichment _userCardEnrichment;
 
     public CardsByArtistNameEntryService(ILogger logger) : this(
         new ArtistDomainService(logger),
         new ArtistNameArgEntityValidatorContainer(),
         new ArtistNameArgToItrMapper(),
-        new CollectionCardItemOufToOutMapper())
+        new CollectionCardItemOufToOutMapper(),
+        new UserCardEnrichment(logger))
     { }
 
     private CardsByArtistNameEntryService(
         IArtistDomainService artistDomainService,
         IArtistNameArgEntityValidator artistNameArgEntityValidator,
         IArtistNameArgToItrMapper artistNameArgToItrMapper,
-        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper)
+        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
+        IUserCardEnrichment userCardEnrichment)
     {
         _artistDomainService = artistDomainService;
         _artistNameArgEntityValidator = artistNameArgEntityValidator;
         _artistNameArgToItrMapper = artistNameArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
+        _userCardEnrichment = userCardEnrichment;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IArtistNameArgEntity artistName)
@@ -48,6 +53,9 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        await _userCardEnrichment.Enrich(outEntities, artistName).ConfigureAwait(false);
+
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }
 }
