@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
@@ -21,14 +22,10 @@ public sealed class UserSealedProductsScribe : CosmosScribe
     }
 
     public async Task<OpResponse<UserSealedProductExtEntity>> UpsertWithMergeAsync(
-        UserSealedProductExtEntity input,
+        [NotNull] UserSealedProductExtEntity input,
         int countDelta)
     {
-        ReadPointItem readPoint = new ReadPointItem
-        {
-            Id = new ProvidedCosmosItemId(input.ProductUuid),
-            Partition = new ProvidedPartitionKeyValue(input.UserId)
-        };
+        ReadPointItem readPoint = CreateReadPoint(input.ProductUuid, input.UserId);
 
         OpResponse<UserSealedProductExtEntity> existing =
             await _gopher.ReadAsync<UserSealedProductExtEntity>(readPoint).ConfigureAwait(false);
@@ -60,5 +57,14 @@ public sealed class UserSealedProductsScribe : CosmosScribe
         };
 
         return await UpsertAsync(updated).ConfigureAwait(false);
+    }
+
+    private static ReadPointItem CreateReadPoint(string productUuid, string userId)
+    {
+        return new ReadPointItem
+        {
+            Id = new ProvidedCosmosItemId(productUuid),
+            Partition = new ProvidedPartitionKeyValue(userId)
+        };
     }
 }
