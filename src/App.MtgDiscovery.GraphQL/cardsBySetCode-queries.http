@@ -1,7 +1,7 @@
 ###
 # Variables
 # @name variables
-@baseUrl = https://localhost:65203
+@baseUrl = {{$dotenv BASE_URL}}
 @cardEndpoint = {{baseUrl}}/graphql
 
 

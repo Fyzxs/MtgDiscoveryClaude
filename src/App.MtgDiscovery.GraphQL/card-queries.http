@@ -2,12 +2,11 @@
 # Variables
 # @name variables
 @baseUrl = https://localhost:65203
-@cardEndpoint = {{baseUrl}}/graphql
+@gqlEndpoint = {{baseUrl}}/graphql
 
 
 ### Get Cards by Multiple IDs (Batch)
-# @ref variables
-POST {{cardEndpoint}}
+POST {{$dotenv GRAPHQL_ENDPOINT}}
 Content-Type: application/json
 
 query GetCardsBatch($ids: CardIdsArgEntityInput!) {

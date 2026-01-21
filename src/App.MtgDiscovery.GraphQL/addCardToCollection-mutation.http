@@ -1,0 +1,441 @@
+###
+# Add Card to Collection Mutation Tests
+# Auth0 JWT Authentication required - extracts user ID from JWT claims
+# Domain: dev-63szoyl0kt0p7e5q.us.auth0.com
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+@bearerToken = {{$dotenv BEARER_TOKEN}}
+
+### Add Card to Collection - Single Normal Card
+# Add a single non-foil card to user's collection
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+Authorization: Bearer {{$dotenv BEARER_TOKEN}}
+
+mutation AddSingleCard(
+  $cardId: String!
+  $setId: String!
+  $collectedList: [CollectedItemArgEntityInput!]!
+) {
+  addCardToCollection(
+    cardId: $cardId
+    setId: $setId
+    collectedList: $collectedList
+  ) {
+    __typename
+    ... on SuccessUserCardCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
+    "setId": "neo",
+    "collectedList": [
+      {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 1
+      }
+    ]
+  }
+}
+
+### Add Card to Collection - Multiple Variants
+# @ref variables
+# Add multiple variants of the same card (foil and non-foil)
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation AddMultipleVariants(
+  $cardId: String!
+  $setId: String!
+  $collectedList: [CollectedItemArgEntityInput!]!
+) {
+  addCardToCollection(
+    cardId: $cardId
+    setId: $setId
+    collectedList: $collectedList
+  ) {
+    __typename
+    ... on SuccessUserCardCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "cardId": "11600105-56c6-4073-a4a6-8469030b39c9",
+    "setId": "dmu",
+    "collectedList": [
+      {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 2
+      },
+      {
+        "finish": "foil",
+        "special": "none",
+        "count": 1
+      },
+      {
+        "finish": "foil",
+        "special": "promo",
+        "count": 1
+      }
+    ]
+  }
+}
+
+### Add Card to Collection - With Variables
+# @ref variables
+# Using GraphQL variables for cleaner queries
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation AddCardWithVariables(
+  $cardId: String!
+  $setId: String!
+  $collectedList: [CollectedItemArgEntityInput!]!
+) {
+  addCardToCollection(
+    cardId: $cardId
+    setId: $setId
+    collectedList: $collectedList
+  ) {
+    __typename
+    ... on SuccessUserCardCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "cardId": "0000579f-7b35-4ed3-b44c-db2a538066fe",
+    "setId": "war",
+    "collectedList": [
+      {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 4
+      }
+    ]
+  }
+}
+
+### Add Card to Collection - Special Treatments
+# @ref variables
+# Add cards with special treatments (showcase, extended art, etc.)
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation AddSpecialCards(
+  $cardId: String!
+  $setId: String!
+  $collectedList: [CollectedItemArgEntityInput!]!
+) {
+  addCardToCollection(
+    cardId: $cardId
+    setId: $setId
+    collectedList: $collectedList
+  ) {
+    __typename
+    ... on SuccessUserCardCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "cardId": "3c92bca5-ec3a-4238-99a4-26c9594c8d1f",
+    "setId": "bro",
+    "collectedList": [
+      {
+        "finish": "foil",
+        "special": "showcase",
+        "count": 1
+      },
+      {
+        "finish": "nonfoil",
+        "special": "extended",
+        "count": 1
+      },
+      {
+        "finish": "foil",
+        "special": "retro",
+        "count": 2
+      }
+    ]
+  }
+}
+
+### Test without JWT Token (should fail)
+# @ref variables
+# This should return an authorization error
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+mutation AddCardUnauthorized(
+  $cardId: String!
+  $setId: String!
+  $collectedList: [CollectedItemArgEntityInput!]!
+) {
+  addCardToCollection(
+    cardId: $cardId
+    setId: $setId
+    collectedList: $collectedList
+  ) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "cardId": "test-card-id",
+    "setId": "test",
+    "collectedList": [
+      {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 1
+      }
+    ]
+  }
+}
+
+### Test with Invalid Data (missing required fields)
+# @ref variables
+# This should return a validation error
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{bearerToken}}
+
+mutation AddCardInvalid(
+  $cardId: String!
+  $setId: String!
+  $collectedList: [CollectedItemArgEntityInput!]!
+) {
+  addCardToCollection(
+    cardId: $cardId
+    setId: $setId
+    collectedList: $collectedList
+  ) {
+    __typename
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "variables": {
+    "cardId": "",
+    "setId": "",
+    "collectedList": []
+  }
+}
+
+### GraphQL Schema Introspection - AddCardToCollection Mutation
+# @ref variables
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+
+query IntrospectAddCardMutation {
+  __type(name: "Mutation") {
+    fields {
+      name
+      description
+      args {
+        name
+        type {
+          name
+          kind
+          ofType {
+            name
+            kind
+          }
+        }
+      }
+      type {
+        name
+        kind
+      }
+    }
+  }
+}
+
+###
+# How to get Auth0 JWT Token:
+# 1. Go to your Auth0 dashboard (https://manage.auth0.com/)
+# 2. Navigate to Applications → Applications and find your SPA app
+# 3. Use Auth0's test tab or implement frontend login flow
+# 4. Copy the JWT token from the response
+# 5. Replace the bearerToken variable with the actual token
+#
+# Required JWT Claims:
+# - "sub": User's unique identifier (e.g., "auth0|68b7c2c1b773c5897e8ceb8f")
+# - "nickname": User's display name (e.g., "quinntgil+mtg01")
+#
+# The mutation extracts the user ID automatically from the JWT
+
+###
+# Expected Response Examples:
+#
+# addCardToCollection without token:
+# { "errors": [{ "message": "The current user is not authorized to access this resource.", "extensions": { "code": "AUTH_NOT_AUTHORIZED" } }] }
+#
+# addCardToCollection with valid token and data:
+# {
+#   "data": {
+#     "addCardToCollection": {
+#       "__typename": "SuccessUserCardCollectionResponse",
+#       "data": {
+#         "userId": "550e8400-e29b-41d4-a716-446655440000",
+#         "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
+#         "setId": "neo",
+#         "collectedList": [
+#           {
+#             "finish": "nonfoil",
+#             "special": "none",
+#             "count": 1
+#           }
+#         ]
+#       },
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
+#
+# addCardToCollection with invalid data:
+# {
+#   "data": {
+#     "addCardToCollection": {
+#       "__typename": "FailureResponse",
+#       "status": {
+#         "message": "Card ID cannot be empty",
+#         "statusCode": 400
+#       }
+#     }
+#   }
+# }
+
+###
+# Finish Options:
+# - "nonfoil": Regular non-foil card
+# - "foil": Traditional foil card
+# - "etched": Etched foil treatment
+#
+# Special Options:
+# - "none": No special treatment
+# - "showcase": Showcase frame variant
+# - "extended": Extended art variant
+# - "retro": Retro frame variant
+# - "promo": Promotional variant
+# - "altered": Altered/signed card
+# - "serialized": Serialized numbered card
+#
+# Count: Number of this specific variant owned (integer)

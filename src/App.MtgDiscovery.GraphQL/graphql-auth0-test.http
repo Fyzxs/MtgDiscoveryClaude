@@ -7,7 +7,7 @@
 ###
 # Variables
 # @name variables
-@baseUrl = https://localhost:65203
+@baseUrl = {{$dotenv BASE_URL}}
 @graphqlEndpoint = {{baseUrl}}/graphql
 
 ### Test Public Query (works without authentication)

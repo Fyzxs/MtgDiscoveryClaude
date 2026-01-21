@@ -1,8 +1,8 @@
 ###
 # Variables
 # @name variables
-@baseUrl = https://localhost:65203
-@gqlEndpoint = {{baseUrl}}/graphql
+@baseUrl = {{$dotenv BASE_URL}}
+@gqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
 
 ### Test Simple Set Query
 # @ref variables
