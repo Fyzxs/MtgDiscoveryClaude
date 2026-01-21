@@ -1,0 +1,1 @@
+export { SealedProductCard } from './SealedProductCard';

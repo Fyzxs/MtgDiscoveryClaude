@@ -1,0 +1,1 @@
+export { SealedProductGrid } from './SealedProductGrid';
