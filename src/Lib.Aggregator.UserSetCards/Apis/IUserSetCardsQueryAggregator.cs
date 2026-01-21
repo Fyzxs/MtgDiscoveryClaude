@@ -7,7 +7,7 @@ namespace Lib.Aggregator.UserSetCards.Apis;
 
 public interface IUserSetCardsQueryAggregator
 {
-    Task<IOperationResponse<IUserSetCardOufEntity>> GetUserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard);
+    Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard);
 
-    Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards);
+    Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards);
 }

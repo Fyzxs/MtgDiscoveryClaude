@@ -36,7 +36,7 @@ public sealed class UserSetCardsQueryMethods
     public async Task<ResponseModel> UserSetCards(UserSetCardArgEntity setCardArgs)
     {
         IOperationResponse<UserSetCardOutEntity> response = await _entryService
-            .GetUserSetCardByUserAndSetAsync(setCardArgs)
+            .UserSetCardByUserAndSetAsync(setCardArgs)
             .ConfigureAwait(false);
         return await _userSetCardResponseMapper.Map(response).ConfigureAwait(false);
     }
