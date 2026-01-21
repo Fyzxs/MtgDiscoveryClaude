@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
+using AwesomeAssertions;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Shared.Invocation.Exceptions;
-using AwesomeAssertions;
 
 namespace Lib.Adapter.UserCards.Tests.Exceptions;
 
