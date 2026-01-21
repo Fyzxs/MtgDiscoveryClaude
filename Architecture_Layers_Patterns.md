@@ -71,6 +71,106 @@ private CardQueryMethods(ICardEntryService cardEntryService)
 - **Response Models**: `*ResponseModel` with union types
 - **Mappers**: `*TypeMapper` for entity transformation
 
+### GraphQL Response Type Pattern (Critical)
+
+Every GraphQL response type **MUST** follow this three-part pattern:
+
+#### 1. Union Type Class
+```csharp
+// CORRECT: Uses dedicated type classes
+public sealed class UserCardCollectionResponseModelUnionType : UnionType
+{
+    protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
+    {
+        descriptor.Name("UserCardCollectionResponseModel");
+        descriptor.Description("Union type for user card collection response");
+        descriptor.Type<UserCardCollectionSuccessDataResponseModelType>();  // ✓ Dedicated type
+        descriptor.Type<FailureResponseModelType>();                        // ✓ Dedicated type
+    }
+}
+
+// INCORRECT: Using inline ObjectType<T> - THIS WILL FAIL AT RUNTIME
+public sealed class BadResponseModelUnionType : UnionType<ResponseModel>
+{
+    protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
+    {
+        descriptor
+            .Name("BadResponseModel")
+            .Type<ObjectType<SuccessDataResponseModel<SomeEntity>>>()  // ✗ Will not resolve
+            .Type<ObjectType<FailureResponseModel>>();                 // ✗ Will not resolve
+    }
+}
+```
+
+#### 2. Success Response Type Class
+```csharp
+// Every success response MUST have a dedicated type class
+public sealed class UserCardCollectionSuccessDataResponseModelType
+    : ObjectType<SuccessDataResponseModel<UserCardCollectionOutEntity>>
+{
+    protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<UserCardCollectionOutEntity>> descriptor)
+    {
+        descriptor.Name("SuccessUserCardCollectionResponse");  // GraphQL type name
+        descriptor.Description("Response returned when adding cards to collection is successful");
+
+        descriptor.Field(f => f.Data)
+            .Type<NonNullType<UserCardCollectionOutEntityType>>()  // Reference entity type
+            .Description("The user card collection result");
+
+        descriptor.Field(f => f.Status)
+            .Type<StatusDataModelType>()
+            .Description("Status information about the success");
+
+        descriptor.Field(f => f.MetaData)
+            .Type<MetaDataModelType>()
+            .Description("Metadata about the response");
+    }
+}
+```
+
+#### 3. Entity Type Classes
+```csharp
+// Each entity in the response needs its own type class
+public sealed class UserCardCollectionOutEntityType : ObjectType<UserCardCollectionOutEntity>
+{
+    protected override void Configure([NotNull] IObjectTypeDescriptor<UserCardCollectionOutEntity>> descriptor)
+    {
+        descriptor.Name("UserCardCollection");
+        descriptor.Description("A user's card collection entry");
+
+        descriptor.Field(f => f.UserId)
+            .Type<NonNullType<StringType>>()
+            .Description("The unique identifier for the user");
+
+        // Define all fields...
+    }
+}
+```
+
+#### 4. Schema Registration
+```csharp
+// All types MUST be registered in schema extensions
+public static IRequestExecutorBuilder AddApiMutation(this IRequestExecutorBuilder builder)
+{
+    return builder
+        .AddTypeExtension<UserCardsMutationMethods>()
+        .AddType<UserCardCollectionResponseModelUnionType>()         // Union type
+        .AddType<UserCardCollectionSuccessDataResponseModelType>()   // Success type
+        .AddType<UserCardCollectionOutEntityType>()                  // Entity type
+        .AddType<CollectedItemOutEntityType>()                       // Nested entity types
+        .AddType<FailureResponseModelType>();                        // Failure type (shared)
+}
+```
+
+#### Validation Checklist
+- [ ] Union type class exists and extends `UnionType` (not `UnionType<T>`)
+- [ ] Success response type class exists as `{Entity}SuccessDataResponseModelType`
+- [ ] Entity type class exists as `{Entity}OutEntityType`
+- [ ] All nested entity types have their own type classes
+- [ ] Union type references dedicated type classes (not `ObjectType<T>`)
+- [ ] All types are registered in schema extensions
+- [ ] GraphQL type names follow pattern: `Success{Entity}Response`
+
 ### Common Abstractions
 ```csharp
 // Base response model for all GraphQL responses

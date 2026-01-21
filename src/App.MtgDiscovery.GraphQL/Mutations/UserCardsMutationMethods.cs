@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
@@ -22,32 +21,31 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
+    private readonly IUserCardCollectionItrToOutMapper _mapper;
 
-    public UserCardsMutationMethods(ILogger logger) : this(new EntryService(logger))
+    public UserCardsMutationMethods(ILogger logger) : this(
+        new EntryService(logger),
+        new UserCardCollectionItrToOutMapper())
     {
     }
 
-    private UserCardsMutationMethods(IEntryService entryService)
+    private UserCardsMutationMethods(
+        IEntryService entryService,
+        IUserCardCollectionItrToOutMapper mapper)
     {
         _entryService = entryService;
+        _mapper = mapper;
     }
 
     [Authorize]
     [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, string cardId, string setId, ICollection<CollectedItemArgEntity> collectedList)
+    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddCardToCollectionArgEntity args)
     {
-        // Create AuthUserArgEntity directly from ClaimsPrincipal
+        // Extract user information from JWT claims
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        AddCardToCollectionArgEntity args = new()
-        {
-            UserId = authUserArg.UserId,
-            CardId = cardId,
-            SetId = setId,
-            CollectedList = [.. collectedList.Cast<ICollectedItemArgEntity>()]
-        };
-
-        IOperationResponse<IUserCardCollectionItrEntity> response = await _entryService.AddCardToCollectionAsync(args).ConfigureAwait(false);
+        // Pass both auth and args to entry service - it will combine them during mapping
+        IOperationResponse<IUserCardCollectionItrEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -58,15 +56,8 @@ public sealed class UserCardsMutationMethods
             }
         };
 
-        IUserCardCollectionItrEntity collection = response.ResponseData;
-
-        UserCardCollectionOutEntity result = new()
-        {
-            UserId = collection.UserId,
-            CardId = collection.CardId,
-            SetId = collection.SetId,
-            CollectedList = [.. collection.CollectedList.Select(item => new CollectedItemOutEntity { Finish = item.Finish, Special = item.Special, Count = item.Count })]
-        };
+        // Use mapper to transform ITR entity to OUT entity
+        UserCardCollectionOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<UserCardCollectionOutEntity>() { Data = result };
     }

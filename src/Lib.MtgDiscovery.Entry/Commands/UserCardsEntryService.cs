@@ -32,13 +32,15 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAddCardToCollectionArgEntity args)
+    public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddCardToCollectionArgEntity args)
     {
+        // Validate the card collection args
         IValidatorActionResult<IOperationResponse<IUserCardCollectionItrEntity>> result = await _validator.Validate(args).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
-        IUserCardCollectionItrEntity mappedArgs = await _mapper.Map(args).ConfigureAwait(false);
+        // Map args to ITR entity - mapper will combine authUser.UserId with args
+        IUserCardCollectionItrEntity mappedArgs = await _mapper.Map(authUser, args).ConfigureAwait(false);
         return await _userCardsDomainService.AddUserCardAsync(mappedArgs).ConfigureAwait(false);
     }
 }
