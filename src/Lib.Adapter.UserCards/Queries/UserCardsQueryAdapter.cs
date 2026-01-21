@@ -4,9 +4,9 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
 using Lib.Adapter.UserCards.Apis;
+using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -31,7 +31,7 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
         _userCardsInquisition = userCardsInquisition;
     }
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet)
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet)
     {
         //TODO: This needs to be a mapper
         UserCardItemsBySetExtEntitys args = new() { SetId = userCardsSet.SetId, UserId = userCardsSet.UserId };
