@@ -10,10 +10,3 @@ public sealed class AddCardToCollectionArgEntity : IAddCardToCollectionArgEntity
     public string SetId { get; init; }
     public ICollection<ICollectedItemArgEntity> CollectedList { get; init; }
 }
-
-public sealed class CollectedItemArgEntity : ICollectedItemArgEntity
-{
-    public string Finish { get; init; }
-    public string Special { get; init; }
-    public int Count { get; init; }
-}
