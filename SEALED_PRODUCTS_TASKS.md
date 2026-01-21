@@ -454,7 +454,7 @@ internal sealed class SealedProductOufEntity : ISealedProductOufEntity
 ---
 
 ### Task 3.5: Create SealedProduct ExtToOuf Mapper
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 3.1, 3.4
 **Location:** `src/Lib.Adapter.SealedProducts/Queries/Mappers/`
 
