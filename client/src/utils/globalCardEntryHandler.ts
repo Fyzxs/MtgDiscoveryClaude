@@ -279,6 +279,32 @@ class GlobalCardEntryHandler {
     } finally {
       perfMonitor.end('card-entry-submit');
     }
+
+    let count = parseInt(state.count, 10);
+    if (state.isNegative) {
+      count = -count;
+    }
+
+    // Submit the update
+    perfMonitor.start('card-entry-submit');
+    try {
+      await handler.onSubmit({
+        cardId: handler.cardId,
+        count,
+        finish: state.finish,
+        special: state.special,
+        setId: '', // Will be filled in by the onSubmit handler
+        setCode: '',
+        setGroupId: null
+      });
+    } catch (error) {
+      logger.error('Failed to submit card entry:', error);
+    } finally {
+      perfMonitor.end('card-entry-submit');
+    }
+
+    // Reset entry state
+    this.reset(cardId);
   }
 }
 
