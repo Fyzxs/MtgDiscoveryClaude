@@ -20,5 +20,6 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
 
     private UserCardsEntryService(IAddCardToCollectionEntryService addCardToCollection) => _addCardToCollection = addCardToCollection;
 
+    //TODO: We don't want this mapping to happen here. It should be in the invoked services
     public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args) => await _addCardToCollection.Execute(new AddCardToCollectionArgsEntity { AuthUser = authUser, AddUserCard = args }).ConfigureAwait(false);
 }

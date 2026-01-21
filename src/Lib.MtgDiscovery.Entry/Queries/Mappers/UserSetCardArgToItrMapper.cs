@@ -15,9 +15,3 @@ internal sealed class UserSetCardArgToItrMapper : IUserSetCardArgToItrMapper
         });
     }
 }
-
-internal sealed class UserSetCardItrEntity : IUserSetCardItrEntity
-{
-    public string UserId { get; init; }
-    public string SetId { get; init; }
-}
