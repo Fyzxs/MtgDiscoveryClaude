@@ -7,9 +7,9 @@ namespace Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 public interface IUserSealedProductItrEntity : Abstractions.IItrEntity
 {
     /// <summary>
-    /// The unique identifier of the user who owns this sealed product collection entry.
+    /// The unique identifier of the collection this sealed product entry belongs to.
     /// </summary>
-    string UserId { get; }
+    string CollectionId { get; }
 
     /// <summary>
     /// The unique identifier (UUID) of the sealed product in the collection.

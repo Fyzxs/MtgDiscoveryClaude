@@ -32,7 +32,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
     {
         IUserSealedProductXfrEntity xfrEntity = new UserSealedProductXfrEntity
         {
-            UserId = input.UserId,
+            CollectionId = input.CollectionId,
             ProductUuid = input.ProductUuid,
             SetId = input.SetId,
             CountDelta = input.CountDelta,
@@ -55,7 +55,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
 
     private sealed class UserSealedProductXfrEntity : IUserSealedProductXfrEntity
     {
-        public required string UserId { get; init; }
+        public required string CollectionId { get; init; }
         public required string ProductUuid { get; init; }
         public required string SetId { get; init; }
         public required int CountDelta { get; init; }

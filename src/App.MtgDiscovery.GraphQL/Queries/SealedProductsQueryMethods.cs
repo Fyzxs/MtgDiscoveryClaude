@@ -42,6 +42,8 @@ public sealed class SealedProductsQueryMethods
         GetSealedProductsBySetCodeArgEntity args,
         [Service] ClaimsPrincipal claimsPrincipal = null)
     {
+        System.ArgumentNullException.ThrowIfNull(args);
+
         IOperationResponse<List<SealedProductOutEntity>> productsResponse = await _entryService
             .SealedProductsBySetCodeAsync(args)
             .ConfigureAwait(false);
@@ -53,13 +55,22 @@ public sealed class SealedProductsQueryMethods
 
         List<SealedProductOutEntity> enrichedProducts;
 
-        if (claimsPrincipal?.Identity?.IsAuthenticated == true)
+        // If authenticated AND collectionId is provided, enrich with user collection data
+        if (claimsPrincipal?.Identity?.IsAuthenticated == true && args.HasCollectionId)
         {
             AuthUserArgEntity authUser = new(claimsPrincipal);
             string userId = authUser.UserId;
 
+            // Validate that the authenticated user has permission to access this collection
+            // For now, we validate that collectionId matches userId (1:1 mapping)
+            if (userId.Equals(args.CollectionId, System.StringComparison.Ordinal) is false)
+            {
+                throw new System.UnauthorizedAccessException($"User {userId} is not authorized to access collection {args.CollectionId}");
+            }
+
+            // Use collectionId (not userId) for querying user products
             IOperationResponse<List<UserSealedProductOutEntity>> userProductsResponse =
-                await _entryService.GetUserSealedProductsByUserIdAsync(userId).ConfigureAwait(false);
+                await _entryService.GetUserSealedProductsByUserIdAsync(args.CollectionId).ConfigureAwait(false);
 
             if (userProductsResponse.IsSuccess)
             {
