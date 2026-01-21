@@ -84,8 +84,8 @@ export const VirtualizedCardGrid: React.FC<VirtualizedCardGridProps> = ({
         <MtgCard
           key={card.id}
           card={card}
-          isSelected={selectedCardId === card.id}
-          onSelectionChange={onCardSelection}
+          index={cardIndex}
+          groupId="virtualized"
           context={context}
         />
       </div>

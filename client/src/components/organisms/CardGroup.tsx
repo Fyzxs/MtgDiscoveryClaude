@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Divider } from '@mui/material';
 import { CardGrid } from './CardGrid';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import type { Card, CardContext, UserCardData } from '../../types/card';
+import type { Card, CardContext } from '../../types/card';
 
 interface CardGroupProps {
   groupId: string;
@@ -13,7 +13,6 @@ interface CardGroupProps {
   showHeader: boolean;
   context: CardContext;
   isLoading?: boolean;
-  collectionLookup?: Map<string, UserCardData>;
 }
 
 const CardGroupComponent: React.FC<CardGroupProps> = ({
@@ -24,8 +23,7 @@ const CardGroupComponent: React.FC<CardGroupProps> = ({
   isVisible,
   showHeader,
   context,
-  isLoading = false,
-  collectionLookup
+  isLoading = false
 }) => {
   if (!isVisible) {
     return null;
@@ -87,7 +85,6 @@ const CardGroupComponent: React.FC<CardGroupProps> = ({
           cards={cards}
           groupId={groupId}
           context={context}
-          collectionLookup={collectionLookup}
           isLoading={isLoading}
           spacing={1.5}
           minItemWidth={280}
@@ -126,7 +123,6 @@ export const CardGroup = React.memo(CardGroupComponent, (prevProps, nextProps) =
       prevProps.cards.length === nextProps.cards.length &&
       prevProps.totalCards === nextProps.totalCards &&
       prevProps.showHeader === nextProps.showHeader &&
-      prevProps.selectedCardId === nextProps.selectedCardId &&
       prevProps.isLoading === nextProps.isLoading &&
       // Deep comparison would be expensive, so use first card id as proxy for changes
       (prevProps.cards.length === 0 || 
