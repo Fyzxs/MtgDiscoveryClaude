@@ -16,76 +16,13 @@ public sealed class UserCardsEntryService : IUserCardsEntryService
     public UserCardsEntryService(ILogger logger) : this(new UserCardsDomainService(logger))
     { }
 
-    private UserCardsEntryService(IUserCardsDomainService userCardsDomainService) =>
-        _userCardsDomainService = userCardsDomainService;
+    private UserCardsEntryService(IUserCardsDomainService userCardsDomainService) => _userCardsDomainService = userCardsDomainService;
 
     public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddCardToCollectionAsync(IAddCardToCollectionArgEntity args)
     {
-        if (args is null)
-        {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new BadRequestOperationException("Arguments cannot be null"));
-        }
-
-        IOperationResponse<IUserCardCollectionItrEntity> validationResponse = ValidateArgEntity(args);
-        if (validationResponse.IsFailure)
-        {
-            return validationResponse;
-        }
-
+        System.ArgumentNullException.ThrowIfNull(args);
         IUserCardCollectionItrEntity itrEntity = MapToItrEntity(args);
-        return await _userCardsDomainService
-            .AddUserCardAsync(itrEntity)
-            .ConfigureAwait(false);
-    }
-
-    private static IOperationResponse<IUserCardCollectionItrEntity> ValidateArgEntity(IAddCardToCollectionArgEntity args)
-    {
-        if (string.IsNullOrWhiteSpace(args.UserId))
-        {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new BadRequestOperationException("UserId is required"));
-        }
-
-        if (string.IsNullOrWhiteSpace(args.CardId))
-        {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new BadRequestOperationException("CardId is required"));
-        }
-
-        if (string.IsNullOrWhiteSpace(args.SetId))
-        {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new BadRequestOperationException("SetId is required"));
-        }
-
-        if (args.CollectedList is null || args.CollectedList.Count is 0)
-        {
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new BadRequestOperationException("CollectedList must contain at least one item"));
-        }
-
-        foreach (ICollectedItemArgEntity item in args.CollectedList)
-        {
-            if (string.IsNullOrWhiteSpace(item.Finish))
-            {
-                return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                    new BadRequestOperationException("Finish is required for all collected items"));
-            }
-
-            if (string.IsNullOrWhiteSpace(item.Special))
-            {
-                return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                    new BadRequestOperationException("Special is required for all collected items"));
-            }
-
-            if (0 < item.Count) { continue; }
-
-            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
-                new BadRequestOperationException("Count must be greater than zero for all collected items"));
-        }
-
-        return new SuccessOperationResponse<IUserCardCollectionItrEntity>(null);
+        return await _userCardsDomainService.AddUserCardAsync(itrEntity).ConfigureAwait(false);
     }
 
     private static IUserCardCollectionItrEntity MapToItrEntity(IAddCardToCollectionArgEntity args)

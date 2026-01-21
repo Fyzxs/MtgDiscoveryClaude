@@ -118,6 +118,10 @@ Use the CLAUDE.md files, CODING_CRITERIA.md, microobjects_coding_guidelines.md, 
 
 **Action Pattern:** Analyze → Explain Why Invalid → Post Education → **ALWAYS Mark Resolved**
 
+### OTHER UNRESOLVED COMMENTS → EVALUATE, RESPOND & RESOLVE
+Unless the comment is deferred to `@Fyzxs` it should be resolved before you finish, with the reason why it's resolved.
+
+
 ## GitHub Integration Process
 
 ### Comment Collection & Analysis

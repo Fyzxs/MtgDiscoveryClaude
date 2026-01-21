@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.UserCards.Apis;
+using Lib.Adapter.UserCards.Tests.Fakes;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
+using TestConvenience.Core.Fakes;
 
 namespace Lib.Adapter.UserCards.Tests.Apis;
 
@@ -44,14 +46,14 @@ public sealed class UserCardsAdapterServiceTests
         ILogger logger = new LoggerFake();
         UserCardsAdapterService service = new(logger);
 
-        ICollectedItemItrEntity collectedCard = new CollectedItemItrEntityFake
+        ICollectedItemItrEntity collectedCard = new FakeCollectedItemItrEntity
         {
             Finish = "nonfoil",
             Special = "none",
             Count = 1
         };
 
-        IUserCardCollectionItrEntity userCard = new UserCardCollectionItrEntityFake
+        IUserCardCollectionItrEntity userCard = new FakeUserCardCollectionItrEntity
         {
             UserId = "user123",
             CardId = "card456",
@@ -70,26 +72,4 @@ public sealed class UserCardsAdapterServiceTests
         actual.ResponseData.CardId.Should().Be("card456");
         actual.ResponseData.SetId.Should().Be("set789");
     }
-}
-
-internal sealed class LoggerFake : ILogger
-{
-    public System.IDisposable BeginScope<TState>(TState state) where TState : notnull => null;
-    public bool IsEnabled(LogLevel logLevel) => true;
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter) { }
-}
-
-internal sealed class CollectedItemItrEntityFake : ICollectedItemItrEntity
-{
-    public string Finish { get; init; }
-    public string Special { get; init; }
-    public int Count { get; init; }
-}
-
-internal sealed class UserCardCollectionItrEntityFake : IUserCardCollectionItrEntity
-{
-    public string UserId { get; init; }
-    public string CardId { get; init; }
-    public string SetId { get; init; }
-    public ICollection<ICollectedItemItrEntity> CollectedList { get; init; }
 }

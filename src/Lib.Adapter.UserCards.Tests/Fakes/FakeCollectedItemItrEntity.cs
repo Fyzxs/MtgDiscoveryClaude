@@ -1,8 +1,8 @@
 ﻿using Lib.Shared.DataModels.Entities;
 
-namespace App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
+namespace Lib.Adapter.UserCards.Tests.Fakes;
 
-public sealed class CollectedItemArgEntity : ICollectedItemArgEntity
+internal sealed class FakeCollectedItemItrEntity : ICollectedItemItrEntity
 {
     public string Finish { get; init; }
     public string Special { get; init; }
