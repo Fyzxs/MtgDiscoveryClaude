@@ -28,6 +28,14 @@ describe('badgeFormatters', () => {
       expect(formatFinishText('galaxyfoil')).toBe('Galaxy Foil');
     });
 
+    it('should format ripplefoil correctly', () => {
+      expect(formatFinishText('ripplefoil')).toBe('Ripple Foil');
+    });
+
+    it('should format oilslick correctly', () => {
+      expect(formatFinishText('oilslick')).toBe('Oil Slick');
+    });
+
     it('should return original text for unknown finish', () => {
       expect(formatFinishText('unknown')).toBe('unknown');
     });
@@ -64,6 +72,58 @@ describe('badgeFormatters', () => {
 
     it('should format promopack correctly', () => {
       expect(formatPromoText('promopack')).toBe('Promo Pack');
+    });
+
+    it('should format firstplacefoil correctly', () => {
+      expect(formatPromoText('firstplacefoil')).toBe('First Place Foil');
+    });
+
+    it('should format boxtopper correctly', () => {
+      expect(formatPromoText('boxtopper')).toBe('Box Topper');
+    });
+
+    it('should format instore correctly', () => {
+      expect(formatPromoText('instore')).toBe('In Store');
+    });
+
+    it('should format giftbox correctly', () => {
+      expect(formatPromoText('giftbox')).toBe('Gift Box');
+    });
+
+    it('should format startercollection correctly', () => {
+      expect(formatPromoText('startercollection')).toBe('Starter Collection');
+    });
+
+    it('should format beginnerbox correctly', () => {
+      expect(formatPromoText('beginnerbox')).toBe('Beginner Box');
+    });
+
+    it('should format planeswalkerdeck correctly', () => {
+      expect(formatPromoText('planeswalkerdeck')).toBe('Planeswalker Deck');
+    });
+
+    it('should format mediainsert correctly', () => {
+      expect(formatPromoText('mediainsert')).toBe('Media Insert');
+    });
+
+    it('should format schinesealtart correctly', () => {
+      expect(formatPromoText('schinesealtart')).toBe('Chinese Alt Art');
+    });
+
+    it('should format arenaleague without underscore correctly', () => {
+      expect(formatPromoText('arenaleague')).toBe('Arena League');
+    });
+
+    it('should format judgegift without underscore correctly', () => {
+      expect(formatPromoText('judgegift')).toBe('Judge Gift');
+    });
+
+    it('should format wizardsplaynetwork without underscore correctly', () => {
+      expect(formatPromoText('wizardsplaynetwork')).toBe('WPN');
+    });
+
+    it('should format premiereshop without underscore correctly', () => {
+      expect(formatPromoText('premiereshop')).toBe('Premiere Shop');
     });
 
     it('should handle FF + Roman numerals pattern', () => {
@@ -133,6 +193,14 @@ describe('badgeFormatters', () => {
 
     it('should format shatteredglass correctly', () => {
       expect(formatFrameEffectText('shatteredglass')).toBe('Shattered Glass');
+    });
+
+    it('should format universesbeyond correctly', () => {
+      expect(formatFrameEffectText('universesbeyond')).toBe('Universes Beyond');
+    });
+
+    it('should format moonlitland correctly', () => {
+      expect(formatFrameEffectText('moonlitland')).toBe('Moonlit Land');
     });
 
     it('should capitalize unknown frame effects', () => {
