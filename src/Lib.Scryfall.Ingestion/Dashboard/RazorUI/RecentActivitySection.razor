@@ -1,0 +1,27 @@
+@using RazorConsole.Components
+@using Spectre.Console
+@using System.Collections.Generic
+
+@if (Logs.Count > 0)
+{
+    <Rows>
+        <Newline />
+        <Markup Content="Recent Activity:" Foreground="@Color.White" />
+        @foreach (string log in Logs)
+        {
+            <Markup Content="@($"  {TruncateString(log, 100)}")" Foreground="@Color.Grey" />
+        }
+    </Rows>
+}
+
+@code {
+    [Parameter]
+    public IReadOnlyList<string> Logs { get; init; } = new List<string>();
+
+    private static string TruncateString(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        if (text.Length <= maxLength) return text;
+        return string.Concat(text.AsSpan(0, maxLength - 3), "...");
+    }
+}
