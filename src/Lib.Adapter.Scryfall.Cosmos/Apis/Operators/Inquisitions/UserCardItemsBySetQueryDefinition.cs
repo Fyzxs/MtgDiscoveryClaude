@@ -1,4 +1,5 @@
 ﻿using Lib.Cosmos.Apis.Operators;
+using Microsoft.Azure.Cosmos;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 

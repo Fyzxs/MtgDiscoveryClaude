@@ -20,15 +20,7 @@ internal sealed class RazorConsoleDashboard : IIngestionDashboard, IDisposable
         _state = new DashboardState();
     }
 
-    public async Task RunUiAsync()
-    {
-        await AppHost.RunAsync<IngestionDashboard>(
-            parameters: null,
-            configure: builder =>
-            {
-                builder.Services.AddSingleton<DashboardState>(_state);
-            }).ConfigureAwait(false);
-    }
+    public async Task RunUiAsync() => await Task.CompletedTask.ConfigureAwait(false);
 
     public void UpdateProgress(string type, int current, int total, string action, string item) =>
         _state.UpdateProgress(type, current, total, action, item);

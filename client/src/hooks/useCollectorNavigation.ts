@@ -74,6 +74,10 @@ export const useCollectorNavigation = (): NavigationHelpers => {
 
   const createCollectorClickHandler = useCallback((path: string, additionalParams?: Record<string, string>) => {
     return (e: React.MouseEvent) => {
+      // Allow browser's default behavior for modifier keys (CTRL/CMD+click = new tab, etc.)
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) {
+        return;
+      }
       e.preventDefault();
       navigateWithCollector(path, additionalParams);
     };
