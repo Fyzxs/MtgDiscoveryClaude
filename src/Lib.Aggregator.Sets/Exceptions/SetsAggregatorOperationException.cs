@@ -2,13 +2,13 @@
 using System.Net;
 using Lib.Shared.Invocation.Exceptions;
 
-namespace Lib.Aggregator.Artists.Operations;
+namespace Lib.Aggregator.Sets.Exceptions;
 
 #pragma warning disable CA1032
-internal sealed class ArtistAggregatorOperationException : OperationException
+internal sealed class SetsAggregatorOperationException : OperationException
 #pragma warning restore CA1032
 {
-    public ArtistAggregatorOperationException(string message, Exception innerException = null)
+    public SetsAggregatorOperationException(string message, Exception innerException = null)
         : base(HttpStatusCode.InternalServerError, message, innerException)
     { }
 }

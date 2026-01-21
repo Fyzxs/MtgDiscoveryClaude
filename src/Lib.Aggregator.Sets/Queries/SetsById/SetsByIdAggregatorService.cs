@@ -44,7 +44,7 @@ internal sealed class SetsByIdAggregatorService : ISetsByIdAggregatorService
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ISetItemCollectionOufEntity>(new AggregatorOperationException(System.Net.HttpStatusCode.InternalServerError, "Failed to retrieve sets by IDs", response.OuterException));
+            return new FailureOperationResponse<ISetItemCollectionOufEntity>(new SetsAggregatorOperationException("Failed to retrieve sets by IDs", response.OuterException));
         }
 
         IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
