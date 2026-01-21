@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '../atoms';
+import { Box, Typography, IconButton, Tooltip } from '../atoms';
+import { ContentCopyIcon } from '../atoms/Icons';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { SetCollectionPanel } from './SetCollectionPanel';
 import { SectionErrorBoundary } from '../ErrorBoundaries';
@@ -33,7 +34,33 @@ export const SetPageHeader: React.FC<SetPageHeaderProps> = ({
       {/* Set Information Card */}
       {setInfo && (
         <SectionErrorBoundary name="SetInfoCard">
-          <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            {/* Set ID */}
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              px: 2,
+              py: 1
+            }}>
+              <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
+                {setInfo.id}
+              </Typography>
+              <Tooltip title="Copy ID">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    navigator.clipboard.writeText(setInfo.id);
+                  }}
+                  sx={{ p: 0.5 }}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
             <Box sx={{ position: 'relative' }}>
               <MtgSetCard key={refreshTrigger} set={setInfo} />
               {/* Only render panel if collector parameter exists */}
