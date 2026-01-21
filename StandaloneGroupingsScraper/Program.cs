@@ -503,6 +503,13 @@ public class ScryfallGroupingsScraper
             filters.Properties["date"] = dateMatch.Groups[1].Value;
         }
 
+        // year:YYYY patterns
+        var yearMatch = Regex.Match(query, @"year:(\d{4})");
+        if (yearMatch.Success)
+        {
+            filters.Year = yearMatch.Groups[1].Value;
+        }
+
         return filters;
     }
 }
@@ -527,6 +534,7 @@ public class GroupingFilters
 {
     public CollectorNumberRange CollectorNumberRange { get; set; }
     public Dictionary<string, object> Properties { get; set; }
+    public string Year { get; set; }
 }
 
 public class CollectorNumberRange

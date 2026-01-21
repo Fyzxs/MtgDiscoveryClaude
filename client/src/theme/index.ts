@@ -17,6 +17,11 @@ declare module '@mui/material/styles' {
       restricted: string;
       banned: string;
     };
+    reservedList: {
+      brass: string;
+      gold: string;
+      shadow: string;
+    };
     mtg: {
       cardBorder: string;
       cardOverlayGradient: string;
@@ -40,6 +45,11 @@ declare module '@mui/material/styles' {
       notLegal?: string;
       restricted?: string;
       banned?: string;
+    };
+    reservedList?: {
+      brass?: string;
+      gold?: string;
+      shadow?: string;
     };
     mtg?: {
       cardBorder?: string;
@@ -238,6 +248,12 @@ export const theme = createTheme({
       notLegal: '#424242',    // Gray
       restricted: '#2196F3',  // Blue
       banned: '#F44336',      // Red
+    },
+    // Reserved List colors
+    reservedList: {
+      brass: '#B5A642',       // Aged brass
+      gold: '#D4AF37',        // Accent gold
+      shadow: '0 2px 8px rgba(181, 166, 66, 0.4)',
     },
     // Additional MTG-specific colors
     mtg: {

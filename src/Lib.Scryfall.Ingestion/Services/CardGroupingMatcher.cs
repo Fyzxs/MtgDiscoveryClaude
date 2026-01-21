@@ -62,6 +62,15 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
             return false;
         }
 
+        // Check year if specified
+        if (string.IsNullOrEmpty(grouping.ParsedFilters.Year) is false)
+        {
+            if (MatchesYear(cardData, grouping.ParsedFilters.Year) is false)
+            {
+                return false;
+            }
+        }
+
         // Check collector number range if specified
         if (grouping.ParsedFilters.CollectorNumberRange is not null)
         {
@@ -81,6 +90,24 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         }
 
         return true;
+    }
+
+    private static bool MatchesYear(dynamic cardData, string expectedYear)
+    {
+        string releasedAt = GetStringProperty(cardData, "released_at");
+        if (string.IsNullOrEmpty(releasedAt))
+        {
+            return false;
+        }
+
+        // released_at format is YYYY-MM-DD, extract the year
+        if (releasedAt.Length >= 4)
+        {
+            string cardYear = releasedAt.Substring(0, 4);
+            return string.Equals(cardYear, expectedYear, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return false;
     }
 
     private static bool MatchesCollectorNumberRange(dynamic cardData, CollectorNumberRange range)

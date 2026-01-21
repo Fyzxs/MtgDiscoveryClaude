@@ -16,6 +16,11 @@ internal sealed class SetItemExtToItrMapper : ISetItemExtToItrMapper
 {
     public Task<ISetItemItrEntity> Map(ScryfallSetItemExtEntity scryfallSetItem)
     {
+        if (scryfallSetItem.Data is null)
+        {
+            throw new System.InvalidOperationException($"Set item data is null for set: {scryfallSetItem.Id}");
+        }
+
         dynamic data = scryfallSetItem.Data;
 
         return Task.FromResult<ISetItemItrEntity>(new SetItemItrEntity

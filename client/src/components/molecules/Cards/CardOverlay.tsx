@@ -35,6 +35,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const cardName = card.name;
   const rarity = card.rarity;
   const collectorNumber = card.collectorNumber;
+  const reserved = card.reserved;
   const releaseDate = card.releasedAt;
   const artist = card.artist;
   const artistIds = card.artistIds;
@@ -94,6 +95,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
             <RarityCollectorBadge
               rarity={rarity}
               collectorNumber={collectorNumber}
+              reserved={reserved}
             />
           </Box>
           {context.hasCollector && collectionData && (
