@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.UserSealedProducts.Queries;
-using Lib.Aggregator.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.UserSealedProducts.Queries;
 
-internal sealed class UserSealedProductsByUserIdAggregator : IUserSealedProductsByUserIdAggregator
+internal sealed class UserSealedProductsByUserIdAggregator : Apis.IUserSealedProductsByUserIdAggregator
 {
     private readonly IUserSealedProductsByUserIdAdapter _adapter;
 
