@@ -2,7 +2,7 @@
 using System.Net;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Shared.Invocation.Exceptions;
-using TestConvenience.Core.AwesomeAssertions;
+using AwesomeAssertions;
 
 namespace Lib.Adapter.UserCards.Tests.Exceptions;
 

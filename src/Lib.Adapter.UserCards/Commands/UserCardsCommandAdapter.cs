@@ -35,14 +35,29 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
     private readonly IUserCardsScribe _userCardsScribe;
     private readonly ILogger _logger;
 
-    public UserCardsCommandAdapter(ILogger logger)
+    public UserCardsCommandAdapter(ILogger logger) : this(logger, new UserCardsScribe(logger))
+    { }
+
+    internal UserCardsCommandAdapter(ILogger logger, IUserCardsScribe userCardsScribe)
     {
         _logger = logger;
-        _userCardsScribe = new UserCardsScribe(logger);
+        _userCardsScribe = userCardsScribe;
     }
 
     public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
     {
+        if (userCard is null)
+        {
+            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
+                new UserCardsAdapterException("User card cannot be null"));
+        }
+
+        if (string.IsNullOrWhiteSpace(userCard.UserId) || string.IsNullOrWhiteSpace(userCard.CardId))
+        {
+            return new FailureOperationResponse<IUserCardCollectionItrEntity>(
+                new UserCardsAdapterException("UserId and CardId are required"));
+        }
+
         try
         {
             UserCardItem userCardItem = MapToUserCardItem(userCard);
@@ -61,7 +76,14 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         catch (System.Exception ex)
         {
             string message = $"Failed to add user card. UserId: {userCard.UserId}, CardId: {userCard.CardId}";
-            _logger.LogError(ex, "Failed to add user card. UserId: {UserId}, CardId: {CardId}", userCard.UserId, userCard.CardId);
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
+            _logger.LogError(ex,
+                "Failed to add user card. UserId: {UserId}, CardId: {CardId}, SetId: {SetId}, Exception: {ExceptionType}",
+                userCard.UserId,
+                userCard.CardId,
+                userCard.SetId,
+                ex.GetType().Name);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
             throw new UserCardsAdapterException(message, ex);
         }
     }

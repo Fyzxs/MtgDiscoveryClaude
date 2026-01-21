@@ -4,7 +4,7 @@ using Lib.Adapter.UserCards.Apis;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
-using TestConvenience.Core.AwesomeAssertions;
+using AwesomeAssertions;
 
 namespace Lib.Adapter.UserCards.Tests.Apis;
 
