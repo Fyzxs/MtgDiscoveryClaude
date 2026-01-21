@@ -85,3 +85,40 @@ export const GET_USER_CARDS_BATCH = gql`
     }
   }
 `;
+
+export const GET_USER_SET_CARDS = gql`
+  query GetUserSetCards($setCardArgs: UserSetCardInput!) {
+    userSetCards(setCardArgs: $setCardArgs) {
+      __typename
+      ... on UserSetCardSuccessResponse {
+        data {
+          userId
+          setId
+          totalCards
+          uniqueCards
+          groupsCollecting
+          groups {
+            key
+            value {
+              nonFoil {
+                cards
+              }
+              foil {
+                cards
+              }
+              etched {
+                cards
+              }
+            }
+          }
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;

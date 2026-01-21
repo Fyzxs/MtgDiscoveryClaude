@@ -83,7 +83,7 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       perfMonitor.end('collection-update-total');
 
       // Check if mutation was successful
-      if ((result.data as any)?.addCardToCollection?.__typename === 'SuccessCardsResponse') {
+      if ((result.data as any)?.addCardToCollection?.__typename === 'CardsSuccessResponse') {
         const updatedCard = (result.data as any).addCardToCollection.data?.[0];
 
         if (updatedCard) {
