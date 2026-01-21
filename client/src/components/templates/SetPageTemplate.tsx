@@ -3,6 +3,9 @@ import { PageContainer } from '../molecules/layouts';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
+import { MobileFilterBar } from '../molecules/shared/MobileFilterBar';
+import { FilterDrawer } from '../organisms/filters/FilterDrawer';
+import type { FilterPanelConfig } from '../../types/filters';
 
 interface SetPageTemplateProps {
   // Query state
@@ -18,6 +21,19 @@ interface SetPageTemplateProps {
   currentCount: number;
   totalCount: number;
 
+  // Mobile layout props
+  useMobileLayout?: boolean;
+  filterDrawerOpen?: boolean;
+  onFilterDrawerToggle?: () => void;
+  filterConfig?: FilterPanelConfig;
+  activeFilterCount?: number;
+  onClearFilters?: () => void;
+
+  // Groups toggle (shown in mobile bar)
+  showGroupsToggle?: boolean;
+  showGroups?: boolean;
+  onShowGroupsChange?: (value: boolean) => void;
+
   children?: never; // Prevent accidental children
 }
 
@@ -28,28 +44,54 @@ export const SetPageTemplate: React.FC<SetPageTemplateProps> = ({
   filters,
   cardDisplay,
   currentCount,
-  totalCount
+  totalCount,
+  useMobileLayout = false,
+  filterDrawerOpen = false,
+  onFilterDrawerToggle,
+  filterConfig,
+  activeFilterCount = 0,
+  onClearFilters,
+  showGroupsToggle = false,
+  showGroups = true,
+  onShowGroupsChange
 }) => {
+  // Build results summary text for mobile bar
+  const resultsSummary = `${currentCount} of ${totalCount} cards`;
+
   return (
     <QueryStateContainer
       loading={isLoading}
       error={error}
       containerProps={{ maxWidth: false }}
     >
-      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+      <PageContainer maxWidth={false} sx={{ mt: { xs: 1, sm: 2 }, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
         {/* Header Section */}
         {header}
 
-        {/* Filters Section */}
-        {filters}
+        {/* Mobile Filter Bar (sticky) */}
+        {useMobileLayout && onFilterDrawerToggle && onShowGroupsChange && (
+          <MobileFilterBar
+            activeFilterCount={activeFilterCount}
+            onFilterClick={onFilterDrawerToggle}
+            showGroups={showGroups}
+            onShowGroupsChange={onShowGroupsChange}
+            showGroupsToggle={showGroupsToggle}
+            resultsSummary={resultsSummary}
+          />
+        )}
 
-        {/* Results Summary */}
-        <ResultsSummary
-          current={currentCount}
-          total={totalCount}
-          label="cards"
-          textAlign="center"
-        />
+        {/* Desktop Filters Section (inline) */}
+        {useMobileLayout === false && filters}
+
+        {/* Results Summary - only show on desktop (mobile has it in the bar) */}
+        {useMobileLayout === false && (
+          <ResultsSummary
+            current={currentCount}
+            total={totalCount}
+            label="cards"
+            textAlign="center"
+          />
+        )}
 
         {/* Card Display Section */}
         {cardDisplay}
@@ -57,6 +99,18 @@ export const SetPageTemplate: React.FC<SetPageTemplateProps> = ({
         {/* Back to Top Button */}
         <BackToTopFab />
       </PageContainer>
+
+      {/* Mobile Filter Drawer */}
+      {useMobileLayout && filterConfig && onFilterDrawerToggle && (
+        <FilterDrawer
+          open={filterDrawerOpen}
+          onClose={onFilterDrawerToggle}
+          config={filterConfig}
+          title="Filter Cards"
+          activeFilterCount={activeFilterCount}
+          onClear={onClearFilters}
+        />
+      )}
     </QueryStateContainer>
   );
 };

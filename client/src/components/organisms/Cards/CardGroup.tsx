@@ -86,8 +86,7 @@ const CardGroupComponent: React.FC<CardGroupProps> = ({
           groupId={groupId}
           context={context}
           isLoading={isLoading}
-          spacing={1.5}
-          minItemWidth={280}
+          spacing={{ xs: 0.75, sm: 1, md: 1.5 }}
         />
       ) : (
         <Box sx={{

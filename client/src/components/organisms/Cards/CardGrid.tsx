@@ -1,16 +1,39 @@
-import React, { useDeferredValue, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Box, type SxProps, type Theme } from '../../atoms';
 import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../../hooks/useGridNavigation';
 import { MtgCard } from './MtgCard';
 import type { Card, CardContext } from '../../../types/card';
+import type { Breakpoint } from '@mui/material/styles';
+
+type ResponsiveValue<T> = T | Partial<Record<Breakpoint, T>>;
+
+// Default responsive card widths for mobile-first design
+const DEFAULT_MIN_ITEM_WIDTH: Partial<Record<Breakpoint, number>> = {
+  xs: 120,  // 2-3 cards on mobile
+  sm: 140,  // 3-4 cards on tablet
+  md: 180,  // auto-fill on medium
+  lg: 220,  // auto-fill on large
+  xl: 250,  // auto-fill on extra large
+};
+
+// Default max width to prevent cards from getting too large with few items
+// Keeps cards consistent size regardless of how many are displayed
+const DEFAULT_MAX_ITEM_WIDTH: Partial<Record<Breakpoint, number>> = {
+  xs: 140,  // Cap on mobile - slightly larger than min (120)
+  sm: 160,  // Cap on tablet - slightly larger than min (140)
+  md: 220,  // Cap on medium - slightly larger than min (180)
+  lg: 260,  // Cap on large - slightly larger than min (220)
+  xl: 300,  // Cap on extra large - slightly larger than min (250)
+};
 
 interface CardGridProps {
   cards: Card[];
   groupId: string;
   context: CardContext;
-  spacing?: number;
-  minItemWidth?: number;
+  spacing?: ResponsiveValue<number>;
+  minItemWidth?: ResponsiveValue<number>;
+  maxItemWidth?: ResponsiveValue<number>;
   sx?: SxProps<Theme>;
   enableNavigation?: boolean;
   isLoading?: boolean;
@@ -39,51 +62,65 @@ export const CardGrid: React.FC<CardGridProps> = ({
   cards,
   groupId,
   context,
-  spacing = 1.5,
-  minItemWidth = 280,
+  spacing = { xs: 1, sm: 1.5 },
+  minItemWidth = DEFAULT_MIN_ITEM_WIDTH,
+  maxItemWidth = DEFAULT_MAX_ITEM_WIDTH,
   sx = {},
   enableNavigation = true,
   isLoading = false,
   onArtistClick,
   onSetClick
 }) => {
-  // Defer card rendering to keep UI responsive during filter changes
-  // When showing MORE cards (filter removal), React can render them in background
-  const deferredCards = useDeferredValue(cards);
+  // Create a stable fingerprint of the card LIST (just IDs, not data)
+  // This only changes when the actual cards change, not when collection data updates
+  const cardListFingerprint = useMemo(
+    () => cards.map(c => c.id).join(','),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only care about ID changes
+    [cards.length, cards[0]?.id, cards[cards.length - 1]?.id]
+  );
 
   // Progressive rendering: render cards in batches for better performance
   const [visibleCount, setVisibleCount] = useState(0);
+  const prevFingerprintRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Reset when cards change
-    setVisibleCount(0);
+    // Only run progressive loading when the card LIST changes (not just data)
+    // null means first run, empty string means no cards yet
+    if (prevFingerprintRef.current !== null && cardListFingerprint === prevFingerprintRef.current) {
+      return;
+    }
+    prevFingerprintRef.current = cardListFingerprint;
 
     // Render in batches to keep UI responsive
     const batchSize = 50;
-    const totalCards = deferredCards.length;
+    const cardsLength = cards.length;
 
-    if (totalCards === 0) return;
+    if (cardsLength === 0) {
+      setVisibleCount(0);
+      return;
+    }
 
     // First batch immediately
-    setVisibleCount(Math.min(batchSize, totalCards));
+    setVisibleCount(Math.min(batchSize, cardsLength));
 
     // Remaining batches progressively
-    if (totalCards > batchSize) {
+    if (cardsLength > batchSize) {
       const timeoutIds: NodeJS.Timeout[] = [];
 
-      for (let i = batchSize; i < totalCards; i += batchSize) {
+      for (let i = batchSize; i < cardsLength; i += batchSize) {
         const timeout = setTimeout(() => {
-          setVisibleCount(Math.min(i + batchSize, totalCards));
+          setVisibleCount(Math.min(i + batchSize, cardsLength));
         }, ((i / batchSize) - 1) * 50); // 50ms between batches
         timeoutIds.push(timeout);
       }
 
       return () => timeoutIds.forEach(clearTimeout);
     }
-  }, [deferredCards]);
+  }, [cardListFingerprint, cards.length]);
 
-  // Use visible cards for rendering
-  const cardsToRender = deferredCards.slice(0, visibleCount);
+  // Use cards directly (not deferred) so collection updates show immediately
+  // Progressive loading is controlled by visibleCount
+  const cardsToRender = cards.slice(0, visibleCount);
 
   // Grid navigation hook
   const { handleKeyDown } = useGridNavigation({
@@ -98,6 +135,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
       <Box data-card-group={groupId}>
         <ResponsiveGridAutoFit
           minItemWidth={minItemWidth}
+          maxItemWidth={maxItemWidth}
           spacing={spacing}
           sx={sx}
           data-grid-container="true"
@@ -121,7 +159,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
   }
 
   // Empty state
-  if (deferredCards.length === 0) {
+  if (cards.length === 0) {
     return null;
   }
 
@@ -130,6 +168,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
     <Box data-card-group={groupId}>
       <ResponsiveGridAutoFit
         minItemWidth={minItemWidth}
+        maxItemWidth={maxItemWidth}
         spacing={spacing}
         sx={{
           margin: '0 auto',

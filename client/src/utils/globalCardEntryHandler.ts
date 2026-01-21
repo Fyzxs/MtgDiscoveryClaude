@@ -18,10 +18,14 @@ class GlobalCardEntryHandler {
   private handlers = new Map<string, CardHandler>();
   private entryStates = new Map<string, CollectionEntryState>();
   private isEntering = new Map<string, boolean>();
+  // Track recent Enter keydown to prevent keyup from triggering button click
+  private recentEnterKeydown = false;
 
   constructor() {
     // Install ONE global handler that never changes
     document.addEventListener('keydown', this.handleKeyDown.bind(this), true);
+    // Also capture keyup to prevent Enter from triggering button activation
+    document.addEventListener('keyup', this.handleKeyUp.bind(this), true);
   }
 
   private getDefaultFinish(cardId: string): CardFinish {
@@ -46,6 +50,16 @@ class GlobalCardEntryHandler {
     this.entryStates.delete(cardId);
     this.isEntering.delete(cardId);
     domOverlay.cleanup(cardId);
+  }
+
+  private handleKeyUp(event: KeyboardEvent) {
+    // If we recently handled an Enter keydown, prevent the keyup from triggering
+    // the browser's default button activation behavior (which causes scroll)
+    if (this.recentEnterKeydown && event.key.toLowerCase() === 'enter') {
+      this.recentEnterKeydown = false;
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 
   private handleKeyDown(event: KeyboardEvent) {
@@ -93,6 +107,8 @@ class GlobalCardEntryHandler {
     if (key === 'enter') {
       if (this.isEntering.get(cardId)) {
         this.submitEntry(cardId);
+        // Mark that we handled Enter so keyup doesn't trigger button click
+        this.recentEnterKeydown = true;
         event.preventDefault();
         event.stopPropagation();
       }

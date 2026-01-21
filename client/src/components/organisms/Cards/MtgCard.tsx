@@ -13,6 +13,7 @@ import { useMtgCardStyles } from '../../../hooks/useMtgCardStyles';
 import { useMtgCardCollectionActions } from '../../../hooks/useMtgCardCollectionActions';
 import { useMtgCardInteractions } from '../../../hooks/useMtgCardInteractions';
 import { useMtgCardMemo, mtgCardPropsComparison } from '../../../hooks/useMtgCardMemo';
+import { useCardDisplaySettings, type CardSize, type DisplayMode } from '../../../hooks/useCardDisplaySettings';
 
 interface MtgCardProps extends StyledComponentProps {
   card: Card;
@@ -21,6 +22,9 @@ interface MtgCardProps extends StyledComponentProps {
   groupId: string;
   onSetClick?: (setCode?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
+  // Responsive props
+  size?: CardSize;
+  displayMode?: DisplayMode;
 }
 
 
@@ -32,15 +36,37 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
   groupId: _groupId,
   onSetClick,
   onArtistClick,
-  className = ''
+  className = '',
+  size: explicitSize,
+  displayMode: explicitMode
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Get responsive display settings
+  const displaySettings = useCardDisplaySettings({
+    explicitSize,
+    explicitMode
+  });
 
   // Use extracted hooks
   const { ariaLabel } = useMtgCardMemo({ card });
   const { cardStyles } = useMtgCardStyles({ card });
-  const { modalOpen, isSelected, handleCardClick, handleZoomClick, handleModalClose } = useMtgCardInteractions({ cardRef });
+  const {
+    modalOpen,
+    isSelected,
+    overlayExpanded,
+    handleCardClick,
+    handleZoomClick,
+    handleModalClose,
+    handleOverlayToggle
+  } = useMtgCardInteractions({
+    cardRef,
+    overlayBehavior: displaySettings.overlayBehavior
+  });
   useMtgCardCollectionActions({ card, isSelected, cardRef });
+
+  // Calculate collection count for mobile display
+  const collectionCount = card.userCollection?.totalCount ?? 0;
 
   return (
     <MuiCard
@@ -55,7 +81,11 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
       role="button"
       aria-label={ariaLabel}
       aria-describedby={`card-details-${card.id}`}
-      sx={cardStyles}
+      sx={{
+        ...cardStyles,
+        // Ensure minimum touch target on mobile
+        minHeight: displaySettings.isMobile ? 44 : undefined,
+      }}
       className={className}
     >
       <Box sx={{
@@ -65,8 +95,8 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
       }}>
         <CardImageDisplay
           card={card}
-          size="normal"
-          showFlipButton={true}
+          size={displaySettings.imageScryfallSize}
+          showFlipButton={!displaySettings.isMobile && !displaySettings.isTablet}
           sx={{
             position: 'absolute',
             top: 0,
@@ -77,19 +107,23 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         />
       </Box>
 
-      <CardBadges
-        foil={card.foil}
-        nonfoil={card.nonFoil}
-        etched={card.finishes?.includes('etched')}
-        promoTypes={card.promoTypes}
-        frameEffects={card.frameEffects}
-        isPromo={card.promo}
-        digital={card.digital}
-      />
+      {displaySettings.showBadges && (
+        <CardBadges
+          foil={card.foil}
+          nonfoil={card.nonFoil}
+          etched={card.finishes?.includes('etched')}
+          promoTypes={card.promoTypes}
+          frameEffects={card.frameEffects}
+          isPromo={card.promo}
+          digital={card.digital}
+        />
+      )}
 
-      <ZoomIndicator
-        onZoomClick={handleZoomClick}
-      />
+      {displaySettings.showZoomIndicator && (
+        <ZoomIndicator
+          onZoomClick={handleZoomClick}
+        />
+      )}
 
 
       <CardOverlay
@@ -99,6 +133,10 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
         onCardClick={undefined}
         onArtistClick={onArtistClick}
         onSetClick={onSetClick}
+        variant={displaySettings.overlayVariant}
+        expanded={overlayExpanded}
+        onExpandToggle={handleOverlayToggle}
+        collectionCount={collectionCount}
       />
 
       {/* Hidden element for screen reader description */}

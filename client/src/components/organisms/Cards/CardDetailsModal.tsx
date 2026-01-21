@@ -15,6 +15,7 @@ import type { Card } from '../../../types/card';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
 import { CollectionSummary, ModalContainer, ManaCost } from '../../molecules';
 import { RarityBadge, PriceDisplay } from '../../atoms';
+import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
 import { RelatedCardsDisplay } from './RelatedCardsDisplay';
 import { AllPrintingsDisplay } from './AllPrintingsDisplay';
 import { RulingsDisplay } from '../../molecules';
@@ -24,6 +25,8 @@ import { SetLink } from '../../atoms';
 import { ArtistLinks } from '../../molecules';
 import { CardName } from '../../atoms';
 import { NavigateBeforeIcon, NavigateNextIcon, OpenInNewIcon, CircleIcon, CircleOutlinedIcon, RemoveCircleIcon, WarningIcon, HelpOutlineIcon, ContentCopyIcon, CloseIcon } from '../../atoms/Icons';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
+import { CardDetailsSheet } from './CardDetailsSheet';
 
 interface CardDetailsModalProps {
   open: boolean;
@@ -97,9 +100,36 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
   hasNext
 }) => {
   const { hasCollector } = useCollectorParam();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
 
+  // Use mobile sheet for mobile and tablet views
+  const useMobileSheet = isMobile || isTablet;
 
   if (!card) return null;
+
+  // Render mobile sheet on smaller screens
+  if (useMobileSheet) {
+    return (
+      <CardDetailsSheet
+        open={open}
+        onClose={onClose}
+        card={card}
+        onPrevious={onPrevious}
+        onNext={onNext}
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+      />
+    );
+  }
+
+  // Check if there are any displayable treatments
+  const hasDisplayableTreatments = (
+    card.foil ||
+    card.finishes?.includes('etched') ||
+    (card.promoTypes && card.promoTypes.length > 0) ||
+    (card.frameEffects && card.frameEffects.length > 0) ||
+    card.digital
+  );
 
   const formatOracleText = (text?: string) => {
     if (!text) return null;
@@ -335,7 +365,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               )}
 
               {/* Treatments */}
-              {(card.foil || card.nonFoil || (card.promoTypes?.length ?? 0) > 0 || (card.frameEffects?.length ?? 0) > 0 || card.promo || card.digital) && (
+              {hasDisplayableTreatments && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     Treatments:
@@ -360,7 +390,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                     Artist:
                   </Typography>
                   <ArtistLinks
-                    artists={card.artist.split(/\s+(?:&|and)\s+/i)}
+                    artist={card.artist}
                     artistIds={card.artistIds}
                   />
                 </Box>
@@ -391,6 +421,13 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
                   }>
                     <HelpOutlineIcon sx={{ fontSize: 18, color: 'text.secondary', cursor: 'help' }} />
                   </Tooltip>
+                  {card.reserved && (
+                    <Tooltip title="This card is on the Reserved List">
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <ReservedListShield size="small" sx={{ mt: 0.25 }} />
+                      </Box>
+                    </Tooltip>
+                  )}
                 </Box>
 
                 <Grid container spacing={1.5}>
@@ -577,15 +614,10 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
               {/* Related Cards */}
               {card.allParts && card.allParts.length > 1 && (
                 <>
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                      Related Cards
-                    </Typography>
-                    <RelatedCardsDisplay 
-                      relatedCardIds={card.allParts.map(part => part.id).filter((id): id is string => !!id)}
-                      currentCardId={card.id}
-                    />
-                  </Box>
+                  <RelatedCardsDisplay
+                    relatedCardIds={card.allParts.map(part => part.id).filter((id): id is string => !!id)}
+                    currentCardId={card.id}
+                  />
                   <Divider sx={{ mt: 2 }} />
                 </>
               )}

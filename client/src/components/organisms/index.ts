@@ -7,7 +7,6 @@ export { ArtistSearchResults } from './Artists/ArtistSearchResults';
 // Card-related organisms
 export { AllPrintingsDisplay } from './Cards/AllPrintingsDisplay';
 export { CardDetailsModal } from './Cards/CardDetailsModal';
-export { CardDisplay } from './Cards/CardDisplayResponsive';
 export { CardFilterPanel } from './Cards/CardFilterPanel';
 export { CardGrid } from './Cards/CardGrid';
 export { CardGroup } from './Cards/CardGroup';

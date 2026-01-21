@@ -407,6 +407,7 @@ export const GET_CARDS_BY_IDS = gql`
           colors
           colorIdentity
           keywords
+          reserved
           setId
           setCode
           setName

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
 using Cli.MtgDiscovery.DataMigration.ErrorTracking;
@@ -31,6 +32,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
     private readonly IErrorLogger _errorLogger;
     private readonly ISuccessLogger _successLogger;
     private readonly IMigrationProgressTracker _progressTracker;
+    private readonly UserSetCardsRecalculator _userSetCardsRecalculator;
 
     public MigrationOrchestrator(
         ILogger logger,
@@ -54,6 +56,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
         _errorLogger = errorLogger;
         _successLogger = successLogger;
         _progressTracker = progressTracker;
+        _userSetCardsRecalculator = new UserSetCardsRecalculator(logger);
     }
 
     public async Task<MigrationResult> ExecuteMigrationAsync()
@@ -65,7 +68,14 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
             .ReadAllAsync(_configuration.SourceCollectorId)
             .ConfigureAwait(false);
 
+        // Log test mode if configured
+        if (string.IsNullOrWhiteSpace(_configuration.TestSetCode) is false)
+        {
+            _logger.LogWarning("TEST MODE: Only migrating cards from set code '{SetCode}'", _configuration.TestSetCode);
+        }
+
         int successCount = 0;
+        int skippedCount = 0;
         int notFoundCount = 0;
         int errorCount = 0;
 
@@ -73,9 +83,13 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
         {
             try
             {
-                bool success = await ProcessRecordAsync(sqlRecord).ConfigureAwait(false);
+                bool? processResult = await ProcessRecordAsync(sqlRecord).ConfigureAwait(false);
 
-                if (success)
+                if (processResult is null)
+                {
+                    skippedCount++;
+                }
+                else if (processResult.Value)
                 {
                     successCount++;
                 }
@@ -107,6 +121,15 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
         await _successLogger.FlushAsync().ConfigureAwait(false);
         _progressTracker.Complete();
 
+        if (skippedCount > 0)
+        {
+            _logger.LogInformation("Skipped {SkippedCount} records (not matching test set code)", skippedCount);
+        }
+
+        // Recalculate UserSetCards totals from UserCards data
+        _logger.LogInformation("Recalculating UserSetCards totals...");
+        await _userSetCardsRecalculator.RecalculateAsync(_configuration.TargetUserId).ConfigureAwait(false);
+
         MigrationResult result = new()
         {
             TotalRecords = totalRecords,
@@ -118,7 +141,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
         return result;
     }
 
-    private async Task<bool> ProcessRecordAsync(CollectorDataRecord sqlRecord)
+    private async Task<bool?> ProcessRecordAsync(CollectorDataRecord sqlRecord)
     {
         OpResponse<OldDiscoveryCardExtEntity> cosmosResponse = await _cosmosGopher
             .ReadCardAsync(sqlRecord.CardId)
@@ -160,15 +183,22 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
 
         ICardItemItrEntity newSystemCard = lookupResponse.ResponseData;
 
+        // Skip if test set code is configured and doesn't match
+        if (string.IsNullOrWhiteSpace(_configuration.TestSetCode) is false &&
+            string.Equals(newSystemCard.SetCode, _configuration.TestSetCode, StringComparison.OrdinalIgnoreCase) is false)
+        {
+            return null; // Skipped
+        }
+
         IEnumerable<IAddCardToCollectionArgsEntity> addCardEntities = await _cardMapper
-            .Map((sqlRecord, cosmosCard, newSystemCard, _configuration.TargetUserId))
+            .Map((sqlRecord, cosmosCard, newSystemCard, _configuration.TargetUserId, _configuration.ReplaceExistingCounts))
             .ConfigureAwait(false);
 
-        // Step 1: Add each variation to UserCards (without updating UserSetCards)
+        // Add each variation to UserCards and UserSetCards (totals recalculated at end)
         foreach (IAddCardToCollectionArgsEntity addCardEntity in addCardEntities)
         {
             IOperationResponse<List<CardItemOutEntity>> addResponse = await _cardAdder
-                .AddUserCardOnlyAsync(addCardEntity)
+                .AddCardToCollectionAsync(addCardEntity)
                 .ConfigureAwait(false);
 
             if (addResponse.IsFailure)

@@ -7,6 +7,6 @@ using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 namespace Cli.MtgDiscovery.DataMigration.Mapping;
 
-internal interface IOldToNewCardMapper : ICreateMapper<(CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId), IEnumerable<IAddCardToCollectionArgsEntity>>
+internal interface IOldToNewCardMapper : ICreateMapper<(CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId, bool replaceMode), IEnumerable<IAddCardToCollectionArgsEntity>>
 {
 }

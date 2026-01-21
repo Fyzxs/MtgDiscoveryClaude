@@ -1,1 +1,79 @@
-/* All styling now handled by Material-UI theme */
+/* Material-UI theme handles most styling, but some CSS custom properties are needed for mobile */
+
+:root {
+  /* Card sizing variables */
+  --card-width-compact: 140px;
+  --card-width-normal: 200px;
+  --card-width-large: 280px;
+
+  /* Safe area insets (iOS notch, Android gesture nav) */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* Mobile layout dimensions */
+  --mobile-header-height: 56px;
+  --mobile-filter-bar-height: 48px;
+  --mobile-bottom-nav-height: 56px;
+  --sheet-border-radius: 16px;
+}
+
+/* Reduced motion support - respect user preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* iOS momentum scrolling for scroll containers */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch-friendly scrollbar hiding for mobile */
+@media (pointer: coarse) {
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Safe area padding utilities */
+.safe-area-top {
+  padding-top: var(--safe-area-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+.safe-area-left {
+  padding-left: var(--safe-area-left);
+}
+
+.safe-area-right {
+  padding-right: var(--safe-area-right);
+}
+
+/* Full viewport height accounting for mobile browser chrome */
+.full-height {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
+/* Prevent text selection on touch interactions */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}

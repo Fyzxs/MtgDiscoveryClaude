@@ -12,22 +12,19 @@ export interface ResponsiveBreakpoints {
 }
 
 /**
- * Hook for responsive breakpoint detection using both MUI and custom MTG breakpoints
- * Provides real-time screen size information for responsive behavior
+ * Hook for responsive breakpoint detection using MUI breakpoints
+ * Aligned with MUI defaults: xs (0-599), sm (600-899), md (900-1199), lg (1200+)
  */
 export const useResponsiveBreakpoints = (): ResponsiveBreakpoints => {
   const theme = useTheme();
   const [screenWidth, setScreenWidth] = useState(0);
 
-  // Custom MTG breakpoint queries
-  const isMobile = useMediaQuery(`(max-width: ${theme.mtg.breakpoints.tablet})`);
-  const isTablet = useMediaQuery(
-    `(min-width: ${theme.mtg.breakpoints.tablet}) and (max-width: ${theme.mtg.breakpoints.desktop})`
-  );
-  const isDesktop = useMediaQuery(
-    `(min-width: ${theme.mtg.breakpoints.desktop}) and (max-width: ${theme.mtg.breakpoints.wide})`
-  );
-  const isWide = useMediaQuery(`(min-width: ${theme.mtg.breakpoints.wide})`);
+  // Use MUI's breakpoint helpers for consistent behavior
+  // down('sm') = 0-599px, between('sm','md') = 600-899px, etc.
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));      // 0-599px (xs)
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-899px (sm)
+  const isDesktop = useMediaQuery(theme.breakpoints.between('md', 'lg')); // 900-1199px (md)
+  const isWide = useMediaQuery(theme.breakpoints.up('lg'));          // 1200px+ (lg+)
 
   // Update screen width on resize
   useEffect(() => {

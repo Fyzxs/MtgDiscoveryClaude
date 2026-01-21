@@ -27,7 +27,7 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
         _specialMapper = specialMapper;
     }
 
-    public async Task<IEnumerable<IAddCardToCollectionArgsEntity>> Map((CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId) source)
+    public async Task<IEnumerable<IAddCardToCollectionArgsEntity>> Map((CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId, bool replaceMode) source)
     {
         string finish = await _finishMapper
             .Map((source.oldCosmosCard.Body.Foil, source.oldCosmosCard.Body.Nonfoil, source.oldCosmosCard.Body.Etched))
@@ -45,7 +45,8 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
                 finish,
                 entry.special,
                 source.newSystemCard.SetGroupId,
-                entry.count))
+                entry.count,
+                source.replaceMode))
             .ToList();
 
         return results;
@@ -58,13 +59,14 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
         string finish,
         string special,
         string setGroupId,
-        int count)
+        int count,
+        bool replaceMode)
     {
         IAuthUserArgEntity authUser = new AuthUserArgEntity(userId);
         IUserCardDetailsArgEntity details = new UserCardDetailsArgEntity(finish, special, setGroupId, count);
         IAddUserCardArgEntity addUserCard = new AddUserCardArgEntity(cardId, setId, userId, details);
 
-        return new AddCardToCollectionArgsEntity(authUser, addUserCard);
+        return new AddCardToCollectionArgsEntity(authUser, addUserCard, replaceMode);
     }
 
     private sealed class AuthUserArgEntity : IAuthUserArgEntity
@@ -117,13 +119,15 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
 
     private sealed class AddCardToCollectionArgsEntity : IAddCardToCollectionArgsEntity
     {
-        public AddCardToCollectionArgsEntity(IAuthUserArgEntity authUser, IAddUserCardArgEntity addUserCard)
+        public AddCardToCollectionArgsEntity(IAuthUserArgEntity authUser, IAddUserCardArgEntity addUserCard, bool replaceMode)
         {
             AuthUser = authUser;
             AddUserCard = addUserCard;
+            ReplaceMode = replaceMode;
         }
 
         public IAuthUserArgEntity AuthUser { get; }
         public IAddUserCardArgEntity AddUserCard { get; }
+        public bool ReplaceMode { get; }
     }
 }

@@ -37,7 +37,7 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   );
 
   const handleArtistClick = useCallback((artistName: string) => {
-    navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
+    navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`, { formats: 'paper' });
   }, [navigateWithCollector]);
 
   const handleSearchChange = useCallback((value: string) => {

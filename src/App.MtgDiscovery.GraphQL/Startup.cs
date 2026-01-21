@@ -38,7 +38,8 @@ internal sealed class Startup
             options.AddDefaultPolicy(policy =>
             {
                 string[] allowedOrigins = _configuration["AllowedOrigins"]?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? [];
-                if (_environment.IsDevelopment() || allowedOrigins.Length == 0)
+                bool isLocalDevelopment = _environment.IsDevelopment() || _environment.EnvironmentName == "Local";
+                if (isLocalDevelopment || allowedOrigins.Length == 0)
                 {
                     _ = policy.AllowAnyOrigin()
                           .AllowAnyHeader()
