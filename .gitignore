@@ -500,3 +500,4 @@ src/Cli.Sealed.ImageScraper/sealed-images/**
 src/Cli.Sealed.ImageScraper/custom-images/**
 **/appsettings.*.json
 src/Cli.Sealed.ImageScraper/sealed-images/**
+.mtgjson-cache/**
