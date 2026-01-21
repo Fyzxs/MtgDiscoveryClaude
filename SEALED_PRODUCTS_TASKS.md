@@ -151,7 +151,7 @@ internal sealed class SealedProductsBySetIdInquisition
 ---
 
 ### Task 1.5: Create SealedProductsGopher
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Gophers/`
 
