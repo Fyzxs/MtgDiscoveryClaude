@@ -194,7 +194,12 @@ export const useSetPageData = (setCode: string | undefined) => {
   const { loading: setLoading, error: setError, data: setData } = useQuery<SetsResponse>(
     GET_SET_BY_CODE_WITH_GROUPINGS,
     {
-      variables: { codes: { setCodes: [setCode] } },
+      variables: {
+        codes: {
+          setCodes: [setCode],
+          ...(hasCollector && collectorId ? { userId: collectorId } : {})
+        }
+      },
       skip: !setCode
     }
   );

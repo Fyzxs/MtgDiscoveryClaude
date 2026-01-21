@@ -208,7 +208,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                   >
                     {collectionProgress.setTotalCards > 0
                       ? `${collectionProgress.totalCards} cards collected`
-                      : 'not collecting'
+                      : `${set.userCollection?.totalCards || 0} cards entered`
                     }
                   </Typography>
                 </>
@@ -224,7 +224,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
                     color="text.secondary"
                     sx={{ fontSize: '0.75rem', mt: 0.5 }}
                   >
-                    not collecting
+                    {set.userCollection?.totalCards || 0} cards entered
                   </Typography>
                 </>
               )
