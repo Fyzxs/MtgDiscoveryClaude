@@ -1,0 +1,5 @@
+# Ignore environment file with sensitive tokens
+.env
+
+# Keep the example file
+!.env.example
