@@ -13,15 +13,20 @@ internal sealed class ArtistsQueryDomainService : IArtistsQueryDomainService
     private readonly ICardsByArtistDomainService _cardsByArtistService;
     private readonly ICardsByArtistNameDomainService _cardsByArtistNameService;
 
-    public ArtistsQueryDomainService(ILogger logger)
-        : this(new ArtistAggregatorService(logger))
+    public ArtistsQueryDomainService(ILogger logger) : this(
+        new ArtistSearchDomainService(logger),
+        new CardsByArtistDomainService(logger),
+        new CardsByArtistNameDomainService(logger))
     { }
 
-    private ArtistsQueryDomainService(IArtistAggregatorService artistAggregatorService)
+    private ArtistsQueryDomainService(
+        IArtistSearchDomainService artistSearchService,
+        ICardsByArtistDomainService cardsByArtistService,
+        ICardsByArtistNameDomainService cardsByArtistNameService)
     {
-        _artistSearchService = new ArtistSearchDomainService(artistAggregatorService);
-        _cardsByArtistService = new CardsByArtistDomainService(artistAggregatorService);
-        _cardsByArtistNameService = new CardsByArtistNameDomainService(artistAggregatorService);
+        _artistSearchService = artistSearchService;
+        _cardsByArtistService = cardsByArtistService;
+        _cardsByArtistNameService = cardsByArtistNameService;
     }
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
