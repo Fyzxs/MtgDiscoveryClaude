@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace Lib.Shared.DataModels.Entities;
+﻿namespace Lib.Shared.DataModels.Entities;
 
 public interface IAddCardToCollectionArgEntity
 {
-    string UserId { get; }
     string CardId { get; }
     string SetId { get; }
-    ICollection<ICollectedItemArgEntity> CollectedList { get; }
+    ICollectedItemArgEntity CollectedItem { get; }
 }
 
 public interface ICollectedItemArgEntity

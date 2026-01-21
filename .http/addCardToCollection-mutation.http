@@ -17,7 +17,7 @@ Content-Type: application/json
 Authorization: Bearer {{$dotenv BEARER_TOKEN}}
 
 mutation AddSingleCard(
-  $args: AddCardToCollectionArgEntityInput!
+  $args: AddCardToCollectionInput!
 ) {
   addCardToCollection(
     args: $args
@@ -49,32 +49,28 @@ mutation AddSingleCard(
 }
 
 {
-  "variables": {
     "args": {
       "cardId": "d5c83259-9b90-47c2-b48e-c7d78519e792",
       "setId": "neo",
-      "collectedList": [
-        {
-          "finish": "nonfoil",
-          "special": "none",
-          "count": 1
-        }
-      ]
+      "collectedItem": {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 1
+      }
     }
-  }
 }
 
-### Add Card to Collection - Multiple Variants
+### Add Card to Collection - Foil Card
 # @ref variables
-# Add multiple variants of the same card (foil and non-foil)
+# Add a single foil card to user's collection
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
-mutation AddMultipleVariants(
-  $args: AddCardToCollectionArgEntityInput!
+mutation AddFoilCard(
+  $args: AddCardToCollectionInput!
 ) {
-  addCardToCollection(
+  addCardToCollectionAsync(
     args: $args
   ) {
     __typename
@@ -94,7 +90,7 @@ mutation AddMultipleVariants(
         statusCode
       }
     }
-    ... on FailureResponse {
+    ... on FailureResponseModel {
       status {
         message
         statusCode
@@ -108,23 +104,11 @@ mutation AddMultipleVariants(
     "args": {
       "cardId": "11600105-56c6-4073-a4a6-8469030b39c9",
       "setId": "dmu",
-      "collectedList": [
-        {
-          "finish": "nonfoil",
-          "special": "none",
-          "count": 2
-        },
-        {
-          "finish": "foil",
-          "special": "none",
-          "count": 1
-        },
-        {
-          "finish": "foil",
-          "special": "promo",
-          "count": 1
-        }
-      ]
+      "collectedItem": {
+        "finish": "foil",
+        "special": "none",
+        "count": 1
+      }
     }
   }
 }
@@ -137,9 +121,9 @@ Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
 mutation AddCardWithVariables(
-  $args: AddCardToCollectionArgEntityInput!
+  $args: AddCardToCollectionInput!
 ) {
-  addCardToCollection(
+  addCardToCollectionAsync(
     args: $args
   ) {
     __typename
@@ -163,7 +147,7 @@ mutation AddCardWithVariables(
         timestamp
       }
     }
-    ... on FailureResponse {
+    ... on FailureResponseModel {
       status {
         message
         statusCode
@@ -177,28 +161,26 @@ mutation AddCardWithVariables(
     "args": {
       "cardId": "0000579f-7b35-4ed3-b44c-db2a538066fe",
       "setId": "war",
-      "collectedList": [
-        {
-          "finish": "nonfoil",
-          "special": "none",
-          "count": 4
-        }
-      ]
+      "collectedItem": {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 4
+      }
     }
   }
 }
 
-### Add Card to Collection - Special Treatments
+### Add Card to Collection - Special Treatment
 # @ref variables
-# Add cards with special treatments (showcase, extended art, etc.)
+# Add a card with special treatment (showcase)
 POST {{graphqlEndpoint}}
 Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
-mutation AddSpecialCards(
-  $args: AddCardToCollectionArgEntityInput!
+mutation AddSpecialCard(
+  $args: AddCardToCollectionInput!
 ) {
-  addCardToCollection(
+  addCardToCollectionAsync(
     args: $args
   ) {
     __typename
@@ -218,7 +200,7 @@ mutation AddSpecialCards(
         statusCode
       }
     }
-    ... on FailureResponse {
+    ... on FailureResponseModel {
       status {
         message
         statusCode
@@ -232,23 +214,11 @@ mutation AddSpecialCards(
     "args": {
       "cardId": "3c92bca5-ec3a-4238-99a4-26c9594c8d1f",
       "setId": "bro",
-      "collectedList": [
-        {
-          "finish": "foil",
-          "special": "showcase",
-          "count": 1
-        },
-        {
-          "finish": "nonfoil",
-          "special": "extended",
-          "count": 1
-        },
-        {
-          "finish": "foil",
-          "special": "retro",
-          "count": 2
-        }
-      ]
+      "collectedItem": {
+        "finish": "foil",
+        "special": "showcase",
+        "count": 1
+      }
     }
   }
 }
@@ -260,13 +230,13 @@ POST {{graphqlEndpoint}}
 Content-Type: application/json
 
 mutation AddCardUnauthorized(
-  $args: AddCardToCollectionArgEntityInput!
+  $args: AddCardToCollectionInput!
 ) {
-  addCardToCollection(
+  addCardToCollectionAsync(
     args: $args
   ) {
     __typename
-    ... on FailureResponse {
+    ... on FailureResponseModel {
       status {
         message
         statusCode
@@ -280,13 +250,11 @@ mutation AddCardUnauthorized(
     "args": {
       "cardId": "test-card-id",
       "setId": "test",
-      "collectedList": [
-        {
-          "finish": "nonfoil",
-          "special": "none",
-          "count": 1
-        }
-      ]
+      "collectedItem": {
+        "finish": "nonfoil",
+        "special": "none",
+        "count": 1
+      }
     }
   }
 }
@@ -299,13 +267,13 @@ Content-Type: application/json
 Authorization: Bearer {{bearerToken}}
 
 mutation AddCardInvalid(
-  $args: AddCardToCollectionArgEntityInput!
+  $args: AddCardToCollectionInput!
 ) {
-  addCardToCollection(
+  addCardToCollectionAsync(
     args: $args
   ) {
     __typename
-    ... on FailureResponse {
+    ... on FailureResponseModel {
       status {
         message
         statusCode
@@ -319,7 +287,7 @@ mutation AddCardInvalid(
     "args": {
       "cardId": "",
       "setId": "",
-      "collectedList": []
+      "collectedItem": null
     }
   }
 }
@@ -370,13 +338,13 @@ query IntrospectAddCardMutation {
 ###
 # Expected Response Examples:
 #
-# addCardToCollection without token:
+# addCardToCollectionAsync without token:
 # { "errors": [{ "message": "The current user is not authorized to access this resource.", "extensions": { "code": "AUTH_NOT_AUTHORIZED" } }] }
 #
-# addCardToCollection with valid token and data:
+# addCardToCollectionAsync with valid token and data:
 # {
 #   "data": {
-#     "addCardToCollection": {
+#     "addCardToCollectionAsync": {
 #       "__typename": "SuccessUserCardCollectionResponse",
 #       "data": {
 #         "userId": "550e8400-e29b-41d4-a716-446655440000",
@@ -398,11 +366,11 @@ query IntrospectAddCardMutation {
 #   }
 # }
 #
-# addCardToCollection with invalid data:
+# addCardToCollectionAsync with invalid data:
 # {
 #   "data": {
-#     "addCardToCollection": {
-#       "__typename": "FailureResponse",
+#     "addCardToCollectionAsync": {
+#       "__typename": "FailureResponseModel",
 #       "status": {
 #         "message": "Card ID cannot be empty",
 #         "statusCode": 400

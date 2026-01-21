@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities;
+﻿using Lib.Shared.DataModels.Entities;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 
 public sealed class AddCardToCollectionArgEntity : IAddCardToCollectionArgEntity
 {
-    public string UserId { get; init; } // Not used from GraphQL, set by Entry layer
     public string CardId { get; init; }
     public string SetId { get; init; }
-    public ICollection<ICollectedItemArgEntity> CollectedList { get; init; }
+
+    // GraphQL needs concrete type for input, not interface
+    public CollectedItemArgEntity CollectedItem { get; init; }
+
+    // Implement interface property
+    ICollectedItemArgEntity IAddCardToCollectionArgEntity.CollectedItem => CollectedItem;
 }

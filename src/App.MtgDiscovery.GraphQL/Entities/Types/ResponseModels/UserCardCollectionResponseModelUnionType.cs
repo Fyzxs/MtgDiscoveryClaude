@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using HotChocolate.Types;
 
-namespace App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
 public sealed class UserCardCollectionResponseModelUnionType : UnionType
 {

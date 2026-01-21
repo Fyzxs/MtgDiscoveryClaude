@@ -4,7 +4,6 @@ using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
-using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Authorization;
@@ -39,7 +38,8 @@ public sealed class UserCardsMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddCardToCollectionArgEntity args)
+    public async Task<ResponseModel> AddCardToCollectionAsync(
+        ClaimsPrincipal claimsPrincipal, AddCardToCollectionArgEntity args)
     {
         // Extract user information from JWT claims
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
@@ -61,5 +61,4 @@ public sealed class UserCardsMutationMethods
 
         return new SuccessDataResponseModel<UserCardCollectionOutEntity>() { Data = result };
     }
-
 }
