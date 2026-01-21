@@ -36,11 +36,11 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         _cardNameSearchOperations = cardNameSearchOperations;
     }
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardsByIdsOperations.CardsByIdsAsync(args);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardsByIdsOperations.Execute(args);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => _cardsBySetCodeOperations.CardsBySetCodeAsync(setCode);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => _cardsBySetCodeOperations.Execute(setCode);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardsByNameOperations.CardsByNameAsync(cardName);
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardsByNameOperations.Execute(cardName);
 
-    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardNameSearchOperations.CardNameSearchAsync(searchTerm);
+    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardNameSearchOperations.Execute(searchTerm);
 }
