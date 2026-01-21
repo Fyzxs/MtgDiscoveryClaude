@@ -21,6 +21,8 @@ Before starting implementation:
 2. Review `CardsBySetCodeAdapter.cs` for setCode→setId lookup pattern
 3. Understand the entity flow: ArgEntity → ItrEntity → XfrEntity → ExtEntity → OufEntity → OutEntity
 4. Have access to Azure Cosmos DB emulator or development instance
+5. **Run Image Scraper CLI** to download all sealed product images (see "Image Scraper CLI" section)
+6. Upload `sealed-images/` folder contents to CDN at `mtgsealed/` path (→ `https://img.mtgdiscovery.com/mtgsealed/`)
 
 ---
 
@@ -72,7 +74,6 @@ public interface ISealedProductItrEntity : IItrEntity
     string Subtype { get; }
     int? CardCount { get; }
     string ReleaseDate { get; }
-    string ScgId { get; }  // Star City Games ID - used for image URLs and filtering
     string TcgplayerProductId { get; }
     string ImageUrl { get; }
     string PurchaseUrlTcgplayer { get; }
@@ -148,9 +149,6 @@ public sealed class SealedProductExtEntity : CosmosItem
 
     [JsonProperty("release_date")]
     public string ReleaseDate { get; init; }
-
-    [JsonProperty("scg_id")]
-    public string ScgId { get; init; }  // Star City Games ID - used for image URL construction
 
     [JsonProperty("tcgplayer_product_id")]
     public string TcgplayerProductId { get; init; }
@@ -270,9 +268,6 @@ public sealed class UserSealedProductExtEntity : CosmosItem
 
     [JsonProperty("subtype")]
     public string Subtype { get; init; }
-
-    [JsonProperty("scg_id")]
-    public string ScgId { get; init; }  // Star City Games ID - for image URL
 
     [JsonProperty("tcgplayer_product_id")]
     public string TcgplayerProductId { get; init; }
@@ -516,7 +511,6 @@ public sealed class SealedProductOutEntity
     public string Subtype { get; init; }
     public int? CardCount { get; init; }
     public string ReleaseDate { get; init; }
-    public string ScgId { get; init; }  // Star City Games ID - for image URL
     public string TcgplayerProductId { get; init; }
     public string ImageUrl { get; init; }
     public string PurchaseUrlTcgplayer { get; init; }
@@ -656,18 +650,6 @@ public sealed class MtgJsonSealedProductDto
 }
 ```
 
-**MtgJsonIdentifiersDto.cs:**
-```csharp
-public sealed class MtgJsonIdentifiersDto
-{
-    [JsonProperty("scgId")]
-    public string ScgId { get; init; }  // Star City Games ID - REQUIRED for filtering
-
-    [JsonProperty("tcgplayerProductId")]
-    public string TcgplayerProductId { get; init; }
-}
-```
-
 **Acceptance Criteria:**
 - [ ] DTOs match MTGJSON structure exactly
 - [ ] All JsonProperty attributes use camelCase (MTGJSON format)
@@ -690,23 +672,25 @@ SealedProductIngestionService.cs
 ```
 
 **Ingestion Flow:**
-1. Fetch `https://mtgjson.com/api/v5/{SET_CODE}.json`
-2. Deserialize, extract `sealedProduct[]` array
-3. **Filter:** Skip products where `category` ends with `_case` (e.g., `booster_case`, `bundle_case`)
-4. **Lookup setId** from `SetCodeToIdAssociations` using set code
-5. Map each product to `SealedProductExtEntity`:
+1. Fetch `https://mtgjson.com/api/v5/AllPrintings.json.zip` (or use cached version)
+2. Deserialize, extract `sealedProduct[]` array for each set
+3. **Lookup setId** from `SetCodeToIdAssociations` using set code
+4. Map each product to `SealedProductExtEntity`:
    - `SetId` = looked up Scryfall GUID
-   - `SetCode` = original MTGJSON code (lowercase)
-   - `Uuid` = from MTGJSON `uuid`
-   - `ImageUrl` = `https://raw.githubusercontent.com/fyzxs/mtgsealedimgs/main/sealed/{setCode}/{uuid}.jpg`
-6. Upsert to `SealedProducts` container
+   - `SetCode` = original MTGJSON code
+   - `ImageUrl` = `https://img.mtgdiscovery.com/mtgsealed/{setCode}/{uuid}.jpg` (referencing pre-scraped images)
+5. Upsert to `SealedProducts` container
+
+**Prerequisites:**
+- Run Image Scraper CLI first: `dotnet run --project src/Cli.Sealed.ImageScraper -- --all`
+- Upload `sealed-images/` contents to CDN at `mtgsealed/` path
 
 **Acceptance Criteria:**
 - [ ] Fetches from MTGJSON API
-- [ ] Filters out `*_case` category products
 - [ ] Performs setCode→setId lookup
-- [ ] Computes GitHub image URL using uuid
-- [ ] Handles missing data gracefully
+- [ ] References pre-scraped images by UUID
+- [ ] Handles missing identifiers gracefully
+- [ ] Skips `booster_case` category (matching scraper behavior)
 
 ---
 
@@ -756,7 +740,6 @@ export interface SealedProduct {
   subtype?: string;
   cardCount?: number;
   releaseDate?: string;
-  scgId: string;  // Star City Games ID - required, used for image URLs
   tcgplayerProductId?: string;
   imageUrl?: string;
   purchaseUrlTcgplayer?: string;
@@ -800,7 +783,6 @@ export const GET_SEALED_PRODUCTS_BY_SET_CODE = gql`
           subtype
           cardCount
           releaseDate
-          scgId
           tcgplayerProductId
           imageUrl
           purchaseUrlTcgplayer
@@ -961,7 +943,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
 ```
 
 **Acceptance Criteria:**
-- [ ] Displays product image from GitHub (fyzxs/mtgsealedimgs)
+- [ ] Displays product image from MTG Discovery CDN (`img.mtgdiscovery.com/mtgsealed/`)
 - [ ] Shows category badge
 - [ ] Handles missing images gracefully
 - [ ] Follows existing card display patterns
@@ -1055,21 +1037,33 @@ const { sealedProducts, loading: sealedLoading } = useSealedProductsData(
 
 ## Verification Checklist
 
+### Image Scraper CLI (Completed)
+- [x] `dotnet build src/Cli.Sealed.ImageScraper` succeeds
+- [x] `--all` flag processes all sets
+- [x] `--sets MKM,DSK` flag processes specific sets
+- [x] TCGPlayer images download correctly
+- [x] CardMarket fallback works (prefixes 7, 32, 24, 2)
+- [x] CardTrader fallback works (HTML scraping)
+- [x] MTGO Redemption images generate with set icon + set name
+- [x] `booster_case` category is skipped
+- [x] Images saved to `sealed-images/{setCode}/{uuid}.jpg`
+
 ### Backend
 - [ ] `dotnet build src/MtgDiscoveryVibe.sln` succeeds
 - [ ] `dotnet test src/MtgDiscoveryVibe.sln` passes
 - [ ] GraphQL query returns data in Playground
 
 ### Data Ingestion
-- [ ] CLI imports MKM sealed products
+- [ ] Image Scraper CLI run first (images available)
+- [ ] CLI imports sealed products to Cosmos DB
 - [ ] Data visible in Cosmos DB
-- [ ] GitHub image URLs load correctly
+- [ ] ImageUrl references correct CDN path
 
 ### Frontend
 - [ ] `npm run codegen` succeeds
 - [ ] `npm run build` succeeds
 - [ ] Sealed tab appears on set page
-- [ ] Products display with images
+- [ ] Products display with images from CDN
 - [ ] Tab switching works
 - [ ] Mobile responsive
 
@@ -1085,28 +1079,102 @@ const { sealedProducts, loading: sealedLoading } = useSealedProductsData(
 | GraphQL Query | `src/App.MtgDiscovery.GraphQL/Queries/UserWishlistCardsQueryMethods.cs` |
 | Card Display Component | `client/src/components/organisms/Cards/CardCompact.tsx` |
 | Data Hook Pattern | `client/src/hooks/useSetPageData.ts` |
+| **Image Scraper CLI** | `src/Cli.Sealed.ImageScraper/` |
+| Image Provider Pattern | `src/Cli.Sealed.ImageScraper/ImageProviders/TcgPlayerImageProvider.cs` |
+| MTGO Redemption Generation | `src/Cli.Sealed.ImageScraper/MtgoRedemption/MtgoRedemptionImageGenerator.cs` |
+
+---
+
+## Image Scraper CLI (Completed)
+
+**Location:** `src/Cli.Sealed.ImageScraper/`
+
+**Purpose:** Downloads/generates images for all sealed products before data ingestion.
+
+### Usage
+
+```bash
+# Process all sets
+dotnet run --project src/Cli.Sealed.ImageScraper -- --all
+
+# Process specific sets
+dotnet run --project src/Cli.Sealed.ImageScraper -- --sets MKM,DSK,WOE
+```
+
+### Output
+
+Images are saved to: `sealed-images/{setCode}/{uuid}.jpg`
+
+- Uses product UUID as filename (matches MTGJSON UUID)
+- JPEG format, organized by set code
+
+### Image Sources (Priority Order)
+
+1. **TCGPlayer** (Primary)
+   - URL: `https://tcgplayer-cdn.tcgplayer.com/product/{tcgplayerProductId}_in_{size}x{size}.jpg`
+   - Sizes tried: 1000 → 800 → 600 → 400 → 200
+
+2. **CardMarket** (Fallback)
+   - URL: `https://product-images.s3.cardmarket.com/{prefix}/{mcmId}/{mcmId}.{ext}`
+   - Prefixes tried: 7, 32, 24, 2 (based on digit sum calculation)
+   - Extensions: jpg, png
+
+3. **CardTrader** (Fallback)
+   - Scrapes `https://www.cardtrader.com/en/manasearch_results?ids={base64(cardTraderId)}`
+   - Extracts image URL from `<meta name="image">` tag
+
+4. **MTGO Redemption** (Generated)
+   - For products ending in "MTGO Redemption" or "MTGO Redemption Foil"
+   - Generates 600x800 image with:
+     - Scryfall set icon (from `https://svgs.scryfall.io/sets/{setCode}.svg`)
+     - Set name (with text wrapping)
+     - "MTGO REDEMPTION" text (green) or "MTGO REDEMPTION FOIL" (gold)
+
+### Skipped Categories
+
+- `booster_case` - Excluded (cases contain multiple boxes)
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `Program.cs` | CLI entry point, argument parsing |
+| `ImageScraperApplication.cs` | Main application orchestration |
+| `Orchestration/ImageScraperOrchestrator.cs` | Product processing logic |
+| `ImageProviders/TcgPlayerImageProvider.cs` | TCGPlayer URL generation |
+| `ImageProviders/CardMarketImageProvider.cs` | CardMarket URL generation with prefix calculation |
+| `ImageProviders/CardTraderImageProvider.cs` | CardTrader page scraping |
+| `MtgoRedemption/MtgoRedemptionImageGenerator.cs` | MTGO Redemption image generation |
+| `Downloading/ImageDownloader.cs` | HTTP image download with validation |
+
+### Dependencies
+
+- `SkiaSharp` - Image generation
+- `Svg.Skia` - SVG rendering for set icons
+- `RazorConsole.Core` - Dashboard UI
 
 ---
 
 ## Data Source Reference
 
-**MTGJSON API:** `https://mtgjson.com/api/v5/{SET_CODE}.json`
+**MTGJSON API:** `https://mtgjson.com/api/v5/AllPrintings.json.zip` (cached locally)
 
-**GitHub Image URL:** `https://raw.githubusercontent.com/fyzxs/mtgsealedimgs/main/sealed/{setCode}/{uuid}.jpg`
+**Image Storage:** `sealed-images/{setCode}/{uuid}.jpg` (downloaded via Image Scraper CLI)
 
-Example: `https://raw.githubusercontent.com/fyzxs/mtgsealedimgs/main/sealed/mkm/a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg`
+**Image CDN URL:** `https://img.mtgdiscovery.com/mtgsealed/{setCode}/{uuid}.jpg`
 
-**Note:** The scraper converts any PNG images to JPG format before uploading.
+**CDN Upload:** Upload `sealed-images/` folder contents to `mtgsealed/` path on CDN.
 
-**Category Values (included):**
+**Category Values:**
 - `booster_pack` - Single booster pack
 - `booster_box` - Box containing multiple booster packs
+- `booster_case` - Case containing multiple booster boxes (SKIPPED by scraper)
 - `bundle` - Collection with cards and accessories
+- `bundle_case` - Case containing multiple bundles
 - `box_set` - Complete set (MTGO redemption)
 - `limited_aid_tool` - Limited format product (prerelease kits)
-
-**Category Values (excluded - `*_case`):**
-- `booster_case` - Case containing multiple booster boxes
-- `bundle_case` - Case containing multiple bundles
+- `limited_aid_case` - Case of limited aid tools
 
 **IMPORTANT:** MTGJSON does NOT include Scryfall set IDs. Use `SetCodeToIdAssociations` container to lookup setId from setCode.
+
+**IMPORTANT:** Run the Image Scraper CLI before data ingestion to ensure all images are available.
