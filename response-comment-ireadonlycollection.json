@@ -1,4 +1,0 @@
-{
-  "content": "⏳ **PENDING**: IReadOnlyCollection suggestion acknowledged\n\n**Reason for Deferral:**\n- Consistency with existing Cosmos adapter patterns - all similar collections in this layer use `IEnumerable` (RulingAggregateItem, ArtistAggregateItem)\n- `IReadOnlyCollection` is used in other layers (Aggregator, Domain) but not in Cosmos items\n- Changing this would create inconsistency in the adapter layer\n\n**Pattern Analysis:**\n- Cosmos adapter layer: Uses `IEnumerable` for collections\n- Aggregator/Domain layers: Uses `IReadOnlyCollection` where Count access is needed\n\n**Decision:** Maintaining consistency with established Cosmos adapter patterns.",
-  "status": 4
-}

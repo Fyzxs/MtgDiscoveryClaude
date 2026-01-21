@@ -25,7 +25,7 @@ BEFORE STARTING:
 5. Get story title: `az boards work-item show --id {STORY_ID} --fields System.Title --output tsv --query "fields.'System.Title'"`
 6. Create feature branch: `git checkout -b "feature/{STORY_ID}-{sanitized-story-title}"`
 7. Push branch to origin: `git push -u origin "feature/{STORY_ID}-{sanitized-story-title}"`
-8. Create draft PR: `az repos pr create --source-branch "feature/{STORY_ID}-{sanitized-story-title}" --target-branch "main" --title "User Story {STORY_ID}: {STORY_TITLE}" --description "Implements User Story {STORY_ID}" --draft true --output json`
+8. Create draft PR: `az repos pr create --source-branch "feature/{STORY_ID}-{sanitized-story-title}" --target-branch "main" --title "User Story {STORY_ID}: {STORY_TITLE}" --draft true --output json`
 9. Link User Story to PR: `az repos pr work-item add --id {PR_ID} --work-items {STORY_ID}`
 10. Find Code Review child task: `az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'Code Review'"`
 11. Update Code Review task with PR info: `az boards work-item update --id {CODE_REVIEW_TASK_ID} --description "PR #{PR_NUMBER}: {PR_URL}"`
@@ -80,12 +80,14 @@ It is Execute for each TSK-IMPL task until all are completed:
 1. ALWAYS invoke 'quinn-code-reviewer' agent with {STORY_ID} and {PR_ID} context to analyze all changes (agent will determine if review is needed)
 2. ALWAYS invoke 'quinn-pr-cleanup' agent with {STORY_ID} and {PR_ID}  for final comment resolution (agent will determine if cleanup is needed)
 3. ALWAYS invoke 'quinn-pr-finalizer' agent with {STORY_ID} and {PR_ID}  for comprehensive validation (agent will perform all checks and post comments)
-4. Resolve Code Review task: `az boards work-item update --id {CODE_REVIEW_TASK_ID} --state "Resolved"`
-5. Resolve User Story: `az boards work-item update --id {STORY_ID} --state "Resolved"`
-6. Activate PR for review: `az repos pr update --id {PR_ID} --draft false --auto-complete false`
-7. Find User Approval task: `az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'User Approval'"`
-8. Set User Approval to Active: `az boards work-item update --id {USER_APPROVAL_TASK_ID} --state "Active"`
-9. Complete TodoWrite with final status
+4. Commit implementation: `git add . && git commit -m "Implement {TASK_TITLE} - User Story {STORY_ID}"`
+5. Push changes: `git push`
+6. Resolve Code Review task: `az boards work-item update --id {CODE_REVIEW_TASK_ID} --state "Resolved"`
+7. Resolve User Story: `az boards work-item update --id {STORY_ID} --state "Resolved"`
+8. Activate PR for review: `az repos pr update --id {PR_ID} --draft false --auto-complete false`
+9. Find User Approval task: `az boards query --wiql "SELECT [System.Id] FROM WorkItems WHERE [System.Parent] = '{STORY_ID}' AND [System.Title] CONTAINS 'User Approval'"`
+10. Set User Approval to Active: `az boards work-item update --id {USER_APPROVAL_TASK_ID} --state "Active"`
+11. Complete TodoWrite with final status
 
 ## Error Handling & Recovery
 
