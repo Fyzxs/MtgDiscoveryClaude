@@ -6,6 +6,7 @@ import { SetPageTemplate } from '../templates/SetPageTemplate';
 import { SetPageHeader } from '../organisms/SetPageHeader';
 import { SetPageFilters } from '../organisms/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/SetPageCardDisplay';
+import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { useSetPageData } from '../../hooks/useSetPageData';
 
 /**
@@ -45,6 +46,7 @@ export const SetPage: React.FC = () => {
     handleRarityChange,
     handleClearFilters,
     updateFilter,
+    isFilteringOrSorting,
     hasCollector
   } = useSetPageData(setCode);
 
@@ -85,32 +87,34 @@ export const SetPage: React.FC = () => {
         />
       }
       filters={
-        <SetPageFilters
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          sortBy={sortBy}
-          onSortChange={handleSortChange}
-          selectedRarities={selectedRarities}
-          selectedArtists={selectedArtists}
-          selectedGroupIds={selectedGroupIds}
-          showGroups={filters.showGroups !== false}
-          onRarityChange={handleRarityChange}
-          onArtistChange={(value: string[]) => updateFilter('artists', value)}
-          onGroupChange={(groupIds: string[]) => updateFilter('groups', groupIds)}
-          onShowGroupsChange={(value: boolean) => updateFilter('showGroups', value)}
-          allRarities={allRarities}
-          allArtists={allArtists}
-          allFinishes={allFinishes}
-          cardGroups={cardGroups}
-          cards={cards}
-          hasCollector={hasCollector}
-          collectionCounts={(Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[]}
-          signedCards={(Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]}
-          finishes={(Array.isArray(filters.finishes) ? filters.finishes : []) as string[]}
-          onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
-          onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
-          onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
-        />
+        <FilterControlsWithLoading isLoading={isFilteringOrSorting}>
+          <SetPageFilters
+            searchTerm={searchTerm}
+            onSearchChange={handleSearchChange}
+            sortBy={sortBy}
+            onSortChange={handleSortChange}
+            selectedRarities={selectedRarities}
+            selectedArtists={selectedArtists}
+            selectedGroupIds={selectedGroupIds}
+            showGroups={filters.showGroups !== false}
+            onRarityChange={handleRarityChange}
+            onArtistChange={(value: string[]) => updateFilter('artists', value)}
+            onGroupChange={(groupIds: string[]) => updateFilter('groups', groupIds)}
+            onShowGroupsChange={(value: boolean) => updateFilter('showGroups', value)}
+            allRarities={allRarities}
+            allArtists={allArtists}
+            allFinishes={allFinishes}
+            cardGroups={cardGroups}
+            cards={cards}
+            hasCollector={hasCollector}
+            collectionCounts={(Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[]}
+            signedCards={(Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]}
+            finishes={(Array.isArray(filters.finishes) ? filters.finishes : []) as string[]}
+            onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
+            onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
+            onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
+          />
+        </FilterControlsWithLoading>
       }
       cardDisplay={
         <SetPageCardDisplay

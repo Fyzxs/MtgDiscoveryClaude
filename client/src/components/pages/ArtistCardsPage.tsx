@@ -6,6 +6,7 @@ import { ArtistPageHeader } from '../organisms/ArtistPageHeader';
 import { ArtistPageFilters } from '../organisms/ArtistPageFilters';
 import { ArtistPageCardDisplay } from '../organisms/ArtistPageCardDisplay';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
+import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { SectionErrorBoundary } from '../ErrorBoundaries';
@@ -40,6 +41,7 @@ export const ArtistCardsPage: React.FC = () => {
     setSearchTerm,
     setSortBy,
     updateFilter,
+    isFilteringOrSorting,
     hasCollector
   } = useArtistCardsData(artistName, decodedArtistName);
 
@@ -94,47 +96,49 @@ export const ArtistCardsPage: React.FC = () => {
           </SectionErrorBoundary>
         }
         filters={
-          <ArtistPageFilters
-            totalCards={cards.length}
-            displayArtistName={displayArtistName}
-            hasCollector={hasCollector}
-            filters={{
-              search: {
-                value: searchTerm,
-                onChange: handleSearchChange
-              },
-              rarities: {
-                value: selectedRarities,
-                onChange: (value: string[]) => updateFilter('rarities', value),
-                options: allRarities,
-                shouldShow: allRarities.length > 1
-              },
-              sets: {
-                value: selectedSets,
-                onChange: (value: string[]) => updateFilter('sets', value),
-                options: allSets,
-                shouldShow: allSets.length > 1,
-                getOptionLabel: (setCode: string) => setLabelMap.get(setCode) || setCode.toUpperCase()
-              },
-              sort: {
-                value: sortBy,
-                onChange: setSortBy
-              },
-              collectionCounts: hasCollector ? {
-                value: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
-                onChange: (value: string[]) => updateFilter('collectionCounts', value)
-              } : undefined,
-              signedCards: hasCollector ? {
-                value: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[],
-                onChange: (value: string[]) => updateFilter('signedCards', value)
-              } : undefined,
-              formats: {
-                value: (Array.isArray(filters.formats) ? filters.formats : []) as string[],
-                onChange: (value: string[]) => updateFilter('formats', value),
-                shouldShow: allFormats.length > 1
-              }
-            }}
-          />
+          <FilterControlsWithLoading isLoading={isFilteringOrSorting}>
+            <ArtistPageFilters
+              totalCards={cards.length}
+              displayArtistName={displayArtistName}
+              hasCollector={hasCollector}
+              filters={{
+                search: {
+                  value: searchTerm,
+                  onChange: handleSearchChange
+                },
+                rarities: {
+                  value: selectedRarities,
+                  onChange: (value: string[]) => updateFilter('rarities', value),
+                  options: allRarities,
+                  shouldShow: allRarities.length > 1
+                },
+                sets: {
+                  value: selectedSets,
+                  onChange: (value: string[]) => updateFilter('sets', value),
+                  options: allSets,
+                  shouldShow: allSets.length > 1,
+                  getOptionLabel: (setCode: string) => setLabelMap.get(setCode) || setCode.toUpperCase()
+                },
+                sort: {
+                  value: sortBy,
+                  onChange: setSortBy
+                },
+                collectionCounts: hasCollector ? {
+                  value: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
+                  onChange: (value: string[]) => updateFilter('collectionCounts', value)
+                } : undefined,
+                signedCards: hasCollector ? {
+                  value: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[],
+                  onChange: (value: string[]) => updateFilter('signedCards', value)
+                } : undefined,
+                formats: {
+                  value: (Array.isArray(filters.formats) ? filters.formats : []) as string[],
+                  onChange: (value: string[]) => updateFilter('formats', value),
+                  shouldShow: allFormats.length > 1
+                }
+              }}
+            />
+          </FilterControlsWithLoading>
         }
         summary={
           <ResultsSummary
