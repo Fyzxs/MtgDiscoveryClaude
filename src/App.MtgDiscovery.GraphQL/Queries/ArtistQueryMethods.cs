@@ -19,26 +19,20 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class ArtistQueryMethods
 {
-    private readonly ICardItemOufToOutMapper _scryfallCardMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardCollectionMapper;
     private readonly IArtistSearchResultCollectionOufToOutMapper _artistSearchMapper;
     private readonly IEntryService _entryService;
 
-    public ArtistQueryMethods(ILogger logger) : this(
-        new CardItemOufToOutMapper(),
-        new CollectionCardItemOufToOutMapper(),
+    public ArtistQueryMethods(ILogger logger) : this(new CollectionCardItemOufToOutMapper(),
         new ArtistSearchResultCollectionOufToOutMapper(),
         new EntryService(logger))
     {
     }
 
-    private ArtistQueryMethods(
-        ICardItemOufToOutMapper scryfallCardMapper,
-        ICollectionCardItemOufToOutMapper cardCollectionMapper,
+    private ArtistQueryMethods(ICollectionCardItemOufToOutMapper cardCollectionMapper,
         IArtistSearchResultCollectionOufToOutMapper artistSearchMapper,
         IEntryService entryService)
     {
-        _scryfallCardMapper = scryfallCardMapper;
         _cardCollectionMapper = cardCollectionMapper;
         _artistSearchMapper = artistSearchMapper;
         _entryService = entryService;

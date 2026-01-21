@@ -10,6 +10,42 @@
 @graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
 
 
+### Get Multiple User Cards
+# @ref variables
+# Get specified cards owned by a specific user
+POST {{graphqlEndpoint}}
+Content-Type: application/json
+query GetUserCardsBatch($cardsArgs: UserCardsByIdsArgEntityInput!) {
+  userCardsByIds(cardsArgs: $cardsArgs) {
+    ... on SuccessUserCardsCollectionResponse {
+      data {
+        userId
+        cardId
+        setId
+        collectedList {
+          finish
+          special
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "cardsArgs":
+    {
+      "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+      "cardIds": ["02e8e540-8aa3-4e6a-9a11-c3949cab5f0f", "82ae4f7b-8122-4af6-8079-888eabf1a11e"]
+    }
+}
+
 ### Get User Cards By Set - Basic Query
 # @ref variables
 # Get all cards in a specific set owned by a specific user
@@ -40,8 +76,8 @@ query GetUserCard($cardArgs: UserCardArgEntityInput!) {
 
 {
   "cardArgs": {
-  "cardId": "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
-  "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+    "cardId": "02e8e540-8aa3-4e6a-9a11-c3949cab5f0f",
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
   }
 }
 
