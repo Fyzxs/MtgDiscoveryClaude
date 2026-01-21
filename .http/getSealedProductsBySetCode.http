@@ -42,6 +42,6 @@ query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput
 
 {
   "args": {
-    "setCode": "tdm"
+    "setCode": "lea"
   }
 }

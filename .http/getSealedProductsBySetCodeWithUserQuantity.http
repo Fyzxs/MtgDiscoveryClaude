@@ -1,0 +1,131 @@
+###
+# Get Sealed Products By Set Code Query (with User Collection Data)
+# Frontend: client/src/graphql/queries/sealedProducts.ts - GET_SEALED_PRODUCTS_BY_SET_CODE
+# NOTE: When authenticated, this returns userQuantity field populated with user's collection count
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get Sealed Products by Set Code (Unauthenticated - userQuantity will be 0)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput!) {
+  sealedProductsBySetCode(args: $args) {
+    __typename
+    ... on SealedProductsSuccessResponse {
+      data {
+        uuid
+        setId
+        setCode
+        setName
+        name
+        category
+        subtype
+        cardCount
+        releaseDate
+        tcgplayerProductId
+        imageUrl
+        purchaseUrlTcgplayer
+        purchaseUrlCardmarket
+        purchaseUrlCardKingdom
+        userQuantity
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "setCode": "mkm"
+  }
+}
+
+
+### Get Sealed Products by Set Code (Authenticated - userQuantity populated from collection)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput!) {
+  sealedProductsBySetCode(args: $args) {
+    __typename
+    ... on SealedProductsSuccessResponse {
+      data {
+        uuid
+        setId
+        setCode
+        setName
+        name
+        category
+        subtype
+        cardCount
+        releaseDate
+        tcgplayerProductId
+        imageUrl
+        purchaseUrlTcgplayer
+        purchaseUrlCardmarket
+        purchaseUrlCardKingdom
+        userQuantity
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "setCode": "mkm"
+  }
+}
+
+
+### Get Sealed Products - Different Set (Duskmourn)
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer {{BEARER_TOKEN}}
+
+query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput!) {
+  sealedProductsBySetCode(args: $args) {
+    __typename
+    ... on SealedProductsSuccessResponse {
+      data {
+        uuid
+        setId
+        setCode
+        setName
+        name
+        category
+        subtype
+        cardCount
+        releaseDate
+        imageUrl
+        userQuantity
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "args": {
+    "setCode": "dsk"
+  }
+}
