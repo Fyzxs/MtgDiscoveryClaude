@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.Invocation.Response.Models;
 
@@ -8,8 +8,8 @@ public class MetaDataModelType : ObjectType<MetaDataModel>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<MetaDataModel> descriptor)
     {
-        descriptor.Name("MetaData");
-        descriptor.Description("Metadata for the response");
+        descriptor.Name("MetaData")
+            .Description("Metadata for the response");
 
         descriptor.Field(f => f.TimeStamp)
             .Description("Timestamp of the response");

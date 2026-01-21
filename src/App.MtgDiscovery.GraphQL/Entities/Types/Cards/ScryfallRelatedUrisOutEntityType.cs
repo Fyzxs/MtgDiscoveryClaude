@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -7,8 +7,8 @@ internal sealed class ScryfallRelatedUrisOutEntityType : ObjectType<RelatedUrisO
 {
     protected override void Configure(IObjectTypeDescriptor<RelatedUrisOutEntity> descriptor)
     {
-        descriptor.Name("RelatedUris");
-        descriptor.Description("Related URIs for additional information");
+        descriptor.Name("RelatedUris")
+            .Description("Related URIs for additional information");
 
         descriptor.Field(f => f.Gatherer).Description("Gatherer page");
         descriptor.Field(f => f.TcgplayerInfiniteArticles).Description("TCGPlayer articles");

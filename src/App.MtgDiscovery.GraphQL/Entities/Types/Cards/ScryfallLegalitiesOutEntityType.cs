@@ -1,4 +1,4 @@
-﻿using HotChocolate.Types;
+using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
@@ -7,8 +7,8 @@ internal sealed class ScryfallLegalitiesOutEntityType : ObjectType<LegalitiesOut
 {
     protected override void Configure(IObjectTypeDescriptor<LegalitiesOutEntity> descriptor)
     {
-        descriptor.Name("Legalities");
-        descriptor.Description("Format legalities for the card");
+        descriptor.Name("Legalities")
+            .Description("Format legalities for the card");
 
         descriptor.Field(f => f.Standard).Description("Standard legality");
         descriptor.Field(f => f.Future).Description("Future Standard legality");

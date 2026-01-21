@@ -8,14 +8,14 @@ public sealed class UserCardsByIdsArgEntityInputType : InputObjectType<UserCards
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardsByIdsArgEntity> descriptor)
     {
-        descriptor.Name("UserCardsByIdsArgEntityInput");
-        descriptor.Description("Input for querying user cards by card IDs");
+        _ = descriptor.Name("UserCardsByIdsInput")
+            .Description("Input for querying user cards by card IDs");
 
-        descriptor.Field(x => x.UserId)
+        _ = descriptor.Field(x => x.UserId)
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the user");
 
-        descriptor.Field(x => x.CardIds)
+        _ = descriptor.Field(x => x.CardIds)
             .Type<NonNullType<ListType<NonNullType<StringType>>>>()
             .Description("The collection of card IDs to query");
     }

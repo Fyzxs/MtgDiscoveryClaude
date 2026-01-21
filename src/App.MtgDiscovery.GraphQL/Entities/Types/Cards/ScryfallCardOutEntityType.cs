@@ -7,8 +7,8 @@ internal sealed class ScryfallCardOutEntityType : ObjectType<CardItemOutEntity>
 {
     protected override void Configure(IObjectTypeDescriptor<CardItemOutEntity> descriptor)
     {
-        descriptor.Name("Card");
-        descriptor.Description("Represents a Magic: The Gathering card from Scryfall");
+        descriptor.Name("Card")
+            .Description("Represents a Magic: The Gathering card from Scryfall");
 
         descriptor.Field(f => f.Id)
             .Type<NonNullType<StringType>>()

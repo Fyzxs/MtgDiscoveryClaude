@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.DataModels.Entities.Outs.Artists;
 
@@ -8,8 +8,8 @@ public sealed class ArtistSearchResultOutEntityType : ObjectType<ArtistSearchRes
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<ArtistSearchResultOutEntity> descriptor)
     {
-        descriptor.Name("ArtistSearchResult");
-        descriptor.Description("An artist search result");
+        descriptor.Name("ArtistSearchResult")
+            .Description("An artist search result");
 
         descriptor.Field(f => f.ArtistId)
             .Type<NonNullType<StringType>>()

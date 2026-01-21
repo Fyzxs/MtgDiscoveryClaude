@@ -7,7 +7,7 @@ public sealed class CardNameSearchResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {
-        descriptor.Name("CardNameSearchResponseModel");
+        descriptor.Name("CardNameSearchResponse");
         descriptor.Type<CardNameSearchResultsSuccessDataResponseModelType>();
         descriptor.Type<FailureResponseModelType>();
     }

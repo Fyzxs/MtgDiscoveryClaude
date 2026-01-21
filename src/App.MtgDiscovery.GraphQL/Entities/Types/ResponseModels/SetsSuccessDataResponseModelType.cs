@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 using HotChocolate.Types;
@@ -11,8 +11,8 @@ internal sealed class SetsSuccessDataResponseModelType : ObjectType<SuccessDataR
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<ScryfallSetOutEntity>>> descriptor)
     {
-        descriptor.Name("SuccessSetsResponse");
-        descriptor.Description("Response returned when sets are successfully retrieved");
+        descriptor.Name("SetsSuccessResponse")
+            .Description("Response returned when sets are successfully retrieved");
 
         descriptor.Field(f => f.Data)
             .Type<ListType<ScryfallSetOutEntityType>>()

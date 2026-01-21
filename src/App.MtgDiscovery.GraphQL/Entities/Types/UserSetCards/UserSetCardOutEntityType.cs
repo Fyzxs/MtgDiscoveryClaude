@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using HotChocolate.Types;
@@ -10,8 +10,8 @@ public sealed class UserSetCardOutEntityType : ObjectType<UserSetCardOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserSetCardOutEntity> descriptor)
     {
-        descriptor.Name("UserSetCard");
-        descriptor.Description("A user's collection summary for a specific set");
+        descriptor.Name("UserSetCard")
+            .Description("A user's collection summary for a specific set");
 
         descriptor.Field(f => f.UserId)
             .Type<NonNullType<StringType>>()
