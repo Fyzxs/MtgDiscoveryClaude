@@ -515,7 +515,7 @@ internal sealed class SealedProductExtToOufMapper : ISealedProductExtToOufMapper
 ---
 
 ### Task 3.6: Create SealedProductsBySetCodeAdapter
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 1.4, 3.3, 3.5
 **Location:** `src/Lib.Adapter.SealedProducts/Apis/Queries/`
 
