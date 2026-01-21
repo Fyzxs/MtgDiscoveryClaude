@@ -95,6 +95,8 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
       sx={{
         p: 2,
         mb: 2,
+        mx: 'auto',
+        width: 'fit-content',
         bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
