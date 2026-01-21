@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>warnings</Nullable>
     <LangVersion>latest</LangVersion>
@@ -42,14 +42,6 @@
     <!-- CA1303  int.toString locale-->
     <NoWarn>$(NoWarn);IDE0290;IDE2001;IDE0005;IDE0046;CA1716;CA1040;CA1056;CA1303;CA1305</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!-- Hack for security issue -->
-    <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="System.Private.Uri" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" />
