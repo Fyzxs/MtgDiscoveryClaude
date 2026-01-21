@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '../../atoms';
+import { Box } from '../../atoms';
 import { BinderSlot } from '../../molecules/Binder';
 import type { Card } from '../../../types/card';
 
@@ -8,10 +8,8 @@ interface BinderPageGridProps {
   cards: (Card | null)[];
   /** Set of collected card IDs for determining opacity */
   collectedCardIds: Set<string>;
-  /** Page number for display */
+  /** Page number (used for keys) */
   pageNumber: number;
-  /** Whether to show page number */
-  showPageNumber?: boolean;
   /** Whether there is a collector viewing (affects card opacity) */
   hasCollector?: boolean;
 }
@@ -24,7 +22,6 @@ export const BinderPageGrid: React.FC<BinderPageGridProps> = ({
   cards,
   collectedCardIds,
   pageNumber,
-  showPageNumber = true,
   hasCollector = true
 }) => {
   // Ensure we always have exactly 9 slots
@@ -33,63 +30,50 @@ export const BinderPageGrid: React.FC<BinderPageGridProps> = ({
     slots.push(null);
   }
 
+  // Grid aspect ratio: 3 cards wide x 3 cards tall (each card 745:1040) + gaps
+  const gridAspectRatio = (3 * 745 + 16) / (3 * 1040 + 16); // ~0.718
+
   return (
     <Box
+      data-component="binder-page-grid"
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        bgcolor: 'grey.900',
+        borderRadius: 2,
+        p: { xs: 1, sm: 1.5, md: 2 },
+        border: '2px solid',
+        borderColor: 'grey.800',
+        boxShadow: 3,
+        // Width-based sizing with height cap for wide screens
         width: '100%',
-        maxWidth: { xs: 360, sm: 450, md: 550, lg: 600 }
+        aspectRatio: `${gridAspectRatio}`,
+        // Max width = 75% of (available height * aspect ratio) to account for controls/UI
+        maxWidth: `calc((100dvh - 220px) * ${gridAspectRatio} * 0.75)`,
+        maxHeight: '100%',
+        overflow: 'hidden'
       }}
     >
-      {/* Binder page background */}
+      {/* 3x3 Grid - fills page */}
       <Box
+        data-component="binder-3x3-grid"
         sx={{
-          bgcolor: 'grey.900',
-          borderRadius: 2,
-          p: { xs: 1, sm: 1.5, md: 2 },
-          border: '2px solid',
-          borderColor: 'grey.800',
-          boxShadow: 3,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateRows: 'repeat(3, 1fr)',
+          gap: 1, // fixed 8px gap
+          height: '100%',
           width: '100%'
         }}
       >
-        {/* 3x3 Grid */}
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gridTemplateRows: 'repeat(3, 1fr)',
-            gap: { xs: 0.5, sm: 0.75, md: 1 },
-            aspectRatio: '3 / 4' // Approximate binder page ratio
-          }}
-        >
-          {slots.map((card, index) => (
-            <BinderSlot
-              key={card?.id ?? `empty-${pageNumber}-${index}`}
-              card={card}
-              isCollected={card ? collectedCardIds.has(card.id) : false}
-              index={index}
-              hasCollector={hasCollector}
-            />
-          ))}
-        </Box>
+        {slots.map((card, index) => (
+          <BinderSlot
+            key={card?.id ?? `empty-${pageNumber}-${index}`}
+            card={card}
+            isCollected={card ? collectedCardIds.has(card.id) : false}
+            index={index}
+            hasCollector={hasCollector}
+          />
+        ))}
       </Box>
-
-      {/* Page number */}
-      {showPageNumber && (
-        <Typography
-          variant="caption"
-          sx={{
-            mt: 1,
-            color: 'text.secondary',
-            fontWeight: 500
-          }}
-        >
-          Page {pageNumber}
-        </Typography>
-      )}
     </Box>
   );
 };

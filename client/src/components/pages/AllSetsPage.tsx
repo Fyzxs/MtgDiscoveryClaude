@@ -186,7 +186,8 @@ export const AllSetsPage: React.FC = () => {
         options: setTypes,
         label: 'Set Types',
         placeholder: 'All Types',
-        fullWidth: useCompactUI
+        fullWidth: useCompactUI,
+        searchable: true
       }
     ],
     sort: {

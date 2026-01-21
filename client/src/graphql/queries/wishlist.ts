@@ -9,6 +9,7 @@ export const GET_USER_WISHLIST = gql`
         data {
           id
           name
+          releasedAt
           setId
           setCode
           setName
