@@ -3,9 +3,9 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 
-internal class ScryfallCardOutEntityType : ObjectType<ScryfallCardOutEntity>
+internal class ScryfallCardOutEntityType : ObjectType<CardItemOutEntity>
 {
-    protected override void Configure(IObjectTypeDescriptor<ScryfallCardOutEntity> descriptor)
+    protected override void Configure(IObjectTypeDescriptor<CardItemOutEntity> descriptor)
     {
         descriptor.Name("Card");
         descriptor.Description("Represents a Magic: The Gathering card from Scryfall");

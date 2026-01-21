@@ -189,12 +189,12 @@ public sealed class MetaDataModelTests
 [TestClass]
 public sealed class UnhandledExceptionInternalServerErrorResponseModelTests
 {
-    private sealed class FakeExecutionContext : IExecutionContext
+    private sealed class ExecutionContextFake : IExecutionContext
     {
         private readonly TimeSpan _elapsedTime;
         private readonly string _invocationId;
 
-        public FakeExecutionContext(TimeSpan elapsedTime, string invocationId)
+        public ExecutionContextFake(TimeSpan elapsedTime, string invocationId)
         {
             _elapsedTime = elapsedTime;
             _invocationId = invocationId;
@@ -210,7 +210,7 @@ public sealed class UnhandledExceptionInternalServerErrorResponseModelTests
         // Arrange
         TimeSpan expectedElapsedTime = TimeSpan.FromMilliseconds(500);
         string expectedInvocationId = "test-invocation";
-        FakeExecutionContext executionContext = new(expectedElapsedTime, expectedInvocationId);
+        ExecutionContextFake executionContext = new(expectedElapsedTime, expectedInvocationId);
         Exception expectedException = new InvalidOperationException("Test exception");
 
         // Act
@@ -227,12 +227,12 @@ public sealed class UnhandledExceptionInternalServerErrorResponseModelTests
 [TestClass]
 public sealed class UnhandledExceptionBadRequestResponseModelTests
 {
-    private sealed class FakeExecutionContext : IExecutionContext
+    private sealed class ExecutionContextFake : IExecutionContext
     {
         private readonly TimeSpan _elapsedTime;
         private readonly string _invocationId;
 
-        public FakeExecutionContext(TimeSpan elapsedTime, string invocationId)
+        public ExecutionContextFake(TimeSpan elapsedTime, string invocationId)
         {
             _elapsedTime = elapsedTime;
             _invocationId = invocationId;
@@ -248,7 +248,7 @@ public sealed class UnhandledExceptionBadRequestResponseModelTests
         // Arrange
         TimeSpan expectedElapsedTime = TimeSpan.FromMilliseconds(250);
         string expectedInvocationId = "bad-request-invocation";
-        FakeExecutionContext executionContext = new(expectedElapsedTime, expectedInvocationId);
+        ExecutionContextFake executionContext = new(expectedElapsedTime, expectedInvocationId);
         Exception expectedException = new ArgumentException("Invalid argument");
 
         // Act

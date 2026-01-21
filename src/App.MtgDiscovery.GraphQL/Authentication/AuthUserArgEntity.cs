@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Args;
 using Lib.Universal.Utilities;
 
 namespace App.MtgDiscovery.GraphQL.Authentication;

@@ -1,6 +1,7 @@
 ﻿using Lib.Scryfall.Shared.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Filters;
+
 internal interface IScryfallSetFilter
 {
     bool ShouldInclude(IScryfallSet set);

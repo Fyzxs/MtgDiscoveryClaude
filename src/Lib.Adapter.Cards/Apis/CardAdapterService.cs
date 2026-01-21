@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Queries;
-using Lib.Shared.DataModels.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -35,22 +36,22 @@ public sealed class CardAdapterService : ICardAdapterService
         _cardQueryAdapter = cardQueryAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByIdsAsync(ICardIdsItrEntity cardIds)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds)
     {
         return await _cardQueryAdapter.GetCardsByIdsAsync(cardIds).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode)
     {
         return await _cardQueryAdapter.GetCardsBySetCodeAsync(setCode).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICardItemItrEntity>>> GetCardsByNameAsync(ICardNameItrEntity cardName)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName)
     {
         return await _cardQueryAdapter.GetCardsByNameAsync(cardName).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm)
     {
         return await _cardQueryAdapter.SearchCardNamesAsync(searchTerm).ConfigureAwait(false);
     }

@@ -1,4 +1,5 @@
 ﻿namespace Lib.Scryfall.Ingestion.Configurations;
+
 internal interface IScryfallProcessingConfig
 {
     const string MaxSetsKey = "max_sets";

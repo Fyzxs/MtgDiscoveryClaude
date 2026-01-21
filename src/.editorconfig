@@ -456,6 +456,7 @@ dotnet_diagnostic.IDE0300.severity = none # remove redundant equality - complain
 dotnet_diagnostic.CA1822.severity = none
 dotnet_diagnostic.CA1859.severity = none
 dotnet_diagnostic.CA1046.severity = none
+dotnet_diagnostic.IDE0290.severity = none # Primary constructors
 
 # Custom Reductions
 [*.cs]

@@ -7,12 +7,11 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Sets.Apis;
-using Lib.Adapter.Sets.Entities;
+using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Exceptions;
-using Lib.Adapter.Sets.Queries.Mappers;
+using Lib.Adapter.Sets.Queries.Entities;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -30,33 +29,29 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
     private readonly ICosmosGopher _setGopher;
     private readonly ICosmosGopher _setCodeIndexGopher;
     private readonly ICosmosInquisition _allSetsInquisition;
-    private readonly IScryfallSetItemToSetItemItrEntityMapper _setMapper;
 
     public SetCosmosQueryAdapter(ILogger logger) : this(
         new ScryfallSetItemsGopher(logger),
         new ScryfallSetCodeIndexGopher(logger),
-        new AllSetItemsInquisition(logger),
-        new ScryfallSetItemToSetItemItrEntityMapper())
+        new AllSetItemsInquisition(logger))
     { }
 
     private SetCosmosQueryAdapter(
         ICosmosGopher setGopher,
         ICosmosGopher setCodeIndexGopher,
-        ICosmosInquisition allSetsInquisition,
-        IScryfallSetItemToSetItemItrEntityMapper setMapper)
+        ICosmosInquisition allSetsInquisition)
     {
         _setGopher = setGopher;
         _setCodeIndexGopher = setCodeIndexGopher;
         _allSetsInquisition = allSetsInquisition;
-        _setMapper = setMapper;
     }
 
     //TODO: Remove the Get prefix
-    public async Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetSetsByIdsAsync([NotNull] ISetIdsItrEntity setIds)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByIdsAsync([NotNull] ISetIdsXfrEntity setIds)
     {
         // Extract primitives for external system interface
         IEnumerable<string> setIdList = setIds.SetIds;
-        List<Task<OpResponse<ScryfallSetItem>>> tasks = [];
+        List<Task<OpResponse<ScryfallSetItemExtEntity>>> tasks = [];
 
         foreach (string setId in setIdList)
         {
@@ -66,27 +61,24 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
                 Id = new ProvidedCosmosItemId(setId),
                 Partition = new ProvidedPartitionKeyValue(setId)
             };
-            tasks.Add(_setGopher.ReadAsync<ScryfallSetItem>(readPoint));
+            tasks.Add(_setGopher.ReadAsync<ScryfallSetItemExtEntity>(readPoint));
         }
 
-        OpResponse<ScryfallSetItem>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);
+        OpResponse<ScryfallSetItemExtEntity>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        //TODO: Technically this should be a Mapper. Take the collection in, return a collection of ISetItemItrEntity
-        List<ISetItemItrEntity> successfulSets = [];
-        foreach (OpResponse<ScryfallSetItem> response in responses.Where(r => r.IsSuccessful()))
-        {
-            ISetItemItrEntity mapped = await _setMapper.Map(response.Value).ConfigureAwait(false);
-            if (mapped != null) successfulSets.Add(mapped);
-        }
+        IEnumerable<ScryfallSetItemExtEntity> successfulSets = responses
+            .Where(task => task.IsSuccessful())
+            .Select(task => task.Value)
+            .Where(set => set is not null);
 
-        return new SuccessOperationResponse<IEnumerable<ISetItemItrEntity>>(successfulSets);
+        return new SuccessOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>(successfulSets);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetSetsByCodesAsync([NotNull] ISetCodesItrEntity setCodes)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetSetsByCodesAsync([NotNull] ISetCodesXfrEntity setCodes)
     {
         // Extract primitives for external system interface
         IEnumerable<string> setCodeList = setCodes.SetCodes;
-        List<Task<OpResponse<ScryfallSetCodeIndexItem>>> indexTasks = [];
+        List<Task<OpResponse<ScryfallSetCodeIndexExtEntity>>> indexTasks = [];
 
         foreach (string setCode in setCodeList)
         {
@@ -95,10 +87,10 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
                 Id = new ProvidedCosmosItemId(setCode),
                 Partition = new ProvidedPartitionKeyValue(setCode)
             };
-            indexTasks.Add(_setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexItem>(readPoint));
+            indexTasks.Add(_setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint));
         }
 
-        OpResponse<ScryfallSetCodeIndexItem>[] indexResponses = await Task.WhenAll(indexTasks).ConfigureAwait(false);
+        OpResponse<ScryfallSetCodeIndexExtEntity>[] indexResponses = await Task.WhenAll(indexTasks).ConfigureAwait(false);
 
         List<string> setIds = [.. indexResponses
             .Where(r => r.IsSuccessful())
@@ -106,34 +98,26 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
 
         if (setIds.Count == 0)
         {
-            return new SuccessOperationResponse<IEnumerable<ISetItemItrEntity>>([]);
+            return new SuccessOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>([]);
         }
 
         //TODO: Should be a mapper
-        SetIdsItrEntity setIdsEntity = new() { SetIds = setIds };
+        ISetIdsXfrEntity setIdsEntity = new SetIdsXfrEntity { SetIds = setIds };
         return await GetSetsByIdsAsync(setIdsEntity).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ISetItemItrEntity>>> GetAllSetsAsync()
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> GetAllSetsAsync()
     {
-        OpResponse<IEnumerable<ScryfallSetItem>> response = await _allSetsInquisition
-            .QueryAsync<ScryfallSetItem>(CancellationToken.None)
+        OpResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _allSetsInquisition
+            .QueryAsync<ScryfallSetItemExtEntity>(CancellationToken.None)
             .ConfigureAwait(false);
 
-        if (response.IsSuccessful() is false)
+        if (response.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IEnumerable<ISetItemItrEntity>>(
+            return new FailureOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>(
                 new SetAdapterException("Failed to retrieve all sets", response.Exception()));
         }
 
-        //TODO: Should be a mapper
-        List<ISetItemItrEntity> sets = [];
-        foreach (ScryfallSetItem item in response.Value)
-        {
-            ISetItemItrEntity mapped = await _setMapper.Map(item).ConfigureAwait(false);
-            if (mapped != null) sets.Add(mapped);
-        }
-
-        return new SuccessOperationResponse<IEnumerable<ISetItemItrEntity>>(sets);
+        return new SuccessOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>(response.Value);
     }
 }
