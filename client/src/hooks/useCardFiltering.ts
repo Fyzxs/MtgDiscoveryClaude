@@ -17,10 +17,13 @@ interface CardFilterOptions {
     artists?: string[];
     sets?: string[];
     showDigital?: boolean;
+    collectionCounts?: string[];
+    signedCards?: string[];
   };
   initialSearch?: string;
   initialSort?: string;
   includeSets?: boolean; // Whether to include set filtering
+  includeCollectorFilters?: boolean; // Whether to include collector-specific filters
 }
 
 export function useCardFiltering<T extends CardLike>(
@@ -33,7 +36,8 @@ export function useCardFiltering<T extends CardLike>(
     initialFilters = {},
     initialSearch = '',
     initialSort,
-    includeSets = false
+    includeSets = false,
+    includeCollectorFilters = false
   } = options;
 
   const data = cards || [];
@@ -70,7 +74,11 @@ export function useCardFiltering<T extends CardLike>(
         rarities: initialFilters.rarities || [],
         artists: initialFilters.artists || [],
         sets: initialFilters.sets || [],
-        showDigital: initialFilters.showDigital || false
+        showDigital: initialFilters.showDigital || false,
+        ...(includeCollectorFilters ? {
+          collectionCounts: initialFilters.collectionCounts || [],
+          signedCards: initialFilters.signedCards || []
+        } : {})
       }
     }
   );
