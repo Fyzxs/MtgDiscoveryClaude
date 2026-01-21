@@ -23,6 +23,7 @@ export { default as FlipIcon } from '@mui/icons-material/Flip';
 export { default as OpenInNewIcon } from '@mui/icons-material/OpenInNew';
 export { default as RefreshIcon } from '@mui/icons-material/Refresh';
 export { default as SearchIcon } from '@mui/icons-material/Search';
+export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOff';
 export { default as ZoomInIcon } from '@mui/icons-material/ZoomIn';
 
 // Status Icons
