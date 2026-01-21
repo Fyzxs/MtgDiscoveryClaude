@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Box, Typography, Chip, Stack } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
-import { CardDateBadge } from '../shared/CardDateBadge';
 import { useLazyLoad } from '../../../hooks/useLazyLoad';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
 
@@ -69,12 +68,12 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
       sx={{
         position: 'relative',
         width: '100%',
-        // Mobile/tablet: image-only height, Desktop: include info section
+        // Consistent heights across all breakpoints
         height: {
-          xs: 150,  // Mobile: just image
-          sm: 170,  // Tablet: just image
-          md: 280,  // Desktop: image + info
-          lg: 300   // Large desktop: image + info
+          xs: 240,
+          sm: 260,
+          md: 280,
+          lg: 300
         },
         display: 'flex',
         flexDirection: 'column',
@@ -97,9 +96,8 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         sx={{
           position: 'relative',
           width: '100%',
-          // Mobile/tablet: fill entire card, Desktop: square aspect ratio
-          paddingTop: { xs: '100%', sm: '100%', md: '100%' },
-          flexGrow: { xs: 1, sm: 1, md: 0 }, // Fill on mobile, fixed on desktop
+          // Square aspect ratio (1:1) for all breakpoints
+          paddingTop: '100%',
           flexShrink: 0,
           backgroundImage: `url(${COMING_SOON_URL})`,
           backgroundSize: 'cover',
@@ -154,61 +152,14 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             }}
           />
         )}
-
-        {/* Release Date Badge */}
-        {product.releaseDate && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: { xs: 6, sm: 8 },
-              right: { xs: 6, sm: 8 },
-              zIndex: 2,
-            }}
-          >
-            <CardDateBadge date={product.releaseDate} />
-          </Box>
-        )}
-
-        {/* Product Name Badge - Mobile/Tablet only */}
-        <Box
-          sx={{
-            display: { xs: 'block', sm: 'block', md: 'none' },
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            bgcolor: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(8px)',
-            p: { xs: 0.75, sm: 1 },
-            zIndex: 2,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: { xs: '0.7rem', sm: '0.75rem' },
-              fontWeight: 600,
-              color: 'white',
-              lineHeight: 1.2,
-              textAlign: 'center',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
-            {product.name}
-          </Typography>
-        </Box>
       </Box>
 
-      {/* Product Info - Desktop only */}
+      {/* Product Info - Always visible */}
       <Box
         sx={{
-          display: { xs: 'none', sm: 'none', md: 'flex' },
-          pt: { md: 1 },
-          px: { md: 1.5 },
-          pb: { md: 0.5 },
+          p: { xs: 1, sm: 1.5 },
           flexGrow: 1,
+          display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           justifyContent: 'flex-start',
@@ -217,7 +168,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         {/* Product Name - 2-line truncation */}
         <Typography
           sx={{
-            fontSize: { md: '0.8125rem' },
+            fontSize: { xs: '0.75rem', sm: '0.8125rem' },
             fontWeight: 600,
             color: 'text.primary',
             lineHeight: 1.3,
@@ -226,6 +177,7 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textAlign: 'center',
+            minHeight: { xs: '1.95rem', sm: '2.1rem' }, // Reserve 2 lines
           }}
         >
           {product.name}

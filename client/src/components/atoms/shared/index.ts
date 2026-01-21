@@ -1,5 +1,5 @@
 export { CardCountDisplay } from './CardCountDisplay';
-export { CardDateBadge } from './CardDateBadge';
+export { ItemDateBadge } from './ItemDateBadge';
 export { CollectionProgressBar } from './CollectionProgressBar';
 export { DarkBadge } from './DarkBadge';
 export { ErrorAlert } from './ErrorAlert';
