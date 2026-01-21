@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from '..';
 import type { StyledComponentProps } from '../../../types/components';
 
 interface CollectorNumberProps extends StyledComponentProps {
