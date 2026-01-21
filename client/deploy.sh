@@ -48,14 +48,14 @@ deploy_preview() {
 
     # Build with preview environment
     echo -e "${BLUE}Building application for preview...${NC}"
-    npm run build -- --mode preview
+    npx vite build --mode preview
 
     # Get deployment token
     get_deployment_token
 
     # Deploy to preview
     echo -e "${BLUE}Deploying to preview environment...${NC}"
-    swa deploy ./dist \
+    npx @azure/static-web-apps-cli deploy ./dist \
         --deployment-token "$TOKEN" \
         --app-name "$APP_NAME" \
         --env preview
@@ -98,7 +98,7 @@ deploy_production() {
 
     # Deploy to production
     echo -e "${BLUE}Deploying to production environment...${NC}"
-    swa deploy ./dist \
+    npx @azure/static-web-apps-cli deploy ./dist \
         --deployment-token "$TOKEN" \
         --app-name "$APP_NAME" \
         --env production
@@ -174,11 +174,22 @@ else
         preview|--preview|-p)
             deploy_preview
             ;;
-        production|prod|--production|-P)
+        production|prod|--production)
             deploy_production
             ;;
         status|--status|-s)
             show_status
+            ;;
+        help|--help|-h)
+            echo "Usage: $0 [preview|production|status]"
+            echo ""
+            echo "Options:"
+            echo "  preview, -p      Deploy to preview environment"
+            echo "  production, prod Deploy to production environment"
+            echo "  status, -s       Show deployment status"
+            echo "  help, -h         Show this help message"
+            echo "  (no args)        Show interactive menu"
+            exit 0
             ;;
         *)
             echo -e "${RED}Unknown option: $1${NC}"
@@ -187,8 +198,9 @@ else
             echo ""
             echo "Options:"
             echo "  preview, -p      Deploy to preview environment"
-            echo "  production, -P   Deploy to production environment"
+            echo "  production, prod Deploy to production environment"
             echo "  status, -s       Show deployment status"
+            echo "  help, -h         Show this help message"
             echo "  (no args)        Show interactive menu"
             exit 1
             ;;
