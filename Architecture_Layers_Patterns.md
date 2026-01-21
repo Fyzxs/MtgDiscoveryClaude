@@ -743,6 +743,181 @@ internal sealed class CardScribe : CosmosScribe<ScryfallCardItem>
 }
 ```
 
+#### Inquisition Pattern (Parameterized Queries)
+
+The Inquisition pattern provides a structured approach for parameterized Cosmos DB queries, separating query logic from parameter binding and execution. This pattern is the **preferred approach** for all query operations requiring parameters.
+
+##### Pattern Structure
+1. **Inquisition Class**: Implements `ICosmosInquisition<TParameters>` and handles parameter binding
+2. **Parameters Class**: Defines strongly-typed parameters for the query (suffix: `ExtArgs`)
+3. **Query Definition**: Encapsulates the SQL query with parameter placeholders
+4. **Inquisitor Delegation**: Delegates actual query execution to `ICosmosInquisitor`
+
+##### Complete Implementation Example
+```csharp
+// 1. Parameters class defining query inputs
+public sealed class UserCardItemsBySetExtArgs
+{
+    public string UserId { get; init; }
+    public string SetId { get; init; }
+}
+
+// 2. Inquisition implementation with parameter binding
+public sealed class UserCardItemsBySetInquisition : ICosmosInquisition<UserCardItemsBySetExtArgs>
+{
+    private readonly ICosmosInquisitor _inquisitor;
+    private readonly InquiryDefinition _inquiry;
+
+    // Public constructor for DI container
+    public UserCardItemsBySetInquisition(ILogger logger)
+        : this(new UserCardsInquisitor(logger), new UserCardItemsBySetQueryDefinition())
+    { }
+
+    // Private constructor for testing
+    private UserCardItemsBySetInquisition(ICosmosInquisitor inquisitor, InquiryDefinition inquiry)
+    {
+        _inquisitor = inquisitor;
+        _inquiry = inquiry;
+    }
+
+    public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(
+        UserCardItemsBySetExtArgs args,
+        CancellationToken cancellationToken = default)
+    {
+        // 1. Bind parameters to query
+        QueryDefinition query = _inquiry.AsSystemType()
+            .WithParameter("@userId", args.UserId)
+            .WithParameter("@setId", args.SetId);
+
+        // 2. Extract partition key from args
+        PartitionKey partitionKey = new(args.UserId);
+
+        // 3. Delegate to inquisitor for execution
+        OpResponse<IEnumerable<T>> response = await _inquisitor.QueryAsync<T>(
+            query,
+            partitionKey,
+            cancellationToken).ConfigureAwait(false);
+
+        return response;
+    }
+}
+
+// 3. Query definition class (separate file)
+internal sealed class UserCardItemsBySetQueryDefinition : InquiryDefinition
+{
+    public override QueryDefinition AsSystemType()
+    {
+        return new QueryDefinition(@"
+            SELECT * FROM c
+            WHERE c.user_id = @userId
+            AND c.set_id = @setId");
+    }
+}
+```
+
+##### Key Implementation Rules
+1. **Parameter Binding Only**: Inquisitions handle parameter binding, not query execution
+2. **Strongly-Typed Parameters**: Use dedicated `ExtArgs` classes, not primitives
+3. **Delegation Pattern**: Always delegate execution to `ICosmosInquisitor`
+4. **Constructor Chain**: Public constructor for DI, private for testing
+5. **Partition Key Extraction**: Extract partition key from parameters, not hardcode
+6. **Query Definition Separation**: Separate query SQL from parameter binding logic
+
+##### Benefits of This Pattern
+- **Type Safety**: Compile-time parameter validation
+- **Testability**: Separate concerns allow isolated testing
+- **Reusability**: Query definitions can be reused across contexts
+- **Maintainability**: Clear separation between SQL, parameters, and execution
+- **Consistency**: Standardized approach across all parameterized queries
+
+##### Usage in Adapters
+```csharp
+internal sealed class UserCardCosmosQueryAdapter : IUserCardAdapterService
+{
+    private readonly ICosmosInquisition<UserCardItemsBySetExtArgs> _userCardsBySetInquisition;
+
+    public UserCardCosmosQueryAdapter(ILogger logger)
+        : this(new UserCardItemsBySetInquisition(logger))
+    { }
+
+    private UserCardCosmosQueryAdapter(ICosmosInquisition<UserCardItemsBySetExtArgs> inquisition)
+    {
+        _userCardsBySetInquisition = inquisition;
+    }
+
+    public async Task<IOperationResponse<ICardCollectionItrEntity>> GetUserCardsBySetAsync(
+        string userId, string setId)
+    {
+        try
+        {
+            var args = new UserCardItemsBySetExtArgs { UserId = userId, SetId = setId };
+
+            OpResponse<IEnumerable<ScryfallCardItem>> response =
+                await _userCardsBySetInquisition.QueryAsync<ScryfallCardItem>(args)
+                    .ConfigureAwait(false);
+
+            if (response.IsSuccessful)
+            {
+                // Map to internal entities and return
+                return MapToCardCollection(response.Value);
+            }
+
+            return new FailureOperationResponse<ICardCollectionItrEntity>(
+                new OperationException("Query failed", response.StatusCode));
+        }
+        catch (Exception ex)
+        {
+            throw new CardAdapterException("Failed to query user cards by set", ex);
+        }
+    }
+}
+```
+
+##### Anti-Patterns to Avoid
+```csharp
+// WRONG: Inline parameter binding in adapter
+public async Task<IOperationResponse<T>> GetCardsAsync(string userId, string setId)
+{
+    // DON'T DO THIS - parameter binding mixed with business logic
+    var query = new QueryDefinition("SELECT * FROM c WHERE c.user_id = @userId")
+        .WithParameter("@userId", userId)
+        .WithParameter("@setId", setId);
+
+    // Execution logic mixed with binding
+    var response = await _inquisitor.QueryAsync<T>(query, new PartitionKey(userId));
+}
+
+// WRONG: Primitive parameters instead of args class
+public interface IBadInquisition : ICosmosInquisition<string, string>  // No!
+{
+    // Loses type safety and parameter meaning
+}
+
+// WRONG: Direct inquisitor usage without inquisition abstraction
+public class BadAdapter
+{
+    private readonly ICosmosInquisitor _inquisitor;  // Skip inquisition layer
+
+    public async Task<T> BadQueryAsync(string param1, string param2)
+    {
+        // Direct usage loses abstraction benefits
+        var query = new QueryDefinition("...").WithParameter("@p1", param1);
+        return await _inquisitor.QueryAsync<T>(query, new PartitionKey(param1));
+    }
+}
+```
+
+##### Migration Strategy for Existing Code
+When converting existing direct query code to the Inquisition pattern:
+
+1. **Identify Parameters**: Extract all query parameters into an `ExtArgs` class
+2. **Create Query Definition**: Move SQL to dedicated `QueryDefinition` class
+3. **Implement Inquisition**: Create inquisition class with parameter binding
+4. **Update Adapter**: Replace direct inquisitor calls with inquisition usage
+5. **Add Tests**: Test parameter binding and delegation separately
+
+This pattern ensures consistent, maintainable, and testable query operations across the entire adapter layer.
+
 ### Mapper Pattern Implementation (External to Internal Transformation)
 
 The Adapter Layer uses explicit mapper classes for transforming between external storage entities and internal ITR entities, similar to Entry Layer but with different focus.
@@ -906,7 +1081,10 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
 - **Implementations**: `*CosmosQueryAdapter` for Cosmos operations
 - **Items**: `Scryfall*Item` for external data models
 - **Exceptions**: `*AdapterException` for adapter failures
-- **Operators**: `*Scribe` for write operations, `*Gopher` for read operations
+- **Operators**: `*Scribe` for write operations, `*Gopher` for read operations, `*Inquisitor` for query operations
+- **Inquisitions**: `*Inquisition` for parameterized query operations
+- **Parameters**: `*ExtArgs` for inquisition parameter classes
+- **Query Definitions**: `*QueryDefinition` for SQL query encapsulation
 - **Mappers**: `*ItemTo*ItrEntityMapper` for external-to-internal transformation
 
 ### Common Abstractions
@@ -1082,6 +1260,446 @@ public sealed class CardOutEntity
     public string Name { get; init; }
 }
 ```
+
+---
+
+## Primitive Obsession Avoidance
+
+### Core Principle: No Naked Primitives
+
+The architecture strictly avoids **primitive obsession** - the practice of using primitive types (string, int, bool) to represent domain concepts. Instead, every concept has an explicit interface and object representation.
+
+### Data Representation Strategy
+
+#### ToSystemType Pattern for Primitives
+
+The architecture uses the `ToSystemType<T>` abstract class from `Lib.Universal.Primitives` to wrap all primitive domain concepts. This pattern provides:
+
+- **Implicit Conversion**: Automatic conversion to system types when needed
+- **Type Safety**: Compile-time prevention of parameter confusion
+- **Consistent Behavior**: Standardized `ToString()`, equality, and hashing
+- **Debugger Support**: Built-in debugger display formatting
+- **No Validation**: These just provide an object, there's no data validation or transformation.
+
+```csharp
+// Base pattern from Lib.Universal.Primitives.ToSystemType<T>
+[DebuggerDisplay("[{GetType().Name}]:{AsSystemType()}")]
+public abstract class ToSystemType<TSystemType>
+{
+    public static implicit operator TSystemType(ToSystemType<TSystemType> source) => source.AsSystemType();
+    public abstract TSystemType AsSystemType();
+    public override string ToString() => $"{AsSystemType()}";
+}
+
+// Domain concept definition
+public abstract class CardId : ToSystemType<string>;
+
+// Concrete implementation
+public sealed class ScryfallCardId : CardId
+{
+    private readonly string _value;
+
+    public ScryfallCardId(string value)
+    {
+        _value = value;
+    }
+
+    public override string AsSystemType() => _value;
+}
+
+// Usage - implicit conversion when needed
+public void ProcessCard(CardId cardId)
+{
+    string id = cardId;  // Implicit conversion via operator
+    var sql = $"SELECT * FROM cards WHERE id = '{cardId}'";  // ToString() called
+}
+```
+
+#### String Equality Pattern
+
+For string-based domain concepts that need equality comparison, use `StringEqualityToSystemType<T>`:
+
+```csharp
+// For concepts that need string equality semantics
+public abstract class UserId : StringEqualityToSystemType<UserId>;
+
+public sealed class Auth0UserId : UserId
+{
+    private readonly string _value;
+
+    public Auth0UserId(string value)
+    {
+        _value = ValidateAuth0Format(value);
+    }
+
+    public override string AsSystemType() => _value;
+
+    // Inherits proper equality, hashing, and comparison from base class
+}
+```
+
+#### Tightly Coupled Data (DTO Pattern)
+For data that flows through layers as a cohesive unit, use **interface-based DTOs**:
+
+```csharp
+// CORRECT: Interface-based entity for tightly coupled data
+public interface ICardItemItrEntity
+{
+    string Id { get; }
+    string Name { get; }
+    string SetCode { get; }
+    int CollectorNumber { get; }
+    string ManaCost { get; }
+    string TypeLine { get; }
+}
+
+// CORRECT: Implementation with init setters for DTO-style usage
+public sealed class CardItemItrEntity : ICardItemItrEntity
+{
+    public string Id { get; init; }
+    public string Name { get; init; }
+    public string SetCode { get; init; }
+    public int CollectorNumber { get; init; }
+    public string ManaCost { get; init; }
+    public string TypeLine { get; init; }
+}
+```
+
+#### Domain Concepts (Wrapped Primitives)
+For domain concepts that represent specific meaning, use **ToSystemType<> wrapper objects**:
+
+```csharp
+// CORRECT: Domain concept as abstract class using ToSystemType
+public abstract class CardId : ToSystemType<string>;
+
+// CORRECT: Concrete implementation
+public sealed class ScryfallCardId : CardId
+{
+    private readonly string _value;
+
+    public ScryfallCardId(string value)
+    {
+        _value = value;
+    }
+
+    public override string AsSystemType() => _value;
+}
+
+// CORRECT: Usage in domain operations
+public interface ICardDomainService
+{
+    Task<IOperationResponse<ICardItrEntity>> GetCardAsync(CardId cardId);
+}
+```
+
+### When to Use Each Pattern
+
+#### Use Interface-Based DTOs When:
+- Data flows through multiple layers as a unit
+- Properties are logically related
+- Data structure is stable across layer boundaries
+- Multiple properties always travel together
+
+```csharp
+// ✓ Good: Card data that always flows together
+public interface ICardItrEntity
+{
+    string Id { get; }
+    string Name { get; }
+    string SetCode { get; }
+    // Related properties that form a cohesive unit
+}
+
+// ✓ Good: User information that's always retrieved together
+public interface IUserInfoItrEntity
+{
+    string UserId { get; }
+    string UserSourceId { get; }
+    string UserNickname { get; }
+}
+```
+
+#### Use ToSystemType Wrapped Primitives When:
+- Single values represent domain concepts
+- Type safety is critical
+- Values have specific validation rules
+- Domain operations work with the concept
+- You need implicit conversion to system types
+- You want consistent equality and hashing behavior
+
+```csharp
+// ✓ Good: String domain concepts using ToSystemType
+public abstract class SetCode : ToSystemType<string>;
+
+public sealed class MtgSetCode : SetCode
+{
+    private readonly string _value;
+
+    public MtgSetCode(string value)
+    {
+        _value = value;
+    }
+
+    public override string AsSystemType() => _value;
+
+}
+
+// ✓ Good: Numeric domain concepts using ToSystemType
+public abstract class CollectorNumber : ToSystemType<int>;
+
+public sealed class MtgCollectorNumber : CollectorNumber
+{
+    private readonly int _value;
+
+    public MtgCollectorNumber(int value)
+    {
+        _value = value;
+    }
+
+    public override int AsSystemType() => _value;
+}
+```
+
+### Anti-Patterns to Avoid
+
+#### ❌ WRONG: Naked Primitives in Method Signatures
+```csharp
+// DON'T DO THIS - Primitive obsession
+public interface ICardService
+{
+    Task<Card> GetCardAsync(string cardId);  // What kind of string? GUID? MTG ID?
+    Task<Card[]> GetCardsBySetAsync(string setCode);  // What format? How long?
+    Task<bool> IsValidCard(string name, int collectorNumber);  // Type confusion risk
+}
+
+// DON'T DO THIS - Multiple primitives that should be grouped
+public interface IUserService
+{
+    Task<User> CreateUserAsync(string userId, string sourceId, string nickname, string email);
+    Task<User> UpdateUserAsync(string userId, string sourceId, string nickname, string email);
+    // These always travel together - should be an entity
+}
+```
+
+#### ❌ WRONG: Stringly-Typed Parameters
+```csharp
+// DON'T DO THIS - Error-prone string usage
+public class CardValidator
+{
+    public bool IsValidSetCode(string setCode)  // What format? Length?
+    {
+        return setCode.Length == 3;  // Validation logic scattered
+    }
+
+    public bool IsValidManaCost(string manaCost)  // What syntax?
+    {
+        return manaCost.Contains("{") && manaCost.Contains("}");
+    }
+}
+
+// DON'T DO THIS - Magic string constants
+public class CardQueries
+{
+    public async Task<Card> GetCardAsync(string id, string idType)
+    {
+        if (idType == "scryfall")  // Magic string - no type safety
+        {
+            // Implementation
+        }
+        else if (idType == "mtgjson")  // Another magic string
+        {
+            // Implementation
+        }
+    }
+}
+```
+
+#### ❌ WRONG: Anemic Data Classes Without Interfaces
+```csharp
+// DON'T DO THIS - No interface, just naked class
+public class CardData  // No interface = not composable or testable
+{
+    public string Id { get; set; }    // Mutable = problematic
+    public string Name { get; set; }  // No validation, no behavior
+    public string Set { get; set; }   // What's the format of "Set"?
+}
+```
+
+### Correct Implementation Patterns
+
+#### ✅ CORRECT: Domain Concepts as Objects
+```csharp
+// Domain concept with validation and behavior using ToSystemType
+public abstract class ManaCost : ToSystemType<string>;
+
+public sealed class MtgManaCost : ManaCost
+{
+    private readonly string _value;
+    private readonly int _convertedCost;
+
+    public MtgManaCost(string value)
+    {
+        _value = ValidateFormat(value);
+        _convertedCost = CalculateConvertedCost(_value);
+    }
+
+    public override string AsSystemType() => _value;
+    public int ConvertedManaCost() => _convertedCost;
+    public bool ContainsColor(ManaColor color) => _value.Contains(color.Symbol);
+
+    private static string ValidateFormat(string value)
+    {
+        if (string.IsNullOrEmpty(value)) return "{0}";
+        if (!IsValidManaFormat(value))
+            throw new ArgumentException($"Invalid mana cost format: {value}");
+        return value;
+    }
+
+    private static int CalculateConvertedCost(string value)
+    {
+        // Implementation for calculating converted mana cost
+        return 0; // Simplified for example
+    }
+
+    private static bool IsValidManaFormat(string value)
+    {
+        // Implementation for validating mana cost format
+        return value.Contains("{") && value.Contains("}");
+    }
+}
+
+// Usage in domain operations
+public interface ICardDomainService
+{
+    Task<IOperationResponse<ICardItrEntity>> GetCardsByManaCostAsync(ManaCost manaCost);
+}
+```
+
+#### ✅ CORRECT: Entity Interfaces for Related Data
+```csharp
+// Interface for tightly coupled data
+public interface ICardSearchCriteriaItrEntity
+{
+    string? Name { get; }
+    string? SetCode { get; }
+    string? ManaCost { get; }
+    string? TypeLine { get; }
+    int? CollectorNumberMin { get; }
+    int? CollectorNumberMax { get; }
+}
+
+// Implementation with validation in constructor
+public sealed class CardSearchCriteriaItrEntity : ICardSearchCriteriaItrEntity
+{
+    public string? Name { get; init; }
+    public string? SetCode { get; init; }
+    public string? ManaCost { get; init; }
+    public string? TypeLine { get; init; }
+    public int? CollectorNumberMin { get; init; }
+    public int? CollectorNumberMax { get; init; }
+
+    // Constructor validation for business rules
+    public CardSearchCriteriaItrEntity()
+    {
+        if (CollectorNumberMin.HasValue && CollectorNumberMax.HasValue)
+        {
+            if (CollectorNumberMin > CollectorNumberMax)
+                throw new ArgumentException("Min collector number cannot exceed max");
+        }
+    }
+}
+```
+
+#### ✅ CORRECT: Mapper Usage With Explicit Types
+```csharp
+// Mapper works with explicit entity types, not primitives
+public sealed class CardSearchArgsToItrMapper
+    : ICreateMapper<CardSearchArgEntity, ICardSearchCriteriaItrEntity>
+{
+    public ICardSearchCriteriaItrEntity Map(CardSearchArgEntity source)
+    {
+        return new CardSearchCriteriaItrEntity
+        {
+            Name = source.Name,        // Explicit mapping
+            SetCode = source.SetCode,  // No primitive confusion
+            ManaCost = source.ManaCost,
+            TypeLine = source.TypeLine,
+            CollectorNumberMin = source.CollectorNumberMin,
+            CollectorNumberMax = source.CollectorNumberMax
+        };
+    }
+}
+```
+
+### Benefits of This Approach
+
+#### Type Safety
+```csharp
+// Compile-time safety prevents errors
+public void ProcessCard(CardId cardId, SetCode setCode)
+{
+    // Impossible to accidentally swap parameters
+    // ProcessCard(setCode, cardId);  // ← Compilation error
+
+    // Implicit conversion to system types when needed
+    string cardIdValue = cardId;    // Uses implicit operator
+    string setCodeValue = setCode;  // Uses implicit operator
+}
+
+// vs primitive version (error-prone)
+public void ProcessCard(string cardId, string setCode)
+{
+    // Easy to accidentally swap parameters
+    // ProcessCard(setCode, cardId);  // ← Compiles but wrong!
+}
+```
+
+#### Clear Intent
+```csharp
+// Clear what each parameter represents
+public interface ICardService
+{
+    Task<ICardItrEntity> CardAsync(CardId cardId);
+    Task<ICardCollectionItrEntity> CardsBySetAsync(SetCode setCode);
+    Task<ICardCollectionItrEntity> SearchByNameAsync(CardName cardName);
+}
+
+// vs primitive version (ambiguous)
+public interface ICardService
+{
+    Task<ICardItrEntity> CardAsync(string id);      // What format?
+    Task<ICardCollectionItrEntity> CardsBySetAsync(string code);  // How long?
+    Task<ICardCollectionItrEntity> SearchByNameAsync(string name);   // Exact or partial?
+}
+```
+
+### Implementation Checklist
+
+When adding new functionality, verify:
+
+- [ ] **No naked primitives** in public method signatures
+- [ ] **Domain concepts** represented as `ToSystemType<T>` or `StringEqualityToSystemType<T>` wrappers
+- [ ] **Abstract base classes** defined for domain concept categories (e.g., `CardId`, `SetCode`)
+- [ ] **Concrete implementations** with validation in constructors
+- [ ] **Related data** grouped into interface-based entities with `init` setters
+- [ ] **Mappers** transform between entity types, not primitives
+- [ ] **Type safety** prevents parameter confusion through strong typing
+- [ ] **Implicit conversions** work correctly for system type integration
+- [ ] **Clear intent** through meaningful type names and inheritance hierarchy
+
+### Migration Strategy
+
+When encountering primitive obsession in existing code:
+
+1. **Identify Domain Concepts**: Find primitives that represent domain meaning
+2. **Create Abstract Base Classes**: Define abstract classes inheriting from `ToSystemType<T>`
+3. **Implement Concrete Wrappers**: Create concrete implementations with validation in constructors
+4. **Group Related Data**: Combine primitives that always travel together into interface-based entities
+5. **Update Signatures**: Replace primitive parameters with domain objects
+6. **Add Mappers**: Create explicit mapping between old and new representations
+7. **Test Thoroughly**: Ensure implicit conversions and validation work correctly
+
+This systematic approach to avoiding primitive obsession creates more maintainable, type-safe code that clearly expresses domain concepts and prevents common runtime errors.
 
 ---
 
