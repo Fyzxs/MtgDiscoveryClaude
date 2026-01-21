@@ -42,6 +42,7 @@ export const MobileFilterBar: React.FC<MobileFilterBarProps> = ({
         borderColor: 'divider',
         px: 2,
         py: 1.5,
+        mb: 2,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

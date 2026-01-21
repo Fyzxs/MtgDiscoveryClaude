@@ -87,6 +87,51 @@ class DirectDomOverlay {
         font-weight: 500 !important;
         color: #ff9800 !important;
       }
+
+      /* Responsive adjustments for smaller screens */
+      @media (max-width: 600px) {
+        .dom-overlay-count {
+          font-size: 1.75rem !important;
+          margin-bottom: 4px !important;
+        }
+
+        .dom-overlay-details {
+          gap: 8px !important;
+          height: 1.5rem !important;
+        }
+
+        .dom-overlay-finish {
+          font-size: 0.875rem !important;
+        }
+
+        .dom-overlay-special {
+          font-size: 0.875rem !important;
+        }
+
+        .dom-overlay-divider {
+          height: 1rem !important;
+        }
+      }
+
+      /* Tablet adjustments */
+      @media (min-width: 601px) and (max-width: 900px) {
+        .dom-overlay-count {
+          font-size: 2.25rem !important;
+          margin-bottom: 6px !important;
+        }
+
+        .dom-overlay-details {
+          gap: 12px !important;
+        }
+
+        .dom-overlay-finish {
+          font-size: 1rem !important;
+        }
+
+        .dom-overlay-special {
+          font-size: 1rem !important;
+        }
+      }
     `;
     document.head.appendChild(this.styleElement);
   }

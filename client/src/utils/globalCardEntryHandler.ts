@@ -69,6 +69,12 @@ class GlobalCardEntryHandler {
       return;
     }
 
+    // Don't capture keys when a modal or drawer is open
+    const modalOrDrawerOpen = document.querySelector('.MuiModal-root, .MuiDrawer-root');
+    if (modalOrDrawerOpen) {
+      return;
+    }
+
     // CRITICAL: Block all collection keyboard shortcuts if no collector ID in URL
     const urlParams = new URLSearchParams(window.location.search);
     const collectorId = urlParams.get('ctor');
