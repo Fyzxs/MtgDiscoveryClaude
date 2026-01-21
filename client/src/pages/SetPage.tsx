@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery, useApolloClient } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import {
@@ -296,24 +296,6 @@ export const SetPage: React.FC = () => {
     }).filter((artist: string) => allArtists.includes(artist)); // Only keep valid artists
   }, [filters.artists, artistMap, allArtists]);
   
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-
-
-
-
-  
-  // Example: When adding to collection (to be implemented)
-  // const handleAddToCollection = () => {
-  //   const selectedId = getSelectedCardId();
-  //   if (selectedId) {
-  //     // Add card with selectedId to collection
-  //   }
-  // };
-  
-  // This is no longer used for click handling, but kept for potential future use
-  const handleCardSelection = useCallback((cardId: string, selected: boolean) => {
-    setSelectedCardId(selected ? cardId : null);
-  }, []);
 
   // Sync non-search filters with URL immediately
   useUrlState(
@@ -629,8 +611,6 @@ export const SetPage: React.FC = () => {
                     hideReleaseDate: false,
                     hasCollector
                   }}
-                  onCardSelection={() => {}}
-                  selectedCardId={null}
                   collectionLookup={collectionLookup}
                 />
               ))
@@ -651,8 +631,6 @@ export const SetPage: React.FC = () => {
                   hideReleaseDate: false,
                   hasCollector
                 }}
-                onCardSelection={() => {}}
-                selectedCardId={null}
                 collectionLookup={collectionLookup}
               />
             )}
@@ -675,8 +653,6 @@ export const SetPage: React.FC = () => {
                 hideReleaseDate: allSameReleaseDate,
                 hasCollector
               }}
-              onCardSelection={handleCardSelection}
-              selectedCardId={selectedCardId}
               collectionLookup={collectionLookup}
             />
           ) : (
@@ -699,8 +675,6 @@ export const SetPage: React.FC = () => {
                     hideReleaseDate: allSameReleaseDate,
                     hasCollector
                   }}
-                  onCardSelection={handleCardSelection}
-                  selectedCardId={selectedCardId}
                   collectionLookup={collectionLookup}
                 />
               ))
