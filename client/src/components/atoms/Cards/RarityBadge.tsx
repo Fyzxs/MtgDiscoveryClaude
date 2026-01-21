@@ -4,9 +4,11 @@ import type { StyledComponentProps } from '../../../types/components';
 
 interface RarityBadgeProps extends StyledComponentProps {
   rarity: Rarity | string;
+  /** Size variant for responsive display */
+  size?: 'small' | 'medium';
 }
 
-export const RarityBadge = ({ rarity, className = '' }: RarityBadgeProps) => {
+export const RarityBadge = ({ rarity, className = '', size = 'medium' }: RarityBadgeProps) => {
   const getRarityColors = (r: string): { background: string; color: string } => {
     switch (r.toLowerCase()) {
       case 'common':
@@ -45,18 +47,20 @@ export const RarityBadge = ({ rarity, className = '' }: RarityBadgeProps) => {
   };
 
   const colors = getRarityColors(rarity);
+  const chipSize = size === 'small' ? 20 : 24;
+  const fontSize = size === 'small' ? '0.625rem' : '0.75rem';
 
   return (
-    <Chip 
+    <Chip
       label={getRaritySymbol(rarity)}
       className={className}
       sx={{
-        width: 24,
-        height: 24,
-        minWidth: 24,
+        width: chipSize,
+        height: chipSize,
+        minWidth: chipSize,
         backgroundColor: colors.background,
         color: colors.color,
-        fontSize: '0.75rem',
+        fontSize,
         fontWeight: 'bold',
         '& .MuiChip-label': {
           px: 0,

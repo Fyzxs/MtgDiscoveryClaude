@@ -8,12 +8,15 @@ interface CollectionProgressBarProps {
   collected: number;
   total: number;
   percentage: number;
+  /** Compact mode for smaller cards */
+  compact?: boolean;
 }
 
 export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
   collected,
   total,
-  percentage
+  percentage,
+  compact = false
 }) => {
   const theme = useTheme();
   const isNotCollecting = total === 0 && percentage === 0;
@@ -39,21 +42,28 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
 
   const progressColor = getProgressColor();
 
+  // Compact sizing
+  const barHeight = compact ? 20 : 32;
+  const labelFontSize = compact ? '0.625rem' : '0.75rem';
+  const percentFontSize = compact ? '0.75rem' : (isNotCollecting ? '0.875rem' : '1rem');
+
   return (
-    <Box sx={{ width: '100%', mt: 1 }}>
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        sx={{ fontSize: '0.75rem', mb: 0.5, textAlign: 'center' }}
-      >
-        {isNotCollecting ? `${collected} unique` : `${collected} of ${total} set cards`}
-      </Typography>
+    <Box sx={{ width: '100%', mt: compact ? 0.5 : 1 }}>
+      {!compact && (
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: labelFontSize, mb: 0.5, textAlign: 'center' }}
+        >
+          {isNotCollecting ? `${collected} unique` : `${collected} of ${total} set cards`}
+        </Typography>
+      )}
       <Box sx={{ position: 'relative', width: '100%' }}>
         <LinearProgress
           variant="determinate"
           value={percentage}
           sx={{
-            height: 32,
+            height: barHeight,
             borderRadius: 1,
             bgcolor: isNotCollecting ? theme.palette.grey[800] : alpha(theme.palette.primary.main, 0.15),
             '& .MuiLinearProgress-bar': {
@@ -69,14 +79,17 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            fontSize: isNotCollecting ? '0.875rem' : '1rem',
+            fontSize: percentFontSize,
             fontWeight: 700,
             color: 'text.primary',
             textShadow: '0 1px 3px rgba(0,0,0,0.8)',
             whiteSpace: 'nowrap'
           }}
         >
-          {isNotCollecting ? 'No groups selected' : `${Math.round(percentage)}%`}
+          {isNotCollecting
+            ? (compact ? '—' : 'No groups selected')
+            : `${Math.round(percentage)}%`
+          }
         </Typography>
       </Box>
     </Box>

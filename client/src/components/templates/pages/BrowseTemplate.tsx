@@ -71,9 +71,10 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
     <PageContainer
       maxWidth={maxWidth}
       sx={{
-        mt: containerPadding.mt,
+        // Responsive padding for mobile
+        mt: { xs: 1, sm: containerPadding.mt },
         mb: containerPadding.mb,
-        px: containerPadding.px,
+        px: { xs: 1, sm: 2, md: containerPadding.px },
         mx: 'auto',
         ...containerSx
       }}
@@ -84,7 +85,7 @@ export const BrowseTemplate: React.FC<BrowseTemplateProps> = ({
           component="header"
           asSection={false}
           sx={{
-            mb: hasFilters ? 4 : 3,
+            mb: hasFilters ? { xs: 2, sm: 3, md: 4 } : { xs: 2, sm: 3 },
             display: 'flex',
             justifyContent: 'center'
           }}

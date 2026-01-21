@@ -1,11 +1,14 @@
 import React from 'react';
 import Typography from '../Typography';
+import type { SxProps, Theme } from '@mui/material';
 
 interface SetTitleProps {
   name: string;
+  /** Optional sx overrides for responsive sizing */
+  sx?: SxProps<Theme>;
 }
 
-export const SetTitle: React.FC<SetTitleProps> = ({ name }) => {
+export const SetTitle: React.FC<SetTitleProps> = ({ name, sx }) => {
   // Calculate font size based on name length
   const getFontSize = () => {
     const length = name.length;
@@ -34,6 +37,7 @@ export const SetTitle: React.FC<SetTitleProps> = ({ name }) => {
         WebkitBoxOrient: 'vertical',
         lineHeight: 1.2,
         fontSize: getFontSize(),
+        ...sx,
       }}
     >
       {name}

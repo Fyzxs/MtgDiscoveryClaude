@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, startTransition, useTransition } from 'react';
+import React, { useMemo, useCallback, startTransition, useTransition, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box } from '../atoms';
@@ -8,8 +8,11 @@ import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { EmptyState } from '../molecules/shared/EmptyState';
 import { CollectionStatsSummary } from '../molecules/shared/CollectionStatsSummary';
+import { CollapsibleStatsSummary } from '../molecules/shared/CollapsibleStatsSummary';
+import { EdgeDrawer } from '../molecules/shared/EdgeDrawer';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
-import type { SortOption } from '../molecules/shared/SortDropdown';
+import { SortDropdown, type SortOption } from '../molecules/shared/SortDropdown';
+import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
 import { useUrlFilterState, createUrlFilterConfig } from '../../hooks/useUrlFilterState';
 import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 import { GraphQLQueryStateContainer } from '../molecules/shared/QueryStateContainer';
@@ -20,6 +23,7 @@ import { CardGridErrorBoundary } from '../utils/ErrorBoundaries';
 import { BrowseTemplate } from '../templates/pages/BrowseTemplate';
 import type { MtgSet } from '../../types/set';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 
 interface SetsResponse {
   allSets: {
@@ -37,6 +41,10 @@ const EMPTY_SETS_ARRAY: MtgSet[] = [];
 
 export const AllSetsPage: React.FC = () => {
   const { hasCollector, collectorId } = useCollectorParam();
+  const { isMobile, isTablet } = useResponsiveBreakpoints();
+  // Use compact/drawer UI for both mobile and tablet (xs + sm breakpoints)
+  const useCompactUI = isMobile || isTablet;
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const { loading, error, data } = useQuery<SetsResponse>(GET_ALL_SETS, {
     variables: {
       args: hasCollector && collectorId ? { userId: collectorId } : {}
@@ -157,6 +165,14 @@ export const AllSetsPage: React.FC = () => {
   const sets = data?.allSets?.data || EMPTY_SETS_ARRAY;
   const setTypes = getUniqueSetTypes(sets);
 
+  // Calculate active filter count for mobile drawer badge
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (selectedSetTypes.length > 0) count++;
+    if (selectedCollectionStatuses.length > 0) count++;
+    return count;
+  }, [selectedSetTypes, selectedCollectionStatuses]);
+
   return (
     <GraphQLQueryStateContainer
       loading={loading}
@@ -168,56 +184,74 @@ export const AllSetsPage: React.FC = () => {
         maxWidth={false}
         header={
           <Box sx={{ width: '100%' }}>
-            <Heading variant="h3" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
+            {/* Hide title on mobile/tablet - it's obvious from context */}
+            <Heading
+              variant="h3"
+              component="h1"
+              gutterBottom
+              sx={{ textAlign: 'center', display: { xs: 'none', md: 'block' } }}
+            >
               All Sets
             </Heading>
-            {hasCollector && <CollectionStatsSummary sets={sets} />}
+            {hasCollector && (
+              useCompactUI ? (
+                <CollapsibleStatsSummary sets={sets} />
+              ) : (
+                <CollectionStatsSummary sets={sets} />
+              )
+            )}
           </Box>
         }
         filters={
-          <FilterControlsWithLoading isLoading={isFiltering || isPending}>
+          useCompactUI ? (
+            // Mobile/Tablet: Edge drawer tab is always visible - no inline content needed
+            null
+          ) : (
+            // Desktop: Full FilterPanel inline
+            <FilterControlsWithLoading isLoading={isFiltering || isPending}>
               <FilterPanel
-              config={{
-                search: {
-                  value: searchTerm,
-                  onChange: (value: string) => {
-                    startTransition(() => {
-                      setSearchTerm(value);
-                    });
+                config={{
+                  search: {
+                    value: searchTerm,
+                    onChange: (value: string) => {
+                      startTransition(() => {
+                        setSearchTerm(value);
+                      });
+                    },
+                    placeholder: 'Search sets...',
+                    debounceMs: 300
                   },
-                  placeholder: 'Search sets...',
-                  debounceMs: 300
-                },
-                multiSelects: [
-                  {
-                    key: 'setTypes',
-                    value: selectedSetTypes,
-                    onChange: handleSetTypeChange,
-                    options: setTypes,
-                    label: 'Set Types',
-                    placeholder: 'All Types'
-                  }
-                ],
-                sort: {
-                  value: sortBy,
-                  onChange: handleSortChange,
-                  options: sortOptions
-                },
-                collectorFilters: hasCollector ? {
-                  collectionStatus: {
-                    key: 'collectionStatus',
-                    value: selectedCollectionStatuses,
-                    onChange: handleCollectionStatusChange,
-                    options: ['not-started', 'in-progress', 'completed'],
-                    label: 'Collection Status',
-                    placeholder: 'All Statuses',
-                    minWidth: 180
-                  }
-                } : undefined
-              }}
-              layout="horizontal"
-            />
-          </FilterControlsWithLoading>
+                  multiSelects: [
+                    {
+                      key: 'setTypes',
+                      value: selectedSetTypes,
+                      onChange: handleSetTypeChange,
+                      options: setTypes,
+                      label: 'Set Types',
+                      placeholder: 'All Types'
+                    }
+                  ],
+                  sort: {
+                    value: sortBy,
+                    onChange: handleSortChange,
+                    options: sortOptions
+                  },
+                  collectorFilters: hasCollector ? {
+                    collectionStatus: {
+                      key: 'collectionStatus',
+                      value: selectedCollectionStatuses,
+                      onChange: handleCollectionStatusChange,
+                      options: ['not-started', 'in-progress', 'completed'],
+                      label: 'Collection Status',
+                      placeholder: 'All Statuses',
+                      minWidth: 180
+                    }
+                  } : undefined
+                }}
+                layout="horizontal"
+              />
+            </FilterControlsWithLoading>
+          )
         }
         summary={
           <ResultsSummary
@@ -230,7 +264,24 @@ export const AllSetsPage: React.FC = () => {
         content={
           <>
             <CardGridErrorBoundary name="AllSetsGrid">
-              <ResponsiveGridAutoFit minItemWidth={240} spacing={1.5}>
+              <ResponsiveGridAutoFit
+                minItemWidth={{
+                  xs: 140,  // 2 cards on mobile
+                  sm: 160,  // 3+ cards on tablet
+                  md: 180,  // 4+ cards on medium
+                  lg: 200,  // 5+ cards on large
+                  xl: 220,  // 6+ cards on extra large
+                }}
+                spacing={{ xs: 0.5, sm: 0.75, md: 1.5 }}
+                sx={{
+                  // On mobile/tablet, use fixed widths (no stretching)
+                  gridTemplateColumns: {
+                    xs: 'repeat(auto-fill, 140px)',
+                    sm: 'repeat(auto-fill, 160px)',
+                    md: 'repeat(auto-fit, minmax(180px, 1fr))',
+                  },
+                }}
+              >
                 {filteredSets.map((set) => (
                   <MtgSetCard
                     key={set.id}
@@ -251,8 +302,64 @@ export const AllSetsPage: React.FC = () => {
         }
       />
 
+      {/* Mobile/Tablet Edge Drawer for filters */}
+      {useCompactUI && (
+        <EdgeDrawer
+          open={filterDrawerOpen}
+          onOpen={() => setFilterDrawerOpen(true)}
+          onClose={() => setFilterDrawerOpen(false)}
+          tabLabel="Filter"
+          activeCount={activeFilterCount + (searchTerm ? 1 : 0)}
+          title="Search & Filter"
+        >
+          <FilterPanel
+            config={{
+              search: {
+                value: searchTerm,
+                onChange: (value: string) => {
+                  startTransition(() => {
+                    setSearchTerm(value);
+                  });
+                },
+                placeholder: 'Search sets...',
+                debounceMs: 300
+              },
+              multiSelects: [
+                {
+                  key: 'setTypes',
+                  value: selectedSetTypes,
+                  onChange: handleSetTypeChange,
+                  options: setTypes,
+                  label: 'Set Types',
+                  placeholder: 'All Types'
+                }
+              ],
+              sort: {
+                value: sortBy,
+                onChange: handleSortChange,
+                options: sortOptions
+              },
+              collectorFilters: hasCollector ? {
+                collectionStatus: {
+                  key: 'collectionStatus',
+                  value: selectedCollectionStatuses,
+                  onChange: handleCollectionStatusChange,
+                  options: ['not-started', 'in-progress', 'completed'],
+                  label: 'Collection Status',
+                  placeholder: 'All Statuses',
+                  minWidth: 180
+                }
+              } : undefined
+            }}
+            layout="vertical"
+          />
+        </EdgeDrawer>
+      )}
+
       {/* Back to Top Button - positioned fixed outside template */}
       <BackToTopFab />
     </GraphQLQueryStateContainer>
   );
-};export default AllSetsPage;
+};
+
+export default AllSetsPage;

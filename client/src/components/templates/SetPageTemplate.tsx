@@ -36,7 +36,7 @@ export const SetPageTemplate: React.FC<SetPageTemplateProps> = ({
       error={error}
       containerProps={{ maxWidth: false }}
     >
-      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+      <PageContainer maxWidth={false} sx={{ mt: { xs: 1, sm: 2 }, mb: 4, px: { xs: 1, sm: 2, md: 3 } }}>
         {/* Header Section */}
         {header}
 

@@ -6,21 +6,24 @@ import { ReleaseDateBadge } from '../../atoms/shared/ReleaseDateBadge';
 interface TopBadgesProps {
   setCode: string;
   releaseDate: string;
+  /** Compact mode for smaller cards - shows only set code */
+  compact?: boolean;
 }
 
-export const TopBadges: React.FC<TopBadgesProps> = ({ setCode, releaseDate }) => {
+export const TopBadges: React.FC<TopBadgesProps> = ({ setCode, releaseDate, compact = false }) => {
   return (
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: compact ? 'center' : 'space-between',
         alignItems: 'center',
         width: '100%',
-        mb: 0
+        mb: 0,
+        gap: compact ? 1 : 0,
       }}
     >
-      <SetCodeBadge code={setCode} />
-      <ReleaseDateBadge date={releaseDate} />
+      <SetCodeBadge code={setCode} compact={compact} />
+      {!compact && <ReleaseDateBadge date={releaseDate} />}
     </Box>
   );
 };

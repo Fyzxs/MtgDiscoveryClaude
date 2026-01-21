@@ -134,6 +134,9 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
     );
   };
 
+  // Calculate padding to reach minimum touch target (44px)
+  const touchTargetPadding = Math.max(0, (44 - sizeValue) / 2);
+
   return (
     <Link
       href={url}
@@ -148,6 +151,13 @@ export const ExternalLinkIcon: React.FC<ExternalLinkIconProps> = ({
       }}
       sx={{
         display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        // Ensure minimum touch target while keeping visual size small
+        minWidth: 44,
+        minHeight: 44,
+        // Negative margin to compensate for extra touch target space
+        mx: -touchTargetPadding / 8,
         transition: 'opacity 0.2s ease',
         '&:hover': {
           opacity: 0.8

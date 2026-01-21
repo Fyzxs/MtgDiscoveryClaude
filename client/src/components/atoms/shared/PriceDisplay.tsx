@@ -9,6 +9,8 @@ interface PriceDisplayProps extends Omit<StandardPriceProps, 'price' | 'currency
   currency?: 'USD' | 'EUR' | 'usd' | 'eur';
   label?: string;
   sx?: SxProps<Theme>;
+  /** Compact mode for mobile views */
+  compact?: boolean;
 }
 
 export const PriceDisplay: React.FC<PriceDisplayProps> = ({
@@ -16,7 +18,8 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
   currency = 'usd',
   label,
   className = '',
-  sx
+  sx,
+  compact = false
 }) => {
   const getPriceValue = (): number => {
     if (!price) return 0;
@@ -41,6 +44,45 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
   const priceValue = getPriceValue();
   const colorTheme = getPriceColor(priceValue);
 
+  // Compact layout shows label and price inline
+  if (compact) {
+    return (
+      <DarkBadge
+        component="span"
+        className={className}
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 0.5,
+          py: 0.25,
+          px: 0.75,
+          ...sx
+        }}
+      >
+        {label && (
+          <Typography
+            component="span"
+            variant="caption"
+            sx={{ color: 'text.secondary', fontSize: '0.625rem' }}
+          >
+            {label}:
+          </Typography>
+        )}
+        <Typography
+          component="span"
+          variant="body2"
+          sx={{
+            fontWeight: 'bold',
+            color: colorTheme,
+            fontSize: '0.75rem'
+          }}
+        >
+          {formatPrice(priceValue)}
+        </Typography>
+      </DarkBadge>
+    );
+  }
+
   return (
     <DarkBadge
       component="span"
@@ -57,10 +99,10 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
           {label}
         </Typography>
       )}
-      <Typography 
+      <Typography
         component="span"
         variant="body2"
-        sx={{ 
+        sx={{
           fontWeight: 'bold',
           color: colorTheme
         }}
