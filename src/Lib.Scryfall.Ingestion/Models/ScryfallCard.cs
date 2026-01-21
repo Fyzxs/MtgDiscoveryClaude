@@ -124,7 +124,7 @@ internal sealed class ScryfallCard : IScryfallCard
         {
             dynamic cardFaces = _dto.Data.card_faces;
             if (cardFaces == null) return false;
-            return cardFaces.Count > 0;
+            return 0 < cardFaces.Count;
         }
         catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
         {

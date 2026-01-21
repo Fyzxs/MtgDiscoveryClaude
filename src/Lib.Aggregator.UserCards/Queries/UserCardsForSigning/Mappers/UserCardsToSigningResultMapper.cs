@@ -69,7 +69,7 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
                 {
                     (int unsignedCopies, bool isPartiallySigned, bool isFullySigned, List<IUserCardDetailsOufEntity> details) = CalculateSigningStats(card);
 
-                    if (unsignedCopies > 0)
+                    if (0 < unsignedCopies)
                     {
                         artistUnsignedCount++;
                     }
@@ -159,7 +159,7 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
             .Where(c => c.Special != SignedSpecial)
             .Sum(c => c.Count);
 
-        bool isPartiallySigned = hasSigned && unsignedCopies > 0;
+        bool isPartiallySigned = hasSigned && 0 < unsignedCopies;
         bool isFullySigned = hasSigned && unsignedCopies == 0;
 
         List<IUserCardDetailsOufEntity> details = collected

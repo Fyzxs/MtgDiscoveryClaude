@@ -41,7 +41,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
         _dashboard.LogFetchingSets();
 
         Dictionary<string, IScryfallSet> sets = [];
-        bool hasSetFilter = _config.SetCodesToProcess.Count > 0;
+        bool hasSetFilter = 0 < _config.SetCodesToProcess.Count;
         System.DateTime? releasedAfter = _config.SetsReleasedAfter;
         int skippedCount = 0;
 
@@ -71,7 +71,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
             _dashboard.UpdateProgress("Sets:", sets.Count, 0, "Fetching", set.Name());
         }
 
-        if (skippedCount > 0)
+        if (0 < skippedCount)
         {
             _dashboard.LogSetsSkipped(skippedCount);
         }
