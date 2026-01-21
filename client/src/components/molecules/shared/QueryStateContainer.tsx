@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, CircularProgress, Alert, Box } from '@mui/material';
+import { Container, CircularProgress, Alert, Box, type ContainerProps } from '../../atoms';
 import { handleGraphQLError } from '../../../utils/networkErrorHandler';
 
 interface QueryStateContainerProps {
@@ -9,7 +9,7 @@ interface QueryStateContainerProps {
   children: React.ReactNode;
   loadingComponent?: React.ReactNode;
   errorComponent?: React.ReactNode;
-  containerProps?: any;
+  containerProps?: Omit<ContainerProps, 'children'>;
   showContainer?: boolean;
 }
 
@@ -32,7 +32,7 @@ export const QueryStateContainer: React.FC<QueryStateContainerProps> = ({
     if (loadingComponent) {
       return <>{loadingComponent}</>;
     }
-    
+
     const loadingContent = (
       <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
@@ -95,7 +95,7 @@ interface GraphQLQueryStateContainerProps<T> extends Omit<QueryStateContainerPro
     data?: T;
   } | null;
   failureTypeName?: string;
-  getErrorMessage?: (data: any) => string;
+  getErrorMessage?: (data: GraphQLQueryStateContainerProps<T>['data']) => string;
 }
 
 export function GraphQLQueryStateContainer<T>({
@@ -109,9 +109,9 @@ export function GraphQLQueryStateContainer<T>({
 }: GraphQLQueryStateContainerProps<T>) {
   // Check for GraphQL failure response
   let errorMsg: string | undefined;
-  
+
   if (data?.__typename === failureTypeName) {
-    errorMsg = getErrorMessage 
+    errorMsg = getErrorMessage
       ? getErrorMessage(data)
       : data.status?.message || 'Request failed';
   }
@@ -131,11 +131,12 @@ export function GraphQLQueryStateContainer<T>({
 /**
  * Hook for managing multiple query states
  */
+// eslint-disable-next-line react-refresh/only-export-components -- Utility hook related to QueryStateContainer
 export function useQueryStates(queries: Array<{ loading?: boolean; error?: Error | null }>) {
   const isLoading = queries.some(q => q.loading);
   const errors = queries.filter(q => q.error).map(q => q.error);
   const firstError = errors[0] || null;
-  
+
   return {
     isLoading,
     hasError: errors.length > 0,

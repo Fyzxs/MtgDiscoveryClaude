@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '../../utils/logger';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useMutation, useQuery } from '@apollo/client/react';
-import { SYNC_USER_PROFILE, GET_USER_PROFILE } from '../../graphql/mutations/user';
+import { useQuery } from '@apollo/client/react';
+import { GET_USER_INFO } from '../../graphql/mutations/user';
+import { getTokenReadyState } from '../../graphql/apollo-client';
 
 export interface UserProfile {
   id: string;
@@ -26,6 +28,20 @@ export interface CollectorProfile {
   collectionValue?: number;
 }
 
+interface UserInfoQueryData {
+  userInfo?: {
+    userId: string;
+    email: string;
+  };
+}
+
+interface UserInfoQueryResult {
+  loading: boolean;
+  data?: UserInfoQueryData;
+  error?: Error;
+  refetch: () => Promise<unknown>;
+}
+
 export interface UserSyncState {
   userProfile: UserProfile | null;
   isLoading: boolean;
@@ -40,80 +56,82 @@ export const useUserSync = (): UserSyncState => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
+  const [tokenReady, setTokenReady] = useState(false);
 
-  const [syncUserProfile] = useMutation(SYNC_USER_PROFILE);
-  
-  const { loading: profileLoading, refetch: refetchProfile } = useQuery(GET_USER_PROFILE, {
-    skip: !isAuthenticated,
-    errorPolicy: 'all',
-    onCompleted: (data) => {
-      if (data?.userProfile?.__typename === 'SuccessUserProfileResponse') {
-        setUserProfile(data.userProfile.data);
-        setIsFirstTimeUser(false);
-      } else if (data?.userProfile?.__typename === 'FailureResponse') {
-        // User doesn't exist in backend yet
-        setIsFirstTimeUser(true);
+  useEffect(() => {
+    const checkTokenReady = () => {
+      const ready = getTokenReadyState();
+      if (ready !== tokenReady) {
+        logger.debug('useUserSync - Token ready state changed:', ready);
+        setTokenReady(ready);
       }
-    },
-    onError: (error) => {
-      console.log('User profile query error (expected for new users):', error);
+    };
+
+    if (isAuthenticated && auth0Loading === false) {
+      const interval = setInterval(checkTokenReady, 100);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, auth0Loading, tokenReady]);
+
+  // Use GET_USER_INFO authenticated query
+  const { loading: userInfoLoading, data: userInfoData, error: userInfoError, refetch: refetchUserInfo } = useQuery<UserInfoQueryData>(GET_USER_INFO, {
+    skip: tokenReady === false,
+    errorPolicy: 'all'
+  }) as UserInfoQueryResult;
+
+  // Handle user info query results
+  useEffect(() => {
+    if (userInfoData?.userInfo) {
+      // Convert simple userInfo to UserProfile format
+      const simpleProfile: UserProfile = {
+        id: userInfoData.userInfo.userId,
+        auth0UserId: user?.sub || '',
+        email: userInfoData.userInfo.email,
+        name: user?.name,
+        nickname: user?.nickname,
+        picture: user?.picture,
+        isEmailVerified: user?.email_verified || false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      setUserProfile(simpleProfile);
+      setIsFirstTimeUser(false);
+      logger.debug('User info loaded:', simpleProfile);
+    } else if (userInfoError) {
+      logger.error('User info query error:', userInfoError);
+      setError('Failed to load user info');
       setIsFirstTimeUser(true);
     }
-  });
+  }, [userInfoData, userInfoError, user]);
 
   const syncUser = useCallback(async () => {
-    if (!isAuthenticated || !user) {
-      return;
-    }
-
-    try {
-      setError(null);
-      
-      const userInput = {
-        auth0UserId: user.sub || '',
-        email: user.email || '',
-        name: user.name || user.email?.split('@')[0] || '',
-        nickname: user.nickname || user.name || user.email?.split('@')[0] || '',
-        picture: user.picture || '',
-        isEmailVerified: user.email_verified || false
-      };
-
-      const { data } = await syncUserProfile({
-        variables: {
-          userProfile: userInput
-        }
-      });
-
-      if (data?.syncUserProfile?.__typename === 'SuccessUserProfileResponse') {
-        setUserProfile(data.syncUserProfile.data);
-        setIsFirstTimeUser(false);
-        console.log('User profile synced successfully:', data.syncUserProfile.data);
-      } else if (data?.syncUserProfile?.__typename === 'FailureResponse') {
-        setError(data.syncUserProfile.status.message);
+    // Simply refetch user info
+    if (refetchUserInfo) {
+      try {
+        await refetchUserInfo();
+      } catch (err) {
+        logger.error('User sync error:', err);
+        setError('Failed to sync user info');
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to sync user profile';
-      setError(errorMessage);
-      console.error('User sync error:', err);
     }
-  }, [isAuthenticated, user, syncUserProfile]);
+  }, [refetchUserInfo]);
 
   const refetchUserProfile = useCallback(async () => {
-    if (refetchProfile) {
-      await refetchProfile();
+    if (refetchUserInfo) {
+      await refetchUserInfo();
     }
-  }, [refetchProfile]);
+  }, [refetchUserInfo]);
 
   // Auto-sync user when Auth0 authentication completes
   useEffect(() => {
-    if (isAuthenticated && user && !userProfile && !profileLoading) {
+    if (isAuthenticated && user && !userProfile && !userInfoLoading) {
       syncUser();
     }
-  }, [isAuthenticated, user, userProfile, profileLoading, syncUser]);
+  }, [isAuthenticated, user, userProfile, userInfoLoading, syncUser]);
 
   return {
     userProfile,
-    isLoading: auth0Loading || profileLoading,
+    isLoading: auth0Loading || userInfoLoading,
     error,
     isFirstTimeUser,
     syncUser,

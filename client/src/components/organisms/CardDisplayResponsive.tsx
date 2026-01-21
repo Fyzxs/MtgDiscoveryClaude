@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Box, useTheme } from '../atoms';
+import type { SxProps, Theme } from '../atoms';
 import type { Card, CardContext } from '../../types/card';
 import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
 import { PriceDisplay } from '../atoms/shared/PriceDisplay';
@@ -7,6 +9,10 @@ import { CardMetadata } from '../molecules/Cards/CardMetadata';
 import { ArtistInfo } from '../molecules/Cards/ArtistInfo';
 import { CardLinks } from '../molecules/Cards/CardLinks';
 import { ManaCost } from '../molecules/Cards/ManaCost';
+import { useLongPress } from '../../hooks/useLongPress';
+import { useSwipeGesture } from '../../hooks/useSwipeGesture';
+import { useHapticFeedback } from '../../hooks/useHapticFeedback';
+import { getRarityColor } from '../../theme';
 
 interface CardDisplayProps {
   card: Card;
@@ -15,72 +21,184 @@ interface CardDisplayProps {
   onCardClick?: (cardId?: string) => void;
   onSetClick?: (setCode?: string) => void;
   onArtistClick?: (artistName: string, artistId?: string) => void;
-  className?: string;
+  onCardLongPress?: (cardId?: string) => void;
+  onSwipe?: (direction: 'left' | 'right' | 'up' | 'down', cardId?: string) => void;
+  enableHapticFeedback?: boolean;
+  enableSwipeGestures?: boolean;
+  enableLongPress?: boolean;
+  sx?: SxProps<Theme>;
 }
 
-export const CardDisplay: React.FC<CardDisplayProps> = ({ 
-  card, 
+export const CardDisplay: React.FC<CardDisplayProps> = ({
+  card,
   context = {},
   showHover = true,
   onCardClick,
   onSetClick,
   onArtistClick,
-  className = ''
+  onCardLongPress,
+  onSwipe,
+  enableHapticFeedback = true,
+  enableSwipeGestures = false,
+  enableLongPress = false,
+  sx = {},
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const theme = useTheme();
+  const { triggerHaptic } = useHapticFeedback({ enabled: enableHapticFeedback });
 
-  // Determine border color based on rarity
-  const getBorderColor = (rarity?: string): string => {
-    switch (rarity?.toLowerCase()) {
-      case 'common':
-        return 'border-gray-600 shadow-gray-600/50';
-      case 'uncommon':
-        return 'border-gray-400 shadow-gray-400/50';
-      case 'rare':
-        return 'border-yellow-600 shadow-yellow-600/50';
-      case 'mythic':
-        return 'border-orange-600 shadow-orange-600/50';
-      case 'special':
-      case 'bonus':
-        return 'border-purple-600 shadow-purple-600/50';
-      default:
-        return 'border-gray-700 shadow-gray-700/50';
+  const [isHovered, setIsHovered] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
+
+  // Handle card click with haptic feedback
+  const handleCardClick = () => {
+    if (enableHapticFeedback) {
+      triggerHaptic('light');
+    }
+    onCardClick?.(card.id);
+  };
+
+  // Handle long press with haptic feedback
+  const handleLongPress = () => {
+    if (enableHapticFeedback) {
+      triggerHaptic('medium');
+    }
+    onCardLongPress?.(card.id);
+  };
+
+  // Handle swipe gestures
+  const handleSwipe = (direction: 'left' | 'right' | 'up' | 'down') => {
+    if (enableHapticFeedback) {
+      triggerHaptic('selection');
+    }
+    onSwipe?.(direction, card.id);
+  };
+
+  // Long press handlers
+  const longPressHandlers = useLongPress({
+    onLongPress: handleLongPress,
+    onClick: handleCardClick,
+    threshold: 500,
+    onStart: () => {
+      setIsTouched(true);
+      if (enableHapticFeedback) {
+        triggerHaptic('selection');
+      }
+    },
+    onFinish: () => setIsTouched(false),
+    onCancel: () => setIsTouched(false),
+  });
+
+  // Swipe gesture handlers
+  const swipeHandlers = useSwipeGesture({
+    onSwipe: handleSwipe,
+    threshold: 50,
+    velocityThreshold: 0.3,
+    preventDefaultTouchmove: false,
+  });
+
+  // Get rarity-based styling
+  const getRarityBorderColor = (rarity?: string): string => {
+    return getRarityColor(rarity);
+  };
+
+  // Get container styling based on responsive state
+  const getContainerSx = (): SxProps<Theme> => {
+    const rarityColor = getRarityBorderColor(card.rarity);
+
+    return {
+      position: 'relative',
+      bgcolor: 'grey.900',
+      borderRadius: 3,
+      border: 2,
+      borderColor: rarityColor,
+      boxShadow: isHovered ? theme.mtg.shadows.card.hover : theme.mtg.shadows.card.normal,
+      transition: theme.mtg.transitions.card,
+      cursor: onCardClick ? 'pointer' : 'default',
+      overflow: 'hidden',
+
+      // Touch feedback
+      transform: isTouched ? 'scale(0.98)' : 'none',
+
+      // Hover effects for non-touch devices
+      '@media (hover: hover)': {
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: theme.mtg.shadows.card.hover,
+        },
+      },
+
+      // Remove tap highlight on mobile
+      WebkitTapHighlightColor: 'transparent',
+
+      // Focus styles for accessibility
+      '&:focus-visible': {
+        outline: `2px solid ${theme.palette.primary.main}`,
+        outlineOffset: '2px',
+      },
+
+      ...sx,
+    };
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (onCardClick && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      handleCardClick();
     }
   };
 
-  const borderClass = getBorderColor(card.rarity);
+  // Combine all event handlers - carefully to avoid type conflicts
+  const baseHandlers = {
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => setIsHovered(false),
+    onKeyDown: handleKeyDown,
+    tabIndex: onCardClick ? 0 : undefined,
+    role: onCardClick ? 'button' : undefined,
+    'aria-label': onCardClick ? `View ${card.name} details` : undefined,
+  };
+
+  const eventHandlers = enableLongPress
+    ? { ...longPressHandlers, ...baseHandlers }
+    : enableSwipeGestures
+      ? { ...swipeHandlers, onClick: handleCardClick, ...baseHandlers }
+      : { onClick: handleCardClick, ...baseHandlers };
 
   return (
-    <div 
-      className={`
-        relative 
-        bg-gray-900 
-        rounded-xl 
-        border-2 
-        ${borderClass}
-        ${isHovered ? 'shadow-lg' : 'shadow-md'}
-        transition-all 
-        duration-300
-        ${className}
-      `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <Box
+      component="div"
+      sx={getContainerSx()}
+      {...(eventHandlers as Partial<React.DOMAttributes<HTMLDivElement>>)}
     >
       {/* Mobile Layout - Horizontal */}
-      <div className="sm:hidden">
-        <div className="flex gap-3 p-3">
+      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 3,
+            p: 3,
+          }}
+        >
           {/* Card Image - Smaller on mobile */}
-          <div className="flex-shrink-0">
-            <CardImageDisplay 
+          <Box sx={{ flexShrink: 0 }}>
+            <CardImageDisplay
               card={card}
               size="small"
               showFlipButton={false}
-              className="w-20"
+              sx={{ width: 80 }}
             />
-          </div>
-          
+          </Box>
+
           {/* Card Info */}
-          <div className="flex-1 min-w-0 space-y-1">
+          <Box
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
+            }}
+          >
             <CardMetadata
               name={card.name}
               cardId={card.id}
@@ -92,52 +210,81 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
               context={context}
               onCardClick={onCardClick}
               onSetClick={onSetClick}
-              className="flex-1"
+              sx={{ flex: 1 }}
             />
-            
+
             {card.manaCost && (
               <ManaCost manaCost={card.manaCost} size="small" />
             )}
-            
+
             <ArtistInfo
               artist={card.artist}
               artistIds={card.artistIds}
               context={context}
               onArtistClick={onArtistClick}
             />
-            
-            <div className="flex justify-between items-center pt-1">
-              <PriceDisplay 
-                price={card.prices?.usd} 
+
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                pt: 1,
+              }}
+            >
+              <PriceDisplay
+                price={card.prices?.usd}
                 currency="usd"
-                className="text-sm font-bold"
+                sx={{
+                  fontSize: '0.875rem',
+                  fontWeight: 'bold',
+                }}
               />
               <CardLinks
                 scryfallUrl={card.scryfallUri}
                 cardName={card.name}
-                className="scale-75 origin-right"
+                sx={{
+                  transform: 'scale(0.75)',
+                  transformOrigin: 'right',
+                }}
               />
-            </div>
-          </div>
-        </div>
-      </div>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Desktop Layout - Vertical */}
-      <div className="hidden sm:block p-4 space-y-4">
+      <Box sx={{ display: { xs: 'none', sm: 'block' }, p: 4 }}>
         {/* Card Image */}
-        <div className="flex justify-center">
-          <CardImageDisplay 
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mb: 4,
+          }}
+        >
+          <CardImageDisplay
             card={card}
             size="normal"
             showFlipButton={true}
-            className="w-full max-w-[250px] lg:max-w-[300px]"
+            sx={{
+              width: '100%',
+              maxWidth: { sm: '250px', lg: '300px' },
+            }}
           />
-        </div>
+        </Box>
 
         {/* Card Info */}
-        <div className="space-y-3">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {/* Header with name and mana cost */}
-          <div className="flex justify-between items-start gap-2">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: 2,
+            }}
+          >
             <CardMetadata
               name={card.name}
               cardId={card.id}
@@ -149,12 +296,16 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
               context={context}
               onCardClick={onCardClick}
               onSetClick={onSetClick}
-              className="flex-1 min-w-0"
+              sx={{ flex: 1, minWidth: 0 }}
             />
             {card.manaCost && (
-              <ManaCost manaCost={card.manaCost} size="small" className="flex-shrink-0" />
+              <ManaCost
+                manaCost={card.manaCost}
+                size="small"
+                sx={{ flexShrink: 0 }}
+              />
             )}
-          </div>
+          </Box>
 
           {/* Collector Info */}
           {context.showCollectorInfo && (
@@ -174,42 +325,87 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
           />
 
           {/* Price and Links */}
-          <div className="flex justify-between items-center pt-2 border-t border-gray-800">
-            <PriceDisplay 
-              price={card.prices?.usd} 
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              pt: 2,
+              borderTop: 1,
+              borderColor: 'grey.800',
+            }}
+          >
+            <PriceDisplay
+              price={card.prices?.usd}
               currency="usd"
-              className="text-lg"
+              sx={{ fontSize: '1.125rem' }}
             />
             <CardLinks
               scryfallUrl={card.scryfallUri}
               cardName={card.name}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
 
         {/* Hover overlay with additional info - Desktop only */}
         {showHover && isHovered && (
-          <div className="absolute inset-x-0 bottom-0 bg-gray-900/95 backdrop-blur-sm rounded-b-xl p-4 border-t border-gray-700">
-            <div className="space-y-2">
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bgcolor: 'rgba(17, 24, 39, 0.95)',
+              backdropFilter: 'blur(4px)',
+              borderRadius: '0 0 24px 24px',
+              p: 4,
+              borderTop: 1,
+              borderColor: 'grey.700',
+            }}
+          >
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {card.oracleText && (
-                <p className="text-sm text-gray-300 italic">
+                <Box
+                  component="p"
+                  sx={{
+                    fontSize: '0.875rem',
+                    color: 'grey.300',
+                    fontStyle: 'italic',
+                    m: 0,
+                  }}
+                >
                   {card.oracleText}
-                </p>
+                </Box>
               )}
               {card.flavorText && (
-                <p className="text-xs text-gray-500 italic">
+                <Box
+                  component="p"
+                  sx={{
+                    fontSize: '0.75rem',
+                    color: 'grey.500',
+                    fontStyle: 'italic',
+                    m: 0,
+                  }}
+                >
                   "{card.flavorText}"
-                </p>
+                </Box>
               )}
               {(card.power || card.toughness) && (
-                <div className="text-right text-lg font-bold text-gray-400">
+                <Box
+                  sx={{
+                    textAlign: 'right',
+                    fontSize: '1.125rem',
+                    fontWeight: 'bold',
+                    color: 'grey.400',
+                  }}
+                >
                   {card.power}/{card.toughness}
-                </div>
+                </Box>
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
