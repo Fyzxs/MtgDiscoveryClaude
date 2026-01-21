@@ -49,9 +49,17 @@ internal sealed class CardGrouping
     public string Id { get; set; }
     public string DisplayName { get; set; }
     public int Order { get; set; }
-    public int CardCount { get; set; }
+    public CardCounts CardCounts { get; set; }
     public string RawQuery { get; set; }
     public GroupingFilters ParsedFilters { get; set; }
+}
+
+internal sealed class CardCounts
+{
+    public int Total { get; set; }
+    public int NonFoil { get; set; }
+    public int Foil { get; set; }
+    public int Etched { get; set; }
 }
 
 internal sealed class GroupingFilters

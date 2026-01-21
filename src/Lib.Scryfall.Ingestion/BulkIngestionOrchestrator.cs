@@ -7,8 +7,10 @@ using Lib.Scryfall.Ingestion.Apis;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Apis.Pipeline;
+using Lib.Scryfall.Ingestion.Services;
 using Lib.Scryfall.Shared.Apis.Models;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace Lib.Scryfall.Ingestion;
 
@@ -21,6 +23,8 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
     private readonly IArtistsPipelineService _artistsPipeline;
     private readonly ITrigramsPipelineService _trigramsPipeline;
     private readonly IBulkProcessingConfiguration _config;
+    private readonly ICardGroupingMatcher _groupingMatcher;
+    private readonly ISetGroupingsLoader _groupingsLoader;
 
     public BulkIngestionOrchestrator(
         IIngestionDashboard dashboard,
@@ -38,6 +42,8 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
         _artistsPipeline = artistsPipeline;
         _trigramsPipeline = trigramsPipeline;
         _config = config;
+        _groupingsLoader = new MonoStateSetGroupingsLoader();
+        _groupingMatcher = new CardGroupingMatcher();
     }
 
     public async Task OrchestrateBulkIngestionAsync()
@@ -80,14 +86,25 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
 
                 _cardsPipeline.ProcessCards(cards, setsByCode);
 
-                // Track artists and trigrams from cards
+                // Track artists, trigrams, and finish counts from cards
                 foreach (IScryfallCard card in cards)
                 {
                     _artistsPipeline.TrackArtist(card);
                     _trigramsPipeline.TrackCard(card);
+
+                    // Track finish counts for set groupings
+                    string setCode = card.Set().Code();
+                    CardGrouping grouping = _groupingMatcher.GetGroupingForCard(card.Data(), setCode);
+                    if (grouping is not null)
+                    {
+                        TrackFinishCounts(card.Data(), grouping);
+                    }
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
+
+                // Attach groupings to sets before writing
+                AttachGroupingsToSets(sets);
             }
 
             // Phase 3: Write all data
@@ -132,6 +149,79 @@ internal sealed class BulkIngestionOrchestrator : IBulkIngestionOrchestrator
             _dashboard.LogBulkIngestionFailed(ex);
             _dashboard.Complete($"Ingestion failed: {ex.Message}");
             throw;
+        }
+    }
+
+    private void AttachGroupingsToSets(Dictionary<string, IScryfallSet> sets)
+    {
+        foreach (KeyValuePair<string, IScryfallSet> kvp in sets)
+        {
+            IScryfallSet set = kvp.Value;
+            string setCode = set.Code();
+
+            SetGroupingData groupingData = _groupingsLoader.GetGroupingsForSet(setCode);
+            if (groupingData is null || groupingData.Groupings is null || groupingData.Groupings.Count == 0)
+            {
+                continue;
+            }
+
+            dynamic setData = set.Data();
+            if (setData is JObject setJObj)
+            {
+                JArray groupingsArray = [];
+                foreach (CardGrouping grouping in groupingData.Groupings)
+                {
+                    JObject groupingObj = new()
+                    {
+                        ["id"] = grouping.Id,
+                        ["displayName"] = grouping.DisplayName,
+                        ["order"] = grouping.Order,
+                        ["rawQuery"] = grouping.RawQuery
+                    };
+
+                    if (grouping.CardCounts is not null)
+                    {
+                        groupingObj["cardCounts"] = new JObject
+                        {
+                            ["total"] = grouping.CardCounts.Total,
+                            ["nonFoil"] = grouping.CardCounts.NonFoil,
+                            ["foil"] = grouping.CardCounts.Foil,
+                            ["etched"] = grouping.CardCounts.Etched
+                        };
+                    }
+
+                    groupingsArray.Add(groupingObj);
+                }
+
+                setJObj["groupings"] = groupingsArray;
+            }
+        }
+    }
+
+    private static void TrackFinishCounts(dynamic cardData, CardGrouping grouping)
+    {
+        grouping.CardCounts ??= new CardCounts();
+
+        grouping.CardCounts.Total++;
+
+        if (cardData is JObject jobj && jobj.TryGetValue("finishes", out JToken finishesToken) && finishesToken is JArray finishesArray)
+        {
+            foreach (JToken finishToken in finishesArray)
+            {
+                string finish = finishToken.ToString();
+                if (string.Equals(finish, "nonfoil", StringComparison.OrdinalIgnoreCase))
+                {
+                    grouping.CardCounts.NonFoil++;
+                }
+                else if (string.Equals(finish, "foil", StringComparison.OrdinalIgnoreCase))
+                {
+                    grouping.CardCounts.Foil++;
+                }
+                else if (string.Equals(finish, "etched", StringComparison.OrdinalIgnoreCase))
+                {
+                    grouping.CardCounts.Etched++;
+                }
+            }
         }
     }
 }
