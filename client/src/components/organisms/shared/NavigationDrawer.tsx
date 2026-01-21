@@ -12,7 +12,7 @@ import {
   TextField,
   InputAdornment
 } from '../../atoms';
-import { CloseIcon, SearchIcon, CollectionsBookmarkIcon, NavigateNextIcon, FavoriteBorderIcon, HotelIcon } from '../../atoms/Icons';
+import { CloseIcon, SearchIcon, CollectionsBookmarkIcon, NavigateNextIcon, FavoriteBorderIcon, HotelIcon } from '../../atoms';
 import { useTheme } from '../../atoms';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';

@@ -13,7 +13,7 @@ import { useTheme } from '../../atoms';
 import { SearchInput } from '../../molecules/shared/SearchInput';
 import { AuthButton } from '../../auth/AuthButton';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
-import { SearchIcon, ArrowDropDownIcon, MenuIcon, CollectionsBookmarkIcon } from '../../atoms/Icons';
+import { SearchIcon, ArrowDropDownIcon, MenuIcon, CollectionsBookmarkIcon } from '../../atoms';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import { NavigationDrawer } from './NavigationDrawer';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '../../atoms';
-import { ItemDateBadge } from '../../atoms';
+import { DateBadge } from '../shared/badges';
 import type { SealedProductContext } from '../../../types/sealedProduct';
 
 interface SealedProductOverlayProps {
@@ -41,7 +41,7 @@ export const SealedProductOverlay: React.FC<SealedProductOverlayProps> = React.m
       className={className}
     >
       <Box sx={{ p: 1, display: 'flex', justifyContent: 'flex-end' }}>
-        <ItemDateBadge date={releaseDate} />
+        <DateBadge variant="text" date={releaseDate} />
       </Box>
     </Box>
   );

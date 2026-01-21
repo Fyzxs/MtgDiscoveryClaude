@@ -1,5 +1,5 @@
-import Typography from '../Typography';
-import Box from '../Box';
+import Typography from '../mui-wrappers/Typography';
+import Box from '../mui-wrappers/Box';
 import { DarkBadge } from '../shared/DarkBadge';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useLinkParams } from '../../../contexts/LinkParamsContext';

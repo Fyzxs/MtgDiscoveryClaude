@@ -1,8 +1,6 @@
 import React from 'react';
 import { Box } from '../../atoms';
-import { SetTypeBadge } from '../../atoms/Sets/SetTypeBadge';
-import { DigitalBadge } from '../../atoms/Sets/DigitalBadge';
-import { FoilOnlyBadge } from '../../atoms/Sets/FoilOnlyBadge';
+import { StatusBadge } from '../shared/badges';
 
 interface BottomBadgesProps {
   setType: string;
@@ -29,9 +27,9 @@ export const BottomBadges: React.FC<BottomBadgesProps> = ({
         mb: 0
       }}
     >
-      <SetTypeBadge setType={setType} />
-      <DigitalBadge show={digital} />
-      <FoilOnlyBadge show={foilOnly} />
+      <StatusBadge variant="setType" setType={setType} />
+      <StatusBadge variant="digital" show={digital} />
+      <StatusBadge variant="foil" show={foilOnly} />
     </Box>
   );
 };

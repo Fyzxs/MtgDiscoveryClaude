@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '../Button';
-import Box from '../Box';
+import Button from '../mui-wrappers/Button';
+import Box from '../mui-wrappers/Box';
 
 interface SkipNavigationProps {
   links?: Array<{

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react';
 import { Box } from '../../atoms';
-import { PageTab } from '../../atoms/Binder';
+import { PageTab } from '../../atoms';
 import type { Card } from '../../../types/card';
 
 interface BinderPageTabsProps {

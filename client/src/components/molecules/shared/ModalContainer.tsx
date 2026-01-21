@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { Modal, Box, IconButton, alpha, useTheme } from '../../atoms';
-import { CloseIcon } from '../../atoms/Icons';
+import { CloseIcon } from '../../atoms';
 
 interface ModalContainerProps {
   open: boolean;

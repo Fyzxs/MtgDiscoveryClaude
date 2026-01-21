@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import CardMedia from '../../atoms/CardMedia';
-import Box from '../../atoms/Box';
-import Typography from '../../atoms/Typography';
-import { ImageNotSupportedIcon } from '../../atoms/Icons';
+import { CardMedia, Box, Typography, ImageNotSupportedIcon } from '../../atoms';
 
 interface CardImageProps {
   imageUrl?: string;

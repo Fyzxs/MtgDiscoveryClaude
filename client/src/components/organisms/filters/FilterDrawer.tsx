@@ -6,7 +6,7 @@ import {
   Typography,
   Button
 } from '../../atoms';
-import { CloseIcon } from '../../atoms/Icons';
+import { CloseIcon } from '../../atoms';
 import { FilterPanel } from './FilterPanel';
 import type { FilterPanelConfig } from '../../../types/filters';
 import { useTheme } from '../../atoms';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '../../atoms';
 import { ExpandableSection } from '../../molecules';
-import { LoadingContainer, ErrorAlert } from '../../atoms';
+import { LoadingIndicator, ErrorAlert } from '../../molecules/feedback';
 import { CardGrid } from './CardGrid';
 import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
@@ -114,7 +114,7 @@ export const AllPrintingsDisplay: React.FC<AllPrintingsDisplayProps> = ({ cardNa
       onExpandedChange={setExpanded}
     >
       {loading && (
-        <LoadingContainer py={4} />
+        <LoadingIndicator withContainer={false} />
       )}
       
       {userFriendlyError && (

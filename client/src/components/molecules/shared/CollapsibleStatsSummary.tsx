@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Collapse } from '../../atoms';
-import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms/Icons';
+import { ExpandMoreIcon, ExpandLessIcon } from '../../atoms';
 import { CollectionStatsSummary } from './CollectionStatsSummary';
 import { touchTargetStyles } from '../../../styles/touchTargets';
 import type { MtgSet } from '../../../types/set';
