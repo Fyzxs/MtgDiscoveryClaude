@@ -11,6 +11,7 @@ export interface CollectionEntryState {
 export interface CardCollectionUpdate {
   cardId: string;
   setId: string;
+  setCode: string;
   setGroupId: string | null;
   count: number;
   finish: CardFinish;

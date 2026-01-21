@@ -79,7 +79,8 @@ export const useMtgCardCollectionActions = ({
         await submitCollectionUpdateRef.current({
           ...update,
           setId: card.setId,
-          setGroupId: card.setGroupId || undefined
+          setCode: card.setCode || '',
+          setGroupId: card.setGroupId || null
         }, card.name);
         // Success flash via DOM (after mutation succeeds)
         cardElement.removeAttribute('data-submitting');
@@ -93,7 +94,7 @@ export const useMtgCardCollectionActions = ({
       setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- cardRef is a ref, refs are stable
-  }, [card.name, card.setId, card.setGroupId]);
+  }, [card.name, card.setId, card.setCode, card.setGroupId]);
 
   // Collection entry hook
   useCardCollectionEntry({

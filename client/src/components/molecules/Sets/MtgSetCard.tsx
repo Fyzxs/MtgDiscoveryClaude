@@ -406,18 +406,33 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           sx={{
             position: 'absolute',
             top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            left: 0,
+            right: 0,
+            transform: 'translateY(-50%)',
             opacity: 0.12,
             zIndex: 0,
             pointerEvents: 'none',
+            display: 'flex',
+            justifyContent: 'center',
+            px: 0.5,
+            '& > div': {
+              width: '100% !important',
+              height: 'auto !important',
+              border: 'none !important',
+            },
+            '& img': {
+              maxWidth: '100% !important',
+              maxHeight: 'none !important',
+              width: '100%',
+              height: 'auto',
+            },
           }}
         >
           <SetIconDisplay
             iconSvgUri={set.iconSvgUri}
             setName={set.name}
             borderColor="transparent"
-            size={160}
+            size={300}
           />
         </Box>
 
