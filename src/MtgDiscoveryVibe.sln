@@ -105,6 +105,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserSetCards
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserSetCards", "Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj", "{F728564A-91F7-433F-BB37-E9BF875CF689}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.DataMigration", "Cli.MtgDiscovery.DataMigration\Cli.MtgDiscovery.DataMigration.csproj", "{1B1BD5A2-3C49-4E00-8708-227FCA45D173}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -631,6 +633,18 @@ Global
 		{F728564A-91F7-433F-BB37-E9BF875CF689}.Release|x64.Build.0 = Release|Any CPU
 		{F728564A-91F7-433F-BB37-E9BF875CF689}.Release|x86.ActiveCfg = Release|Any CPU
 		{F728564A-91F7-433F-BB37-E9BF875CF689}.Release|x86.Build.0 = Release|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Debug|x64.Build.0 = Debug|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Debug|x86.Build.0 = Debug|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Release|x64.ActiveCfg = Release|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Release|x64.Build.0 = Release|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Release|x86.ActiveCfg = Release|Any CPU
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
