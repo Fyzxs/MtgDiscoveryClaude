@@ -1,0 +1,5 @@
+namespace Lib.Aggregator.UserWishlistCards.Apis;
+
+public interface IUserWishlistCardsAggregatorService : IUserWishlistCardsCommandAggregatorService, IUserWishlistCardsQueryAggregatorService
+{
+}

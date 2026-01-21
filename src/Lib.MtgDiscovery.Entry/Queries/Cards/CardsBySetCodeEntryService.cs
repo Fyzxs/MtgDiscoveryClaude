@@ -22,6 +22,7 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
     private readonly ISetCodeArgToItrMapper _setCodeArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly IUserWishlistCardByIdsEnrichment _userWishlistCardEnrichment;
     private readonly ISetCodeArgToUserCardsSetContextMapper _setContextMapper;
 
     public CardsBySetCodeEntryService(ILogger logger) : this(
@@ -30,6 +31,7 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         new SetCodeArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
         new UserCardEnrichment(logger),
+        new UserWishlistCardByIdsEnrichment(logger),
         new SetCodeArgToUserCardsSetContextMapper())
     { }
 
@@ -39,6 +41,7 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         ISetCodeArgToItrMapper setCodeArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
         IUserCardEnrichment userCardEnrichment,
+        IUserWishlistCardByIdsEnrichment userWishlistCardEnrichment,
         ISetCodeArgToUserCardsSetContextMapper setContextMapper)
     {
         _cardDomainService = cardDomainService;
@@ -46,6 +49,7 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         _setCodeArgToItrMapper = setCodeArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardEnrichment = userCardEnrichment;
+        _userWishlistCardEnrichment = userWishlistCardEnrichment;
         _setContextMapper = setContextMapper;
     }
 
@@ -69,6 +73,8 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
                 await _userCardEnrichment.EnrichBySet(outEntities, userCardsSetContext).ConfigureAwait(false);
             }
         }
+
+        await _userWishlistCardEnrichment.Enrich(outEntities, setCode).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

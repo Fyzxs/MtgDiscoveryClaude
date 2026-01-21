@@ -276,7 +276,8 @@ export const CardAllPrintingsPage: React.FC = () => {
           options: uniqueArtists.map(artist => ({ value: artist, label: artist })),
           label: 'Artist',
           placeholder: 'All Artists',
-          fullWidth: true
+          fullWidth: true,
+          searchable: true
         }] : []),
         // Formats filter
         ...(hasMultipleFormats ? [{

@@ -177,6 +177,9 @@ export interface Card {
   // Collection data will be embedded when collector ID is provided to GraphQL query
   // Empty array means no collection
   userCollection?: UserCardData | UserCardData[];
+  // Wishlist data will be embedded when collector ID is provided to GraphQL query
+  // Empty array means not wishlisted
+  userWishlist?: UserCardData | UserCardData[];
 }
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'mythic' | 'special' | 'bonus';

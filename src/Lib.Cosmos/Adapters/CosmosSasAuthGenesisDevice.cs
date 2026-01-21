@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Configurations;
 using Microsoft.Azure.Cosmos;
 
@@ -28,6 +30,13 @@ internal sealed class CosmosSasAuthGenesisDevice : IGenesisDevice
         };
         ThroughputProperties throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(containerConfig.AutoscaleMax());
 
-        await databaseResponse.Database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties).ConfigureAwait(false);
+        try
+        {
+            await databaseResponse.Database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties).ConfigureAwait(false);
+        }
+        catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.BadRequest && ex.ResponseBody.StartsWith("Setting offer throughput or autopilot on container is not supported for serverless accounts."))
+        {
+            await databaseResponse.Database.CreateContainerIfNotExistsAsync(containerProperties).ConfigureAwait(false);
+        }
     }
 }

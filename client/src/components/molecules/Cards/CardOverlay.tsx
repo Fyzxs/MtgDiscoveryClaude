@@ -6,6 +6,7 @@ import { ArtistLinks } from './ArtistLinks';
 import { CardName, SetLink, PriceDisplay, CardDateBadge } from '../../atoms';
 import { CardLinks } from './CardLinks';
 import { CollectionSummary } from './CollectionSummary';
+import { WishlistSummary } from './WishlistSummary';
 import { formatCollectionCount } from '../../../utils/collectionFormatters';
 import { touchTargetStyles } from '../../../styles/touchTargets';
 import type { Card, CardContext } from '../../../types/card';
@@ -63,6 +64,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const scryfallUrl = card.scryfallUri;
   const tcgplayerUrl = card.purchaseUris?.tcgplayer;
   const collectionData = card.userCollection;
+  const wishlistData = card.userWishlist;
 
   // Shared gradient for consistent look across all breakpoints
   const overlayGradient = 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.2) 85%, transparent 100%)';
@@ -82,17 +84,25 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         }}
         className={className}
       >
-        {/* Release date + collection row */}
+        {/* Release date + collection/wishlist row */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
           {releaseDate && !context.hideReleaseDate && (
             <CardDateBadge date={releaseDate} />
           )}
-          {context.hasCollector && collectionData && (
-            <CollectionSummary
-              collectionData={collectionData}
-              size="small"
-            />
-          )}
+          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+            {context.hasCollector && collectionData && (
+              <CollectionSummary
+                collectionData={collectionData}
+                size="small"
+              />
+            )}
+            {context.hasCollector && wishlistData && (
+              <WishlistSummary
+                wishlistData={wishlistData}
+                size="small"
+              />
+            )}
+          </Box>
         </Box>
 
         {/* Artist (show on set page between collector info and card name) */}
@@ -275,12 +285,20 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
               reserved={reserved}
             />
           </Box>
-          {context.hasCollector && collectionData && (
-            <CollectionSummary
-              collectionData={collectionData}
-              size="small"
-            />
-          )}
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.25 }}>
+            {context.hasCollector && collectionData && (
+              <CollectionSummary
+                collectionData={collectionData}
+                size="small"
+              />
+            )}
+            {context.hasCollector && wishlistData && (
+              <WishlistSummary
+                wishlistData={wishlistData}
+                size="small"
+              />
+            )}
+          </Box>
         </Box>
 
         {/* Artist(s) */}

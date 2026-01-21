@@ -77,6 +77,7 @@ export function useSetGroupToggle(): UseSetGroupToggleResult {
       await addSetGroupMutation({
         variables: {
           input: {
+            userId: collectorId,
             setId,
             setGroupId,
             collecting,

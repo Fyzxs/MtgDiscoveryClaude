@@ -128,7 +128,8 @@ export const SetPageFilters: React.FC<SetPageFiltersProps> = ({
               options: allArtists.map(artist => ({ value: artist, label: artist })),
               label: 'Artist',
               placeholder: 'All Artists',
-              minWidth: 200
+              minWidth: 200,
+              searchable: true
             }] : []),
             // Finishes filter (general filter, shown for all users)
             ...(allFinishes.length > 1 ? [{

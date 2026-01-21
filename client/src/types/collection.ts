@@ -129,3 +129,42 @@ export interface CollectionGroup {
   count?: number;
   finishes: GroupFinishProgress[];
 }
+
+// Wishlist types
+export interface WishlistCardUpdate {
+  cardId: string;
+  setId: string;
+  count: number;
+  finish: CardFinish;
+  special: CardSpecial;
+}
+
+export interface WishlistUpdateResult {
+  success: boolean;
+  card?: unknown;
+  error?: string;
+}
+
+// Entry mode for toggling between collection and wishlist
+export type EntryMode = 'collection' | 'wishlist';
+
+// Wishlist entry from the /wishlist page query
+export interface WishlistEntry {
+  userId: string;
+  cardId: string;
+  cardName: string;
+  setId: string;
+  setCode: string;
+  setName: string;
+  artistIds: string[];
+  cardNameGuid: string;
+  createdAt: string;
+  updatedAt: string;
+  wishlistItems: WishlistEntryItem[];
+}
+
+export interface WishlistEntryItem {
+  finish: string;
+  special: string;
+  count: number;
+}

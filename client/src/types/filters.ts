@@ -57,6 +57,7 @@ export interface MultiSelectConfig {
   fullWidth?: boolean;
   loading?: boolean;
   disabled?: boolean;
+  searchable?: boolean; // When true, uses Autocomplete with search capability
 }
 
 /**
