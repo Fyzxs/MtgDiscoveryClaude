@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { CardMedia, Box, Typography } from '@mui/material';
-import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
+import CardMedia from '../CardMedia';
+import Box from '../Box';
+import Typography from '../Typography';
+import { ImageNotSupportedIcon } from '../Icons';
 
 interface CardImageProps {
   imageUrl?: string;

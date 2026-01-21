@@ -1,7 +1,7 @@
 import './App.css'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
-import { Container, Typography, Box, CircularProgress } from '@mui/material'
+import { Container, Typography, Box, CircularProgress } from './components/atoms'
 import { AppCard as Card } from './components/molecules/shared/AppCard'
 import { AppButton as Button } from './components/molecules/shared/AppButton'
 import { Layout } from './components/templates/Layout'

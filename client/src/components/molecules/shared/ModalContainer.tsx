@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react';
-import { Modal, Box, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Modal, Box, IconButton } from '../../atoms';
+import { CloseIcon } from '../../atoms/Icons';
 
 interface ModalContainerProps {
   open: boolean;

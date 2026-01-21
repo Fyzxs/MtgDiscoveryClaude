@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { TextField, InputAdornment, IconButton, Skeleton, CircularProgress } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
+import { TextField, InputAdornment, IconButton, Skeleton, CircularProgress } from '../../atoms';
 import type { SearchInputProps } from '../../../types/components';
+import { SearchIcon, ClearIcon } from '../../atoms/Icons';
 
 interface DebouncedSearchInputProps extends SearchInputProps {
   loading?: boolean;

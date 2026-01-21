@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
+import { Typography } from '../../atoms';
 import { ExpandableSection } from '../molecules';
 import { LoadingContainer, ErrorAlert } from '../atoms';
 import { MtgCard } from './MtgCard';

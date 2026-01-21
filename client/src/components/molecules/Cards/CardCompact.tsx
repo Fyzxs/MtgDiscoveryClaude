@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, useTheme, Typography } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box, useTheme, Typography } from '../../atoms';
+import type { SxProps, Theme } from '../../atoms';
 import type { Card, CardContext } from '../../../types/card';
 import { CardImageDisplay } from './CardImageDisplay';
 import { PriceDisplay } from '../../atoms';

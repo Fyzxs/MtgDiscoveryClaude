@@ -1,4 +1,6 @@
-import { Link, Typography, Box } from '@mui/material';
+import Link from '../Link';
+import Typography from '../Typography';
+import Box from '../Box';
 import { SetIcon } from '../Sets/SetIcon';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import type { StyledComponentProps } from '../../../types/components';

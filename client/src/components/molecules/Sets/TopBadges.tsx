@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '../../atoms';
 import { SetCodeBadge } from '../../atoms/Sets/SetCodeBadge';
 import { ReleaseDateBadge } from '../../atoms/shared/ReleaseDateBadge';
 

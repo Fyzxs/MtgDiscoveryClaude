@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box } from '../../atoms';
 import { FilterPanel } from './filters/FilterPanel';
 import { CollectorFiltersSection } from '../molecules/shared/CollectorFiltersSection';
 import { FilterErrorBoundary } from '../ErrorBoundaries';

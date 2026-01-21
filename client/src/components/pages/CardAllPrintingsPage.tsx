@@ -10,8 +10,7 @@ import {
   Button,
   CircularProgress,
   Alert
-} from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
+} from '../../atoms';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { CardGrid } from '../organisms/CardGrid';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
@@ -26,6 +25,7 @@ import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErr
 import { AppErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+import { RefreshIcon } from '../atoms/Icons';
 
 // Stable empty array to prevent infinite re-renders
 const EMPTY_CARDS_ARRAY: Card[] = [];

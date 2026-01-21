@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, startTransition } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Typography } from '../../atoms';
 import { GET_ALL_SETS } from '../../graphql/queries/sets';
 import { MtgSetCard } from '../molecules/Sets/MtgSetCard';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';

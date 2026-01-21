@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Chip } from '@mui/material';
+import { Box, Chip } from '../../atoms';
 
 interface CardBadgesProps {
   foil?: boolean;       // Individual boolean properties instead of arrays

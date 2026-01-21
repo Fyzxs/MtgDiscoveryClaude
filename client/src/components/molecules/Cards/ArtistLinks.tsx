@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Typography } from '../../atoms';
 import { ArtistLink } from '../../atoms';
 import type { CardContext } from '../../../types/card';
 

@@ -1,6 +1,6 @@
-import { IconButton } from '@mui/material';
-import { ZoomIn } from '@mui/icons-material';
+import IconButton from '../IconButton';
 import type { MouseEvent } from 'react';
+import { ZoomInIcon } from '../Icons';
 
 interface ZoomIndicatorProps {
   onZoomClick: (e: MouseEvent) => void;
@@ -39,7 +39,7 @@ export const ZoomIndicator = ({
       }}
       className={`zoom-indicator ${className || ''}`}
     >
-      <ZoomIn sx={{ fontSize: '3rem' }} />
+      <ZoomInIcon sx={{ fontSize: '3rem' }} />
     </IconButton>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography, Link } from '@mui/material';
-import type { SxProps, Theme } from '@mui/material';
+import { Box, Typography, Link } from '../../atoms';
+import type { SxProps, Theme } from '../../atoms';
 import type { CardContext } from '../../../types/card';
 
 interface ArtistInfoProps {
