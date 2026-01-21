@@ -85,12 +85,19 @@ export const SetPage: React.FC = () => {
     hasCollector
   } = useSetPageData(setCode);
 
-  // Sealed products data - only fetch when sealed tab is active
+  // Sealed products data - always fetch to determine if tab should be shown
   const {
     sealedProducts,
     loading: sealedLoading,
     error: sealedError
-  } = useSealedProductsData(setCode, activeTab === 'sealed');
+  } = useSealedProductsData(setCode, true);
+
+  // If sealed tab is active but no sealed products exist, switch to cards tab
+  React.useEffect(() => {
+    if (activeTab === 'sealed' && sealedProducts.length === 0 && !sealedLoading) {
+      setActiveTab('cards');
+    }
+  }, [activeTab, sealedProducts.length, sealedLoading]);
 
   // Binder view mode state
   const canUseBookMode = !isMobile && !isTablet;
@@ -329,7 +336,7 @@ export const SetPage: React.FC = () => {
               }}
             >
               <Tab label="Cards" value="cards" />
-              <Tab label="Sealed" value="sealed" />
+              {sealedProducts.length > 0 && <Tab label="Sealed" value="sealed" />}
               <Tab label="Binder" value="binder" />
             </Tabs>
           </Box>
