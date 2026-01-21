@@ -16,10 +16,8 @@ internal sealed class AddUserSealedProductAggregator : IAddUserSealedProductAggr
         new AddUserSealedProductAdapter(logger))
     { }
 
-    private AddUserSealedProductAggregator(IAddUserSealedProductAdapter adapter)
-    {
+    private AddUserSealedProductAggregator(IAddUserSealedProductAdapter adapter) =>
         _adapter = adapter;
-    }
 
     public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input)
     {
