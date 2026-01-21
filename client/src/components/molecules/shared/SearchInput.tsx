@@ -139,8 +139,8 @@ const SearchInputComponent: React.FC<SearchInputProps> = ({
     if (e.key === 'Enter') {
       e.preventDefault();
 
-      if (onEnter && searchInputRef.current) {
-        onEnter(searchInputRef.current.value);
+      if (onEnter) {
+        onEnter(internalValue);
       } else if (onSubmit && internalValue?.trim()) {
         onSubmit();
       }
