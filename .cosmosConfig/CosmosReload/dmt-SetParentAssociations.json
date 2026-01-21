@@ -12,7 +12,7 @@
     "AccountEndpoint": "https://cosmos-mtg-dev-wcus-01.documents.azure.com:443/",
     "RecreateContainer": false,
     "Database": "MtgDiscoveryV4",
-    "Container": "SetItems",
+    "Container": "SetParentAssociations",
     "PartitionKeyPath": "/partition",
     "WriteMode":"UpsertStream",
     "IsServerlessAccount":true
