@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Queries.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
-using Lib.Shared.Abstractions.Actions;
-using Lib.Shared.Abstractions.Mappers;
+using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.DataModels.Entities.Outs.Cards;
@@ -23,12 +21,13 @@ internal sealed class CardEntryService : ICardEntryService
     private readonly ISetCodeArgEntityValidator _setCodeArgEntityValidator;
     private readonly ICardNameArgEntityValidator _cardNameArgEntityValidator;
     private readonly ICardSearchTermArgEntityValidator _cardSearchTermArgEntityValidator;
-    private readonly ICardsArgsToItrMapper _cardsArgsToItrMapper;
-    private readonly ISetCodeArgsToItrMapper _setCodeArgsToItrMapper;
-    private readonly ICardNameArgsToItrMapper _cardNameArgsToItrMapper;
-    private readonly ICardSearchTermArgsToItrMapper _cardSearchTermArgsToItrMapper;
+    private readonly ICardIdsArgToItrMapper _cardIdsArgToItrMapper;
+    private readonly ISetCodeArgToItrMapper _setCodeArgToItrMapper;
+    private readonly ICardNameArgToItrMapper _cardNameArgToItrMapper;
+    private readonly ICardSearchTermArgToItrMapper _cardSearchTermArgToItrMapper;
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly ICollectionCardNameSearchOufToOutMapper _cardNameSearchOufToOutMapper;
+    private readonly IUserCardEnrichment _userCardEnrichment;
 
     public CardEntryService(ILogger logger) : this(
         new CardDomainService(logger),
@@ -36,52 +35,55 @@ internal sealed class CardEntryService : ICardEntryService
         new SetCodeArgEntityValidatorContainer(),
         new CardNameArgEntityValidatorContainer(),
         new CardSearchTermArgEntityValidatorContainer(),
-        new CardsArgsToItrMapper(),
-        new SetCodeArgsToItrMapper(),
-        new CardNameArgsToItrMapper(),
-        new CardSearchTermArgsToItrMapper(),
+        new CardIdsArgToItrMapper(),
+        new SetCodeArgToItrMapper(),
+        new CardNameArgToItrMapper(),
+        new CardSearchTermArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
-        new CollectionCardNameSearchOufToOutMapper())
+        new CollectionCardNameSearchOufToOutMapper(),
+        new UserCardEnrichment(logger))
     { }
 
-    private CardEntryService(
-        ICardDomainService cardDomainService,
+    private CardEntryService(ICardDomainService cardDomainService,
         ICardIdsArgEntityValidator cardIdsArgEntityValidator,
         ISetCodeArgEntityValidator setCodeArgEntityValidator,
         ICardNameArgEntityValidator cardNameArgEntityValidator,
         ICardSearchTermArgEntityValidator cardSearchTermArgEntityValidator,
-        ICardsArgsToItrMapper cardsArgsToItrMapper,
-        ISetCodeArgsToItrMapper setCodeArgsToItrMapper,
-        ICardNameArgsToItrMapper cardNameArgsToItrMapper,
-        ICardSearchTermArgsToItrMapper cardSearchTermArgsToItrMapper,
+        ICardIdsArgToItrMapper cardIdsArgToItrMapper,
+        ISetCodeArgToItrMapper setCodeArgToItrMapper,
+        ICardNameArgToItrMapper cardNameArgToItrMapper,
+        ICardSearchTermArgToItrMapper cardSearchTermArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
-        ICollectionCardNameSearchOufToOutMapper cardNameSearchOufToOutMapper)
+        ICollectionCardNameSearchOufToOutMapper cardNameSearchOufToOutMapper,
+        IUserCardEnrichment userCardEnrichment)
     {
         _cardDomainService = cardDomainService;
         _cardIdsArgEntityValidator = cardIdsArgEntityValidator;
         _setCodeArgEntityValidator = setCodeArgEntityValidator;
         _cardNameArgEntityValidator = cardNameArgEntityValidator;
         _cardSearchTermArgEntityValidator = cardSearchTermArgEntityValidator;
-        _cardsArgsToItrMapper = cardsArgsToItrMapper;
-        _setCodeArgsToItrMapper = setCodeArgsToItrMapper;
-        _cardNameArgsToItrMapper = cardNameArgsToItrMapper;
-        _cardSearchTermArgsToItrMapper = cardSearchTermArgsToItrMapper;
+        _cardIdsArgToItrMapper = cardIdsArgToItrMapper;
+        _setCodeArgToItrMapper = setCodeArgToItrMapper;
+        _cardNameArgToItrMapper = cardNameArgToItrMapper;
+        _cardSearchTermArgToItrMapper = cardSearchTermArgToItrMapper;
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _cardNameSearchOufToOutMapper = cardNameSearchOufToOutMapper;
+        _userCardEnrichment = userCardEnrichment;
     }
-
-
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _cardIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        ICardIdsItrEntity itrEntity = await _cardsArgsToItrMapper.Map(args).ConfigureAwait(false);
+        ICardIdsItrEntity itrEntity = await _cardIdsArgToItrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByIdsAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        await _userCardEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }
 
@@ -90,7 +92,7 @@ internal sealed class CardEntryService : ICardEntryService
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _setCodeArgEntityValidator.Validate(setCode).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        ISetCodeItrEntity itrEntity = await _setCodeArgsToItrMapper.Map(setCode).ConfigureAwait(false);
+        ISetCodeItrEntity itrEntity = await _setCodeArgToItrMapper.Map(setCode).ConfigureAwait(false);
         IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsBySetCodeAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
@@ -103,7 +105,7 @@ internal sealed class CardEntryService : ICardEntryService
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _cardNameArgEntityValidator.Validate(cardName).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        ICardNameItrEntity itrEntity = await _cardNameArgsToItrMapper.Map(cardName).ConfigureAwait(false);
+        ICardNameItrEntity itrEntity = await _cardNameArgToItrMapper.Map(cardName).ConfigureAwait(false);
         IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByNameAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
@@ -116,7 +118,7 @@ internal sealed class CardEntryService : ICardEntryService
         IValidatorActionResult<IOperationResponse<ICardNameSearchCollectionOufEntity>> validatorResult = await _cardSearchTermArgEntityValidator.Validate(searchTerm).ConfigureAwait(false);
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardNameSearchResultOutEntity>>(validatorResult.FailureStatus().OuterException);
 
-        ICardSearchTermItrEntity itrEntity = await _cardSearchTermArgsToItrMapper.Map(searchTerm).ConfigureAwait(false);
+        ICardSearchTermItrEntity itrEntity = await _cardSearchTermArgToItrMapper.Map(searchTerm).ConfigureAwait(false);
         IOperationResponse<ICardNameSearchCollectionOufEntity> opResponse = await _cardDomainService.CardNameSearchAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<List<CardNameSearchResultOutEntity>>(opResponse.OuterException);
 

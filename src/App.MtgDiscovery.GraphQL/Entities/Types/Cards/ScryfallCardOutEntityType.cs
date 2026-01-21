@@ -274,5 +274,8 @@ internal class ScryfallCardOutEntityType : ObjectType<CardItemOutEntity>
         descriptor.Field(f => f.AttractionLights)
             .Name("attractions")
             .Description("Attraction lights");
+
+        descriptor.Field(f => f.UserCollection)
+            .Description("User's collection information for this card (populated when userId provided)");
     }
 }
