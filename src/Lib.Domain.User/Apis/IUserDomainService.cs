@@ -1,10 +1,5 @@
-﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.Invocation.Operations;
+﻿namespace Lib.Domain.User.Apis;
 
-namespace Lib.Domain.User.Apis;
-
-public interface IUserDomainService
+public interface IUserDomainService : IUserCommandDomainService
 {
-    Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
 }

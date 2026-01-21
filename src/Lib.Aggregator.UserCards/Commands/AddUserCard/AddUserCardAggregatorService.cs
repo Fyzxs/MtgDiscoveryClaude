@@ -42,9 +42,9 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         _addCardToSetMapper = addCardToSetMapper;
     }
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard)
+    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(IUserCardItrEntity input)
     {
-        IAddUserCardXfrEntity xfrEntity = await _addUserCardItrToXfrMapper.Map(userCard).ConfigureAwait(false);
+        IAddUserCardXfrEntity xfrEntity = await _addUserCardItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<UserCardExtEntity> response = await _userCardsAdapterService.AddUserCardAsync(xfrEntity).ConfigureAwait(false);
 
         if (response.IsFailure)

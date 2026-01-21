@@ -32,9 +32,9 @@ internal sealed class ArtistSearchAggregatorService : IArtistSearchAggregatorSer
         _artistSearchResultCollectionMapper = artistSearchResultCollectionMapper;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(IArtistSearchTermItrEntity input)
     {
-        IArtistSearchTermXfrEntity mappedEntity = await _artistSearchItrToXfrMapper.Map(searchTerm).ConfigureAwait(false);
+        IArtistSearchTermXfrEntity mappedEntity = await _artistSearchItrToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>> adapterResponse = await _artistAdapterService.SearchArtistsAsync(mappedEntity).ConfigureAwait(false);
 
         if (adapterResponse.IsFailure)

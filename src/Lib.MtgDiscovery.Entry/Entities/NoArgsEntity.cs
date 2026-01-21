@@ -1,3 +1,5 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities;
+﻿using Lib.Shared.DataModels.Entities.Args;
 
-internal sealed class NoArgsEntity;
+namespace Lib.MtgDiscovery.Entry.Entities;
+
+internal sealed class NoArgsEntity : INoArgsArgEntity;
