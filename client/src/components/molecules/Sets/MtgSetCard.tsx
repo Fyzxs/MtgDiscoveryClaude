@@ -290,7 +290,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
               }}
             >
               {collectionProgress.setTotalCards > 0
-                ? `${collectionProgress.uniqueCards}/${collectionProgress.setTotalCards}`
+                ? `${collectionProgress.uniqueCards}/${collectionProgress.setTotalCards} • ${Math.round(percentage)}%`
                 : `${set.userCollection?.totalCards || 0}/${totalInSet}`
               }
             </Typography>
@@ -414,9 +414,9 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
             pointerEvents: 'none',
             display: 'flex',
             justifyContent: 'center',
-            px: 0.5,
+            px: 1.5,
             '& > div': {
-              width: '100% !important',
+              width: '90% !important',
               height: 'auto !important',
               border: 'none !important',
             },
@@ -432,7 +432,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
             iconSvgUri={set.iconSvgUri}
             setName={set.name}
             borderColor="transparent"
-            size={300}
+            size={270}
           />
         </Box>
 
@@ -454,16 +454,6 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           }}
         >
           {formatSetType(set.setType)}
-        </Box>
-
-        {/* Small icon */}
-        <Box sx={{ zIndex: 1, mb: 1 }}>
-          <SetIconDisplay
-            iconSvgUri={set.iconSvgUri}
-            setName={set.name}
-            borderColor="transparent"
-            size={66}
-          />
         </Box>
 
         {/* Meta badges */}
