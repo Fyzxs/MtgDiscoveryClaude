@@ -41,6 +41,11 @@ export const CardCompact: React.FC<CardCompactProps> = ({
   const { isMobile } = useResponsiveBreakpoints();
   const { triggerHaptic } = useHapticFeedback({ enabled: enableHapticFeedback });
 
+  // Debug: Log card.reserved value
+  if (card.reserved !== undefined) {
+    console.log(`Card ${card.name} - reserved:`, card.reserved);
+  }
+
   const [isHovered, setIsHovered] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
 

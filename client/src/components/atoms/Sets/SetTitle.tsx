@@ -8,7 +8,7 @@ interface SetTitleProps {
   sx?: SxProps<Theme>;
 }
 
-export const SetTitle: React.FC<SetTitleProps> = ({ name, sx }) => {
+export const SetTitle: React.FC<SetTitleProps> = ({ name }) => {
   // Calculate font size based on name length
   const getFontSize = () => {
     const length = name.length;
@@ -36,8 +36,7 @@ export const SetTitle: React.FC<SetTitleProps> = ({ name, sx }) => {
         WebkitLineClamp: 2,
         WebkitBoxOrient: 'vertical',
         lineHeight: 1.2,
-        fontSize: getFontSize(),
-        ...sx,
+        fontSize: getFontSize()
       }}
     >
       {name}

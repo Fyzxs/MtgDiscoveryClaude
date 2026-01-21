@@ -107,6 +107,7 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
 
   if (!card) return null;
 
+<<<<<<< HEAD
   // Render mobile sheet on smaller screens
   if (useMobileSheet) {
     return (
@@ -122,6 +123,8 @@ export const CardDetailsModal: React.FC<CardDetailsModalProps> = ({
     );
   }
 
+=======
+>>>>>>> c6bb6adc (latest stuff)
   // Check if there are any displayable treatments
   const hasDisplayableTreatments = (
     card.foil ||
