@@ -2,7 +2,9 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Grid
+  Grid,
+  FormControlLabel,
+  Switch
 } from '../../atoms';
 import { MultiSelectDropdown } from './MultiSelectDropdown';
 import type { CollectorFiltersConfig } from '../../../types/filters';
@@ -24,11 +26,12 @@ const CollectorFiltersSectionComponent: React.FC<CollectorFiltersSectionProps> =
     collectionCounts,
     signedCards,
     finishes,
-    collectionStatus
+    collectionStatus,
+    wishlist
   } = config;
 
   // If no collector filters are configured, don't render anything
-  if (!collectionCounts && !signedCards && !finishes && !collectionStatus) {
+  if (!collectionCounts && !signedCards && !finishes && !collectionStatus && !wishlist) {
     return null;
   }
 
@@ -132,6 +135,23 @@ const CollectorFiltersSectionComponent: React.FC<CollectorFiltersSectionProps> =
               fullWidth={collectionStatus.fullWidth !== false}
               loading={collectionStatus.loading}
               disabled={collectionStatus.disabled}
+            />
+          </Grid>
+        )}
+
+        {/* Wishlist Toggle */}
+        {wishlist && (
+          <Grid size={{ xs: 12, sm: 'auto' }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={wishlist.value}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => wishlist.onChange(e.target.checked)}
+                  size="small"
+                />
+              }
+              label={wishlist.label}
+              sx={{ minWidth: 150 }}
             />
           </Grid>
         )}
