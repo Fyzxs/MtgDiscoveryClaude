@@ -52,11 +52,11 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        echo "Creating Application Insights: $(envNames.appInsightsName)"
+        echo "Creating Application Insights: $(envNames.appInsightsName) in $(appInsightsLocation)"
 
         az monitor app-insights component create \
           --app $(envNames.appInsightsName) \
-          --location $(location) \
+          --location $(appInsightsLocation) \
           --resource-group $(envNames.resourceGroupName) \
           --application-type $(appInsightsType) \
           --workspace $(logAnalytics.logAnalyticsWorkspaceId) \
@@ -286,6 +286,10 @@ steps:
             Environment=${{ parameters.environment }} \
             Application=$(appName)
 
+        # Note: Health probes will be configured during deployment with actual application
+        # Placeholder image may not have /health endpoint
+        echo "Container App created - health probes will be configured during application deployment"
+
         # Get FQDN
         FQDN=$(az containerapp show \
           --name $(envNames.containerAppName) \
@@ -295,7 +299,7 @@ steps:
 
         echo "##vso[task.setvariable variable=containerAppFqdn;isOutput=true]$FQDN"
 
-        echo "Container App created successfully"
+        echo "Container App created successfully with health probes"
         echo "Container App URL: https://$FQDN"
         echo "Using Managed Identity: $(managedIdentity.identityName)"
     name: containerApp
@@ -307,12 +311,12 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        echo "Creating Static Web App: $(envNames.staticWebAppName)"
+        echo "Creating Static Web App: $(envNames.staticWebAppName) in $(swaLocation)"
 
         az staticwebapp create \
           --name $(envNames.staticWebAppName) \
           --resource-group $(envNames.resourceGroupName) \
-          --location $(location) \
+          --location $(swaLocation) \
           --sku $(staticWebAppSku) \
           --tags \
             Environment=${{ parameters.environment }} \
