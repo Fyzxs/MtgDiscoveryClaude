@@ -9,9 +9,9 @@ import {
   FormControlLabel,
   Switch
 } from '@mui/material';
-import { DebouncedSearchInput } from '../../atoms/shared/DebouncedSearchInput';
-import { MultiSelectDropdown } from '../../atoms/shared/MultiSelectDropdown';
-import { SortDropdown } from '../../atoms/shared/SortDropdown';
+import { DebouncedSearchInput } from '../../molecules/shared/DebouncedSearchInput';
+import { MultiSelectDropdown } from '../../molecules/shared/MultiSelectDropdown';
+import { SortDropdown } from '../../molecules/shared/SortDropdown';
 import { CollectorFiltersSection } from '../../molecules/shared/CollectorFiltersSection';
 import type {
   FilterPanelConfig,
