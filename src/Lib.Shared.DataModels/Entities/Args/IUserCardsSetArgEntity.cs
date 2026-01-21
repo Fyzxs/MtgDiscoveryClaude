@@ -3,7 +3,7 @@
 /// <summary>
 /// Argument entity for querying user cards by set.
 /// </summary>
-public interface IUserCardsSetArgEntity
+public interface IUserCardsBySetArgEntity
 {
     /// <summary>
     /// The ID of the set to query.

@@ -5,13 +5,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Args;
-using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
-using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -21,25 +19,20 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class SetQueryMethods
 {
-    private readonly ICollectionSetItemItrToOutMapper _setCollectionMapper;
     private readonly IEntryService _entryService;
 
-    public SetQueryMethods(ILogger logger) : this(new CollectionSetItemItrToOutMapper(), new EntryService(logger))
+    public SetQueryMethods(ILogger logger) : this(new EntryService(logger))
     {
     }
 
-    private SetQueryMethods(ICollectionSetItemItrToOutMapper setCollectionMapper, IEntryService entryService)
-    {
-        _setCollectionMapper = setCollectionMapper;
-        _entryService = entryService;
-    }
+    private SetQueryMethods(IEntryService entryService) => _entryService = entryService;
 
     public string TestSet() => "Set query endpoint is working!";
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> SetsById(SetIdsArgEntity ids)
     {
-        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
+        IOperationResponse<List<ScryfallSetOutEntity>> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -53,15 +46,13 @@ public class SetQueryMethods
             };
         }
 
-        ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
-
-        return new SuccessDataResponseModel<ICollection<ScryfallSetOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = response.ResponseData };
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> SetsByCode(SetCodesArgEntity codes)
     {
-        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
+        IOperationResponse<List<ScryfallSetOutEntity>> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -75,15 +66,13 @@ public class SetQueryMethods
             };
         }
 
-        ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
-
-        return new SuccessDataResponseModel<ICollection<ScryfallSetOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = response.ResponseData };
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> AllSets()
     {
-        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
+        IOperationResponse<List<ScryfallSetOutEntity>> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -97,8 +86,6 @@ public class SetQueryMethods
             };
         }
 
-        ICollection<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
-
-        return new SuccessDataResponseModel<ICollection<ScryfallSetOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = response.ResponseData };
     }
 }

@@ -13,7 +13,8 @@ internal sealed class UserCardDetailsArgToItrMapper : IUserCardDetailsArgToItrMa
         {
             Finish = argItem.Finish,
             Special = argItem.Special,
-            Count = argItem.Count
+            Count = argItem.Count,
+            SetGroupId = argItem.SetGroupId
         });
     }
 }

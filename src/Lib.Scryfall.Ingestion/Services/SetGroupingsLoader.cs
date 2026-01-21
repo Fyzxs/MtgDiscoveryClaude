@@ -14,10 +14,7 @@ internal sealed class SetGroupingsLoader : ISetGroupingsLoader
 {
     private readonly Dictionary<string, SetGroupingData> _groupings;
 
-    public SetGroupingsLoader(string filePath)
-    {
-        _groupings = LoadGroupings(filePath);
-    }
+    public SetGroupingsLoader(string filePath) => _groupings = LoadGroupings(filePath);
 
     private Dictionary<string, SetGroupingData> LoadGroupings(string filePath)
     {
@@ -38,10 +35,7 @@ internal sealed class SetGroupingsLoader : ISetGroupingsLoader
             : null;
     }
 
-    public bool HasGroupingsForSet(string setCode)
-    {
-        return _groupings.ContainsKey(setCode);
-    }
+    public bool HasGroupingsForSet(string setCode) => _groupings.ContainsKey(setCode);
 }
 
 internal sealed class SetGroupingData

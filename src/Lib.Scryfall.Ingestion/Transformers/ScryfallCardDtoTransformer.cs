@@ -9,12 +9,6 @@ internal sealed class ScryfallCardDtoTransformer : IScryfallDtoTransformer<ExtSc
 {
     private readonly IScryfallSet _set;
 
-    public ScryfallCardDtoTransformer(IScryfallSet set)
-    {
-        _set = set;
-    }
-    public IScryfallCard Transform(ExtScryfallCardDto dto)
-    {
-        return new ScryfallCard(dto, _set);
-    }
+    public ScryfallCardDtoTransformer(IScryfallSet set) => _set = set;
+    public IScryfallCard Transform(ExtScryfallCardDto dto) => new ScryfallCard(dto, _set);
 }

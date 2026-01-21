@@ -8,17 +8,11 @@ public abstract class OperationResponseMessage : ToSystemType<string>;
 
 public sealed class SuccessOperationResponse<TResponseData> : OperationResponse<TResponseData>
 {
-    public SuccessOperationResponse(TResponseData responseData) : base(responseData)
-    {
-        IsSuccess = true;
-    }
+    public SuccessOperationResponse(TResponseData responseData) : base(responseData) => IsSuccess = true;
 }
 public sealed class FailureOperationResponse<TResponseData> : OperationResponse<TResponseData>
 {
-    public FailureOperationResponse(OperationException ex) : base(ex)
-    {
-        IsSuccess = false;
-    }
+    public FailureOperationResponse(OperationException ex) : base(ex) => IsSuccess = false;
 }
 
 public interface IOperationResponse<out TResponseData>
@@ -38,10 +32,7 @@ public abstract class OperationResponse<TResponseData> : IOperationResponse<TRes
         OuterException = ex;
     }
 
-    protected OperationResponse(TResponseData responseData)
-    {
-        ResponseData = responseData;
-    }
+    protected OperationResponse(TResponseData responseData) => ResponseData = responseData;
 
     public bool IsSuccess { get; protected set; }
     public bool IsFailure => IsSuccess is false;

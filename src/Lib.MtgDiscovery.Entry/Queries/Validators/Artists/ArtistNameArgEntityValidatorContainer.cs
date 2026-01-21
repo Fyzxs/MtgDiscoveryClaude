@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Lib.Shared.Abstractions.Actions;
+using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
@@ -8,7 +8,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 
-internal sealed class ArtistNameArgEntityValidatorContainer : ValidatorActionContainer<IArtistNameArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>, IArtistNameArgEntityValidator
+internal sealed class ArtistNameArgEntityValidatorContainer : ValidatorActionContainer<IArtistNameArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>, IArtistNameArgEntityValidator
 {
     public ArtistNameArgEntityValidatorContainer() : base([
             new IsNotNullArtistNameArgEntityValidator(),
@@ -18,7 +18,7 @@ internal sealed class ArtistNameArgEntityValidatorContainer : ValidatorActionCon
     { }
 }
 
-internal sealed class IsNotNullArtistNameArgEntityValidator : OperationResponseValidator<IArtistNameArgEntity, ICardItemCollectionItrEntity>
+internal sealed class IsNotNullArtistNameArgEntityValidator : OperationResponseValidator<IArtistNameArgEntity, ICardItemCollectionOufEntity>
 {
     public IsNotNullArtistNameArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -34,7 +34,7 @@ internal sealed class IsNotNullArtistNameArgEntityValidator : OperationResponseV
     }
 }
 
-internal sealed class HasValidArtistNameArgEntityValidator : OperationResponseValidator<IArtistNameArgEntity, ICardItemCollectionItrEntity>
+internal sealed class HasValidArtistNameArgEntityValidator : OperationResponseValidator<IArtistNameArgEntity, ICardItemCollectionOufEntity>
 {
     public HasValidArtistNameArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -50,7 +50,7 @@ internal sealed class HasValidArtistNameArgEntityValidator : OperationResponseVa
     }
 }
 
-internal sealed class HasMinimumLengthArtistNameArgEntityValidator : OperationResponseValidator<IArtistNameArgEntity, ICardItemCollectionItrEntity>
+internal sealed class HasMinimumLengthArtistNameArgEntityValidator : OperationResponseValidator<IArtistNameArgEntity, ICardItemCollectionOufEntity>
 {
     public HasMinimumLengthArtistNameArgEntityValidator() : base(new Validator(), new Message())
     { }

@@ -29,8 +29,5 @@ internal abstract class HttpScryfallCollection<TDto, TDomain> : IHttpScryfallCol
         }
     }
 
-    public IAsyncEnumerator<TDomain> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-    {
-        return Items(cancellationToken).GetAsyncEnumerator(cancellationToken);
-    }
+    public IAsyncEnumerator<TDomain> GetAsyncEnumerator(CancellationToken cancellationToken = default) => Items(cancellationToken).GetAsyncEnumerator(cancellationToken);
 }

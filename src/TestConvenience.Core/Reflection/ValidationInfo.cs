@@ -75,8 +75,5 @@ internal sealed class ValidationInfo
         return fieldInfo;
     }
 
-    public void AssertIfNull(object obj)
-    {
-        _asserter.AssertIf(obj == null, $"Expected field [name={_name}] to be of [type={_type.Name}] but a field [name={_name}] was not found.");
-    }
+    public void AssertIfNull(object obj) => _asserter.AssertIf(obj == null, $"Expected field [name={_name}] to be of [type={_type.Name}] but a field [name={_name}] was not found.");
 }
