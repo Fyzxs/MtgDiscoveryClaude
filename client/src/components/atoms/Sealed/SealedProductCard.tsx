@@ -220,7 +220,9 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
       <Box
         sx={{
           display: { xs: 'none', sm: 'none', md: 'flex' },
-          p: { md: 1.5 },
+          pt: { md: 1 },
+          px: { md: 1.5 },
+          pb: { md: 0.5 },
           flexGrow: 1,
           flexDirection: 'column',
           overflow: 'hidden',
