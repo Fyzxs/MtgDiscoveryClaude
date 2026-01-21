@@ -84,18 +84,25 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
 
     public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards)
     {
-        IEnumerable<Task<OpResponse<UserCardExtEntity>>> readTasks = userCards.CardIds.Select(cardId =>
-            _userCardsGopher.ReadAsync<UserCardExtEntity>(new ReadPointItem
-            {
-                Id = new ProvidedCosmosItemId(cardId),
-                Partition = new ProvidedPartitionKeyValue(userCards.UserId)
-            }));
+        const int batchSize = 20; // Process in batches to avoid Cosmos DB rate limiting
+        List<UserCardExtEntity> foundCards = new();
 
-        OpResponse<UserCardExtEntity>[] responses = await Task.WhenAll(readTasks).ConfigureAwait(false);
+        // Process card IDs in batches
+        foreach (IEnumerable<string> batch in userCards.CardIds.Chunk(batchSize))
+        {
+            IEnumerable<Task<OpResponse<UserCardExtEntity>>> readTasks = batch.Select(cardId =>
+                _userCardsGopher.ReadAsync<UserCardExtEntity>(new ReadPointItem
+                {
+                    Id = new ProvidedCosmosItemId(cardId),
+                    Partition = new ProvidedPartitionKeyValue(userCards.UserId)
+                }));
 
-        List<UserCardExtEntity> foundCards = [.. responses
-            .Where(r => r.StatusCode != System.Net.HttpStatusCode.NotFound && r.IsSuccessful())
-            .Select(r => r.Value)];
+            OpResponse<UserCardExtEntity>[] responses = await Task.WhenAll(readTasks).ConfigureAwait(false);
+
+            foundCards.AddRange(responses
+                .Where(r => r.StatusCode != System.Net.HttpStatusCode.NotFound && r.IsSuccessful())
+                .Select(r => r.Value));
+        }
 
         return new SuccessOperationResponse<IEnumerable<UserCardExtEntity>>(foundCards);
     }
