@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Claims;
 using Lib.Shared.DataModels.Entities;
 using Lib.Universal.Utilities;

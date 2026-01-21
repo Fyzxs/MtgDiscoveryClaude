@@ -1,4 +1,4 @@
-#pragma warning disable CA1515
+﻿#pragma warning disable CA1515
 
 namespace App.MtgDiscovery.GraphQL.Mutations;
 

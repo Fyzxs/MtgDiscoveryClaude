@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Scryfall.Ingestion.Aggregation;
 using Lib.Scryfall.Ingestion.Apis.Aggregation;
@@ -43,7 +44,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
 
     public async Task WriteArtistsAsync()
     {
-        List<IArtistAggregate> artists = _artistAggregator.GetArtists().ToList();
+        List<IArtistAggregate> artists = [.. _artistAggregator.GetArtists()];
         int artistCount = artists.Count;
 
         if (artistCount == 0) return;
@@ -121,7 +122,7 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
 
     private async Task WriteArtistTrigramsAsync()
     {
-        List<IArtistTrigramAggregate> trigrams = _artistTrigramAggregator.GetTrigrams().ToList();
+        List<IArtistTrigramAggregate> trigrams = [.. _artistTrigramAggregator.GetTrigrams()];
         int trigramCount = trigrams.Count;
 
         if (trigramCount == 0) return;
@@ -139,13 +140,13 @@ internal sealed class ArtistsPipelineService : IArtistsPipelineService
             {
                 Trigram = aggregate.Trigram(),
                 Artists = new Collection<ArtistNameTrigramDataItem>(
-                    aggregate.Entries().Select(entry => new ArtistNameTrigramDataItem
+                    [.. aggregate.Entries().Select(entry => new ArtistNameTrigramDataItem
                     {
                         ArtistId = entry.ArtistId(),
                         Name = entry.Name(),
                         Normalized = entry.Normalized(),
-                        Positions = new Collection<int>(entry.Positions().ToList())
-                    }).ToList())
+                        Positions = new Collection<int>([.. entry.Positions()])
+                    })])
             };
 
             ArtistNameTrigramsScribe trigramScribe = new(_dashboard);

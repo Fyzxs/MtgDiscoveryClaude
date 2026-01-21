@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;

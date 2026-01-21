@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
 
 public sealed class ArtistAggregateItem
 {

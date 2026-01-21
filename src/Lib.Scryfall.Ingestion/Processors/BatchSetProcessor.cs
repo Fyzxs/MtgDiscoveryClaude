@@ -58,7 +58,7 @@ internal sealed class BatchSetProcessor : IBatchSetProcessor
 
     public async Task ProcessSetsAsync(IEnumerable<IScryfallSet> sets)
     {
-        List<IScryfallSet> setList = sets.ToList();
+        List<IScryfallSet> setList = [.. sets];
         int totalSets = setList.Count;
         int processedSets = 0;
 

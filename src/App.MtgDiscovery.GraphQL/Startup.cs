@@ -1,4 +1,5 @@
-﻿using App.MtgDiscovery.GraphQL.Schemas;
+﻿using System.Security.Claims;
+using App.MtgDiscovery.GraphQL.Schemas;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace App.MtgDiscovery.GraphQL;
 

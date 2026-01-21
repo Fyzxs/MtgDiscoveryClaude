@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Aggregator.Artists.Apis;
-using Lib.Aggregator.Artists.Operations;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

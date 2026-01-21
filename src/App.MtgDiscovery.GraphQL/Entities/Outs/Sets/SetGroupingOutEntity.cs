@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
 

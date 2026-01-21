@@ -23,5 +23,4 @@ public sealed class UserAggregatorService : IUserAggregatorService
     {
         return await _userAdapterService.RegisterUserAsync(userInfo).ConfigureAwait(false);
     }
-
 }

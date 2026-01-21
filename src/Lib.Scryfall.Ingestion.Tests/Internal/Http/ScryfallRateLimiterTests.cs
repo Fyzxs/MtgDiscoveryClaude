@@ -52,7 +52,7 @@ public sealed class ScryfallRateLimiterTests
         {
             // Simulate waiting for the rate limit to reset
         }
-        await Task.Delay(110).ConfigureAwait(false); // Wait more than 100ms
+        await Task.Delay(110, TestContext.CancellationTokenSource.Token).ConfigureAwait(false); // Wait more than 100ms
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         // Act
@@ -74,7 +74,7 @@ public sealed class ScryfallRateLimiterTests
 
         // Act
         Task<IRateLimitToken> acquireTask = rateLimiter.AcquireTokenAsync();
-        await Task.Delay(50).ConfigureAwait(false);
+        await Task.Delay(50, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
 
         // Assert
         _ = acquireTask.IsCompleted.Should().BeFalse();
@@ -90,7 +90,7 @@ public sealed class ScryfallRateLimiterTests
 
         // Act
         firstToken.Dispose();
-        await Task.Delay(110).ConfigureAwait(false); // Wait for rate limit
+        await Task.Delay(110, TestContext.CancellationTokenSource.Token).ConfigureAwait(false); // Wait for rate limit
         using IRateLimitToken actual = await rateLimiter.AcquireTokenAsync().ConfigureAwait(false);
 
         // Assert
@@ -111,4 +111,6 @@ public sealed class ScryfallRateLimiterTests
         // Assert
         act.Should().NotThrow();
     }
+
+    public TestContext TestContext { get; set; }
 }

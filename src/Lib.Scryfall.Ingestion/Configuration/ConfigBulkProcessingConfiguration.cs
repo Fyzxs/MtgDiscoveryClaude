@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.Scryfall.Ingestion.Apis.Configuration;
 using Lib.Universal.Configurations;
@@ -67,12 +67,11 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
         get
         {
             string value = _config[$"{BulkProcessingKey}:{SetCodesToProcessKey}"];
-            if (value.IzNullOrWhiteSpace()) return new List<string>();
+            if (value.IzNullOrWhiteSpace()) return [];
 
-            return value.Split(',')
+            return [.. value.Split(',')
                 .Select(s => s.Trim().ToLowerInvariant())
-                .Where(s => s.IzNotNullOrWhiteSpace())
-                .ToList();
+                .Where(s => s.IzNotNullOrWhiteSpace())];
         }
     }
 }

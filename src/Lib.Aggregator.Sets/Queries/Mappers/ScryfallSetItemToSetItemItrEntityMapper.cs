@@ -51,7 +51,7 @@ internal sealed class ScryfallSetItemToSetItemItrEntityMapper
 
                 if (groupingsList is not null)
                 {
-                    groupings = groupingsList.Cast<ISetGroupingItrEntity>().ToList();
+                    groupings = [.. groupingsList.Cast<ISetGroupingItrEntity>()];
                 }
             }
         }

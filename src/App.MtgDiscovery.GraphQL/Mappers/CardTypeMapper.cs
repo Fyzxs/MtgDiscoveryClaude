@@ -199,7 +199,7 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
     {
         if (source == null) return null;
 
-        return source.Select(face => new CardFaceOutEntity
+        return [.. source.Select(face => new CardFaceOutEntity
         {
             Artist = face.Artist,
             ArtistId = face.ArtistId,
@@ -222,21 +222,21 @@ internal sealed class ScryfallCardMapper : IScryfallCardMapper
             Toughness = face.Toughness,
             TypeLine = face.TypeLine,
             Watermark = face.Watermark
-        }).ToList();
+        })];
     }
 
     private static ICollection<AllPartsOutEntity> MapAllParts(ICollection<IAllPartsItrEntity> source)
     {
         if (source == null) return null;
 
-        return source.Select(part => new AllPartsOutEntity
+        return [.. source.Select(part => new AllPartsOutEntity
         {
             Id = part.Id,
             Component = part.Component,
             Name = part.Name,
             TypeLine = part.TypeLine,
             Uri = part.Uri
-        }).ToList();
+        })];
     }
 
     private static PreviewOutEntity MapPreview(IPreviewItrEntity source)

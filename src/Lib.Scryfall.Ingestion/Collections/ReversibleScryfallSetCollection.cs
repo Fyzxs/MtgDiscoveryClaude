@@ -49,7 +49,7 @@ internal sealed class ReversibleScryfallSetCollection : IAsyncEnumerable<IScryfa
 
         _logger.LogCollectingSetsForReverseProcessing();
 
-        List<IScryfallSet> allSets = new();
+        List<IScryfallSet> allSets = [];
         await foreach (IScryfallSet set in _source.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
             allSets.Add(set);

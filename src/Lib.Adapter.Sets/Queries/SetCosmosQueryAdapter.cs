@@ -3,13 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Sets.Apis;
-using Lib.Adapter.Sets.Entities;
-using Lib.Adapter.Sets.Exceptions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
-using Lib.Aggregator.Scryfall.Shared.Mappers;
+using Lib.Adapter.Sets.Apis;
+using Lib.Adapter.Sets.Entities;
+using Lib.Adapter.Sets.Exceptions;
 using Lib.Adapter.Sets.Queries.Mappers;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
@@ -96,10 +95,9 @@ internal sealed class SetCosmosQueryAdapter : ISetQueryAdapter
 
         OpResponse<ScryfallSetCodeIndexItem>[] indexResponses = await Task.WhenAll(indexTasks).ConfigureAwait(false);
 
-        List<string> setIds = indexResponses
+        List<string> setIds = [.. indexResponses
             .Where(r => r.IsSuccessful())
-            .Select(r => r.Value.SetId)
-            .ToList();
+            .Select(r => r.Value.SetId)];
 
         if (setIds.Count == 0)
         {
