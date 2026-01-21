@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Adapter.UserSealedProducts.Commands;
-using Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -21,7 +21,7 @@ internal sealed class AddUserSealedProductAggregator : IAddUserSealedProductAggr
         _adapter = adapter;
     }
 
-    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductArgEntity input)
+    public async Task<IOperationResponse<IUserSealedProductOufEntity>> Execute(IAddUserSealedProductItrEntity input)
     {
         IUserSealedProductXfrEntity xfrEntity = new UserSealedProductXfrEntity
         {
