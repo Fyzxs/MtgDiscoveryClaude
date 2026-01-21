@@ -49,9 +49,9 @@ internal sealed class ArtistEntryService : IArtistEntryService
         _artistNameMapper = artistNameMapper;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm)
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm)
     {
-        IValidatorActionResult<IOperationResponse<IArtistSearchResultCollectionItrEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IArtistSearchResultCollectionOufEntity>> result = await _searchTermValidator.Validate(searchTerm).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -59,9 +59,9 @@ internal sealed class ArtistEntryService : IArtistEntryService
         return await _artistDomainService.ArtistSearchAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistAsync(IArtistIdArgEntity artistId)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdArgEntity artistId)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _artistIdValidator.Validate(artistId).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _artistIdValidator.Validate(artistId).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 
@@ -69,9 +69,9 @@ internal sealed class ArtistEntryService : IArtistEntryService
         return await _artistDomainService.CardsByArtistAsync(mappedArgs).ConfigureAwait(false);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameArgEntity artistName)
     {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> result = await _artistNameValidator.Validate(artistName).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> result = await _artistNameValidator.Validate(artistName).ConfigureAwait(false);
 
         if (result.IsNotValid()) return result.FailureStatus();
 

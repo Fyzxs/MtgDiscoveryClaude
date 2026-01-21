@@ -7,7 +7,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
 
-internal sealed class CardNameArgEntityValidatorContainer : ValidatorActionContainer<ICardNameArgEntity, IOperationResponse<ICardItemCollectionItrEntity>>, ICardNameArgEntityValidator
+internal sealed class CardNameArgEntityValidatorContainer : ValidatorActionContainer<ICardNameArgEntity, IOperationResponse<ICardItemCollectionOufEntity>>, ICardNameArgEntityValidator
 {
     public CardNameArgEntityValidatorContainer() : base([
             new IsNotNullCardNameArgEntityValidator(),
@@ -15,7 +15,7 @@ internal sealed class CardNameArgEntityValidatorContainer : ValidatorActionConta
         ])
     { }
 }
-internal sealed class IsNotNullCardNameArgEntityValidator : OperationResponseValidator<ICardNameArgEntity, ICardItemCollectionItrEntity>
+internal sealed class IsNotNullCardNameArgEntityValidator : OperationResponseValidator<ICardNameArgEntity, ICardItemCollectionOufEntity>
 {
     public IsNotNullCardNameArgEntityValidator() : base(new Validator(), new Message())
     { }
@@ -31,7 +31,7 @@ internal sealed class IsNotNullCardNameArgEntityValidator : OperationResponseVal
     }
 }
 
-internal sealed class HasValidCardNameArgEntityValidator : OperationResponseValidator<ICardNameArgEntity, ICardItemCollectionItrEntity>
+internal sealed class HasValidCardNameArgEntityValidator : OperationResponseValidator<ICardNameArgEntity, ICardItemCollectionOufEntity>
 {
     public HasValidCardNameArgEntityValidator() : base(new Validator(), new Message())
     { }

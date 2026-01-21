@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal sealed class CollectedItemSpecialValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
+internal sealed class CollectedItemSpecialValidator : OperationResponseValidator<IAddUserCardArgEntity, IUserCardOufEntity>
 {
     private static readonly HashSet<string> s_validSpecials = new(System.StringComparer.OrdinalIgnoreCase)
     {
@@ -20,10 +20,10 @@ internal sealed class CollectedItemSpecialValidator : OperationResponseValidator
     public CollectedItemSpecialValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardArgEntity>
+    public sealed class Validator : IValidator<IAddUserCardArgEntity>
     {
 
-        public Task<bool> IsValid(IUserCardArgEntity arg)
+        public Task<bool> IsValid(IAddUserCardArgEntity arg)
         {
             string special = arg.UserCardDetails.Special;
             return Task.FromResult(s_validSpecials.Contains(special));

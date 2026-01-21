@@ -7,7 +7,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Validators;
 
-internal sealed class AddCardToCollectionArgEntityValidatorContainer : ValidatorActionContainer<IUserCardArgEntity, IOperationResponse<IUserCardItrEntity>>, IAddCardToCollectionArgEntityValidator
+internal sealed class AddCardToCollectionArgEntityValidatorContainer : ValidatorActionContainer<IAddUserCardArgEntity, IOperationResponse<IUserCardOufEntity>>, IAddCardToCollectionArgEntityValidator
 {
     public AddCardToCollectionArgEntityValidatorContainer() : base([
             new HasValidCardIdAddCardToCollectionArgEntityValidator(),
@@ -20,14 +20,14 @@ internal sealed class AddCardToCollectionArgEntityValidatorContainer : Validator
     { }
 }
 
-internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
+internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddUserCardArgEntity, IUserCardOufEntity>
 {
     public HasValidCardIdAddCardToCollectionArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardArgEntity>
+    public sealed class Validator : IValidator<IAddUserCardArgEntity>
     {
-        public Task<bool> IsValid(IUserCardArgEntity arg) => Task.FromResult(arg.CardId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IAddUserCardArgEntity arg) => Task.FromResult(arg.CardId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage
@@ -36,14 +36,14 @@ internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator : Oper
     }
 }
 
-internal sealed class HasValidSetIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IUserCardArgEntity, IUserCardItrEntity>
+internal sealed class HasValidSetIdAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddUserCardArgEntity, IUserCardOufEntity>
 {
     public HasValidSetIdAddCardToCollectionArgEntityValidator() : base(new Validator(), new Message())
     { }
 
-    public sealed class Validator : IValidator<IUserCardArgEntity>
+    public sealed class Validator : IValidator<IAddUserCardArgEntity>
     {
-        public Task<bool> IsValid(IUserCardArgEntity arg) => Task.FromResult(arg.SetId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IAddUserCardArgEntity arg) => Task.FromResult(arg.SetId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage

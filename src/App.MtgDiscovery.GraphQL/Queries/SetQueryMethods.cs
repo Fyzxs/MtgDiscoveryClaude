@@ -22,14 +22,14 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class SetQueryMethods
 {
-    private readonly ICollectionSetItemItrToOutMapper _setCollectionMapper;
+    private readonly ICollectionSetItemOufToOutMapper _setCollectionMapper;
     private readonly IEntryService _entryService;
 
-    public SetQueryMethods(ILogger logger) : this(new CollectionSetItemItrToOutMapper(), new EntryService(logger))
+    public SetQueryMethods(ILogger logger) : this(new CollectionSetItemOufToOutMapper(), new EntryService(logger))
     {
     }
 
-    private SetQueryMethods(ICollectionSetItemItrToOutMapper setCollectionMapper, IEntryService entryService)
+    private SetQueryMethods(ICollectionSetItemOufToOutMapper setCollectionMapper, IEntryService entryService)
     {
         _setCollectionMapper = setCollectionMapper;
         _entryService = entryService;
@@ -40,7 +40,7 @@ public class SetQueryMethods
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> SetsById(SetIdsArgEntity ids)
     {
-        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
+        IOperationResponse<ISetItemCollectionOufEntity> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -62,7 +62,7 @@ public class SetQueryMethods
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> SetsByCode(SetCodesArgEntity codes)
     {
-        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
+        IOperationResponse<ISetItemCollectionOufEntity> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -84,7 +84,7 @@ public class SetQueryMethods
     [GraphQLType(typeof(SetResponseModelUnionType))]
     public async Task<ResponseModel> AllSets()
     {
-        IOperationResponse<ISetItemCollectionItrEntity> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
+        IOperationResponse<ISetItemCollectionOufEntity> response = await _entryService.AllSetsAsync().ConfigureAwait(false);
 
         if (response.IsFailure)
         {

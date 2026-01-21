@@ -20,17 +20,17 @@ namespace App.MtgDiscovery.GraphQL.Mutations;
 public sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IUserCardItrToOutMapper _mapper;
+    private readonly IUserCardOufToOutMapper _mapper;
 
     public UserCardsMutationMethods(ILogger logger) : this(
         new EntryService(logger),
-        new UserCardItrToOutMapper())
+        new UserCardOufToOutMapper())
     {
     }
 
     private UserCardsMutationMethods(
         IEntryService entryService,
-        IUserCardItrToOutMapper mapper)
+        IUserCardOufToOutMapper mapper)
     {
         _entryService = entryService;
         _mapper = mapper;
@@ -38,11 +38,11 @@ public sealed class UserCardsMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, UserCardArgEntity args)
+    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        IOperationResponse<IUserCardItrEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
+        IOperationResponse<IUserCardOufEntity> response = await _entryService.AddCardToCollectionAsync(authUserArg, args).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -52,7 +52,7 @@ public sealed class UserCardsMutationMethods
                 StatusCode = response.OuterException.StatusCode
             }
         };
-
+        //TODO: Pretty sure this mapping should be done in the entry. But this is a MASSIVE change.
         UserCardOutEntity result = await _mapper.Map(response.ResponseData).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<UserCardOutEntity>() { Data = result };

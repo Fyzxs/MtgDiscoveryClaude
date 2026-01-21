@@ -18,14 +18,14 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class CardQueryMethods
 {
-    private readonly ICollectionCardItemItrToOutMapper _cardCollectionMapper;
+    private readonly ICollectionCardItemOufToOutMapper _cardCollectionMapper;
     private readonly IEntryService _entryService;
 
-    public CardQueryMethods(ILogger logger) : this(new CollectionCardItemItrToOutMapper(), new EntryService(logger))
+    public CardQueryMethods(ILogger logger) : this(new CollectionCardItemOufToOutMapper(), new EntryService(logger))
     {
     }
 
-    private CardQueryMethods(ICollectionCardItemItrToOutMapper cardCollectionMapper, IEntryService entryService)
+    private CardQueryMethods(ICollectionCardItemOufToOutMapper cardCollectionMapper, IEntryService entryService)
     {
         _cardCollectionMapper = cardCollectionMapper;
         _entryService = entryService;
@@ -36,7 +36,7 @@ public class CardQueryMethods
     [GraphQLType(typeof(CardResponseModelUnionType))]
     public async Task<ResponseModel> CardsById(CardIdsArgEntity ids)
     {
-        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsByIdsAsync(ids).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> response = await _entryService.CardsByIdsAsync(ids).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -55,7 +55,7 @@ public class CardQueryMethods
     [GraphQLType(typeof(CardResponseModelUnionType))]
     public async Task<ResponseModel> CardsBySetCode(SetCodeArgEntity setCode)
     {
-        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> response = await _entryService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -74,7 +74,7 @@ public class CardQueryMethods
     [GraphQLType(typeof(CardResponseModelUnionType))]
     public async Task<ResponseModel> CardsByName(CardNameArgEntity cardName)
     {
-        IOperationResponse<ICardItemCollectionItrEntity> response = await _entryService.CardsByNameAsync(cardName).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> response = await _entryService.CardsByNameAsync(cardName).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -93,7 +93,7 @@ public class CardQueryMethods
     [GraphQLType(typeof(CardNameSearchResponseModelUnionType))]
     public async Task<ResponseModel> CardNameSearch(CardSearchTermArgEntity searchTerm)
     {
-        IOperationResponse<ICardNameSearchResultCollectionItrEntity> response = await _entryService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
+        IOperationResponse<ICardNameSearchResultCollectionOufEntity> response = await _entryService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {

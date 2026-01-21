@@ -3,7 +3,7 @@ using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Entities;
 
-internal sealed class CardNameSearchResultCollectionItrEntity : ICardNameSearchResultCollectionItrEntity
+internal sealed class CardNameSearchResultCollectionOufEntity : ICardNameSearchResultCollectionOufEntity
 {
     public ICollection<ICardNameSearchResultItrEntity> Names { get; init; }
 }

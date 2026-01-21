@@ -1,0 +1,15 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using App.MtgDiscovery.GraphQL.Entities.Outs.Sets;
+using HotChocolate.Types;
+
+namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
+
+public sealed class CollectorNumberRangeOutEntityType : ObjectType<CollectorNumberRangeOutEntity>
+{
+    protected override void Configure([NotNull] IObjectTypeDescriptor<CollectorNumberRangeOutEntity> descriptor)
+    {
+        descriptor.Field(f => f.Min).Type<StringType>();
+        descriptor.Field(f => f.Max).Type<StringType>();
+        descriptor.Field(f => f.OrConditions).Type<ListType<StringType>>();
+    }
+}

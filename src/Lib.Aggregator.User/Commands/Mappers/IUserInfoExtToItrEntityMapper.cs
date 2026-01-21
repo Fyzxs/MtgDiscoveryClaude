@@ -7,4 +7,4 @@ namespace Lib.Aggregator.User.Commands.Mappers;
 /// <summary>
 /// Maps UserInfoExtEntity to IUserInfoItrEntity.
 /// </summary>
-internal interface IUserInfoExtToItrEntityMapper : ICreateMapper<UserInfoExtEntity, IUserInfoItrEntity>;
+internal interface IUserInfoExtToItrEntityMapper : ICreateMapper<UserInfoExtEntity, IUserInfoOufEntity>;

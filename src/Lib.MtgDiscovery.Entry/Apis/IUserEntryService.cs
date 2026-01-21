@@ -7,5 +7,5 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface IUserEntryService
 {
-    Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IAuthUserArgEntity authUser);
+    Task<IOperationResponse<IUserInfoOufEntity>> RegisterUserAsync(IAuthUserArgEntity authUser);
 }

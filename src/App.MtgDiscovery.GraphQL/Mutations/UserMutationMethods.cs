@@ -36,7 +36,7 @@ public class UserMutationMethods
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
         // Call the entry service
-        IOperationResponse<IUserInfoItrEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
+        IOperationResponse<IUserInfoOufEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
 
         if (response.IsFailure) return new FailureResponseModel()
         {
@@ -47,7 +47,7 @@ public class UserMutationMethods
             }
         };
 
-        IUserInfoItrEntity registration = response.ResponseData;
+        IUserInfoOufEntity registration = response.ResponseData;
 
         UserRegistrationOutEntity result = new()
         {

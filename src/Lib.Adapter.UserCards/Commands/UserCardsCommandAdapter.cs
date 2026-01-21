@@ -37,13 +37,13 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         _userCardsScribe = userCardsScribe;
     }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IUserCardXfrEntity userCard)
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard)
     {
         // Step 1: Try to read existing record
         ReadPointItem readPoint = new()
         {
-            Id = new ProvidedCosmosItemId(userCard.CardId),
-            Partition = new ProvidedPartitionKeyValue(userCard.UserId)
+            Id = new ProvidedCosmosItemId(addUserCard.CardId),
+            Partition = new ProvidedPartitionKeyValue(addUserCard.UserId)
         };
         OpResponse<UserCardExtEntity> existingResponse = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint).ConfigureAwait(false);
 
@@ -53,12 +53,12 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         {
             // Step 2: Merge with existing collected items
             UserCardExtEntity existingItem = existingResponse.Value;
-            itemToUpsert = MergeCollectedItems(existingItem, userCard);
+            itemToUpsert = MergeCollectedItems(existingItem, addUserCard);
         }
         else
         {
             // Step 3: Create new item if none exists
-            itemToUpsert = MapUserCardToExtEntity(userCard);
+            itemToUpsert = MapUserCardToExtEntity(addUserCard);
         }
 
         // Step 4: Upsert the merged/new item
@@ -74,7 +74,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         return new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value);
     }
 
-    private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IUserCardXfrEntity newData)
+    private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IAddUserCardXfrEntity newData)
     {
         // Create a dictionary for efficient merging based on finish + special combination
         Dictionary<(string finish, string special), UserCardDetailsExtEntity> mergedItems = existing.CollectedList
@@ -117,10 +117,11 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         };
     }
 
-    private static UserCardExtEntity MapUserCardToExtEntity(IUserCardXfrEntity userCard)
+    //TODO: Mapper
+    private static UserCardExtEntity MapUserCardToExtEntity(IAddUserCardXfrEntity addUserCard)
     {
         List<UserCardDetailsExtEntity> collectedItems = [];
-        foreach (IUserCardDetailsXfrEntity item in userCard.CollectedList)
+        foreach (IUserCardDetailsXfrEntity item in addUserCard.CollectedList)
         {
             collectedItems.Add(new UserCardDetailsExtEntity
             {
@@ -132,9 +133,9 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 
         return new UserCardExtEntity
         {
-            UserId = userCard.UserId,
-            CardId = userCard.CardId,
-            SetId = userCard.SetId,
+            UserId = addUserCard.UserId,
+            CardId = addUserCard.CardId,
+            SetId = addUserCard.SetId,
             CollectedList = collectedItems
         };
     }
