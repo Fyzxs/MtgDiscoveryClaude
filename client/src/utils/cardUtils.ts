@@ -119,14 +119,16 @@ export const getUniqueFormats = (cards: CardLike[]): string[] => {
 export const createCardFilterFunctions = <T extends CardLike>() => ({
   rarities: commonFilters.multiSelect<T>('rarity'),
   sets: commonFilters.multiSelect<T>('setCode'),
-  artists: (card: T, selectedArtists: string[]) => {
+  artists: (card: T, value: unknown) => {
+    const selectedArtists = Array.isArray(value) ? value as string[] : [];
     if (!selectedArtists || selectedArtists.length === 0) return true;
     if (!card.artist) return false;
     const cardArtists = card.artist.split(/\s+(?:&|and)\s+/i).map(a => a.trim());
     const normalizedSelected = selectedArtists.map(a => a.toLowerCase());
     return cardArtists.some(artist => normalizedSelected.includes(artist.toLowerCase()));
   },
-  formats: (card: T, selectedFormats: string[]) => {
+  formats: (card: T, value: unknown) => {
+    const selectedFormats = Array.isArray(value) ? value as string[] : [];
     // If no formats selected, show all cards
     if (!selectedFormats || selectedFormats.length === 0) return true;
 
@@ -146,7 +148,8 @@ export const createCardFilterFunctions = <T extends CardLike>() => ({
     return true;
   },
   // Collector-specific filters
-  collectionCounts: (card: T, selectedCounts: string[]) => {
+  collectionCounts: (card: T, value: unknown) => {
+    const selectedCounts = Array.isArray(value) ? value as string[] : [];
     if (!selectedCounts || selectedCounts.length === 0) return true;
     const count = getCardCollectionCount(card);
     return selectedCounts.some(countOption => {
@@ -158,7 +161,8 @@ export const createCardFilterFunctions = <T extends CardLike>() => ({
       return false;
     });
   },
-  signedCards: (card: T, selectedOptions: string[]) => {
+  signedCards: (card: T, value: unknown) => {
+    const selectedOptions = Array.isArray(value) ? value as string[] : [];
     if (!selectedOptions || selectedOptions.length === 0) return true;
     // Both signed and unsigned filters only apply to owned cards
     const count = getCardCollectionCount(card);
@@ -171,7 +175,8 @@ export const createCardFilterFunctions = <T extends CardLike>() => ({
       return false;
     });
   },
-  finishes: (card: T, selectedFinishes: string[]) => {
+  finishes: (card: T, value: unknown) => {
+    const selectedFinishes = Array.isArray(value) ? value as string[] : [];
     if (!selectedFinishes || selectedFinishes.length === 0) return true;
     if (!card.userCollection) return false;
     const collectionArray = Array.isArray(card.userCollection) ? card.userCollection : [card.userCollection];

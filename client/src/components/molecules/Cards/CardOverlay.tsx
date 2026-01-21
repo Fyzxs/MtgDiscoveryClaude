@@ -9,10 +9,6 @@ import { CollectionSummary } from './CollectionSummary';
 import { formatReleaseDate } from '../../../utils/dateFormatters';
 import type { Card, CardContext } from '../../../types/card';
 
-interface CardWithCollection extends Card {
-  userCollection?: unknown;
-}
-
 interface CardOverlayProps {
   card: Card;
   isSelected?: boolean;
@@ -47,7 +43,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const price = card.prices?.usd;
   const scryfallUrl = card.scryfallUri;
   const tcgplayerUrl = card.purchaseUris?.tcgplayer;
-  const collectionData = (card as CardWithCollection).userCollection;
+  const collectionData = card.userCollection;
 
   return (
     <Box

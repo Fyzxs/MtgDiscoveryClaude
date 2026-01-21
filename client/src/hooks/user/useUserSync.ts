@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useQuery, type ApolloError } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { GET_USER_INFO } from '../../graphql/mutations/user';
 import { getTokenReadyState } from '../../graphql/apollo-client';
 
@@ -37,7 +37,7 @@ interface UserInfoQueryData {
 interface UserInfoQueryResult {
   loading: boolean;
   data?: UserInfoQueryData;
-  error?: ApolloError;
+  error?: Error;
   refetch: () => Promise<unknown>;
 }
 

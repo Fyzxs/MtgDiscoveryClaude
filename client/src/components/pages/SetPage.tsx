@@ -327,8 +327,8 @@ export const SetPage: React.FC = () => {
     cardsData?.cardsBySetCode?.data,
     filterConfig,
     {
-      search: initialValues.search || '',
-      sort: initialValues.sort || 'collector-asc',
+      search: (typeof initialValues.search === 'string' ? initialValues.search : '') || '',
+      sort: (typeof initialValues.sort === 'string' ? initialValues.sort : 'collector-asc') || 'collector-asc',
       filters: {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         artists: initialArtists,  // Use raw initial values, normalize later
@@ -342,8 +342,8 @@ export const SetPage: React.FC = () => {
     }
   );
 
-  const selectedRarities = filters.rarities || [];
-  const selectedGroupIds = useMemo(() => filters.groups || [], [filters.groups]);
+  const selectedRarities = (Array.isArray(filters.rarities) ? filters.rarities : []) as string[];
+  const selectedGroupIds = useMemo(() => (Array.isArray(filters.groups) ? filters.groups : []) as string[], [filters.groups]);
 
   // Apply optimized sorting to filtered cards
   // Include collectorId in sort key to invalidate cache when collection context changes
@@ -360,14 +360,15 @@ export const SetPage: React.FC = () => {
       return; // Already normalized, don't run again
     }
 
-    if (artistMap && artistMap.size > 0 && filters.artists && filters.artists.length > 0) {
-      const normalized = filters.artists.map((artist: string) => {
+    const artistsFilter = Array.isArray(filters.artists) ? filters.artists as string[] : [];
+    if (artistMap && artistMap.size > 0 && artistsFilter.length > 0) {
+      const normalized = artistsFilter.map((artist: string) => {
         const normalizedArtist = artistMap.get(artist.toLowerCase());
         return normalizedArtist || artist;
       });
 
       // Only update if the normalized version is different
-      const needsUpdate = normalized.some((norm: string, i: number) => norm !== filters.artists[i]);
+      const needsUpdate = normalized.some((norm: string, i: number) => norm !== artistsFilter[i]);
       if (needsUpdate) {
         hasNormalizedRef.current = true;
         updateFilter('artists', normalized);
@@ -377,24 +378,31 @@ export const SetPage: React.FC = () => {
 
   // Update URL when filters change
   useEffect(() => {
-    const urlUpdates: Record<string, string | string[] | null> = {
+    const raritiesArray = Array.isArray(filters.rarities) ? filters.rarities as string[] : [];
+    const artistsArray = Array.isArray(filters.artists) ? filters.artists as string[] : [];
+    const groupsArray = Array.isArray(filters.groups) ? filters.groups as string[] : [];
+    const countsArray = Array.isArray(filters.collectionCounts) ? filters.collectionCounts as string[] : [];
+    const signedArray = Array.isArray(filters.signedCards) ? filters.signedCards as string[] : [];
+
+    const showGroupsValue = typeof filters.showGroups === 'boolean' ? filters.showGroups : true;
+    const urlUpdates: Record<string, string | string[] | boolean | null> = {
       search: searchTerm || null,
       sort: sortBy !== 'collector-asc' ? sortBy : null,
-      rarities: filters.rarities?.length > 0 ? filters.rarities : null,
-      artists: filters.artists?.length > 0 ? filters.artists : null,
-      groups: filters.groups?.length > 0 ? filters.groups : null,
-      showGroups: filters.showGroups !== true ? filters.showGroups : null,
+      rarities: raritiesArray.length > 0 ? raritiesArray : null,
+      artists: artistsArray.length > 0 ? artistsArray : null,
+      groups: groupsArray.length > 0 ? groupsArray : null,
+      showGroups: showGroupsValue !== true ? showGroupsValue : null,
       // Collector-specific filters (only persist if hasCollector is true)
-      counts: (hasCollector && filters.collectionCounts?.length > 0) ? filters.collectionCounts : null,
-      signed: (hasCollector && filters.signedCards?.length > 0) ? filters.signedCards : null
+      counts: (hasCollector && countsArray.length > 0) ? countsArray : null,
+      signed: (hasCollector && signedArray.length > 0) ? signedArray : null
     };
 
     updateUrl(urlUpdates);
   }, [searchTerm, sortBy, filters.rarities, filters.artists, filters.groups, filters.showGroups, filters.collectionCounts, filters.signedCards, hasCollector, updateUrl]);
-  
+
   // Normalize selected artists to match the case in our data
   const selectedArtists = useMemo(() => {
-    const raw = filters.artists || [];
+    const raw = Array.isArray(filters.artists) ? filters.artists as string[] : [];
     // If data hasn't loaded yet, use the raw values
     if (!artistMap || artistMap.size === 0) return raw;
     // Once we have data, normalize and validate
@@ -410,14 +418,14 @@ export const SetPage: React.FC = () => {
   useUrlState(
     {
       rarities: selectedRarities,
-      artists: filters.artists || [],  // Use raw filter values to preserve URL state
-      groups: filters.groups || [],
+      artists: (Array.isArray(filters.artists) ? filters.artists : []) as string[],  // Use raw filter values to preserve URL state
+      groups: (Array.isArray(filters.groups) ? filters.groups : []) as string[],
       showGroups: filters.showGroups,
       sort: sortBy,
       // Collector-specific filters
-      counts: filters.collectionCounts || [],
-      signed: filters.signedCards || [],
-      finishes: filters.finishes || []
+      counts: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
+      signed: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[],
+      finishes: (Array.isArray(filters.finishes) ? filters.finishes : []) as string[]
     },
     {
       rarities: { default: [] },
@@ -632,9 +640,9 @@ export const SetPage: React.FC = () => {
           cardGroups={cardGroups}
           cards={cards}
           hasCollector={hasCollector}
-          collectionCounts={filters.collectionCounts || []}
-          signedCards={filters.signedCards || []}
-          finishes={filters.finishes || []}
+          collectionCounts={(Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[]}
+          signedCards={(Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]}
+          finishes={(Array.isArray(filters.finishes) ? filters.finishes : []) as string[]}
           onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
           onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
           onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
@@ -643,7 +651,6 @@ export const SetPage: React.FC = () => {
       cardDisplay={
         <SetPageCardDisplay
           cardsLoading={cardsLoading}
-          cards={cards}
           sortedCards={sortedCards}
           filteredCards={filteredCards}
           cardGroups={cardGroups}

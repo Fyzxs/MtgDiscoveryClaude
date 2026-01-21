@@ -177,8 +177,8 @@ export const ArtistCardsPage: React.FC = () => {
     cardsData?.cardsByArtistName?.data,
     filterConfig,
     {
-      search: initialValues.search || '',
-      sort: initialValues.sort || 'release-desc',
+      search: (typeof initialValues.search === 'string' ? initialValues.search : '') || '',
+      sort: (typeof initialValues.sort === 'string' ? initialValues.sort : 'release-desc') || 'release-desc',
       filters: {
         rarities: Array.isArray(initialValues.rarities) ? initialValues.rarities : (initialValues.rarities ? [initialValues.rarities] : []),
         sets: Array.isArray(initialValues.sets) ? initialValues.sets : (initialValues.sets ? [initialValues.sets] : []),
@@ -189,8 +189,8 @@ export const ArtistCardsPage: React.FC = () => {
     }
   );
 
-  const selectedRarities = filters.rarities || [];
-  const selectedSets = filters.sets || [];
+  const selectedRarities = (Array.isArray(filters.rarities) ? filters.rarities : []) as string[];
+  const selectedSets = (Array.isArray(filters.sets) ? filters.sets : []) as string[];
 
   // Memoize cards array to prevent unnecessary re-renders
   const cards = useMemo(() => cardsData?.cardsByArtistName?.data || [], [cardsData]);
@@ -212,8 +212,8 @@ export const ArtistCardsPage: React.FC = () => {
       rarities: selectedRarities,
       sets: selectedSets,
       sort: sortBy,
-      counts: filters.collectionCounts || [],
-      signed: filters.signedCards || []
+      counts: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
+      signed: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]
     },
     {
       rarities: { default: [] },
@@ -316,15 +316,15 @@ export const ArtistCardsPage: React.FC = () => {
                 onChange: setSortBy
               },
               collectionCounts: hasCollector ? {
-                value: filters.collectionCounts || [],
+                value: (Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[],
                 onChange: (value: string[]) => updateFilter('collectionCounts', value)
               } : undefined,
               signedCards: hasCollector ? {
-                value: filters.signedCards || [],
+                value: (Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[],
                 onChange: (value: string[]) => updateFilter('signedCards', value)
               } : undefined,
               formats: {
-                value: filters.formats || [],
+                value: (Array.isArray(filters.formats) ? filters.formats : []) as string[],
                 onChange: (value: string[]) => updateFilter('formats', value),
                 shouldShow: allFormats.length > 1
               }

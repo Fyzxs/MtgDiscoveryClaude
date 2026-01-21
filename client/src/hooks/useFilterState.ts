@@ -17,7 +17,6 @@ export interface FilterState {
 const EMPTY_FILTERS: Readonly<Record<string, unknown>> = {};
 const EMPTY_ARRAY: readonly unknown[] = [];
 const EMPTY_FUNCTIONS: Readonly<Record<string, (item: unknown, value: unknown) => boolean>> = {};
-const EMPTY_SORT_OPTIONS: Readonly<Record<string, (a: unknown, b: unknown) => number>> = {};
 
 /**
  * Hook to manage filtering, searching, and sorting of data
@@ -32,8 +31,7 @@ export function useFilterState<T>(
   configRef.current = config;
 
   const {
-    searchFields = EMPTY_ARRAY,
-    sortOptions = EMPTY_SORT_OPTIONS, // eslint-disable-line @typescript-eslint/no-unused-vars
+    searchFields = EMPTY_ARRAY as readonly (keyof T)[],
     filterFunctions = EMPTY_FUNCTIONS,
     defaultSort = ''
   } = configRef.current;
@@ -141,11 +139,12 @@ export function useFilterState<T>(
  */
 export const commonFilters = {
   // Multi-select filter (item value must be in selected array)
-  multiSelect: <T>(field: keyof T) => (item: T, selectedValues: string[]) => {
+  multiSelect: <T>(field: keyof T) => (item: T, value: unknown) => {
+    const selectedValues = Array.isArray(value) ? value as string[] : [];
     if (!selectedValues || selectedValues.length === 0) return true;
     return selectedValues.includes(String(item[field]));
   },
-  
+
   // Range filter
   range: <T>(field: keyof T, min?: number, max?: number) => (item: T) => {
     const value = Number(item[field]);
@@ -154,18 +153,19 @@ export const commonFilters = {
     if (max !== undefined && value > max) return false;
     return true;
   },
-  
+
   // Boolean filter
-  boolean: <T>(field: keyof T) => (item: T, value: boolean) => {
-    return Boolean(item[field]) === value;
+  boolean: <T>(field: keyof T) => (item: T, value: unknown) => {
+    return Boolean(item[field]) === Boolean(value);
   },
-  
+
   // Contains filter for arrays
-  contains: <T>(field: keyof T) => (item: T, searchValue: string) => {
+  contains: <T>(field: keyof T) => (item: T, value: unknown) => {
+    const searchValue = String(value);
     const fieldValue = item[field];
     if (!fieldValue) return false;
     if (Array.isArray(fieldValue)) {
-      return fieldValue.some(v => 
+      return fieldValue.some(v =>
         String(v).toLowerCase().includes(searchValue.toLowerCase())
       );
     }

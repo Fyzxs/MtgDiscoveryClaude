@@ -29,7 +29,14 @@ interface CardFilterOptions {
 
 // Define defaults outside to prevent recreating on every render
 const DEFAULT_SEARCH_FIELDS: (keyof CardLike)[] = ['name'];
-const DEFAULT_INITIAL_FILTERS = {};
+const DEFAULT_INITIAL_FILTERS: {
+  rarities?: string[];
+  artists?: string[];
+  sets?: string[];
+  formats?: string[];
+  collectionCounts?: string[];
+  signedCards?: string[];
+} = {};
 const EMPTY_ARRAY: string[] = [];
 
 export function useCardFiltering<T extends CardLike>(

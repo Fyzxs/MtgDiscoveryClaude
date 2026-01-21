@@ -61,7 +61,7 @@ export const AllSetsPage: React.FC = () => {
     }
   );
   
-  const selectedSetTypes = filters.setTypes || [];
+  const selectedSetTypes = (Array.isArray(filters.setTypes) ? filters.setTypes : []) as string[];
 
   // Get unique set types from data
   const getUniqueSetTypes = (sets: MtgSet[]): string[] => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import type { CardContext } from '../../../types/card';
 
 interface ArtistInfoProps {
@@ -8,14 +9,16 @@ interface ArtistInfoProps {
   context?: CardContext;
   onArtistClick?: (artistName: string, artistId?: string) => void;
   className?: string;
+  sx?: SxProps<Theme>;
 }
 
-export const ArtistInfo: React.FC<ArtistInfoProps> = ({ 
-  artist, 
+export const ArtistInfo: React.FC<ArtistInfoProps> = ({
+  artist,
   artistIds,
   context = {},
   onArtistClick,
-  className = '' 
+  className = '',
+  sx
 }) => {
   if (!artist) return null;
 
@@ -48,7 +51,7 @@ export const ArtistInfo: React.FC<ArtistInfoProps> = ({
   };
 
   return (
-    <Box className={className} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+    <Box className={className} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', ...sx }}>
       <Typography 
         variant="caption" 
         sx={{ 
