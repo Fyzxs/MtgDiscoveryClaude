@@ -6,6 +6,7 @@ import {
   getUniqueArtists,
   getUniqueRarities,
   getUniqueSets,
+  getUniqueFormats,
   createCardFilterFunctions
 } from '../utils/cardUtils';
 
@@ -51,6 +52,7 @@ export function useCardFiltering<T extends CardLike>(
   const uniqueArtists = useMemo(() => getUniqueArtists(data), [data]);
   const uniqueRarities = useMemo(() => getUniqueRarities(data), [data]);
   const uniqueSets = useMemo(() => includeSets ? getUniqueSets(data) : EMPTY_ARRAY, [data, includeSets]);
+  const uniqueFormats = useMemo(() => getUniqueFormats(data), [data]);
 
   // Create filter configuration
   const filterConfig = useMemo(() => ({
@@ -121,10 +123,12 @@ export function useCardFiltering<T extends CardLike>(
     uniqueArtists,
     uniqueRarities,
     uniqueSets,
-    
+    uniqueFormats,
+
     // Helpers
     hasMultipleArtists: uniqueArtists.length > 1,
     hasMultipleRarities: uniqueRarities.length > 1,
-    hasMultipleSets: uniqueSets.length > 1
+    hasMultipleSets: uniqueSets.length > 1,
+    hasMultipleFormats: uniqueFormats.length > 1
   };
 }

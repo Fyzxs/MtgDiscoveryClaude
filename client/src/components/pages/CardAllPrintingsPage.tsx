@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useCardCache } from '../../hooks/useCardCache';
 import type { Card } from '../../types/card';
 import {
@@ -24,6 +24,7 @@ import {
 import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
 import { AppErrorBoundary } from '../ErrorBoundaries';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
+import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 
 // Stable empty array to prevent infinite re-renders
 const EMPTY_CARDS_ARRAY: Card[] = [];
@@ -40,7 +41,7 @@ interface CardsSuccessResponse {
 
 export const CardAllPrintingsPage: React.FC = () => {
   const { cardName } = useParams<{ cardName: string }>();
-  const navigate = useNavigate();
+  const { navigateWithCollector } = useCollectorNavigation();
   const decodedCardName = decodeURIComponent(cardName || '');
   const [userFriendlyError, setUserFriendlyError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -127,7 +128,7 @@ export const CardAllPrintingsPage: React.FC = () => {
   };
 
   const handleArtistClick = (artistName: string) => {
-    navigate(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
+    navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`);
   };
 
   // Memoize filtering options to prevent infinite re-renders
@@ -147,8 +148,10 @@ export const CardAllPrintingsPage: React.FC = () => {
     updateFilter,
     uniqueArtists,
     uniqueRarities,
+    uniqueFormats,
     hasMultipleArtists,
-    hasMultipleRarities
+    hasMultipleRarities,
+    hasMultipleFormats
   } = useCardFiltering(cards, filteringOptions);
 
   if (loading) {
@@ -219,8 +222,10 @@ export const CardAllPrintingsPage: React.FC = () => {
         onFilterChange={updateFilter}
         uniqueArtists={uniqueArtists}
         uniqueRarities={uniqueRarities}
+        uniqueFormats={uniqueFormats}
         hasMultipleArtists={hasMultipleArtists}
         hasMultipleRarities={hasMultipleRarities}
+        hasMultipleFormats={hasMultipleFormats}
         filteredCount={filteredCards.length}
         totalCount={totalCards}
         showSearch={false}

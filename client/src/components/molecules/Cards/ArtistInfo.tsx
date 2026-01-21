@@ -33,8 +33,9 @@ export const ArtistInfo: React.FC<ArtistInfoProps> = ({
   }
 
   // On artist page with multiple artists, show only the other artists
+  // Use case-insensitive comparison to handle name variations
   const displayArtists = context.isOnArtistPage && context.currentArtist
-    ? artists.filter(a => a !== context.currentArtist)
+    ? artists.filter(a => a.trim().toLowerCase() !== context.currentArtist?.trim().toLowerCase())
     : artists;
 
   if (displayArtists.length === 0) return null;
