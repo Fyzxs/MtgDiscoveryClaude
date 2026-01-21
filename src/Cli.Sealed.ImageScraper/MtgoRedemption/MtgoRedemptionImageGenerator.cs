@@ -25,6 +25,11 @@ internal sealed class MtgoRedemptionImageGenerator : IMtgoRedemptionImageGenerat
     private static readonly SKColor s_goldTextColor = new(218, 165, 32);
     private static readonly SKColor s_setNameColor = SKColors.Black;
 
+    private static readonly Dictionary<string, string> s_setIconMapping = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "TSB", "TSP" }
+    };
+
     private readonly HttpClient _httpClient;
 
     public MtgoRedemptionImageGenerator(HttpClient httpClient) => _httpClient = httpClient;
@@ -64,8 +69,12 @@ internal sealed class MtgoRedemptionImageGenerator : IMtgoRedemptionImageGenerat
 
     private async Task<SKSvg> DownloadSetIconAsync(string setCode, CancellationToken cancellationToken)
     {
+        string iconSetCode = s_setIconMapping.TryGetValue(setCode, out string mappedCode)
+            ? mappedCode
+            : setCode;
+
 #pragma warning disable CA1308 // URL requires lowercase set code
-        string url = $"{ScryfallIconUrlBase}{setCode.ToLowerInvariant()}.svg";
+        string url = $"{ScryfallIconUrlBase}{iconSetCode.ToLowerInvariant()}.svg";
 #pragma warning restore CA1308
 
         using HttpResponseMessage response = await _httpClient

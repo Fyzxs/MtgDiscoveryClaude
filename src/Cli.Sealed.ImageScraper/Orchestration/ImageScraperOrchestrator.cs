@@ -20,14 +20,20 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
     private const string MtgoRedemptionSuffix = "MTGO Redemption";
     private const string MtgoRedemptionFoilSuffix = "MTGO Redemption Foil";
     private const string PlaceholderImageFileName = "COMING_SOON.jpg";
+    private const string CustomImagesDirectory = "custom-images";
 
     private static readonly HashSet<string> s_excludedCategories = new(StringComparer.OrdinalIgnoreCase)
     {
         "booster_case",
         "bundle_case",
         "deck_box",
-        "deck",
         "subset"
+    };
+
+    private static readonly HashSet<string> s_excludedSubtypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "secret_lair_bundle",
+        "duel"
     };
 
     private readonly IReadOnlyList<string> _setCodes;
@@ -121,6 +127,13 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
                 continue;
             }
 
+            if (string.IsNullOrEmpty(product.Subtype) is false && s_excludedSubtypes.Contains(product.Subtype))
+            {
+                _skippedLogger.LogSkippedKnown(product, $"Excluded subtype: {product.Subtype}");
+                _dashboard.IncrementSkipped();
+                continue;
+            }
+
 #pragma warning disable CA1308 // SetCode in output path should be lowercase to match URL pattern
             string outputPath = Path.Combine(OutputDirectory, setCode.ToLowerInvariant(), $"{product.Uuid}.jpg");
 #pragma warning restore CA1308
@@ -136,9 +149,17 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
 
             if (downloaded is false)
             {
-                _skippedLogger.LogSkippedNoImage(product);
-                CopyPlaceholderImage(outputPath);
-                _dashboard.IncrementNoImage();
+                if (TryCopyCustomImage(setCode, product.Uuid, outputPath))
+                {
+                    _dashboard.IncrementDownloaded();
+                    _dashboard.AddLog($"Copied: {product.Name} (custom image)");
+                }
+                else
+                {
+                    _skippedLogger.LogSkippedNoImage(product);
+                    CopyPlaceholderImage(outputPath);
+                    _dashboard.IncrementNoImage();
+                }
             }
         }
     }
@@ -266,6 +287,48 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
         if (File.Exists(placeholderPath))
         {
             File.Copy(placeholderPath, outputPath, overwrite: true);
+        }
+    }
+
+    private static bool TryCopyCustomImage(string setCode, string uuid, string outputPath)
+    {
+        try
+        {
+#pragma warning disable CA1308 // SetCode must be lowercase to match URL pattern convention
+            string customImagePath = Path.Combine(
+                CustomImagesDirectory,
+                setCode.ToLowerInvariant(),
+                $"{uuid}.jpg");
+#pragma warning restore CA1308
+
+            if (File.Exists(customImagePath) is false)
+            {
+                return false;
+            }
+
+            string directory = Path.GetDirectoryName(outputPath);
+            if (string.IsNullOrEmpty(directory) is false && Directory.Exists(directory) is false)
+            {
+                _ = Directory.CreateDirectory(directory);
+            }
+
+            File.Copy(customImagePath, outputPath, overwrite: true);
+            return true;
+        }
+        catch (IOException)
+        {
+            // File system error (disk full, file locked, corruption)
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Permission denied
+            return false;
+        }
+        catch (NotSupportedException)
+        {
+            // Invalid path format
+            return false;
         }
     }
 }
