@@ -71,23 +71,25 @@ export const SealedProductGrid: React.FC<SealedProductGridProps> = ({
   return (
     <Box
       sx={{
-        display: 'grid',
-        gridTemplateColumns: {
-          xs: 'repeat(auto-fill, minmax(140px, 1fr))',
-          sm: 'repeat(auto-fill, minmax(160px, 1fr))',
-          md: 'repeat(auto-fill, minmax(180px, 1fr))',
-          lg: 'repeat(auto-fill, minmax(200px, 1fr))',
-        },
-        gap: { xs: 1.5, sm: 2 },
-        justifyItems: 'center',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: { xs: 1.5, sm: 2, md: 2.5 },
       }}
     >
       {products.map((product) => (
-        <SealedProductCard
+        <Box
           key={product.uuid}
-          product={product}
-          onProductClick={onProductClick}
-        />
+          sx={{
+            width: { xs: 160, sm: 180, md: 200, lg: 220 },
+            flexShrink: 0,
+          }}
+        >
+          <SealedProductCard
+            product={product}
+            onProductClick={onProductClick}
+          />
+        </Box>
       ))}
     </Box>
   );
