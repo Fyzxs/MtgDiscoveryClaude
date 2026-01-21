@@ -1,0 +1,4 @@
+{
+  "content": "⏳ **PENDING**: IReadOnlyCollection Interface Suggestion Acknowledged\n\n**Reason for Deferral:**\n- The suggestion is valid but would require changes to existing patterns throughout the codebase\n- Current implementation with `IEnumerable<CollectedItem>` follows established patterns in other Cosmos items\n- This would be better addressed as part of a broader refactoring effort to update all collection properties\n\n**Next Steps:**\n- 📋 Can be considered for a future technical debt cleanup iteration\n- 🗓️ No immediate impact on functionality or performance\n- 👤 Team decision needed on standardizing collection interface types\n\n**Note:** The current implementation works correctly and the main suggestions for documentation and null-safety have been implemented.",
+  "parentCommentId": 1
+}
