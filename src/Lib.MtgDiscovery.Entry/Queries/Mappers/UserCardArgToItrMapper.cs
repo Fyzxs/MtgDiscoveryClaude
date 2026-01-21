@@ -13,7 +13,7 @@ internal sealed class UserCardArgToItrMapper : IUserCardArgToItrMapper
             UserId = userCardArgs.UserId,
             CardId = userCardArgs.CardId,
             SetId = null,
-            CollectedList = []
+            Details = null
         });
     }
 }

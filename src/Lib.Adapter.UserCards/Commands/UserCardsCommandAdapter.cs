@@ -80,39 +80,36 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
         Dictionary<(string finish, string special), UserCardDetailsExtEntity> mergedItems = existing.CollectedList
             .ToDictionary(item => (item.Finish, item.Special));
 
-        // Merge or add new collected items
-        foreach (IUserCardDetailsXfrEntity newItem in newData.CollectedList)
+        IUserCardDetailsXfrEntity newItem = newData.Details;
+        (string finish, string special) key = (newItem.Finish, newItem.Special);
+
+        if (mergedItems.TryGetValue(key, out UserCardDetailsExtEntity existingItem))
         {
-            (string finish, string special) key = (newItem.Finish, newItem.Special);
-
-            if (mergedItems.TryGetValue(key, out UserCardDetailsExtEntity existingItem))
+            // Update count for existing finish/special combination
+            int newCount = existingItem.Count + newItem.Count;
+            if (newCount < 0)
             {
-                // Update count for existing finish/special combination
-                int newCount = existingItem.Count + newItem.Count;
-                if (newCount < 0)
-                {
-                    newCount = 0;
-                }
+                newCount = 0;
+            }
 
-                mergedItems[key] = new UserCardDetailsExtEntity
-                {
-                    Finish = existingItem.Finish,
-                    Special = existingItem.Special,
-                    Count = newCount
-                    // setGroupId from newItem intentionally omitted - used for aggregation only
-                };
-            }
-            else
+            mergedItems[key] = new UserCardDetailsExtEntity
             {
-                // Add new finish/special combination
-                mergedItems[key] = new UserCardDetailsExtEntity
-                {
-                    Finish = newItem.Finish,
-                    Special = newItem.Special,
-                    Count = newItem.Count
-                    // setGroupId from newItem intentionally omitted - used for aggregation only
-                };
-            }
+                Finish = existingItem.Finish,
+                Special = existingItem.Special,
+                Count = newCount
+                // setGroupId from newItem intentionally omitted - used for aggregation only
+            };
+        }
+        else
+        {
+            // Add new finish/special combination
+            mergedItems[key] = new UserCardDetailsExtEntity
+            {
+                Finish = newItem.Finish,
+                Special = newItem.Special,
+                Count = newItem.Count
+                // setGroupId from newItem intentionally omitted - used for aggregation only
+            };
         }
 
         // Return updated item
@@ -128,26 +125,24 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
     //TODO: Mapper
     private static UserCardExtEntity MapUserCardToExtEntity(IAddUserCardXfrEntity addUserCard)
     {
-        List<UserCardDetailsExtEntity> collectedItems = [];
-        foreach (IUserCardDetailsXfrEntity item in addUserCard.CollectedList)
+        IUserCardDetailsXfrEntity item = addUserCard.Details;
+
+        // Note: setGroupId from item is used to update UserSetCards aggregation
+        // but is NOT persisted in the UserCard record itself
+        UserCardDetailsExtEntity collectedItem = new()
         {
-            // Note: setGroupId from item is used to update UserSetCards aggregation
-            // but is NOT persisted in the UserCard record itself
-            collectedItems.Add(new UserCardDetailsExtEntity
-            {
-                Finish = item.Finish,
-                Special = item.Special,
-                Count = item.Count
-                // setGroupId intentionally omitted - used for aggregation only
-            });
-        }
+            Finish = item.Finish,
+            Special = item.Special,
+            Count = item.Count
+            // setGroupId intentionally omitted - used for aggregation only
+        };
 
         return new UserCardExtEntity
         {
             UserId = addUserCard.UserId,
             CardId = addUserCard.CardId,
             SetId = addUserCard.SetId,
-            CollectedList = collectedItems
+            CollectedList = [collectedItem]
         };
     }
 }
