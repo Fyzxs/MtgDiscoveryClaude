@@ -1,0 +1,108 @@
+# Copilot Ignore File
+# Files and directories that GitHub Copilot should not use for context
+
+# Build outputs
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+
+# Package directories
+packages/
+node_modules/
+.pnp
+.pnp.js
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*~
+
+# Generated files
+*.Generated.cs
+generated/
+*.g.cs
+*.designer.cs
+
+# Documentation builds
+docs/_site/
+docs/.docfx/
+
+# Sensitive data
+*.key
+*.pfx
+*.p12
+*.cer
+secrets.json
+appsettings.*.json
+!appsettings.Development.json
+
+# Large binary files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.pdf
+*.docx
+*.xlsx
+
+# Database files
+*.mdf
+*.ldf
+*.db
+*.sqlite
+
+# Azure artifacts
+*.azurepubxml
+*.pubxml
+*.publishproj
+
+# Frontend build
+client/build/
+client/dist/
+client/.next/
+client/out/
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.backup
+*.old
+_backup/
+
+# Example and sample data
+Example.*/
+example-data/
+sample-data/
+*.sample.json
