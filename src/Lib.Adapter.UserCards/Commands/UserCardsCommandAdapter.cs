@@ -30,12 +30,12 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 
     public async Task<IOperationResponse<IUserCardCollectionItrEntity>> AddUserCardAsync(IUserCardCollectionItrEntity userCard)
     {
-        UserCardItem userCardItem = _userCardItemMapper.Map(userCard);
+        UserCardItem userCardItem = await _userCardItemMapper.Map(userCard).ConfigureAwait(false);
         OpResponse<UserCardItem> cosmosResponse = await _userCardsScribe.UpsertAsync(userCardItem).ConfigureAwait(false);
 
         if (cosmosResponse.IsNotSuccessful()) return new FailureOperationResponse<IUserCardCollectionItrEntity>(new UserCardsAdapterException($"Failed to add user card: {cosmosResponse.StatusCode}"));
 
-        IUserCardCollectionItrEntity resultEntity = _userCardCollectionMapper.Map(cosmosResponse.Value);
+        IUserCardCollectionItrEntity resultEntity = await _userCardCollectionMapper.Map(cosmosResponse.Value).ConfigureAwait(false);
         return new SuccessOperationResponse<IUserCardCollectionItrEntity>(resultEntity);
     }
 }
