@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import type { GridLayoutProps } from '../../../types/components';
+import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 
 export interface ResponsiveGridProps extends GridLayoutProps {
   minItemWidth?: number | string;
@@ -61,16 +63,16 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
  * but limits the max width to prevent excessive stretching
  */
 export const ResponsiveGridAutoFit: React.FC<ResponsiveGridProps> = (props) => {
-  const { 
-    sx = {}, 
-    minItemWidth = 250, 
+  const {
+    sx = {},
+    minItemWidth = 250,
     spacing = 3,
     justifyContent = 'center',
-    ...rest 
+    ...rest
   } = props;
-  
+
   const itemWidth = typeof minItemWidth === 'number' ? `${minItemWidth}px` : minItemWidth;
-  
+
   return (
     <ResponsiveGrid
       {...rest}
