@@ -14,6 +14,7 @@ using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 
 namespace Lib.MtgDiscovery.Entry.Tests.Queries;
@@ -44,31 +45,31 @@ public sealed class CardEntryServiceTests
     public async Task CardsByIdsAsync_WithValidArgs_CallsValidatorMapperAndDataService()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = ["id1", "id2"] };
-        FakeCardIdsItrEntity mappedArgs = new() { CardIds = ["id1", "id2"] };
-        FakeCardItemCollectionItrEntity expectedResponse = new();
+        CardIdsArgEntityFake args = new() { CardIds = ["id1", "id2"] };
+        CardIdsItrEntityFake mappedArgs = new() { CardIds = ["id1", "id2"] };
+        CardItemCollectionItrEntityFake expectedResponse = new();
 
-        FakeCardIdsArgEntityValidator fakeValidator = new()
+        CardIdsArgEntityValidatorFake fakeValidator = new()
         {
-            ValidateResult = new FakeValidatorActionResult { IsValidValue = true }
+            ValidateResult = new ValidatorActionResultFake { IsValidValue = true }
         };
 
-        FakeCardsArgsToItrMapper fakeMapper = new()
+        CardsArgsToItrMapperFake fakeMapper = new()
         {
             MapResult = mappedArgs
         };
 
-        FakeCardDomainService fakeCardDomainService = new()
+        CardDomainServiceFake fakeCardDomainService = new()
         {
             CardsByIdsAsyncResult = new SuccessOperationResponse<ICardItemCollectionItrEntity>(expectedResponse)
         };
 
-        FakeSetCodeArgEntityValidator fakeSetCodeValidator = new();
-        FakeCardNameArgEntityValidator fakeCardNameValidator = new();
-        FakeCardSearchTermArgEntityValidator fakeSearchTermValidator = new();
-        FakeSetCodeArgsToItrMapper fakeSetCodeMapper = new();
-        FakeCardNameArgsToItrMapper fakeCardNameMapper = new();
-        FakeCardSearchTermArgsToItrMapper fakeSearchTermMapper = new();
+        SetCodeArgEntityValidatorFake fakeSetCodeValidator = new();
+        CardNameArgEntityValidatorFake fakeCardNameValidator = new();
+        CardSearchTermArgEntityValidatorFake fakeSearchTermValidator = new();
+        SetCodeArgsToItrMapperFake fakeSetCodeMapper = new();
+        CardNameArgsToItrMapperFake fakeCardNameMapper = new();
+        CardSearchTermArgsToItrMapperFake fakeSearchTermMapper = new();
 
         CardEntryService subject = new TestableCardEntryService(fakeCardDomainService, fakeValidator, fakeSetCodeValidator, fakeCardNameValidator, fakeSearchTermValidator, fakeMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
@@ -91,27 +92,27 @@ public sealed class CardEntryServiceTests
     public async Task CardsByIdsAsync_WithInvalidArgs_ReturnsFailureResponse()
     {
         // Arrange
-        FakeCardIdsArgEntity args = new() { CardIds = [] };
-        FakeOperationResponse failureResponse = new() { IsSuccessValue = false };
+        CardIdsArgEntityFake args = new() { CardIds = [] };
+        OperationResponseFake failureResponse = new() { IsSuccessValue = false };
 
-        FakeCardIdsArgEntityValidator fakeValidator = new()
+        CardIdsArgEntityValidatorFake fakeValidator = new()
         {
-            ValidateResult = new FakeValidatorActionResult
+            ValidateResult = new ValidatorActionResultFake
             {
                 IsValidValue = false,
                 FailureStatusValue = failureResponse
             }
         };
 
-        FakeCardsArgsToItrMapper fakeMapper = new();
-        FakeCardDomainService fakeCardDomainService = new();
+        CardsArgsToItrMapperFake fakeMapper = new();
+        CardDomainServiceFake fakeCardDomainService = new();
 
-        FakeSetCodeArgEntityValidator fakeSetCodeValidator = new();
-        FakeCardNameArgEntityValidator fakeCardNameValidator = new();
-        FakeCardSearchTermArgEntityValidator fakeSearchTermValidator = new();
-        FakeSetCodeArgsToItrMapper fakeSetCodeMapper = new();
-        FakeCardNameArgsToItrMapper fakeCardNameMapper = new();
-        FakeCardSearchTermArgsToItrMapper fakeSearchTermMapper = new();
+        SetCodeArgEntityValidatorFake fakeSetCodeValidator = new();
+        CardNameArgEntityValidatorFake fakeCardNameValidator = new();
+        CardSearchTermArgEntityValidatorFake fakeSearchTermValidator = new();
+        SetCodeArgsToItrMapperFake fakeSetCodeMapper = new();
+        CardNameArgsToItrMapperFake fakeCardNameMapper = new();
+        CardSearchTermArgsToItrMapperFake fakeSearchTermMapper = new();
 
         CardEntryService subject = new TestableCardEntryService(fakeCardDomainService, fakeValidator, fakeSetCodeValidator, fakeCardNameValidator, fakeSearchTermValidator, fakeMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
@@ -125,21 +126,10 @@ public sealed class CardEntryServiceTests
         fakeCardDomainService.CardsByIdsAsyncInvokeCount.Should().Be(0);
     }
 
-    private sealed class LoggerFake : ILogger
-    {
-        public IDisposable BeginScope<TState>(TState state) where TState : notnull => new DisposableFake();
-        public bool IsEnabled(LogLevel logLevel) => false;
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) { }
 
-        private sealed class DisposableFake : IDisposable
-        {
-            public void Dispose() { }
-        }
-    }
-
-    private sealed class FakeCardIdsArgEntityValidator : ICardIdsArgEntityValidator
+    private sealed class CardIdsArgEntityValidatorFake : ICardIdsArgEntityValidator
     {
-        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new FakeValidatorActionResult();
+        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new ValidatorActionResultFake();
         public int ValidateInvokeCount { get; private set; }
         public ICardIdsArgEntity ValidateInput { get; private set; } = default!;
 
@@ -151,9 +141,9 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardsArgsToItrMapper : ICardsArgsToItrMapper
+    private sealed class CardsArgsToItrMapperFake : ICardsArgsToItrMapper
     {
-        public ICardIdsItrEntity MapResult { get; init; } = new FakeCardIdsItrEntity();
+        public ICardIdsItrEntity MapResult { get; init; } = new CardIdsItrEntityFake();
         public int MapInvokeCount { get; private set; }
         public ICardIdsArgEntity MapInput { get; private set; } = default!;
 
@@ -165,22 +155,22 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardDomainService : ICardDomainService
+    private sealed class CardDomainServiceFake : ICardDomainService
     {
         public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } =
-            new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+            new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
         public int CardsByIdsAsyncInvokeCount { get; private set; }
         public ICardIdsItrEntity CardsByIdsAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
         public int CardsBySetCodeAsyncInvokeCount { get; private set; }
         public ISetCodeItrEntity CardsBySetCodeAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
         public int CardsByNameAsyncInvokeCount { get; private set; }
         public ICardNameItrEntity CardsByNameAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new FakeCardNameSearchResultCollectionItrEntity());
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardNameSearchResultCollectionItrEntityFake());
         public int CardNameSearchAsyncInvokeCount { get; private set; }
         public ICardSearchTermItrEntity CardNameSearchAsyncInput { get; private set; } = default!;
 
@@ -213,49 +203,49 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeValidatorActionResult : IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>>
+    private sealed class ValidatorActionResultFake : IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>>
     {
         public bool IsValidValue { get; init; }
-        public IOperationResponse<ICardItemCollectionItrEntity> FailureStatusValue { get; init; } = new FakeOperationResponse();
+        public IOperationResponse<ICardItemCollectionItrEntity> FailureStatusValue { get; init; } = new OperationResponseFake();
 
         public bool IsValid() => IsValidValue;
         public bool IsNotValid() => !IsValidValue;
         public IOperationResponse<ICardItemCollectionItrEntity> FailureStatus() => FailureStatusValue;
     }
 
-    private sealed class FakeOperationResponse : IOperationResponse<ICardItemCollectionItrEntity>
+    private sealed class OperationResponseFake : IOperationResponse<ICardItemCollectionItrEntity>
     {
         public bool IsSuccessValue { get; init; }
         public bool IsSuccess => IsSuccessValue;
         public bool IsFailure => !IsSuccessValue;
-        public ICardItemCollectionItrEntity ResponseData => new FakeCardItemCollectionItrEntity();
+        public ICardItemCollectionItrEntity ResponseData => new CardItemCollectionItrEntityFake();
         public OperationException OuterException => new BadRequestOperationException("Test exception");
         public HttpStatusCode Status => HttpStatusCode.OK;
     }
 
-    private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
+    private sealed class CardIdsArgEntityFake : ICardIdsArgEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
 
-    private sealed class FakeCardIdsItrEntity : ICardIdsItrEntity
+    private sealed class CardIdsItrEntityFake : ICardIdsItrEntity
     {
         public ICollection<string> CardIds { get; init; } = [];
     }
 
-    private sealed class FakeCardItemCollectionItrEntity : ICardItemCollectionItrEntity
+    private sealed class CardItemCollectionItrEntityFake : ICardItemCollectionItrEntity
     {
         public ICollection<ICardItemItrEntity> Data { get; init; } = [];
     }
 
-    private sealed class FakeCardNameSearchResultCollectionItrEntity : ICardNameSearchResultCollectionItrEntity
+    private sealed class CardNameSearchResultCollectionItrEntityFake : ICardNameSearchResultCollectionItrEntity
     {
         public ICollection<ICardNameSearchResultItrEntity> Names { get; init; } = [];
     }
 
-    private sealed class FakeSetCodeArgEntityValidator : ISetCodeArgEntityValidator
+    private sealed class SetCodeArgEntityValidatorFake : ISetCodeArgEntityValidator
     {
-        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new FakeValidatorActionResult();
+        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new ValidatorActionResultFake();
         public int ValidateInvokeCount { get; private set; }
         public ISetCodeArgEntity ValidateInput { get; private set; } = default!;
 
@@ -267,9 +257,9 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardNameArgEntityValidator : ICardNameArgEntityValidator
+    private sealed class CardNameArgEntityValidatorFake : ICardNameArgEntityValidator
     {
-        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new FakeValidatorActionResult();
+        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new ValidatorActionResultFake();
         public int ValidateInvokeCount { get; private set; }
         public ICardNameArgEntity ValidateInput { get; private set; } = default!;
 
@@ -281,9 +271,9 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardSearchTermArgEntityValidator : ICardSearchTermArgEntityValidator
+    private sealed class CardSearchTermArgEntityValidatorFake : ICardSearchTermArgEntityValidator
     {
-        public IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> ValidateResult { get; init; } = new FakeSearchValidatorActionResult();
+        public IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> ValidateResult { get; init; } = new SearchValidatorActionResultFake();
         public int ValidateInvokeCount { get; private set; }
         public ICardSearchTermArgEntity ValidateInput { get; private set; } = default!;
 
@@ -295,29 +285,29 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeSearchValidatorActionResult : IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>>
+    private sealed class SearchValidatorActionResultFake : IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>>
     {
         public bool IsValidValue { get; init; }
-        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> FailureStatusValue { get; init; } = new FakeSearchOperationResponse();
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> FailureStatusValue { get; init; } = new SearchOperationResponseFake();
 
         public bool IsValid() => IsValidValue;
         public bool IsNotValid() => !IsValidValue;
         public IOperationResponse<ICardNameSearchResultCollectionItrEntity> FailureStatus() => FailureStatusValue;
     }
 
-    private sealed class FakeSearchOperationResponse : IOperationResponse<ICardNameSearchResultCollectionItrEntity>
+    private sealed class SearchOperationResponseFake : IOperationResponse<ICardNameSearchResultCollectionItrEntity>
     {
         public bool IsSuccessValue { get; init; }
         public bool IsSuccess => IsSuccessValue;
         public bool IsFailure => !IsSuccessValue;
-        public ICardNameSearchResultCollectionItrEntity ResponseData => new FakeCardNameSearchResultCollectionItrEntity();
+        public ICardNameSearchResultCollectionItrEntity ResponseData => new CardNameSearchResultCollectionItrEntityFake();
         public OperationException OuterException => new BadRequestOperationException("Test exception");
         public HttpStatusCode Status => HttpStatusCode.OK;
     }
 
-    private sealed class FakeSetCodeArgsToItrMapper : ISetCodeArgsToItrMapper
+    private sealed class SetCodeArgsToItrMapperFake : ISetCodeArgsToItrMapper
     {
-        public ISetCodeItrEntity MapResult { get; init; } = new FakeSetCodeItrEntity();
+        public ISetCodeItrEntity MapResult { get; init; } = new SetCodeItrEntityFake();
         public int MapInvokeCount { get; private set; }
         public ISetCodeArgEntity MapInput { get; private set; } = default!;
 
@@ -329,9 +319,9 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardNameArgsToItrMapper : ICardNameArgsToItrMapper
+    private sealed class CardNameArgsToItrMapperFake : ICardNameArgsToItrMapper
     {
-        public ICardNameItrEntity MapResult { get; init; } = new FakeCardNameItrEntity();
+        public ICardNameItrEntity MapResult { get; init; } = new CardNameItrEntityFake();
         public int MapInvokeCount { get; private set; }
         public ICardNameArgEntity MapInput { get; private set; } = default!;
 
@@ -343,9 +333,9 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardSearchTermArgsToItrMapper : ICardSearchTermArgsToItrMapper
+    private sealed class CardSearchTermArgsToItrMapperFake : ICardSearchTermArgsToItrMapper
     {
-        public ICardSearchTermItrEntity MapResult { get; init; } = new FakeCardSearchTermItrEntity();
+        public ICardSearchTermItrEntity MapResult { get; init; } = new CardSearchTermItrEntityFake();
         public int MapInvokeCount { get; private set; }
         public ICardSearchTermArgEntity MapInput { get; private set; } = default!;
 
@@ -357,17 +347,17 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeSetCodeItrEntity : ISetCodeItrEntity
+    private sealed class SetCodeItrEntityFake : ISetCodeItrEntity
     {
         public string SetCode { get; init; } = string.Empty;
     }
 
-    private sealed class FakeCardNameItrEntity : ICardNameItrEntity
+    private sealed class CardNameItrEntityFake : ICardNameItrEntity
     {
         public string CardName { get; init; } = string.Empty;
     }
 
-    private sealed class FakeCardSearchTermItrEntity : ICardSearchTermItrEntity
+    private sealed class CardSearchTermItrEntityFake : ICardSearchTermItrEntity
     {
         public string SearchTerm { get; init; } = string.Empty;
     }

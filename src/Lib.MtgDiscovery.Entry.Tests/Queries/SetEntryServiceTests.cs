@@ -2,6 +2,7 @@
 using Lib.MtgDiscovery.Entry.Queries;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestConvenience.Core.Fakes;
 
 namespace Lib.MtgDiscovery.Entry.Tests.Queries;
 
@@ -21,15 +22,4 @@ public sealed class SetEntryServiceTests
         // Constructor should create instance without throwing
     }
 
-    private sealed class LoggerFake : ILogger
-    {
-        public IDisposable BeginScope<TState>(TState state) where TState : notnull => new DisposableFake();
-        public bool IsEnabled(LogLevel logLevel) => false;
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) { }
-
-        private sealed class DisposableFake : IDisposable
-        {
-            public void Dispose() { }
-        }
-    }
 }

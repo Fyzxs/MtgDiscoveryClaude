@@ -4,7 +4,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.User.Tests.Fakes;
 
-internal sealed class FakeOperationResponse<T> : IOperationResponse<T>
+internal sealed class OperationResponseFake<T> : IOperationResponse<T>
 {
     public bool IsSuccess { get; init; }
     public bool IsFailure => IsSuccess is false;

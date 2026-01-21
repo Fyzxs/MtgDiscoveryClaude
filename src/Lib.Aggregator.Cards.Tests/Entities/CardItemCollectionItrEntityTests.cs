@@ -2,6 +2,7 @@
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Aggregator.Scryfall.Shared.Entities;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.Aggregator.Cards.Tests.Entities;
 
@@ -13,8 +14,8 @@ public sealed class CardItemCollectionItrEntityTests
     {
         // Arrange
         List<ICardItemItrEntity> expected = [
-            new FakeCardItemItrEntity { Id = "card1", Name = "Card One" },
-            new FakeCardItemItrEntity { Id = "card2", Name = "Card Two" }
+            new CardItemItrEntityFake { Id = "card1", Name = "Card One" },
+            new CardItemItrEntityFake { Id = "card2", Name = "Card Two" }
         ];
 
         // Act

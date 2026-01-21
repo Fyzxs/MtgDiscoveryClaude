@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
 
@@ -19,13 +21,10 @@ internal sealed class UserCardCollectionItrToOutMapper : IUserCardCollectionItrT
 
     public async Task<List<UserCardOutEntity>> Map(IEnumerable<IUserCardItrEntity> userCards)
     {
-        List<UserCardOutEntity> results = [];
-        foreach (IUserCardItrEntity userCard in userCards)
-        {
-            UserCardOutEntity mapped = await _mapper.Map(userCard).ConfigureAwait(false);
-            results.Add(mapped);
-        }
+        UserCardOutEntity[] results = await Task.WhenAll(
+            userCards.Select(userCard => _mapper.Map(userCard))
+        ).ConfigureAwait(false);
 
-        return results;
+        return results.ToList();
     }
 }
