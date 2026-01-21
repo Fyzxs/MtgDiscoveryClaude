@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AwesomeAssertions;
@@ -16,7 +16,7 @@ public sealed class EntryServiceTests
 {
     private sealed class TestableEntryService : TypeWrapper<EntryService>
     {
-        public TestableEntryService(ICardEntryService cardEntryService, ISetEntryService setEntryService) 
+        public TestableEntryService(ICardEntryService cardEntryService, ISetEntryService setEntryService)
             : base(cardEntryService, setEntryService) { }
     }
 
@@ -72,10 +72,22 @@ public sealed class EntryServiceTests
 
     private sealed class FakeCardEntryService : ICardEntryService
     {
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } = 
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } =
             new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
         public int CardsByIdsAsyncInvokeCount { get; private set; }
         public ICardIdsArgEntity CardsByIdsAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public int CardsBySetCodeAsyncInvokeCount { get; private set; }
+        public ISetCodeArgEntity CardsBySetCodeAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public int CardsByNameAsyncInvokeCount { get; private set; }
+        public ICardNameArgEntity CardsByNameAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new FakeCardNameSearchResultCollectionItrEntity());
+        public int CardNameSearchAsyncInvokeCount { get; private set; }
+        public ICardSearchTermArgEntity CardNameSearchAsyncInput { get; private set; } = default!;
 
         public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsArgEntity args)
         {
@@ -83,11 +95,61 @@ public sealed class EntryServiceTests
             CardsByIdsAsyncInput = args;
             return Task.FromResult(CardsByIdsAsyncResult);
         }
+
+        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeArgEntity setCode)
+        {
+            CardsBySetCodeAsyncInvokeCount++;
+            CardsBySetCodeAsyncInput = setCode;
+            return Task.FromResult(CardsBySetCodeAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameArgEntity cardName)
+        {
+            CardsByNameAsyncInvokeCount++;
+            CardsByNameAsyncInput = cardName;
+            return Task.FromResult(CardsByNameAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm)
+        {
+            CardNameSearchAsyncInvokeCount++;
+            CardNameSearchAsyncInput = searchTerm;
+            return Task.FromResult(CardNameSearchAsyncResult);
+        }
     }
 
     private sealed class FakeSetEntryService : ISetEntryService
     {
-        // Empty fake implementation as SetEntryService is not used in current EntryService
+        public IOperationResponse<ISetItemCollectionItrEntity> SetsByIdsAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new FakeSetItemCollectionItrEntity());
+        public int SetsByIdsAsyncInvokeCount { get; private set; }
+        public ISetIdsArgEntity SetsByIdsAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ISetItemCollectionItrEntity> SetsByCodeAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new FakeSetItemCollectionItrEntity());
+        public int SetsByCodeAsyncInvokeCount { get; private set; }
+        public ISetCodesArgEntity SetsByCodeAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ISetItemCollectionItrEntity> AllSetsAsyncResult { get; init; } = new SuccessOperationResponse<ISetItemCollectionItrEntity>(new FakeSetItemCollectionItrEntity());
+        public int AllSetsAsyncInvokeCount { get; private set; }
+
+        public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByIdsAsync(ISetIdsArgEntity setIds)
+        {
+            SetsByIdsAsyncInvokeCount++;
+            SetsByIdsAsyncInput = setIds;
+            return Task.FromResult(SetsByIdsAsyncResult);
+        }
+
+        public Task<IOperationResponse<ISetItemCollectionItrEntity>> SetsByCodeAsync(ISetCodesArgEntity setCodes)
+        {
+            SetsByCodeAsyncInvokeCount++;
+            SetsByCodeAsyncInput = setCodes;
+            return Task.FromResult(SetsByCodeAsyncResult);
+        }
+
+        public Task<IOperationResponse<ISetItemCollectionItrEntity>> AllSetsAsync()
+        {
+            AllSetsAsyncInvokeCount++;
+            return Task.FromResult(AllSetsAsyncResult);
+        }
     }
 
     private sealed class FakeCardIdsArgEntity : ICardIdsArgEntity
@@ -98,5 +160,15 @@ public sealed class EntryServiceTests
     private sealed class FakeCardItemCollectionItrEntity : ICardItemCollectionItrEntity
     {
         public ICollection<ICardItemItrEntity> Data { get; init; } = [];
+    }
+
+    private sealed class FakeCardNameSearchResultCollectionItrEntity : ICardNameSearchResultCollectionItrEntity
+    {
+        public ICollection<ICardNameSearchResultItrEntity> Names { get; init; } = [];
+    }
+
+    private sealed class FakeSetItemCollectionItrEntity : ISetItemCollectionItrEntity
+    {
+        public ICollection<ISetItemItrEntity> Data { get; init; } = [];
     }
 }

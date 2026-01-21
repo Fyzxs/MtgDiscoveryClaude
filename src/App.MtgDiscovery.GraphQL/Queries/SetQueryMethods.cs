@@ -21,16 +21,16 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class SetQueryMethods
 {
-    private readonly ISetItemItrToOutMapper _scryfallSetMapper;
+    private readonly ISetItemCollectionItrToOutMapper _setCollectionMapper;
     private readonly IEntryService _entryService;
 
-    public SetQueryMethods(ILogger logger) : this(new SetItemItrToOutMapper(), new EntryService(logger))
+    public SetQueryMethods(ILogger logger) : this(new SetItemCollectionItrToOutMapper(), new EntryService(logger))
     {
     }
 
-    private SetQueryMethods(ISetItemItrToOutMapper scryfallSetMapper, IEntryService entryService)
+    private SetQueryMethods(ISetItemCollectionItrToOutMapper setCollectionMapper, IEntryService entryService)
     {
-        _scryfallSetMapper = scryfallSetMapper;
+        _setCollectionMapper = setCollectionMapper;
         _entryService = entryService;
     }
 
@@ -53,13 +53,7 @@ public class SetQueryMethods
             };
         }
 
-        List<ScryfallSetOutEntity> results = [];
-
-        foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
-        {
-            ScryfallSetOutEntity outEntity = await _scryfallSetMapper.Map(setItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
+        List<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results };
     }
@@ -81,13 +75,7 @@ public class SetQueryMethods
             };
         }
 
-        List<ScryfallSetOutEntity> results = [];
-
-        foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
-        {
-            ScryfallSetOutEntity outEntity = await _scryfallSetMapper.Map(setItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
+        List<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results };
     }
@@ -109,13 +97,7 @@ public class SetQueryMethods
             };
         }
 
-        List<ScryfallSetOutEntity> results = [];
-
-        foreach (ISetItemItrEntity setItem in response.ResponseData.Data)
-        {
-            ScryfallSetOutEntity outEntity = await _scryfallSetMapper.Map(setItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
+        List<ScryfallSetOutEntity> results = await _setCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<ScryfallSetOutEntity>>() { Data = results };
     }

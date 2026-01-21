@@ -9,8 +9,6 @@ using Lib.Adapter.Artists.Exceptions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
-using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Aggregator.Scryfall.Shared.Mappers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -30,26 +28,22 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 {
     private readonly ICosmosInquisitor _artistNameTrigramsInquisitor;
     private readonly ICosmosInquisitor _artistCardsInquisitor;
-    private readonly CardItemExtToItrEntityMapper _cardMapper;
 
     public ArtistCosmosQueryAdapter(ILogger logger) : this(
         new ArtistNameTrigramsInquisitor(logger),
-        new ScryfallArtistCardsInquisitor(logger),
-        new CardItemExtToItrEntityMapper())
+        new ScryfallArtistCardsInquisitor(logger))
     {
     }
 
     private ArtistCosmosQueryAdapter(
         ICosmosInquisitor artistNameTrigramsInquisitor,
-        ICosmosInquisitor artistCardsInquisitor,
-        CardItemExtToItrEntityMapper cardMapper)
+        ICosmosInquisitor artistCardsInquisitor)
     {
         _artistNameTrigramsInquisitor = artistNameTrigramsInquisitor;
         _artistCardsInquisitor = artistCardsInquisitor;
-        _cardMapper = cardMapper;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionItrEntity>> SearchArtistsAsync([NotNull] IArtistSearchTermItrEntity searchTerm)
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync([NotNull] IArtistSearchTermItrEntity searchTerm)
     {
         // Extract primitives for external system interface
         string searchTermValue = searchTerm.SearchTerm;
@@ -61,7 +55,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
         if (normalized.Length < 3)
         {
-            return new FailureOperationResponse<IArtistSearchResultCollectionItrEntity>(
+            return new FailureOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>(
                 new ArtistAdapterException("Search term must contain at least 3 letters"));
         }
 
@@ -72,10 +66,10 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
             trigrams.Add(normalized.Substring(i, 3));
         }
 
-        // Query each trigram and collect all matching artist names
-        HashSet<string> matchingArtistIds = [];
+        // Query each trigram and collect all matching artist data entities
+        HashSet<string> seenArtistIds = [];
+        List<ArtistNameTrigramDataExtEntity> matchingArtists = [];
         Dictionary<string, int> artistMatchCounts = [];
-        Dictionary<string, string> artistIdToName = [];
 
         foreach (string trigram in trigrams)
         {
@@ -100,36 +94,31 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
                         // Server-side filtering should have already filtered, but double-check
                         if (entry.Normalized.Contains(normalized))
                         {
-                            matchingArtistIds.Add(entry.ArtistId);
-                            artistIdToName[entry.ArtistId] = entry.Name;
-
-                            // Track how many trigrams matched for ranking
-                            if (artistMatchCounts.ContainsKey(entry.ArtistId) is false)
+                            // Track unique artists and their match counts for sorting
+                            if (seenArtistIds.Add(entry.ArtistId))
                             {
-                                artistMatchCounts[entry.ArtistId] = 0;
+                                matchingArtists.Add(entry);
+                                artistMatchCounts[entry.ArtistId] = 1;
                             }
-                            artistMatchCounts[entry.ArtistId]++;
+                            else
+                            {
+                                artistMatchCounts[entry.ArtistId]++;
+                            }
                         }
                     }
                 }
             }
         }
 
-        // Sort by match count (artists matching more trigrams appear first) and convert to result entities
-        List<IArtistSearchResultItrEntity> sortedResults = [.. matchingArtistIds
-            .OrderByDescending(artistId => artistMatchCounts[artistId])
-            .ThenBy(artistId => artistIdToName[artistId])
-            .Select(artistId => new ArtistSearchResultItrEntity
-            {
-                ArtistId = artistId,
-                Name = artistIdToName[artistId]
-            } as IArtistSearchResultItrEntity)];
+        // Sort by match count (artists matching more trigrams appear first), then by name
+        List<ArtistNameTrigramDataExtEntity> sortedResults = [.. matchingArtists
+            .OrderByDescending(artist => artistMatchCounts[artist.ArtistId])
+            .ThenBy(artist => artist.Name)];
 
-        return new SuccessOperationResponse<IArtistSearchResultCollectionItrEntity>(
-            new ArtistSearchResultCollectionItrEntity { Artists = sortedResults });
+        return new SuccessOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>(sortedResults);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> GetCardsByArtistIdAsync([NotNull] IArtistIdItrEntity artistId)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> GetCardsByArtistIdAsync([NotNull] IArtistIdItrEntity artistId)
     {
         // Extract primitives for external system interface
         string artistIdValue = artistId.ArtistId;
@@ -144,26 +133,14 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
         if (cardsResponse.IsSuccessful() is false)
         {
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(
+            return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
                 new ArtistAdapterException($"Failed to retrieve cards for artist '{artistIdValue}'", cardsResponse.Exception()));
         }
 
-        // Convert ScryfallArtistCard to ScryfallCardItem for mapping
-        List<ICardItemItrEntity> cards = [];
-        foreach (ScryfallArtistCardExtEntity artistCard in cardsResponse.Value)
-        {
-            ScryfallCardItemExtEntity cardItem = new() { Data = artistCard.Data };
-            ICardItemItrEntity mappedCard = _cardMapper.Map(cardItem);
-            if (mappedCard != null)
-            {
-                cards.Add(mappedCard);
-            }
-        }
-
-        return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
+        return new SuccessOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(cardsResponse.Value);
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionItrEntity>> GetCardsByArtistNameAsync([NotNull] IArtistNameItrEntity artistName)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> GetCardsByArtistNameAsync([NotNull] IArtistNameItrEntity artistName)
     {
         // Extract primitives for external system interface
         string artistNameValue = artistName.ArtistName;
@@ -175,7 +152,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
         if (normalized.Length < 3)
         {
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(
+            return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
                 new ArtistAdapterException("Artist name must contain at least 3 letters"));
         }
 
@@ -232,7 +209,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         // Check if we found any matches
         if (matchingArtistIds.Count == 0)
         {
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(
+            return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
                 new ArtistAdapterException($"Artist '{artistNameValue}' not found"));
         }
 
@@ -267,7 +244,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
                 .Select(id => artistIdToName[id])];
 
             string alternatives = string.Join(", ", ambiguousMatches);
-            return new FailureOperationResponse<ICardItemCollectionItrEntity>(
+            return new FailureOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>(
                 new ArtistAdapterException($"Multiple artists found for '{artistNameValue}'. Consider using artist search for: {alternatives}"));
         }
 

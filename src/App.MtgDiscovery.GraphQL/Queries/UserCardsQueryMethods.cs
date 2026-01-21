@@ -19,19 +19,23 @@ public sealed class UserCardsQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IUserCardItrToOutMapper _mapper;
+    private readonly IUserCardCollectionItrToOutMapper _collectionMapper;
 
     public UserCardsQueryMethods(ILogger logger) : this(
         new EntryService(logger),
-        new UserCardItrToOutMapper())
+        new UserCardItrToOutMapper(),
+        new UserCardCollectionItrToOutMapper())
     {
     }
 
     private UserCardsQueryMethods(
         IEntryService entryService,
-        IUserCardItrToOutMapper mapper)
+        IUserCardItrToOutMapper mapper,
+        IUserCardCollectionItrToOutMapper collectionMapper)
     {
         _entryService = entryService;
         _mapper = mapper;
+        _collectionMapper = collectionMapper;
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
@@ -50,13 +54,7 @@ public sealed class UserCardsQueryMethods
             }
         };
 
-        // TODO: Create a mapper to handle the looping. This shoud be List<UserCardCollectionOutEntity> results = _mapper.Map(response.ResponseData) 
-        List<UserCardOutEntity> results = [];
-        foreach (IUserCardItrEntity userCard in response.ResponseData)
-        {
-            UserCardOutEntity mapped = await _mapper.Map(userCard).ConfigureAwait(false);
-            results.Add(mapped);
-        }
+        List<UserCardOutEntity> results = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
 
         return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = results };
     }

@@ -15,9 +15,9 @@ namespace Lib.Domain.Cards.Tests.Queries;
 [TestClass]
 public sealed class CardDomainOperationsTests
 {
-    private sealed class TestableCardDomainOperations : TypeWrapper<CardDomainOperations>
+    private sealed class TestableQueryCardDomainService : TypeWrapper<QueryCardDomainService>
     {
-        public TestableCardDomainOperations(ICardAggregatorService cardAggregatorService) : base(cardAggregatorService) { }
+        public TestableQueryCardDomainService(ICardAggregatorService cardAggregatorService) : base(cardAggregatorService) { }
     }
 
     [TestMethod, TestCategory("unit")]
@@ -27,7 +27,7 @@ public sealed class CardDomainOperationsTests
         ILogger logger = new LoggerFake();
 
         // Act
-        CardDomainOperations _ = new(logger);
+        QueryCardDomainService _ = new(logger);
 
         // Assert
         // Constructor should create instance without throwing
@@ -44,7 +44,7 @@ public sealed class CardDomainOperationsTests
             CardsByIdsAsyncResult = new SuccessOperationResponse<ICardItemCollectionItrEntity>(expectedResponse)
         };
 
-        CardDomainOperations subject = new TestableCardDomainOperations(fakeAggregator);
+        QueryCardDomainService subject = new TestableQueryCardDomainService(fakeAggregator);
 
         // Act
         IOperationResponse<ICardItemCollectionItrEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
@@ -75,11 +75,44 @@ public sealed class CardDomainOperationsTests
         public int CardsByIdsAsyncInvokeCount { get; private set; }
         public ICardIdsItrEntity CardsByIdsAsyncInput { get; private set; } = default!;
 
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public int CardsBySetCodeAsyncInvokeCount { get; private set; }
+        public ISetCodeItrEntity CardsBySetCodeAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public int CardsByNameAsyncInvokeCount { get; private set; }
+        public ICardNameItrEntity CardsByNameAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new FakeCardNameSearchResultCollectionItrEntity());
+        public int CardNameSearchAsyncInvokeCount { get; private set; }
+        public ICardSearchTermItrEntity CardNameSearchAsyncInput { get; private set; } = default!;
+
         public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
         {
             CardsByIdsAsyncInvokeCount++;
             CardsByIdsAsyncInput = args;
             return Task.FromResult(CardsByIdsAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+        {
+            CardsBySetCodeAsyncInvokeCount++;
+            CardsBySetCodeAsyncInput = setCode;
+            return Task.FromResult(CardsBySetCodeAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+        {
+            CardsByNameAsyncInvokeCount++;
+            CardsByNameAsyncInput = cardName;
+            return Task.FromResult(CardsByNameAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+        {
+            CardNameSearchAsyncInvokeCount++;
+            CardNameSearchAsyncInput = searchTerm;
+            return Task.FromResult(CardNameSearchAsyncResult);
         }
     }
 
@@ -91,5 +124,10 @@ public sealed class CardDomainOperationsTests
     private sealed class FakeCardItemCollectionItrEntity : ICardItemCollectionItrEntity
     {
         public ICollection<ICardItemItrEntity> Data { get; init; } = [];
+    }
+
+    private sealed class FakeCardNameSearchResultCollectionItrEntity : ICardNameSearchResultCollectionItrEntity
+    {
+        public ICollection<ICardNameSearchResultItrEntity> Names { get; init; } = [];
     }
 }

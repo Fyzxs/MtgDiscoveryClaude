@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AwesomeAssertions;
-using Lib.MtgDiscovery.Data.Apis;
+using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Queries;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
@@ -23,8 +23,8 @@ public sealed class CardEntryServiceTests
 {
     private sealed class TestableCardEntryService : TypeWrapper<CardEntryService>
     {
-        public TestableCardEntryService(ICardDataService cardDataService, ICardIdsArgEntityValidator validator, ICardsArgsToItrMapper mapper) 
-            : base(cardDataService, validator, mapper) { }
+        public TestableCardEntryService(ICardDomainService cardDomainService, ICardIdsArgEntityValidator validator, ISetCodeArgEntityValidator setCodeValidator, ICardNameArgEntityValidator cardNameValidator, ICardSearchTermArgEntityValidator searchTermValidator, ICardsArgsToItrMapper mapper, ISetCodeArgsToItrMapper setCodeMapper, ICardNameArgsToItrMapper cardNameMapper, ICardSearchTermArgsToItrMapper searchTermMapper)
+            : base(cardDomainService, validator, setCodeValidator, cardNameValidator, searchTermValidator, mapper, setCodeMapper, cardNameMapper, searchTermMapper) { }
     }
 
     [TestMethod, TestCategory("unit")]
@@ -47,23 +47,30 @@ public sealed class CardEntryServiceTests
         FakeCardIdsArgEntity args = new() { CardIds = ["id1", "id2"] };
         FakeCardIdsItrEntity mappedArgs = new() { CardIds = ["id1", "id2"] };
         FakeCardItemCollectionItrEntity expectedResponse = new();
-        
+
         FakeCardIdsArgEntityValidator fakeValidator = new()
         {
             ValidateResult = new FakeValidatorActionResult { IsValidValue = true }
         };
-        
+
         FakeCardsArgsToItrMapper fakeMapper = new()
         {
             MapResult = mappedArgs
         };
-        
-        FakeCardDataService fakeCardDataService = new()
+
+        FakeCardDomainService fakeCardDomainService = new()
         {
             CardsByIdsAsyncResult = new SuccessOperationResponse<ICardItemCollectionItrEntity>(expectedResponse)
         };
 
-        CardEntryService subject = new TestableCardEntryService(fakeCardDataService, fakeValidator, fakeMapper);
+        FakeSetCodeArgEntityValidator fakeSetCodeValidator = new();
+        FakeCardNameArgEntityValidator fakeCardNameValidator = new();
+        FakeCardSearchTermArgEntityValidator fakeSearchTermValidator = new();
+        FakeSetCodeArgsToItrMapper fakeSetCodeMapper = new();
+        FakeCardNameArgsToItrMapper fakeCardNameMapper = new();
+        FakeCardSearchTermArgsToItrMapper fakeSearchTermMapper = new();
+
+        CardEntryService subject = new TestableCardEntryService(fakeCardDomainService, fakeValidator, fakeSetCodeValidator, fakeCardNameValidator, fakeSearchTermValidator, fakeMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
         IOperationResponse<ICardItemCollectionItrEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
@@ -76,8 +83,8 @@ public sealed class CardEntryServiceTests
         fakeValidator.ValidateInput.Should().BeSameAs(args);
         fakeMapper.MapInvokeCount.Should().Be(1);
         fakeMapper.MapInput.Should().BeSameAs(args);
-        fakeCardDataService.CardsByIdsAsyncInvokeCount.Should().Be(1);
-        fakeCardDataService.CardsByIdsAsyncInput.Should().BeSameAs(mappedArgs);
+        fakeCardDomainService.CardsByIdsAsyncInvokeCount.Should().Be(1);
+        fakeCardDomainService.CardsByIdsAsyncInput.Should().BeSameAs(mappedArgs);
     }
 
     [TestMethod, TestCategory("unit")]
@@ -86,20 +93,27 @@ public sealed class CardEntryServiceTests
         // Arrange
         FakeCardIdsArgEntity args = new() { CardIds = [] };
         FakeOperationResponse failureResponse = new() { IsSuccessValue = false };
-        
+
         FakeCardIdsArgEntityValidator fakeValidator = new()
         {
-            ValidateResult = new FakeValidatorActionResult 
-            { 
+            ValidateResult = new FakeValidatorActionResult
+            {
                 IsValidValue = false,
                 FailureStatusValue = failureResponse
             }
         };
-        
-        FakeCardsArgsToItrMapper fakeMapper = new();
-        FakeCardDataService fakeCardDataService = new();
 
-        CardEntryService subject = new TestableCardEntryService(fakeCardDataService, fakeValidator, fakeMapper);
+        FakeCardsArgsToItrMapper fakeMapper = new();
+        FakeCardDomainService fakeCardDomainService = new();
+
+        FakeSetCodeArgEntityValidator fakeSetCodeValidator = new();
+        FakeCardNameArgEntityValidator fakeCardNameValidator = new();
+        FakeCardSearchTermArgEntityValidator fakeSearchTermValidator = new();
+        FakeSetCodeArgsToItrMapper fakeSetCodeMapper = new();
+        FakeCardNameArgsToItrMapper fakeCardNameMapper = new();
+        FakeCardSearchTermArgsToItrMapper fakeSearchTermMapper = new();
+
+        CardEntryService subject = new TestableCardEntryService(fakeCardDomainService, fakeValidator, fakeSetCodeValidator, fakeCardNameValidator, fakeSearchTermValidator, fakeMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
 
         // Act
         IOperationResponse<ICardItemCollectionItrEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
@@ -108,7 +122,7 @@ public sealed class CardEntryServiceTests
         actual.Should().BeSameAs(failureResponse);
         fakeValidator.ValidateInvokeCount.Should().Be(1);
         fakeMapper.MapInvokeCount.Should().Be(0);
-        fakeCardDataService.CardsByIdsAsyncInvokeCount.Should().Be(0);
+        fakeCardDomainService.CardsByIdsAsyncInvokeCount.Should().Be(0);
     }
 
     private sealed class LoggerFake : ILogger
@@ -151,18 +165,51 @@ public sealed class CardEntryServiceTests
         }
     }
 
-    private sealed class FakeCardDataService : ICardDataService
+    private sealed class FakeCardDomainService : ICardDomainService
     {
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } = 
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } =
             new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
         public int CardsByIdsAsyncInvokeCount { get; private set; }
         public ICardIdsItrEntity CardsByIdsAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public int CardsBySetCodeAsyncInvokeCount { get; private set; }
+        public ISetCodeItrEntity CardsBySetCodeAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new FakeCardItemCollectionItrEntity());
+        public int CardsByNameAsyncInvokeCount { get; private set; }
+        public ICardNameItrEntity CardsByNameAsyncInput { get; private set; } = default!;
+
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> CardNameSearchAsyncResult { get; init; } = new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new FakeCardNameSearchResultCollectionItrEntity());
+        public int CardNameSearchAsyncInvokeCount { get; private set; }
+        public ICardSearchTermItrEntity CardNameSearchAsyncInput { get; private set; } = default!;
 
         public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
         {
             CardsByIdsAsyncInvokeCount++;
             CardsByIdsAsyncInput = args;
             return Task.FromResult(CardsByIdsAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+        {
+            CardsBySetCodeAsyncInvokeCount++;
+            CardsBySetCodeAsyncInput = setCode;
+            return Task.FromResult(CardsBySetCodeAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+        {
+            CardsByNameAsyncInvokeCount++;
+            CardsByNameAsyncInput = cardName;
+            return Task.FromResult(CardsByNameAsyncResult);
+        }
+
+        public Task<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+        {
+            CardNameSearchAsyncInvokeCount++;
+            CardNameSearchAsyncInput = searchTerm;
+            return Task.FromResult(CardNameSearchAsyncResult);
         }
     }
 
@@ -199,5 +246,129 @@ public sealed class CardEntryServiceTests
     private sealed class FakeCardItemCollectionItrEntity : ICardItemCollectionItrEntity
     {
         public ICollection<ICardItemItrEntity> Data { get; init; } = [];
+    }
+
+    private sealed class FakeCardNameSearchResultCollectionItrEntity : ICardNameSearchResultCollectionItrEntity
+    {
+        public ICollection<ICardNameSearchResultItrEntity> Names { get; init; } = [];
+    }
+
+    private sealed class FakeSetCodeArgEntityValidator : ISetCodeArgEntityValidator
+    {
+        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new FakeValidatorActionResult();
+        public int ValidateInvokeCount { get; private set; }
+        public ISetCodeArgEntity ValidateInput { get; private set; } = default!;
+
+        public Task<IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>>> Validate(ISetCodeArgEntity arg)
+        {
+            ValidateInvokeCount++;
+            ValidateInput = arg;
+            return Task.FromResult(ValidateResult);
+        }
+    }
+
+    private sealed class FakeCardNameArgEntityValidator : ICardNameArgEntityValidator
+    {
+        public IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>> ValidateResult { get; init; } = new FakeValidatorActionResult();
+        public int ValidateInvokeCount { get; private set; }
+        public ICardNameArgEntity ValidateInput { get; private set; } = default!;
+
+        public Task<IValidatorActionResult<IOperationResponse<ICardItemCollectionItrEntity>>> Validate(ICardNameArgEntity arg)
+        {
+            ValidateInvokeCount++;
+            ValidateInput = arg;
+            return Task.FromResult(ValidateResult);
+        }
+    }
+
+    private sealed class FakeCardSearchTermArgEntityValidator : ICardSearchTermArgEntityValidator
+    {
+        public IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>> ValidateResult { get; init; } = new FakeSearchValidatorActionResult();
+        public int ValidateInvokeCount { get; private set; }
+        public ICardSearchTermArgEntity ValidateInput { get; private set; } = default!;
+
+        public Task<IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>>> Validate(ICardSearchTermArgEntity arg)
+        {
+            ValidateInvokeCount++;
+            ValidateInput = arg;
+            return Task.FromResult(ValidateResult);
+        }
+    }
+
+    private sealed class FakeSearchValidatorActionResult : IValidatorActionResult<IOperationResponse<ICardNameSearchResultCollectionItrEntity>>
+    {
+        public bool IsValidValue { get; init; }
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> FailureStatusValue { get; init; } = new FakeSearchOperationResponse();
+
+        public bool IsValid() => IsValidValue;
+        public bool IsNotValid() => !IsValidValue;
+        public IOperationResponse<ICardNameSearchResultCollectionItrEntity> FailureStatus() => FailureStatusValue;
+    }
+
+    private sealed class FakeSearchOperationResponse : IOperationResponse<ICardNameSearchResultCollectionItrEntity>
+    {
+        public bool IsSuccessValue { get; init; }
+        public bool IsSuccess => IsSuccessValue;
+        public bool IsFailure => !IsSuccessValue;
+        public ICardNameSearchResultCollectionItrEntity ResponseData => new FakeCardNameSearchResultCollectionItrEntity();
+        public OperationException OuterException => new BadRequestOperationException("Test exception");
+        public HttpStatusCode Status => HttpStatusCode.OK;
+    }
+
+    private sealed class FakeSetCodeArgsToItrMapper : ISetCodeArgsToItrMapper
+    {
+        public ISetCodeItrEntity MapResult { get; init; } = new FakeSetCodeItrEntity();
+        public int MapInvokeCount { get; private set; }
+        public ISetCodeArgEntity MapInput { get; private set; } = default!;
+
+        public Task<ISetCodeItrEntity> Map(ISetCodeArgEntity arg)
+        {
+            MapInvokeCount++;
+            MapInput = arg;
+            return Task.FromResult(MapResult);
+        }
+    }
+
+    private sealed class FakeCardNameArgsToItrMapper : ICardNameArgsToItrMapper
+    {
+        public ICardNameItrEntity MapResult { get; init; } = new FakeCardNameItrEntity();
+        public int MapInvokeCount { get; private set; }
+        public ICardNameArgEntity MapInput { get; private set; } = default!;
+
+        public Task<ICardNameItrEntity> Map(ICardNameArgEntity arg)
+        {
+            MapInvokeCount++;
+            MapInput = arg;
+            return Task.FromResult(MapResult);
+        }
+    }
+
+    private sealed class FakeCardSearchTermArgsToItrMapper : ICardSearchTermArgsToItrMapper
+    {
+        public ICardSearchTermItrEntity MapResult { get; init; } = new FakeCardSearchTermItrEntity();
+        public int MapInvokeCount { get; private set; }
+        public ICardSearchTermArgEntity MapInput { get; private set; } = default!;
+
+        public Task<ICardSearchTermItrEntity> Map(ICardSearchTermArgEntity arg)
+        {
+            MapInvokeCount++;
+            MapInput = arg;
+            return Task.FromResult(MapResult);
+        }
+    }
+
+    private sealed class FakeSetCodeItrEntity : ISetCodeItrEntity
+    {
+        public string SetCode { get; init; } = string.Empty;
+    }
+
+    private sealed class FakeCardNameItrEntity : ICardNameItrEntity
+    {
+        public string CardName { get; init; } = string.Empty;
+    }
+
+    private sealed class FakeCardSearchTermItrEntity : ICardSearchTermItrEntity
+    {
+        public string SearchTerm { get; init; } = string.Empty;
     }
 }
