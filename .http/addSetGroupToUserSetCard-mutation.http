@@ -1,0 +1,348 @@
+###
+# Add SetGroup to UserSetCard Mutation Tests
+# Auth0 JWT Authentication required - extracts user ID from JWT claims automatically
+# Updates user's collecting preferences for specific set groups
+# Domain: dev-63szoyl0kt0p7e5q.us.auth0.com
+# NOTE: userId is now extracted from JWT token for security - never sent in request body
+
+###
+# Variables
+# @name variables
+@baseUrl = {{$dotenv BASE_URL}}
+@graphqlEndpoint = {{$dotenv GRAPHQL_ENDPOINT}}
+@bearerToken = {{$dotenv BEARER_TOKEN}}
+
+### Add SetGroup to UserSetCard - Normal Group
+# Add or update a set group collecting status for a user's set
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+Authorization: Bearer {{$dotenv BEARER_TOKEN}}
+
+mutation AddSetGroupNormal($input: AddSetGroupToUserSetCardInput!) {
+  addSetGroupToUserSetCard(input: $input) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "input": {
+    "setId": "neo",
+    "setGroupId": "other",
+    "collecting": true,
+    "count": 399
+  }
+}
+
+### Add SetGroup to UserSetCard - Borderless Group
+# Add or update borderless variant collecting status
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+Authorization: Bearer {{$dotenv BEARER_TOKEN}}
+
+mutation AddSetGroupBorderless(
+  $input: AddSetGroupToUserSetCardInput!
+) {
+  addSetGroupToUserSetCard(
+    input: $input
+  ) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+        groups {
+          key
+          value {
+            nonFoil { cards }
+            foil { cards }
+            etched { cards }
+          }
+        }
+      }
+      status {
+        message
+        statusCode
+      }
+      metaData {
+        requestId
+        timestamp
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "input": {
+    "setId": "neo",
+    "setGroupId": "borderless",
+    "collecting": true,
+    "count": 50
+  }
+}
+
+### Add SetGroup to UserSetCard - Extended Art Group
+# Add or update extended art variant collecting status
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+Authorization: Bearer {{$dotenv BEARER_TOKEN}}
+
+mutation AddSetGroupExtendedArt(
+  $input: AddSetGroupToUserSetCardInput!
+) {
+  addSetGroupToUserSetCard(
+    input: $input
+  ) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        totalCards
+        uniqueCards
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "input": {
+    "setId": "neo",
+    "setGroupId": "extendedart",
+    "collecting": true,
+    "count": 25
+  }
+}
+
+### Add SetGroup to UserSetCard - Not Collecting
+# Mark a set group as not being collected
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+Authorization: Bearer {{$dotenv BEARER_TOKEN}}
+
+mutation AddSetGroupNotCollecting(
+  $input: AddSetGroupToUserSetCardInput!
+) {
+  addSetGroupToUserSetCard(
+    input: $input
+  ) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "input": {
+    "setId": "neo",
+    "setGroupId": "showcase",
+    "collecting": false,
+    "count": 0
+  }
+}
+
+### Test without JWT Token (should fail with 401)
+# This should return an authorization error
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+
+mutation AddSetGroupUnauthorized(
+  $input: AddSetGroupToUserSetCardInput!
+) {
+  addSetGroupToUserSetCard(
+    input: $input
+  ) {
+    __typename
+    ... on UserSetCardSuccessResponse {
+      data {
+        userId
+        setId
+        collecting {
+          setGroupId
+          collecting
+          count
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "input": {
+    "setId": "neo",
+    "setGroupId": "normal",
+    "collecting": true,
+    "count": 399
+  }
+}
+
+### GraphQL Schema Introspection - AddSetGroupToUserSetCard Mutation
+# Verify the mutation is available in the schema
+POST {{$dotenv GRAPHQL_ENDPOINT}}
+Content-Type: application/json
+
+query IntrospectAddSetGroupMutation {
+  __schema {
+    mutationType {
+      fields(includeDeprecated: false) {
+        name
+        description
+        args {
+          name
+          type {
+            name
+            kind
+            ofType {
+              name
+              kind
+            }
+          }
+        }
+        type {
+          name
+          kind
+          ofType {
+            name
+            kind
+          }
+        }
+      }
+    }
+  }
+}
+
+###
+# How to Test:
+# 1. Ensure GraphQL API is running: dotnet run --project src/App.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL.csproj
+# 2. Obtain a valid Auth0 JWT token (see registerUser-mutation.http for instructions)
+# 3. Set the BEARER_TOKEN in your .env file or replace {{$dotenv BEARER_TOKEN}}
+# 4. Execute the mutation requests in order
+# 5. Verify idempotency by running the same request twice - should not create duplicates
+#
+# Required JWT Claims:
+# - "sub": User's unique identifier (automatically extracted)
+# - User ID is derived from JWT claims to ensure users can only modify their own data
+#
+# Input Parameters:
+# - setId: The set code (e.g., "neo" for Kamigawa: Neon Dynasty)
+# - setGroupId: The group identifier (e.g., "normal", "borderless", "showcase")
+# - collecting: Boolean indicating if user is collecting this group
+# - count: Total number of cards in this group for the set
+#
+# Expected Response Examples:
+#
+# Success with authentication:
+# {
+#   "data": {
+#     "addSetGroupToUserSetCard": {
+#       "__typename": "UserSetCardSuccessResponse",
+#       "data": {
+#         "userId": "550e8400-e29b-41d4-a716-446655440000",
+#         "setId": "neo",
+#         "totalCards": 15,
+#         "uniqueCards": 8,
+#         "collecting": [
+#           {
+#             "setGroupId": "normal",
+#             "collecting": true,
+#             "count": 399
+#           },
+#           {
+#             "setGroupId": "borderless",
+#             "collecting": true,
+#             "count": 50
+#           }
+#         ]
+#       },
+#       "status": {
+#         "message": "Success",
+#         "statusCode": 200
+#       }
+#     }
+#   }
+# }
+#
+# Failure without authentication:
+# {
+#   "errors": [
+#     {
+#       "message": "The current user is not authorized to access this resource.",
+#       "extensions": {
+#         "code": "AUTH_NOT_AUTHORIZED"
+#       }
+#     }
+#   ]
+# }
+#
+# Notes:
+# - The mutation is idempotent - calling with same setGroupId updates existing entry
+# - User ID is automatically extracted from JWT claims for security
+# - The response includes the full collecting array showing all set groups
+# - Groups with collecting=false and count=0 may be omitted from response

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
 [ExtendObjectType(typeof(ApiMutation))]
-public class UserMutationMethods
+public sealed class UserMutationMethods
 {
     private readonly IEntryService _entryService;
 
@@ -28,10 +28,8 @@ public class UserMutationMethods
     [GraphQLType(typeof(UserRegistrationResponseModelUnionType))]
     public async Task<ResponseModel> RegisterUserInfoAsync(ClaimsPrincipal claimsPrincipal)
     {
-        // Create AuthUserArgEntity directly from ClaimsPrincipal
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
 
-        // Call the entry service
         IOperationResponse<UserRegistrationOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
 
         if (response.IsFailure)
