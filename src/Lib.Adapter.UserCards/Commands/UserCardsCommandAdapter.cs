@@ -1,3 +1,4 @@
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
@@ -8,7 +9,6 @@ using Lib.Adapter.UserCards.Exceptions;
 using Lib.Shared.DataModels.Entities;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace Lib.Adapter.UserCards.Commands;
 
@@ -51,7 +51,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             if (upsertResult.IsNotSuccessful())
             {
                 string message = $"Failed to upsert user card. UserId: {userCard.UserId}, CardId: {userCard.CardId}, StatusCode: {upsertResult.StatusCode}";
-                UserCardsAdapterException exception = new UserCardsAdapterException(message);
+                UserCardsAdapterException exception = new(message);
                 return new FailureOperationResponse<IUserCardCollectionItrEntity>(exception);
             }
 
