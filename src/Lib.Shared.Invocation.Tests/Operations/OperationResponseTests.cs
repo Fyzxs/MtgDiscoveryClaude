@@ -53,7 +53,7 @@ public sealed class SuccessOperationResponseTests
     public void Constructor_WithNullData_StoresNullData()
     {
         // Arrange & Act
-        SuccessOperationResponse<string?> subject = new(null);
+        SuccessOperationResponse<string> subject = new(null);
 
         // Assert
         subject.IsSuccess.Should().BeTrue();

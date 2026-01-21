@@ -3167,6 +3167,121 @@
       }
     ]
   },
+  "pcbb": {
+    "SetCode": "pcbb",
+    "Groupings": [
+      {
+        "Id": "standard-showdown",
+        "DisplayName": "Standard Showdown",
+        "Order": 0,
+        "CardCount": 5,
+        "RawQuery": "e:pcbb cn≥1 cn≤999",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "999",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      }
+    ]
+  },
+  "mb2": {
+    "SetCode": "mb2",
+    "Groupings": [
+      {
+        "Id": "white-border-reprints",
+        "DisplayName": "White-Border Reprints",
+        "Order": 0,
+        "CardCount": 121,
+        "RawQuery": "e:mb2 cn≥1 cn≤121",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "121",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "future-frame-nonfoil",
+        "DisplayName": "Future Frame (Nonfoil)",
+        "Order": 1,
+        "CardCount": 22,
+        "RawQuery": "e:mb2 cn≥122 cn≤143",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "122",
+            "Max": "143",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "future-frame-foil-nonfoil",
+        "DisplayName": "Future Frame (Foil/Nonfoil)",
+        "Order": 2,
+        "CardCount": 99,
+        "RawQuery": "e:mb2 cn≥144 cn≤242",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "144",
+            "Max": "242",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "future-frame-foil",
+        "DisplayName": "Future Frame (Foil)",
+        "Order": 3,
+        "CardCount": 15,
+        "RawQuery": "e:mb2 cn≥243 cn≤257",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "243",
+            "Max": "257",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "alchemy-made-real",
+        "DisplayName": "Alchemy Made Real",
+        "Order": 4,
+        "CardCount": 7,
+        "RawQuery": "e:mb2 cn≥258 cn≤264",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "258",
+            "Max": "264",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "playtest-cards",
+        "DisplayName": "Playtest Cards",
+        "Order": 5,
+        "CardCount": 121,
+        "RawQuery": "e:mb2 cn≥265 cn≤999",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "265",
+            "Max": "999",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      }
+    ]
+  },
   "blb": {
     "SetCode": "blb",
     "Groupings": [
@@ -3471,121 +3586,6 @@
           "CollectorNumberRange": {
             "Min": "105",
             "Max": "355",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
-  "pcbb": {
-    "SetCode": "pcbb",
-    "Groupings": [
-      {
-        "Id": "standard-showdown",
-        "DisplayName": "Standard Showdown",
-        "Order": 0,
-        "CardCount": 5,
-        "RawQuery": "e:pcbb cn≥1 cn≤999",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "999",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
-  "mb2": {
-    "SetCode": "mb2",
-    "Groupings": [
-      {
-        "Id": "white-border-reprints",
-        "DisplayName": "White-Border Reprints",
-        "Order": 0,
-        "CardCount": 121,
-        "RawQuery": "e:mb2 cn≥1 cn≤121",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "121",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "future-frame-nonfoil",
-        "DisplayName": "Future Frame (Nonfoil)",
-        "Order": 1,
-        "CardCount": 22,
-        "RawQuery": "e:mb2 cn≥122 cn≤143",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "122",
-            "Max": "143",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "future-frame-foil-nonfoil",
-        "DisplayName": "Future Frame (Foil/Nonfoil)",
-        "Order": 2,
-        "CardCount": 99,
-        "RawQuery": "e:mb2 cn≥144 cn≤242",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "144",
-            "Max": "242",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "future-frame-foil",
-        "DisplayName": "Future Frame (Foil)",
-        "Order": 3,
-        "CardCount": 15,
-        "RawQuery": "e:mb2 cn≥243 cn≤257",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "243",
-            "Max": "257",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "alchemy-made-real",
-        "DisplayName": "Alchemy Made Real",
-        "Order": 4,
-        "CardCount": 7,
-        "RawQuery": "e:mb2 cn≥258 cn≤264",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "258",
-            "Max": "264",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "playtest-cards",
-        "DisplayName": "Playtest Cards",
-        "Order": 5,
-        "CardCount": 121,
-        "RawQuery": "e:mb2 cn≥265 cn≤999",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "265",
-            "Max": "999",
             "OrConditions": null
           },
           "Properties": {}
@@ -4352,71 +4352,6 @@
       }
     ]
   },
-  "otc": {
-    "SetCode": "otc",
-    "Groupings": [
-      {
-        "Id": "commanders",
-        "DisplayName": "Commanders",
-        "Order": 0,
-        "CardCount": 8,
-        "RawQuery": "e:otc cn≥1 cn≤8",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "8",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "new-cards",
-        "DisplayName": "New Cards",
-        "Order": 1,
-        "CardCount": 32,
-        "RawQuery": "e:otc cn≥9 cn≤40",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "9",
-            "Max": "40",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "extended-art",
-        "DisplayName": "Extended Art",
-        "Order": 2,
-        "CardCount": 36,
-        "RawQuery": "e:otc cn≥41 cn≤76",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "41",
-            "Max": "76",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "reprints",
-        "DisplayName": "Reprints",
-        "Order": 3,
-        "CardCount": 266,
-        "RawQuery": "e:otc cn≥77 cn≤342",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "77",
-            "Max": "342",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
   "big": {
     "SetCode": "big",
     "Groupings": [
@@ -4496,6 +4431,71 @@
           "Properties": {
             "stamped": true
           }
+        }
+      }
+    ]
+  },
+  "otc": {
+    "SetCode": "otc",
+    "Groupings": [
+      {
+        "Id": "commanders",
+        "DisplayName": "Commanders",
+        "Order": 0,
+        "CardCount": 8,
+        "RawQuery": "e:otc cn≥1 cn≤8",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "8",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "new-cards",
+        "DisplayName": "New Cards",
+        "Order": 1,
+        "CardCount": 32,
+        "RawQuery": "e:otc cn≥9 cn≤40",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "9",
+            "Max": "40",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "extended-art",
+        "DisplayName": "Extended Art",
+        "Order": 2,
+        "CardCount": 36,
+        "RawQuery": "e:otc cn≥41 cn≤76",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "41",
+            "Max": "76",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "reprints",
+        "DisplayName": "Reprints",
+        "Order": 3,
+        "CardCount": 266,
+        "RawQuery": "e:otc cn≥77 cn≤342",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "77",
+            "Max": "342",
+            "OrConditions": null
+          },
+          "Properties": {}
         }
       }
     ]
@@ -5254,26 +5254,6 @@
       }
     ]
   },
-  "pw24": {
-    "SetCode": "pw24",
-    "Groupings": [
-      {
-        "Id": "promos",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 18,
-        "RawQuery": "e:pw24 cn≥1 cn≤999",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "999",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
   "pf24": {
     "SetCode": "pf24",
     "Groupings": [
@@ -5291,6 +5271,26 @@
             "stamped": false,
             "boosterfun": false
           }
+        }
+      }
+    ]
+  },
+  "pw24": {
+    "SetCode": "pw24",
+    "Groupings": [
+      {
+        "Id": "promos",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 18,
+        "RawQuery": "e:pw24 cn≥1 cn≤999",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "999",
+            "OrConditions": null
+          },
+          "Properties": {}
         }
       }
     ]
@@ -8622,6 +8622,27 @@
       }
     ]
   },
+  "pl23": {
+    "SetCode": "pl23",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 6,
+        "RawQuery": "set:pl23 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
   "one": {
     "SetCode": "one",
     "Groupings": [
@@ -8929,27 +8950,6 @@
       }
     ]
   },
-  "pl23": {
-    "SetCode": "pl23",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pl23 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "dmr": {
     "SetCode": "dmr",
     "Groupings": [
@@ -9031,6 +9031,26 @@
       }
     ]
   },
+  "pw23": {
+    "SetCode": "pw23",
+    "Groupings": [
+      {
+        "Id": "promos",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 11,
+        "RawQuery": "e:pw23 cn≥1 cn≤999",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "999",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      }
+    ]
+  },
   "p23": {
     "SetCode": "p23",
     "Groupings": [
@@ -9058,26 +9078,6 @@
         "ParsedFilters": {
           "CollectorNumberRange": {
             "Min": "6",
-            "Max": "999",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
-  "pw23": {
-    "SetCode": "pw23",
-    "Groupings": [
-      {
-        "Id": "promos",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 11,
-        "RawQuery": "e:pw23 cn≥1 cn≤999",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
             "Max": "999",
             "OrConditions": null
           },
@@ -9368,12 +9368,14 @@
         "DisplayName": "Jumpstart Cards",
         "Order": 1,
         "CardCount": 5,
-        "RawQuery": "set:bro is:jumpstart",
+        "RawQuery": "set:bro cn≥288 cn≤292",
         "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "jumpstart": true
-          }
+          "CollectorNumberRange": {
+            "Min": "288",
+            "Max": "292",
+            "OrConditions": null
+          },
+          "Properties": {}
         }
       },
       {
@@ -10011,12 +10013,14 @@
         "DisplayName": "Jumpstart Cards",
         "Order": 1,
         "CardCount": 5,
-        "RawQuery": "set:dmu is:jumpstart",
+        "RawQuery": "set:dmu cn≥282 cn≤286",
         "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "jumpstart": true
-          }
+          "CollectorNumberRange": {
+            "Min": "282",
+            "Max": "286",
+            "OrConditions": null
+          },
+          "Properties": {}
         }
       },
       {
@@ -12996,27 +13000,6 @@
       }
     ]
   },
-  "pw21": {
-    "SetCode": "pw21",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pw21 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "mh2": {
     "SetCode": "mh2",
     "Groupings": [
@@ -13191,6 +13174,95 @@
             "promo": false,
             "frame": "1997"
           }
+        }
+      }
+    ]
+  },
+  "pw21": {
+    "SetCode": "pw21",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 6,
+        "RawQuery": "set:pw21 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "c21": {
+    "SetCode": "c21",
+    "Groupings": [
+      {
+        "Id": "commanders",
+        "DisplayName": "Commanders",
+        "Order": 0,
+        "CardCount": 10,
+        "RawQuery": "e:c21 cn≥1 cn≤10",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "1",
+            "Max": "10",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "new-cards",
+        "DisplayName": "New Cards",
+        "Order": 1,
+        "CardCount": 71,
+        "RawQuery": "e:c21 cn≥11 cn≤81",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "11",
+            "Max": "81",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "reprints",
+        "DisplayName": "Reprints",
+        "Order": 2,
+        "CardCount": 248,
+        "RawQuery": "e:c21 ((cn≥82 cn≤327) OR cn:\"408\" OR cn:\"409\")",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "82",
+            "Max": "327",
+            "OrConditions": [
+              "408",
+              "409"
+            ]
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "extended-art",
+        "DisplayName": "Extended Art",
+        "Order": 3,
+        "CardCount": 80,
+        "RawQuery": "e:c21 cn≥328 cn≤407",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "328",
+            "Max": "407",
+            "OrConditions": null
+          },
+          "Properties": {}
         }
       }
     ]
@@ -13373,74 +13445,6 @@
           "Properties": {
             "datestamped": true
           }
-        }
-      }
-    ]
-  },
-  "c21": {
-    "SetCode": "c21",
-    "Groupings": [
-      {
-        "Id": "commanders",
-        "DisplayName": "Commanders",
-        "Order": 0,
-        "CardCount": 10,
-        "RawQuery": "e:c21 cn≥1 cn≤10",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "1",
-            "Max": "10",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "new-cards",
-        "DisplayName": "New Cards",
-        "Order": 1,
-        "CardCount": 71,
-        "RawQuery": "e:c21 cn≥11 cn≤81",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "11",
-            "Max": "81",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "reprints",
-        "DisplayName": "Reprints",
-        "Order": 2,
-        "CardCount": 248,
-        "RawQuery": "e:c21 ((cn≥82 cn≤327) OR cn:\"408\" OR cn:\"409\")",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "82",
-            "Max": "327",
-            "OrConditions": [
-              "408",
-              "409"
-            ]
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "extended-art",
-        "DisplayName": "Extended Art",
-        "Order": 3,
-        "CardCount": 80,
-        "RawQuery": "e:c21 cn≥328 cn≤407",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "328",
-            "Max": "407",
-            "OrConditions": null
-          },
-          "Properties": {}
         }
       }
     ]
@@ -13963,6 +13967,289 @@
           "Properties": {
             "promoType": "buyabox"
           }
+        }
+      }
+    ]
+  },
+  "plst": {
+    "SetCode": "plst",
+    "Groupings": [
+      {
+        "Id": "everyone-s-invited",
+        "DisplayName": "Everyone's Invited!",
+        "Order": 0,
+        "CardCount": 74,
+        "RawQuery": "e:plst date:2025-05-12",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "date": "2025-05-12"
+          }
+        }
+      },
+      {
+        "Id": "tarkir-dragonstorm",
+        "DisplayName": "Tarkir: Dragonstorm",
+        "Order": 1,
+        "CardCount": 9,
+        "RawQuery": "e:plst (cn:\"DMR-271\" OR cn:\"M21-303\" OR cn:\"MAT-67\" OR cn:\"MID-301\" OR cn:\"MUL-12\" OR cn:\"NEO-341\" OR cn:\"ONE-287\" OR cn:\"ZNR-297\" OR cn:\"ZNR-304\")",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": null,
+            "Max": null,
+            "OrConditions": [
+              "DMR-271",
+              "M21-303",
+              "MAT-67",
+              "MID-301",
+              "MUL-12",
+              "NEO-341",
+              "ONE-287",
+              "ZNR-297",
+              "ZNR-304"
+            ]
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "2024-welcome-decks",
+        "DisplayName": "2024 Welcome Decks",
+        "Order": 2,
+        "CardCount": 69,
+        "RawQuery": "e:plst date:2024-09-30",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "date": "2024-09-30"
+          }
+        }
+      },
+      {
+        "Id": "20-ways-to-win",
+        "DisplayName": "20 Ways to Win",
+        "Order": 3,
+        "CardCount": 61,
+        "RawQuery": "e:plst date:2024-12-02",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "date": "2024-12-02"
+          }
+        }
+      },
+      {
+        "Id": "mystery-booster-2",
+        "DisplayName": "Mystery Booster 2",
+        "Order": 4,
+        "CardCount": 1342,
+        "RawQuery": "e:plst date:2024-08-02",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "date": "2024-08-02"
+          }
+        }
+      },
+      {
+        "Id": "murders-at-karlov-manor",
+        "DisplayName": "Murders at Karlov Manor",
+        "Order": 5,
+        "CardCount": 40,
+        "RawQuery": "e:plst (cn:\"APC-117\" OR cn:\"MH1-21\" OR cn:\"DIS-33\" OR cn:\"XLN-91\" OR cn:\"C16-47\" OR cn:\"SOM-96\" OR cn:\"STX-64\" OR cn:\"MH2-191\" OR cn:\"ISD-183\" OR cn:\"DKA-143\" OR cn:\"DST-40\" OR cn:\"MRD-99\" OR cn:\"ELD-107\" OR cn:\"DKA-4\" OR cn:\"M20-167\" OR cn:\"RTR-140\" OR cn:\"ONS-89\" OR cn:\"WAR-54\" OR cn:\"DOM-130\" OR cn:\"HOU-149\" OR cn:\"MBS-10\" OR cn:\"RAV-277\" OR cn:\"2X2-17\" OR cn:\"STX-220\" OR cn:\"M14-213\" OR cn:\"KLD-221\" OR cn:\"ARB-68\" OR cn:\"JOU-153\" OR cn:\"RNA-182\" OR cn:\"C21-19\" OR cn:\"UMA-138\" OR cn:\"MH2-46\" OR cn:\"VOW-207\" OR cn:\"ONS-272\" OR cn:\"UMA-247\" OR cn:\"SOM-98\" OR cn:\"DDU-50\" OR cn:\"CLB-85\" OR cn:\"DIS-173\" OR cn:\"SOI-262\")",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": null,
+            "Max": null,
+            "OrConditions": [
+              "APC-117",
+              "MH1-21",
+              "DIS-33",
+              "XLN-91",
+              "C16-47",
+              "SOM-96",
+              "STX-64",
+              "MH2-191",
+              "ISD-183",
+              "DKA-143",
+              "DST-40",
+              "MRD-99",
+              "ELD-107",
+              "DKA-4",
+              "M20-167",
+              "RTR-140",
+              "ONS-89",
+              "WAR-54",
+              "DOM-130",
+              "HOU-149",
+              "MBS-10",
+              "RAV-277",
+              "2X2-17",
+              "STX-220",
+              "M14-213",
+              "KLD-221",
+              "ARB-68",
+              "JOU-153",
+              "RNA-182",
+              "C21-19",
+              "UMA-138",
+              "MH2-46",
+              "VOW-207",
+              "ONS-272",
+              "UMA-247",
+              "SOM-98",
+              "DDU-50",
+              "CLB-85",
+              "DIS-173",
+              "SOI-262"
+            ]
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "raining-cats-and-dogs",
+        "DisplayName": "Raining Cats and Dogs",
+        "Order": 6,
+        "CardCount": 58,
+        "RawQuery": "e:plst (cn:\"2XM-233\" OR cn:\"AFR-23\" OR cn:\"BFZ-234\" OR cn:\"BFZ-235\" OR cn:\"BNG-5\" OR cn:\"BRO-30\" OR cn:\"C17-1\" OR cn:\"C17-33\" OR cn:\"C17-7\" OR cn:\"C19-46\" OR cn:\"C20-251\" OR cn:\"C21-50\" OR cn:\"C21-98\" OR cn:\"CLB-691\" OR cn:\"CMR-261\" OR cn:\"DMC-102\" OR cn:\"DMR-170\" OR cn:\"DOM-239\" OR cn:\"E02-46\" OR cn:\"ELD-163\" OR cn:\"FRF-141\" OR cn:\"FUT-147\" OR cn:\"FUT-31\" OR cn:\"GN2-1\" OR cn:\"KHM-184\" OR cn:\"KHM-188\" OR cn:\"KHM-229\" OR cn:\"KHM-235\" OR cn:\"KHM-240\" OR cn:\"LRW-11\" OR cn:\"LRW-31\" OR cn:\"M10-190\" OR cn:\"M10-227\" OR cn:\"M10-228\" OR cn:\"M21-180\" OR cn:\"M21-242\" OR cn:\"M21-29\" OR cn:\"MBS-19\" OR cn:\"MH1-16\" OR cn:\"MIC-157\" OR cn:\"MIC-170\" OR cn:\"NCC-285\" OR cn:\"NCC-290\" OR cn:\"NCC-4\" OR cn:\"NCC-404\" OR cn:\"NCC-405\" OR cn:\"NCC-9\" OR cn:\"NEC-21\" OR cn:\"NEO-189\" OR cn:\"NEO-26\" OR cn:\"NEO-38\" OR cn:\"ONC-21\" OR cn:\"PLC-22\" OR cn:\"PLS-108\" OR cn:\"SNC-250\" OR cn:\"ZEN-159\" OR cn:\"ZNC-134\" OR cn:\"ZNR-16\")",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": null,
+            "Max": null,
+            "OrConditions": [
+              "2XM-233",
+              "AFR-23",
+              "BFZ-234",
+              "BFZ-235",
+              "BNG-5",
+              "BRO-30",
+              "C17-1",
+              "C17-33",
+              "C17-7",
+              "C19-46",
+              "C20-251",
+              "C21-50",
+              "C21-98",
+              "CLB-691",
+              "CMR-261",
+              "DMC-102",
+              "DMR-170",
+              "DOM-239",
+              "E02-46",
+              "ELD-163",
+              "FRF-141",
+              "FUT-147",
+              "FUT-31",
+              "GN2-1",
+              "KHM-184",
+              "KHM-188",
+              "KHM-229",
+              "KHM-235",
+              "KHM-240",
+              "LRW-11",
+              "LRW-31",
+              "M10-190",
+              "M10-227",
+              "M10-228",
+              "M21-180",
+              "M21-242",
+              "M21-29",
+              "MBS-19",
+              "MH1-16",
+              "MIC-157",
+              "MIC-170",
+              "NCC-285",
+              "NCC-290",
+              "NCC-4",
+              "NCC-404",
+              "NCC-405",
+              "NCC-9",
+              "NEC-21",
+              "NEO-189",
+              "NEO-26",
+              "NEO-38",
+              "ONC-21",
+              "PLC-22",
+              "PLS-108",
+              "SNC-250",
+              "ZEN-159",
+              "ZNC-134",
+              "ZNR-16"
+            ]
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "tokens",
+        "DisplayName": "Tokens",
+        "Order": 7,
+        "CardCount": 44,
+        "RawQuery": "e:plst (cn:\"TKHM-8\" OR cn:\"T2XM-2\" OR cn:\"TAFR-1\" OR cn:\"TAKH-16\" OR cn:\"TAKH-17\" OR cn:\"TBNG-2\" OR cn:\"TC17-1\" OR cn:\"TC17-3\" OR cn:\"TC21-25\" OR cn:\"TC21-26\" OR cn:\"TC21-27\" OR cn:\"TCMR-14\" OR cn:\"TCMR-2\" OR cn:\"TGRN-1\" OR cn:\"TGRN-2\" OR cn:\"TISD-5\" OR cn:\"TISD-6\" OR cn:\"TKHM-21\" OR cn:\"TM20-1\" OR cn:\"TM21-11\" OR cn:\"TM21-3\" OR cn:\"TMH2-17\" OR cn:\"TMID-13\" OR cn:\"TMID-16\" OR cn:\"TNPH-1\" OR cn:\"TORI-12\" OR cn:\"TORI-13\" OR cn:\"TORI-14\" OR cn:\"TORI-5\" OR cn:\"TORI-7\" OR cn:\"TRIX-6\" OR cn:\"TSHM-12\" OR cn:\"TSNC-10\" OR cn:\"TSNC-12\" OR cn:\"TSNC-9\" OR cn:\"TSOI-10\" OR cn:\"TSOI-18\" OR cn:\"TSTX-5\" OR cn:\"TSTX-8\" OR cn:\"TTSR-10\" OR cn:\"TXLN-1\" OR cn:\"TXLN-10\" OR cn:\"TXLN-6\" OR cn:\"TZNR-3\")",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": null,
+            "Max": null,
+            "OrConditions": [
+              "TKHM-8",
+              "T2XM-2",
+              "TAFR-1",
+              "TAKH-16",
+              "TAKH-17",
+              "TBNG-2",
+              "TC17-1",
+              "TC17-3",
+              "TC21-25",
+              "TC21-26",
+              "TC21-27",
+              "TCMR-14",
+              "TCMR-2",
+              "TGRN-1",
+              "TGRN-2",
+              "TISD-5",
+              "TISD-6",
+              "TKHM-21",
+              "TM20-1",
+              "TM21-11",
+              "TM21-3",
+              "TMH2-17",
+              "TMID-13",
+              "TMID-16",
+              "TNPH-1",
+              "TORI-12",
+              "TORI-13",
+              "TORI-14",
+              "TORI-5",
+              "TORI-7",
+              "TRIX-6",
+              "TSHM-12",
+              "TSNC-10",
+              "TSNC-12",
+              "TSNC-9",
+              "TSOI-10",
+              "TSOI-18",
+              "TSTX-5",
+              "TSTX-8",
+              "TTSR-10",
+              "TXLN-1",
+              "TXLN-10",
+              "TXLN-6",
+              "TZNR-3"
+            ]
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "other-cards",
+        "DisplayName": "Other Cards",
+        "Order": 8,
+        "CardCount": 3352,
+        "RawQuery": "e: cn≥ cn≤",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {}
         }
       }
     ]
@@ -22562,22 +22849,6 @@
       }
     ]
   },
-  "cm2": {
-    "SetCode": "cm2",
-    "Groupings": [
-      {
-        "Id": "box",
-        "DisplayName": "Box-Exclusive Cards",
-        "Order": 0,
-        "CardCount": 312,
-        "RawQuery": "set:cm2 st:box",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {}
-        }
-      }
-    ]
-  },
   "bbd": {
     "SetCode": "bbd",
     "Groupings": [
@@ -22657,6 +22928,22 @@
           "Properties": {
             "datestamped": true
           }
+        }
+      }
+    ]
+  },
+  "cm2": {
+    "SetCode": "cm2",
+    "Groupings": [
+      {
+        "Id": "box",
+        "DisplayName": "Box-Exclusive Cards",
+        "Order": 0,
+        "CardCount": 312,
+        "RawQuery": "set:cm2 st:box",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {}
         }
       }
     ]
@@ -23626,15 +23913,15 @@
       }
     ]
   },
-  "j17": {
-    "SetCode": "j17",
+  "f17": {
+    "SetCode": "f17",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 9,
-        "RawQuery": "set:j17 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f17 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -23647,15 +23934,15 @@
       }
     ]
   },
-  "f17": {
-    "SetCode": "f17",
+  "j17": {
+    "SetCode": "j17",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f17 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 9,
+        "RawQuery": "set:j17 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -24943,6 +25230,27 @@
       }
     ]
   },
+  "f15": {
+    "SetCode": "f15",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 12,
+        "RawQuery": "set:f15 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
   "j15": {
     "SetCode": "j15",
     "Groupings": [
@@ -24964,23 +25272,33 @@
       }
     ]
   },
-  "f15": {
-    "SetCode": "f15",
+  "jvc": {
+    "SetCode": "jvc",
     "Groupings": [
       {
-        "Id": "promo",
-        "DisplayName": "Promos",
+        "Id": "jace",
+        "DisplayName": "Jace",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f15 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 33,
+        "RawQuery": "set:jvc cn>=1 cn<34",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": null,
+            "Max": "34",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "chandra",
+        "DisplayName": "Chandra",
+        "Order": 1,
+        "CardCount": 29,
+        "RawQuery": "set:jvc cn>=34",
         "ParsedFilters": {
           "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
+          "Properties": {}
         }
       }
     ]
@@ -25040,37 +25358,6 @@
         "Order": 1,
         "CardCount": 33,
         "RawQuery": "set:dvd cn>=30",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {}
-        }
-      }
-    ]
-  },
-  "jvc": {
-    "SetCode": "jvc",
-    "Groupings": [
-      {
-        "Id": "jace",
-        "DisplayName": "Jace",
-        "Order": 0,
-        "CardCount": 33,
-        "RawQuery": "set:jvc cn>=1 cn<34",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": null,
-            "Max": "34",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "chandra",
-        "DisplayName": "Chandra",
-        "Order": 1,
-        "CardCount": 29,
-        "RawQuery": "set:jvc cn>=34",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {}
@@ -26035,15 +26322,15 @@
       }
     ]
   },
-  "j13": {
-    "SetCode": "j13",
+  "f13": {
+    "SetCode": "f13",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 9,
-        "RawQuery": "set:j13 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f13 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26056,15 +26343,15 @@
       }
     ]
   },
-  "f13": {
-    "SetCode": "f13",
+  "j13": {
+    "SetCode": "j13",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f13 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 9,
+        "RawQuery": "set:j13 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26401,15 +26688,15 @@
       }
     ]
   },
-  "j12": {
-    "SetCode": "j12",
+  "f12": {
+    "SetCode": "f12",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 9,
-        "RawQuery": "set:j12 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 13,
+        "RawQuery": "set:f12 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26422,15 +26709,15 @@
       }
     ]
   },
-  "f12": {
-    "SetCode": "f12",
+  "j12": {
+    "SetCode": "j12",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 13,
-        "RawQuery": "set:f12 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 9,
+        "RawQuery": "set:j12 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -26794,27 +27081,6 @@
       }
     ]
   },
-  "g11": {
-    "SetCode": "g11",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 8,
-        "RawQuery": "set:g11 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "p11": {
     "SetCode": "p11",
     "Groupings": [
@@ -26845,6 +27111,27 @@
         "Order": 0,
         "CardCount": 12,
         "RawQuery": "set:f11 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "g11": {
+    "SetCode": "g11",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 8,
+        "RawQuery": "set:g11 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -27148,15 +27435,15 @@
       }
     ]
   },
-  "f10": {
-    "SetCode": "f10",
+  "g10": {
+    "SetCode": "g10",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f10 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 8,
+        "RawQuery": "set:g10 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -27190,15 +27477,15 @@
       }
     ]
   },
-  "g10": {
-    "SetCode": "g10",
+  "f10": {
+    "SetCode": "f10",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 8,
-        "RawQuery": "set:g10 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f10 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -28597,27 +28884,6 @@
       }
     ]
   },
-  "f07": {
-    "SetCode": "f07",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f07 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "p07": {
     "SetCode": "p07",
     "Groupings": [
@@ -28648,6 +28914,27 @@
         "Order": 0,
         "CardCount": 5,
         "RawQuery": "set:g07 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "f07": {
+    "SetCode": "f07",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 12,
+        "RawQuery": "set:f07 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -28693,6 +28980,40 @@
           "CollectorNumberRange": null,
           "Properties": {
             "booster": true
+          }
+        }
+      }
+    ]
+  },
+  "ptsp": {
+    "SetCode": "ptsp",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 2,
+        "RawQuery": "set:ptsp is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      },
+      {
+        "Id": "datestamped",
+        "DisplayName": "Datestamped Promos",
+        "Order": 1,
+        "CardCount": 1,
+        "RawQuery": "set:ptsp is:datestamped",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "datestamped": true
           }
         }
       }
@@ -28965,36 +29286,15 @@
       }
     ]
   },
-  "p06": {
-    "SetCode": "p06",
+  "f06": {
+    "SetCode": "f06",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 7,
-        "RawQuery": "set:p06 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
-  "g06": {
-    "SetCode": "g06",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 4,
-        "RawQuery": "set:g06 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 12,
+        "RawQuery": "set:f06 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29041,15 +29341,36 @@
       }
     ]
   },
-  "f06": {
-    "SetCode": "f06",
+  "g06": {
+    "SetCode": "g06",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 12,
-        "RawQuery": "set:f06 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 4,
+        "RawQuery": "set:g06 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "p06": {
+    "SetCode": "p06",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 7,
+        "RawQuery": "set:p06 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29389,15 +29710,15 @@
       }
     ]
   },
-  "g05": {
-    "SetCode": "g05",
+  "p05": {
+    "SetCode": "p05",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 4,
-        "RawQuery": "set:g05 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 6,
+        "RawQuery": "set:p05 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29431,15 +29752,15 @@
       }
     ]
   },
-  "p05": {
-    "SetCode": "p05",
+  "g05": {
+    "SetCode": "g05",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:p05 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 4,
+        "RawQuery": "set:g05 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29635,27 +29956,6 @@
       }
     ]
   },
-  "g04": {
-    "SetCode": "g04",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:g04 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
   "f04": {
     "SetCode": "f04",
     "Groupings": [
@@ -29686,6 +29986,27 @@
         "Order": 0,
         "CardCount": 6,
         "RawQuery": "set:p04 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
+  "g04": {
+    "SetCode": "g04",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 6,
+        "RawQuery": "set:g04 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29941,15 +30262,15 @@
       }
     ]
   },
-  "f03": {
-    "SetCode": "f03",
+  "p03": {
+    "SetCode": "p03",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 13,
-        "RawQuery": "set:f03 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 7,
+        "RawQuery": "set:p03 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -29962,15 +30283,15 @@
       }
     ]
   },
-  "p03": {
-    "SetCode": "p03",
+  "f03": {
+    "SetCode": "f03",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 7,
-        "RawQuery": "set:p03 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 13,
+        "RawQuery": "set:f03 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -30072,7 +30393,7 @@
         "Id": "2022",
         "DisplayName": "2022",
         "Order": 3,
-        "CardCount": 422,
+        "CardCount": 423,
         "RawQuery": "set:prm year:2022",
         "ParsedFilters": {
           "CollectorNumberRange": null,
@@ -30083,7 +30404,7 @@
         "Id": "2021",
         "DisplayName": "2021",
         "Order": 4,
-        "CardCount": 402,
+        "CardCount": 401,
         "RawQuery": "set:prm year:2021",
         "ParsedFilters": {
           "CollectorNumberRange": null,
@@ -30336,6 +30657,27 @@
       }
     ]
   },
+  "pr2": {
+    "SetCode": "pr2",
+    "Groupings": [
+      {
+        "Id": "promo",
+        "DisplayName": "Promos",
+        "Order": 0,
+        "CardCount": 6,
+        "RawQuery": "set:pr2 is:promo not:datestamped not:stamped not:boosterfun",
+        "ParsedFilters": {
+          "CollectorNumberRange": null,
+          "Properties": {
+            "promo": true,
+            "datestamped": false,
+            "stamped": false,
+            "boosterfun": false
+          }
+        }
+      }
+    ]
+  },
   "f02": {
     "SetCode": "f02",
     "Groupings": [
@@ -30366,27 +30708,6 @@
         "Order": 0,
         "CardCount": 2,
         "RawQuery": "set:g02 is:promo not:datestamped not:stamped not:boosterfun",
-        "ParsedFilters": {
-          "CollectorNumberRange": null,
-          "Properties": {
-            "promo": true,
-            "datestamped": false,
-            "stamped": false,
-            "boosterfun": false
-          }
-        }
-      }
-    ]
-  },
-  "pr2": {
-    "SetCode": "pr2",
-    "Groupings": [
-      {
-        "Id": "promo",
-        "DisplayName": "Promos",
-        "Order": 0,
-        "CardCount": 6,
-        "RawQuery": "set:pr2 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -30569,15 +30890,15 @@
       }
     ]
   },
-  "g01": {
-    "SetCode": "g01",
+  "f01": {
+    "SetCode": "f01",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 2,
-        "RawQuery": "set:g01 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 7,
+        "RawQuery": "set:f01 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -30590,15 +30911,15 @@
       }
     ]
   },
-  "f01": {
-    "SetCode": "f01",
+  "g01": {
+    "SetCode": "g01",
     "Groupings": [
       {
         "Id": "promo",
         "DisplayName": "Promos",
         "Order": 0,
-        "CardCount": 7,
-        "RawQuery": "set:f01 is:promo not:datestamped not:stamped not:boosterfun",
+        "CardCount": 2,
+        "RawQuery": "set:g01 is:promo not:datestamped not:stamped not:boosterfun",
         "ParsedFilters": {
           "CollectorNumberRange": null,
           "Properties": {
@@ -31640,71 +31961,6 @@
       }
     ]
   },
-  "pvan": {
-    "SetCode": "pvan",
-    "Groupings": [
-      {
-        "Id": "first-series",
-        "DisplayName": "First Series",
-        "Order": 0,
-        "CardCount": 8,
-        "RawQuery": "e:pvan cn≥101 cn≤108",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "101",
-            "Max": "108",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "second-series",
-        "DisplayName": "Second Series",
-        "Order": 1,
-        "CardCount": 8,
-        "RawQuery": "e:pvan cn≥201 cn≤208",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "201",
-            "Max": "208",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "third-series",
-        "DisplayName": "Third Series",
-        "Order": 2,
-        "CardCount": 8,
-        "RawQuery": "e:pvan cn≥301 cn≤308",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "301",
-            "Max": "308",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      },
-      {
-        "Id": "fourth-series",
-        "DisplayName": "Fourth Series",
-        "Order": 3,
-        "CardCount": 8,
-        "RawQuery": "e:pvan cn≥401 cn≤408",
-        "ParsedFilters": {
-          "CollectorNumberRange": {
-            "Min": "401",
-            "Max": "408",
-            "OrConditions": null
-          },
-          "Properties": {}
-        }
-      }
-    ]
-  },
   "por": {
     "SetCode": "por",
     "Groupings": [
@@ -31809,6 +32065,71 @@
               "93d",
               "160d"
             ]
+          },
+          "Properties": {}
+        }
+      }
+    ]
+  },
+  "pvan": {
+    "SetCode": "pvan",
+    "Groupings": [
+      {
+        "Id": "first-series",
+        "DisplayName": "First Series",
+        "Order": 0,
+        "CardCount": 8,
+        "RawQuery": "e:pvan cn≥101 cn≤108",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "101",
+            "Max": "108",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "second-series",
+        "DisplayName": "Second Series",
+        "Order": 1,
+        "CardCount": 8,
+        "RawQuery": "e:pvan cn≥201 cn≤208",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "201",
+            "Max": "208",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "third-series",
+        "DisplayName": "Third Series",
+        "Order": 2,
+        "CardCount": 8,
+        "RawQuery": "e:pvan cn≥301 cn≤308",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "301",
+            "Max": "308",
+            "OrConditions": null
+          },
+          "Properties": {}
+        }
+      },
+      {
+        "Id": "fourth-series",
+        "DisplayName": "Fourth Series",
+        "Order": 3,
+        "CardCount": 8,
+        "RawQuery": "e:pvan cn≥401 cn≤408",
+        "ParsedFilters": {
+          "CollectorNumberRange": {
+            "Min": "401",
+            "Max": "408",
+            "OrConditions": null
           },
           "Properties": {}
         }

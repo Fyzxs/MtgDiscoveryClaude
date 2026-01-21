@@ -7,4 +7,5 @@ namespace Lib.Aggregator.UserCards.Apis;
 public interface IUserCardsCommandAggregatorService
 {
     Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard);
+    Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard);
 }

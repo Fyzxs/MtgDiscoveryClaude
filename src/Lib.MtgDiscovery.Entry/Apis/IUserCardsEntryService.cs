@@ -9,4 +9,5 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 public interface IUserCardsEntryService
 {
     Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args);
+    Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args);
 }

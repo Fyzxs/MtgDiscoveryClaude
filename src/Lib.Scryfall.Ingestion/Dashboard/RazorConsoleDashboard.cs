@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
@@ -20,9 +20,9 @@ internal sealed class RazorConsoleDashboard : IIngestionDashboard, IDisposable
         _state = new DashboardState();
     }
 
-    public async Task RunUIAsync()
+    public async Task RunUiAsync()
     {
-        await AppHost.RunAsync<RazorUI.IngestionDashboard>(
+        await AppHost.RunAsync<IngestionDashboard>(
             parameters: null,
             configure: builder =>
             {

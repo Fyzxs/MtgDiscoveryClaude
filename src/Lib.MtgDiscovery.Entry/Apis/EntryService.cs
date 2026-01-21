@@ -83,6 +83,8 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args) => _userCardsEntryService.AddCardToCollectionAsync(args);
 
+    public Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args) => _userCardsEntryService.AddUserCardOnlyAsync(args);
+
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => _userCardsQueryEntryService.UserCardAsync(cardArgs);
 
     public Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => _userCardsQueryEntryService.UserCardsBySetAsync(bySetArgs);
@@ -94,4 +96,6 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) => _userSetCardsQueryEntryService.AllUserSetCardsAsync(userSetCardsArgs);
 
     public Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args) => _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args);
+
+    public Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args) => _userSetCardsCommandEntryService.AddCardToSetAsync(args);
 }

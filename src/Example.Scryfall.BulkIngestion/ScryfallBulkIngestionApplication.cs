@@ -22,7 +22,7 @@ public sealed class ScryfallBulkIngestionApplication : ExampleApplication
         IIngestionDashboard dashboard = dashboardFactory.Create(logger);
 
         // Check if this is a RazorConsole dashboard
-        if (dashboard is Lib.Scryfall.Ingestion.Dashboard.RazorConsoleDashboard razorDashboard)
+        if (dashboard is RazorConsoleDashboard razorDashboard)
         {
             // For RazorConsole: Run ingestion in background, UI on main thread
             Task ingestionTask = Task.Run(async () =>
@@ -42,7 +42,7 @@ public sealed class ScryfallBulkIngestionApplication : ExampleApplication
             });
 
             // Run RazorConsole UI on main thread (blocking)
-            await razorDashboard.RunUIAsync().ConfigureAwait(false);
+            await razorDashboard.RunUiAsync().ConfigureAwait(false);
 
             // Wait for ingestion to complete
             await ingestionTask.ConfigureAwait(false);
