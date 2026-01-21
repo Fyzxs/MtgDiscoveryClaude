@@ -81,7 +81,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
 
             _dashboard.UpdateProgress("Sets:", current, total, "Writing", set.Name());
 
-            ScryfallSetItem entity = new()
+            ScryfallSetItemExtEntity entity = new()
             {
                 Data = set.Data()
             };
@@ -89,7 +89,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
             await _setScribe.UpsertAsync(entity).ConfigureAwait(false);
 
             // Write SetCodeIndex (mapping set code to set ID)
-            ScryfallSetCodeIndexItem codeIndex = new()
+            ScryfallSetCodeIndexExtEntity codeIndex = new()
             {
                 SetCode = set.Code(),
                 SetId = set.Id()
@@ -99,7 +99,7 @@ internal sealed class SetsPipelineService : ISetsPipelineService
             // Write SetAssociation if this set has a parent
             if (set.HasParentSet())
             {
-                ScryfallSetParentAssociationItem parentAssociationItem = new()
+                ScryfallSetParentAssociationExtEntity parentAssociationItem = new()
                 {
                     SetId = set.Id(),
                     ParentSetCode = set.ParentSetCode(),

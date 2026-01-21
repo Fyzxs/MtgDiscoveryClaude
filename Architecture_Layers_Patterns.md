@@ -17,7 +17,7 @@ Adapter Layer → Aggregator Layer → Domain Layer → Shared Layer → Entry L
 
 ### Entity Transformation Flow
 ```
-ArgEntity (App) → ItrEntity (Internal) → ExtEntity (External) → ItrEntity → OutEntity (App)
+ArgEntity (App) → ItrEntity (Internal) → XfrEntity (Transfer) → ExtEntity (External) → ItrEntity → OutEntity (App)
 ```
 
 ---
@@ -1233,6 +1233,7 @@ if (validationResult.Failed)
 Layer-specific entity suffixes:
 - **ArgEntity**: Arguments from external clients (App layer)
 - **ItrEntity**: Internal transfer entities (all internal layers)
+- **XfrEntity**: Transfer entities crossing Aggregator→Adapter boundary when no actual entity mapping is needed
 - **OutEntity**: Output entities to external clients (App layer)
 - **ExtEntity**: External system entities (Adapter layer)
 - **Item**: Database/storage entities (Adapter layer)

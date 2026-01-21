@@ -7,7 +7,7 @@ using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -18,7 +18,7 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 public sealed class UserCardsQueryMethods
 {
     private readonly IEntryService _entryService;
-    private readonly IUserCardCollectionItrToOutMapper _mapper;
+    private readonly IUserCardCollectionItrToOutMapper _collectionMapper;
 
     public UserCardsQueryMethods(ILogger logger) : this(
         new EntryService(logger),
@@ -28,16 +28,16 @@ public sealed class UserCardsQueryMethods
 
     private UserCardsQueryMethods(
         IEntryService entryService,
-        IUserCardCollectionItrToOutMapper mapper)
+        IUserCardCollectionItrToOutMapper collectionMapper)
     {
         _entryService = entryService;
-        _mapper = mapper;
+        _collectionMapper = collectionMapper;
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
     public async Task<ResponseModel> UserCardsBySet(UserCardsSetArgEntity setArgs)
     {
-        IOperationResponse<IEnumerable<IUserCardCollectionItrEntity>> response = await _entryService
+        IOperationResponse<IEnumerable<IUserCardItrEntity>> response = await _entryService
             .UserCardsBySetAsync(setArgs)
             .ConfigureAwait(false);
 
@@ -50,14 +50,8 @@ public sealed class UserCardsQueryMethods
             }
         };
 
-        // TODO: Create a mapper to handle the looping. This shoud be List<UserCardCollectionOutEntity> results = _mapper.Map(response.ResponseData) 
-        List<UserCardCollectionOutEntity> results = [];
-        foreach (IUserCardCollectionItrEntity userCard in response.ResponseData)
-        {
-            UserCardCollectionOutEntity mapped = await _mapper.Map(userCard).ConfigureAwait(false);
-            results.Add(mapped);
-        }
+        List<UserCardOutEntity> results = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
 
-        return new SuccessDataResponseModel<List<UserCardCollectionOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<List<UserCardOutEntity>>() { Data = results };
     }
 }

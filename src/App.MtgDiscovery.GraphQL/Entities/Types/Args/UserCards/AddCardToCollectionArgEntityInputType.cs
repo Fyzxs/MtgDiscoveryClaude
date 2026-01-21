@@ -4,9 +4,9 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 
-public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<AddCardToCollectionArgEntity>
+public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<UserCardArgEntity>
 {
-    protected override void Configure([NotNull] IInputObjectTypeDescriptor<AddCardToCollectionArgEntity> descriptor)
+    protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardArgEntity> descriptor)
     {
         descriptor.Name("AddCardToCollectionInput");
         descriptor.Description("Input for adding cards to a user's collection");
@@ -19,7 +19,7 @@ public sealed class AddCardToCollectionArgEntityInputType : InputObjectType<AddC
             .Type<NonNullType<StringType>>()
             .Description("The unique identifier of the set");
 
-        descriptor.Field(x => x.CollectedItem)
+        descriptor.Field(x => x.UserCardDetails)
             .Type<NonNullType<CollectedItemArgEntityInputType>>()
             .Description("The collected item with its finish and count");
     }

@@ -1,27 +1,29 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace App.MtgDiscovery.GraphQL.Mappers;
 
 internal sealed class UserCardCollectionItrToOutMapper : IUserCardCollectionItrToOutMapper
 {
-    public Task<UserCardCollectionOutEntity> Map(IUserCardCollectionItrEntity source)
-    {
-        UserCardCollectionOutEntity result = new()
-        {
-            UserId = source.UserId,
-            CardId = source.CardId,
-            SetId = source.SetId,
-            CollectedList = [.. source.CollectedList.Select(item => new CollectedItemOutEntity
-            {
-                Finish = item.Finish,
-                Special = item.Special,
-                Count = item.Count
-            })]
-        };
+    private readonly IUserCardItrToOutMapper _mapper;
 
-        return Task.FromResult(result);
+    public UserCardCollectionItrToOutMapper() : this(new UserCardItrToOutMapper())
+    { }
+
+    private UserCardCollectionItrToOutMapper(IUserCardItrToOutMapper mapper)
+    {
+        _mapper = mapper;
+    }
+
+    public async Task<List<UserCardOutEntity>> Map(IEnumerable<IUserCardItrEntity> userCards)
+    {
+        UserCardOutEntity[] results = await Task.WhenAll(
+            userCards.Select(userCard => _mapper.Map(userCard))
+        ).ConfigureAwait(false);
+
+        return results.ToList();
     }
 }

@@ -34,7 +34,7 @@ public sealed class FilterContainerTests
         // Arrange
         TestTarget target = new();
         TestResult result = new();
-        FakeFilter filter = new() { IsFilteredOutResult = false };
+        FilterFake filter = new() { IsFilteredOutResult = false };
         TestFilterContainer subject = new(filter);
 
         // Act
@@ -53,8 +53,8 @@ public sealed class FilterContainerTests
         // Arrange
         TestTarget target = new();
         TestResult result = new();
-        FakeFilter filter1 = new() { IsFilteredOutResult = true };
-        FakeFilter filter2 = new() { IsFilteredOutResult = false };
+        FilterFake filter1 = new() { IsFilteredOutResult = true };
+        FilterFake filter2 = new() { IsFilteredOutResult = false };
         TestFilterContainer subject = new(filter1, filter2);
 
         // Act
@@ -72,9 +72,9 @@ public sealed class FilterContainerTests
         // Arrange
         TestTarget target = new();
         TestResult result = new();
-        FakeFilter filter1 = new() { IsFilteredOutResult = false };
-        FakeFilter filter2 = new() { IsFilteredOutResult = false };
-        FakeFilter filter3 = new() { IsFilteredOutResult = false };
+        FilterFake filter1 = new() { IsFilteredOutResult = false };
+        FilterFake filter2 = new() { IsFilteredOutResult = false };
+        FilterFake filter3 = new() { IsFilteredOutResult = false };
         TestFilterContainer subject = new(filter1, filter2, filter3);
 
         // Act
@@ -97,7 +97,7 @@ public sealed class FilterContainerTests
         public string Value { get; set; } = "";
     }
 
-    private sealed class FakeFilter : IFilter<TestTarget, TestResult>
+    private sealed class FilterFake : IFilter<TestTarget, TestResult>
     {
         public bool IsFilteredOutResult { get; init; }
         public int IsFilteredOutInvokeCount { get; private set; }

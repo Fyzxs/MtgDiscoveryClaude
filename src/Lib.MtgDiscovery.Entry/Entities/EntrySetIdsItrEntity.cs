@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 
 namespace Lib.MtgDiscovery.Entry.Entities;
 
 internal sealed class EntrySetIdsItrEntity : ISetIdsItrEntity
 {
-    private readonly List<string> _setIds;
-
-    public EntrySetIdsItrEntity(List<string> setIds)
+    public EntrySetIdsItrEntity(ICollection<string> setIds)
     {
-        _setIds = setIds;
+        SetIds = setIds;
     }
 
-    public IReadOnlyCollection<string> SetIds => _setIds;
+    public ICollection<string> SetIds { get; }
 }

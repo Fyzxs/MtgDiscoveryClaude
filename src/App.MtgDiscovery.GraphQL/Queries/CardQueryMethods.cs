@@ -7,7 +7,7 @@ using App.MtgDiscovery.GraphQL.Mappers;
 using HotChocolate;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -17,16 +17,16 @@ namespace App.MtgDiscovery.GraphQL.Queries;
 [ExtendObjectType(typeof(ApiQuery))]
 public class CardQueryMethods
 {
-    private readonly IScryfallCardMapper _scryfallCardMapper;
+    private readonly ICollectionCardItemItrToOutMapper _cardCollectionMapper;
     private readonly IEntryService _entryService;
 
-    public CardQueryMethods(ILogger logger) : this(new ScryfallCardMapper(), new EntryService(logger))
+    public CardQueryMethods(ILogger logger) : this(new CollectionCardItemItrToOutMapper(), new EntryService(logger))
     {
     }
 
-    private CardQueryMethods(IScryfallCardMapper scryfallCardMapper, IEntryService entryService)
+    private CardQueryMethods(ICollectionCardItemItrToOutMapper cardCollectionMapper, IEntryService entryService)
     {
-        _scryfallCardMapper = scryfallCardMapper;
+        _cardCollectionMapper = cardCollectionMapper;
         _entryService = entryService;
     }
 
@@ -46,15 +46,9 @@ public class CardQueryMethods
             }
         };
 
-        List<ScryfallCardOutEntity> results = [];
+        ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
-        {
-            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
-
-        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
@@ -71,15 +65,9 @@ public class CardQueryMethods
             }
         };
 
-        List<ScryfallCardOutEntity> results = [];
+        ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
-        {
-            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
-
-        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
@@ -96,15 +84,9 @@ public class CardQueryMethods
             }
         };
 
-        List<ScryfallCardOutEntity> results = [];
+        ICollection<CardItemOutEntity> results = await _cardCollectionMapper.Map(response.ResponseData.Data).ConfigureAwait(false);
 
-        foreach (ICardItemItrEntity cardItem in response.ResponseData.Data)
-        {
-            ScryfallCardOutEntity outEntity = await _scryfallCardMapper.Map(cardItem).ConfigureAwait(false);
-            results.Add(outEntity);
-        }
-
-        return new SuccessDataResponseModel<List<ScryfallCardOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<ICollection<CardItemOutEntity>>() { Data = results };
     }
 
     [GraphQLType(typeof(CardNameSearchResponseModelUnionType))]
@@ -128,6 +110,6 @@ public class CardQueryMethods
             results.Add(new CardNameSearchResultOutEntity { Name = nameResult.Name });
         }
 
-        return new SuccessDataResponseModel<List<CardNameSearchResultOutEntity>>() { Data = results };
+        return new SuccessDataResponseModel<ICollection<CardNameSearchResultOutEntity>>() { Data = results };
     }
 }

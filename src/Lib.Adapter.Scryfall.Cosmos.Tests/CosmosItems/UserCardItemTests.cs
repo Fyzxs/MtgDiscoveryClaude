@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Nesteds;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.CosmosItems;
@@ -14,7 +13,7 @@ public sealed class UserCardItemTests
     public void Constructor_WithInitializers_CreatesInstance()
     {
         // Arrange & Act
-        UserCardItem actual = new()
+        UserCardExtEntity actual = new()
         {
             UserId = "test-user-id",
             CardId = "test-card-id",
@@ -35,7 +34,7 @@ public sealed class UserCardItemTests
     public void Id_ReturnsCardIdValue()
     {
         // Arrange
-        UserCardItem actual = new()
+        UserCardExtEntity actual = new()
         {
             CardId = "expected-card-id"
         };
@@ -48,7 +47,7 @@ public sealed class UserCardItemTests
     public void Partition_ReturnsUserIdValue()
     {
         // Arrange
-        UserCardItem actual = new()
+        UserCardExtEntity actual = new()
         {
             UserId = "expected-user-id"
         };
@@ -61,10 +60,10 @@ public sealed class UserCardItemTests
     public void JsonPropertyAttributes_AreConfiguredCorrectly()
     {
         // Arrange
-        PropertyInfo userIdProperty = typeof(UserCardItem).GetProperty(nameof(UserCardItem.UserId));
-        PropertyInfo cardIdProperty = typeof(UserCardItem).GetProperty(nameof(UserCardItem.CardId));
-        PropertyInfo setIdProperty = typeof(UserCardItem).GetProperty(nameof(UserCardItem.SetId));
-        PropertyInfo collectedListProperty = typeof(UserCardItem).GetProperty(nameof(UserCardItem.CollectedList));
+        PropertyInfo userIdProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.UserId));
+        PropertyInfo cardIdProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.CardId));
+        PropertyInfo setIdProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.SetId));
+        PropertyInfo collectedListProperty = typeof(UserCardExtEntity).GetProperty(nameof(UserCardExtEntity.CollectedList));
 
         // Act
         JsonPropertyAttribute userIdJsonAttribute = userIdProperty?.GetCustomAttributes(typeof(JsonPropertyAttribute), false).FirstOrDefault() as JsonPropertyAttribute;
@@ -90,7 +89,7 @@ public sealed class UserCardItemTests
     public void CollectedItem_ConstructorWithInitializers_CreatesInstance()
     {
         // Arrange & Act
-        CollectedItem actual = new()
+        UserCardDetailsExtEntity actual = new()
         {
             Finish = "foil",
             Special = "signed",
@@ -108,9 +107,9 @@ public sealed class UserCardItemTests
     public void CollectedItem_JsonPropertyAttributes_AreConfiguredCorrectly()
     {
         // Arrange
-        PropertyInfo finishProperty = typeof(CollectedItem).GetProperty(nameof(CollectedItem.Finish));
-        PropertyInfo specialProperty = typeof(CollectedItem).GetProperty(nameof(CollectedItem.Special));
-        PropertyInfo countProperty = typeof(CollectedItem).GetProperty(nameof(CollectedItem.Count));
+        PropertyInfo finishProperty = typeof(UserCardDetailsExtEntity).GetProperty(nameof(UserCardDetailsExtEntity.Finish));
+        PropertyInfo specialProperty = typeof(UserCardDetailsExtEntity).GetProperty(nameof(UserCardDetailsExtEntity.Special));
+        PropertyInfo countProperty = typeof(UserCardDetailsExtEntity).GetProperty(nameof(UserCardDetailsExtEntity.Count));
 
         // Act
         JsonPropertyAttribute finishJsonAttribute = finishProperty?.GetCustomAttributes(typeof(JsonPropertyAttribute), false).FirstOrDefault() as JsonPropertyAttribute;

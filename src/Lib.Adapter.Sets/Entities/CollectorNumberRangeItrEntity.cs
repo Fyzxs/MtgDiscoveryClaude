@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities;
+using Lib.Shared.DataModels.Entities.Itrs;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Sets.Entities;

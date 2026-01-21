@@ -35,21 +35,21 @@ internal sealed class SetItemsProcessor : ISetProcessor
 
     public async Task ProcessAsync(IScryfallSet set)
     {
-        ScryfallSetItem setItem = _mapper.Map(set);
-        OpResponse<ScryfallSetItem> response = await _scribe.UpsertAsync(setItem).ConfigureAwait(false);
+        ScryfallSetItemExtEntity setItem = _mapper.Map(set);
+        OpResponse<ScryfallSetItemExtEntity> response = await _scribe.UpsertAsync(setItem).ConfigureAwait(false);
 
         LogSuccess(set, response);
         LogFailure(set, response);
     }
 
-    private void LogSuccess(IScryfallSet set, OpResponse<ScryfallSetItem> response)
+    private void LogSuccess(IScryfallSet set, OpResponse<ScryfallSetItemExtEntity> response)
     {
         if (response.IsNotSuccessful()) return;
 
         _logger.LogSetItemStored(set.Code());
     }
 
-    private void LogFailure(IScryfallSet set, OpResponse<ScryfallSetItem> response)
+    private void LogFailure(IScryfallSet set, OpResponse<ScryfallSetItemExtEntity> response)
     {
         if (response.IsSuccessful()) return;
 
