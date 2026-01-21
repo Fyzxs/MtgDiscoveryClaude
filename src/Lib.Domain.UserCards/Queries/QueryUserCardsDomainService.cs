@@ -8,16 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Domain.UserCards.Queries;
 
-internal sealed class QueryUserCardsDomainService : IUserCardsDomainService
+internal sealed class QueryUserCardsDomainService : IUserCardsQueryDomainService
 {
-    private readonly IUserCardsAggregatorService _userCardsAggregatorService;
+    private readonly IUserCardsQueryAggregatorService _userCardsAggregatorService;
 
     public QueryUserCardsDomainService(ILogger logger) : this(new UserCardsAggregatorService(logger))
     { }
 
-    private QueryUserCardsDomainService(IUserCardsAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
-
-    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => throw new System.NotImplementedException("Use CommandUserCardsDomainService for write operations");
+    private QueryUserCardsDomainService(IUserCardsQueryAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
     public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => await _userCardsAggregatorService.UserCardAsync(userCard).ConfigureAwait(false);
 

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.UserCards.Commands;
 
-internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
+internal sealed class UserCardsCommandAggregator : IUserCardsCommandAggregatorService
 {
     private readonly IAddUserCardAggregatorService _addUserCardOperations;
 
@@ -17,14 +17,4 @@ internal sealed class UserCardsCommandAggregator : IUserCardsAggregatorService
     private UserCardsCommandAggregator(IAddUserCardAggregatorService addUserCardOperations) => _addUserCardOperations = addUserCardOperations;
 
     public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => _addUserCardOperations.AddUserCardAsync(userCard);
-
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => throw new System.NotImplementedException("Use UserCardsQueryAggregator");
-
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => throw new System.NotImplementedException("Use UserCardsQueryAggregator");
-
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => throw new System.NotImplementedException("Use UserCardsQueryAggregator");
-
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => throw new System.NotImplementedException("Use UserCardsQueryAggregator");
-
-    public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => throw new System.NotImplementedException("Use UserCardsQueryAggregator");
 }

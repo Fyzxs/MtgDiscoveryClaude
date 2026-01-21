@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Aggregator.UserCards.Queries;
 
-internal sealed class UserCardsQueryAggregator : IUserCardsAggregatorService
+internal sealed class UserCardsQueryAggregator : IUserCardsQueryAggregatorService
 {
     private readonly IUserCardAggregatorService _userCardOperations;
     private readonly IUserCardsBySetAggregatorService _userCardsBySetOperations;
@@ -41,8 +41,6 @@ internal sealed class UserCardsQueryAggregator : IUserCardsAggregatorService
         _userCardsByArtistOperations = userCardsByArtistOperations;
         _userCardsByNameOperations = userCardsByNameOperations;
     }
-
-    public Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => throw new System.NotImplementedException("Use UserCardsCommandAggregator");
 
     public Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => _userCardOperations.UserCardAsync(userCard);
 
