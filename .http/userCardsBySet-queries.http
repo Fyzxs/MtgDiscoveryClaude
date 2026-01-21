@@ -45,8 +45,8 @@ query GetUserCardsBySet($setArgs: UserCardsSetArgEntityInput!) {
 
 {
   "setArgs": {
-    "setId": "neo",
-    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
+  "setId": "452951cf-378b-4472-b7fe-572fe2af2ac0",
+  "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38"
   }
 }
 
