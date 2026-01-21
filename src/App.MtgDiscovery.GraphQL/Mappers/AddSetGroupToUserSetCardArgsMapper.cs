@@ -1,14 +1,17 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
+using App.MtgDiscovery.GraphQL.Authentication;
 using Lib.MtgDiscovery.Entry.Entities;
-using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
-namespace Lib.MtgDiscovery.Entry.Commands.UserSetCards.Mappers;
+namespace App.MtgDiscovery.GraphQL.Mappers;
 
 internal sealed class AddSetGroupToUserSetCardArgsMapper : IAddSetGroupToUserSetCardArgsMapper
 {
-    public Task<IAddSetGroupToUserSetCardArgsEntity> Map(IAuthUserArgEntity authUser, IAddSetGroupToUserSetCardArgEntity addSetGroupToUserSetCard)
+    public Task<IAddSetGroupToUserSetCardArgsEntity> Map(ClaimsPrincipal claimsPrincipal, IAddSetGroupToUserSetCardArgEntity addSetGroupToUserSetCard)
     {
+        AuthUserArgEntity authUser = new(claimsPrincipal);
+
         IAddSetGroupToUserSetCardArgsEntity entity = new AddSetGroupToUserSetCardArgsEntity
         {
             AuthUser = authUser,
