@@ -1045,7 +1045,7 @@ internal sealed class SealedProductsDomainService : ISealedProductsDomainService
 ## Phase 6: Entry Layer
 
 ### Task 6.1: Create SealedProduct OutEntity
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Nothing
 **Location:** `src/Lib.MtgDiscovery.Entry/Entities/Outs/SealedProducts/`
 
@@ -1084,7 +1084,7 @@ public sealed class SealedProductOutEntity
 ---
 
 ### Task 6.2: Create SealedProductsBySetCode Itr Entity Implementation
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 2.3
 **Location:** `src/Lib.MtgDiscovery.Entry/Entities/Itrs/SealedProducts/`
 
@@ -1112,7 +1112,7 @@ internal sealed class SealedProductsBySetCodeItrEntity : ISealedProductsBySetCod
 ---
 
 ### Task 6.3: Create SealedProductsBySetCode ArgToItr Mapper
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 2.1, 6.2
 **Location:** `src/Lib.MtgDiscovery.Entry/Queries/Actions/Mappers/`
 
@@ -1160,7 +1160,7 @@ internal sealed class SealedProductsBySetCodeArgToItrMapper : ISealedProductsByS
 ---
 
 ### Task 6.4: Create SealedProduct OufToOut Mapper
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 2.4, 6.1
 **Location:** `src/Lib.MtgDiscovery.Entry/Queries/Actions/Mappers/`
 
@@ -1220,7 +1220,7 @@ internal sealed class SealedProductOufToOutMapper : ISealedProductOufToOutMapper
 ---
 
 ### Task 6.5: Create SealedProductsBySetCode Validator
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 2.1
 **Location:** `src/Lib.MtgDiscovery.Entry/Commands/Actions/Validators/SealedProducts/`
 
@@ -1278,7 +1278,7 @@ internal sealed class SealedProductsBySetCodeArgEntityValidator
 ---
 
 ### Task 6.6: Create SealedProductsBySetCodeEntryService
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 5.3, 6.3, 6.4, 6.5
 **Location:** `src/Lib.MtgDiscovery.Entry/Queries/SealedProducts/`
 
@@ -1373,7 +1373,7 @@ internal sealed class SealedProductsBySetCodeEntryService : ISealedProductsBySet
 ---
 
 ### Task 6.7: Create ISealedProductsEntryService
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 6.6
 **Location:** `src/Lib.MtgDiscovery.Entry/Apis/`
 
@@ -1420,7 +1420,7 @@ internal sealed class SealedProductsEntryService : ISealedProductsEntryService
 ---
 
 ### Task 6.8: Update IEntryService
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 6.7
 **Location:** `src/Lib.MtgDiscovery.Entry/Apis/`
 
