@@ -235,8 +235,8 @@ Use visual indicators for immediate clarity:
 7. **Evaluate performance impact** and scalability considerations
 8. **Review configuration changes** with special attention to production risks
 9. **Generate file-based review document** with emoji categorization (.claude/reviews/)
-10. **Create PR comment payloads** for Azure DevOps integration
-11. **Post PR comments** using az devops invoke commands
+10. **Create inline PR comments** on specific files and lines for each finding
+11. **Post PR comments** using az devops invoke commands with file/line context
 12. **Use ```suggestion code blocks** for all code change recommendations
 13. **Document decisions** and rationale for complex review points
 14. **Provide follow-up guidance** without making direct code changes
@@ -255,12 +255,60 @@ Use visual indicators for immediate clarity:
    - Comprehensive findings with emoji categorization
    - Structured sections: Critical → Suggestions → Positive
    - Cross-references to PR thread IDs
-   
-2. **PR Comment Integration**
-   - Summary comment with overall assessment
-   - Inline comments for specific code issues
+
+2. **Inline PR Comments on Files**
+   - Comments directly on specific files and line numbers
+   - Each finding posted as a thread on the relevant code location
+   - Thread context includes file path and line range
    - JSON payloads for az devops invoke commands
+
+3. **PR Summary Comment**
+   - Overall assessment comment on PR conversation
+   - References to inline comments for details
    - Consistent emoji usage across all comments
+
+### Azure DevOps Inline Comment Creation
+
+**Create Inline Comment Thread on File:**
+```bash
+# Create thread comment JSON payload
+cat > thread-comment.json << 'EOF'
+{
+  "comments": [
+    {
+      "parentCommentId": 0,
+      "content": "{emoji} **{Issue Title}**\n\n{Description}\n\n```suggestion\n{suggested_code}\n```\n\n**Risk/Impact:** {risk_assessment}",
+      "commentType": 1
+    }
+  ],
+  "status": 1,
+  "threadContext": {
+    "filePath": "/{relative_file_path}",
+    "rightFileStart": {
+      "line": {start_line},
+      "offset": 1
+    },
+    "rightFileEnd": {
+      "line": {end_line},
+      "offset": 1
+    }
+  }
+}
+EOF
+
+# Post the inline comment
+az devops invoke --area git --resource pullRequestThreads \
+  --org https://dev.azure.com/{organization} \
+  --route-parameters project={project} repositoryId={repositoryId} pullRequestId={pullRequestId} \
+  --http-method POST --api-version 6.0 \
+  --in-file thread-comment.json
+```
+
+**Thread Context Fields:**
+- `filePath`: Relative path from repository root (must start with `/`)
+- `rightFileStart.line`: Starting line number for the comment
+- `rightFileEnd.line`: Ending line number (same as start for single line)
+- `status`: 1 = Active, 2 = Fixed, 3 = Pending, 4 = Closed, 5 = Resolved
 
 ### Comment Format Standards
 ```markdown
