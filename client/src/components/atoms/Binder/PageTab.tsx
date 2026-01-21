@@ -30,16 +30,14 @@ export const PageTab: React.FC<PageTabProps> = ({
   // Determine background color based on state
   const getBackgroundColor = () => {
     if (isActive) return 'primary.main';
-    if (hasMissingCards) return 'warning.dark';
     return 'grey.800';
   };
 
   // Determine border color based on state
-  // Active tabs with missing cards get amber border to indicate incomplete
+  // Tabs with missing cards get amber border to indicate incomplete
   const getBorderColor = () => {
-    if (isActive && hasMissingCards) return 'warning.main';
-    if (isActive) return 'primary.light';
     if (hasMissingCards) return 'warning.main';
+    if (isActive) return 'primary.light';
     return 'grey.700';
   };
 
@@ -58,12 +56,12 @@ export const PageTab: React.FC<PageTabProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         bgcolor: getBackgroundColor(),
-        border: isActive && hasMissingCards ? '2px solid' : '1px solid',
+        border: hasMissingCards ? '2px solid' : '1px solid',
         borderColor: getBorderColor(),
         borderRadius: side === 'right' ? '0 4px 4px 0' : '4px 0 0 4px',
         cursor: 'pointer',
         '&:hover': {
-          bgcolor: isActive ? 'primary.dark' : hasMissingCards ? 'warning.main' : 'grey.700',
+          bgcolor: isActive ? 'primary.dark' : 'grey.700',
         },
         '&:focus': {
           outline: 'none',
@@ -78,7 +76,7 @@ export const PageTab: React.FC<PageTabProps> = ({
         sx={{
           fontSize: '0.65rem',
           fontWeight: isActive ? 700 : 500,
-          color: isActive ? 'primary.contrastText' : hasMissingCards ? 'warning.contrastText' : 'text.secondary',
+          color: isActive ? 'primary.contrastText' : 'text.secondary',
           lineHeight: 1
         }}
       >

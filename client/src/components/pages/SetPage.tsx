@@ -390,9 +390,11 @@ export const SetPage: React.FC = () => {
                     collectionCounts={(Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[]}
                     signedCards={(Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]}
                     finishes={(Array.isArray(filters.finishes) ? filters.finishes : []) as string[]}
+                    wishlist={typeof filters.wishlist === 'boolean' ? filters.wishlist : false}
                     onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
                     onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
                     onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
+                    onWishlistChange={(value: boolean) => updateFilter('wishlist', value)}
                   />
                 </FilterControlsWithLoading>
               )}

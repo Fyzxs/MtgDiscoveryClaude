@@ -66,6 +66,15 @@ export const getCardCollectionCount = (card: CardLike): number => {
 };
 
 /**
+ * Get total wishlist count for a card
+ */
+export const getCardWishlistCount = (card: CardLike): number => {
+  if (!card.userWishlist) return 0;
+  const wishlistArray = Array.isArray(card.userWishlist) ? card.userWishlist : [card.userWishlist];
+  return wishlistArray.reduce((sum, item) => sum + item.count, 0);
+};
+
+/**
  * Check if a card has any signed copies
  */
 export const hasSignedCopies = (card: CardLike): boolean => {
@@ -183,5 +192,13 @@ export const createCardFilterFunctions = <T extends CardLike>() => ({
     return collectionArray.some(item =>
       item.finish && selectedFinishes.includes(item.finish)
     );
+  },
+  wishlist: (card: T, value: unknown) => {
+    // If not enabled (false or empty), show all cards
+    if (value === false || value === undefined || value === null) return true;
+
+    // If enabled (true), only show cards with wishlist count > 0
+    const wishlistCount = getCardWishlistCount(card);
+    return wishlistCount > 0;
   }
 });

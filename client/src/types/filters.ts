@@ -107,6 +107,7 @@ export interface CollectorFiltersConfig {
   signedCards?: MultiSelectConfig;
   finishes?: MultiSelectConfig;
   collectionStatus?: MultiSelectConfig;
+  wishlist?: ToggleConfig;
 }
 
 /**
