@@ -5,7 +5,7 @@ import { Section } from '../molecules/layouts';
 import { LoadingIndicator } from '../molecules/feedback';
 import { SearchTemplate } from '../templates/pages/SearchTemplate';
 import { DebouncedSearchInput } from '../molecules/shared/DebouncedSearchInput';
-import { CardSearchResults } from '../organisms/CardSearchResults';
+import { CardSearchResults } from '../organisms/Cards/CardSearchResults';
 import { CARD_NAME_SEARCH } from '../../graphql/queries/cardNameSearch';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
 

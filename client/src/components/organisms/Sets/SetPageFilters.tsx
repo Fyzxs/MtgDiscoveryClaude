@@ -1,13 +1,13 @@
 import React from 'react';
-import { FormControlLabel, Switch } from '../atoms';
+import { FormControlLabel, Switch } from '../../atoms';
 import { FilterPanel } from './filters/FilterPanel';
-import { FilterErrorBoundary } from '../utils/ErrorBoundaries';
-import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
+import { FilterErrorBoundary } from '../../utils/ErrorBoundaries';
+import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../../config/cardSortOptions';
 import {
   getCollectionCountOptions,
   getSignedCardsOptions,
-} from '../../utils/cardUtils';
-import type { Card } from '../../types/card';
+} from '../../../utils/cardUtils';
+import type { Card } from '../../../types/card';
 
 interface CardGroupConfig {
   id: string;

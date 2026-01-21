@@ -1,18 +1,18 @@
 import React, { useRef } from 'react';
-import { Card as MuiCard, Box } from '../atoms';
-import type { Card, CardContext, UserCardData } from '../../types/card';
-import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
-import { ZoomIndicator } from '../atoms/Cards/ZoomIndicator';
-import { CardOverlay } from '../molecules/Cards/CardOverlay';
+import { Card as MuiCard, Box } from '../../atoms';
+import type { Card, CardContext } from '../../../types/card';
+import { CardImageDisplay } from './CardImageDisplay';
+import { ZoomIndicator } from '../../atoms/Cards/ZoomIndicator';
+import { CardOverlay } from '../../molecules/Cards/CardOverlay';
 import { CardDetailsModal } from './CardDetailsModal';
-import { CardBadges } from '../molecules/Cards/CardBadges';
-import { srOnly } from '../../styles/cardStyles';
-import type { StyledComponentProps } from '../../types/components';
-// Extracted molecules
-import { useMtgCardStyles } from '../molecules/Cards/MtgCardStyles';
-import { useMtgCardCollectionActions } from '../molecules/Cards/MtgCardCollectionActions';
-import { useMtgCardInteractions } from '../molecules/Cards/MtgCardInteractions';
-import { useMtgCardMemo, mtgCardPropsComparison } from '../molecules/Cards/MtgCardMemo';
+import { CardBadges } from '../../molecules/Cards/CardBadges';
+import { srOnly } from '../../../styles/cardStyles';
+import type { StyledComponentProps } from '../../../types/components';
+// Extracted hooks
+import { useMtgCardStyles } from '../../../hooks/useMtgCardStyles';
+import { useMtgCardCollectionActions } from '../../../hooks/useMtgCardCollectionActions';
+import { useMtgCardInteractions } from '../../../hooks/useMtgCardInteractions';
+import { useMtgCardMemo, mtgCardPropsComparison } from '../../../hooks/useMtgCardMemo';
 
 interface MtgCardProps extends StyledComponentProps {
   card: Card;

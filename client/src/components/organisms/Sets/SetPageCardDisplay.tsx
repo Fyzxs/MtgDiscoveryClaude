@@ -1,9 +1,9 @@
 import React from 'react';
-import { CardGroup } from './CardGroup';
-import { SearchEmptyState } from '../molecules/shared/EmptyState';
-import { CardGridErrorBoundary } from '../utils/ErrorBoundaries';
-import type { Card } from '../../types/card';
-import type { MtgSet } from '../../types/set';
+import { CardGroup } from '../Cards/CardGroup';
+import { SearchEmptyState } from '../../molecules/shared/EmptyState';
+import { CardGridErrorBoundary } from '../../utils/ErrorBoundaries';
+import type { Card } from '../../../types/card';
+import type { MtgSet } from '../../../types/set';
 
 interface CardGroupConfig {
   id: string;

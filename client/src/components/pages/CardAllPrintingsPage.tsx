@@ -8,11 +8,11 @@ import { Heading, BodyText } from '../molecules/text';
 import { LoadingIndicator, StatusMessage } from '../molecules/feedback';
 import { AppButton, FilterControlsWithLoading } from '../molecules/shared';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
-import { CardGrid } from '../organisms/CardGrid';
+import { CardGrid } from '../organisms/Cards/CardGrid';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
 import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 import { useOptimizedSort } from '../../hooks/useOptimizedSort';
-import { CardFilterPanel } from '../organisms/CardFilterPanel';
+import { CardFilterPanel } from '../organisms/Cards/CardFilterPanel';
 import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS, createCardSortOptions } from '../../config/cardSortOptions';
 import { CollectorFiltersSection } from '../molecules/shared/CollectorFiltersSection';
 import {

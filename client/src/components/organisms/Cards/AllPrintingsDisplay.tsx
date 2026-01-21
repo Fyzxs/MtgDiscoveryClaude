@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Typography } from '../atoms';
-import { ExpandableSection } from '../molecules';
-import { LoadingContainer, ErrorAlert } from '../atoms';
+import { Typography } from '../../atoms';
+import { ExpandableSection } from '../../molecules';
+import { LoadingContainer, ErrorAlert } from '../../atoms';
 import { MtgCard } from './MtgCard';
-import { ResponsiveGridAutoFit } from '../molecules/layouts/ResponsiveGrid';
-import { handleGraphQLError, globalLoadingManager } from '../../utils/networkErrorHandler';
-import { useCollectorParam } from '../../hooks/useCollectorParam';
-import { useCardQueries } from '../../hooks/useCardQueries';
-import type { Card } from '../../types/card';
+import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
+import { handleGraphQLError, globalLoadingManager } from '../../../utils/networkErrorHandler';
+import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { useCardQueries } from '../../../hooks/useCardQueries';
+import type { Card } from '../../../types/card';
 
 interface AllPrintingsDisplayProps {
   cardName: string;

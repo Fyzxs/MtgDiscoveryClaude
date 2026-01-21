@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
 import { SetPageTemplate } from '../templates/SetPageTemplate';
-import { SetPageHeader } from '../organisms/SetPageHeader';
-import { SetPageFilters } from '../organisms/SetPageFilters';
-import { SetPageCardDisplay } from '../organisms/SetPageCardDisplay';
+import { SetPageHeader } from '../organisms/Sets/SetPageHeader';
+import { SetPageFilters } from '../organisms/Sets/SetPageFilters';
+import { SetPageCardDisplay } from '../organisms/Sets/SetPageCardDisplay';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { useSetPageData } from '../../hooks/useSetPageData';
 

@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { Box, useTheme } from '../atoms';
-import type { SxProps, Theme } from '../atoms';
-import type { Card, CardContext } from '../../types/card';
-import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
-import { PriceDisplay } from '../atoms/shared/PriceDisplay';
-import { CollectorInfo } from '../molecules/Cards/CollectorInfo';
-import { CardMetadata } from '../molecules/Cards/CardMetadata';
-import { ArtistLinks } from '../molecules/Cards/ArtistLinks';
-import { CardLinks } from '../molecules/Cards/CardLinks';
-import { ManaCost } from '../molecules/Cards/ManaCost';
-import { useLongPress } from '../../hooks/useLongPress';
-import { useSwipeGesture } from '../../hooks/useSwipeGesture';
-import { useHapticFeedback } from '../../hooks/useHapticFeedback';
-import { getRarityColor } from '../../theme';
+import { Box, useTheme } from '../../atoms';
+import type { SxProps, Theme } from '../../atoms';
+import type { Card, CardContext } from '../../../types/card';
+import { CardImageDisplay } from './CardImageDisplay';
+import { PriceDisplay } from '../../atoms/shared/PriceDisplay';
+import { CollectorInfo } from '../../molecules/Cards/CollectorInfo';
+import { CardMetadata } from '../../molecules/Cards/CardMetadata';
+import { ArtistLinks } from '../../molecules/Cards/ArtistLinks';
+import { CardLinks } from '../../molecules/Cards/CardLinks';
+import { ManaCost } from '../../molecules/Cards/ManaCost';
+import { useLongPress } from '../../../hooks/useLongPress';
+import { useSwipeGesture } from '../../../hooks/useSwipeGesture';
+import { useHapticFeedback } from '../../../hooks/useHapticFeedback';
+import { getRarityColor } from '../../../theme';
 
 interface CardDisplayProps {
   card: Card;

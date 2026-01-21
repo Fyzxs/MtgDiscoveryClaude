@@ -13,8 +13,8 @@ import {
   ListItemIcon,
   ListItemText,
   Chip
-} from '../atoms';
-import { useLanguageDetection } from '../../hooks/useLanguageDetection';
+} from '../../atoms';
+import { useLanguageDetection } from '../../../hooks/useLanguageDetection';
 
 /**
  * First-time user language selection prompt
