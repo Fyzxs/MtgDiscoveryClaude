@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.User.Apis;
-using Lib.Aggregator.User.Commands.RegisterUser;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

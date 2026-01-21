@@ -14,16 +14,23 @@ internal sealed class CardsQueryDomainService : ICardsQueryDomainService
     private readonly ICardsByNameDomainService _cardsByNameService;
     private readonly ICardNameSearchDomainService _cardNameSearchService;
 
-    public CardsQueryDomainService(ILogger logger)
-        : this(new CardAggregatorService(logger))
+    public CardsQueryDomainService(ILogger logger) : this(
+        new CardsByIdsDomainService(logger),
+        new CardsBySetCodeDomainService(logger),
+        new CardsByNameDomainService(logger),
+        new CardNameSearchDomainService(logger))
     { }
 
-    private CardsQueryDomainService(ICardAggregatorService cardAggregatorService)
+    private CardsQueryDomainService(
+        ICardsByIdsDomainService cardsByIdsService,
+        ICardsBySetCodeDomainService cardsBySetCodeService,
+        ICardsByNameDomainService cardsByNameService,
+        ICardNameSearchDomainService cardNameSearchService)
     {
-        _cardsByIdsService = new CardsByIdsDomainService(cardAggregatorService);
-        _cardsBySetCodeService = new CardsBySetCodeDomainService(cardAggregatorService);
-        _cardsByNameService = new CardsByNameDomainService(cardAggregatorService);
-        _cardNameSearchService = new CardNameSearchDomainService(cardAggregatorService);
+        _cardsByIdsService = cardsByIdsService;
+        _cardsBySetCodeService = cardsBySetCodeService;
+        _cardsByNameService = cardsByNameService;
+        _cardNameSearchService = cardNameSearchService;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args)

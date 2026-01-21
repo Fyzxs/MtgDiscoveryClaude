@@ -1,9 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
-using Lib.Aggregator.Cards.Queries.CardNameSearch;
-using Lib.Aggregator.Cards.Queries.CardsByIds;
-using Lib.Aggregator.Cards.Queries.CardsByName;
-using Lib.Aggregator.Cards.Queries.CardsBySetCode;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

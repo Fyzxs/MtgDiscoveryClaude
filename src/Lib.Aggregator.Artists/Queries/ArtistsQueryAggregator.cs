@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.Artists.Apis;
-using Lib.Aggregator.Artists.Queries.ArtistSearch;
-using Lib.Aggregator.Artists.Queries.CardsByArtist;
-using Lib.Aggregator.Artists.Queries.CardsByArtistName;
 using Lib.Shared.DataModels.Entities.Itrs;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;

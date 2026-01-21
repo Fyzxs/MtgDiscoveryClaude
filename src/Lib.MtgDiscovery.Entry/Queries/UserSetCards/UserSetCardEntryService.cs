@@ -43,7 +43,7 @@ internal sealed class UserSetCardEntryService : IUserSetCardEntryService
         if (validatorResult.IsNotValid()) return new FailureOperationResponse<UserSetCardOutEntity>(validatorResult.FailureStatus().OuterException);
 
         IUserSetCardItrEntity itrEntity = await _userSetCardArgToItrMapper.Map(userSetCardArgs).ConfigureAwait(false);
-        IOperationResponse<IUserSetCardOufEntity> opResponse = await _userSetCardsDomainService.GetUserSetCardByUserAndSetAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<IUserSetCardOufEntity> opResponse = await _userSetCardsDomainService.UserSetCardByUserAndSetAsync(itrEntity).ConfigureAwait(false);
         if (opResponse.IsFailure) return new FailureOperationResponse<UserSetCardOutEntity>(opResponse.OuterException);
 
         UserSetCardOutEntity outEntity = await _userSetCardOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);

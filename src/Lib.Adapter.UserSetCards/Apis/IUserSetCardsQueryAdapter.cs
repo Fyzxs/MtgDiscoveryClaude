@@ -1,4 +1,5 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+﻿using System.Collections.Generic;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
 
@@ -34,4 +35,14 @@ public interface IUserSetCardsQueryAdapter
     /// <param name="readParams">Parameters for getting user set card (userId, setId)</param>
     /// <returns>User set card ExtEntity wrapped in operation response, or failure if not found</returns>
     Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams);
+
+    /// <summary>
+    /// Gets all user set card data for a given user from storage.
+    ///
+    /// Query operation that retrieves all set card records for the specified user from Cosmos DB.
+    /// Returns empty collection if no records exist (does NOT fail on empty results).
+    /// </summary>
+    /// <param name="queryParams">Parameters for querying user set cards (userId)</param>
+    /// <returns>Collection of user set card ExtEntities wrapped in operation response</returns>
+    Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams);
 }
