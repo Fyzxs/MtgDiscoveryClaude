@@ -19,6 +19,15 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
     private const string OutputDirectory = "sealed-images";
     private const string MtgoRedemptionSuffix = "MTGO Redemption";
     private const string MtgoRedemptionFoilSuffix = "MTGO Redemption Foil";
+    private const string PlaceholderImageFileName = "COMING_SOON.jpg";
+
+    private static readonly HashSet<string> s_excludedCategories = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "booster_case",
+        "bundle_case",
+        "deck_box",
+        "deck"
+    };
 
     private readonly IReadOnlyList<string> _setCodes;
     private readonly IMtgJsonFetcher _mtgJsonFetcher;
@@ -104,14 +113,16 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
             productIndex++;
             _dashboard.UpdateProgress(productIndex, product.Name);
 
-            if (product.Category?.Equals("booster_case", StringComparison.OrdinalIgnoreCase) == true)
+            if (string.IsNullOrEmpty(product.Category) is false && s_excludedCategories.Contains(product.Category))
             {
-                _skippedLogger.LogSkipped(product, $"Category: {product.Category}");
+                _skippedLogger.LogSkippedKnown(product, $"Excluded category: {product.Category}");
                 _dashboard.IncrementSkipped();
                 continue;
             }
 
-            string outputPath = Path.Combine(OutputDirectory, setCode, $"{product.Uuid}.jpg");
+#pragma warning disable CA1308 // SetCode in output path should be lowercase to match URL pattern
+            string outputPath = Path.Combine(OutputDirectory, setCode.ToLowerInvariant(), $"{product.Uuid}.jpg");
+#pragma warning restore CA1308
 
             if (File.Exists(outputPath))
             {
@@ -124,8 +135,9 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
 
             if (downloaded is false)
             {
-                _skippedLogger.LogSkipped(product, "No image found from any provider");
-                _dashboard.IncrementNoScgId();
+                _skippedLogger.LogSkippedNoImage(product);
+                CopyPlaceholderImage(outputPath);
+                _dashboard.IncrementNoImage();
             }
         }
     }
@@ -239,5 +251,20 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
         }
 
         return false;
+    }
+
+    private static void CopyPlaceholderImage(string outputPath)
+    {
+        string directory = Path.GetDirectoryName(outputPath);
+        if (string.IsNullOrEmpty(directory) is false && Directory.Exists(directory) is false)
+        {
+            _ = Directory.CreateDirectory(directory);
+        }
+
+        string placeholderPath = Path.Combine(AppContext.BaseDirectory, PlaceholderImageFileName);
+        if (File.Exists(placeholderPath))
+        {
+            File.Copy(placeholderPath, outputPath, overwrite: true);
+        }
     }
 }

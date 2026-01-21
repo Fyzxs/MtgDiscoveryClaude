@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Cli.Sealed.ImageScraper.MtgJson.Dtos;
+namespace Cli.Sealed.Ingestion.Dtos;
 
 internal sealed class MtgJsonSealedProductDto
 {
@@ -16,6 +16,15 @@ internal sealed class MtgJsonSealedProductDto
     [JsonProperty("subtype")]
     public string Subtype { get; init; }
 
+    [JsonProperty("cardCount")]
+    public int? CardCount { get; init; }
+
+    [JsonProperty("releaseDate")]
+    public string ReleaseDate { get; init; }
+
     [JsonProperty("identifiers")]
     public MtgJsonIdentifiersDto Identifiers { get; init; }
+
+    [JsonProperty("purchaseUrls")]
+    public MtgJsonPurchaseUrlsDto PurchaseUrls { get; init; }
 }

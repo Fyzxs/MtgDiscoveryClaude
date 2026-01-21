@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-namespace Cli.Sealed.ImageScraper.Dashboard.RazorUI;
+namespace Cli.Sealed.Ingestion.Dashboard.RazorUI;
 
 #pragma warning disable IDE0032 // Use auto property
 #pragma warning disable IDE0044 // Make field readonly
-internal sealed class ImageScraperDashboardState : IDisposable
+internal sealed class IngestionDashboardState : IDisposable
 {
     private readonly Lock _lock = new();
     private readonly Queue<string> _recentLogs = new(5);
@@ -23,10 +23,9 @@ internal sealed class ImageScraperDashboardState : IDisposable
     private int _total;
     private string _currentProduct = string.Empty;
 
-    private int _downloadedCount;
+    private int _successCount;
     private int _skippedCount;
     private int _errorCount;
-    private int _noImageCount;
 
     private long _memoryUsage;
     private bool _isComplete;
@@ -63,9 +62,9 @@ internal sealed class ImageScraperDashboardState : IDisposable
         get { lock (_lock) { return _currentProduct; } }
     }
 
-    public int DownloadedCount
+    public int SuccessCount
     {
-        get { lock (_lock) { return _downloadedCount; } }
+        get { lock (_lock) { return _successCount; } }
     }
 
     public int SkippedCount
@@ -76,11 +75,6 @@ internal sealed class ImageScraperDashboardState : IDisposable
     public int ErrorCount
     {
         get { lock (_lock) { return _errorCount; } }
-    }
-
-    public int NoImageCount
-    {
-        get { lock (_lock) { return _noImageCount; } }
     }
 
     public long MemoryUsage
@@ -157,11 +151,11 @@ internal sealed class ImageScraperDashboardState : IDisposable
         }
     }
 
-    public void IncrementDownloaded()
+    public void IncrementSuccess()
     {
         lock (_lock)
         {
-            _downloadedCount++;
+            _successCount++;
         }
     }
 
@@ -178,14 +172,6 @@ internal sealed class ImageScraperDashboardState : IDisposable
         lock (_lock)
         {
             _errorCount++;
-        }
-    }
-
-    public void IncrementNoImage()
-    {
-        lock (_lock)
-        {
-            _noImageCount++;
         }
     }
 

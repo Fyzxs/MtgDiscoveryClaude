@@ -7,7 +7,7 @@ internal sealed class SealedProduct
     public string SetCode { get; init; }
     public string SetName { get; init; }
     public string Category { get; init; }
-    public string ScgId { get; init; }
+    public string Subtype { get; init; }
     public string TcgplayerProductId { get; init; }
     public string McmId { get; init; }
     public string CardTraderId { get; init; }

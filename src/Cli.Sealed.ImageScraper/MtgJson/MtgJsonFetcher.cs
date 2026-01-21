@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Cli.Sealed.ImageScraper.MtgJson.Dtos;
 using Cli.Sealed.ImageScraper.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Cli.Sealed.ImageScraper.MtgJson;
 
@@ -32,62 +33,89 @@ internal sealed class MtgJsonFetcher : IMtgJsonFetcher
         IReadOnlyList<string> setCodes,
         CancellationToken cancellationToken)
     {
-        AllPrintingsDto allPrintings = await LoadAllPrintingsAsync(cancellationToken).ConfigureAwait(false);
+        if (_cache.Exists() is false)
+        {
+            await DownloadAndCacheAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        _onStatusUpdate("Streaming sealed products from AllPrintings.json...");
 
         HashSet<string> requestedSets = setCodes is null
             ? null
             : new HashSet<string>(setCodes, StringComparer.OrdinalIgnoreCase);
 
         List<SealedProduct> products = [];
+        int setCount = 0;
 
-        foreach (KeyValuePair<string, MtgJsonSetDto> kvp in allPrintings.Data)
+        using (FileStream fileStream = new(_cache.GetCachePath(), FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 65536, useAsync: true))
+        using (StreamReader streamReader = new(fileStream))
+        using (JsonTextReader jsonReader = new(streamReader))
         {
-            if (requestedSets is not null && requestedSets.Contains(kvp.Key) is false)
+            while (await jsonReader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                continue;
-            }
-
-            MtgJsonSetDto set = kvp.Value;
-            if (set.SealedProduct is null)
-            {
-                continue;
-            }
-
-            foreach (MtgJsonSealedProductDto dto in set.SealedProduct)
-            {
-                products.Add(new SealedProduct
+                if (jsonReader.TokenType == JsonToken.PropertyName && string.Equals(jsonReader.Value?.ToString(), "data", StringComparison.OrdinalIgnoreCase))
                 {
-                    Uuid = dto.Uuid,
-                    Name = dto.Name,
-                    SetCode = set.Code,
-                    SetName = set.Name,
-                    Category = dto.Category,
-                    ScgId = dto.Identifiers?.ScgId,
-                    TcgplayerProductId = dto.Identifiers?.TcgplayerProductId,
-                    McmId = dto.Identifiers?.McmId,
-                    CardTraderId = dto.Identifiers?.CardTraderId
-                });
+                    await jsonReader.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+                    while (await jsonReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                    {
+                        if (jsonReader.TokenType == JsonToken.EndObject)
+                        {
+                            break;
+                        }
+
+                        if (jsonReader.TokenType == JsonToken.PropertyName)
+                        {
+                            string setCode = jsonReader.Value?.ToString();
+                            await jsonReader.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+                            if (requestedSets is not null && requestedSets.Contains(setCode) is false)
+                            {
+                                await jsonReader.SkipAsync(cancellationToken).ConfigureAwait(false);
+                                continue;
+                            }
+
+                            JObject setObject = await JObject.LoadAsync(jsonReader, cancellationToken).ConfigureAwait(false);
+
+                            if (setObject["sealedProduct"] is not JArray sealedProductArray || sealedProductArray.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            setCount++;
+                            string setName = setObject["name"]?.ToString();
+
+                            foreach (JToken item in sealedProductArray)
+                            {
+                                MtgJsonSealedProductDto dto = item.ToObject<MtgJsonSealedProductDto>();
+
+                                if (dto is not null)
+                                {
+                                    products.Add(new SealedProduct
+                                    {
+                                        Uuid = dto.Uuid,
+                                        Name = dto.Name,
+                                        SetCode = setCode,
+                                        SetName = setName,
+                                        Category = dto.Category,
+                                        Subtype = dto.Subtype,
+                                        TcgplayerProductId = dto.Identifiers?.TcgplayerProductId,
+                                        McmId = dto.Identifiers?.McmId,
+                                        CardTraderId = dto.Identifiers?.CardTraderId
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                }
             }
         }
+
+        _onStatusUpdate($"Found {products.Count} sealed products across {setCount} sets");
 
         return products;
-    }
-
-    private async Task<AllPrintingsDto> LoadAllPrintingsAsync(CancellationToken cancellationToken)
-    {
-        if (_cache.Exists() is false)
-        {
-            await DownloadAndCacheAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        _onStatusUpdate("Loading AllPrintings.json from cache...");
-
-        string json = await File.ReadAllTextAsync(_cache.GetCachePath(), cancellationToken).ConfigureAwait(false);
-        AllPrintingsDto result = JsonConvert.DeserializeObject<AllPrintingsDto>(json);
-
-        _onStatusUpdate($"Loaded {result?.Data?.Count ?? 0} sets from cache");
-
-        return result;
     }
 
     private async Task DownloadAndCacheAsync(CancellationToken cancellationToken)

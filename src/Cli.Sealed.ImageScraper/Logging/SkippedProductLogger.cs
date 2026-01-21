@@ -7,9 +7,14 @@ namespace Cli.Sealed.ImageScraper.Logging;
 internal sealed class SkippedProductLogger : ISkippedProductLogger
 {
     private const string OutputDirectory = "sealed-images";
-    private const string LogFileName = "skipped.log";
+    private const string KnownLogFileName = "skipped-known.log";
+    private const string NoImageLogFileName = "skipped-image.log";
+    private const string UnknownLogFileName = "skipped-unknown.log";
+    private const string LogHeader = "SetCode\tName\tUuid\tCategory\tSubtype\tReason";
 
-    private readonly StreamWriter _writer;
+    private readonly StreamWriter _knownWriter;
+    private readonly StreamWriter _noImageWriter;
+    private readonly StreamWriter _unknownWriter;
     private readonly object _lock;
     private bool _disposed;
 
@@ -23,13 +28,30 @@ internal sealed class SkippedProductLogger : ISkippedProductLogger
             _ = Directory.CreateDirectory(OutputDirectory);
         }
 
-        string logPath = Path.Combine(OutputDirectory, LogFileName);
-        _writer = new StreamWriter(logPath, append: false);
-        _writer.WriteLine("SetCode\tName\tUuid\tReason");
-        _writer.Flush();
+        _knownWriter = CreateWriter(KnownLogFileName);
+        _noImageWriter = CreateWriter(NoImageLogFileName);
+        _unknownWriter = CreateWriter(UnknownLogFileName);
     }
 
-    public void LogSkipped(SealedProduct product, string reason)
+    private static StreamWriter CreateWriter(string fileName)
+    {
+        string logPath = Path.Combine(OutputDirectory, fileName);
+        StreamWriter writer = new(logPath, append: false);
+        writer.WriteLine(LogHeader);
+        writer.Flush();
+        return writer;
+    }
+
+    public void LogSkippedKnown(SealedProduct product, string reason) =>
+        WriteLog(_knownWriter, product, reason);
+
+    public void LogSkippedNoImage(SealedProduct product) =>
+        WriteLog(_noImageWriter, product, "No image found from any provider");
+
+    public void LogSkippedUnknown(SealedProduct product, string reason) =>
+        WriteLog(_unknownWriter, product, reason);
+
+    private void WriteLog(StreamWriter writer, SealedProduct product, string reason)
     {
         lock (_lock)
         {
@@ -39,9 +61,11 @@ internal sealed class SkippedProductLogger : ISkippedProductLogger
             }
 
             string escapedName = EscapeTabField(product.Name);
+            string escapedCategory = EscapeTabField(product.Category);
+            string escapedSubtype = EscapeTabField(product.Subtype);
             string escapedReason = EscapeTabField(reason);
-            _writer.WriteLine($"{product.SetCode}\t{escapedName}\t{product.Uuid}\t{escapedReason}");
-            _writer.Flush();
+            writer.WriteLine($"{product.SetCode}\t{escapedName}\t{product.Uuid}\t{escapedCategory}\t{escapedSubtype}\t{escapedReason}");
+            writer.Flush();
         }
     }
 
@@ -68,7 +92,9 @@ internal sealed class SkippedProductLogger : ISkippedProductLogger
             }
 
             _disposed = true;
-            _writer.Dispose();
+            _knownWriter.Dispose();
+            _noImageWriter.Dispose();
+            _unknownWriter.Dispose();
         }
     }
 }
