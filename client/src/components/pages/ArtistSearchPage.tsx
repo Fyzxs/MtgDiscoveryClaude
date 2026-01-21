@@ -43,7 +43,13 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   const handleSearchChange = useCallback((value: string) => {
     startTransition(() => {
       setSearchTerm(value);
-      if (value.length >= 3) {
+    });
+  }, []);
+
+  const handleSearchSubmit = useCallback((value: string) => {
+    startTransition(() => {
+      setSearchTerm(value);
+      if (value.trim().length > 0) {
         searchArtists({
           variables: {
             searchTerm: {
@@ -56,10 +62,10 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   }, [searchArtists]);
 
   // Determine display states
-  const hasSearched = searchTerm.length >= 3;
+  const hasSearched = data !== undefined;
   const hasResults = hasSearched && data?.artistSearch?.data && data.artistSearch.data.length > 0;
   const isEmpty = hasSearched && !loading && data?.artistSearch?.data?.length === 0;
-  const showInitialState = searchTerm.length === 0;
+  const showInitialState = data === undefined;
 
   // Search input slot
   const searchInput = (
@@ -70,7 +76,8 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
       <DebouncedSearchInput
         value={searchTerm}
         onChange={handleSearchChange}
-        placeholder="Enter artist name..."
+        onEnter={handleSearchSubmit}
+        placeholder="Enter artist name and press Enter..."
         debounceMs={500}
         fullWidth
         disabled={loading}
@@ -79,13 +86,9 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   );
 
   // Results summary slot
-  const resultsSummary = hasSearched && (
+  const resultsSummary = hasResults && (
     <BodyText variant="body2" color="text.secondary">
-      {searchTerm.length < 3 ? (
-        <CharacterCountMessage remainingChars={3 - searchTerm.length} />
-      ) : hasResults ? (
-        `Search results for "${searchTerm}"`
-      ) : null}
+      {`Search results for "${searchTerm}"`}
     </BodyText>
   );
 
@@ -94,7 +97,7 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
     if (showInitialState) {
       return (
         <BodyText variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
-          Search by Artist Name - Enter at least 3 characters to search
+          Enter artist name and press Enter to search
         </BodyText>
       );
     }
@@ -139,11 +142,4 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   );
 });
 
-// Memoized component for character count message
-const CharacterCountMessage = React.memo<{ remainingChars: number }>(({ remainingChars }) => (
-  <>
-    Minimum 3 characters required - Enter {remainingChars} more character{remainingChars === 1 ? '' : 's'}
-  </>
-));
-
-CharacterCountMessage.displayName = 'CharacterCountMessage';export default ArtistSearchPage;
+export default ArtistSearchPage;
