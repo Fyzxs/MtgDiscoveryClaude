@@ -1,4 +1,5 @@
-﻿using App.MtgDiscovery.GraphQL.ErrorHandling;
+﻿using System;
+using App.MtgDiscovery.GraphQL.ErrorHandling;
 using App.MtgDiscovery.GraphQL.Schemas;
 using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,8 +17,13 @@ namespace App.MtgDiscovery.GraphQL;
 internal sealed class Startup
 {
     private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _environment;
 
-    public Startup(IConfiguration configuration) => _configuration = configuration;
+    public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+    {
+        _configuration = configuration;
+        _environment = environment;
+    }
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -31,9 +37,20 @@ internal sealed class Startup
         {
             options.AddDefaultPolicy(policy =>
             {
-                _ = policy.AllowAnyOrigin()
-                      .AllowAnyHeader()
-                      .AllowAnyMethod();
+                string[] allowedOrigins = _configuration["AllowedOrigins"]?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? [];
+                if (_environment.IsDevelopment() || allowedOrigins.Length == 0)
+                {
+                    _ = policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                }
+                else
+                {
+                    _ = policy.WithOrigins(allowedOrigins)
+                          .AllowAnyHeader()
+                          .WithMethods("GET", "POST")
+                          .AllowCredentials();
+                }
             });
         });
 
@@ -56,12 +73,10 @@ internal sealed class Startup
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    // Allow both API audiences from the token
+                    // Restrict to primary API audience only
                     ValidAudiences =
                     [
-                        "api://mtg-discovery", // Primary API audience
-                        "https://dev-63szoyl0kt0p7e5q.us.auth0.com/userinfo", // Auth0 userinfo endpoint
-                        _configuration["Auth0:ClientId"]  // ID token audience (optional, for backwards compat)
+                        _configuration["Auth0:Audience"] ?? "api://mtg-discovery"
                     ]
                 };
             });
@@ -86,9 +101,9 @@ internal sealed class Startup
             .AddErrorFilter<HttpStatusCodeErrorFilter>()
             .ModifyRequestOptions(opt =>
             {
-                opt.IncludeExceptionDetails = true;
+                opt.IncludeExceptionDetails = _environment.IsDevelopment();
             })
-            .DisableIntrospection(false)
+            .DisableIntrospection(_environment.IsDevelopment() is false)
             .UseDefaultPipeline()
             .AddDefaultTransactionScopeHandler()
             .ModifyOptions(o => o.EnableDefer = true);
