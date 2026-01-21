@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
+using Lib.Shared.DataModels.Entities.Oufs.Artists;
 
 namespace Lib.Aggregator.Artists.Queries.Entities;
 

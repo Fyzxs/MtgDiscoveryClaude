@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 namespace Lib.Aggregator.Scryfall.Shared.Mappers;
 

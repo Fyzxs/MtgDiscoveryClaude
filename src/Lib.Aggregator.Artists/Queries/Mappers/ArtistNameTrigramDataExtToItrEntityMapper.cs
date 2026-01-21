@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.Artists.Queries.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 

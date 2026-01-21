@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
 
 namespace Lib.Aggregator.Sets.Entities;
 

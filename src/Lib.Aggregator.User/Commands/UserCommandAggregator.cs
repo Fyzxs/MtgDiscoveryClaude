@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Aggregator.User.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.User;
+using Lib.Shared.DataModels.Entities.Oufs.User;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

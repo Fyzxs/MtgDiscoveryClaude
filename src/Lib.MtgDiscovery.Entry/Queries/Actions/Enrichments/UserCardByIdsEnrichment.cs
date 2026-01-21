@@ -4,8 +4,9 @@ using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Integrators;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Args.User;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

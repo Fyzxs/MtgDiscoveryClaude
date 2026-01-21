@@ -1,6 +1,6 @@
 ﻿using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Shared.Abstractions.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
 
 namespace Lib.Aggregator.Artists.Queries.Mappers;
 

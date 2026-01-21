@@ -1,11 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Sets.Exceptions;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities.Xfrs;
+using Lib.Shared.DataModels.Entities.Xfrs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

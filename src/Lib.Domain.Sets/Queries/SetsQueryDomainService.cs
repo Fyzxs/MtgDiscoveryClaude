@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

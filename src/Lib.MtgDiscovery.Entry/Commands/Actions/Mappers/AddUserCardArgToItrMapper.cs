@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.Entities;
 using Lib.MtgDiscovery.Entry.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Actions.Mappers;
 

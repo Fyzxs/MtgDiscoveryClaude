@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Xfrs;
+﻿using System.Threading.Tasks;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Xfrs.Sets;
 
 namespace Lib.Aggregator.Sets.Queries.Mappers;
 

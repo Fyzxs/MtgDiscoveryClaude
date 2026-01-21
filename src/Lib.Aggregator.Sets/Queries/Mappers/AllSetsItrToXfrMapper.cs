@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Queries.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
-using Lib.Shared.DataModels.Entities.Xfrs;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Xfrs.Sets;
 
 namespace Lib.Aggregator.Sets.Queries.Mappers;
 

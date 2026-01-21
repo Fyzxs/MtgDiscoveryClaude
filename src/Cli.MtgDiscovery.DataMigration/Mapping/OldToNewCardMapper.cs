@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 using Lib.MtgDiscovery.Entry.Entities;
-using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Args.User;
+using Lib.Shared.DataModels.Entities.Args.UserCards;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Microsoft.Extensions.Logging;
 
 namespace Cli.MtgDiscovery.DataMigration.Mapping;

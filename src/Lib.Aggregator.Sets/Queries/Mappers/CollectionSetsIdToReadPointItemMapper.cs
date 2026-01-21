@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
 
 namespace Lib.Aggregator.Sets.Queries.Mappers;
 

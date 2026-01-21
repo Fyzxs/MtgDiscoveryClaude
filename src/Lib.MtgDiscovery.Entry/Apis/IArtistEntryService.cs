@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Args.Artists;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Apis;

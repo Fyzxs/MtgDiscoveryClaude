@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Actions.Validators;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;
 

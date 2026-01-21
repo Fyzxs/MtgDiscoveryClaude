@@ -3,7 +3,7 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;

@@ -3,9 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Dashboard.RazorUI;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RazorConsole.Core;
 
 namespace Lib.Scryfall.Ingestion.Dashboard;
 

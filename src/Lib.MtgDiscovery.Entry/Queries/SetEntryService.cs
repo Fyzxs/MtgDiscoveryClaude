@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.MtgDiscovery.Entry.Queries.Sets;
-using Lib.Shared.DataModels.Entities.Args;
+using Lib.Shared.DataModels.Entities.Args.Sets;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

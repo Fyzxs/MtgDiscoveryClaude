@@ -1,4 +1,6 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs;
+﻿using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Newtonsoft.Json;
 
 namespace Lib.Aggregator.Sets.Models;
@@ -21,9 +23,9 @@ internal sealed class SetGroupingItrEntity : ISetGroupingItrEntity
     public GroupingFiltersItrEntity Filters { get; set; }
 
     [JsonProperty("cardCounts")]
-    public FinishCountsOufEntity CardCounts { get; set; }
+    public FinishCountsItrEntity CardCounts { get; set; }
 
     IGroupingFiltersItrEntity ISetGroupingItrEntity.Filters => Filters;
 
-    IFinishCountsOufEntity ISetGroupingItrEntity.CardCounts => CardCounts;
+    IFinishCountsItrEntity ISetGroupingItrEntity.CardCounts => CardCounts;
 }
