@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
 using App.MtgDiscovery.GraphQL.Entities.Types.Artists;

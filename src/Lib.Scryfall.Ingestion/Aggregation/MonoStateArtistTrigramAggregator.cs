@@ -22,10 +22,9 @@ internal sealed class MonoStateArtistTrigramAggregator : IArtistTrigramAggregato
         if (string.IsNullOrWhiteSpace(artistName)) return;
 
         // Normalize: lowercase and remove non-alphabetic characters
-        string normalized = new(artistName
+        string normalized = new([.. artistName
             .ToLowerInvariant()
-            .Where(char.IsLetter)
-            .ToArray());
+            .Where(char.IsLetter)]);
 
         if (normalized.Length < 3) return;
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Microsoft.Extensions.Logging;
 

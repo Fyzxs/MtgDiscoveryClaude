@@ -55,10 +55,9 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         string searchTermValue = searchTerm.SearchTerm;
 
         // Normalize the search term: lowercase and remove non-alphabetic characters
-        string normalized = new(searchTermValue
+        string normalized = new([.. searchTermValue
             .ToLowerInvariant()
-            .Where(char.IsLetter)
-            .ToArray());
+            .Where(char.IsLetter)]);
 
         if (normalized.Length < 3)
         {
@@ -81,7 +80,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         foreach (string trigram in trigrams)
         {
             // Query for this trigram with server-side filtering
-            string firstChar = trigram.Substring(0, 1);
+            string firstChar = trigram[..1];
             QueryDefinition queryDefinition = new QueryDefinition(
                 "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE artist FROM artist IN c.artists WHERE CONTAINS(artist.norm, @normalized))")
                 .WithParameter("@trigram", trigram)
@@ -117,15 +116,14 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         }
 
         // Sort by match count (artists matching more trigrams appear first) and convert to result entities
-        List<IArtistSearchResultItrEntity> sortedResults = matchingArtistIds
+        List<IArtistSearchResultItrEntity> sortedResults = [.. matchingArtistIds
             .OrderByDescending(artistId => artistMatchCounts[artistId])
             .ThenBy(artistId => artistIdToName[artistId])
             .Select(artistId => new ArtistSearchResultItrEntity
             {
                 ArtistId = artistId,
                 Name = artistIdToName[artistId]
-            } as IArtistSearchResultItrEntity)
-            .ToList();
+            } as IArtistSearchResultItrEntity)];
 
         return new SuccessOperationResponse<IArtistSearchResultCollectionItrEntity>(
             new ArtistSearchResultCollectionItrEntity { Artists = sortedResults });
@@ -171,10 +169,9 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         string artistNameValue = artistName.ArtistName;
 
         // Normalize the artist name: lowercase and remove non-alphabetic characters
-        string normalized = new(artistNameValue
+        string normalized = new([.. artistNameValue
             .ToLowerInvariant()
-            .Where(char.IsLetter)
-            .ToArray());
+            .Where(char.IsLetter)]);
 
         if (normalized.Length < 3)
         {
@@ -197,7 +194,7 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         foreach (string trigram in trigrams)
         {
             // Query for this trigram with server-side filtering
-            string firstChar = trigram.Substring(0, 1);
+            string firstChar = trigram[..1];
             QueryDefinition queryDefinition = new QueryDefinition(
                 "SELECT * FROM c WHERE c.id = @trigram AND c.partition = @partition AND EXISTS(SELECT VALUE artist FROM artist IN c.artists WHERE CONTAINS(artist.norm, @normalized))")
                 .WithParameter("@trigram", trigram)
@@ -240,10 +237,9 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
         }
 
         // Sort by match count to get best matches
-        List<string> sortedMatches = matchingArtistIds
+        List<string> sortedMatches = [.. matchingArtistIds
             .OrderByDescending(artistId => artistMatchCounts[artistId])
-            .ThenBy(artistId => artistIdToName[artistId])
-            .ToList();
+            .ThenBy(artistId => artistIdToName[artistId])];
 
         string topMatchArtistId = sortedMatches.First();
         int topMatchScore = artistMatchCounts[topMatchArtistId];
@@ -266,10 +262,9 @@ internal sealed class ArtistCosmosQueryAdapter : IArtistQueryAdapter
 
         if (isHighConfidence is false)
         {
-            List<string> ambiguousMatches = sortedMatches
+            List<string> ambiguousMatches = [.. sortedMatches
                 .Take(3) // Show up to 3 alternatives
-                .Select(id => artistIdToName[id])
-                .ToList();
+                .Select(id => artistIdToName[id])];
 
             string alternatives = string.Join(", ", ambiguousMatches);
             return new FailureOperationResponse<ICardItemCollectionItrEntity>(

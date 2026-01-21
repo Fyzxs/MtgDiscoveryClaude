@@ -34,7 +34,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
             return new FailureOperationResponse<ICardItemCollectionItrEntity>(new CardAggregatorOperationException("Failed to retrieve cards by IDs", response.OuterException));
         }
 
-        ICollection<ICardItemItrEntity> cards = response.ResponseData.ToList();
+        ICollection<ICardItemItrEntity> cards = [.. response.ResponseData];
         return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
     }
 
@@ -47,7 +47,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
             return new FailureOperationResponse<ICardItemCollectionItrEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for set '{setCode.SetCode}'", response.OuterException));
         }
 
-        ICollection<ICardItemItrEntity> cards = response.ResponseData.ToList();
+        ICollection<ICardItemItrEntity> cards = [.. response.ResponseData];
         return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
     }
 
@@ -60,7 +60,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
             return new FailureOperationResponse<ICardItemCollectionItrEntity>(new CardAggregatorOperationException($"Failed to retrieve cards for name '{cardName.CardName}'", response.OuterException));
         }
 
-        ICollection<ICardItemItrEntity> cards = response.ResponseData.ToList();
+        ICollection<ICardItemItrEntity> cards = [.. response.ResponseData];
         return new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntity { Data = cards });
     }
 
@@ -73,7 +73,7 @@ internal sealed class QueryCardAggregatorService : ICardAggregatorService
             return new FailureOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardAggregatorOperationException($"Failed to search for cards with term '{searchTerm.SearchTerm}'", response.OuterException));
         }
 
-        List<ICardNameSearchResultItrEntity> results = response.ResponseData.Select(x => new CardNameSearchResultItrEntity { Name = x }).Cast<ICardNameSearchResultItrEntity>().ToList();
+        List<ICardNameSearchResultItrEntity> results = [.. response.ResponseData.Select(x => new CardNameSearchResultItrEntity { Name = x }).Cast<ICardNameSearchResultItrEntity>()];
         return new SuccessOperationResponse<ICardNameSearchResultCollectionItrEntity>(new CardNameSearchResultCollectionItrEntity { Names = results });
     }
 }

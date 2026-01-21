@@ -9,7 +9,7 @@ internal sealed class CollectorNumberRangeItrEntity : ICollectorNumberRangeItrEn
     public string Min { get; set; }
     public string Max { get; set; }
 
-    [JsonProperty("OrConditions")]
+    [JsonProperty(nameof(OrConditions))]
     public List<string> InternalOrConditions { get; set; }
 
     [JsonIgnore]

@@ -14,6 +14,6 @@ internal sealed class SetGroupingItrEntity : ISetGroupingItrEntity
     [JsonIgnore]
     public IGroupingFiltersItrEntity Filters => ParsedFilters;
 
-    [JsonProperty("ParsedFilters")]
+    [JsonProperty(nameof(ParsedFilters))]
     public GroupingFiltersItrEntity ParsedFilters { get; set; }
 }

@@ -40,7 +40,7 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
     {
         _logger.LogTrigramWritePhaseStarted();
 
-        List<ICardNameTrigramAggregate> trigrams = _aggregator.GetTrigrams().ToList();
+        List<ICardNameTrigramAggregate> trigrams = [.. _aggregator.GetTrigrams()];
         int trigramCount = trigrams.Count;
 
         if (trigramCount == 0)
@@ -62,12 +62,12 @@ internal sealed class TrigramsPipelineService : ITrigramsPipelineService
             {
                 Trigram = aggregate.Trigram(),
                 Cards = new Collection<CardNameTrigramDataItem>(
-                    aggregate.Entries().Select(entry => new CardNameTrigramDataItem
+                    [.. aggregate.Entries().Select(entry => new CardNameTrigramDataItem
                     {
                         Name = entry.Name(),
                         Normalized = entry.Normalized(),
-                        Positions = new Collection<int>(entry.Positions().ToList())
-                    }).ToList())
+                        Positions = new Collection<int>([.. entry.Positions()])
+                    })])
             };
 
             await _scribe.UpsertAsync(entity).ConfigureAwait(false);

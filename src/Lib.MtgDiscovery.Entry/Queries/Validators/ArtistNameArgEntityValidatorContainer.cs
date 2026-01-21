@@ -61,10 +61,9 @@ internal sealed class HasMinimumLengthArtistNameArgEntityValidator : OperationRe
             if (arg?.ArtistName == null) return Task.FromResult(false);
 
             // Normalize the artist name to check minimum length
-            string normalized = new(arg.ArtistName
+            string normalized = new([.. arg.ArtistName
                 .ToLowerInvariant()
-                .Where(char.IsLetter)
-                .ToArray());
+                .Where(char.IsLetter)]);
 
             return Task.FromResult(normalized.Length >= 3);
         }
