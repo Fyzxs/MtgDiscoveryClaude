@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '../atoms';
+import { PageContainer } from '../molecules/layouts';
 import { ResultsSummary } from '../molecules/shared/ResultsSummary';
 import { BackToTopFab } from '../molecules/shared/BackToTopFab';
 import { QueryStateContainer } from '../molecules/shared/QueryStateContainer';
@@ -36,7 +36,7 @@ export const SetPageTemplate: React.FC<SetPageTemplateProps> = ({
       error={error}
       containerProps={{ maxWidth: false }}
     >
-      <Container maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
+      <PageContainer maxWidth={false} sx={{ mt: 2, mb: 4, px: 3 }}>
         {/* Header Section */}
         {header}
 
@@ -56,7 +56,7 @@ export const SetPageTemplate: React.FC<SetPageTemplateProps> = ({
 
         {/* Back to Top Button */}
         <BackToTopFab />
-      </Container>
+      </PageContainer>
     </QueryStateContainer>
   );
 };
