@@ -9,5 +9,5 @@ public interface IUserSetCardOufEntity
     int TotalCards { get; }
     int UniqueCards { get; }
     IReadOnlyDictionary<string, IUserSetCardGroupOufEntity> Groups { get; }
-    IReadOnlyCollection<string> GroupsCollecting { get; }
+    IReadOnlyCollection<IUserSetCardCollectingOufEntity> Collecting { get; }
 }

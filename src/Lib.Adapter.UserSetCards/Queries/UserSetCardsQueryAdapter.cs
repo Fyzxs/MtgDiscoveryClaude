@@ -38,6 +38,21 @@ internal sealed class UserSetCardsQueryAdapter : IUserSetCardsQueryAdapter
 
         if (readResponse.IsNotSuccessful())
         {
+            // If document not found, return empty UserSetCard instead of failure
+            if (readResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                UserSetCardExtEntity emptyCard = new()
+                {
+                    UserId = readParams.UserId,
+                    SetId = readParams.SetId,
+                    TotalCards = 0,
+                    UniqueCards = 0,
+                    Collecting = [],
+                    Groups = []
+                };
+                return new SuccessOperationResponse<UserSetCardExtEntity>(emptyCard);
+            }
+
             return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
         }
 
