@@ -104,7 +104,7 @@ export const AllSetsPage: React.FC = () => {
       failureTypeName="FailureResponse"
     >
       <BrowseTemplate
-        maxWidth="xl"
+        maxWidth={false}
         header={
           <Typography variant="h3" component="h1" gutterBottom sx={{ textAlign: 'center' }}>
             All Sets

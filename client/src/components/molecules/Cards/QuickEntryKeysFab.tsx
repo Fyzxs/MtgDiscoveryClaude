@@ -3,12 +3,28 @@ import { Fab, Zoom, Paper, Box, Typography, IconButton, Collapse } from '@mui/ma
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material/styles';
+import { useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
 
 export const QuickEntryKeysFab: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const theme = useTheme();
+  const location = useLocation();
   const { userProfile } = useUser();
+
+  // Check if current page has cards that can be added to collection
+  const hasCards = () => {
+    const pathname = location.pathname;
+    return pathname.includes('/set/') ||
+           pathname.includes('/artists/') ||
+           pathname.includes('/card/');
+  };
+
+  // Check if ctor parameter is in URL
+  const hasCtorParam = () => {
+    const urlParams = new URLSearchParams(location.search);
+    return urlParams.has('ctor');
+  };
 
   const helpItems = [
     { keys: '0-9', description: 'Quantity' },
@@ -25,7 +41,11 @@ export const QuickEntryKeysFab: React.FC = () => {
     { keys: 'Esc', description: 'Cancel' }
   ];
 
-  if (!userProfile?.id) {
+  // Only show FAB if:
+  // 1. User is authenticated
+  // 2. Current page has cards that can be added to collection
+  // 3. ctor parameter is present in URL
+  if (!userProfile?.id || !hasCards() || !hasCtorParam()) {
     return null;
   }
 
