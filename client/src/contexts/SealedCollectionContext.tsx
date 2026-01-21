@@ -66,9 +66,35 @@ export const SealedCollectionProvider: React.FC<SealedCollectionProviderProps> =
   // Track last modification delta per product (for LastDeltaBadge)
   const lastDeltaMapRef = useRef<Map<string, number>>(new Map());
   const [lastDeltaVersion, setLastDeltaVersion] = useState(0);
+  const deltaTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // Cleanup all delta timeouts on unmount
+  React.useEffect(() => {
+    return () => {
+      deltaTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      deltaTimeoutsRef.current.clear();
+    };
+  }, []);
 
   const getLastDelta = useCallback((productUuid: string): number | undefined => {
     return lastDeltaMapRef.current.get(productUuid);
+  }, []);
+
+  const clearDeltaAfterDelay = useCallback((productUuid: string, delayMs: number = 5000) => {
+    // Clear any existing timeout for this product
+    const existingTimeout = deltaTimeoutsRef.current.get(productUuid);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+
+    // Set new timeout to clear delta
+    const timeout = setTimeout(() => {
+      lastDeltaMapRef.current.delete(productUuid);
+      setLastDeltaVersion(v => v + 1);
+      deltaTimeoutsRef.current.delete(productUuid);
+    }, delayMs);
+
+    deltaTimeoutsRef.current.set(productUuid, timeout);
   }, []);
 
   const submitSealedProductUpdate = useCallback(async (update: SealedProductCollectionUpdate, productName?: string) => {
@@ -88,10 +114,12 @@ export const SealedCollectionProvider: React.FC<SealedCollectionProviderProps> =
       // Use ctor from URL if present, otherwise use logged-in user's ID
       const targetUserId = collectorId || userProfile.id;
 
-      // Store last delta for this product (for LastDeltaBadge display)
+      // Store last delta for this product (for LastDeltaBadge display) - shows immediately
       lastDeltaMapRef.current.set(update.productUuid, update.count);
       deltaWasSet = true;
       setLastDeltaVersion(v => v + 1);
+
+      // Don't start timer yet - wait for server confirmation
 
       const variables = perfMonitor.measure('sealed-collection-prepare-variables', () => ({
         args: {
@@ -158,6 +186,9 @@ export const SealedCollectionProvider: React.FC<SealedCollectionProviderProps> =
         const updatedProduct = (result.data as AddSealedProductMutationResponse).addUserSealedProduct?.data?.[0];
 
         if (updatedProduct) {
+          // Restart delta badge timer now that server confirmed (5 seconds from now)
+          clearDeltaAfterDelay(update.productUuid, 5000);
+
           // Dispatch again with real data from server (in case it differs from optimistic)
           queueMicrotask(() => {
             window.dispatchEvent(new CustomEvent('collection-updated', {
@@ -249,7 +280,7 @@ export const SealedCollectionProvider: React.FC<SealedCollectionProviderProps> =
       });
       throw error;
     }
-  }, [addSealedProduct, userProfile, collectorId, apolloClient.cache]);
+  }, [addSealedProduct, userProfile, collectorId, apolloClient.cache, clearDeltaAfterDelay]);
 
   const value: SealedCollectionContextValue = {
     submitSealedProductUpdate,

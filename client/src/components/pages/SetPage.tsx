@@ -422,6 +422,7 @@ export const SetPage: React.FC = () => {
                   products={sealedProducts}
                   loading={sealedLoading}
                   error={sealedError}
+                  context={{ isOnSetPage: true }}
                 />
               </Box>
             </Box>
