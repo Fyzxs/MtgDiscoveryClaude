@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using App.MtgDiscovery.GraphQL.Entities.Outs.Artists;
 using HotChocolate.Types;
+using Lib.Shared.DataModels.Entities.Outs.Artists;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Artists;
 

@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface IUserCardsEntryService
 {
-    Task<IOperationResponse<IUserCardOufEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args);
+    Task<IOperationResponse<UserCardOutEntity>> AddCardToCollectionAsync(IAuthUserArgEntity authUser, IAddUserCardArgEntity args);
 }

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using App.MtgDiscovery.GraphQL.Entities.Outs.UserCards;
 using HotChocolate.Types;
+using Lib.Shared.DataModels.Entities.Outs.UserCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 

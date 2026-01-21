@@ -22,5 +22,5 @@ internal sealed class QueryCardDomainService : ICardDomainService
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardAggregatorService.CardsByNameAsync(cardName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardNameSearchResultCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardAggregatorService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardAggregatorService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
 }
