@@ -121,11 +121,11 @@ export const BinderPageTabs: React.FC<BinderPageTabsProps> = ({
   }, [currentPage, leftTabs.length]);
 
   // Common scrollable container styles
-  // Height matches binder page calculation: (100dvh - 220px) * 0.75
+  // Height matches binder page grid
   const scrollContainerSx = {
     width: 32,
-    // Match binder page height across all breakpoints
-    maxHeight: 'calc((100dvh - 220px) * 0.75)',
+    // Match binder page grid max height
+    maxHeight: 'calc(100vh - 500px)',
     overflowY: 'auto',
     overflowX: 'hidden',
     flexShrink: 0,
