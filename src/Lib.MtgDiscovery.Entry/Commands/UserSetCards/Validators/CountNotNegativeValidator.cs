@@ -13,11 +13,23 @@ internal sealed class CountNotNegativeValidator : OperationResponseValidator<IAd
 
     public sealed class Validator : IValidator<IAddSetGroupToUserSetCardArgsEntity>
     {
-        public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg) => Task.FromResult(arg.AddSetGroupToUserSetCard != null && 0 <= arg.AddSetGroupToUserSetCard.Count);
+        public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg)
+        {
+            if (arg.AddSetGroupToUserSetCard is null) return Task.FromResult(false);
+
+            if (arg.AddSetGroupToUserSetCard.Counts is null) return Task.FromResult(false);
+
+            bool allCountsValid = 0 <= arg.AddSetGroupToUserSetCard.Counts.Total
+                                  && 0 <= arg.AddSetGroupToUserSetCard.Counts.NonFoil
+                                  && 0 <= arg.AddSetGroupToUserSetCard.Counts.Foil
+                                  && 0 <= arg.AddSetGroupToUserSetCard.Counts.Etched;
+
+            return Task.FromResult(allCountsValid);
+        }
     }
 
     public sealed class Message : OperationResponseMessage
     {
-        public override string AsSystemType() => "Count cannot be negative";
+        public override string AsSystemType() => "Finish counts cannot be negative";
     }
 }

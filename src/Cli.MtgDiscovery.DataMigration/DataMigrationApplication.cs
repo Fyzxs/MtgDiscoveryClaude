@@ -12,7 +12,6 @@ using Example.Core;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Universal.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

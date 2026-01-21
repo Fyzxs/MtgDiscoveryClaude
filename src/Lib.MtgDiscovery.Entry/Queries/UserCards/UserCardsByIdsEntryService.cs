@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.UserCards;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.UserCards;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;

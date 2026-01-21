@@ -1,5 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.UserSetCards.Apis.Entities;
+﻿using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 using Lib.Shared.Invocation.Services;
 

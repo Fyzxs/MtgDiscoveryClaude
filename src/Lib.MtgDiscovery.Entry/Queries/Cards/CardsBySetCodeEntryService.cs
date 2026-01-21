@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
-using Lib.MtgDiscovery.Entry.Queries.Enrichments;
-using Lib.MtgDiscovery.Entry.Queries.Mappers;
-using Lib.MtgDiscovery.Entry.Queries.Validators.Cards;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Enrichments;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.Cards;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
 using Lib.Shared.DataModels.Entities.Itrs;

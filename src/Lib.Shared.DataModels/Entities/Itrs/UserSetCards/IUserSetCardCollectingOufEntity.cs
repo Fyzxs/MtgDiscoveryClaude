@@ -6,6 +6,6 @@ public interface IUserSetCardCollectingOufEntity
 {
     string SetGroupId { get; }
     bool Collecting { get; }
-    int Count { get; }
+    IFinishCountsOufEntity Counts { get; }
     IReadOnlyCollection<string> CollectingFinishes { get; }
 }

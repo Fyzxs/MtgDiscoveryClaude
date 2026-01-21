@@ -198,6 +198,6 @@ query GetCardsByName($cardName: CardNameArgEntityInput!) {
 {
   "cardName": {
     "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
-    "name": "Lightning Bolt"
+    "cardName": "Lightning Bolt"
   }
 }
