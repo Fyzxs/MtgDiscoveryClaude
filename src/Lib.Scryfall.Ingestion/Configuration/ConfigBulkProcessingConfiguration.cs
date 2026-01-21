@@ -14,6 +14,7 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
     private const string DashboardRefreshFrequencyKey = "DashboardRefreshFrequency";
     private const string ProcessRulingsKey = "ProcessRulings";
     private const string SetsOnlyKey = "SetsOnly";
+    private const string UseRazorConsoleKey = "UseRazorConsole";
     private const string SetCodesToProcessKey = "SetCodesToProcess";
     private const string SetsReleasedAfterKey = "SetsReleasedAfter";
 
@@ -57,6 +58,15 @@ internal sealed class ConfigBulkProcessingConfiguration : IBulkProcessingConfigu
         get
         {
             string value = _config[$"{BulkProcessingKey}:{SetsOnlyKey}"];
+            return value.IzNotNullOrWhiteSpace() && bool.Parse(value);
+        }
+    }
+
+    public bool UseRazorConsole
+    {
+        get
+        {
+            string value = _config[$"{BulkProcessingKey}:{UseRazorConsoleKey}"];
             return value.IzNotNullOrWhiteSpace() && bool.Parse(value);
         }
     }

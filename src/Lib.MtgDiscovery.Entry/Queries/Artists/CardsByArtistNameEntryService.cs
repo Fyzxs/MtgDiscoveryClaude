@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Queries.Enrichments;
-using Lib.MtgDiscovery.Entry.Queries.Entities;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.Artists;
 using Lib.Shared.Abstractions.Actions.Validators;
