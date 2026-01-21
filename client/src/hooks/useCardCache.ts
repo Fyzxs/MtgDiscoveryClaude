@@ -30,7 +30,7 @@ export function useCardCache() {
           query: GET_CARDS_BY_IDS,
           variables: {
             ids: {
-              ids: [cardId],
+              cardIds: [cardId],
               ...(hasCollector && collectorId ? { userId: collectorId } : {})
             }
           }
@@ -57,7 +57,7 @@ export function useCardCache() {
           query: GET_CARDS_BY_IDS,
           variables: {
             ids: {
-              ids: missingIds,
+              cardIds: missingIds,
               ...(hasCollector && collectorId ? { userId: collectorId } : {})
             }
           }

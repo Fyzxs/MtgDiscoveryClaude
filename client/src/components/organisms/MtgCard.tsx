@@ -74,7 +74,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
     if (card.nonFoil) finishes.push('non-foil');
     if (card.foil) finishes.push('foil');
     if (card.finishes?.includes('etched')) finishes.push('etched');
-    return finishes.length > 0 ? finishes : ['non-foil']; // Default to non-foil if none specified
+    return finishes.length > 0 ? finishes : ['foil']; // Default to foil if no finishes specified (should not happen)
   }, [card.nonFoil, card.foil, card.finishes]);
 
   // Handle collection update submission
@@ -290,6 +290,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
       <CardBadges
         foil={card.foil}
         nonfoil={card.nonFoil}
+        etched={card.finishes?.includes('etched')}
         promoTypes={card.promoTypes}
         frameEffects={card.frameEffects}
         isPromo={card.promo}
