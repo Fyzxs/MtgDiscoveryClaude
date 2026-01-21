@@ -1,0 +1,14 @@
+variables:
+  # Environment identifier
+  environment: 'dev'
+  sequenceNumber: '01'
+
+  # Environment-specific settings
+  containerAppMaxReplicas: 1
+  staticWebAppSku: 'Free'
+  appConfigLocation: 'eastus'  # Dev uses East US to avoid Free tier limit per region
+
+  # Auth0 configuration (NOT secrets - these are public identifiers)
+  auth0Domain: 'dev-63szoyl0kt0p7e5q.us.auth0.com'
+  auth0Audience: 'api://mtg-discovery'
+  auth0ClientId: 'OXYTiA2a2SpN3cNf4Er4ix9DHHhLdYC5'

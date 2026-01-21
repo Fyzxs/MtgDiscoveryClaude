@@ -1,0 +1,33 @@
+variables:
+  # Application constants
+  appName: 'mtg'
+  location: 'westcentralus'
+  regionShortName: 'wcus'
+
+  # Resource short names (Azure naming abbreviations)
+  resourceGroupShortName: 'rg'
+  staticWebAppShortName: 'swa'
+  containerRegistryShortName: 'cr'
+  containerAppShortName: 'ca'
+  appInsightsShortName: 'appi'
+  cosmosDbShortName: 'cosmos'
+  containerAppEnvShortName: 'cae'
+  logAnalyticsShortName: 'log'
+  managedIdentityShortName: 'id'
+  appConfigShortName: 'appconfig'
+
+  # Container App settings
+  containerAppPort: 8080
+  containerAppCpu: '0.5'
+  containerAppMemory: '1.0Gi'
+  containerAppMinReplicas: 0
+  containerAppMaxReplicas: 10
+
+  # Static Web App settings
+  staticWebAppSku: 'Free'
+
+  # Cosmos DB settings
+  cosmosDbConsistencyLevel: 'Session'
+
+  # Application Insights settings
+  appInsightsType: 'web'

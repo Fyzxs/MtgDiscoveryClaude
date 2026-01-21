@@ -1,0 +1,49 @@
+# Template to create shared resources (Resource Group + ACR)
+
+parameters:
+  - name: azureSubscription
+    type: string
+
+steps:
+
+  - task: AzureCLI@2
+    displayName: 'Create Azure Container Registry'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Creating Azure Container Registry: $(sharedNames.containerRegistryName)"
+
+        # Check if ACR already exists
+        ACR_EXISTS=$(az acr show \
+          --name $(sharedNames.containerRegistryName) \
+          --query id \
+          -o tsv 2>/dev/null || echo "")
+
+        if [ -z "$ACR_EXISTS" ]; then
+          az acr create \
+            --name $(sharedNames.containerRegistryName) \
+            --resource-group $(sharedNames.sharedResourceGroupName) \
+            --location $(location) \
+            --sku Basic \
+            --admin-enabled true \
+            --tags \
+              Environment=shared \
+              Application=$(appName) \
+              ManagedBy=AzureDevOps
+
+          echo "Container Registry created successfully"
+        else
+          echo "Container Registry already exists, skipping creation"
+        fi
+
+        # Get and display login server
+        LOGIN_SERVER=$(az acr show \
+          --name $(sharedNames.containerRegistryName) \
+          --query loginServer \
+          -o tsv)
+
+        echo "Container Registry Login Server: $LOGIN_SERVER"
+        echo "##vso[task.setvariable variable=containerRegistryLoginServer;isOutput=true]$LOGIN_SERVER"
+    name: acrInfo
