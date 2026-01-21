@@ -14,6 +14,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { SearchInput } from '../atoms/shared/SearchInput';
 import { AuthButton } from '../auth/AuthButton';
 import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+import { LanguageSwitcher } from '../atoms/shared/LanguageSwitcher';
 
 export const Header: React.FC = () => {
   const [setCode, setSetCode] = useState('');
@@ -197,6 +198,11 @@ export const Header: React.FC = () => {
 
         {/* Authentication Button */}
         <AuthButton />
+
+        {/* Language Switcher - Far Right */}
+        <Box sx={{ ml: 2 }}>
+          <LanguageSwitcher compact={true} />
+        </Box>
       </Toolbar>
     </AppBar>
   );

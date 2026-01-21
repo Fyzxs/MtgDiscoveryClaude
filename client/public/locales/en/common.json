@@ -1,0 +1,17 @@
+{
+  "search": "Search",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "view": "View",
+  "clearAll": "Clear All",
+  "selectAll": "Select All",
+  "showMore": "Show More",
+  "showLess": "Show Less",
+  "backToTop": "Back to Top",
+  "doubleClickToExpand": "Double-click to expand"
+}

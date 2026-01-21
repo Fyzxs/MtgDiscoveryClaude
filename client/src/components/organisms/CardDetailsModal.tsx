@@ -25,19 +25,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import type { Card } from '../../types/card';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 // import { GET_USER_CARD_BY_ID } from '../../graphql/queries/userCards'; // TODO: Uncomment after types generated
-import { CollectionSummary } from '../molecules/Cards/CollectionSummary';
-import { ModalContainer } from '../molecules/shared/ModalContainer';
-import { ManaCost } from '../molecules/Cards/ManaCost';
-import { RarityBadge } from '../atoms/Cards/RarityBadge';
-import { PriceDisplay } from '../atoms/shared/PriceDisplay';
-import { RelatedCardsDisplay } from '../molecules/Cards/RelatedCardsDisplay';
-import { AllPrintingsDisplay } from '../molecules/Cards/AllPrintingsDisplay';
-import { RulingsDisplay } from '../molecules/Cards/RulingsDisplay';
-import { CardImageDisplay } from '../molecules/Cards/CardImageDisplay';
-import { CardBadges } from '../atoms/Cards/CardBadges';
-import { SetLink } from '../atoms/Cards/SetLink';
-import { ArtistLinks } from '../molecules/Cards/ArtistLinks';
-import { CardName } from '../atoms/Cards/CardName';
+import { CollectionSummary, ModalContainer, ManaCost } from '../molecules';
+import { RarityBadge, PriceDisplay } from '../atoms';
+import { RelatedCardsDisplay } from './RelatedCardsDisplay';
+import { AllPrintingsDisplay } from './AllPrintingsDisplay';
+import { RulingsDisplay, CardImageDisplay } from '../molecules';
+import { CardBadges, SetLink } from '../atoms';
+import { ArtistLinks } from '../molecules';
+import { CardName } from '../atoms';
 
 interface CardDetailsModalProps {
   open: boolean;
