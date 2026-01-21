@@ -185,6 +185,8 @@ internal sealed class UserCardCollectionItrEntityFake : IUserCardCollectionItrEn
     public string CardId { get; init; }
     public string SetId { get; init; }
     public IEnumerable<ICollectedCardItrEntity> CollectedList { get; init; }
+
+    ICollection<ICollectedItemItrEntity> IUserCardCollectionItrEntity.CollectedList => throw new System.NotImplementedException();
 }
 
 internal sealed class UserCardsScribeFake : IUserCardsScribe
