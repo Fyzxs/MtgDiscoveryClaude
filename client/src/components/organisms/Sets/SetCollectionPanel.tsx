@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { logger } from '../../../utils/logger';
-import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography } from '../../atoms';
+import { Box, IconButton, Collapse, Checkbox, FormControlLabel, Typography, CircularProgress } from '../../atoms';
 import { useTheme } from '../../atoms';
 import type { MtgSet } from '../../../types/set';
 import type { GroupFinishProgress, CollectionGroup } from '../../../types/collection';
@@ -32,7 +32,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
 }) => {
   const theme = useTheme();
   const { hasCollector } = useCollectorParam();
-  const { toggleSetGroup } = useSetGroupToggle();
+  const { toggleSetGroup, loading } = useSetGroupToggle();
   const { isAuthenticated } = useUser();
 
   // Local state to track finish selections for optimistic UI updates
@@ -319,9 +319,31 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
             borderLeft: 'none',
             borderRadius: '0 4px 4px 0',
             p: 2,
-            overflowY: 'auto'
+            overflowY: 'auto',
+            position: 'relative'
           }}
         >
+          {/* Loading Overlay */}
+          {loading && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                bgcolor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '0 4px 4px 0',
+                zIndex: 1000
+              }}
+            >
+              <CircularProgress size={48} />
+            </Box>
+          )}
+
           <Typography variant="h6" sx={{ mb: 2, fontSize: '1rem' }}>
             Collection Groups
           </Typography>
@@ -334,7 +356,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
                     checked={group.isCollecting}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleGroupToggle(e, group.setGroupId)}
                     size="small"
-                    disabled={!isAuthenticated}
+                    disabled={!isAuthenticated || loading}
                     sx={{ py: 0 }}
                   />
                 }
@@ -357,7 +379,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
                           handleFinishToggle(group.setGroupId, finish.finishType, e.target.checked)
                         }
                         size="small"
-                        disabled={!isAuthenticated || !group.isCollecting}
+                        disabled={!isAuthenticated || !group.isCollecting || loading}
                         sx={{ py: 0 }}
                       />
                     }

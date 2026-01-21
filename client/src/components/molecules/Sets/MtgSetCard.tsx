@@ -98,16 +98,20 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
   }, [hasCollector, set.userCollection]);
 
   const handleCardClick = (e: React.MouseEvent) => {
+    // Allow browser's default behavior for modifier keys (CTRL/CMD+click = new tab, etc.)
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) {
+      return;
+    }
+
     // Only handle click if there's a custom onSetClick handler
     // Otherwise let the anchor tag handle navigation naturally
-    if (onSetClick && e.button === 0) {
+    if (onSetClick) {
       e.preventDefault();
       onSetClick(set.code);
-    } else if (e.button === 0) {
+    } else {
       // Use collector navigation for regular clicks
       createCollectorClickHandler(setPath)(e);
     }
-    // Allow right-click, middle-click, and normal navigation to work
   };
 
   const getBackgroundColor = () => {

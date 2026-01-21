@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Scryfall.Ingestion.Apis.Dashboard;
 using Lib.Scryfall.Ingestion.Dashboard.RazorUI;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RazorConsole.Core;
 
 namespace Lib.Scryfall.Ingestion.Dashboard;
 
-internal sealed class RazorConsoleDashboard : IIngestionDashboard, IDisposable
+internal sealed partial class RazorConsoleDashboard : IIngestionDashboard, IDisposable
 {
     private readonly DashboardState _state;
     private readonly ILogger _fallbackLogger;
@@ -16,9 +20,23 @@ internal sealed class RazorConsoleDashboard : IIngestionDashboard, IDisposable
     {
         _fallbackLogger = fallbackLogger;
         _state = new DashboardState();
+
+        // Log that RazorConsole is being initialized
+        LogRazorDashboardInitialized(fallbackLogger);
     }
 
-    public async Task RunUiAsync() => await Task.CompletedTask.ConfigureAwait(false);
+    public async Task RunUiAsync()
+    {
+        IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton(_state);
+            })
+            .UseRazorConsole<IngestionDashboard>();
+
+        IHost host = hostBuilder.Build();
+        await host.RunAsync().ConfigureAwait(false);
+    }
 
     public void UpdateProgress(string type, int current, int total, string action, string item) =>
         _state.UpdateProgress(type, current, total, action, item);
@@ -73,4 +91,16 @@ internal sealed class RazorConsoleDashboard : IIngestionDashboard, IDisposable
     }
 
     public void Dispose() => _state.Dispose();
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "{message}")]
+    private static partial void LogCompletionMessage(ILogger logger, string message);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to render dashboard")]
+    private static partial void LogRenderFailure(ILogger logger, Exception ex);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "RazorConsoleDashboard initialized - interactive UI mode")]
+    private static partial void LogRazorDashboardInitialized(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "RazorConsoleDashboard.RunUiAsync() starting")]
+    private static partial void LogRunUiStarting(ILogger logger);
 }
