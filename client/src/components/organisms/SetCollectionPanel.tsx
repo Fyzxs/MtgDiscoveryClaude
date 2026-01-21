@@ -6,7 +6,7 @@ import type { MtgSet } from '../../types/set';
 import { useSetGroupToggle } from '../../hooks/useSetGroupToggle';
 import { useCollectorParam } from '../../hooks/useCollectorParam';
 import { ChevronLeftIcon } from '../atoms';
-import { getMockFinishCounts, getDefaultCollectingFinishes } from '../../utils/mockFinishCounts';
+import { getDefaultCollectingFinishes } from '../../utils/mockFinishCounts';
 import { useUser } from '../../contexts/UserContext';
 
 // Collection group types
@@ -52,8 +52,8 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
   const { toggleSetGroup } = useSetGroupToggle();
   const { isAuthenticated } = useUser();
 
-  // Local state to track finish selections (for stubbing Phase 1)
-  // In Phase 3, this will come from the backend
+  // Local state to track finish selections for optimistic UI updates
+  // Overrides backend state until mutation completes and refetch occurs
   const [localFinishSelections, setLocalFinishSelections] = useState<Record<string, ('nonFoil' | 'foil' | 'etched')[]>>({});
 
   // Calculate collection progress from embedded userCollection data
@@ -71,12 +71,12 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       const foilCollected = groupData?.group.foil.cards.length || 0;
       const etchedCollected = groupData?.group.etched.cards.length || 0;
 
-      // Use actual finish counts from backend (available in collectingGroup.counts)
-      // This provides accurate counts for each finish type
-      const finishCounts = collectingGroup.counts || {
-        total: grouping?.cardCount || 0,
-        nonFoil: grouping?.cardCount || 0,
-        foil: grouping?.cardCount || 0,
+      // Use actual finish counts from backend set metadata (grouping.cardCounts is source of truth)
+      // Fall back to user collection counts if set metadata unavailable
+      const finishCounts = grouping?.cardCounts || collectingGroup.counts || {
+        total: 0,
+        nonFoil: 0,
+        foil: 0,
         etched: 0
       };
 
@@ -127,7 +127,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
         setGroupId: collectingGroup.setGroupId,
         displayName: grouping?.displayName || collectingGroup.setGroupId.charAt(0).toUpperCase() + collectingGroup.setGroupId.slice(1),
         isCollecting: collectingGroup.collecting,
-        count: grouping?.cardCount || 0,
+        count: finishCounts.total,
         finishes
       };
     });
@@ -138,17 +138,14 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
   const handleGroupToggle = async (e: React.ChangeEvent<HTMLInputElement>, groupId: string) => {
     const isCollecting = e.target.checked;
 
-    // Get the count from the set's groupings metadata
+    // Get the finish counts from the set's groupings metadata
     const grouping = set.groupings?.find(g => g.id === groupId);
-    const count = grouping?.cardCount || 0;
-
-    // Get mock finish counts to determine which finishes are available
-    const mockFinishCounts = getMockFinishCounts(set.code, groupId, count);
+    const finishCounts = grouping?.cardCounts || { total: 0, nonFoil: 0, foil: 0, etched: 0 };
 
     // When checking: select all available finishes by default
     // When unchecking: clear all finishes
     const selectedFinishes = isCollecting
-      ? getDefaultCollectingFinishes(mockFinishCounts)
+      ? getDefaultCollectingFinishes(finishCounts)
       : [];
 
     // Update local state
@@ -158,7 +155,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
     }));
 
     // Call mutation with counts
-    await toggleSetGroup(set.id, set.code, groupId, isCollecting, selectedFinishes, count);
+    await toggleSetGroup(set.id, set.code, groupId, isCollecting, selectedFinishes, finishCounts);
 
     // Notify parent that group was toggled (to refresh set card)
     onGroupToggled?.();
@@ -179,17 +176,17 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       [groupId]: newSelections
     }));
 
-    // Get the count from the set's groupings metadata
+    // Get the finish counts from the set's groupings metadata
     const grouping = set.groupings?.find(g => g.id === groupId);
-    const count = grouping?.cardCount || 0;
+    const finishCounts = grouping?.cardCounts || { total: 0, nonFoil: 0, foil: 0, etched: 0 };
 
     // If all finishes are unchecked, auto-uncheck the group
     if (newSelections.length === 0) {
-      await toggleSetGroup(set.id, set.code, groupId, false, [], count);
+      await toggleSetGroup(set.id, set.code, groupId, false, [], finishCounts);
       onGroupToggled?.();
     } else {
       // Just update the finish selections
-      await toggleSetGroup(set.id, set.code, groupId, true, newSelections, count);
+      await toggleSetGroup(set.id, set.code, groupId, true, newSelections, finishCounts);
       onGroupToggled?.();
     }
 
@@ -228,10 +225,8 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
       }
 
       // Otherwise, create a default group (not collecting, but may have collected cards)
-      // For uncollected groups, we don't have backend counts, so we need to use mock data
-      // TODO: Backend should provide finish counts for all groups, not just collecting ones
-      const count = grouping?.cardCount || 0;
-      const mockFinishCounts = getMockFinishCounts(set.code, groupId, count);
+      // Get finish counts from backend grouping data
+      const finishCounts = grouping?.cardCounts || { total: 0, nonFoil: 0, foil: 0, etched: 0 };
 
       // Check if there are any collected cards for this group (even if not actively collecting)
       const groupData = set.userCollection?.groups.find(g => g.setGroupId === groupId);
@@ -241,34 +236,34 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
 
       const defaultFinishes: GroupFinishProgress[] = [];
 
-      if (mockFinishCounts.nonFoil > 0) {
+      if (finishCounts.nonFoil > 0) {
         defaultFinishes.push({
           finishType: 'nonFoil',
           collected: nonFoilCollected,
-          total: mockFinishCounts.nonFoil,
-          percentage: mockFinishCounts.nonFoil > 0 ? (nonFoilCollected / mockFinishCounts.nonFoil) * 100 : 0,
+          total: finishCounts.nonFoil,
+          percentage: finishCounts.nonFoil > 0 ? (nonFoilCollected / finishCounts.nonFoil) * 100 : 0,
           emoji: '🔹',
           isSelected: false
         });
       }
 
-      if (mockFinishCounts.foil > 0) {
+      if (finishCounts.foil > 0) {
         defaultFinishes.push({
           finishType: 'foil',
           collected: foilCollected,
-          total: mockFinishCounts.foil,
-          percentage: mockFinishCounts.foil > 0 ? (foilCollected / mockFinishCounts.foil) * 100 : 0,
+          total: finishCounts.foil,
+          percentage: finishCounts.foil > 0 ? (foilCollected / finishCounts.foil) * 100 : 0,
           emoji: '✨',
           isSelected: false
         });
       }
 
-      if (mockFinishCounts.etched > 0) {
+      if (finishCounts.etched > 0) {
         defaultFinishes.push({
           finishType: 'etched',
           collected: etchedCollected,
-          total: mockFinishCounts.etched,
-          percentage: mockFinishCounts.etched > 0 ? (etchedCollected / mockFinishCounts.etched) * 100 : 0,
+          total: finishCounts.etched,
+          percentage: finishCounts.etched > 0 ? (etchedCollected / finishCounts.etched) * 100 : 0,
           emoji: '⚡',
           isSelected: false
         });
@@ -278,7 +273,7 @@ export const SetCollectionPanel: React.FC<SetCollectionPanelProps> = ({
         setGroupId: groupId,
         displayName,
         isCollecting: false,
-        count,
+        count: finishCounts.total,
         finishes: defaultFinishes,
         originalIndex
       };

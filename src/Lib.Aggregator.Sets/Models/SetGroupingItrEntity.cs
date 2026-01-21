@@ -5,15 +5,25 @@ namespace Lib.Aggregator.Sets.Models;
 
 internal sealed class SetGroupingItrEntity : ISetGroupingItrEntity
 {
+    [JsonProperty("id")]
     public string Id { get; set; }
+
+    [JsonProperty("displayName")]
     public string DisplayName { get; set; }
+
+    [JsonProperty("order")]
     public int Order { get; set; }
-    public int CardCount { get; set; }
+
+    [JsonProperty("rawQuery")]
     public string RawQuery { get; set; }
 
-    [JsonIgnore]
-    public IGroupingFiltersItrEntity Filters => ParsedFilters;
+    [JsonProperty("parsedFilters")]
+    public GroupingFiltersItrEntity Filters { get; set; }
 
-    [JsonProperty(nameof(ParsedFilters))]
-    public GroupingFiltersItrEntity ParsedFilters { get; set; }
+    [JsonProperty("cardCounts")]
+    public FinishCountsOufEntity CardCounts { get; set; }
+
+    IGroupingFiltersItrEntity ISetGroupingItrEntity.Filters => Filters;
+
+    IFinishCountsOufEntity ISetGroupingItrEntity.CardCounts => CardCounts;
 }

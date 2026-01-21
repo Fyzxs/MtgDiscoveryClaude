@@ -20,9 +20,9 @@ public sealed class SetGroupingOutEntityType : ObjectType<SetGroupingOutEntity>
         descriptor.Field(f => f.Order)
             .Name("order")
             .Type<NonNullType<IntType>>();
-        descriptor.Field(f => f.CardCount)
-            .Name("cardCount")
-            .Type<NonNullType<IntType>>();
+        descriptor.Field(f => f.CardCounts)
+            .Name("cardCounts")
+            .Type<SetGroupingFinishCountsType>();
         descriptor.Field(f => f.RawQuery)
             .Name("rawQuery")
             .Type<NonNullType<StringType>>();

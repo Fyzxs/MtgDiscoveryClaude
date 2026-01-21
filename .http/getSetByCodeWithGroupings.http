@@ -38,7 +38,12 @@ query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
           id
           displayName
           order
-          cardCount
+          cardCounts {
+            total
+            nonFoil
+            foil
+            etched
+          }
           rawQuery
           filters {
             collectorNumberRange {
@@ -92,6 +97,6 @@ query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
 {
   "codes": {
     "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
-    "setCodes": ["ori"]
+    "setCodes": ["m19"]
   }
 }

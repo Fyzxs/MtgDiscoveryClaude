@@ -11,6 +11,8 @@ internal static class SetSchemaExtensions
     {
         return builder
             .AddTypeExtension<SetQueryMethods>()
-            .AddType<ScryfallSetOutEntityType>();
+            .AddType<ScryfallSetOutEntityType>()
+            .AddType<SetGroupingOutEntityType>()
+            .AddType<SetGroupingFinishCountsType>();
     }
 }
