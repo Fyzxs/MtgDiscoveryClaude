@@ -181,7 +181,7 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
     private void ClearDashboard()
     {
-        if (_lastHeight > 0)
+        if (0 < _lastHeight)
         {
             // Use the wider of last width or current width to ensure complete clearing
             int currentWidth = Math.Max(80, Console.WindowWidth - 1);
@@ -214,14 +214,14 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         // Unified progress display
         if (!string.IsNullOrEmpty(_progressType))
         {
-            if (_progressTotal > 0)
+            if (0 < _progressTotal)
             {
                 string progressBar = CreateProgressBar(_progressCurrent, _progressTotal, width);
                 int percent = _progressCurrent * 100 / _progressTotal;
                 string typePadded = _progressType.PadRight(10);
                 lines.Add($"  {typePadded} {progressBar} {_progressCurrent:N0}/{_progressTotal:N0} ({percent}%)");
             }
-            else if (_progressCurrent > 0)
+            else if (0 < _progressCurrent)
             {
                 // When streaming, we don't know the total upfront
                 string spinner = GetSpinner();
@@ -245,16 +245,16 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         else
         {
             // Fall back to legacy display if no unified progress is set
-            if (_setTotal > 0)
+            if (0 < _setTotal)
             {
                 string setProgress = CreateProgressBar(_setCurrent, _setTotal, width);
                 int setPercent = _setCurrent * 100 / _setTotal;
                 lines.Add($"  Sets:           {setProgress} {_setCurrent}/{_setTotal} ({setPercent}%)");
                 lines.Add($"  Current Item:   {TruncateString(_setName, width - 18)}");
             }
-            else if (_cardTotal > 0 || _cardCurrent > 0)
+            else if (0 < _cardTotal || 0 < _cardCurrent)
             {
-                if (_cardTotal > 0)
+                if (0 < _cardTotal)
                 {
                     string cardProgress = CreateProgressBar(_cardCurrent, _cardTotal, width);
                     int cardPercent = _cardCurrent * 100 / _cardTotal;
@@ -268,9 +268,9 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
                 lines.Add($"  Current Item:   {TruncateString(_cardName, width - 18)}");
             }
-            else if (_trigramTotal > 0 || _trigramCurrent > 0)
+            else if (0 < _trigramTotal || 0 < _trigramCurrent)
             {
-                if (_trigramTotal > 0)
+                if (0 < _trigramTotal)
                 {
                     string trigramProgress = CreateProgressBar(_trigramCurrent, _trigramTotal, width);
                     int trigramPercent = _trigramCurrent * 100 / _trigramTotal;
@@ -284,9 +284,9 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
 
                 lines.Add($"  Current Item:   {TruncateString(_trigramName, width - 18)}");
             }
-            else if (_rulingTotal > 0 || _rulingCurrent > 0)
+            else if (0 < _rulingTotal || 0 < _rulingCurrent)
             {
-                if (_rulingTotal > 0)
+                if (0 < _rulingTotal)
                 {
                     string rulingProgress = CreateProgressBar(_rulingCurrent, _rulingTotal, width);
                     int rulingPercent = _rulingCurrent * 100 / _rulingTotal;
@@ -307,21 +307,21 @@ internal sealed class ConsoleDashboard : IIngestionDashboard
         }
 
         // Display completed counts tracker
-        if (_completedCounts.Count > 0)
+        if (0 < _completedCounts.Count)
         {
             lines.Add("");
             lines.Add("  Completed:");
             string completedLine = "  ";
             foreach (KeyValuePair<string, int> kvp in _completedCounts.OrderBy(x => GetTypeOrder(x.Key)))
             {
-                if (completedLine.Length > 2) completedLine += " | ";
+                if (2 < completedLine.Length) completedLine += " | ";
                 completedLine += $"{kvp.Key}: {kvp.Value:N0}";
             }
 
             lines.Add(completedLine);
         }
 
-        if (_recentLogs.Count > 0)
+        if (0 < _recentLogs.Count)
         {
             lines.Add("");
             lines.Add("  Recent Activity:");

@@ -93,7 +93,7 @@ internal sealed class SilentDashboard : IIngestionDashboard
     public void UpdateCompletedCount(string type, int count)
     {
         // Log completed counts at specific milestones
-        if (count > 0 && (count % 100 == 0 || count == 1))
+        if (0 < count && (count % 100 == 0 || count == 1))
         {
             _logger.LogCompletedCount(type, count);
         }

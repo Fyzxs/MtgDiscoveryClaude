@@ -46,13 +46,13 @@ internal sealed class ValidationInfo
     private void AssertReferenceValue(object actualValue)
     {
         if (ReferenceEquals(_expectedValue, actualValue)) return;
-        _asserter.AssertIf(!_expectedValue.Equals(actualValue), $"Field [name={_name}] is not the same reference as expected and does not '#Equals()' actual. [expected={_expectedValue}] [actual  ={actualValue}]");
+        _asserter.AssertIf(_expectedValue.Equals(actualValue) is false, $"Field [name={_name}] is not the same reference as expected and does not '#Equals()' actual. [expected={_expectedValue}] [actual  ={actualValue}]");
     }
 
     private void AssertPrimitiveValue(object actualValue)
     {
-        if (!actualValue.GetType().IsPrimitive) return;
-        _asserter.AssertIf(!_expectedValue.Equals(actualValue), $"Expected [name={_name}] to have a value of [expected={_expectedValue}] but found [actual={actualValue}].");
+        if (actualValue.GetType().IsPrimitive is false) return;
+        _asserter.AssertIf(_expectedValue.Equals(actualValue) is false, $"Expected [name={_name}] to have a value of [expected={_expectedValue}] but found [actual={actualValue}].");
     }
 
     public FieldInfo FieldInfo(object obj)

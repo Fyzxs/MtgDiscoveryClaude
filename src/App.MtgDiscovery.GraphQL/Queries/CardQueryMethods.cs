@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public class CardQueryMethods
+public sealed class CardQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<List<CardItemOutEntity>> _cardResponseMapper;

@@ -4,7 +4,7 @@ using HotChocolate;
 
 namespace App.MtgDiscovery.GraphQL.ErrorHandling;
 
-public class HttpStatusCodeErrorFilter : IErrorFilter
+public sealed class HttpStatusCodeErrorFilter : IErrorFilter
 {
     public IError OnError([NotNull] IError error)
     {
