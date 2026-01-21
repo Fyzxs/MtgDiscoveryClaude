@@ -20,6 +20,7 @@ export const GET_SEALED_PRODUCTS_BY_SET_CODE = gql`
           purchaseUrlTcgplayer
           purchaseUrlCardmarket
           purchaseUrlCardKingdom
+          userQuantity
         }
       }
       ... on FailureResponse {
