@@ -7,6 +7,7 @@ import { AppButton as Button } from './components/molecules/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/utils/ErrorBoundaries'
 import { CollectionProvider } from './contexts/CollectionContext'
+import { SealedCollectionProvider } from './contexts/SealedCollectionContext'
 import { WishlistProvider } from './contexts/WishlistContext'
 import { EntryModeProvider } from './contexts/EntryModeContext'
 import { UserProvider } from './contexts/UserContext'
@@ -98,8 +99,9 @@ function App() {
         <BrowserRouter>
           <EntryModeProvider>
             <CollectionProvider>
-              <WishlistProvider>
-                <Layout>
+              <SealedCollectionProvider>
+                <WishlistProvider>
+                  <Layout>
               <Suspense fallback={<PageLoadingFallback />}>
                 <Routes>
                   <Route path="/" element={
@@ -161,8 +163,9 @@ function App() {
                   <Route path="*" element={<LegacyRedirect />} />
                 </Routes>
               </Suspense>
-                </Layout>
-              </WishlistProvider>
+                  </Layout>
+                </WishlistProvider>
+              </SealedCollectionProvider>
             </CollectionProvider>
           </EntryModeProvider>
         </BrowserRouter>

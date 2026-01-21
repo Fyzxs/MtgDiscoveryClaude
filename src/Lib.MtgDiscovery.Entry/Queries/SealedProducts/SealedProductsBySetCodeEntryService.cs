@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.SealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Enrichments;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.SealedProducts;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -19,24 +20,28 @@ internal sealed class SealedProductsBySetCodeEntryService : ISealedProductsBySet
     private readonly ISealedProductsBySetCodeArgEntityValidator _validator;
     private readonly ISealedProductsBySetCodeArgToItrMapper _argToItrMapper;
     private readonly ICollectionSealedProductOufToOutMapper _oufToOutMapper;
+    private readonly IUserSealedProductEnrichment _userSealedProductEnrichment;
 
     public SealedProductsBySetCodeEntryService(ILogger logger) : this(
         new SealedProductsDomainService(logger),
         new SealedProductsBySetCodeArgEntityValidatorContainer(),
         new SealedProductsBySetCodeArgToItrMapper(),
-        new CollectionSealedProductOufToOutMapper())
+        new CollectionSealedProductOufToOutMapper(),
+        new UserSealedProductEnrichment(logger))
     { }
 
     private SealedProductsBySetCodeEntryService(
         ISealedProductsDomainService domainService,
         ISealedProductsBySetCodeArgEntityValidator validator,
         ISealedProductsBySetCodeArgToItrMapper argToItrMapper,
-        ICollectionSealedProductOufToOutMapper oufToOutMapper)
+        ICollectionSealedProductOufToOutMapper oufToOutMapper,
+        IUserSealedProductEnrichment userSealedProductEnrichment)
     {
         _domainService = domainService;
         _validator = validator;
         _argToItrMapper = argToItrMapper;
         _oufToOutMapper = oufToOutMapper;
+        _userSealedProductEnrichment = userSealedProductEnrichment;
     }
 
     public async Task<IOperationResponse<List<SealedProductOutEntity>>> Execute(ISealedProductsBySetCodeArgEntity args)
@@ -55,6 +60,9 @@ internal sealed class SealedProductsBySetCodeEntryService : ISealedProductsBySet
         }
 
         List<SealedProductOutEntity> outEntities = await _oufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        // Enrich with user collection data if collectionId is provided
+        await _userSealedProductEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<SealedProductOutEntity>>(outEntities);
     }
