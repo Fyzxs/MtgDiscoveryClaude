@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 

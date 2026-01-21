@@ -1,4 +1,6 @@
-﻿namespace TestConvenience.Core.Fakes;
+﻿using Microsoft.Extensions.Caching.Memory;
+
+namespace TestConvenience.Core.Fakes;
 
 public sealed class MemoryCacheFake : IMemoryCache
 {

@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Lib.Adapter.Cards.Apis;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
+using Lib.Shared.DataModels.Entities.Itrs;
+using Lib.Shared.Invocation.Operations;
 using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 

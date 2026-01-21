@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Lib.Scryfall.Shared.Apis.Models;
+using Lib.Universal.Primitives;
 
 namespace Lib.Scryfall.Ingestion.Tests.Fakes;
 

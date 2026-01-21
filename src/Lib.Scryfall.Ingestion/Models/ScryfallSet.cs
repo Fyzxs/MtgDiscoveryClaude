@@ -3,6 +3,7 @@ using Lib.Scryfall.Ingestion.Collections;
 using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Universal.Primitives;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Models;
 

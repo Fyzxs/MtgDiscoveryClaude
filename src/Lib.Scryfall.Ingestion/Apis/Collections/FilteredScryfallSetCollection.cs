@@ -7,6 +7,7 @@ using Lib.Scryfall.Ingestion.Collections;
 using Lib.Scryfall.Ingestion.Configurations;
 using Lib.Scryfall.Ingestion.Filters;
 using Lib.Scryfall.Shared.Apis.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Lib.Scryfall.Ingestion.Apis.Collections;
 

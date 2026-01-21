@@ -1,5 +1,6 @@
 ﻿using Lib.Scryfall.Ingestion.Dtos;
 using Lib.Scryfall.Ingestion.Services;
+using Newtonsoft.Json.Linq;
 
 namespace Lib.Scryfall.Ingestion.Factories;
 
