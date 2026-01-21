@@ -125,11 +125,11 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
           height: '100%',
           // Card back as background - ensure it shows
           backgroundImage: `url(${CARD_BACK_URL})`,
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          borderRadius,
-          minHeight: '200px' // Ensure minimum height
+          bgcolor: 'black',
+          borderRadius
         }}
       >
 
@@ -144,7 +144,7 @@ export const CardImageDisplay: React.FC<CardImageDisplayProps> = ({
               width: '100%',
               height: '100%',
               borderRadius,
-              bgcolor: 'grey.800'
+              bgcolor: 'black'
             }}
           />
         )}

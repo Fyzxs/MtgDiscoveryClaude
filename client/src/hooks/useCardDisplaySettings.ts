@@ -59,25 +59,22 @@ export function useCardDisplaySettings(
       }
     }
 
-    // Determine display mode
-    const displayMode: DisplayMode = explicitMode ?? (isMobile ? 'compact' : 'full');
+    // Determine display mode - compact for mobile and tablet
+    const isTouchDevice = isMobile || isTablet;
+    const displayMode: DisplayMode = explicitMode ?? (isTouchDevice ? 'compact' : 'full');
 
     // Determine overlay behavior
     let overlayBehavior: OverlayBehavior;
-    if (isMobile) {
+    if (isTouchDevice) {
       overlayBehavior = 'tap';
-    } else if (isTablet) {
-      overlayBehavior = 'tap'; // Also tap on tablet for touch support
     } else {
       overlayBehavior = 'hover';
     }
 
-    // Determine overlay variant
+    // Determine overlay variant - minimal for mobile/tablet, full for desktop
     let overlayVariant: OverlayVariant;
-    if (displayMode === 'compact') {
+    if (isTouchDevice) {
       overlayVariant = 'minimal';
-    } else if (isTablet) {
-      overlayVariant = 'compact';
     } else {
       overlayVariant = 'full';
     }
@@ -86,15 +83,13 @@ export function useCardDisplaySettings(
     let imageScryfallSize: 'small' | 'normal' | 'large';
     if (isMobile) {
       imageScryfallSize = 'small';
-    } else if (isTablet) {
-      imageScryfallSize = 'normal';
     } else {
       imageScryfallSize = 'normal';
     }
 
-    // Determine what to show
-    const showBadges = !isMobile; // Hide badges on mobile to reduce clutter
-    const showZoomIndicator = !isMobile; // Hide on mobile - tap opens details
+    // Determine what to show - hide badges/zoom on touch devices
+    const showBadges = !isTouchDevice;
+    const showZoomIndicator = !isTouchDevice;
 
     return {
       size,
