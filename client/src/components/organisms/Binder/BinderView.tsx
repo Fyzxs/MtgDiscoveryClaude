@@ -125,16 +125,11 @@ export const BinderView: React.FC<BinderViewProps> = ({
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        // Mobile: align to top, Desktop: stretch to fill height
-        alignItems: { xs: 'flex-start', lg: 'stretch' },
+        alignItems: 'flex-start',
         gap: 0,
         py: 1,
         px: { xs: 1, sm: 2 },
-        // On mobile/tablet: use minHeight for natural flow
-        // On desktop+: fill parent container height
-        minHeight: { xs: 500, sm: 600, md: 700, lg: 0 },
-        height: '100%',
-        maxHeight: '100%',
+        maxWidth: '100vw',
         overflow: 'hidden',
         touchAction: 'pan-y' // Allow vertical scroll, capture horizontal swipes
       }}
@@ -144,19 +139,19 @@ export const BinderView: React.FC<BinderViewProps> = ({
         <>
           {/* Left section: tabs + page */}
           <Box
+            data-component="binder-left-section"
             sx={{
-              flex: 1,
               display: 'flex',
-              justifyContent: 'flex-end',
               alignItems: 'flex-start',
               gap: 0.5,
+              flex: 1,
               minWidth: 0,
-              overflow: 'hidden'
+              maxWidth: { xs: '100%', sm: 'calc(600px + 32px)', md: 'calc(700px + 32px)', lg: 'calc(800px + 32px)' }
             }}
           >
             {leftTabsElement}
             {/* Page wrapper for divider positioning */}
-            <Box sx={{ position: 'relative', flex: 1, minWidth: 0 }}>
+            <Box data-component="binder-left-page-wrapper" sx={{ position: 'relative', flex: 1, minWidth: 0 }}>
               <BinderPageGrid
                 cards={leftPageNum !== null ? getPageCards(leftPageNum) : Array(9).fill(null)}
                 collectedCardIds={collectedCardIds}
@@ -181,22 +176,24 @@ export const BinderView: React.FC<BinderViewProps> = ({
 
           {/* Right section: page + tabs */}
           <Box
+            data-component="binder-right-section"
             sx={{
-              flex: 1,
               display: 'flex',
-              justifyContent: 'flex-start',
               alignItems: 'flex-start',
               gap: 0.5,
+              flex: 1,
               minWidth: 0,
-              overflow: 'hidden'
+              maxWidth: { xs: '100%', sm: 'calc(600px + 32px)', md: 'calc(700px + 32px)', lg: 'calc(800px + 32px)' }
             }}
           >
-            <BinderPageGrid
-              cards={rightPageNum !== null && rightPageNum <= totalPages ? getPageCards(rightPageNum) : Array(9).fill(null)}
-              collectedCardIds={collectedCardIds}
-              pageNumber={rightPageNum ?? 0}
-              hasCollector={hasCollector}
-            />
+            <Box data-component="binder-right-page-wrapper" sx={{ position: 'relative', flex: 1, minWidth: 0 }}>
+              <BinderPageGrid
+                cards={rightPageNum !== null && rightPageNum <= totalPages ? getPageCards(rightPageNum) : Array(9).fill(null)}
+                collectedCardIds={collectedCardIds}
+                pageNumber={rightPageNum ?? 0}
+                hasCollector={hasCollector}
+              />
+            </Box>
             {rightTabsElement}
           </Box>
         </>

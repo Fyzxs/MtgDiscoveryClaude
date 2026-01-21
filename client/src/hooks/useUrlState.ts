@@ -101,11 +101,20 @@ export function useUrlState(
       });
 
       const newUrl = `${window.location.pathname}?${params.toString()}`;
-      
-      if (replace) {
-        window.history.replaceState(null, '', newUrl);
-      } else {
-        window.history.pushState(null, '', newUrl);
+
+      try {
+        if (replace) {
+          window.history.replaceState(null, '', newUrl);
+        } else {
+          window.history.pushState(null, '', newUrl);
+        }
+      } catch (error) {
+        // Silently ignore Firefox security errors for rapid history updates
+        if (error instanceof DOMException && error.name === 'SecurityError') {
+          // Ignore - Firefox blocks rapid URL updates for security, but app continues normally
+        } else {
+          throw error;
+        }
       }
     };
 
@@ -127,12 +136,20 @@ export function useUrlState(
     };
   }, [state, config, replace, debounceMs]);
 
-  return {
-    getInitialValues,
-    // Expose current URL params for reading
-    getUrlParams: () => new URLSearchParams(window.location.search),
-    // Manual URL update if needed
-    updateUrl: (updates: Record<string, unknown>) => {
+  // Throttle manual updates to prevent Firefox security errors
+  const lastUpdateRef = useRef<number>(0);
+  const MIN_UPDATE_INTERVAL = 300; // ms between updates (Firefox security limit)
+
+  // Memoize updateUrl to prevent unnecessary re-renders
+  const updateUrl = useCallback((updates: Record<string, unknown>) => {
+    const now = Date.now();
+    if (now - lastUpdateRef.current < MIN_UPDATE_INTERVAL) {
+      // Skip update if too soon after last one (Firefox security)
+      return;
+    }
+    lastUpdateRef.current = now;
+
+    try {
       const params = new URLSearchParams(window.location.search);
       Object.entries(updates).forEach(([key, value]) => {
         if (value) {
@@ -147,7 +164,21 @@ export function useUrlState(
       } else {
         window.history.pushState(null, '', newUrl);
       }
+    } catch (error) {
+      // Silently ignore Firefox security errors for rapid history updates
+      if (error instanceof DOMException && error.name === 'SecurityError') {
+        // Ignore - Firefox blocks rapid URL updates for security, but app continues normally
+      } else {
+        throw error;
+      }
     }
+  }, [replace]); // Only recreate if replace changes
+
+  return {
+    getInitialValues,
+    // Expose current URL params for reading
+    getUrlParams: () => new URLSearchParams(window.location.search),
+    updateUrl
   };
 }
 

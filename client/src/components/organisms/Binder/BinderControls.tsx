@@ -57,6 +57,7 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
 
   return (
     <Box
+      id="binder-controls"
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -67,7 +68,7 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
       }}
     >
       {/* Sort Toggle */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box id="binder-sort-controls" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography variant="caption" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
           Sort:
         </Typography>
@@ -78,12 +79,12 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
           size="small"
           aria-label="Sort order"
         >
-          <ToggleButton value="collector" aria-label="Sort by collector number">
+          <ToggleButton id="binder-sort-collector" value="collector" aria-label="Sort by collector number">
             <Tooltip title="Collector Number">
               <FormatListNumberedIcon fontSize="small" />
             </Tooltip>
           </ToggleButton>
-          <ToggleButton value="alphabetical" aria-label="Sort alphabetically">
+          <ToggleButton id="binder-sort-alphabetical" value="alphabetical" aria-label="Sort alphabetically">
             <Tooltip title="Alphabetical">
               <SortByAlphaIcon fontSize="small" />
             </Tooltip>
@@ -93,7 +94,7 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
 
       {/* View Mode Toggle (only show on desktop) */}
       {canUseBookMode && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box id="binder-view-mode-controls" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography variant="caption" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
             View:
           </Typography>
@@ -104,12 +105,12 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
             size="small"
             aria-label="View mode"
           >
-            <ToggleButton value="single" aria-label="Single page view">
+            <ToggleButton id="binder-view-single" value="single" aria-label="Single page view">
               <Tooltip title="Single Page">
                 <LooksOneIcon fontSize="small" />
               </Tooltip>
             </ToggleButton>
-            <ToggleButton value="book" aria-label="Two page book view">
+            <ToggleButton id="binder-view-book" value="book" aria-label="Two page book view">
               <Tooltip title="Two Pages">
                 <LooksTwoIcon fontSize="small" />
               </Tooltip>
@@ -119,10 +120,11 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
       )}
 
       {/* Navigation */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box id="binder-navigation-controls" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Tooltip title={viewMode === 'book' ? 'Previous spread (←)' : 'Previous page (←)'}>
           <span>
             <IconButton
+              id="binder-nav-prev"
               onClick={onPrev}
               disabled={!canGoPrev}
               size="small"
@@ -134,6 +136,7 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
         </Tooltip>
 
         <Typography
+          id="binder-page-counter"
           variant="body2"
           sx={{
             minWidth: 80,
@@ -148,6 +151,7 @@ export const BinderControls: React.FC<BinderControlsProps> = ({
         <Tooltip title={viewMode === 'book' ? 'Next spread (→)' : 'Next page (→)'}>
           <span>
             <IconButton
+              id="binder-nav-next"
               onClick={onNext}
               disabled={!canGoNext}
               size="small"
