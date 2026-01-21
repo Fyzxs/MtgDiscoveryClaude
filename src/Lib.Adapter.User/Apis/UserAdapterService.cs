@@ -24,18 +24,18 @@ namespace Lib.Adapter.User.Apis;
 /// </summary>
 public sealed class UserAdapterService : IUserAdapterService
 {
-    private readonly IUserPersistenceAdapter _userPersistenceAdapter;
+    private readonly IUserCommandAdapter _userCommandAdapter;
 
-    public UserAdapterService(ILogger logger) : this(new UserCosmosPersistenceAdapter(logger))
+    public UserAdapterService(ILogger logger) : this(new UserCosmosCommandAdapter(logger))
     { }
 
-    private UserAdapterService(IUserPersistenceAdapter userPersistenceAdapter)
+    private UserAdapterService(IUserCommandAdapter userCommandAdapter)
     {
-        _userPersistenceAdapter = userPersistenceAdapter;
+        _userCommandAdapter = userCommandAdapter;
     }
 
     public async Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo)
     {
-        return await _userPersistenceAdapter.RegisterUserAsync(userInfo).ConfigureAwait(false);
+        return await _userCommandAdapter.RegisterUserAsync(userInfo).ConfigureAwait(false);
     }
 }

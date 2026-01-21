@@ -23,7 +23,7 @@ namespace Lib.Adapter.User.Apis;
 /// - Internal mapping: Adapter implementations map from storage entities to ITR entities
 /// Primitive extraction happens in the concrete implementation when interfacing with external systems.
 /// </summary>
-public interface IUserPersistenceAdapter
+public interface IUserCommandAdapter
 {
     Task<IOperationResponse<IUserInfoItrEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
 }
