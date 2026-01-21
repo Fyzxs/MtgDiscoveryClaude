@@ -232,10 +232,10 @@ export const SetPage: React.FC = () => {
     <SetPageTemplate
       isLoading={isLoading}
       error={firstError}
-      currentCount={currentCount}
-      totalCount={cards.length}
-      // Mobile layout props
-      useMobileLayout={useMobileLayout}
+      currentCount={activeTab === 'cards' ? currentCount : sealedProducts.length}
+      totalCount={activeTab === 'cards' ? cards.length : sealedProducts.length}
+      // Mobile layout props - only for cards tab
+      useMobileLayout={useMobileLayout && activeTab === 'cards'}
       filterDrawerOpen={filterDrawerOpen}
       onFilterDrawerToggle={handleFilterDrawerToggle}
       filterConfig={filterConfig}
@@ -252,40 +252,10 @@ export const SetPage: React.FC = () => {
           availableGroupIds={allCardGroups.map(g => g.id)}
         />
       }
-      filters={
-        <FilterControlsWithLoading isLoading={isFilteringOrSorting}>
-          <SetPageFilters
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
-            sortBy={sortBy}
-            onSortChange={handleSortChange}
-            selectedRarities={selectedRarities}
-            selectedArtists={selectedArtists}
-            selectedGroupIds={selectedGroupIds}
-            showGroups={filters.showGroups !== false}
-            onRarityChange={handleRarityChange}
-            onArtistChange={(value: string[]) => updateFilter('artists', value)}
-            onGroupChange={(groupIds: string[]) => updateFilter('groups', groupIds)}
-            onShowGroupsChange={handleShowGroupsChange}
-            allRarities={allRarities}
-            allArtists={allArtists}
-            allFinishes={allFinishes}
-            cardGroups={cardGroups}
-            cards={cards}
-            hasCollector={hasCollector}
-            collectionCounts={(Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[]}
-            signedCards={(Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]}
-            finishes={(Array.isArray(filters.finishes) ? filters.finishes : []) as string[]}
-            onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
-            onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
-            onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
-          />
-        </FilterControlsWithLoading>
-      }
       cardDisplay={
         <Box>
-          {/* Tab Navigation */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+          {/* Tab Navigation - Centered */}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3, display: 'flex', justifyContent: 'center' }}>
             <Tabs
               value={activeTab}
               onChange={handleTabChange}
@@ -293,38 +263,79 @@ export const SetPage: React.FC = () => {
                 '& .MuiTab-root': {
                   textTransform: 'none',
                   fontWeight: 600,
-                  fontSize: '0.9rem',
+                  fontSize: '0.95rem',
+                  minWidth: 120,
                 },
               }}
             >
               <Tab label="Cards" value="cards" />
-              <Tab label="Sealed Products" value="sealed" />
+              <Tab label="Sealed" value="sealed" />
             </Tabs>
           </Box>
 
-          {/* Tab Content */}
+          {/* Cards Tab Content */}
           {activeTab === 'cards' && (
-            <SetPageCardDisplay
-              cardsLoading={cardsLoading}
-              sortedCards={sortedCards}
-              filteredCards={filteredCards}
-              cardGroups={cardGroups}
-              setInfo={setInfo}
-              showGroups={filters.showGroups !== false}
-              visibleGroupIds={visibleGroupIds}
-              allSameReleaseDate={allSameReleaseDate}
-              setCode={setCode}
-              hasCollector={hasCollector}
-              onClearFilters={handleClearFilters}
-            />
+            <Box>
+              {/* Filters Section */}
+              {useMobileLayout === false && (
+                <FilterControlsWithLoading isLoading={isFilteringOrSorting}>
+                  <SetPageFilters
+                    searchTerm={searchTerm}
+                    onSearchChange={handleSearchChange}
+                    sortBy={sortBy}
+                    onSortChange={handleSortChange}
+                    selectedRarities={selectedRarities}
+                    selectedArtists={selectedArtists}
+                    selectedGroupIds={selectedGroupIds}
+                    showGroups={filters.showGroups !== false}
+                    onRarityChange={handleRarityChange}
+                    onArtistChange={(value: string[]) => updateFilter('artists', value)}
+                    onGroupChange={(groupIds: string[]) => updateFilter('groups', groupIds)}
+                    onShowGroupsChange={handleShowGroupsChange}
+                    allRarities={allRarities}
+                    allArtists={allArtists}
+                    allFinishes={allFinishes}
+                    cardGroups={cardGroups}
+                    cards={cards}
+                    hasCollector={hasCollector}
+                    collectionCounts={(Array.isArray(filters.collectionCounts) ? filters.collectionCounts : []) as string[]}
+                    signedCards={(Array.isArray(filters.signedCards) ? filters.signedCards : []) as string[]}
+                    finishes={(Array.isArray(filters.finishes) ? filters.finishes : []) as string[]}
+                    onCollectionCountsChange={(value: string[]) => updateFilter('collectionCounts', value)}
+                    onSignedCardsChange={(value: string[]) => updateFilter('signedCards', value)}
+                    onFinishesChange={(value: string[]) => updateFilter('finishes', value)}
+                  />
+                </FilterControlsWithLoading>
+              )}
+
+              {/* Card Display */}
+              <SetPageCardDisplay
+                cardsLoading={cardsLoading}
+                sortedCards={sortedCards}
+                filteredCards={filteredCards}
+                cardGroups={cardGroups}
+                setInfo={setInfo}
+                showGroups={filters.showGroups !== false}
+                visibleGroupIds={visibleGroupIds}
+                allSameReleaseDate={allSameReleaseDate}
+                setCode={setCode}
+                hasCollector={hasCollector}
+                onClearFilters={handleClearFilters}
+              />
+            </Box>
           )}
 
+          {/* Sealed Tab Content - Centered */}
           {activeTab === 'sealed' && (
-            <SealedProductGrid
-              products={sealedProducts}
-              loading={sealedLoading}
-              error={sealedError}
-            />
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Box sx={{ width: '100%', maxWidth: '1400px' }}>
+                <SealedProductGrid
+                  products={sealedProducts}
+                  loading={sealedLoading}
+                  error={sealedError}
+                />
+              </Box>
+            </Box>
           )}
         </Box>
       }

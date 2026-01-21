@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Typography, Chip, IconButton, Stack } from '@mui/material';
+import { Box, Typography, Chip, Stack } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { ExternalLinkIcon } from '../../molecules/shared/ExternalLinkIcon';
 import type { SealedProduct } from '../../../hooks/useSealedProductsData';
 
 interface SealedProductCardProps {
@@ -43,13 +43,6 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
 }) => {
   const theme = useTheme();
   const categoryColor = getCategoryColor(product.category);
-
-  const handlePurchaseClick = (url: string | undefined, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (url) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-  };
 
   const hasPurchaseLinks = product.purchaseUrlTcgplayer || product.purchaseUrlCardmarket || product.purchaseUrlCardKingdom;
 
@@ -181,60 +174,21 @@ export const SealedProductCard: React.FC<SealedProductCardProps> = ({
         {/* Purchase Links */}
         {hasPurchaseLinks && (
           <Stack direction="row" spacing={0.5} sx={{ mt: 1 }}>
-            {product.purchaseUrlTcgplayer && (
-              <IconButton
-                size="small"
-                onClick={(e) => handlePurchaseClick(product.purchaseUrlTcgplayer, e)}
-                sx={{
-                  bgcolor: alpha('#00b0ff', 0.1),
-                  color: '#00b0ff',
-                  '&:hover': {
-                    bgcolor: alpha('#00b0ff', 0.2),
-                  },
-                  width: 28,
-                  height: 28,
-                }}
-                title="Buy on TCGPlayer"
-              >
-                <OpenInNewIcon sx={{ fontSize: 14 }} />
-              </IconButton>
-            )}
-            {product.purchaseUrlCardmarket && (
-              <IconButton
-                size="small"
-                onClick={(e) => handlePurchaseClick(product.purchaseUrlCardmarket, e)}
-                sx={{
-                  bgcolor: alpha('#ff9100', 0.1),
-                  color: '#ff9100',
-                  '&:hover': {
-                    bgcolor: alpha('#ff9100', 0.2),
-                  },
-                  width: 28,
-                  height: 28,
-                }}
-                title="Buy on Cardmarket"
-              >
-                <OpenInNewIcon sx={{ fontSize: 14 }} />
-              </IconButton>
-            )}
-            {product.purchaseUrlCardKingdom && (
-              <IconButton
-                size="small"
-                onClick={(e) => handlePurchaseClick(product.purchaseUrlCardKingdom, e)}
-                sx={{
-                  bgcolor: alpha('#76ff03', 0.1),
-                  color: '#76ff03',
-                  '&:hover': {
-                    bgcolor: alpha('#76ff03', 0.2),
-                  },
-                  width: 28,
-                  height: 28,
-                }}
-                title="Buy on Card Kingdom"
-              >
-                <OpenInNewIcon sx={{ fontSize: 14 }} />
-              </IconButton>
-            )}
+            <ExternalLinkIcon
+              type="tcgplayer"
+              url={product.purchaseUrlTcgplayer}
+              size="small"
+            />
+            <ExternalLinkIcon
+              type="cardmarket"
+              url={product.purchaseUrlCardmarket}
+              size="small"
+            />
+            <ExternalLinkIcon
+              type="cardkingdom"
+              url={product.purchaseUrlCardKingdom}
+              size="small"
+            />
           </Stack>
         )}
       </Box>
