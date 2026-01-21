@@ -376,7 +376,7 @@ internal sealed class SealedProductsAdapterException : OperationException
 ---
 
 ### Task 3.3: Create SealedProductsBySetCode Xfr Entity
-**Status:** [ ] Not Started
+**Status:** [x] Complete
 **Depends on:** Task 3.1
 **Location:** `src/Lib.Adapter.SealedProducts/Apis/Entities/`
 
