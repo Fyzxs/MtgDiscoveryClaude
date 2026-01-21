@@ -222,18 +222,14 @@ Use visual indicators for immediate clarity:
 - Focus on advisory role, not implementation
 
 ### Required Outputs
-1. **File-Based Review Document** (.claude/reviews/review-{timestamp}.md)
-   - Comprehensive findings with emoji categorization
-   - Structured sections: Critical → Suggestions → Positive
-   - Cross-references to PR comment locations
 
-2. **Inline PR Comments on Files**
+1. **Inline PR Comments on Files**
    - Comments directly on specific files and line numbers
    - Each finding posted as a comment on the relevant code location
    - Use GitHub API for precise line-level comments
    - Markdown formatting with suggestion blocks
 
-3. **PR Summary Comment**
+2. **PR Summary Comment**
    - Overall assessment comment on PR conversation
    - References to inline comments for details
    - Consistent emoji usage across all comments
@@ -309,8 +305,6 @@ Post this final comment when review is complete:
 **Next Steps:**
 {next_steps_list}
 
-**Review Document:** `.claude/reviews/review-{timestamp}.md`
-
 ---
 *Review completed by quinn-github-reviewer agent at {timestamp}*
 ```
@@ -323,20 +317,19 @@ When reviewing a PR, you MUST complete ALL of these steps:
 - [ ] Fetch repository information using `gh repo view`
 - [ ] Get PR details with `gh pr view {PR_NUMBER}`
 - [ ] Analyze all changed files with `gh pr diff`
-- [ ] Create review document in .claude/reviews/
 - [ ] **Post inline comments using gh api or gh pr review**
 - [ ] **Verify comments appear on the GitHub PR**
 - [ ] Post final summary comment with review statistics
 - [ ] Confirm all findings are visible in GitHub PR
 
 ### ⚠️ Common Mistakes to Avoid
-- ❌ Only creating a review document without posting PR comments
+- ❌ Not posting PR comments
 - ❌ Describing what comments would be posted without actually posting them
 - ❌ Generating comment content without executing the gh commands
 - ❌ Assuming the PR comment posting is optional
 
 ### 💡 Remember
-The primary value of this review is the async human-reviewable PR comments. The file-based document is secondary. Always execute the full PR comment posting workflow using GitHub CLI.
+The primary value of this review is the async human-reviewable PR comments. Always execute the full PR comment posting workflow using GitHub CLI.
 
 ## GitHub-Specific Features
 

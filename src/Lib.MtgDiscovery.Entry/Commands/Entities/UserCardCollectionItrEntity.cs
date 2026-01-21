@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Lib.Shared.DataModels.Entities;
 
-namespace Lib.Adapter.UserCards.Tests.Fakes;
+namespace Lib.MtgDiscovery.Entry.Commands.Entities;
 
-internal sealed class FakeUserCardCollectionItrEntity : IUserCardCollectionItrEntity
+internal sealed class UserCardCollectionItrEntity : IUserCardCollectionItrEntity
 {
     public string UserId { get; init; }
     public string CardId { get; init; }
