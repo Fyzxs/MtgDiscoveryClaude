@@ -68,6 +68,13 @@ Ultra-critical validator that scrutinizes generated layer specifications with ex
 - Validate fake implementations are specified correctly
 - Ensure test coverage is comprehensive
 
+**csproj correctness:**
+- Check the csproj content suggestion that it follows the reference projects patterns
+- Check it doesn't duplicate properties specified by the Directory.Build.Props
+
+**snippet corectness:**
+- Follows MicroObjects practices; the biggest oversight is null checking. 
+
 ## Validation Process
 
 ### Phase 1: Reference Verification
