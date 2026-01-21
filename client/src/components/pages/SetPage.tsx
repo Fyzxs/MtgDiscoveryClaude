@@ -1,17 +1,22 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { Box, Tabs, Tab } from '@mui/material';
 import { PageContainer } from '../molecules/layouts';
 import { StatusMessage } from '../molecules/feedback';
 import { SetPageTemplate } from '../templates/SetPageTemplate';
 import { SetPageHeader } from '../organisms/Sets/SetPageHeader';
 import { SetPageFilters } from '../organisms/Sets/SetPageFilters';
 import { SetPageCardDisplay } from '../organisms/Sets/SetPageCardDisplay';
+import { SealedProductGrid } from '../organisms/Sealed';
 import { FilterControlsWithLoading } from '../molecules/shared/FilterControlsWithLoading';
 import { useSetPageData } from '../../hooks/useSetPageData';
+import { useSealedProductsData } from '../../hooks/useSealedProductsData';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { SET_PAGE_SORT_OPTIONS, SET_PAGE_COLLECTOR_SORT_OPTIONS } from '../../config/cardSortOptions';
 import { getCollectionCountOptions, getSignedCardsOptions } from '../../utils/cardUtils';
 import type { FilterPanelConfig } from '../../types/filters';
+
+type SetPageTab = 'cards' | 'sealed';
 
 /**
  * SetPage - Display a specific Magic: The Gathering set with filtering and grouping
@@ -21,6 +26,7 @@ export const SetPage: React.FC = () => {
   const { setCode } = useParams<{ setCode: string }>();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<SetPageTab>('cards');
 
   // All data and state management extracted to custom hook
   const {
@@ -54,6 +60,18 @@ export const SetPage: React.FC = () => {
     isFilteringOrSorting,
     hasCollector
   } = useSetPageData(setCode);
+
+  // Sealed products data - only fetch when sealed tab is active
+  const {
+    sealedProducts,
+    loading: sealedLoading,
+    error: sealedError
+  } = useSealedProductsData(setCode, activeTab === 'sealed');
+
+  // Tab change handler
+  const handleTabChange = useCallback((_event: React.SyntheticEvent, newValue: SetPageTab) => {
+    setActiveTab(newValue);
+  }, []);
 
   // Calculate active filter count for mobile filter badge
   const activeFilterCount = useMemo(() => {
@@ -265,19 +283,50 @@ export const SetPage: React.FC = () => {
         </FilterControlsWithLoading>
       }
       cardDisplay={
-        <SetPageCardDisplay
-          cardsLoading={cardsLoading}
-          sortedCards={sortedCards}
-          filteredCards={filteredCards}
-          cardGroups={cardGroups}
-          setInfo={setInfo}
-          showGroups={filters.showGroups !== false}
-          visibleGroupIds={visibleGroupIds}
-          allSameReleaseDate={allSameReleaseDate}
-          setCode={setCode}
-          hasCollector={hasCollector}
-          onClearFilters={handleClearFilters}
-        />
+        <Box>
+          {/* Tab Navigation */}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              sx={{
+                '& .MuiTab-root': {
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                },
+              }}
+            >
+              <Tab label="Cards" value="cards" />
+              <Tab label="Sealed Products" value="sealed" />
+            </Tabs>
+          </Box>
+
+          {/* Tab Content */}
+          {activeTab === 'cards' && (
+            <SetPageCardDisplay
+              cardsLoading={cardsLoading}
+              sortedCards={sortedCards}
+              filteredCards={filteredCards}
+              cardGroups={cardGroups}
+              setInfo={setInfo}
+              showGroups={filters.showGroups !== false}
+              visibleGroupIds={visibleGroupIds}
+              allSameReleaseDate={allSameReleaseDate}
+              setCode={setCode}
+              hasCollector={hasCollector}
+              onClearFilters={handleClearFilters}
+            />
+          )}
+
+          {activeTab === 'sealed' && (
+            <SealedProductGrid
+              products={sealedProducts}
+              loading={sealedLoading}
+              error={sealedError}
+            />
+          )}
+        </Box>
       }
     />
   );
