@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
+using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Args.SealedProducts;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using HotChocolate;
@@ -14,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public class SealedProductsQueryMethods
+public sealed class SealedProductsQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<List<SealedProductOutEntity>> _responseMapper;
@@ -34,11 +37,100 @@ public class SealedProductsQueryMethods
     }
 
     [GraphQLType(typeof(SealedProductsResponseModelUnionType))]
-    public async Task<ResponseModel> SealedProductsBySetCode(GetSealedProductsBySetCodeArgEntity args)
+    public async Task<ResponseModel> SealedProductsBySetCode(
+        GetSealedProductsBySetCodeArgEntity args,
+        [Service] ClaimsPrincipal claimsPrincipal = null)
     {
-        IOperationResponse<List<SealedProductOutEntity>> response = await _entryService
+        IOperationResponse<List<SealedProductOutEntity>> productsResponse = await _entryService
             .SealedProductsBySetCodeAsync(args)
             .ConfigureAwait(false);
-        return await _responseMapper.Map(response).ConfigureAwait(false);
+
+        if (productsResponse.IsSuccess is false)
+        {
+            return await _responseMapper.Map(productsResponse).ConfigureAwait(false);
+        }
+
+        List<SealedProductOutEntity> enrichedProducts;
+
+        if (claimsPrincipal?.Identity?.IsAuthenticated == true)
+        {
+            AuthUserArgEntity authUser = new(claimsPrincipal);
+            string userId = authUser.UserId;
+
+            IOperationResponse<List<UserSealedProductOutEntity>> userProductsResponse =
+                await _entryService.GetUserSealedProductsByUserIdAsync(userId).ConfigureAwait(false);
+
+            if (userProductsResponse.IsSuccess)
+            {
+                Dictionary<string, int> userQuantities = userProductsResponse.Value
+                    .ToDictionary(up => up.ProductUuid, up => up.Count);
+
+                enrichedProducts = productsResponse.Value.Select(product => new SealedProductOutEntity
+                {
+                    Uuid = product.Uuid,
+                    SetId = product.SetId,
+                    SetCode = product.SetCode,
+                    SetName = product.SetName,
+                    Name = product.Name,
+                    Category = product.Category,
+                    Subtype = product.Subtype,
+                    CardCount = product.CardCount,
+                    ReleaseDate = product.ReleaseDate,
+                    TcgplayerProductId = product.TcgplayerProductId,
+                    ImageUrl = product.ImageUrl,
+                    PurchaseUrlTcgplayer = product.PurchaseUrlTcgplayer,
+                    PurchaseUrlCardmarket = product.PurchaseUrlCardmarket,
+                    PurchaseUrlCardKingdom = product.PurchaseUrlCardKingdom,
+                    UserQuantity = userQuantities.TryGetValue(product.Uuid, out int quantity) ? quantity : 0
+                }).ToList();
+            }
+            else
+            {
+                enrichedProducts = productsResponse.Value.Select(product => new SealedProductOutEntity
+                {
+                    Uuid = product.Uuid,
+                    SetId = product.SetId,
+                    SetCode = product.SetCode,
+                    SetName = product.SetName,
+                    Name = product.Name,
+                    Category = product.Category,
+                    Subtype = product.Subtype,
+                    CardCount = product.CardCount,
+                    ReleaseDate = product.ReleaseDate,
+                    TcgplayerProductId = product.TcgplayerProductId,
+                    ImageUrl = product.ImageUrl,
+                    PurchaseUrlTcgplayer = product.PurchaseUrlTcgplayer,
+                    PurchaseUrlCardmarket = product.PurchaseUrlCardmarket,
+                    PurchaseUrlCardKingdom = product.PurchaseUrlCardKingdom,
+                    UserQuantity = 0
+                }).ToList();
+            }
+        }
+        else
+        {
+            enrichedProducts = productsResponse.Value.Select(product => new SealedProductOutEntity
+            {
+                Uuid = product.Uuid,
+                SetId = product.SetId,
+                SetCode = product.SetCode,
+                SetName = product.SetName,
+                Name = product.Name,
+                Category = product.Category,
+                Subtype = product.Subtype,
+                CardCount = product.CardCount,
+                ReleaseDate = product.ReleaseDate,
+                TcgplayerProductId = product.TcgplayerProductId,
+                ImageUrl = product.ImageUrl,
+                PurchaseUrlTcgplayer = product.PurchaseUrlTcgplayer,
+                PurchaseUrlCardmarket = product.PurchaseUrlCardmarket,
+                PurchaseUrlCardKingdom = product.PurchaseUrlCardKingdom,
+                UserQuantity = 0
+            }).ToList();
+        }
+
+        IOperationResponse<List<SealedProductOutEntity>> enrichedResponse =
+            OperationResponse<List<SealedProductOutEntity>>.CreateSuccess(enrichedProducts);
+
+        return await _responseMapper.Map(enrichedResponse).ConfigureAwait(false);
     }
 }
