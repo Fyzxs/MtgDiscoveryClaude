@@ -24,6 +24,8 @@ export { default as Menu } from './Menu';
 export { default as Button } from './Button';
 export { default as IconButton } from './IconButton';
 export { default as Fab } from './Fab';
+export { default as ToggleButton } from './ToggleButton';
+export { default as ToggleButtonGroup } from './ToggleButtonGroup';
 
 // Form Components
 export { default as TextField } from './TextField';
@@ -100,6 +102,8 @@ export type {
   ButtonProps,
   IconButtonProps,
   FabProps,
+  ToggleButtonProps,
+  ToggleButtonGroupProps,
 
   // Form
   TextFieldProps,

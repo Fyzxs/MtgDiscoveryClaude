@@ -87,7 +87,7 @@ export const CollectionProgressBar: React.FC<CollectionProgressBarProps> = ({
           }}
         >
           {isNotCollecting
-            ? (compact ? '—' : 'No groups selected')
+            ? (compact ? '—' : 'Not Tracked')
             : `${Math.round(percentage)}%`
           }
         </Typography>

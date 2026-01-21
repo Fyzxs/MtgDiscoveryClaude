@@ -22,11 +22,6 @@ const formatNumber = (num: number): string => {
   return num.toLocaleString();
 };
 
-const formatPercentage = (value: number, total: number): string => {
-  if (total === 0) return '0';
-  return Math.round((value / total) * 100).toString();
-};
-
 const computeCollectionStats = (sets: MtgSet[]): CollectionStats => {
   return sets.reduce<CollectionStats>(
     (acc, set) => {
@@ -174,7 +169,6 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
         <StatItem
           value={`${formatNumber(stats.uniqueOwned)} of ${formatNumber(stats.totalAvailable)}`}
           label="unique cards"
-          subtext={`${formatPercentage(stats.uniqueOwned, stats.totalAvailable)}%`}
         />
 
         <Box
@@ -188,23 +182,7 @@ const CollectionStatsSummaryComponent: React.FC<CollectionStatsSummaryProps> = (
 
         <StatItem
           value={`${formatNumber(stats.collectingSetsCompleted)} of ${formatNumber(stats.collectingSetsTotal)}`}
-          label="sets completed"
-          subtext={stats.collectingSetsTotal > 0 ? `${formatPercentage(stats.collectingSetsCompleted, stats.collectingSetsTotal)}%` : undefined}
-        />
-
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            width: '1px',
-            height: { sm: 40, md: 32, lg: 40 },
-            bgcolor: 'divider'
-          }}
-        />
-
-        <StatItem
-          value={`${formatNumber(stats.setsWithAllUnique)} of ${formatNumber(stats.totalSets)}`}
-          label="all unique cards"
-          subtext={`${formatPercentage(stats.setsWithAllUnique, stats.totalSets)}%`}
+          label="tracked sets complete"
         />
       </Box>
     </Paper>

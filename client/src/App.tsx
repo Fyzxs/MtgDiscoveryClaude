@@ -14,6 +14,7 @@ import { globalSearchFocus } from './utils/globalSearchFocusHandler'
 // Lazy load page components for code splitting
 const AllSetsPage = lazy(() => import('./components/pages/AllSetsPage'))
 const SetPage = lazy(() => import('./components/pages/SetPage'))
+const BinderPage = lazy(() => import('./components/pages/BinderPage'))
 const CardSearchPage = lazy(() => import('./components/pages/CardSearchPage'))
 const ArtistSearchPage = lazy(() => import('./components/pages/ArtistSearchPage'))
 const ArtistCardsPage = lazy(() => import('./components/pages/ArtistCardsPage'))
@@ -109,6 +110,11 @@ function App() {
                   <Route path="/set/:setCode" element={
                     <PageErrorBoundary name="SetPage">
                       <SetPage />
+                    </PageErrorBoundary>
+                  } />
+                  <Route path="/set/binder/:setCode" element={
+                    <PageErrorBoundary name="BinderPage">
+                      <BinderPage />
                     </PageErrorBoundary>
                   } />
                   <Route path="/search/cards" element={

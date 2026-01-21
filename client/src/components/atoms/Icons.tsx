@@ -7,6 +7,7 @@
  */
 
 // Navigation Icons
+export { default as ArrowBackIcon } from '@mui/icons-material/ArrowBack';
 export { default as ArrowDropDownIcon } from '@mui/icons-material/ArrowDropDown';
 export { default as ChevronLeftIcon } from '@mui/icons-material/ChevronLeft';
 export { default as ExpandLessIcon } from '@mui/icons-material/ExpandLess';
@@ -26,6 +27,7 @@ export { default as MenuIcon } from '@mui/icons-material/Menu';
 export { default as OpenInNewIcon } from '@mui/icons-material/OpenInNew';
 export { default as RefreshIcon } from '@mui/icons-material/Refresh';
 export { default as SearchIcon } from '@mui/icons-material/Search';
+export { default as SortByAlphaIcon } from '@mui/icons-material/SortByAlpha';
 export { default as TuneIcon } from '@mui/icons-material/Tune';
 export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOff';
 export { default as ZoomInIcon } from '@mui/icons-material/ZoomIn';
@@ -40,10 +42,14 @@ export { default as WarningIcon } from '@mui/icons-material/Warning';
 
 // Content Icons
 export { default as CollectionsBookmarkIcon } from '@mui/icons-material/CollectionsBookmark';
+export { default as FormatListNumberedIcon } from '@mui/icons-material/FormatListNumbered';
 export { default as ImageNotSupportedIcon } from '@mui/icons-material/ImageNotSupported';
 export { default as KeyboardIcon } from '@mui/icons-material/Keyboard';
+export { default as MenuBookIcon } from '@mui/icons-material/MenuBook';
 export { default as SearchOffIcon } from '@mui/icons-material/SearchOff';
 
 // View Icons
 export { default as ViewListIcon } from '@mui/icons-material/ViewList';
 export { default as ViewModuleIcon } from '@mui/icons-material/ViewModule';
+export { default as LooksOneIcon } from '@mui/icons-material/LooksOne';
+export { default as LooksTwoIcon } from '@mui/icons-material/LooksTwo';

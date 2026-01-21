@@ -48,6 +48,8 @@ import type {
   StackProps as MuiStackProps,
   SwitchProps as MuiSwitchProps,
   TextFieldProps as MuiTextFieldProps,
+  ToggleButtonProps as MuiToggleButtonProps,
+  ToggleButtonGroupProps as MuiToggleButtonGroupProps,
   ToolbarProps as MuiToolbarProps,
   TooltipProps as MuiTooltipProps,
   TypographyProps as MuiTypographyProps,
@@ -77,6 +79,8 @@ export type MenuProps = MuiMenuProps;
 export type ButtonProps = MuiButtonProps;
 export type IconButtonProps = MuiIconButtonProps;
 export type FabProps = MuiFabProps;
+export type ToggleButtonProps = MuiToggleButtonProps;
+export type ToggleButtonGroupProps = MuiToggleButtonGroupProps;
 
 // Form Components
 export type TextFieldProps = MuiTextFieldProps;

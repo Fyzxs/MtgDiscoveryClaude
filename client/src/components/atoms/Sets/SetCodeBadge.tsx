@@ -16,10 +16,10 @@ export const SetCodeBadge = ({ code, compact = false }: SetCodeBadgeProps) => {
       sx={{
         fontFamily: 'monospace',
         fontWeight: 600,
-        fontSize: compact ? '0.625rem' : '0.875rem',
-        height: compact ? 20 : undefined,
+        fontSize: compact ? '0.5625rem' : '0.875rem',
+        height: compact ? 18 : undefined,
         '& .MuiChip-label': {
-          px: compact ? 0.75 : 1,
+          px: compact ? 0.5 : 1,
         },
       }}
     />
