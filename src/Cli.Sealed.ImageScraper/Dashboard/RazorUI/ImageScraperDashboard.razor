@@ -1,0 +1,179 @@
+@using RazorConsole.Components
+@using Spectre.Console
+@inject ImageScraperDashboardState State
+
+<Border BoxBorder="@BoxBorder.Double" BorderColor="@Color.Blue">
+    <Rows>
+        <Align Horizontal="@HorizontalAlignment.Center">
+            <Markup Content="Sealed Product Image Scraper" Foreground="@Color.White" />
+        </Align>
+
+        <Newline />
+
+        <Markup Content="@($"Status: {State.Status}")" Foreground="@Color.Cyan1" />
+
+        <Newline />
+
+        @if (!string.IsNullOrEmpty(State.CurrentSet))
+        {
+            <Rows>
+                <Markup Content="@($"Set: {State.CurrentSet} ({State.SetIndex}/{State.TotalSets})")" Foreground="@Color.Yellow" />
+
+                @if (State.Total > 0)
+                {
+                    <Columns>
+                        <Markup Content="@($"Progress:   ")" />
+                        <Markup Content="@CreateProgressBar(State.Current, State.Total)" />
+                        <Markup Content="@($" {State.Current:N0}/{State.Total:N0} ({Percent}%)")" Foreground="@Color.Green" />
+                    </Columns>
+                    @if (!string.IsNullOrEmpty(State.CurrentProduct))
+                    {
+                        <Markup Content="@($"  Product: {TruncateString(State.CurrentProduct, 55)}")" Foreground="@Color.Grey" />
+                    }
+                }
+            </Rows>
+        }
+
+        <Newline />
+
+        <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+            <Rows>
+                <Markup Content="Statistics" Foreground="@Color.White" />
+                <Columns>
+                    <Markup Content="@($"Downloaded: {State.DownloadedCount:N0}")" Foreground="@Color.Green" />
+                    <Markup Content="  " />
+                    <Markup Content="@($"Skipped: {State.SkippedCount:N0}")" Foreground="@Color.Yellow" />
+                    <Markup Content="  " />
+                    <Markup Content="@($"Errors: {State.ErrorCount:N0}")" Foreground="@(State.ErrorCount > 0 ? Color.Red : Color.Grey)" />
+                </Columns>
+                <Markup Content="@($"No SCG ID: {State.NoScgIdCount:N0}")" Foreground="@Color.Orange1" />
+            </Rows>
+        </Border>
+
+        <Newline />
+
+        @if (State.RecentLogs.Count > 0)
+        {
+            <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+                <Rows>
+                    <Markup Content="Recent Activity" Foreground="@Color.White" />
+                    @foreach (string log in State.RecentLogs)
+                    {
+                        <Markup Content="@TruncateString(log, 70)" Foreground="@Color.Grey" />
+                    }
+                </Rows>
+            </Border>
+            <Newline />
+        }
+
+        <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+            <Columns>
+                <Markup Content="@($"Memory: {State.MemoryUsage} MB")" Foreground="@Color.Grey" />
+                <Markup Content="  " />
+                <Markup Content="@($"Elapsed: {FormatElapsed(State.Elapsed)}")" Foreground="@Color.Grey" />
+            </Columns>
+        </Border>
+
+        @if (State.IsComplete)
+        {
+            <Newline />
+            <Markup Content="@State.CompletionMessage" Foreground="@Color.Green" />
+        }
+
+        <Newline />
+        <Align Horizontal="@HorizontalAlignment.Center">
+            @if (State.IsComplete)
+            {
+                <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Grey">
+                    <Markup Content=" Press [X] to exit " Foreground="@Color.White" />
+                </Border>
+            }
+            else
+            {
+                <Border BoxBorder="@BoxBorder.Rounded" BorderColor="@Color.Red">
+                    <Markup Content=" Press [C] to Cancel " Foreground="@Color.Yellow" />
+                </Border>
+            }
+        </Align>
+    </Rows>
+</Border>
+
+@code {
+    private Task _keyListenerTask;
+    private bool _disposed;
+
+    private int Percent => State.Total > 0 ? (State.Current * 100 / State.Total) : 0;
+
+    protected override Task OnInitializedAsync()
+    {
+        _ = Task.Run(async () =>
+        {
+            while (State.IsComplete is false && _disposed is false)
+            {
+                State.UpdateMemoryUsage();
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        });
+
+        _keyListenerTask = Task.Run(async () =>
+        {
+            while (_disposed is false)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+
+                    if (State.IsComplete is false && (key.Key == ConsoleKey.C || key.KeyChar == 'c' || key.KeyChar == 'C'))
+                    {
+                        State.RequestCancellation();
+                        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+                    }
+                    else if (State.IsComplete && (key.Key == ConsoleKey.X || key.KeyChar == 'x' || key.KeyChar == 'X'))
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+
+                await Task.Delay(50).ConfigureAwait(false);
+            }
+        });
+
+        return Task.CompletedTask;
+    }
+
+    private static string CreateProgressBar(int current, int total)
+    {
+        int barWidth = 30;
+        int filled = total > 0 ? (current * barWidth / total) : 0;
+        int empty = barWidth - filled;
+        return $"[{new string('=', filled)}{new string('-', empty)}]";
+    }
+
+    private static string TruncateString(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        if (text.Length <= maxLength) return text;
+        return string.Concat(text.AsSpan(0, maxLength - 3), "...");
+    }
+
+    private static string FormatElapsed(TimeSpan elapsed)
+    {
+        if (elapsed.TotalHours >= 1)
+        {
+            return $"{(int)elapsed.TotalHours}:{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
+        }
+        return $"{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        if (_keyListenerTask is not null)
+        {
+            _keyListenerTask.Wait(TimeSpan.FromSeconds(1));
+        }
+    }
+}

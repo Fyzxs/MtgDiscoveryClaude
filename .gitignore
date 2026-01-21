@@ -498,3 +498,4 @@ client/schema.json
 
 **/appsettings.Local.json
 src/App.MtgDiscovery.GraphQL/appsettings.Local.json
+src/Cli.Sealed.ImageScraper/sealed-images/**
