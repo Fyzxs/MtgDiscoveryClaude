@@ -12,6 +12,6 @@ internal sealed class CollectionCardIdToReadPointItemMapper : ICollectionCardIdT
     {
         IEnumerable<ReadPointItem> readPointItems = cardIds.Select(cardId => new ReadPointItem() { Id = new ProvidedCosmosItemId(cardId), Partition = new ProvidedPartitionKeyValue(cardId) });
 
-        return Task.FromResult<ICollection<ReadPointItem>>(readPointItems.ToList());
+        return Task.FromResult<ICollection<ReadPointItem>>([.. readPointItems]);
     }
 }

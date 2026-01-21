@@ -1,15 +1,17 @@
 ﻿namespace Lib.Shared.DataModels.Entities.Args;
 
-public interface IAddUserCardArgEntity
+/// <summary>
+/// Argument entity for querying a specific user card.
+/// </summary>
+public interface IUserCardArgEntity
 {
-    string CardId { get; }
-    string SetId { get; }
-    IUserCardDetailsArgEntity UserCardDetails { get; }
-}
+    /// <summary>
+    /// The ID of the user whose card to query.
+    /// </summary>
+    string UserId { get; }
 
-public interface IUserCardDetailsArgEntity
-{
-    string Finish { get; }
-    string Special { get; }
-    int Count { get; }
+    /// <summary>
+    /// The ID of the card to query.
+    /// </summary>
+    string CardId { get; }
 }
