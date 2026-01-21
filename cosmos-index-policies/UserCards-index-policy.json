@@ -1,0 +1,23 @@
+{
+  "indexingMode": "consistent",
+  "automatic": true,
+  "includedPaths": [
+    {
+      "path": "/set_id/?"
+    },
+    {
+      "path": "/card_name_guid/?"
+    },
+    {
+      "path": "/artist_ids/[]/?"
+    }
+  ],
+  "excludedPaths": [
+    {
+      "path": "/*"
+    },
+    {
+      "path": "/\"_etag\"/?"
+    }
+  ]
+}
