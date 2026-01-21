@@ -18,4 +18,5 @@ internal sealed class SealedProductOufEntity : ISealedProductOufEntity
     public string PurchaseUrlTcgplayer { get; init; }
     public string PurchaseUrlCardmarket { get; init; }
     public string PurchaseUrlCardKingdom { get; init; }
+    public int UserQuantity { get; init; }
 }

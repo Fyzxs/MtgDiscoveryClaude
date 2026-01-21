@@ -23,7 +23,8 @@ internal sealed class SealedProductOufToOutMapper : ISealedProductOufToOutMapper
             ImageUrl = source.ImageUrl,
             PurchaseUrlTcgplayer = source.PurchaseUrlTcgplayer,
             PurchaseUrlCardmarket = source.PurchaseUrlCardmarket,
-            PurchaseUrlCardKingdom = source.PurchaseUrlCardKingdom
+            PurchaseUrlCardKingdom = source.PurchaseUrlCardKingdom,
+            UserQuantity = source.UserQuantity
         };
 
         return Task.FromResult(result);
