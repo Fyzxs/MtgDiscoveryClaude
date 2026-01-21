@@ -18,7 +18,7 @@ internal sealed class ArtistAggregate : IArtistAggregate
         _cardIds = [];
         _setIds = [];
         _artistNames = [];
-        _cards = new Dictionary<string, dynamic>();
+        _cards = [];
         _isDirty = false;
     }
 
