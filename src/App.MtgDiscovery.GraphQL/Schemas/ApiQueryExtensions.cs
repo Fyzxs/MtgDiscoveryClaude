@@ -20,7 +20,7 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<CardQueryMethods>()
             .AddTypeExtension<SetQueryMethods>()
             .AddTypeExtension<ArtistQueryMethods>()
-            .AddTypeExtension<UserCardsQueryMethods>()
+            //.AddTypeExtension<UserCardsQueryMethods>()
             .AddTypeExtension<UserInfoQueryMethods>()
             // Input types for queries
             .AddType<UserCardsBySetArgEntityInputType>()

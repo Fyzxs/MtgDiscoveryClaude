@@ -80,8 +80,15 @@ export interface UserSetCardCollecting {
   collectingFinishes?: ('nonFoil' | 'foil' | 'etched')[]; // NEW: Which finishes are being collected (stubbed for Phase 1)
 }
 
-export interface UserSetCardRarityGroup {
-  rarity: string;
+/**
+ * User's card collection data for a specific set group.
+ *
+ * IMPORTANT: This represents a SET GROUP (e.g., "booster", "extended-art", "promo"),
+ * NOT card rarity (common/uncommon/rare/mythic). Card rarity is a property on individual cards.
+ */
+export interface UserSetCardCollectionGroup {
+  /** Set group identifier like "booster", "extended-art", "promo", "showcase" (NOT rarity) */
+  setGroupId: string;
   group: {
     nonFoil: { cards: string[] };
     foil: { cards: string[] };
@@ -93,5 +100,5 @@ export interface UserSetCardCollection {
   totalCards: number;
   uniqueCards: number;
   collecting: UserSetCardCollecting[];
-  groups: UserSetCardRarityGroup[];
+  groups: UserSetCardCollectionGroup[];
 }

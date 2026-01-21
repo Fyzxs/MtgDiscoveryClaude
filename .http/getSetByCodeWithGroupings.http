@@ -1,0 +1,92 @@
+###
+# Get Set By Code With Groupings Query
+# Frontend: client/src/graphql/queries/sets.ts - GET_SET_BY_CODE_WITH_GROUPINGS
+# 
+# @name variables
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get Set by Code with Groupings and User Collection
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
+  setsByCode(codes: $codes) {
+    __typename
+    ... on SetsSuccessResponse {
+      data {
+        id
+        code
+        tcgPlayerId
+        name
+        uri
+        scryfallUri
+        searchUri
+        setType
+        cardCount
+        printedSize
+        releasedAt
+        digital
+        nonFoilOnly
+        foilOnly
+        block
+        iconSvgUri
+        groupings {
+          id
+          displayName
+          order
+          cardCount
+          rawQuery
+          filters {
+            collectorNumberRange {
+              min
+              max
+              orConditions
+            }
+            properties
+          }
+        }
+        userCollection {
+          totalCards
+          uniqueCards
+          collecting {
+            setGroupId
+            collecting
+            count
+            collectingFinishes
+          }
+          groups {
+            setGroupId
+            group {
+              nonFoil {
+                cards
+              }
+              foil {
+                cards
+              }
+              etched {
+                cards
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "codes": {
+    "userId": "6cd19505-4db6-5a83-94b5-8d58f7f8aa38",
+    "setCodes": ["ori"]
+  }
+}

@@ -31,6 +31,7 @@ mutation AddSetGroupNormal($input: AddSetGroupToUserSetCardInput!) {
           setGroupId
           collecting
           count
+          collectingFinishes
         }
       }
       status {
@@ -52,7 +53,8 @@ mutation AddSetGroupNormal($input: AddSetGroupToUserSetCardInput!) {
     "setId": "neo",
     "setGroupId": "other",
     "collecting": true,
-    "count": 399
+    "count": 399,
+    "collectingFinishes": ["nonFoil", "foil"]
   }
 }
 
@@ -79,6 +81,7 @@ mutation AddSetGroupBorderless(
           setGroupId
           collecting
           count
+          collectingFinishes
         }
         groups {
           key
@@ -112,7 +115,8 @@ mutation AddSetGroupBorderless(
     "setId": "neo",
     "setGroupId": "borderless",
     "collecting": true,
-    "count": 50
+    "count": 50,
+    "collectingFinishes": ["foil", "etched"]
   }
 }
 
@@ -139,6 +143,7 @@ mutation AddSetGroupExtendedArt(
           setGroupId
           collecting
           count
+          collectingFinishes
         }
       }
     }
@@ -156,7 +161,8 @@ mutation AddSetGroupExtendedArt(
     "setId": "neo",
     "setGroupId": "extendedart",
     "collecting": true,
-    "count": 25
+    "count": 25,
+    "collectingFinishes": ["foil"]
   }
 }
 
@@ -181,6 +187,7 @@ mutation AddSetGroupNotCollecting(
           setGroupId
           collecting
           count
+          collectingFinishes
         }
       }
     }
@@ -198,7 +205,8 @@ mutation AddSetGroupNotCollecting(
     "setId": "neo",
     "setGroupId": "showcase",
     "collecting": false,
-    "count": 0
+    "count": 0,
+    "collectingFinishes": []
   }
 }
 
@@ -222,6 +230,7 @@ mutation AddSetGroupUnauthorized(
           setGroupId
           collecting
           count
+          collectingFinishes
         }
       }
     }
@@ -239,7 +248,8 @@ mutation AddSetGroupUnauthorized(
     "setId": "neo",
     "setGroupId": "normal",
     "collecting": true,
-    "count": 399
+    "count": 399,
+    "collectingFinishes": ["nonFoil", "foil", "etched"]
   }
 }
 
@@ -295,6 +305,7 @@ query IntrospectAddSetGroupMutation {
 # - setGroupId: The group identifier (e.g., "normal", "borderless", "showcase")
 # - collecting: Boolean indicating if user is collecting this group
 # - count: Total number of cards in this group for the set
+# - collectingFinishes: Array of finish types being collected (e.g., ["nonFoil", "foil", "etched"])
 #
 # Expected Response Examples:
 #
@@ -312,12 +323,14 @@ query IntrospectAddSetGroupMutation {
 #           {
 #             "setGroupId": "normal",
 #             "collecting": true,
-#             "count": 399
+#             "count": 399,
+#             "collectingFinishes": ["nonFoil", "foil", "etched"]
 #           },
 #           {
 #             "setGroupId": "borderless",
 #             "collecting": true,
-#             "count": 50
+#             "count": 50,
+#             "collectingFinishes": ["foil", "etched"]
 #           }
 #         ]
 #       },

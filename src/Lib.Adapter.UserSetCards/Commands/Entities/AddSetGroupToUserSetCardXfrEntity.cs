@@ -1,4 +1,5 @@
-﻿using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
+﻿using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 
 namespace Lib.Adapter.UserSetCards.Commands.Entities;
 
@@ -9,4 +10,5 @@ internal sealed class AddSetGroupToUserSetCardXfrEntity : IAddSetGroupToUserSetC
     public string SetGroupId { get; init; } = string.Empty;
     public bool Collecting { get; init; }
     public int Count { get; init; }
+    public IReadOnlyCollection<string> CollectingFinishes { get; init; } = [];
 }

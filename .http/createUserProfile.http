@@ -1,0 +1,55 @@
+###
+# Create User Profile Mutation
+# Frontend: client/src/graphql/mutations/user.ts - CREATE_USER_PROFILE
+# NOTE: This mutation requires JWT authentication header
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Create User Profile
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+mutation CreateUserProfile($userProfile: CreateUserProfileInput!) {
+  createUserProfile(userProfile: $userProfile) {
+    __typename
+    ... on SuccessUserProfileResponse {
+      data {
+        id
+        auth0UserId
+        email
+        name
+        nickname
+        picture
+        isEmailVerified
+        createdAt
+        updatedAt
+        collectorProfile {
+          id
+          displayName
+          isPublic
+          totalCards
+          uniqueCards
+          favoriteSet
+          collectionValue
+        }
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+      }
+    }
+  }
+}
+
+{
+  "userProfile": {
+    "auth0UserId": "auth0|123456",
+    "email": "user@example.com",
+    "name": "Test User",
+    "nickname": "testuser"
+  }
+}

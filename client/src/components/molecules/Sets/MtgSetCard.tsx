@@ -41,20 +41,36 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
 
     const collectingGroups = set.userCollection.collecting.filter(g => g.collecting === true);
 
+    // Calculate actual cards collected in tracking groups (only those with collecting: true)
+    // Only count finishes that the user is collecting
     const collectedInTrackingGroups = collectingGroups.reduce((sum, collectingGroup) => {
-      const groupData = set.userCollection?.groups.find(g => g.rarity === collectingGroup.setGroupId);
+      const groupData = set.userCollection?.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
       if (!groupData) {
         return sum;
       }
 
-      const nonFoilCount = groupData.group.nonFoil.cards.length;
-      const foilCount = groupData.group.foil.cards.length;
-      const etchedCount = groupData.group.etched.cards.length;
+      const collectingFinishes = collectingGroup.collectingFinishes || [];
+      let groupCollected = 0;
 
-      return sum + nonFoilCount + foilCount + etchedCount;
+      if (collectingFinishes.includes('nonFoil')) {
+        groupCollected += groupData.group.nonFoil.cards.length;
+      }
+      if (collectingFinishes.includes('foil')) {
+        groupCollected += groupData.group.foil.cards.length;
+      }
+      if (collectingFinishes.includes('etched')) {
+        groupCollected += groupData.group.etched.cards.length;
+      }
+
+      return sum + groupCollected;
     }, 0);
 
-    const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+    // Total available cards in tracking groups (only those with collecting: true)
+    // Multiply count by the number of finishes being collected
+    const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => {
+      const finishCount = (g.collectingFinishes || []).length;
+      return sum + (g.count * finishCount);
+    }, 0);
 
     const percentage = totalAvailableInTrackingGroups > 0
       ? (collectedInTrackingGroups / totalAvailableInTrackingGroups) * 100

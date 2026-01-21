@@ -21,7 +21,8 @@ internal sealed class AddSetGroupIntegrator : IAddSetGroupIntegrator
             {
                 SetGroupId = setGroupId,
                 Collecting = change.Collecting,
-                Count = change.Count
+                Count = change.Count,
+                CollectingFinishes = change.CollectingFinishes
             };
         }
         else
@@ -30,7 +31,8 @@ internal sealed class AddSetGroupIntegrator : IAddSetGroupIntegrator
             {
                 SetGroupId = setGroupId,
                 Collecting = change.Collecting,
-                Count = change.Count
+                Count = change.Count,
+                CollectingFinishes = change.CollectingFinishes
             };
         }
 

@@ -7,6 +7,6 @@ public sealed class SetInformationOutEntity
 {
     public int TotalCards { get; init; }
     public int UniqueCards { get; init; }
-    public IReadOnlyCollection<UserSetCardRarityGroupOutEntity> Groups { get; init; }
+    public IReadOnlyCollection<UserSetCardCollectionGroupOutEntity> Groups { get; init; }
     public IReadOnlyCollection<UserSetCardCollectingOutEntity> Collecting { get; init; }
 }

@@ -36,7 +36,7 @@ internal static class ApiMutationExtensions
             .AddType<UserSetCardSuccessDataResponseModelType>()
             .AddType<UserSetCardOutEntityType>()
             .AddType<UserSetCardCollectingOutEntityType>()
-            .AddType<UserSetCardRarityGroupOutEntityType>()
+            .AddType<UserSetCardCollectionGroupOutEntityType>()
             .AddType<UserSetCardGroupOutEntityType>()
             .AddType<UserSetCardFinishGroupOutEntityType>()
             .AddType<FailureResponseModelType>()

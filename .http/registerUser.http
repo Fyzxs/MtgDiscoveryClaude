@@ -1,0 +1,37 @@
+###
+# Register User Mutation
+# Frontend: client/src/graphql/mutations/user.ts - REGISTER_USER
+# NOTE: This mutation requires JWT authentication header
+# @Variables
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Register User
+# @ref variables
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+mutation RegisterUser {
+  registerUserInfo {
+    __typename
+    ... on UserRegistrationSuccessResponse {
+      data {
+        userId
+        displayName
+      }
+      status {
+        message
+        statusCode
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}

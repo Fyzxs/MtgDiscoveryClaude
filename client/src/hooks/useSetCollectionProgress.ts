@@ -1,7 +1,5 @@
 import { useCallback } from 'react';
 import { logger } from '../utils/logger';
-import { useApolloClient } from '@apollo/client/react';
-import { GET_USER_SET_CARDS } from '../graphql/queries/userCards';
 import type { MtgSet } from '../types/set';
 import { useCollectorParam } from './useCollectorParam';
 
@@ -40,9 +38,10 @@ interface UserSetCardData {
     setGroupId: string;
     collecting: boolean;
     count: number;
+    collectingFinishes: string[];
   }[];
   groups: {
-    rarity: string;
+    setGroupId: string;
     group: {
       nonFoil: { cards: string[] };
       foil: { cards: string[] };
@@ -63,44 +62,23 @@ interface UserSetCardResponse {
 }
 
 interface SetCollectionProgressHook {
-  getCollectionProgress: (set: MtgSet, forceRefresh?: boolean) => Promise<SetCollectionProgress | undefined>;
+  getCollectionProgress: (set: MtgSet, userCollection?: UserSetCardData) => SetCollectionProgress | undefined;
 }
 
 export function useSetCollectionProgress(): SetCollectionProgressHook {
-  const { hasCollector, collectorId } = useCollectorParam();
-  const client = useApolloClient();
+  const { hasCollector } = useCollectorParam();
 
-  const getCollectionProgress = useCallback(async (set: MtgSet, forceRefresh = false): Promise<SetCollectionProgress | undefined> => {
-    if (!hasCollector || !collectorId) {
+  const getCollectionProgress = useCallback((set: MtgSet, userCollection?: UserSetCardData): SetCollectionProgress | undefined => {
+    if (!hasCollector || !userCollection) {
       return undefined;
     }
 
     try {
-      const { data } = await client.query<UserSetCardResponse>({
-        query: GET_USER_SET_CARDS,
-        variables: {
-          setCardArgs: {
-            userId: collectorId,
-            setId: set.id
-          }
-        },
-        errorPolicy: 'all',
-        fetchPolicy: forceRefresh ? 'network-only' : 'cache-first'
-      });
-
-      if (!data || !data.userSetCards || data.userSetCards.__typename === 'FailureResponse') {
-        return undefined;
-      }
-
-      const userSetData = data.userSetCards.data;
-
-      if (!userSetData) {
-        return undefined;
-      }
+      const userSetData = userCollection;
 
       // Build detailed group information for ALL groups (not just collecting ones)
       const groups: CollectionGroup[] = userSetData.collecting.map(collectingGroup => {
-        const groupData = userSetData.groups.find(g => g.rarity === collectingGroup.setGroupId);
+        const groupData = userSetData.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
 
         const nonFoilCollected = groupData?.group.nonFoil.cards.length || 0;
         const foilCollected = groupData?.group.foil.cards.length || 0;
@@ -147,21 +125,35 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
       const collectingGroups = userSetData.collecting.filter(g => g.collecting === true);
 
       // Calculate actual cards collected in tracking groups (only those with collecting: true)
+      // Only count finishes that the user is collecting
       const collectedInTrackingGroups = collectingGroups.reduce((sum, collectingGroup) => {
-        const groupData = userSetData.groups.find(g => g.rarity === collectingGroup.setGroupId);
+        const groupData = userSetData.groups.find(g => g.setGroupId === collectingGroup.setGroupId);
         if (!groupData) {
           return sum;
         }
 
-        const nonFoilCount = groupData.group.nonFoil.cards.length;
-        const foilCount = groupData.group.foil.cards.length;
-        const etchedCount = groupData.group.etched.cards.length;
+        const collectingFinishes = collectingGroup.collectingFinishes || [];
+        let groupCollected = 0;
 
-        return sum + nonFoilCount + foilCount + etchedCount;
+        if (collectingFinishes.includes('nonFoil')) {
+          groupCollected += groupData.group.nonFoil.cards.length;
+        }
+        if (collectingFinishes.includes('foil')) {
+          groupCollected += groupData.group.foil.cards.length;
+        }
+        if (collectingFinishes.includes('etched')) {
+          groupCollected += groupData.group.etched.cards.length;
+        }
+
+        return sum + groupCollected;
       }, 0);
 
       // Total available cards in tracking groups (only those with collecting: true)
-      const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+      // Multiply count by the number of finishes being collected
+      const totalAvailableInTrackingGroups = collectingGroups.reduce((sum, g) => {
+        const finishCount = (g.collectingFinishes || []).length;
+        return sum + (g.count * finishCount);
+      }, 0);
 
       // If no groups are being collected, show 0% but still return the groups
       const percentage = totalAvailableInTrackingGroups > 0
@@ -181,7 +173,7 @@ export function useSetCollectionProgress(): SetCollectionProgressHook {
       logger.error('Error in getCollectionProgress:', error);
       return undefined;
     }
-  }, [hasCollector, collectorId, client]);
+  }, [hasCollector]);
 
   return {
     getCollectionProgress

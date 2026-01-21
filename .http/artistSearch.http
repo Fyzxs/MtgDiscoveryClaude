@@ -1,0 +1,35 @@
+###
+# Artist Name Search Query
+# Frontend: client/src/graphql/queries/artistSearch.ts - ARTIST_NAME_SEARCH
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Artist Search
+POST {{gqlEndpoint}}
+Content-Type: application/json
+
+query ArtistSearch($searchTerm: ArtistSearchTermArgEntityInput!) {
+  artistSearch(searchTerm: $searchTerm) {
+    __typename
+    ... on ArtistSearchResultsSuccessResponse {
+      data {
+        artistId
+        name
+      }
+    }
+    ... on FailureResponse {
+      status {
+        message
+        statusCode
+      }
+    }
+  }
+}
+
+{
+  "searchTerm": {
+    "searchTerm": "Nielsen"
+  }
+}

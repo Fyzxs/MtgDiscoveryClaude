@@ -1,0 +1,20 @@
+###
+# Get User Info Query
+# Frontend: client/src/graphql/mutations/user.ts - GET_USER_INFO
+# NOTE: This query requires JWT authentication header
+###
+@baseUrl = https://localhost:65203
+@gqlEndpoint = {{baseUrl}}/graphql
+
+
+### Get User Info
+POST {{gqlEndpoint}}
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+query GetUserInfo {
+  userInfo {
+    userId
+    email
+  }
+}
