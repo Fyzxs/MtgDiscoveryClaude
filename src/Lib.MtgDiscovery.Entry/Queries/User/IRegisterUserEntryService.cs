@@ -1,6 +1,6 @@
 ﻿using Lib.MtgDiscovery.Entry.Apis;
-using Lib.Shared.DataModels.Entities.Args;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.Shared.DataModels.Entities.Args;
 
 namespace Lib.MtgDiscovery.Entry.Queries.User;
 

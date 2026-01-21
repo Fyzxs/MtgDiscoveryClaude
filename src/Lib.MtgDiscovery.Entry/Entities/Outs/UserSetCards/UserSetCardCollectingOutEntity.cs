@@ -1,4 +1,4 @@
-namespace Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
+﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 
 public sealed class UserSetCardCollectingOutEntity
 {

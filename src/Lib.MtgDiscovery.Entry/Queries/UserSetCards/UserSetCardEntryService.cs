@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Domain.UserSetCards.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.MtgDiscovery.Entry.Queries.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Validators.UserSetCards;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args;
-using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
