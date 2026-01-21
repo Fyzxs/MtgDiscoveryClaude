@@ -1,4 +1,4 @@
-using Lib.Adapter.UserSetCards.Apis.Entities;
+﻿using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Mappers;
 

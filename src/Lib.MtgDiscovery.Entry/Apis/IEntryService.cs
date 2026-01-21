@@ -6,4 +6,5 @@ public interface IEntryService :
     IArtistEntryService,
     IUserEntryService,
     IUserCardsEntryService,
-    IUserCardsQueryEntryService;
+    IUserCardsQueryEntryService,
+    IUserSetCardsQueryEntryService;

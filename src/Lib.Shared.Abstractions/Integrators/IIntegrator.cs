@@ -1,4 +1,4 @@
-namespace Lib.Shared.Abstractions.Integrators;
+﻿namespace Lib.Shared.Abstractions.Integrators;
 
 /// <summary>
 /// Defines an integrator that incorporates changes from a delta object into a state object,
