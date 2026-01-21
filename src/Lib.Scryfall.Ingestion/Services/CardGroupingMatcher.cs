@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -11,7 +11,7 @@ internal interface ICardGroupingMatcher
     string GetGroupIdForCard(dynamic cardData, string setCode);
 }
 
-internal sealed class CardGroupingMatcher : ICardGroupingMatcher
+internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
 {
     private readonly ISetGroupingsLoader _groupingsLoader;
 
@@ -33,9 +33,7 @@ internal sealed class CardGroupingMatcher : ICardGroupingMatcher
         }
 
         // Sort groupings by order (process in order)
-        List<CardGrouping> sortedGroupings = groupingData.Groupings
-            .OrderBy(g => g.Order)
-            .ToList();
+        List<CardGrouping> sortedGroupings = [.. groupingData.Groupings.OrderBy(g => g.Order)];
 
         // Find first matching grouping
         foreach (CardGrouping grouping in sortedGroupings)
@@ -115,7 +113,7 @@ internal sealed class CardGroupingMatcher : ICardGroupingMatcher
     private static int GetNumericValue(string value)
     {
         // Extract leading digits from the string
-        Match match = Regex.Match(value, @"^(\d+)");
+        Match match = MyRegex().Match(value);
         return match.Success ? int.Parse(match.Groups[1].Value) : 0;
     }
 
@@ -291,4 +289,7 @@ internal sealed class CardGroupingMatcher : ICardGroupingMatcher
         }
         return null;
     }
+
+    [GeneratedRegex(@"^(\d+)")]
+    private static partial Regex MyRegex();
 }
