@@ -7,4 +7,4 @@ namespace Lib.Adapter.UserSealedProducts.Mappers;
 /// <summary>
 /// Maps UserSealedProductExtEntity to IUserSealedProductItrEntity for query results.
 /// </summary>
-internal interface IUserSealedProductItrMapper : ICreateMapper<UserSealedProductExtEntity, IUserSealedProductItrEntity>;
+public interface IUserSealedProductItrMapper : ICreateMapper<UserSealedProductExtEntity, IUserSealedProductItrEntity>;

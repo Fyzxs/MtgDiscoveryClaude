@@ -123,6 +123,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserSealedProdu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserSealedProducts", "Lib.Aggregator.UserSealedProducts\Lib.Aggregator.UserSealedProducts.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserSealedProducts", "Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj", "{BC87EA72-B311-4F1A-A1B3-CD2D51EE0D7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
