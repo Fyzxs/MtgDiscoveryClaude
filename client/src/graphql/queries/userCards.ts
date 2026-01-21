@@ -59,3 +59,29 @@ export const GET_USER_CARD_BY_ID = gql`
     }
   }
 `;
+
+export const GET_USER_CARDS_BATCH = gql`
+  query GetUserCardsBatch($cardsArgs: UserCardsByIdsArgEntityInput!) {
+    userCardsByIds(cardsArgs: $cardsArgs) {
+      __typename
+      ... on SuccessUserCardsCollectionResponse {
+        data {
+          userId
+          cardId
+          setId
+          collectedList {
+            finish
+            special
+            count
+          }
+        }
+      }
+      ... on FailureResponse {
+        status {
+          message
+          statusCode
+        }
+      }
+    }
+  }
+`;

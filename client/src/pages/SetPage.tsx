@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useQuery } from '@apollo/client/react';
+import { useQuery, useApolloClient } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
-import { 
-  Container, 
-  Typography, 
-  Box, 
+import {
+  Container,
+  Typography,
+  Box,
   Alert,
   FormControlLabel,
   Switch
 } from '@mui/material';
 import { GET_CARDS_BY_SET_CODE } from '../graphql/queries/cards';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
-import { GET_USER_CARDS_BY_SET } from '../graphql/queries/userCards';
+import { getCollectionManager } from '../services/collectionManager';
 import { MtgSetCard } from '../components/organisms/MtgSetCard';
 import { CardGroup } from '../components/organisms/CardGroup';
 import { ResultsSummary } from '../components/molecules/shared/ResultsSummary';
@@ -55,16 +55,6 @@ interface SetsResponse {
   };
 }
 
-interface UserCardsResponse {
-  userCardsBySet: {
-    __typename: string;
-    data?: UserCardData[];
-    status?: {
-      message: string;
-      statusCode: number;
-    };
-  };
-}
 
 interface CardGroupConfig {
   id: string;
@@ -88,6 +78,13 @@ export const SetPage: React.FC = () => {
 
   // Check for collector parameter in URL
   const { hasCollector, collectorId } = useCollectorParam();
+
+  // Apollo client for CollectionManager
+  const apolloClient = useApolloClient();
+
+  // State for collection data
+  const [collectionMap, setCollectionMap] = useState<Map<string, UserCardData>>(new Map());
+  const [collectionLoading, setCollectionLoading] = useState(false);
 
   // URL state configuration for query parameters
   const urlStateConfig = {
@@ -148,30 +145,33 @@ export const SetPage: React.FC = () => {
   // Define setInfo before using it in user cards query
   const setInfo = setData?.setsByCode?.data?.[0];
 
-  // Debug logging - remove after testing
-  console.log('Debug - hasCollector:', hasCollector, 'collectorId:', collectorId, 'setInfo?.id:', setInfo?.id);
 
-  // Query user cards if collector parameter is present
-  const { loading: userCardsLoading, error: userCardsError, data: userCardsData } = useQuery<UserCardsResponse>(GET_USER_CARDS_BY_SET, {
-    variables: {
-      setArgs: {
-        setId: setInfo?.id,
-        userId: collectorId
+  // Fetch collection data using CollectionManager when set info is available
+  useEffect(() => {
+    if (!hasCollector || !collectorId || !setInfo?.id) {
+      setCollectionMap(new Map());
+      return;
+    }
+
+    const fetchCollectionData = async () => {
+      try {
+        setCollectionLoading(true);
+        const manager = getCollectionManager(apolloClient);
+        const data = await manager.requestSetCollectionData(setInfo.id, collectorId);
+        setCollectionMap(data);
+      } catch (error) {
+        console.error('Failed to fetch collection data:', error);
+        setCollectionMap(new Map());
+      } finally {
+        setCollectionLoading(false);
       }
-    },
-    skip: !setCode || !hasCollector || !collectorId || !setInfo?.id
-  });
+    };
+
+    fetchCollectionData();
+  }, [hasCollector, collectorId, setInfo?.id, apolloClient]);
 
   // Create collection lookup map for cards
-  const collectionLookup = useMemo(() => {
-    if (!userCardsData?.userCardsBySet?.data) return new Map();
-
-    const lookup = new Map<string, UserCardData>();
-    userCardsData.userCardsBySet.data.forEach(userCard => {
-      lookup.set(userCard.cardId, userCard);
-    });
-    return lookup;
-  }, [userCardsData]);
+  const collectionLookup = collectionMap;
 
   // Configure filter state (memoized to prevent recreating on every render)
   const filterConfig = useMemo(() => ({
@@ -437,7 +437,7 @@ export const SetPage: React.FC = () => {
   const { isLoading, firstError } = useQueryStates([
     { loading: cardsLoading, error: cardsError },
     { loading: setLoading, error: setError },
-    { loading: userCardsLoading, error: userCardsError }
+    { loading: collectionLoading, error: null }
   ]);
 
   if (!setCode) {

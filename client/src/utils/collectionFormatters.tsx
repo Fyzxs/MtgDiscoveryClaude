@@ -42,40 +42,70 @@ export function formatCollectionInline(collection: CollectionItem[]): React.Reac
   const specialTypes = new Set(collection.filter(item => item.special !== 'none').map(item => item.special));
   const hasSpecials = specialTypes.size > 0;
 
-  // Get finish indicators (always show finish types)
-  const getFinishIndicators = () => {
-    const indicators: JSX.Element[] = [];
+  // Get finish counts with emojis
+  const getFinishCounts = () => {
+    const counts: JSX.Element[] = [];
     if (finishTypes.includes('nonfoil')) {
-      indicators.push(<EmojiWithTooltip key="nonfoil" emoji="📄">📄</EmojiWithTooltip>);
+      const count = finishGroups.nonfoil.reduce((sum, item) => sum + item.count, 0);
+      counts.push(
+        <span key="nonfoil">
+          <EmojiWithTooltip emoji="📄">📄</EmojiWithTooltip>{count}
+        </span>
+      );
     }
     if (finishTypes.includes('foil')) {
-      indicators.push(<EmojiWithTooltip key="foil" emoji="✨">✨</EmojiWithTooltip>);
+      const count = finishGroups.foil.reduce((sum, item) => sum + item.count, 0);
+      counts.push(
+        <span key="foil">
+          <EmojiWithTooltip emoji="✨">✨</EmojiWithTooltip>{count}
+        </span>
+      );
     }
     if (finishTypes.includes('etched')) {
-      indicators.push(<EmojiWithTooltip key="etched" emoji="🌟">🌟</EmojiWithTooltip>);
+      const count = finishGroups.etched.reduce((sum, item) => sum + item.count, 0);
+      counts.push(
+        <span key="etched">
+          <EmojiWithTooltip emoji="🌟">🌟</EmojiWithTooltip>{count}
+        </span>
+      );
     }
-    return indicators.length > 0 ? <>{indicators}</> : null;
+    return <>{counts.map((item, index) => <React.Fragment key={`finish-${index}`}>{item}{index < counts.length - 1 ? ' ' : ''}</React.Fragment>)}</>;
   };
 
-  // Get special indicators (always show if any special types exist)
-  const getSpecialIndicators = () => {
+  // Get special counts with emojis
+  const getSpecialCounts = () => {
     if (!hasSpecials) return null;
-    const indicators: JSX.Element[] = [];
+    const counts: JSX.Element[] = [];
     // Order: 📜 → ✍️ → 🎨
-    if (specialTypes.has('proof')) {
-      indicators.push(<EmojiWithTooltip key="proof" emoji="📜">📜</EmojiWithTooltip>);
+    if (specialTypes.has('artist_proof')) {
+      const count = collection.filter(item => item.special === 'artist_proof').reduce((sum, item) => sum + item.count, 0);
+      counts.push(
+        <span key="proof">
+          <EmojiWithTooltip emoji="📜">📜</EmojiWithTooltip>{count}
+        </span>
+      );
     }
     if (specialTypes.has('signed')) {
-      indicators.push(<EmojiWithTooltip key="signed" emoji="✍️">✍️</EmojiWithTooltip>);
+      const count = collection.filter(item => item.special === 'signed').reduce((sum, item) => sum + item.count, 0);
+      counts.push(
+        <span key="signed">
+          <EmojiWithTooltip emoji="✍️">✍️</EmojiWithTooltip>{count}
+        </span>
+      );
     }
     if (specialTypes.has('altered')) {
-      indicators.push(<EmojiWithTooltip key="altered" emoji="🎨">🎨</EmojiWithTooltip>);
+      const count = collection.filter(item => item.special === 'altered').reduce((sum, item) => sum + item.count, 0);
+      counts.push(
+        <span key="altered">
+          <EmojiWithTooltip emoji="🎨">🎨</EmojiWithTooltip>{count}
+        </span>
+      );
     }
-    return <>{indicators}</>;
+    return <>{counts.map((item, index) => <React.Fragment key={`special-${index}`}>{item}{index < counts.length - 1 ? ' ' : ''}</React.Fragment>)}</>;
   };
 
-  const finishPart = getFinishIndicators();
-  const specialPart = getSpecialIndicators();
+  const finishPart = getFinishCounts();
+  const specialPart = hasSpecials ? getSpecialCounts() : null;
   const separator = finishPart && specialPart ? ' | ' : '';
 
   return (
