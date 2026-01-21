@@ -25,8 +25,7 @@ public sealed class UserCardsMutationMethods
     public UserCardsMutationMethods(ILogger logger) : this(new EntryService(logger))
     { }
 
-    private UserCardsMutationMethods(IEntryService entryService) =>
-        _entryService = entryService;
+    private UserCardsMutationMethods(IEntryService entryService) => _entryService = entryService;
 
     [Authorize]
     [GraphQLType(typeof(UserCardCollectionResponseModelUnionType))]

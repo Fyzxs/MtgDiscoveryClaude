@@ -22,7 +22,7 @@ namespace Lib.Adapter.UserCards.Apis;
 /// Matches EntryService, DomainService, and AggregatorService patterns
 /// to maintain predictable architecture across all layers.
 /// </summary>
-public sealed class UserCardsAdapterService : IUserCardsAdapterService
+internal sealed class UserCardsAdapterService : IUserCardsAdapterService
 {
     private readonly IUserCardsCommandAdapter _userCardsCommandAdapter;
 
