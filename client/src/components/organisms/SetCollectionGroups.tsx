@@ -1,21 +1,7 @@
 import React from 'react';
 import { Box, Checkbox, FormControlLabel, Typography, LinearProgress } from '../atoms';
 import { useTheme } from '../atoms';
-
-interface GroupFinishProgress {
-  finishType: 'nonFoil' | 'foil' | 'etched';
-  collected: number;
-  total: number;
-  percentage: number;
-  emoji: string;
-}
-
-interface CollectionGroup {
-  setGroupId: string;
-  displayName: string;
-  isCollecting: boolean;
-  finishes: GroupFinishProgress[];
-}
+import type { CollectionGroup } from '../../types/collection';
 
 interface SetCollectionGroupsProps {
   groups: CollectionGroup[];

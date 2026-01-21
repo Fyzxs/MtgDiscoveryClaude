@@ -212,7 +212,7 @@ export const MtgSetCard: React.FC<MtgSetCardProps> = ({
           <SetIconDisplay
             iconSvgUri={set.iconSvgUri}
             setName={set.name}
-            borderColor={isHovered ? '#1976d2' : setTypeColor}
+            borderColor={isHovered ? theme.palette.primary.main : setTypeColor}
           />
 
           <Box sx={{ width: '100%' }}>
