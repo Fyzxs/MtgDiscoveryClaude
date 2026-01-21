@@ -11,7 +11,9 @@ internal sealed class AddCardToCollectionArgEntityValidatorContainer : Validator
     public AddCardToCollectionArgEntityValidatorContainer() : base([
             new HasValidCardIdAddCardToCollectionArgEntityValidator(),
             new HasValidSetIdAddCardToCollectionArgEntityValidator(),
-            new HasCollectedListAddCardToCollectionArgEntityValidator(),
+            new CollectedItemNotNullValidator(),
+            new CollectedItemFinishValidator(),
+            new CollectedItemSpecialValidator(),
         ])
     { }
 }
@@ -48,18 +50,3 @@ internal sealed class HasValidSetIdAddCardToCollectionArgEntityValidator : Opera
     }
 }
 
-internal sealed class HasCollectedListAddCardToCollectionArgEntityValidator : OperationResponseValidator<IAddCardToCollectionArgEntity, IUserCardCollectionItrEntity>
-{
-    public HasCollectedListAddCardToCollectionArgEntityValidator() : base(new Validator(), new Message())
-    { }
-
-    public sealed class Validator : IValidator<IAddCardToCollectionArgEntity>
-    {
-        public Task<bool> IsValid(IAddCardToCollectionArgEntity arg) => Task.FromResult(arg.CollectedItem is not null);
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "Collected item cannot be null";
-    }
-}

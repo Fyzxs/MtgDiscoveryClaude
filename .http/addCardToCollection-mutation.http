@@ -54,7 +54,7 @@ mutation AddSingleCard(
       "setId": "neo",
       "collectedItem": {
         "finish": "nonfoil",
-        "special": "none",
+        "special": "proof",
         "count": 1
       }
     }
