@@ -22,15 +22,23 @@ public sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IAddCardToCollectionArgsMapper _argsMapper;
+    private readonly IOperationResponseToResponseModelMapper<List<CardItemOutEntity>> _cardResponseMapper;
 
-    public UserCardsMutationMethods(ILogger logger) : this(new EntryService(logger), new AddCardToCollectionArgsMapper())
+    public UserCardsMutationMethods(ILogger logger) : this(
+        new EntryService(logger),
+        new AddCardToCollectionArgsMapper(),
+        new OperationResponseToResponseModelMapper<List<CardItemOutEntity>>())
     {
     }
 
-    private UserCardsMutationMethods(IEntryService entryService, IAddCardToCollectionArgsMapper argsMapper)
+    private UserCardsMutationMethods(
+        IEntryService entryService,
+        IAddCardToCollectionArgsMapper argsMapper,
+        IOperationResponseToResponseModelMapper<List<CardItemOutEntity>> cardResponseMapper)
     {
         _entryService = entryService;
         _argsMapper = argsMapper;
+        _cardResponseMapper = cardResponseMapper;
     }
 
     [Authorize]
@@ -38,21 +46,7 @@ public sealed class UserCardsMutationMethods
     public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
     {
         IAddCardToCollectionArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
-
         IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToCollectionAsync(combinedArgs).ConfigureAwait(false);
-
-        if (response.IsFailure)
-        {
-            return new FailureResponseModel()
-            {
-                Status = new StatusDataModel()
-                {
-                    Message = response.OuterException.StatusMessage,
-                    StatusCode = response.OuterException.StatusCode
-                }
-            };
-        }
-
-        return new SuccessDataResponseModel<List<CardItemOutEntity>>() { Data = response.ResponseData };
+        return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 }
