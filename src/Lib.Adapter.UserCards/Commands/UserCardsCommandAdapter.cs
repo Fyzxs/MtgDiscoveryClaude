@@ -123,7 +123,7 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
             UserId = existing.UserId,
             CardId = existing.CardId,
             SetId = existing.SetId,
-            CollectedList = mergedItems.Values.ToList()
+            CollectedList = [.. mergedItems.Values]
         };
     }
 }

@@ -10,10 +10,10 @@ internal sealed class AddCardToCollectionArgsToItrMapper : IAddCardToCollectionA
     public Task<IUserCardCollectionItrEntity> Map(IAuthUserArgEntity source1, IAddCardToCollectionArgEntity source2)
     {
         // Convert single item to collection for pipeline compatibility
-        List<ICollectedItemItrEntity> collectedList = new List<ICollectedItemItrEntity>
-        {
+        List<ICollectedItemItrEntity> collectedList =
+        [
             MapToCollectedItemItrEntity(source2.CollectedItem)
-        };
+        ];
 
         // Combine user ID from auth with args data
         return Task.FromResult<IUserCardCollectionItrEntity>(new UserCardCollectionItrEntity
