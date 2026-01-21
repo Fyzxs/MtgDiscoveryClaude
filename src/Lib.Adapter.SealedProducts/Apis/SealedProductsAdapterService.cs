@@ -22,5 +22,5 @@ public sealed class SealedProductsAdapterService : ISealedProductsAdapterService
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> GetBySetCodeAsync(
         ISealedProductsBySetCodeXfrEntity setCode,
         CancellationToken cancellationToken) =>
-        await _sealedProductsBySetCodeAdapter.ExecuteAsync(setCode, cancellationToken).ConfigureAwait(false);
+        await _sealedProductsBySetCodeAdapter.Execute(setCode).ConfigureAwait(false);
 }

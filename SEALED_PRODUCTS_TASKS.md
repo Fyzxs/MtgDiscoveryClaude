@@ -21,10 +21,11 @@ This document contains granular, independently implementable tasks for the seale
 | Entry Service | `Lib.MtgDiscovery.Entry/Queries/Cards/CardsBySetCodeEntryService.cs` |
 | GraphQL Query | `App.MtgDiscovery.GraphQL/Queries/SetQueryMethods.cs` |
 
-**Required Abstractions from `Lib.Shared.Abstractions/Actions/`:**
+**Required Abstractions:**
 
 When implementing the following patterns, you MUST extend the appropriate interface:
 
+**From `Lib.Shared.Abstractions/`:**
 | Pattern | Interface | Location |
 |---------|-----------|----------|
 | Mappers (create new object) | `ICreateMapper<TSource, TResult>` | `Actions/Mappers/ICreateMapper.cs` |
@@ -35,8 +36,24 @@ When implementing the following patterns, you MUST extend the appropriate interf
 | Enrichments | `IEnrichmentAction<T>` | `Actions/Enrichments/` |
 | Resolvers | `IResolver<TIn, TOut>` | `Actions/Resolvers/IResolver.cs` |
 | Integrators | `IIntegrator<TSource, TDest>` | `Actions/Integrators/IIntegrator.cs` |
+| Service Execution | `IServiceExecute<TInput, TOutput>` | `Services/IServiceExecute.cs` |
 
-**Important:** All mapper interfaces use `Task<T>` return types. Use `Task.FromResult()` for synchronous operations.
+**From `Lib.Shared.Invocation/`:**
+| Pattern | Interface | Location |
+|---------|-----------|----------|
+| Operation Response Service | `IOperationResponseService<TInput, TOutput>` | `Services/IOperationResponseService.cs` |
+
+**Important Notes:**
+- All mapper interfaces use `Task<T>` return types. Use `Task.FromResult()` for synchronous operations.
+- Adapter query interfaces (like `ISealedProductsBySetCodeAdapter`) MUST extend `IOperationResponseService<TInput, TOutput>`.
+- The `IOperationResponseService` uses `Execute(TInput input)` method (no CancellationToken).
+- Always check existing similar interfaces in the codebase to verify correct base interface inheritance.
+
+**Interface Inheritance Verification Step:**
+Before finalizing any new interface, verify:
+1. Check similar existing interfaces in the codebase (e.g., `ICardsBySetCodeAdapter`)
+2. Identify what base interfaces they extend
+3. Ensure your new interface follows the same inheritance pattern
 
 ---
 
