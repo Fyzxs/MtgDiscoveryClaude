@@ -130,30 +130,56 @@ export const presets = {
       'name-desc': <T extends { name: string }>(a: T, b: T) => b.name.localeCompare(a.name),
       'cards-desc': <T extends { cardCount?: number }>(a: T, b: T) => (b.cardCount || 0) - (a.cardCount || 0),
       'cards-asc': <T extends { cardCount?: number }>(a: T, b: T) => (a.cardCount || 0) - (b.cardCount || 0),
-      'completion-desc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
+      'completion-desc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; counts: { total: number; nonFoil: number; foil: number; etched: number }; setGroupId: string; collectingFinishes?: string[] }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
         const getPercentage = (item: T): number => {
           if (!item.userCollection) return -1;
           const collectingGroups = item.userCollection.collecting.filter(g => g.collecting === true);
+          if (collectingGroups.length === 0) return -1;
           const collected = collectingGroups.reduce((sum, cg) => {
             const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
             if (!groupData) return sum;
-            return sum + groupData.group.nonFoil.cards.length + groupData.group.foil.cards.length + groupData.group.etched.cards.length;
+            const finishes = cg.collectingFinishes || [];
+            let groupTotal = 0;
+            if (finishes.includes('nonFoil')) groupTotal += groupData.group.nonFoil.cards.length;
+            if (finishes.includes('foil')) groupTotal += groupData.group.foil.cards.length;
+            if (finishes.includes('etched')) groupTotal += groupData.group.etched.cards.length;
+            return sum + groupTotal;
           }, 0);
-          const total = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+          const total = collectingGroups.reduce((sum, g) => {
+            const finishes = g.collectingFinishes || [];
+            let groupTotal = 0;
+            if (finishes.includes('nonFoil')) groupTotal += g.counts.nonFoil;
+            if (finishes.includes('foil')) groupTotal += g.counts.foil;
+            if (finishes.includes('etched')) groupTotal += g.counts.etched;
+            return sum + groupTotal;
+          }, 0);
           return total > 0 ? (collected / total) * 100 : 0;
         };
         return getPercentage(b) - getPercentage(a);
       },
-      'completion-asc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; count: number; setGroupId: string }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
+      'completion-asc': <T extends { userCollection?: { collecting: Array<{ collecting: boolean; counts: { total: number; nonFoil: number; foil: number; etched: number }; setGroupId: string; collectingFinishes?: string[] }>; groups: Array<{ setGroupId: string; group: { nonFoil: { cards: string[] }; foil: { cards: string[] }; etched: { cards: string[] } } }> } }>(a: T, b: T) => {
         const getPercentage = (item: T): number => {
           if (!item.userCollection) return -1;
           const collectingGroups = item.userCollection.collecting.filter(g => g.collecting === true);
+          if (collectingGroups.length === 0) return -1;
           const collected = collectingGroups.reduce((sum, cg) => {
             const groupData = item.userCollection?.groups.find(g => g.setGroupId === cg.setGroupId);
             if (!groupData) return sum;
-            return sum + groupData.group.nonFoil.cards.length + groupData.group.foil.cards.length + groupData.group.etched.cards.length;
+            const finishes = cg.collectingFinishes || [];
+            let groupTotal = 0;
+            if (finishes.includes('nonFoil')) groupTotal += groupData.group.nonFoil.cards.length;
+            if (finishes.includes('foil')) groupTotal += groupData.group.foil.cards.length;
+            if (finishes.includes('etched')) groupTotal += groupData.group.etched.cards.length;
+            return sum + groupTotal;
           }, 0);
-          const total = collectingGroups.reduce((sum, g) => sum + g.count, 0);
+          const total = collectingGroups.reduce((sum, g) => {
+            const finishes = g.collectingFinishes || [];
+            let groupTotal = 0;
+            if (finishes.includes('nonFoil')) groupTotal += g.counts.nonFoil;
+            if (finishes.includes('foil')) groupTotal += g.counts.foil;
+            if (finishes.includes('etched')) groupTotal += g.counts.etched;
+            return sum + groupTotal;
+          }, 0);
           return total > 0 ? (collected / total) * 100 : 0;
         };
         return getPercentage(a) - getPercentage(b);
