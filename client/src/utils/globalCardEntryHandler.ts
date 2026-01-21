@@ -89,7 +89,7 @@ class GlobalCardEntryHandler {
     // Valid entry keys
     const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
       'z', 'n', 'f', 'o', 'e', 'h', 'g', 'i', 'r', 'p', 't', 'm',
-      '+', '`', '-', '~', 'x'];
+      '+', '`', '-', '~', 'x', 'backspace'];
 
     if (validKeys.includes(key) || (isShift && key === '~')) {
       event.preventDefault();
@@ -116,6 +116,15 @@ class GlobalCardEntryHandler {
     // Number keys
     if (key >= '0' && key <= '9') {
       state.count = state.count === '0' ? key : state.count + key;
+    }
+    // Backspace - delete last digit
+    else if (key === 'backspace') {
+      const current = state.count || '';
+      if (current.length > 1) {
+        state.count = current.slice(0, -1);
+      } else {
+        state.count = '';
+      }
     }
     // Increment
     else if (key === '+' || key === '`') {
