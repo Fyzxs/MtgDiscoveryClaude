@@ -72,6 +72,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
                 fullWidth={search.fullWidth !== false}
                 loading={search.loading}
                 disabled={search.disabled}
+                enableDoubleShiftFocus={true}
                 sx={search.sx}
               />
             </Grid>
@@ -241,6 +242,7 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({
               fullWidth={layout === 'vertical' && search.fullWidth !== false}
               loading={search.loading}
               disabled={search.disabled}
+              enableDoubleShiftFocus={true}
               sx={search.sx}
             />
           )}

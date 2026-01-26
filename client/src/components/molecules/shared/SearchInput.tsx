@@ -32,6 +32,9 @@ interface SearchInputProps {
   onSubmit?: () => void;      // Form submit
   onEnter?: (value: string) => void;  // Enter key
 
+  // Global keyboard shortcut participation
+  enableDoubleShiftFocus?: boolean;  // If true, participates in double-shift-to-focus behavior
+
   // Styling
   size?: 'small' | 'medium';
   fullWidth?: boolean;
@@ -56,6 +59,7 @@ const SearchInputComponent: React.FC<SearchInputProps> = ({
   disabled = false,
   onSubmit,
   onEnter,
+  enableDoubleShiftFocus = false,
   size = 'small',
   fullWidth = false,
   minWidth = 300,
@@ -250,7 +254,7 @@ const SearchInputComponent: React.FC<SearchInputProps> = ({
       disabled={disabled}
       label={showLabel ? label : ''}
       inputProps={{
-        'data-search-input': 'true'
+        'data-search-input': enableDoubleShiftFocus ? 'true' : undefined
       }}
       sx={{
         minWidth: fullWidth ? undefined : (expandable ? currentWidth : minWidth),

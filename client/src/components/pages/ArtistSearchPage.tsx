@@ -1,13 +1,13 @@
-import React, { useState, useCallback, startTransition } from 'react';
-import { useLazyQuery } from '@apollo/client/react';
-import { Heading, BodyText } from '../molecules/text';
-import { Section } from '../molecules/layouts';
-import { LoadingIndicator } from '../molecules/feedback';
-import { SearchTemplate } from '../templates/pages/SearchTemplate';
-import { SearchInput } from '../molecules/shared/SearchInput';
-import { ArtistSearchResults } from '../organisms/Artists/ArtistSearchResults';
-import { ARTIST_NAME_SEARCH } from '../../graphql/queries/artistSearch';
-import { useCollectorNavigation } from '../../hooks/useCollectorNavigation';
+import React, { useState, useCallback, startTransition } from "react";
+import { useLazyQuery } from "@apollo/client/react";
+import { Heading, BodyText } from "../molecules/text";
+import { Section } from "../molecules/layouts";
+import { LoadingIndicator } from "../molecules/feedback";
+import { SearchTemplate } from "../templates/pages/SearchTemplate";
+import { SearchInput } from "../molecules/shared/SearchInput";
+import { ArtistSearchResults } from "../organisms/Artists/ArtistSearchResults";
+import { ARTIST_NAME_SEARCH } from "../../graphql/queries/artistSearch";
+import { useCollectorNavigation } from "../../hooks/useCollectorNavigation";
 
 interface ArtistNameResult {
   artistId: string;
@@ -27,18 +27,22 @@ interface ArtistNameSearchResponse {
 
 export const ArtistSearchPage: React.FC = React.memo(() => {
   const { navigateWithCollector } = useCollectorNavigation();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const [searchArtists, { loading, data }] = useLazyQuery<ArtistNameSearchResponse>(
-    ARTIST_NAME_SEARCH,
-    {
-      fetchPolicy: 'cache-and-network'
-    }
+  const [searchArtists, { loading, data }] =
+    useLazyQuery<ArtistNameSearchResponse>(ARTIST_NAME_SEARCH, {
+      fetchPolicy: "cache-and-network",
+    });
+
+  const handleArtistClick = useCallback(
+    (artistName: string) => {
+      navigateWithCollector(
+        `/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, "-"))}`,
+        { formats: "paper" },
+      );
+    },
+    [navigateWithCollector],
   );
-
-  const handleArtistClick = useCallback((artistName: string) => {
-    navigateWithCollector(`/artists/${encodeURIComponent(artistName.toLowerCase().replace(/\s+/g, '-'))}`, { formats: 'paper' });
-  }, [navigateWithCollector]);
 
   const handleSearchChange = useCallback((value: string) => {
     startTransition(() => {
@@ -46,31 +50,38 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
     });
   }, []);
 
-  const handleSearchSubmit = useCallback((value: string) => {
-    startTransition(() => {
-      setSearchTerm(value);
-      if (value.trim().length > 0) {
-        searchArtists({
-          variables: {
-            searchTerm: {
-              searchTerm: value
-            }
-          }
-        });
-      }
-    });
-  }, [searchArtists]);
+  const handleSearchSubmit = useCallback(
+    (value: string) => {
+      startTransition(() => {
+        setSearchTerm(value);
+        if (value.trim().length > 0) {
+          searchArtists({
+            variables: {
+              searchTerm: {
+                searchTerm: value,
+              },
+            },
+          });
+        }
+      });
+    },
+    [searchArtists],
+  );
 
   // Determine display states
   const hasSearched = data !== undefined;
-  const hasResults = hasSearched && data?.artistSearch?.data && data.artistSearch.data.length > 0;
-  const isEmpty = hasSearched && !loading && data?.artistSearch?.data?.length === 0;
+  const hasResults =
+    hasSearched &&
+    data?.artistSearch?.data &&
+    data.artistSearch.data.length > 0;
+  const isEmpty =
+    hasSearched && !loading && data?.artistSearch?.data?.length === 0;
   const showInitialState = data === undefined;
 
   // Search input slot
   const searchInput = (
-    <Section asSection={false} sx={{ width: '100%', maxWidth: 600 }}>
-      <Heading variant="h4" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
+    <Section asSection={false} sx={{ width: "100%", maxWidth: 600 }}>
+      <Heading variant="h4" gutterBottom sx={{ textAlign: "center", mb: 3 }}>
         Artist Search
       </Heading>
       <SearchInput
@@ -80,6 +91,8 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
         placeholder="Enter artist name and press Enter..."
         fullWidth
         disabled={loading}
+        enableDoubleShiftFocus={true}
+        debounceMs={500}
       />
     </Section>
   );
@@ -95,7 +108,11 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
   const resultsContent = (() => {
     if (showInitialState) {
       return (
-        <BodyText variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
+        <BodyText
+          variant="body1"
+          color="text.secondary"
+          sx={{ textAlign: "center" }}
+        >
           Enter artist name and press Enter to search
         </BodyText>
       );
@@ -121,7 +138,11 @@ export const ArtistSearchPage: React.FC = React.memo(() => {
 
   // Empty state slot
   const emptyState = (
-    <BodyText variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
+    <BodyText
+      variant="body1"
+      color="text.secondary"
+      sx={{ textAlign: "center" }}
+    >
       No artists found matching "{searchTerm}"
     </BodyText>
   );
