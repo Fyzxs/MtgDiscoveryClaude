@@ -24,7 +24,8 @@ This document details the implementation plan for transitioning from the current
     id: string,                    // Collection ID (GUID)
     owner_id: string,              // User ID of collection owner
     name: string,                  // Collection display name
-    type: string,                  // "default" | "custom" | "wishlist" | "cube" | "trade"
+    type: string,                  // "default" | "custom" | "cube" | "trade"
+    visibility: string,            // "private" | "public"
     is_default: bool,              // True for user's default collection
     authorized_users: [            // Array of AuthorizedUserExtEntity
       {
@@ -47,12 +48,14 @@ This document details the implementation plan for transitioning from the current
 - **Files to Create**:
   - `src/Lib.Shared.DataModels/Entities/Args/ICollectionArgEntity.cs` - GraphQL input
   - `src/Lib.Shared.DataModels/Entities/Args/IAuthorizedUserArgEntity.cs` - Authorization input
+  - `src/Lib.Shared.DataModels/Entities/Args/IUpdateCollectionVisibilityArgEntity.cs` - Visibility update input (`CollectionId`, `Visibility`)
   - `src/Lib.Shared.DataModels/Entities/Itrs/ICollectionItrEntity.cs` - Internal transfer
   - `src/Lib.Shared.DataModels/Entities/Itrs/IAuthorizedUserItrEntity.cs` - Authorization transfer
+  - `src/Lib.Shared.DataModels/Entities/Itrs/IUpdateCollectionVisibilityItrEntity.cs` - Visibility update transfer
   - `src/Lib.Shared.DataModels/Entities/Outs/ICollectionOutEntity.cs` - GraphQL output
   - `src/Lib.Shared.DataModels/Entities/Outs/IAuthorizedUserOutEntity.cs` - Authorization output
 - **Properties** (align with Cosmos schema):
-  - `CollectionId`, `OwnerId`, `Name`, `Type`, `IsDefault`, `AuthorizedUsers`, `CreatedAt`, `UpdatedAt`
+  - `CollectionId`, `OwnerId`, `Name`, `Type`, `Visibility`, `IsDefault`, `AuthorizedUsers`, `CreatedAt`, `UpdatedAt`
 - **Dependencies**: Task 1.1.1
 - **Testing**: Interface contracts verified by implementations
 
@@ -122,6 +125,7 @@ This document details the implementation plan for transitioning from the current
     - `owner_id`: `userId`
     - `name`: "Default Collection" (or user's nickname + "'s Collection")
     - `type`: "default"
+    - `visibility`: "private"
     - `is_default`: true
     - `authorized_users`: [{ user_id: userId, role: "owner", granted_at: now, granted_by: userId }]
 - **Dependencies**: Feature 1.4 (Collection Aggregator Service)
@@ -140,6 +144,8 @@ This document details the implementation plan for transitioning from the current
 - **Methods**:
   - `Task<IOperationResponse<ICollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgEntity args)`
   - `Task<IOperationResponse<ICollectionOutEntity>> CreateDefaultCollectionAsync(string userId, string userNickname)`
+  - `Task<IOperationResponse<ICollectionOutEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityArgEntity args)`
+  - `Task<IOperationResponse<ICollectionOutEntity>> DeleteCollectionAsync(IDeleteCollectionArgEntity args)`
   - `Task<IOperationResponse<ICollectionOutEntity>> GetCollectionAsync(string collectionId)`
   - `Task<IOperationResponse<ICollectionOutEntity[]>> GetUserCollectionsAsync(string userId)`
   - `Task<IOperationResponse<ICollectionOutEntity[]>> GetAccessibleCollectionsAsync(string userId)`
@@ -152,10 +158,12 @@ This document details the implementation plan for transitioning from the current
   - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/CreateCollectionArgEntityValidator_HasValidUserId.cs`
   - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/CreateCollectionArgEntityValidator_HasValidName.cs`
   - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/CreateCollectionArgEntityValidator_HasValidType.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/CreateCollectionArgEntityValidator_HasValidVisibility.cs`
 - **Validation Rules**:
   - UserId: Not null, not empty, valid GUID format
   - Name: Not null, not empty, max 100 characters, no reserved names ("default")
-  - Type: Valid enum value ("custom" | "wishlist" | "cube" | "trade")
+  - Type: Valid enum value ("custom" | "cube" | "trade")
+  - Visibility: Valid value ("private" | "public"), defaults to "private" if not provided
 - **Dependencies**: Task 1.1.2
 - **Testing**: Unit tests for each validator
 
@@ -192,6 +200,9 @@ This document details the implementation plan for transitioning from the current
 - **Methods**: Match `ICollectionEntryService` signatures (ItrEntity instead of ArgEntity)
   - `Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity collection)`
   - `Task<IOperationResponse<ICollectionOufEntity>> CreateDefaultCollectionAsync(string userId, string userNickname)`
+  - `Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity args)`
+  - `Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity args)`
+  - `Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity args)`
   - `Task<IOperationResponse<ICollectionOufEntity>> GetCollectionAsync(string collectionId)`
   - `Task<IOperationResponse<ICollectionOufEntity[]>> GetUserCollectionsAsync(string userId)`
   - `Task<IOperationResponse<ICollectionOufEntity[]>> GetAccessibleCollectionsAsync(string userId)`
@@ -249,7 +260,7 @@ This document details the implementation plan for transitioning from the current
   - `src/Lib.Adapter.Collections/Commands/ICollectionCommandAdapter.cs`
   - `src/Lib.Adapter.Collections/Queries/ICollectionQueryAdapter.cs`
 - **Methods**:
-  - Command: `CreateCollectionAsync`, `UpdateCollectionAsync`, `DeleteCollectionAsync`
+  - Command: `CreateCollectionAsync`, `UpdateCollectionAsync`, `UpdateCollectionVisibilityAsync`, `DeleteCollectionAsync`, `TransferCollectionOwnershipAsync`
   - Query: `GetCollectionAsync`, `GetUserCollectionsAsync`, `GetAccessibleCollectionsAsync`
 - **Dependencies**: Task 1.1.2
 - **Testing**: Interface verified by implementation
@@ -278,9 +289,14 @@ This document details the implementation plan for transitioning from the current
 - **File**: Create `src/Lib.Domain.Collections/Authorization/ICollectionAuthorizationService.cs`
 - **Methods**:
   - `Task<bool> CanUserAccessCollectionAsync(string userId, string collectionId, string requiredRole)`
-  - `Task<bool> IsUserCollectionOwnerAsync(string userId, string collectionId)`
+  - `Task<bool> IsUserPrimaryOwnerAsync(string userId, string collectionId)` — checks `owner_id` field
+  - `Task<bool> IsUserCollectionOwnerAsync(string userId, string collectionId)` — checks `authorized_users` for "owner" role
   - `Task<string> GetUserRoleInCollectionAsync(string userId, string collectionId)`
+  - `Task<bool> CanUserViewCollectionAsync(string userId, string collectionId)`
 - **Roles Hierarchy**: owner > editor > viewer
+- **Primary Owner vs Co-Owner**:
+  - Primary owner (`owner_id`): Can transfer, delete, change visibility
+  - Co-owner (role "owner" in `authorized_users`): Full CRUD + sharing, but cannot transfer, delete, or change visibility
 - **Dependencies**: Feature 1.5
 - **Testing**: Unit tests with various authorization scenarios
 
@@ -288,19 +304,23 @@ This document details the implementation plan for transitioning from the current
 - **File**: Create `src/Lib.Domain.Collections/Authorization/CollectionAuthorizationService.cs`
 - **Logic**:
   - Fetch collection by ID
-  - Check `authorized_users` array for user
+  - For view access: If collection visibility is `public`, any authenticated user can view. If `private`, check `authorized_users` for viewer+ role.
+  - For edit/owner access: Always check `authorized_users` array regardless of visibility
   - Validate role meets requirement
 - **Dependencies**: Task 1.7.1
 - **Testing**: Unit tests covering:
   - Owner can perform all operations
   - Editor can add/remove cards
   - Viewer can only read
-  - Non-authorized user cannot access
+  - Non-authorized user cannot access private collection
+  - Any authenticated user can view public collection
+  - Non-authorized user cannot edit public collection
 
 ##### Task 1.7.3: Create Collection Authorization Validators
 - **Files to Create**:
   - `src/Lib.MtgDiscovery.Entry/Commands/Validators/AuthUserCanAccessCollectionValidator.cs`
-  - `src/Lib.MtgDiscovery.Entry/Commands/Validators/AuthUserIsCollectionOwnerValidator.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Validators/AuthUserIsCollectionOwnerValidator.cs` — checks "owner" role in `authorized_users`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Validators/AuthUserIsPrimaryCollectionOwnerValidator.cs` — checks `owner_id` field (for delete, transfer, visibility)
 - **Usage**: Add to validator containers for collection mutations
 - **Dependencies**: Task 1.7.2
 - **Testing**: Unit tests with fake authorization service
@@ -347,7 +367,7 @@ This document details the implementation plan for transitioning from the current
 - **Migration Steps**:
   1. Query all UserInfo documents
   2. For each user:
-     - Create default collection (if not exists)
+     - Create default collection (if not exists) with `visibility: "private"`
      - Query all UserCards documents (partition key = user_id)
      - Update each document with `collection_id = default_collection_id`
      - Repeat for UserWishlistCards
@@ -402,6 +422,7 @@ This document details the implementation plan for transitioning from the current
 - **File**: Create `src/App.MtgDiscovery.GraphQL/Mutations/CollectionMutationMethods.cs`
 - **Mutations**:
   - `createCollection(args: CreateCollectionInput!): CollectionResponse!` (authenticated)
+  - `updateCollectionVisibility(args: UpdateCollectionVisibilityInput!): CollectionResponse!` (authenticated, primary owner only)
 - **Pattern**: `[ExtendObjectType("Mutation")]` with `[Authorize]` and `ClaimsPrincipal`
 - **Dependencies**: Task 1.9.1, Feature 1.3
 - **Testing**: Integration tests
@@ -503,6 +524,67 @@ This document details the implementation plan for transitioning from the current
 
 ---
 
+### Feature 1.12: Collection Deletion
+
+**Description**: Allow primary owners to delete non-default collections, removing the collection and all associated card data.
+
+#### Tasks:
+
+##### Task 1.12.1: Create Delete Collection Entities
+- **Files to Create**:
+  - `src/Lib.Shared.DataModels/Entities/Args/IDeleteCollectionArgEntity.cs` — Properties: `CollectionId`
+  - `src/Lib.Shared.DataModels/Entities/Itrs/IDeleteCollectionItrEntity.cs` — Properties: `CollectionId`, `UserId`
+- **Dependencies**: Task 1.1.2
+- **Testing**: Interface contracts
+
+##### Task 1.12.2: Create Delete Collection Validators
+- **Files to Create**:
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/DeleteCollectionArgEntityValidatorContainer.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/DeleteCollectionArgEntityValidator_HasValidCollectionId.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/DeleteCollectionArgEntityValidator_AuthUserIsPrimaryOwner.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/DeleteCollectionArgEntityValidator_IsNotDefaultCollection.cs`
+- **Validation Rules**:
+  - CollectionId: Valid GUID
+  - Authorization: Authenticated user is the primary owner (`owner_id`)
+  - Cannot delete default collection (`is_default` is false)
+- **Dependencies**: Task 1.12.1, Feature 1.7
+- **Testing**: Unit tests for each validator
+
+##### Task 1.12.3: Implement Delete Collection Service Layers
+- **Files to Create**:
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/DeleteCollectionEntryService.cs`
+  - `src/Lib.Domain.Collections/Commands/DeleteCollectionDomainService.cs`
+  - `src/Lib.Aggregator.Collections/Commands/DeleteCollectionAggregatorService.cs`
+- **Business Logic**:
+  - Validate request (primary owner, not default)
+  - Delete all UserCards documents with matching `collection_id`
+  - Delete all UserWishlistCards documents with matching `collection_id`
+  - Delete all UserSetCards documents with matching `collection_id`
+  - Delete the Collection document
+- **Dependencies**: Tasks 1.12.1, 1.12.2, Features 1.3-1.6
+- **Testing**: Unit tests for each layer
+
+##### Task 1.12.4: Add Delete to GraphQL Mutations
+- **File**: Modify `src/App.MtgDiscovery.GraphQL/Mutations/CollectionMutationMethods.cs`
+- **New Mutation**: `deleteCollection(collectionId: ID!): CollectionResponse!` (authenticated, primary owner only)
+- **Dependencies**: Task 1.12.3
+- **Testing**: Integration tests
+
+##### Task 1.12.5: Create Delete Collection Tests
+- **Files to Create**:
+  - `src/Lib.MtgDiscovery.Entry.Tests/Commands/Collections/DeleteCollectionEntryServiceTests.cs`
+  - `src/Lib.Domain.Collections.Tests/Commands/DeleteCollectionDomainServiceTests.cs`
+  - `src/Lib.Aggregator.Collections.Tests/Commands/DeleteCollectionAggregatorServiceTests.cs`
+- **Test Cases**:
+  - Successful deletion removes Collection + all associated card records
+  - Non-primary-owner cannot delete
+  - Default collection cannot be deleted
+  - Non-existent collection returns error
+- **Dependencies**: Task 1.12.3
+- **Testing**: All tests pass
+
+---
+
 ### Epic 1 Completion Criteria
 
 - [ ] All Cosmos containers created (Collections)
@@ -517,7 +599,11 @@ This document details the implementation plan for transitioning from the current
 - [ ] Users can create collections via GraphQL
 - [ ] Users' default collection is auto-created on registration
 - [ ] UserCards mutations accept `collectionId` parameter
-- [ ] Authorization validates collection access
+- [ ] Authorization validates collection access (respects visibility: private vs public)
+- [ ] Visibility defaults to private for new and migrated collections
+- [ ] Only primary owner can change collection visibility
+- [ ] Primary owners can delete non-default collections
+- [ ] Deletion removes Collection + all associated UserCards/UserWishlistCards/UserSetCards
 
 ---
 
@@ -585,6 +671,7 @@ This document details the implementation plan for transitioning from the current
           ownerId
           name
           type
+          visibility
           isDefault
           authorizedUsers {
             userId
@@ -622,6 +709,7 @@ This document details the implementation plan for transitioning from the current
           ownerId
           name
           type
+          visibility
           isDefault
           createdAt
         }
@@ -684,7 +772,6 @@ This document details the implementation plan for transitioning from the current
 - **Badge Colors** (using theme):
   - `default`: Blue (`theme.palette.primary.main`)
   - `custom`: Green (`theme.palette.success.main`)
-  - `wishlist`: Purple (`theme.palette.secondary.main`)
   - `cube`: Orange (`theme.palette.warning.main`)
   - `trade`: Teal (`theme.palette.info.main`)
 - **Dependencies**: None
@@ -716,7 +803,10 @@ This document details the implementation plan for transitioning from the current
   - `onCollectionCreated: (collection: Collection) => void`
 - **Form Fields**:
   - Name: TextField (required, max 100 chars)
-  - Type: Select dropdown (custom | wishlist | cube | trade)
+  - Type: Select dropdown (custom | cube | trade)
+  - Visibility: Toggle switch (private | public), defaults to private
+    - Helper text for private: "Only you and people you share with can see this collection"
+    - Helper text for public: "Anyone can view this collection"
 - **Validation**:
   - Name required
   - Name cannot be "default" (case-insensitive)
@@ -772,9 +862,12 @@ This document details the implementation plan for transitioning from the current
   - Collection icon (based on type)
   - Name (Typography variant="h6")
   - Type badge
+  - Visibility indicator (lock icon for private, globe icon for public)
   - Stats (e.g., "127 cards")
   - Action buttons (Select, View Details)
   - Active indicator (checkmark or highlight)
+  - Visibility toggle (primary owner only): Switch to change between private/public
+  - Delete button (primary owner only, non-default): Opens confirmation dialog, calls `deleteCollection` mutation
 - **Styling**: Card elevation, hover effects
 - **Dependencies**: Task 2.3.2
 - **Testing**: Component tests
@@ -849,6 +942,8 @@ This document details the implementation plan for transitioning from the current
 - [ ] Users can switch between collections seamlessly
 - [ ] Collection type badges displayed consistently
 - [ ] Default collection always available and clearly marked
+- [ ] Visibility toggle available for collection owners
+- [ ] Visibility indicator (lock/globe) displayed on collection cards
 
 ---
 
@@ -1231,6 +1326,84 @@ This document details the implementation plan for transitioning from the current
 
 ---
 
+### Feature 3.10: Collection Ownership Transfer
+
+**Description**: Allow primary owners to transfer ownership of non-default collections to authorized users.
+
+#### Tasks:
+
+##### Task 3.10.1: Create Transfer Ownership Entities
+- **Files to Create**:
+  - `src/Lib.Shared.DataModels/Entities/Args/ITransferCollectionOwnershipArgEntity.cs` — Properties: `CollectionId`, `TargetUserId`
+  - `src/Lib.Shared.DataModels/Entities/Itrs/ITransferCollectionOwnershipItrEntity.cs` — Properties: `CollectionId`, `CurrentOwnerId`, `TargetUserId`
+- **Dependencies**: Epic 1 Feature 1.1
+- **Testing**: Interface contracts
+
+##### Task 3.10.2: Create Transfer Ownership Validators
+- **Files to Create**:
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/TransferCollectionOwnershipArgEntityValidatorContainer.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/TransferCollectionOwnershipArgEntityValidator_HasValidCollectionId.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/TransferCollectionOwnershipArgEntityValidator_HasValidTargetUserId.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/TransferCollectionOwnershipArgEntityValidator_AuthUserIsPrimaryOwner.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/TransferCollectionOwnershipArgEntityValidator_IsNotDefaultCollection.cs`
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/TransferCollectionOwnershipArgEntityValidator_TargetIsAuthorizedUser.cs`
+- **Validation Rules**:
+  - CollectionId: Valid GUID
+  - TargetUserId: Valid GUID, user exists in `authorized_users` for this collection
+  - Authorization: Authenticated user is the primary owner (`owner_id`)
+  - Cannot transfer default collection
+- **Dependencies**: Task 3.10.1, Epic 1 Feature 1.7
+- **Testing**: Unit tests for each validator
+
+##### Task 3.10.3: Implement Transfer Ownership Service Layers
+- **Files to Create**:
+  - `src/Lib.MtgDiscovery.Entry/Commands/Collections/TransferCollectionOwnershipEntryService.cs`
+  - `src/Lib.Domain.Collections/Commands/TransferCollectionOwnershipDomainService.cs`
+  - `src/Lib.Aggregator.Collections/Commands/TransferCollectionOwnershipAggregatorService.cs`
+- **Business Logic**:
+  - Fetch collection document
+  - Change `owner_id` to target user
+  - Ensure previous owner has "owner" role entry in `authorized_users` (co-owner)
+  - Ensure target user's `authorized_users` entry is updated to "owner" role
+  - Update `updated_at` timestamp
+  - Update collection document
+- **Dependencies**: Tasks 3.10.1, 3.10.2, Epic 1 Features 1.3-1.6
+- **Testing**: Unit tests for each layer
+
+##### Task 3.10.4: Add Transfer to GraphQL Mutations
+- **File**: Modify `src/App.MtgDiscovery.GraphQL/Mutations/CollectionMutationMethods.cs`
+- **New Mutation**: `transferCollectionOwnership(args: TransferCollectionOwnershipInput!): CollectionResponse!` (authenticated, primary owner only)
+- **Dependencies**: Task 3.10.3
+- **Testing**: Integration tests
+
+##### Task 3.10.5: Create Transfer Ownership Tests
+- **Files to Create**:
+  - `src/Lib.MtgDiscovery.Entry.Tests/Commands/Collections/TransferCollectionOwnershipEntryServiceTests.cs`
+  - `src/Lib.Domain.Collections.Tests/Commands/TransferCollectionOwnershipDomainServiceTests.cs`
+  - `src/Lib.Aggregator.Collections.Tests/Commands/TransferCollectionOwnershipAggregatorServiceTests.cs`
+- **Test Cases**:
+  - Successful transfer changes `owner_id`
+  - Previous owner retains "owner" role in `authorized_users`
+  - Non-primary-owner cannot transfer
+  - Default collection cannot be transferred
+  - Target must be an existing authorized user
+  - Target's `authorized_users` entry updated to "owner" role
+- **Dependencies**: Task 3.10.3
+- **Testing**: All tests pass
+
+##### Task 3.10.6: Frontend Transfer UI
+- **File**: Modify `client/src/components/molecules/shared/CollectionCard.tsx`
+- **Changes**:
+  - Add "Transfer Ownership" button (primary owner only, non-default collections)
+  - Opens confirmation dialog with authorized user selection
+  - Calls `transferCollectionOwnership` mutation
+- **GraphQL Files to Create**:
+  - `client/src/graphql/mutations/transferCollectionOwnership.graphql`
+- **Dependencies**: Task 3.10.4
+- **Testing**: Component tests
+
+---
+
 ### Epic 3 Completion Criteria
 
 - [ ] Users can grant collection access via GraphQL
@@ -1242,7 +1415,11 @@ This document details the implementation plan for transitioning from the current
 - [ ] Sharing notifications displayed for all operations
 - [ ] Owner can view and manage collection access list
 - [ ] Authorization enforced (only owner can grant/revoke)
-- [ ] All sharing tests pass
+- [ ] Primary owner can transfer ownership of non-default collections
+- [ ] Previous owner becomes co-owner after transfer
+- [ ] Default collection cannot be transferred
+- [ ] Transfer target must be an existing authorized user
+- [ ] All sharing and transfer tests pass
 
 ---
 
@@ -1302,12 +1479,23 @@ This document details the implementation plan for transitioning from the current
    - GraphQL resolvers check `ClaimsPrincipal`
    - Adapter layer validates collection access before Cosmos operations
 
-2. **User ID Privacy**:
+2. **Visibility Enforcement**:
+   - Private collections: All access (read and write) requires explicit `authorizedUsers` entry
+   - Public collections: Read access is open to any authenticated user with the collection ID; write access still requires editor+ role in `authorizedUsers`
+   - Only the primary owner (`owner_id`) can change visibility
+   - Changing from public to private does not auto-revoke existing viewer grants
+
+3. **Primary Owner vs Co-Owner Enforcement**:
+   - Primary owner (`owner_id`): Can delete, transfer ownership, change visibility
+   - Co-owner (role "owner" in `authorized_users`): Full CRUD + sharing, but cannot delete, transfer, or change visibility
+   - Validators distinguish between `AuthUserIsPrimaryCollectionOwnerValidator` and `AuthUserIsCollectionOwnerValidator`
+
+4. **User ID Privacy**:
    - User IDs are GUIDs (not sequential, harder to guess)
    - No public user search (prevents enumeration)
    - Future: Add privacy settings for discoverability
 
-3. **Rate Limiting** (Future):
+5. **Rate Limiting** (Future):
    - Limit collection sharing invitations per user per day
    - Prevent abuse of grant/revoke operations
 
@@ -1465,18 +1653,18 @@ This document details the implementation plan for transitioning from the current
 
 ---
 
-## Open Questions
+## Open Questions (All Resolved)
 
-1. **Collection Limits**: Should there be a maximum number of collections per user?
-2. **Collection Deletion**: Should users be able to delete collections? What happens to shared access?
-3. **Collection Transfer**: Should ownership be transferable?
-4. **Access Audit Log**: Should we track access history (who accessed when)?
-5. **Collection Templates**: Should there be templates for common collection types (e.g., Cube with specific structure)?
-6. **Bulk Sharing**: Should owners be able to grant access to multiple users at once?
-7. **Access Expiration**: Should shared access have expiration dates?
-8. **Collection Privacy Levels**: Should collections be private/public/unlisted?
-9. **Collection Search**: Should collections be searchable by name/type (future)?
-10. **Collection Statistics Dashboard**: Should there be analytics per collection?
+1. ~~**Collection Limits**: Should there be a maximum number of collections per user?~~ **Resolved**: No enforced limit. Keeps the code simple; can add a limit later if needed.
+2. ~~**Collection Deletion**: Should users be able to delete collections? What happens to shared access?~~ **Resolved**: Yes. Hard delete of the Collection document + all associated UserCards, UserWishlistCards, and UserSetCards records. Default collection cannot be deleted. Only the primary owner (`owner_id`) can delete. Shared access is implicitly removed when the collection ceases to exist.
+3. ~~**Collection Transfer**: Should ownership be transferable?~~ **Resolved**: Yes, for non-default collections. Primary owner (`owner_id`) can transfer to any existing authorized user. Previous owner becomes a co-owner (retains "owner" role in `authorized_users`). Default collection cannot be transferred.
+4. ~~**Access Audit Log**: Should we track access history (who accessed when)?~~ **Resolved**: No. System doesn't warrant that level of tracking.
+5. ~~**Collection Templates**: Should there be templates for common collection types (e.g., Cube with specific structure)?~~ **Resolved**: No.
+6. ~~**Bulk Sharing**: Should owners be able to grant access to multiple users at once?~~ **Resolved**: No. Users must be found individually then granted permissions.
+7. ~~**Access Expiration**: Should shared access have expiration dates?~~ **Resolved**: No.
+8. ~~**Collection Privacy Levels**: Should collections be private/public/unlisted?~~ **Resolved**: Collections have a `visibility` field (`private` | `public`) stored as a string for future extensibility. Private collections are only visible to authorized users. Public collections are viewable by any authenticated user who has the collection ID. No browsing/listing of public collections. Unlisted was excluded since collections aren't currently listed.
+9. ~~**Collection Search**: Should collections be searchable by name/type (future)?~~ **Resolved**: No. Public visibility means viewable-by-ID, not browsable/searchable.
+10. ~~**Collection Statistics Dashboard**: Should there be analytics per collection?~~ **Resolved**: No additional statistics beyond what currently exists for a collection.
 
 ---
 
@@ -1486,14 +1674,17 @@ This document details the implementation plan for transitioning from the current
 
 ```
 GraphQL Input (CollectionArgEntity)
-  ↓ Entry Layer
+  - Name, Type, Visibility
+  ↓ Entry Layer (validates, defaults visibility to "private" if not provided)
 Internal Transfer (CollectionItrEntity)
-  ↓ Domain Layer
+  - CollectionId, OwnerId, Name, Type, Visibility, IsDefault, AuthorizedUsers
+  ↓ Domain Layer (business rules: unique names per user, one default)
 Internal Transfer (CollectionItrEntity)
   ↓ Aggregator Layer
 Transfer (CollectionXfrEntity)
   ↓ Adapter Layer
 External (CollectionExtEntity) → Cosmos DB
+  - Fields: id, owner_id, name, type, visibility, is_default, authorized_users[], created_at, updated_at
   ↓ Return Path
 Out-Flow (CollectionOufEntity)
   ↓ Entry Layer
@@ -1539,6 +1730,7 @@ type Collection {
   ownerId: ID!
   name: String!
   type: CollectionType!
+  visibility: CollectionVisibility!
   isDefault: Boolean!
   authorizedUsers: [AuthorizedUser!]!
   createdAt: DateTime!
@@ -1548,9 +1740,13 @@ type Collection {
 enum CollectionType {
   DEFAULT
   CUSTOM
-  WISHLIST
   CUBE
   TRADE
+}
+
+enum CollectionVisibility {
+  PRIVATE
+  PUBLIC
 }
 
 type AuthorizedUser {
@@ -1582,6 +1778,9 @@ extend type Query {
 ```graphql
 extend type Mutation {
   createCollection(args: CreateCollectionInput!): CollectionResponse!
+  deleteCollection(collectionId: ID!): CollectionResponse!
+  updateCollectionVisibility(args: UpdateCollectionVisibilityInput!): CollectionResponse!
+  transferCollectionOwnership(args: TransferCollectionOwnershipInput!): CollectionResponse!
   grantCollectionAccess(args: GrantCollectionAccessInput!): CollectionResponse!
   revokeCollectionAccess(args: RevokeCollectionAccessInput!): CollectionResponse!
 
@@ -1590,9 +1789,20 @@ extend type Mutation {
   addCardToWishlist(args: AddCardToWishlistInput!): AddCardToWishlistResponse!
 }
 
+input UpdateCollectionVisibilityInput {
+  collectionId: ID!
+  visibility: CollectionVisibility!
+}
+
+input TransferCollectionOwnershipInput {
+  collectionId: ID!
+  targetUserId: ID!
+}
+
 input CreateCollectionInput {
   name: String!
   type: CollectionType!
+  visibility: CollectionVisibility = PRIVATE
 }
 
 input GrantCollectionAccessInput {
@@ -1708,7 +1918,10 @@ type AuthorizedUsersSuccessResponse {
 - [ ] CreateCollectionAggregatorService calls adapter
 - [ ] CollectionCommandAdapter maps entities correctly
 - [ ] CollectionAuthorizationService validates roles
-- [ ] User registration creates default collection
+- [ ] CollectionAuthorizationService allows public collection view access for any authenticated user
+- [ ] CollectionAuthorizationService denies private collection access to non-authorized users
+- [ ] Only primary owner can change collection visibility
+- [ ] User registration creates default collection (private visibility)
 - [ ] Migration script creates collections
 - [ ] Migration script updates UserCards with collection_id
 - [ ] GraphQL createCollection mutation works
@@ -1716,6 +1929,13 @@ type AuthorizedUsersSuccessResponse {
 - [ ] GraphQL accessibleCollections query includes shared
 - [ ] AddCardToCollection mutation accepts collectionId
 - [ ] Authorization validators enforce collection access
+- [ ] Delete collection removes Collection document
+- [ ] Delete collection removes associated UserCards
+- [ ] Delete collection removes associated UserWishlistCards
+- [ ] Delete collection removes associated UserSetCards
+- [ ] Non-primary-owner cannot delete collection
+- [ ] Default collection cannot be deleted
+- [ ] Primary owner vs co-owner distinction enforced
 
 ### Epic 2 Tests
 - [ ] CollectionManagementContext loads collections on mount
@@ -1725,13 +1945,17 @@ type AuthorizedUsersSuccessResponse {
 - [ ] CollectionSelector highlights active collection
 - [ ] CollectionBadge renders correct colors
 - [ ] CreateCollectionDialog validates input
+- [ ] CreateCollectionDialog defaults visibility to private
 - [ ] CreateCollectionDialog calls mutation
+- [ ] CollectionCard displays visibility indicator (lock/globe icon)
 - [ ] CollectionsPage displays owned collections
 - [ ] CollectionCard renders collection info
 - [ ] CollectionCard "Select" button sets active collection
 - [ ] CollectionContext uses active collection
 - [ ] WishlistContext uses active collection
 - [ ] Frontend queries include collectionId filter
+- [ ] Delete button shown only for primary owner on non-default collections
+- [ ] Delete confirmation dialog works correctly
 
 ### Epic 3 Tests
 - [ ] GrantCollectionAccessEntryService validates input
@@ -1753,6 +1977,12 @@ type AuthorizedUsersSuccessResponse {
 - [ ] SharedCollectionCard "Remove Myself" button works
 - [ ] Sharing notifications display correctly
 - [ ] Authorization enforced for all sharing operations
+- [ ] Transfer ownership changes `owner_id`
+- [ ] Previous owner retains "owner" role in `authorized_users`
+- [ ] Non-primary-owner cannot transfer
+- [ ] Default collection cannot be transferred
+- [ ] Transfer target must be existing authorized user
+- [ ] Frontend transfer button shown for primary owner on non-default collections
 
 ---
 
@@ -1765,8 +1995,11 @@ type AuthorizedUsersSuccessResponse {
 - `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Scribes/CollectionScribe.cs`
 - `src/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitors/CollectionsInquisitor.cs`
 - `src/Lib.MtgDiscovery.Entry/Commands/Collections/CreateCollectionEntryService.cs`
+- `src/Lib.MtgDiscovery.Entry/Commands/Collections/DeleteCollectionEntryService.cs`
 - `src/Lib.Domain.Collections/Commands/CreateCollectionDomainService.cs`
+- `src/Lib.Domain.Collections/Commands/DeleteCollectionDomainService.cs`
 - `src/Lib.Aggregator.Collections/Commands/CreateCollectionAggregatorService.cs`
+- `src/Lib.Aggregator.Collections/Commands/DeleteCollectionAggregatorService.cs`
 - `src/Lib.Adapter.Collections/Commands/CollectionCommandAdapter.cs`
 - `src/Lib.Domain.Collections/Authorization/CollectionAuthorizationService.cs`
 - `src/App.MtgDiscovery.GraphQL/Mutations/CollectionMutationMethods.cs`
@@ -1788,8 +2021,14 @@ type AuthorizedUsersSuccessResponse {
 - `client/src/components/molecules/shared/SharedCollectionCard.tsx`
 - `client/src/graphql/mutations/grantCollectionAccess.graphql`
 - `client/src/graphql/mutations/revokeCollectionAccess.graphql`
+- `client/src/graphql/mutations/transferCollectionOwnership.graphql`
 - `client/src/graphql/queries/getCollectionAccessList.graphql`
 - `client/src/graphql/queries/getSharedCollections.graphql`
+
+### Backend Files (Epic 3 - Transfer)
+- `src/Lib.MtgDiscovery.Entry/Commands/Collections/TransferCollectionOwnershipEntryService.cs`
+- `src/Lib.Domain.Collections/Commands/TransferCollectionOwnershipDomainService.cs`
+- `src/Lib.Aggregator.Collections/Commands/TransferCollectionOwnershipAggregatorService.cs`
 
 ---
 

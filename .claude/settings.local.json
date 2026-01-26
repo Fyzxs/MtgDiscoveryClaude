@@ -65,7 +65,9 @@
       "Bash(dotnet list:*)",
       "Bash(xargs cat:*)",
       "WebSearch",
-      "Bash(.specify/scripts/bash/setup-plan.sh:*)"
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "mcp__acp__Write",
+      "mcp__acp__Bash"
     ],
     "deny": [],
     "ask": []
