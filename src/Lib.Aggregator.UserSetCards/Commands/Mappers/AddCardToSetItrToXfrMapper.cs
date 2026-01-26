@@ -29,5 +29,6 @@ internal sealed class AddCardToSetItrToXfrMapper : IAddCardToSetItrToXfrMapper
         public required string SetGroupId { get; init; }
         public required string FinishType { get; init; }
         public required int Count { get; init; }
+        public int RemainingFinishCount { get; init; }
     }
 }

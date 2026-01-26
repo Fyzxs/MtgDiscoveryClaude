@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
 using Lib.Adapter.UserSetCards.Apis.Entities;
+using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Commands.Mappers;
 
-internal interface IAddCardToSetItrToXfrMapper
+internal interface IAddCardToSetItrToXfrMapper : ICreateMapper<IAddCardToSetItrEntity, IAddCardToSetXfrEntity>
 {
-    Task<IAddCardToSetXfrEntity> Map(IAddCardToSetItrEntity source);
 }

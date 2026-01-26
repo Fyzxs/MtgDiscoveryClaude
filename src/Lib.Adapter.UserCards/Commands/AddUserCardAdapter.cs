@@ -1,15 +1,14 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis.Entities;
+using Lib.Adapter.UserCards.Commands.Integrators;
 using Lib.Adapter.UserCards.Commands.Mappers;
+using Lib.Adapter.UserCards.Commands.Resolvers;
+using Lib.Adapter.UserCards.Commands.Strategies;
 using Lib.Adapter.UserCards.Exceptions;
-using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -23,146 +22,61 @@ internal sealed class AddUserCardAdapter : IAddUserCardAdapter
 {
     private readonly ICosmosGopher _userCardsGopher;
     private readonly ICosmosScribe _userCardsScribe;
-    private readonly IAddUserCardXfrToExtMapper _addUserCardMapper;
+    private readonly IAddUserCardXfrToReadPointMapper _readPointMapper;
+    private readonly IUserCardResolver _resolver;
+    private readonly IUserCardIntegrator _integrator;
+    private readonly ICosmosRetryStrategy _retryStrategy;
 
-    public AddUserCardAdapter(ILogger logger) : this(new UserCardsGopher(logger), new UserCardsScribe(logger), new AddUserCardXfrToExtMapper()) { }
+    public AddUserCardAdapter(ILogger logger) : this(
+        new UserCardsGopher(logger),
+        new UserCardsScribe(logger),
+        new AddUserCardXfrToReadPointMapper(),
+        new UserCardResolver(),
+        new UserCardIntegrator(),
+        new CosmosRetryStrategy())
+    { }
 
-    private AddUserCardAdapter(ICosmosGopher userCardsGopher, ICosmosScribe userCardsScribe, IAddUserCardXfrToExtMapper addUserCardMapper)
+    private AddUserCardAdapter(
+        ICosmosGopher userCardsGopher,
+        ICosmosScribe userCardsScribe,
+        IAddUserCardXfrToReadPointMapper readPointMapper,
+        IUserCardResolver resolver,
+        IUserCardIntegrator integrator,
+        ICosmosRetryStrategy retryStrategy)
     {
         _userCardsGopher = userCardsGopher;
         _userCardsScribe = userCardsScribe;
-        _addUserCardMapper = addUserCardMapper;
+        _readPointMapper = readPointMapper;
+        _resolver = resolver;
+        _integrator = integrator;
+        _retryStrategy = retryStrategy;
     }
 
     public async Task<IOperationResponse<UserCardExtEntity>> Execute([NotNull] IAddUserCardXfrEntity input)
     {
-        // Step 1: Try to read existing record
-        ReadPointItem readPoint = new()
+        return await _retryStrategy.ExecuteWithRetry<UserCardExtEntity>(async () =>
         {
-            Id = new ProvidedCosmosItemId(input.CardId),
-            Partition = new ProvidedPartitionKeyValue(input.UserId)
-        };
-        OpResponse<UserCardExtEntity> existingResponse = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint).ConfigureAwait(false);
+            // Step 1: Try to read existing record
+            ReadPointItem readPoint = await _readPointMapper.Map(input).ConfigureAwait(false);
+            OpResponse<UserCardExtEntity> readResponse = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint).ConfigureAwait(false);
 
-        UserCardExtEntity itemToUpsert;
+            // Step 2: Resolve existing record or create new one
+            UserCardExtEntity existingRecord = _resolver.Resolve(readResponse, input);
 
-        if (existingResponse.IsSuccessful())
-        {
-            // Step 2: Merge with existing collected items (or replace if in replace mode)
-            UserCardExtEntity existingItem = existingResponse.Value;
-            itemToUpsert = input.ReplaceMode
-                ? ReplaceCollectedItem(existingItem, input)
-                : MergeCollectedItems(existingItem, input);
-        }
-        else
-        {
-            // Step 3: Create new item if none exists
-            itemToUpsert = await _addUserCardMapper.Map(input).ConfigureAwait(false);
-        }
+            // Step 3: Integrate changes (merge or replace based on ReplaceMode)
+            UserCardExtEntity updatedRecord = await _integrator.Integrate(existingRecord, input).ConfigureAwait(false);
 
-        // Step 4: Upsert the merged/new item
-        OpResponse<UserCardExtEntity> upsertResponse = await _userCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+            // Step 4: Upsert the merged/new item
+            OpResponse<UserCardExtEntity> upsertResponse = await _userCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
 
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<UserCardExtEntity>(
-                new UserCardsAdapterException($"Failed to add user card: {upsertResponse.StatusCode}"));
-        }
-
-        // Step 5: Return the raw ExtEntity result
-        return new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value);
-    }
-
-    private UserCardExtEntity MergeCollectedItems(UserCardExtEntity existing, IAddUserCardXfrEntity newData)
-    {
-        // Create a dictionary for efficient merging based on finish + special combination
-        Dictionary<(string finish, string special), UserCardDetailsExtEntity> mergedItems = existing.CollectedList
-            .ToDictionary(item => (item.Finish, item.Special));
-
-        IUserCardDetailsXfrEntity newItem = newData.Details;
-        (string finish, string special) key = (newItem.Finish, newItem.Special);
-
-        if (mergedItems.TryGetValue(key, out UserCardDetailsExtEntity existingItem))
-        {
-            // Update count for existing finish/special combination
-            int newCount = existingItem.Count + newItem.Count;
-            if (newCount < 0)
+            if (upsertResponse.IsNotSuccessful())
             {
-                newCount = 0;
+                return new FailureOperationResponse<UserCardExtEntity>(
+                    new UserCardsAdapterException($"Failed to add user card: {upsertResponse.StatusCode}"));
             }
 
-            mergedItems[key] = new UserCardDetailsExtEntity
-            {
-                Finish = existingItem.Finish,
-                Special = existingItem.Special,
-                Count = newCount
-                // setGroupId from newItem intentionally omitted - used for aggregation only
-            };
-        }
-        else
-        {
-            // Add new finish/special combination
-            mergedItems[key] = new UserCardDetailsExtEntity
-            {
-                Finish = newItem.Finish,
-                Special = newItem.Special,
-                Count = newItem.Count
-                // setGroupId from newItem intentionally omitted - used for aggregation only
-            };
-        }
-
-        // Return updated item with fresh metadata from newData (including denormalized display data)
-        return new UserCardExtEntity
-        {
-            UserId = existing.UserId,
-            CardId = existing.CardId,
-            SetId = existing.SetId,
-            CardName = newData.CardName,
-            SetName = newData.SetName,
-            SetCode = newData.SetCode,
-            ReleasedAt = newData.ReleasedAt,
-            Artist = newData.Artist,
-            ArtistIds = newData.ArtistIds,
-            CardNameGuid = newData.CardNameGuid,
-            CollectedList = [.. mergedItems.Values]
-        };
-    }
-
-    /// <summary>
-    /// Replaces existing collected items with the new data instead of merging.
-    /// Used by migration tools to overwrite existing collection data.
-    /// </summary>
-    private UserCardExtEntity ReplaceCollectedItem(UserCardExtEntity existing, IAddUserCardXfrEntity newData)
-    {
-        // Create a dictionary and replace (or add) the item for this finish/special combination
-        Dictionary<(string finish, string special), UserCardDetailsExtEntity> items = existing.CollectedList
-            .ToDictionary(item => (item.Finish, item.Special));
-
-        IUserCardDetailsXfrEntity newItem = newData.Details;
-        (string finish, string special) key = (newItem.Finish, newItem.Special);
-
-        // Replace the count directly (don't add to existing)
-        items[key] = new UserCardDetailsExtEntity
-        {
-            Finish = newItem.Finish,
-            Special = newItem.Special,
-            Count = newItem.Count
-        };
-
-        // Return updated item with fresh metadata from newData
-        return new UserCardExtEntity
-        {
-            UserId = existing.UserId,
-            CardId = existing.CardId,
-            SetId = existing.SetId,
-            CardName = newData.CardName,
-            SetName = newData.SetName,
-            SetCode = newData.SetCode,
-            ReleasedAt = newData.ReleasedAt,
-            Artist = newData.Artist,
-            ArtistIds = newData.ArtistIds,
-            CardNameGuid = newData.CardNameGuid,
-            CollectedList = [.. items.Values]
-        };
+            // Step 5: Return the raw ExtEntity result
+            return new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value);
+        }).ConfigureAwait(false);
     }
 }

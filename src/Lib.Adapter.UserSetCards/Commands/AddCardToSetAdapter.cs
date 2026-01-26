@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -10,6 +12,7 @@ using Lib.Adapter.UserSetCards.Commands.Resolvers;
 using Lib.Adapter.UserSetCards.Exceptions;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.UserSetCards.Commands;
@@ -38,19 +41,48 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
 
     public async Task<IOperationResponse<UserSetCardExtEntity>> Execute([NotNull] IAddCardToSetXfrEntity input)
     {
-        ReadPointItem readPoint = await _readPointMapper.Map(input).ConfigureAwait(false);
-        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+        const int MaxRetries = 5;
+        int retryCount = 0;
 
-        UserSetCardExtEntity existingRecord = _resolver.Resolve(readResponse, input);
-        UserSetCardExtEntity updatedRecord = await _integrator.Integrate(existingRecord, input).ConfigureAwait(false);
-
-        OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
+        while (retryCount < MaxRetries)
         {
-            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+            try
+            {
+                ReadPointItem readPoint = await _readPointMapper.Map(input).ConfigureAwait(false);
+                OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+
+                UserSetCardExtEntity existingRecord = _resolver.Resolve(readResponse, input);
+                UserSetCardExtEntity updatedRecord = await _integrator.Integrate(existingRecord, input).ConfigureAwait(false);
+
+                OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
+
+                if (upsertResponse.IsNotSuccessful())
+                {
+                    return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+                }
+
+                return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.PreconditionFailed && retryCount < MaxRetries)
+            {
+                // ETag mismatch detected - another request modified the document
+                retryCount++;
+
+                if (retryCount >= MaxRetries)
+                {
+                    return new FailureOperationResponse<UserSetCardExtEntity>(
+                        new UserSetCardsAdapterException($"Failed to add card to set after {MaxRetries} retries due to concurrent updates", ex));
+                }
+
+                // Exponential backoff: 50ms, 100ms, 200ms, 400ms, 800ms
+                int delayMs = 50 * (1 << (retryCount - 1));
+                await Task.Delay(delayMs).ConfigureAwait(false);
+
+                // Loop will retry with fresh read
+            }
         }
 
-        return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
+        // Should never reach here due to loop logic, but satisfy compiler
+        return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
     }
 }

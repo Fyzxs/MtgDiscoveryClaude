@@ -35,4 +35,10 @@ public interface IAddCardToSetXfrEntity
     /// Count to add (positive) or remove (negative).
     /// </summary>
     int Count { get; }
+
+    /// <summary>
+    /// The remaining count of cards with this finish type after the UserCards update.
+    /// Used to determine whether to remove the card from the set group on removal operations.
+    /// </summary>
+    int RemainingFinishCount { get; }
 }

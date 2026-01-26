@@ -53,7 +53,7 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
             return new FailureOperationResponse<IUserCardOufEntity>(response.OuterException);
         }
 
-        IAddCardToSetXfrEntity setCardEntity = await _addCardToSetMapper.Map(xfrEntity).ConfigureAwait(false);
+        IAddCardToSetXfrEntity setCardEntity = await _addCardToSetMapper.Map(xfrEntity, response.ResponseData.CollectedList).ConfigureAwait(false);
         IOperationResponse<UserSetCardExtEntity> setCardResponse = await _userSetCardsAdapterService.AddCardToSetAsync(setCardEntity).ConfigureAwait(false);
 
         if (setCardResponse.IsFailure)

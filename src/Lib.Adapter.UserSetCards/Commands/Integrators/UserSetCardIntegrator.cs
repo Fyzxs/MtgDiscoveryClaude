@@ -37,7 +37,9 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
             TotalCards = Math.Max(0, record.TotalCards + entity.Count),
             UniqueCards = Math.Max(0, record.UniqueCards + uniqueCardDelta),
             Groups = record.Groups,
-            Collecting = UpdateCollectingCounts(record.Collecting, entity, uniqueCardDelta)
+            Collecting = UpdateCollectingCounts(record.Collecting, entity, uniqueCardDelta),
+            ETag = record.ETag,  // Preserve ETag for optimistic concurrency
+            CreatedDate = record.CreatedDate  // Preserve creation date
         };
     }
 
@@ -96,6 +98,8 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
             toModify.Cards.Add(entity.CardId);
             return 1;
         }
+
+        if (0 < entity.RemainingFinishCount) { return 0; }
 
         _ = toModify.Cards.Remove(entity.CardId);
         return -1;
