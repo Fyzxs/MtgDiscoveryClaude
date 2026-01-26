@@ -15,8 +15,6 @@ import { FilterDrawer } from '../organisms/filters/FilterDrawer';
 import { useCardFiltering } from '../../hooks/useCardFiltering';
 import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 import { useOptimizedSort } from '../../hooks/useOptimizedSort';
-import { useCollectionUpdates } from '../../hooks/useCollectionUpdates';
-import { useWishlistUpdates } from '../../hooks/useWishlistUpdates';
 import { useResponsiveBreakpoints } from '../../hooks/useResponsiveBreakpoints';
 import { CardFilterPanel } from '../organisms/Cards/CardFilterPanel';
 import { CARD_DETAIL_SORT_OPTIONS, CARD_DETAIL_COLLECTOR_SORT_OPTIONS, createCardSortOptions } from '../../config/cardSortOptions';
@@ -62,10 +60,6 @@ export const CardAllPrintingsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
-
-  // Listen for collection and wishlist updates via reusable hooks
-  useCollectionUpdates(cards, setCards);
-  useWishlistUpdates(cards, setCards);
 
   const refetch = useCallback(async () => {
     if (!cardName) return;

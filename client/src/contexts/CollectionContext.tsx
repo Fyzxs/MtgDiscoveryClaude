@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useCallback, useState } from 'react';
+import React, { createContext, useContext, useRef, useCallback, useState, useMemo } from 'react';
 import { logger } from '../utils/logger';
 import { NotificationToastStack } from '../components/organisms/shared/NotificationToastStack';
 import type { NotificationToastStackRef } from '../components/organisms/shared/NotificationToastStack';
@@ -11,10 +11,17 @@ import { useUser } from './UserContext';
 import { useCollectorParam } from '../hooks/useCollectorParam';
 import { perfMonitor } from '../utils/performanceMonitor';
 
-interface CollectionContextValue {
+// Action context — stable values that rarely change.
+// Components subscribing here do NOT re-render on every collection update.
+interface CollectionActionContextValue {
   submitCollectionUpdate: (update: CardCollectionUpdate, cardName?: string) => Promise<void>;
   isAnyCardEntering: boolean;
   setIsAnyCardEntering: (isEntering: boolean) => void;
+}
+
+// Delta context — volatile, changes on every collection update.
+// Only lightweight subscribers (DeltaBadge) should use this.
+interface CollectionDeltaContextValue {
   getLastDelta: (cardId: string) => number | undefined;
   lastDeltaVersion: number;
 }
@@ -41,13 +48,23 @@ interface AddCardMutationResponse {
   };
 }
 
-const CollectionContext = createContext<CollectionContextValue | undefined>(undefined);
+const CollectionActionContext = createContext<CollectionActionContextValue | undefined>(undefined);
+const CollectionDeltaContext = createContext<CollectionDeltaContextValue | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
 export const useCollection = () => {
-  const context = useContext(CollectionContext);
+  const context = useContext(CollectionActionContext);
   if (!context) {
     throw new Error('useCollection must be used within CollectionProvider');
+  }
+  return context;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
+export const useCollectionDelta = () => {
+  const context = useContext(CollectionDeltaContext);
+  if (!context) {
+    throw new Error('useCollectionDelta must be used within CollectionProvider');
   }
   return context;
 };
@@ -69,6 +86,16 @@ const SPECIAL_MAP: Record<string, string> = {
   'proof': 'proof',
   'altered': 'altered'
 };
+
+const CARD_COLLECTION_FRAGMENT = gql`
+  fragment CardCollectionWrite on Card {
+    userCollection {
+      finish
+      special
+      count
+    }
+  }
+`;
 
 export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children }) => {
   const apolloClient = useApolloClient();
@@ -106,9 +133,11 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
       const targetUserId = collectorId || userProfile.id;
 
       // Store last delta for this card (for LastDeltaBadge display)
+      // Ref is set immediately so getLastDelta() returns correct value;
+      // state update is deferred to requestAnimationFrame below to avoid
+      // re-rendering the entire card tree before the browser can paint
       lastDeltaMapRef.current.set(update.cardId, update.count);
       deltaWasSet = true;
-      setLastDeltaVersion(v => v + 1);
 
       // OPTIMIZATION: Use static maps from module scope
       const variables = perfMonitor.measure('collection-prepare-variables', () => ({
@@ -167,13 +196,22 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
         });
       }
 
-      window.dispatchEvent(new CustomEvent('collection-updated', {
-        detail: {
-          cardId: update.cardId,
-          setId: update.setId,
-          userCollection: optimisticUserCollection
-        }
-      }));
+      // Write optimistic data directly to Apollo cache — cheap, no re-render cascade.
+      // Only the component using useFragment for this card re-renders.
+      if (cacheId) {
+        apolloClient.cache.writeFragment({
+          id: cacheId,
+          fragment: CARD_COLLECTION_FRAGMENT,
+          data: { userCollection: optimisticUserCollection }
+        });
+      }
+
+      // Defer expensive React state update PAST the next browser paint
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          setLastDeltaVersion(v => v + 1);
+        }, 0);
+      });
 
       // Execute mutation in background (UI already updated above)
       perfMonitor.start('collection-mutation');
@@ -192,15 +230,13 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
         const updatedCard = (result.data as AddCardMutationResponse).addCardToCollection?.data?.[0];
 
         if (updatedCard) {
-          // Dispatch again with real data from server (in case it differs from optimistic)
+          // Write real server data to Apollo cache (reconciles any optimistic drift)
           queueMicrotask(() => {
-            window.dispatchEvent(new CustomEvent('collection-updated', {
-              detail: {
-                cardId: update.cardId,
-                setId: update.setId,
-                userCollection: updatedCard.userCollection
-              }
-            }));
+            apolloClient.cache.writeFragment({
+              id: apolloClient.cache.identify({ __typename: 'Card', id: update.cardId }),
+              fragment: CARD_COLLECTION_FRAGMENT,
+              data: { userCollection: updatedCard.userCollection }
+            });
           });
         }
 
@@ -250,15 +286,13 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
         setLastDeltaVersion(v => v + 1);
       }
 
-      // Revert optimistic UI update by dispatching original collection
+      // Revert optimistic UI update by writing original collection back to cache
       if (originalCollection !== null) {
-        window.dispatchEvent(new CustomEvent('collection-updated', {
-          detail: {
-            cardId: update.cardId,
-            setId: update.setId,
-            userCollection: originalCollection
-          }
-        }));
+        apolloClient.cache.writeFragment({
+          id: apolloClient.cache.identify({ __typename: 'Card', id: update.cardId }),
+          fragment: CARD_COLLECTION_FRAGMENT,
+          data: { userCollection: originalCollection }
+        });
       }
 
       let errorMessage = 'Update failed';
@@ -287,18 +321,23 @@ export const CollectionProvider: React.FC<CollectionProviderProps> = ({ children
     }
   }, [addCardToCollection, userProfile, collectorId, apolloClient.cache]);
 
-  const value: CollectionContextValue = {
+  const actionValue = useMemo<CollectionActionContextValue>(() => ({
     submitCollectionUpdate,
     isAnyCardEntering,
-    setIsAnyCardEntering,
+    setIsAnyCardEntering
+  }), [submitCollectionUpdate, isAnyCardEntering, setIsAnyCardEntering]);
+
+  const deltaValue = useMemo<CollectionDeltaContextValue>(() => ({
     getLastDelta,
     lastDeltaVersion
-  };
+  }), [getLastDelta, lastDeltaVersion]);
 
   return (
-    <CollectionContext.Provider value={value}>
-      {children}
-      <NotificationToastStack ref={toastStackRef} />
-    </CollectionContext.Provider>
+    <CollectionActionContext.Provider value={actionValue}>
+      <CollectionDeltaContext.Provider value={deltaValue}>
+        {children}
+        <NotificationToastStack ref={toastStackRef} />
+      </CollectionDeltaContext.Provider>
+    </CollectionActionContext.Provider>
   );
 };

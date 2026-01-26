@@ -9,6 +9,7 @@ import { CollectionSummary } from '../Cards/CollectionSummary';
 import { WishlistSummary } from '../Cards/WishlistSummary';
 import { useMtgCardCollectionActions } from '../../../hooks/useMtgCardCollectionActions';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
+import { useCardCollectionFromCache } from '../../../hooks/useCardCollectionFromCache';
 import type { Card } from '../../../types/card';
 
 interface BinderSlotProps {
@@ -61,8 +62,11 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
     return () => observer.disconnect();
   }, []);
 
+  // Read collection/wishlist data from Apollo cache for reactive badge updates
+  const { userCollection, userWishlist } = useCardCollectionFromCache(card?.id ?? '');
+
   // Enable collection actions via keyboard when card is selected (only for non-empty slots)
-  const { overlayState, isWishlistMode } = useMtgCardCollectionActions({
+  const { overlayState } = useMtgCardCollectionActions({
     card: card ?? undefined,
     isSelected: card ? isSelected : false,
     cardRef
@@ -274,15 +278,15 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
               zIndex: 20
             }}
           >
-            {card.userCollection && (
+            {userCollection && (
               <CollectionSummary
-                collectionData={card.userCollection}
+                collectionData={userCollection}
                 size="small"
               />
             )}
-            {card.userWishlist && (
+            {userWishlist && (
               <WishlistSummary
-                wishlistData={card.userWishlist}
+                wishlistData={userWishlist}
                 size="small"
               />
             )}
@@ -315,12 +319,12 @@ export const BinderSlot: React.FC<BinderSlotProps> = ({
         {/* Collection entry overlay - always mounted for pre-mount pattern */}
         {card && (
           <CollectionEntryOverlay
+            cardId={isSelected ? card.id : undefined}
             visible={overlayState.visible}
             count={overlayState.count}
             isNegative={overlayState.isNegative}
             finish={overlayState.finish}
             special={overlayState.special}
-            mode={isWishlistMode ? 'wishlist' : 'collection'}
             variant="card"
             flash={overlayState.flash}
           />

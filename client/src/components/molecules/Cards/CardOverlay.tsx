@@ -13,6 +13,7 @@ import { touchTargetStyles } from '../../../styles/touchTargets';
 import type { Card, CardContext } from '../../../types/card';
 import type { OverlayVariant } from '../../../hooks/useCardDisplaySettings';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
+import { useCardCollectionFromCache } from '../../../hooks/useCardCollectionFromCache';
 
 interface CardOverlayProps {
   card: Card;
@@ -50,6 +51,10 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const theme = useTheme();
   const { isMobile } = useResponsiveBreakpoints();
 
+  // Read collection/wishlist from Apollo cache for reactive updates after mutations.
+  // Falls back to card prop data when cache doesn't have the fragment yet.
+  const { userCollection: cacheCollection, userWishlist: cacheWishlist } = useCardCollectionFromCache(card.id);
+
   // Extract properties from card object
   const cardId = card.id;
   const cardName = card.name;
@@ -64,8 +69,8 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const price = card.prices?.usd;
   const scryfallUrl = card.scryfallUri;
   const tcgplayerUrl = card.purchaseUris?.tcgplayer;
-  const collectionData = card.userCollection;
-  const wishlistData = card.userWishlist;
+  const collectionData = cacheCollection ?? card.userCollection;
+  const wishlistData = cacheWishlist ?? card.userWishlist;
 
   // Shared gradient for consistent look across all breakpoints
   const overlayGradient = 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.2) 85%, transparent 100%)';

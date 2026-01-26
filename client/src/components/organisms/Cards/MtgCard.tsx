@@ -65,7 +65,7 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
     cardRef,
     overlayBehavior: displaySettings.overlayBehavior
   });
-  const { overlayState, isWishlistMode } = useMtgCardCollectionActions({ card, isSelected, cardRef });
+  const { overlayState } = useMtgCardCollectionActions({ card, isSelected, cardRef });
 
   // Calculate collection count for mobile display
   const collectionCount = card.userCollection?.totalCount ?? 0;
@@ -146,12 +146,12 @@ const MtgCardComponent: React.FC<MtgCardProps> = ({
 
       {/* Collection entry overlay - always mounted for pre-mount pattern */}
       <CollectionEntryOverlay
+        cardId={isSelected ? card.id : undefined}
         visible={overlayState.visible}
         count={overlayState.count}
         isNegative={overlayState.isNegative}
         finish={overlayState.finish}
         special={overlayState.special}
-        mode={isWishlistMode ? 'wishlist' : 'collection'}
         variant="card"
         flash={overlayState.flash}
       />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Box, type SxProps, type Theme } from '../../atoms';
 import { ResponsiveGridAutoFit } from '../../molecules/layouts/ResponsiveGrid';
 import { useGridNavigation } from '../../../hooks/useGridNavigation';
@@ -81,17 +81,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
 
   // Progressive rendering: render cards in batches for better performance
   const [visibleCount, setVisibleCount] = useState(0);
-  const prevFingerprintRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Only run progressive loading when the card LIST changes (not just data)
-    // null means first run, empty string means no cards yet
-    if (prevFingerprintRef.current !== null && cardListFingerprint === prevFingerprintRef.current) {
-      return;
-    }
-    prevFingerprintRef.current = cardListFingerprint;
-
-    // Render in batches to keep UI responsive
     const batchSize = 50;
     const cardsLength = cards.length;
 

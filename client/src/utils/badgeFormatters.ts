@@ -10,6 +10,7 @@ export const formatFinishText = (finish: string): string => {
   const formatMap: Record<string, string> = {
     'etched': 'Etched',
     'foil': 'Foil',
+    'fracturefoil': 'Fracture Foil',
     'galaxyfoil': 'Galaxy Foil',
     'glossy': 'Glossy',
     'nonfoil': 'Non-Foil',

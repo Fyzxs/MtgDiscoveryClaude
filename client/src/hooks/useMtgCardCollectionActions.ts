@@ -2,11 +2,10 @@ import { useCallback, useMemo, useRef, useEffect } from 'react';
 import type { RefObject } from 'react';
 import { useCollection } from '../contexts/CollectionContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { useEntryMode } from '../contexts/EntryModeContext';
 import { useCardCollectionEntry } from '../hooks/useCardCollectionEntry';
 import type { CardOverlayState } from '../hooks/useCardCollectionEntry';
 import type { Card } from '../types/card';
-import type { CardFinish, CardSpecial } from '../types/collection';
+import type { CardFinish, CardSpecial, EntryMode } from '../types/collection';
 
 interface CollectionUpdate {
   cardId: string;
@@ -28,21 +27,20 @@ export const useMtgCardCollectionActions = ({
 }: MtgCardCollectionActionsProps) => {
   const { submitCollectionUpdate } = useCollection();
   const { submitWishlistUpdate } = useWishlist();
-  const { isWishlistMode, mode } = useEntryMode();
 
-  // Use refs to avoid callback identity changes when mode toggles
-  // This prevents the overlay from being destroyed during mode switch
-  const modeRef = useRef(mode);
-  const isWishlistModeRef = useRef(isWishlistMode);
+  // Use refs to avoid callback identity changes when submit functions or card data updates.
+  // Mode is read from document.body at submit time (synced by EntryModeContext)
+  // so this hook does NOT subscribe to EntryModeContext — preventing mass re-renders
+  // of every MtgCard/BinderSlot when the user toggles mode.
   const submitCollectionUpdateRef = useRef(submitCollectionUpdate);
   const submitWishlistUpdateRef = useRef(submitWishlistUpdate);
+  const cardDataRef = useRef(card);
 
   useEffect(() => {
-    modeRef.current = mode;
-    isWishlistModeRef.current = isWishlistMode;
     submitCollectionUpdateRef.current = submitCollectionUpdate;
     submitWishlistUpdateRef.current = submitWishlistUpdate;
-  }, [mode, isWishlistMode, submitCollectionUpdate, submitWishlistUpdate]);
+    cardDataRef.current = card;
+  }, [submitCollectionUpdate, submitWishlistUpdate, card]);
 
   // Determine available finishes
   const availableFinishes = useMemo<CardFinish[]>(() => {
@@ -55,24 +53,29 @@ export const useMtgCardCollectionActions = ({
   }, [card]);
 
   // Handle collection/wishlist update submission based on mode
-  // Uses refs to keep callback identity stable across mode changes
+  // Uses refs to keep callback identity stable across mode changes and card data updates
   const handleCollectionSubmit = useCallback(async (update: CollectionUpdate) => {
-    if (!card) return;
+    const currentCard = cardDataRef.current;
+    if (!currentCard) return;
     const cardElement = cardRef.current;
     if (!cardElement) return;
+
+    // Read current mode from DOM (synced by EntryModeContext on every toggle)
+    const currentMode = (document.body.getAttribute('data-entry-mode') as EntryMode) || 'collection';
+    const isWishlist = currentMode === 'wishlist';
 
     // Mark as submitting for instant visual feedback (but keep selected for rapid entry)
     cardElement.setAttribute('data-submitting', 'true');
     // Mark the mode for styling purposes
-    cardElement.setAttribute('data-entry-mode', modeRef.current);
+    cardElement.setAttribute('data-entry-mode', currentMode);
 
     try {
-      if (isWishlistModeRef.current) {
+      if (isWishlist) {
         // Wishlist submission
         await submitWishlistUpdateRef.current({
           ...update,
-          setId: card.setId || ''
-        }, card.name);
+          setId: currentCard.setId || ''
+        }, currentCard.name);
         // Wishlist flash - light blue with heart indicator
         cardElement.removeAttribute('data-submitting');
         cardElement.setAttribute('data-flash', 'wishlist');
@@ -81,10 +84,10 @@ export const useMtgCardCollectionActions = ({
         // Collection submission
         await submitCollectionUpdateRef.current({
           ...update,
-          setId: card.setId,
-          setCode: card.setCode || '',
-          setGroupId: card.setGroupId || null
-        }, card.name);
+          setId: currentCard.setId,
+          setCode: currentCard.setCode || '',
+          setGroupId: currentCard.setGroupId || null
+        }, currentCard.name);
         // Success flash via DOM (after mutation succeeds)
         cardElement.removeAttribute('data-submitting');
         cardElement.setAttribute('data-flash', 'success');
@@ -96,8 +99,8 @@ export const useMtgCardCollectionActions = ({
       cardElement.setAttribute('data-flash', 'error');
       setTimeout(() => cardElement.removeAttribute('data-flash'), 900);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- cardRef is a ref, refs are stable
-  }, [card]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- all dependencies accessed via refs for stable callback identity
+  }, []);
 
   // Collection entry hook - only register when card exists
   const { overlayState, isEntering, invalidFinishFlash } = useCardCollectionEntry({
@@ -110,8 +113,6 @@ export const useMtgCardCollectionActions = ({
   return {
     availableFinishes,
     handleCollectionSubmit,
-    isWishlistMode,
-    entryMode: mode,
     overlayState,
     isEntering,
     invalidFinishFlash

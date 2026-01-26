@@ -3,8 +3,7 @@ import { useQuery } from '@apollo/client/react';
 import { useCardQueries } from './useCardQueries';
 import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useCollectorParam } from './useCollectorParam';
-import { useCollectionUpdates } from './useCollectionUpdates';
-import { useWishlistUpdates } from './useWishlistUpdates';
+import { useUrlState } from './useUrlState';
 import { useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { parseCollectorNumber } from '../config/cardSortOptions';
 import type { Card } from '../types/card';
@@ -33,8 +32,26 @@ const EMPTY_CARDS_ARRAY: Card[] = [];
 export const useBinderPageData = (setCode: string | undefined) => {
   const { hasCollector, collectorId } = useCollectorParam();
 
+  // URL-synced page state
+  const pageUrlConfig = useMemo(() => ({
+    page: {
+      default: 1,
+      deserialize: (value: string) => {
+        const parsed = parseInt(value, 10);
+        return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
+      }
+    }
+  }), []);
+
+  const { getInitialValues } = useUrlState({}, pageUrlConfig);
+  const initialPage = useMemo(() => {
+    const values = getInitialValues();
+    const pageValue = values.page as number;
+    return pageValue >= 1 ? pageValue : 1;
+  }, [getInitialValues]);
+
   // Pagination and sort state
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [sortBy, setSortBy] = useState<BinderSortBy>('collector');
 
   // Card data fetching
@@ -42,10 +59,6 @@ export const useBinderPageData = (setCode: string | undefined) => {
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
-
-  // Listen for collection and wishlist updates
-  useCollectionUpdates(cards, setCards);
-  useWishlistUpdates(cards, setCards);
 
   // Load cards effect
   useEffect(() => {
@@ -149,6 +162,12 @@ export const useBinderPageData = (setCode: string | undefined) => {
   const totalPages = useMemo(() => {
     return Math.ceil(binderCards.length / CARDS_PER_PAGE) || 1;
   }, [binderCards.length]);
+
+  // Sync current page to URL
+  useUrlState(
+    { page: currentPage },
+    pageUrlConfig
+  );
 
   // Reset to page 1 when cards change significantly
   useEffect(() => {

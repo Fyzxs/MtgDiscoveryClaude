@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useCallback, useState } from 'react';
+import React, { createContext, useContext, useRef, useCallback, useState, useMemo } from 'react';
 import { logger } from '../utils/logger';
 import { NotificationToastStack } from '../components/organisms/shared/NotificationToastStack';
 import type { NotificationToastStackRef } from '../components/organisms/shared/NotificationToastStack';
@@ -10,10 +10,15 @@ import { useUser } from './UserContext';
 import { useCollectorParam } from '../hooks/useCollectorParam';
 import { perfMonitor } from '../utils/performanceMonitor';
 
-interface WishlistContextValue {
+// Action context — stable values that rarely change.
+interface WishlistActionContextValue {
   submitWishlistUpdate: (update: WishlistCardUpdate, cardName?: string) => Promise<void>;
   isAnyCardEntering: boolean;
   setIsAnyCardEntering: (isEntering: boolean) => void;
+}
+
+// Delta context — volatile, changes on every wishlist update.
+interface WishlistDeltaContextValue {
   getLastDelta: (cardId: string) => number | undefined;
   lastDeltaVersion: number;
 }
@@ -40,13 +45,23 @@ interface WishlistMutationResponse {
   };
 }
 
-const WishlistContext = createContext<WishlistContextValue | undefined>(undefined);
+const WishlistActionContext = createContext<WishlistActionContextValue | undefined>(undefined);
+const WishlistDeltaContext = createContext<WishlistDeltaContextValue | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
 export const useWishlist = () => {
-  const context = useContext(WishlistContext);
+  const context = useContext(WishlistActionContext);
   if (!context) {
     throw new Error('useWishlist must be used within WishlistProvider');
+  }
+  return context;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components -- Standard pattern: export hook with Provider
+export const useWishlistDelta = () => {
+  const context = useContext(WishlistDeltaContext);
+  if (!context) {
+    throw new Error('useWishlistDelta must be used within WishlistProvider');
   }
   return context;
 };
@@ -68,6 +83,16 @@ const SPECIAL_MAP: Record<string, string> = {
   'proof': 'proof',
   'altered': 'altered'
 };
+
+const CARD_WISHLIST_FRAGMENT = gql`
+  fragment CardWishlistWrite on Card {
+    userWishlist {
+      finish
+      special
+      count
+    }
+  }
+`;
 
 export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) => {
   const apolloClient = useApolloClient();
@@ -102,9 +127,10 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
       const targetUserId = collectorId || userProfile.id;
 
       // Store last delta for this card
+      // Ref is set immediately so getLastDelta() returns correct value;
+      // state update is deferred to requestAnimationFrame below
       lastDeltaMapRef.current.set(update.cardId, update.count);
       deltaWasSet = true;
-      setLastDeltaVersion(v => v + 1);
 
       const variables = perfMonitor.measure('wishlist-prepare-variables', () => ({
         args: {
@@ -159,13 +185,22 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
         });
       }
 
-      window.dispatchEvent(new CustomEvent('wishlist-updated', {
-        detail: {
-          cardId: update.cardId,
-          setId: update.setId,
-          userWishlist: optimisticUserWishlist
-        }
-      }));
+      // Write optimistic data directly to Apollo cache — cheap, no re-render cascade.
+      // Only the component using useFragment for this card re-renders.
+      if (cacheId) {
+        apolloClient.cache.writeFragment({
+          id: cacheId,
+          fragment: CARD_WISHLIST_FRAGMENT,
+          data: { userWishlist: optimisticUserWishlist }
+        });
+      }
+
+      // Defer expensive React state update PAST the next browser paint
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          setLastDeltaVersion(v => v + 1);
+        }, 0);
+      });
 
       // Execute mutation in background
       perfMonitor.start('wishlist-mutation');
@@ -182,13 +217,11 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
 
         if (updatedCard) {
           queueMicrotask(() => {
-            window.dispatchEvent(new CustomEvent('wishlist-updated', {
-              detail: {
-                cardId: update.cardId,
-                setId: update.setId,
-                userWishlist: updatedCard.userWishlist
-              }
-            }));
+            apolloClient.cache.writeFragment({
+              id: apolloClient.cache.identify({ __typename: 'Card', id: update.cardId }),
+              fragment: CARD_WISHLIST_FRAGMENT,
+              data: { userWishlist: updatedCard.userWishlist }
+            });
           });
         }
 
@@ -221,15 +254,13 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
         setLastDeltaVersion(v => v + 1);
       }
 
-      // Revert optimistic UI update by dispatching original wishlist
+      // Revert optimistic UI update by writing original wishlist back to cache
       if (originalWishlist !== null) {
-        window.dispatchEvent(new CustomEvent('wishlist-updated', {
-          detail: {
-            cardId: update.cardId,
-            setId: update.setId,
-            userWishlist: originalWishlist
-          }
-        }));
+        apolloClient.cache.writeFragment({
+          id: apolloClient.cache.identify({ __typename: 'Card', id: update.cardId }),
+          fragment: CARD_WISHLIST_FRAGMENT,
+          data: { userWishlist: originalWishlist }
+        });
       }
 
       let errorMessage = 'Update failed';
@@ -256,18 +287,23 @@ export const WishlistProvider: React.FC<WishlistProviderProps> = ({ children }) 
     }
   }, [addCardToWishlist, userProfile, collectorId, apolloClient.cache]);
 
-  const value: WishlistContextValue = {
+  const actionValue = useMemo<WishlistActionContextValue>(() => ({
     submitWishlistUpdate,
     isAnyCardEntering,
-    setIsAnyCardEntering,
+    setIsAnyCardEntering
+  }), [submitWishlistUpdate, isAnyCardEntering, setIsAnyCardEntering]);
+
+  const deltaValue = useMemo<WishlistDeltaContextValue>(() => ({
     getLastDelta,
     lastDeltaVersion
-  };
+  }), [getLastDelta, lastDeltaVersion]);
 
   return (
-    <WishlistContext.Provider value={value}>
-      {children}
-      <NotificationToastStack ref={toastStackRef} />
-    </WishlistContext.Provider>
+    <WishlistActionContext.Provider value={actionValue}>
+      <WishlistDeltaContext.Provider value={deltaValue}>
+        {children}
+        <NotificationToastStack ref={toastStackRef} />
+      </WishlistDeltaContext.Provider>
+    </WishlistActionContext.Provider>
   );
 };

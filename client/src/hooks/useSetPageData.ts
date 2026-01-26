@@ -5,8 +5,6 @@ import { GET_SET_BY_CODE_WITH_GROUPINGS } from '../graphql/queries/sets';
 import { useUrlState } from './useUrlState';
 import { useFilterState } from './useFilterState';
 import { useCollectorParam } from './useCollectorParam';
-import { useCollectionUpdates } from './useCollectionUpdates';
-import { useWishlistUpdates } from './useWishlistUpdates';
 import { useQueryStates } from '../components/molecules/shared/QueryStateContainer';
 import { useMinimumLoadingTime } from './useMinimumLoadingTime';
 import { RARITY_ORDER, parseCollectorNumber } from '../config/cardSortOptions';
@@ -79,10 +77,6 @@ export const useSetPageData = (setCode: string | undefined) => {
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<Error | null>(null);
   const [cards, setCards] = useState<Card[]>(EMPTY_CARDS_ARRAY);
-
-  // Listen for collection and wishlist updates via reusable hooks
-  useCollectionUpdates(cards, setCards);
-  useWishlistUpdates(cards, setCards);
 
   // Load cards effect
   useEffect(() => {

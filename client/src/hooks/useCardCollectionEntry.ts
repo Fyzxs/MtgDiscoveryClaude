@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { CardCollectionUpdate, CardFinish, CardSpecial } from '../types/collection';
 import { globalCardEntry } from '../utils/globalCardEntryHandler';
 
@@ -44,6 +44,14 @@ export function useCardCollectionEntry({
   const [isEntering, setIsEntering] = useState(false);
   const [invalidFinishFlash, setInvalidFinishFlash] = useState(false);
 
+  // Refs for stable registration — avoid re-registration when mutation responses
+  // cause new array/callback references (re-registration calls unregister → hideOverlay,
+  // which stomps on a visible overlay the user is actively typing into)
+  const availableFinishesRef = useRef(availableFinishes);
+  availableFinishesRef.current = availableFinishes;
+  const onSubmitRef = useRef(onSubmit);
+  onSubmitRef.current = onSubmit;
+
   const flashInvalid = useCallback(() => {
     setInvalidFinishFlash(true);
     setOverlayState(prev => ({ ...prev, flash: true }));
@@ -61,6 +69,7 @@ export function useCardCollectionEntry({
     finish: CardFinish;
     special: CardSpecial;
   }) => {
+    console.log(`[OVERLAY] React setState — visible=${state.visible} count=${state.count}`);
     const count = state.count === '' ? 0 : parseInt(state.count, 10);
     setOverlayState({
       visible: state.visible,
@@ -73,25 +82,29 @@ export function useCardCollectionEntry({
     setIsEntering(state.visible);
   }, []);
 
-  // Register with global handler
+  // Only register with globalCardEntry when selected.
+  // Unregister on deselect/unmount — avoids 200+ registrations on page load.
+  // Uses refs for onSubmit and availableFinishes so the effect only re-runs
+  // on isSelected/cardId changes, NOT on mutation-triggered re-renders
+  // (which would cause unregister → hideOverlay, stomping on a visible overlay).
   useEffect(() => {
+    if (!isSelected) return;
     globalCardEntry.register(cardId, {
       cardId,
-      availableFinishes,
-      onSubmit,
+      get availableFinishes() { return availableFinishesRef.current; },
+      onSubmit: (update) => onSubmitRef.current(update),
       onFlashInvalid: flashInvalid,
       onOverlayUpdate: updateOverlayState
     });
-
     return () => {
       globalCardEntry.unregister(cardId);
     };
-  }, [cardId, availableFinishes, onSubmit, flashInvalid, updateOverlayState]);
+  }, [isSelected, cardId, flashInvalid, updateOverlayState]);
 
-  // Reset overlay when not selected
+  // Reset local React state when deselected (no globalCardEntry call needed —
+  // unregister above already hides the overlay via DOM)
   useEffect(() => {
     if (isSelected === false) {
-      globalCardEntry.reset(cardId);
       setOverlayState({
         visible: false,
         count: 0,
@@ -102,7 +115,7 @@ export function useCardCollectionEntry({
       });
       setIsEntering(false);
     }
-  }, [isSelected, cardId, availableFinishes]);
+  }, [isSelected, availableFinishes]);
 
   return {
     isEntering,

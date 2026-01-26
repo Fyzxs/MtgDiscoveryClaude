@@ -1,7 +1,20 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useSyncExternalStore } from 'react';
 import { Box, Typography, keyframes, useTheme } from '@mui/material';
 import type { CardFinish, CardSpecial } from '../../../types/collection';
 import { FINISH_DISPLAY_NAMES, SPECIAL_DISPLAY_NAMES } from '../../../types/collection';
+import { globalCardEntry } from '../../../utils/globalCardEntryHandler';
+import type { EntryMode } from '../../../types/collection';
+
+// Lightweight external store for entry mode — reads from DOM attribute set by EntryModeContext.
+// Using useSyncExternalStore keeps CollectionEntryOverlay reactive to mode changes
+// WITHOUT subscribing to React context (which would bypass React.memo on parent components).
+const subscribeToEntryMode = (callback: () => void) => {
+  const observer = new MutationObserver(callback);
+  observer.observe(document.body, { attributes: true, attributeFilter: ['data-entry-mode'] });
+  return () => observer.disconnect();
+};
+const getEntryModeSnapshot = (): EntryMode =>
+  (document.body.getAttribute('data-entry-mode') as EntryMode) || 'collection';
 
 const fadeIn = keyframes`
   from {
@@ -43,9 +56,11 @@ interface CollectionEntryOverlayProps {
   visible: boolean;
   count: number;
   isNegative: boolean;
-  mode: 'collection' | 'wishlist';
+  /** Explicit mode override. When omitted, reads from document.body data-entry-mode attribute. */
+  mode?: 'collection' | 'wishlist';
   variant: 'card' | 'sealed';
   flash?: boolean;
+  cardId?: string;
 
   // Card-specific props (required when variant='card')
   finish?: CardFinish;
@@ -56,15 +71,20 @@ const CollectionEntryOverlayComponent: React.FC<CollectionEntryOverlayProps> = (
   visible,
   count,
   isNegative,
-  mode,
+  mode: explicitMode,
   variant,
   finish,
   special,
-  flash = false
+  flash = false,
+  cardId
 }) => {
   const theme = useTheme();
   const overlayRef = useRef<HTMLDivElement>(null);
-  const isWishlistMode = mode === 'wishlist';
+  // Subscribe to entry mode via lightweight external store (DOM attribute).
+  // Only used when no explicit mode prop (card overlays). Sealed products pass mode explicitly.
+  const externalMode = useSyncExternalStore(subscribeToEntryMode, getEntryModeSnapshot);
+  const resolvedMode = explicitMode ?? externalMode;
+  const isWishlistMode = resolvedMode === 'wishlist';
   const isCardVariant = variant === 'card';
 
   // Card variant validation
@@ -72,23 +92,27 @@ const CollectionEntryOverlayComponent: React.FC<CollectionEntryOverlayProps> = (
     console.error('CollectionEntryOverlay: finish is required when variant="card"');
   }
 
-  // IMPERATIVE: Directly manipulate visibility styles to bypass React render cycle
-  // This runs synchronously before browser paint for instant visibility changes
+  // When cardId is provided: register overlay element with globalCardEntry for direct DOM manipulation.
+  // Visibility is controlled EXCLUSIVELY by globalCardEntry.hideOverlay/showOverlay
+  // to bypass React render cycles and batching delays entirely.
   useLayoutEffect(() => {
-    if (overlayRef.current === null) {
-      return;
+    if (cardId && overlayRef.current) {
+      globalCardEntry.registerOverlay(cardId, overlayRef.current);
+      return () => {
+        globalCardEntry.registerOverlay(cardId, null);
+      };
     }
+  }, [cardId]);
 
+  // Fallback: When no cardId (e.g. sealed products), use React-driven visibility
+  useLayoutEffect(() => {
+    if (cardId || overlayRef.current === null) return;
     if (visible) {
-      overlayRef.current.style.opacity = '1';
-      overlayRef.current.style.visibility = 'visible';
-      overlayRef.current.style.pointerEvents = 'auto';
+      overlayRef.current.setAttribute('data-overlay-visible', 'true');
     } else {
-      overlayRef.current.style.opacity = '0';
-      overlayRef.current.style.visibility = 'hidden';
-      overlayRef.current.style.pointerEvents = 'none';
+      overlayRef.current.removeAttribute('data-overlay-visible');
     }
-  }, [visible]);
+  }, [cardId, visible]);
 
   const hasSpecial = isCardVariant && special && special !== 'none';
   const specialDisplayName = hasSpecial ? SPECIAL_DISPLAY_NAMES[special as CardSpecial] : '';
@@ -110,6 +134,7 @@ const CollectionEntryOverlayComponent: React.FC<CollectionEntryOverlayProps> = (
   return (
     <Box
       ref={overlayRef}
+      data-collection-overlay="true"
       sx={{
         position: 'absolute',
         bottom: 0,
@@ -129,15 +154,13 @@ const CollectionEntryOverlayComponent: React.FC<CollectionEntryOverlayProps> = (
         justifyContent: 'space-between',
         fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
         boxSizing: 'border-box',
-        // Initial state - useLayoutEffect will override these instantly
+        // Hidden by default — globalCardEntry toggles data-overlay-visible attribute;
+        // a global CSS rule with !important overrides these when the attribute is present.
         opacity: 0,
         visibility: 'hidden',
         pointerEvents: 'none',
-        // CSS transitions for smooth opacity changes
-        transition: 'opacity 150ms ease-in-out',
         // Performance optimizations
         contain: 'layout style paint',
-        willChange: visible ? 'opacity' : 'auto',
         transform: 'translateZ(0)',
         // Flash animation still uses CSS animation
         animation: flash
@@ -218,6 +241,7 @@ const CollectionEntryOverlayComponent: React.FC<CollectionEntryOverlayProps> = (
 
         {/* Count Display (Right) */}
         <Box
+          data-overlay-count="true"
           sx={{
             fontSize: { xs: '1.5rem', sm: '2rem', md: '3rem', lg: '4rem' },
             fontWeight: 'bold',
@@ -243,15 +267,18 @@ const CollectionEntryOverlayComponent: React.FC<CollectionEntryOverlayProps> = (
 export const CollectionEntryOverlay = React.memo(
   CollectionEntryOverlayComponent,
   (prev, next) => {
+    // When cardId is set, visibility is DOM-driven — skip visible comparison to avoid re-renders
+    const visibleMatch = prev.cardId ? true : prev.visible === next.visible;
     return (
-      prev.visible === next.visible &&
+      visibleMatch &&
       prev.count === next.count &&
       prev.isNegative === next.isNegative &&
-      prev.mode === next.mode &&
+      prev.mode === next.mode &&  // both undefined (cards) or both explicit (sealed) — stable
       prev.variant === next.variant &&
       prev.flash === next.flash &&
       prev.finish === next.finish &&
-      prev.special === next.special
+      prev.special === next.special &&
+      prev.cardId === next.cardId
     );
   }
 );
