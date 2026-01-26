@@ -19,7 +19,7 @@ public class ConfigCosmosContainerConfigTests
         ConfigCosmosContainerConfig subject = new(parentKey, fakeConfig);
 
         // Act
-        CosmosContainerAutoscaleMax actual = subject.AutoscaleMax();
+        CosmosAutoscaleMax actual = subject.AutoscaleMax();
 
         // Assert
         _ = actual.Should().BeOfType<ConfigCosmosContainerAutoscaleMax>();

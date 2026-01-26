@@ -1,5 +1,3 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Configurations;
 using Microsoft.Azure.Cosmos;
@@ -19,15 +17,47 @@ internal sealed class CosmosSasAuthGenesisDevice : IGenesisDevice
 
     public async Task LiveLongAndProsper(ICosmosGenesisClientAdapter genesisClientAdapter)
     {
-        DatabaseResponse databaseResponse = await genesisClientAdapter.CreateDatabaseIfNotExistsAsync(_cosmosContainerDefinition).ConfigureAwait(false);
-        ICosmosContainerConfig containerConfig = _connectionConvenience.ContainerConfig(_cosmosContainerDefinition);
+        ICosmosDatabaseConfig databaseConfig = _connectionConvenience.DatabaseConfig(_cosmosContainerDefinition);
+        ICosmosContainerConfig containerConfig = databaseConfig.ContainerConfig(_cosmosContainerDefinition);
+        ICosmosThroughputMode throughputMode = databaseConfig.ThroughputMode();
 
+        DatabaseResponse databaseResponse = await CreateDatabase(genesisClientAdapter, databaseConfig, throughputMode).ConfigureAwait(false);
+        await CreateContainer(databaseResponse, containerConfig, throughputMode).ConfigureAwait(false);
+    }
+
+    private async Task<DatabaseResponse> CreateDatabase(ICosmosGenesisClientAdapter genesisClientAdapter, ICosmosDatabaseConfig databaseConfig, ICosmosThroughputMode throughputMode)
+    {
+        ThroughputProperties throughputProperties = throughputMode.IsDatabaseShared()
+            ? ThroughputProperties.CreateAutoscaleThroughput(databaseConfig.AutoscaleMax())
+            : null;
+
+        return await genesisClientAdapter.CreateDatabaseIfNotExistsAsync(_cosmosContainerDefinition, throughputProperties).ConfigureAwait(false);
+    }
+
+    private async Task CreateContainer(DatabaseResponse databaseResponse, ICosmosContainerConfig containerConfig, ICosmosThroughputMode throughputMode)
+    {
         ContainerProperties containerProperties = new()
         {
             Id = _cosmosContainerDefinition.ContainerName(),
             PartitionKeyPath = _cosmosContainerDefinition.PartitionKeyPath(),
             DefaultTimeToLive = containerConfig.TimeToLive()
         };
+
+        if (throughputMode.IsDatabaseShared())
+        {
+            await CreateContainerWithoutThroughput(databaseResponse, containerProperties).ConfigureAwait(false);
+        }
+        else
+        {
+            await CreateContainerWithThroughput(databaseResponse, containerProperties, containerConfig).ConfigureAwait(false);
+        }
+    }
+
+    private static async Task CreateContainerWithoutThroughput(DatabaseResponse databaseResponse, ContainerProperties containerProperties) =>
+        await databaseResponse.Database.CreateContainerIfNotExistsAsync(containerProperties).ConfigureAwait(false);
+
+    private static async Task CreateContainerWithThroughput(DatabaseResponse databaseResponse, ContainerProperties containerProperties, ICosmosContainerConfig containerConfig)
+    {
         ThroughputProperties throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(containerConfig.AutoscaleMax());
 
         try

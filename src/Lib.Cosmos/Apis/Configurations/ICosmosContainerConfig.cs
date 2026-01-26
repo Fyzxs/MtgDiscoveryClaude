@@ -19,7 +19,7 @@ public interface ICosmosContainerConfig
     /// Gets the maximum throughput for autoscale.
     /// </summary>
     /// <returns>The autoscale maximum throughput.</returns>
-    CosmosContainerAutoscaleMax AutoscaleMax();
+    CosmosAutoscaleMax AutoscaleMax();
 
     /// <summary>
     /// Gets the time-to-live (TTL) in seconds for items in the container.

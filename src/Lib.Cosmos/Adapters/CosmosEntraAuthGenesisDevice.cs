@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Core;
@@ -34,7 +34,7 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
     public async Task LiveLongAndProsper(ICosmosGenesisClientAdapter genesisClientAdapter)
     {
         ICosmosEntraGenesisConfig genesisConfig = _connectionConfig.EntraGenesisConfig(_containerConfig);
-        if (genesisConfig.Bypass()) return;
+        if (genesisConfig.Bypass()) { return; }
 
         try
         {
@@ -63,10 +63,14 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
             _containerConfig.ContainerName()
         );
 
+        ICosmosDatabaseConfig databaseConfig = _connectionConfig.DatabaseConfig(_containerConfig);
+        ICosmosContainerConfig containerConfig = databaseConfig.ContainerConfig(_containerConfig);
+        ICosmosThroughputMode throughputMode = databaseConfig.ThroughputMode();
+
         CosmosDBAccountResource dbAccount = await CosmosAccount(genesisConfig).ConfigureAwait(false);
         AzureLocation location = dbAccount.Data.Location;
-        CosmosDBSqlDatabaseResource cosmosDbSqlResource = await CreateDatabase(dbAccount, location).ConfigureAwait(false);
-        await CreateCollection(cosmosDbSqlResource, location, _containerConfig).ConfigureAwait(false);
+        CosmosDBSqlDatabaseResource cosmosDbSqlResource = await CreateDatabase(dbAccount, location, databaseConfig, throughputMode).ConfigureAwait(false);
+        await CreateCollection(cosmosDbSqlResource, location, containerConfig, throughputMode).ConfigureAwait(false);
     }
 
     private async Task<CosmosDBAccountResource> CosmosAccount(ICosmosEntraGenesisConfig genesisConfig)
@@ -77,29 +81,36 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
         return dbAccount;
     }
 
-    private async Task<CosmosDBSqlDatabaseResource> CreateDatabase(CosmosDBAccountResource dbAccount, AzureLocation location)
+    private async Task<CosmosDBSqlDatabaseResource> CreateDatabase(CosmosDBAccountResource dbAccount, AzureLocation location, ICosmosDatabaseConfig databaseConfig, ICosmosThroughputMode throughputMode)
     {
         CosmosDBSqlDatabaseCollection databases = dbAccount.GetCosmosDBSqlDatabases();
         CosmosDBSqlDatabaseResourceInfo cosmosDbSqlDatabaseResourceInfo = new(_containerConfig.DatabaseName());
         CosmosDBSqlDatabaseCreateOrUpdateContent createOrUpdateContent = new(location, cosmosDbSqlDatabaseResourceInfo);
 
-        if (await databases.ExistsAsync(_containerConfig.DatabaseName()).ConfigureAwait(false)) return await databases.GetAsync(_containerConfig.DatabaseName()).ConfigureAwait(false);
+        if (throughputMode.IsDatabaseShared())
+        {
+            createOrUpdateContent.Options = new CosmosDBCreateUpdateConfig
+            {
+                AutoscaleMaxThroughput = databaseConfig.AutoscaleMax()
+            };
+        }
+
+        if (await databases.ExistsAsync(_containerConfig.DatabaseName()).ConfigureAwait(false)) { return await databases.GetAsync(_containerConfig.DatabaseName()).ConfigureAwait(false); }
 
         return (await databases.CreateOrUpdateAsync(WaitUntil.Completed, _containerConfig.DatabaseName(), createOrUpdateContent).ConfigureAwait(false)).Value;
     }
 
-    private async Task CreateCollection(CosmosDBSqlDatabaseResource cosmosDbSqlResource, AzureLocation location, ICosmosContainerDefinition cosmosContainerConfig)
+    private async Task CreateCollection(CosmosDBSqlDatabaseResource cosmosDbSqlResource, AzureLocation location, ICosmosContainerConfig containerConfig, ICosmosThroughputMode throughputMode)
     {
         CosmosDBSqlContainerCollection cosmosDbSqlContainers = cosmosDbSqlResource.GetCosmosDBSqlContainers();
-        if (await cosmosDbSqlContainers.ExistsAsync(cosmosContainerConfig.ContainerName()).ConfigureAwait(false)) return;
+        if (await cosmosDbSqlContainers.ExistsAsync(_containerConfig.ContainerName()).ConfigureAwait(false)) { return; }
 #pragma warning disable S1481 //_ is fine
-        ArmOperation<CosmosDBSqlContainerResource> _ = await cosmosDbSqlContainers.CreateOrUpdateAsync(WaitUntil.Completed, cosmosContainerConfig.ContainerName(), CollectionConfig(location)).ConfigureAwait(false);
+        ArmOperation<CosmosDBSqlContainerResource> _ = await cosmosDbSqlContainers.CreateOrUpdateAsync(WaitUntil.Completed, _containerConfig.ContainerName(), CollectionConfig(location, containerConfig, throughputMode)).ConfigureAwait(false);
 #pragma warning restore S1481
     }
 
-    private CosmosDBSqlContainerCreateOrUpdateContent CollectionConfig(AzureLocation location)
+    private CosmosDBSqlContainerCreateOrUpdateContent CollectionConfig(AzureLocation location, ICosmosContainerConfig containerConfig, ICosmosThroughputMode throughputMode)
     {
-        ICosmosContainerConfig containerConfig = _connectionConfig.ContainerConfig(_containerConfig);
         CosmosDBContainerPartitionKey cosmosDbContainerPartitionKey = new() { Kind = CosmosDBPartitionKind.Hash };
         cosmosDbContainerPartitionKey.Paths.Add(_containerConfig.PartitionKeyPath());
 
@@ -110,14 +121,14 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
         };
 
         CosmosDBSqlContainerCreateOrUpdateContent cosmosDbSqlContainerCreateOrUpdateContent = new(location, cosmosDbSqlContainerResourceInfo);
-        // Note: Options with CosmosDBCreateUpdateConfig should NOT be set for serverless Cosmos DB accounts
-        // Serverless accounts do not support throughput configuration
-        //{
-        //    Options = new CosmosDBCreateUpdateConfig()
-        //    {
-        //        AutoscaleMaxThroughput = containerConfig.AutoscaleMax()
-        //    }
-        //};
+
+        if (throughputMode.IsContainerDedicated())
+        {
+            cosmosDbSqlContainerCreateOrUpdateContent.Options = new CosmosDBCreateUpdateConfig
+            {
+                AutoscaleMaxThroughput = containerConfig.AutoscaleMax()
+            };
+        }
 
         return cosmosDbSqlContainerCreateOrUpdateContent;
     }

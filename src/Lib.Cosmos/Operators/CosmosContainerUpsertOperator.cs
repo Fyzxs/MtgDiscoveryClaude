@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Lib.Cosmos.Adapters;
+using Lib.Cosmos.Apis;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Azure.Cosmos;
@@ -25,7 +26,18 @@ internal sealed class CosmosContainerUpsertOperator : ICosmosContainerUpsertOper
     public async Task<OpResponse<T>> UpsertAsync<T>(T item)
     {
         Container container = await _clientAdapter.GetContainer().ConfigureAwait(false);
-        ItemResponse<T> itemResponse = await container.UpsertItemAsync(item).ConfigureAwait(false);
+
+        // If item has ETag, use it for optimistic concurrency control
+        ItemRequestOptions requestOptions = null;
+        if (item is CosmosItem cosmosItem && string.IsNullOrEmpty(cosmosItem.ETag) is false)
+        {
+            requestOptions = new ItemRequestOptions
+            {
+                IfMatchEtag = cosmosItem.ETag
+            };
+        }
+
+        ItemResponse<T> itemResponse = await container.UpsertItemAsync(item, requestOptions: requestOptions).ConfigureAwait(false);
         _logger.UpsertInformation(itemResponse.RequestCharge, itemResponse.Diagnostics.GetClientElapsedTime());
         return new ItemOpResponse<T>(itemResponse);
     }
@@ -38,4 +50,3 @@ internal static partial class CosmosContainerUpsertAdapterLoggerExtensions
         Message = "UpsertItem cost: [RequestCharge={requestCharge}] [ElapsedTime={elapsedTime}]")]
     public static partial void UpsertInformation(this ILogger logger, double requestCharge, TimeSpan elapsedTime);
 }
-

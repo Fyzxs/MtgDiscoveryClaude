@@ -4,7 +4,7 @@ using Lib.Universal.Extensions;
 
 namespace Lib.Cosmos.Configurations;
 
-internal sealed class ConfigCosmosContainerAutoscaleMax : CosmosContainerAutoscaleMax
+internal sealed class ConfigCosmosContainerAutoscaleMax : CosmosAutoscaleMax
 {
     private readonly string _sourceKey;
     private readonly IConfig _config;

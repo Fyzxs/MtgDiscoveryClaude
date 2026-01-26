@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Universal.Configurations;
 
 namespace Lib.Cosmos.Configurations;
@@ -18,5 +18,17 @@ internal sealed class ConfigCosmosDatabaseConfig : ICosmosDatabaseConfig
     {
         string containerKey = $"{_parentKey}:{cosmosContainerDefinition.ContainerName().AsSystemType()}";
         return new ConfigCosmosContainerConfig(containerKey, _config);
+    }
+
+    public ICosmosThroughputMode ThroughputMode()
+    {
+        string throughputModeKey = $"{_parentKey}:{ICosmosDatabaseConfig.ThroughputModeKey}";
+        return new ConfigCosmosThroughputMode(throughputModeKey, _config);
+    }
+
+    public CosmosAutoscaleMax AutoscaleMax()
+    {
+        string autoscaleMaxKey = $"{_parentKey}:{ICosmosDatabaseConfig.AutoscaleMaxKey}";
+        return new ConfigCosmosDatabaseAutoscaleMax(autoscaleMaxKey, _config);
     }
 }

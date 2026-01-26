@@ -43,10 +43,10 @@ internal abstract class CosmosGenesisClientAdapter : ICosmosGenesisClientAdapter
     public Task<Container> GetContainer(ICosmosContainerDefinition cosmosContainerDef)
         => Task.FromResult(_cosmosClient.GetContainer(cosmosContainerDef.DatabaseName(), cosmosContainerDef.ContainerName()));
 
-    public async Task<DatabaseResponse> CreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition)
-        => await InternalCreateDatabaseIfNotExistsAsync(containerDefinition, _cosmosClient).ConfigureAwait(false);
+    public async Task<DatabaseResponse> CreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, ThroughputProperties throughputProperties)
+        => await InternalCreateDatabaseIfNotExistsAsync(containerDefinition, _cosmosClient, throughputProperties).ConfigureAwait(false);
 
-    protected abstract Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient);
+    protected abstract Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient, ThroughputProperties throughputProperties);
 }
 
 internal sealed class EntraAuthCosmosGenesisClientAdapter : CosmosGenesisClientAdapter
@@ -64,7 +64,7 @@ internal sealed class EntraAuthCosmosGenesisClientAdapter : CosmosGenesisClientA
         return new CosmosClient(accountEndpoint, tokenCredentials, options);
     }
 
-    protected override Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient)
+    protected override Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient, ThroughputProperties throughputProperties)
         => throw new NotImplementedException("Cannot Genesis this way when using Entra Auth");
 }
 
@@ -74,6 +74,6 @@ internal sealed class SasAuthCosmosGenesisClientAdapter : CosmosGenesisClientAda
         : base(new CosmosClient(config.ConnectionString(), Options(config)))
     { }
 
-    protected override async Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient)
-        => await cosmosClient.CreateDatabaseIfNotExistsAsync(containerDefinition.DatabaseName()).ConfigureAwait(false);
+    protected override async Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient, ThroughputProperties throughputProperties)
+        => await cosmosClient.CreateDatabaseIfNotExistsAsync(containerDefinition.DatabaseName(), throughputProperties).ConfigureAwait(false);
 }

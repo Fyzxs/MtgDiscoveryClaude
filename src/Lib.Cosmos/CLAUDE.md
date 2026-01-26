@@ -50,7 +50,44 @@ This library implements comprehensive Cosmos DB functionality following strict M
 ### Configuration Hierarchy
 - Root: `ConfigCosmosConfiguration`
 - Account level: Connection and authentication settings
+- Database level: Throughput strategy and settings
 - Container level: Container-specific configurations
+
+### Throughput Strategy Pattern
+The library supports configurable throughput at either database or container level via the Strategy pattern:
+
+**Key Components:**
+- `IThroughputStrategy` - Interface for throughput configuration strategy
+- `DatabaseThroughputStrategy` - Database-level shared throughput (autoscale)
+- `ContainerThroughputStrategy` - Container-level dedicated throughput (autoscale)
+- `ConfigThroughputStrategyProvider` - Factory that creates appropriate strategy based on configuration
+
+**Configuration Keys (at database level):**
+- `throughput_mode` - Either "database" or "container" (default: container)
+- `autoscale_max` - Database-level autoscale maximum RU/s (required for database mode)
+
+**Usage:**
+```csharp
+// Configuration example for database-level throughput
+{
+  "cosmos:account:database": {
+    "throughput_mode": "database",
+    "autoscale_max": "4000"
+  }
+}
+
+// Configuration example for container-level throughput (default)
+{
+  "cosmos:account:database:container": {
+    "autoscale_max": "1000"
+  }
+}
+```
+
+**GenesisDevice Integration:**
+- `CosmosSasAuthGenesisDevice` and `CosmosEntraAuthGenesisDevice` use `IThroughputStrategy` to determine throughput configuration
+- Throughput strategy is obtained via `ICosmosConnectionConvenience.DatabaseConfig().ThroughputStrategy()`
+- GenesisDevices have no internal throughput mode logic - all decisions are externalized to the strategy
 
 ## Container Operations
 ### CRUD Operations

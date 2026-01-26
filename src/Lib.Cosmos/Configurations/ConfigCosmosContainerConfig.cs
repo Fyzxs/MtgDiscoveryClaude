@@ -14,7 +14,7 @@ internal sealed class ConfigCosmosContainerConfig : ICosmosContainerConfig
         _config = config;
     }
 
-    public CosmosContainerAutoscaleMax AutoscaleMax() => new ConfigCosmosContainerAutoscaleMax($"{_parentKey}:{ICosmosContainerConfig.AutoscaleMaxKey}", _config);
+    public CosmosAutoscaleMax AutoscaleMax() => new ConfigCosmosContainerAutoscaleMax($"{_parentKey}:{ICosmosContainerConfig.AutoscaleMaxKey}", _config);
 
     public CosmosContainerTimeToLive TimeToLive() => new ConfigCosmosContainerTimeToLive($"{_parentKey}:{ICosmosContainerConfig.TimeToLiveKey}", _config);
 }

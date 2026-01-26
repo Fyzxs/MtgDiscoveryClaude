@@ -27,4 +27,11 @@ public /* cosmos required */ class CosmosItem : CosmosEntity
     [JsonProperty("created_date")]
     public string CreatedDate { get; set; } = DateTime.UtcNow.ToString("O");
 
+    /// <summary>
+    /// Gets or sets the entity tag (ETag) for optimistic concurrency control.
+    /// This value is managed by Cosmos DB and should not be manually set.
+    /// </summary>
+    [JsonProperty("_etag")]
+    public string ETag { get; set; }
+
 }

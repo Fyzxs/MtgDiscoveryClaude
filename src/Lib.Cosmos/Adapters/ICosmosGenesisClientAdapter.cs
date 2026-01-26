@@ -8,5 +8,5 @@ internal interface ICosmosGenesisClientAdapter
 {
     Task<Container> GetContainer(ICosmosContainerDefinition cosmosContainerDef);
 
-    Task<DatabaseResponse> CreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition);
+    Task<DatabaseResponse> CreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, ThroughputProperties throughputProperties);
 }

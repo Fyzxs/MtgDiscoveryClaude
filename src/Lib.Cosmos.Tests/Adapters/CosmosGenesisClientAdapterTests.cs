@@ -14,7 +14,9 @@ public sealed class CosmosGenesisClientAdapterTests
         public TestCosmosGenesisClientAdapter(CosmosClient cosmosClient) : base(cosmosClient) { }
 
         public static CosmosClientOptions OptionsAccess(ICosmosConnectionOptionsConfig config) => Options(config);
-        protected override Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient) => throw new System.NotImplementedException();
+
+        protected override Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient, ThroughputProperties throughputProperties) =>
+            throw new System.NotImplementedException();
     }
 
     [TestMethod, TestCategory("unit")]
