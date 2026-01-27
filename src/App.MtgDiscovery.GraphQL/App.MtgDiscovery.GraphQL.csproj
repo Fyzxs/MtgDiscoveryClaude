@@ -27,19 +27,19 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="appsettings.Local.json">
+    <Content Update="D:\src\MtgDiscoveryVibeWorkspace\configs\appsettings.Local.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="appsettings.Development.json">
+    <Content Update="D:\src\MtgDiscoveryVibeWorkspace\configs\appsettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="appsettings.Production.json">
+    <Content Update="D:\src\MtgDiscoveryVibeWorkspace\configs\appsettings.Production.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="local.settings.json">
+    <None Update="D:\src\MtgDiscoveryVibeWorkspace\local.settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
