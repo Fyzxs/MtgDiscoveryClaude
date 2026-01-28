@@ -62,9 +62,9 @@ A visitor (anonymous or authenticated) can quickly search for cards, sets, or ar
 
 1. **Given** a visitor on the homepage, **When** they type a card name in the search field, **Then** they are directed to the card search results page.
 
-2. **Given** a visitor on the homepage, **When** they type a set code or name, **Then** they can navigate to that set's page.
+2. **Given** a visitor on the homepage, **When** they submit a search term, **Then** they navigate to the card search results page with their query pre-filled.
 
-3. **Given** a visitor on the homepage, **When** they view the search section, **Then** popular/suggested searches are displayed as clickable chips.
+3. **Given** a visitor on the homepage, **When** they view the search section, **Then** the search field is prominently displayed with clear placeholder text indicating searchable content types (cards, sets, artists).
 
 ---
 
@@ -151,7 +151,7 @@ Anonymous users are presented with compelling calls-to-action to create an accou
 | # | Section | Purpose | Auth Variant |
 |---|---------|---------|--------------|
 | 1 | Hero | Value prop / Dashboard | Yes - full replacement |
-| 2 | Quick Search | Search bar + suggestions | Yes - recent searches |
+| 2 | Quick Search | Search bar | No |
 | 3 | Feature Highlights | 4 key features | Yes - personalized order |
 | 4 | Featured Sets | Latest releases carousel | Yes - includes user's sets |
 | 5 | Collection Preview | Demo / User activity | Yes - actual user data |
@@ -225,11 +225,11 @@ Components:
 │              "Welcome back, {displayName}!"                         │
 │                        (h2, centered)                               │
 │                                                                     │
-│   ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌────────────┐│
-│   │    1,234     │ │      12      │ │      45      │ │     3      ││
-│   │    Cards     │ │     Sets     │ │   Wishlist   │ │  Upcoming  ││
-│   │   Tracked    │ │   Complete   │ │    Items     │ │  Signings  ││
-│   └──────────────┘ └──────────────┘ └──────────────┘ └────────────┘│
+│   ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐  │
+│   │      1,234       │ │        12        │ │        45        │  │
+│   │      Cards       │ │       Sets       │ │     Wishlist     │  │
+│   │     Tracked      │ │    In Progress   │ │      Items       │  │
+│   └──────────────────┘ └──────────────────┘ └──────────────────┘  │
 │                                                                     │
 │          ┌─────────────────────────────────────────┐                │
 │          │  Continue: [Last Set Name] →           │                │
@@ -239,13 +239,22 @@ Components:
 
 Layout:
 - Same container as anonymous
-- Grid for stat boxes: { xs: 2 columns, md: 4 columns }
+- Grid for stat boxes: { xs: 1 column, sm: 3 columns }
 
 Components:
 - StatBox: Card with elevation={0}, border, centered content
-- Typography variant="h4" for numbers
+- Typography variant="h4" for numbers (or CircularProgress while loading)
 - Typography variant="caption" for labels
+- Each StatBox loads independently with its own spinner
 - Button or Card for "Continue" action
+
+Empty State (new user with zero data):
+- Display authenticated hero with all stat boxes showing "0"
+- Each zero-stat box includes an encouraging CTA (e.g., "0 Cards — Start tracking!")
+- "Continue" action hidden when no recent sets exist
+
+Error State:
+- If any stat data fetch fails, fall back to the anonymous hero section
 ```
 
 ### Section 2: Quick Search
@@ -257,8 +266,6 @@ Components:
 │   │  🔍  Search cards, sets, or artists...                  [▼] │   │
 │   └─────────────────────────────────────────────────────────────┘   │
 │                                                                     │
-│   Popular: [Black Lotus] [Lightning Bolt] [Murders at Karlov...]   │
-│                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 
 Layout:
@@ -268,8 +275,7 @@ Layout:
 Components:
 - TextField with InputAdornment (SearchIcon)
 - Optional: Select for search type (cards/sets/artists)
-- Chip components for popular searches (clickable)
-- Autocomplete for enhanced UX (future enhancement)
+- Autocomplete for enhanced UX (future enhancement, see post-impl GraphQL notes)
 ```
 
 ### Section 3: Feature Highlights
@@ -451,8 +457,8 @@ Components:
 - Card thumbnail row for sample works
 
 Data:
-- Initially hardcoded or from "featured artist" configuration
-- Future: API endpoint for rotating featured artist
+- Hardcoded array of featured artists in code (name, description, card count, sample card IDs)
+- Rotated manually via code changes with deployments
 ```
 
 ### Section 7: Bottom CTA
@@ -554,7 +560,6 @@ Rest → Hover transition:
 - Skeleton screens for feature cards during data fetch
 - Shimmer effect on set carousel
 - Hero text loads immediately (no skeleton)
-- Search autocomplete shows spinner in field
 
 ---
 
@@ -601,11 +606,10 @@ Rest → Hover transition:
 1. Skip to main content link
 2. Hero CTAs
 3. Search field
-4. Popular search chips
-5. Feature cards (in reading order)
-6. Carousel navigation buttons
-7. Set cards within carousel
-8. Remaining sections in order
+4. Feature cards (in reading order)
+5. Carousel navigation buttons
+6. Set cards within carousel
+7. Remaining sections in order
 
 **Carousel Keyboard Support**:
 - Arrow Left/Right: Navigate between cards
@@ -655,29 +659,28 @@ client/src/
 │           └── components/
 │               ├── FeatureCard.tsx
 │               ├── SetPreviewCard.tsx
-│               ├── StatBox.tsx
-│               └── PopularSearchChip.tsx
+│               └── StatBox.tsx
 ```
 
 ### Data Requirements
 
 **Anonymous User**: No API calls required for MVP (static content)
 
-**Authenticated User**:
-| Data | Source | Endpoint |
-|------|--------|----------|
-| User display name | Auth0/UserContext | Already available |
-| Cards tracked count | New | `GET /user/stats` or compute client-side |
-| Sets in progress | New | `GET /user/recent-sets` |
-| Wishlist count | Existing | WishlistContext |
-| Wishlist preview | Existing | WishlistContext (first N items) |
+**Authenticated User** (all computed client-side from existing data sources):
+| Data | Source | Loading |
+|------|--------|---------|
+| User display name | Auth0/UserContext | Already available (no spinner) |
+| Cards tracked count | Existing UserCards query | Individual spinner per stat box |
+| Sets in progress count | Existing UserSetCards query | Individual spinner per stat box |
+| Wishlist count | Existing `GET_USER_WISHLIST` query (count of results) | Individual spinner per stat box |
+| Wishlist preview | Existing `GET_USER_WISHLIST` query (first 4-6 cards) | Shared spinner with wishlist count (same query) |
 
 ### Component Dependencies
 
 | Component | MUI Components | Custom Components |
 |-----------|---------------|-------------------|
 | HeroSection | Box, Typography, Button, Stack, Grid | StatBox |
-| QuickSearchSection | TextField, InputAdornment, Chip | - |
+| QuickSearchSection | TextField, InputAdornment | - |
 | FeatureHighlights | Grid, Card, CardContent, CardActions, Avatar, Tooltip | FeatureCard |
 | FeaturedSetsCarousel | Box, IconButton, Typography, Link | SetPreviewCard |
 | CollectionPreview | Box, Typography, LinearProgress, CircularProgress | Card thumbnails |
@@ -769,19 +772,53 @@ const HomePage: React.FC = () => {
 
 **Acceptance**: Smooth, polished experience that respects user preferences.
 
+### Post-Implementation: Backend API Evaluation
+
+After all phases are complete, evaluate the final homepage implementation to identify opportunities for dedicated backend APIs that improve performance. Candidates include:
+- Aggregated user stats endpoint (single query instead of multiple client-side computations)
+- Featured content endpoint (artist spotlight, curated sets)
+- Homepage dashboard endpoint (combined payload for authenticated users)
+- Lightweight wishlist count endpoint (avoid fetching full card data just for a count)
+- Review all homepage queries for optimization (e.g., `GET_USER_WISHLIST` returns full card data when only count + thumbnails are needed)
+- **GraphQL paging, sorting, and filtering**: Evaluate adding these capabilities to existing endpoints (e.g., `allSets`, `userWishlist`) rather than creating new dedicated endpoints. This could enable homepage autocomplete search, more efficient carousel data, and lightweight stat queries through existing infrastructure.
+
+### Post-Implementation: Code Cleanup
+
+- **Remove `CardDisplayResponsive` dead code**: The `CardDisplay` component in `src/components/organisms/Cards/CardDisplayResponsive.tsx` is not used anywhere in the application. This file can be safely deleted along with any orphaned imports.
+- **Remove `CardCompact` dead code**: The `CardCompact` component in `src/components/organisms/Cards/CardCompact.tsx` is not used anywhere in the application. The actual card display is handled by `MtgCard` (via `CardGrid`). This file can be safely deleted along with any orphaned imports.
+
+---
+
+## Clarifications
+
+### Session 2026-01-27
+
+- Q: How should the hero section handle empty state for brand-new authenticated users with zero data? → A: Show the authenticated hero with zero stats and encouraging CTAs (e.g., "0 Cards — Start tracking!")
+- Q: Should user statistics (cards tracked, sets in progress, wishlist count) come from a new backend endpoint or be computed client-side? → A: Compute client-side from existing queries/contexts, enabling individualized loading spinners per stat box while each data source loads independently.
+- Q: How should the featured artist be selected for the artist spotlight? → A: Hardcoded array in code, rotated manually with deployments. Post-task: evaluate the final homepage implementation to design backend APIs that improve homepage performance (e.g., aggregated stats endpoint, featured content endpoint).
+- Q: What should happen when one or more authenticated stat data fetches fail? → A: Fall back to the anonymous hero if any stat fetch fails.
+
+### Session 2026-01-27 (post-plan)
+
+- Q: How should the Wishlist stat box get its count, given WishlistContext is a mutation dispatcher not a data store? → A: Use existing `GET_USER_WISHLIST` query — count for stat box, first 4-6 cards for CollectionPreview wishlist thumbnails, with CTA linking to wishlist page. Add to post-implementation backend API evaluation for query optimization review.
+- Q: The authenticated hero wireframe shows "Upcoming Signings" (4th stat box) but no data source exists for signing events. How should the 4th stat box behave? → A: Remove the 4th stat box entirely. Show only 3 stats: Cards Tracked, Sets In Progress, Wishlist Items.
+- Q: Should the featured sets carousel show latest by release date or a curated list? → A: Latest by release date, filtered to expansion + core set types.
+- Q: Should homepage search use autocomplete or simple navigation? → A: Simple navigation to `/search/cards?q={term}` for MVP. Post-impl note: adding paging, sorting, and filtering capabilities to existing GraphQL endpoints could enable autocomplete and other homepage enhancements without creating new endpoints.
+- Q: Should popular search suggestion chips be hardcoded or dynamic? → A: Remove popular search suggestions entirely. The search bar stands alone without suggestion chips.
+
 ---
 
 ## Open Questions
 
-1. **Featured Artist Data**: Should featured artist rotate automatically (weekly?) or be manually curated? Initial implementation can be hardcoded.
+1. ~~**Featured Artist Data**~~: Resolved — hardcoded array in code, rotated manually with deployments.
 
-2. **User Stats API**: Does the backend need new endpoints for user statistics, or can we compute these client-side from existing data?
+2. ~~**User Stats API**~~: Resolved — compute client-side from existing queries/contexts with individual loading spinners per stat box.
 
-3. **Set Carousel Data**: Use latest sets by release date, or curate "featured" sets? Recommend release date initially.
+3. ~~**Set Carousel Data**~~: Resolved — latest by release date, filtered to expansion + core set types.
 
-4. **Search Behavior**: Should homepage search use autocomplete, or simple navigation to search page? Recommend simple navigation for MVP.
+4. ~~**Search Behavior**~~: Resolved — simple navigation to existing search pages for MVP.
 
-5. **Popular Searches**: Hardcoded list or dynamic based on actual search data? Recommend hardcoded for MVP.
+5. ~~**Popular Searches**~~: Resolved — removed entirely. Search bar stands alone.
 
 ---
 

@@ -228,11 +228,13 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
                 #{collectorNumber}
               </Typography>
             </Box>
-            <PriceDisplay
-              price={price}
-              currency="usd"
-              sx={{ fontSize: '0.875rem' }}
-            />
+            {!context.hidePrice && (
+              <PriceDisplay
+                price={price}
+                currency="usd"
+                sx={{ fontSize: '0.875rem' }}
+              />
+            )}
           </Box>
         </Box>
       </Box>
@@ -339,20 +341,26 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
         )}
 
         {/* Price and Links Row */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <PriceDisplay
-            price={price}
-            currency="usd"
-            sx={{ fontSize: '0.875rem' }}
-          />
-          <CardLinks
-            scryfallUrl={scryfallUrl}
-            tcgplayerUrl={tcgplayerUrl}
-            cardName={cardName}
-            setCode={setCode}
-            collectorNumber={collectorNumber}
-          />
-        </Box>
+        {(!context.hidePrice || !context.hideLinks) && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {!context.hidePrice && (
+              <PriceDisplay
+                price={price}
+                currency="usd"
+                sx={{ fontSize: '0.875rem' }}
+              />
+            )}
+            {!context.hideLinks && (
+              <CardLinks
+                scryfallUrl={scryfallUrl}
+                tcgplayerUrl={tcgplayerUrl}
+                cardName={cardName}
+                setCode={setCode}
+                collectorNumber={collectorNumber}
+              />
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

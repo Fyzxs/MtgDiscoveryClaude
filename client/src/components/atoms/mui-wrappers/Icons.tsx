@@ -42,11 +42,15 @@ export { default as RemoveCircleIcon } from '@mui/icons-material/RemoveCircle';
 export { default as WarningIcon } from '@mui/icons-material/Warning';
 
 // Content Icons
+export { default as BrushIcon } from '@mui/icons-material/Brush';
 export { default as CollectionsBookmarkIcon } from '@mui/icons-material/CollectionsBookmark';
-export { default as HotelIcon } from '@mui/icons-material/Hotel';
+export { default as EventNoteIcon } from '@mui/icons-material/EventNote';
 export { default as FormatListNumberedIcon } from '@mui/icons-material/FormatListNumbered';
+export { default as HotelIcon } from '@mui/icons-material/Hotel';
 export { default as ImageNotSupportedIcon } from '@mui/icons-material/ImageNotSupported';
 export { default as KeyboardIcon } from '@mui/icons-material/Keyboard';
+export { default as LightbulbIcon } from '@mui/icons-material/Lightbulb';
+export { default as LockIcon } from '@mui/icons-material/Lock';
 export { default as MenuBookIcon } from '@mui/icons-material/MenuBook';
 export { default as SearchOffIcon } from '@mui/icons-material/SearchOff';
 
