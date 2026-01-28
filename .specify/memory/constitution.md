@@ -1,19 +1,41 @@
 <!--
 Sync Impact Report:
-Version Change: None (initial constitution) → 1.0.0
-Modified Principles: N/A (initial creation)
-Added Sections: All sections are new
+Version Change: 1.0.0 → 1.1.0
+Modified Principles: None (existing principles unchanged)
+Added Sections:
+  - Principle 0: Reference Project Standard (NON-NEGOTIABLE) - New foundational principle
 Removed Sections: None
 Templates Requiring Updates:
-  - ✅ .specify/templates/plan-template.md (reviewed, aligns with principles)
-  - ✅ .specify/templates/spec-template.md (reviewed, aligns with principles)
-  - ✅ .specify/templates/tasks-template.md (to be reviewed when tasks are generated)
+  - ✅ .specify/templates/plan-template.md (reviewed, no changes needed - Constitution Check covers this)
+  - ✅ .specify/templates/spec-template.md (reviewed, no changes needed)
+  - ✅ .specify/templates/tasks-template.md (reviewed, no changes needed)
 Follow-up TODOs: None
 -->
 
 # MtgDiscoveryVibe Constitution
 
 ## Core Principles
+
+### 0. Reference Project Standard (NON-NEGOTIABLE)
+
+**This codebase exists to demonstrate patterns and practices.** It is not merely a functional application - it is a teaching tool and canonical reference that others will study and copy.
+
+**Why This Principle is Numbered Zero:**
+This principle supersedes and elevates all other principles. Every rule in this constitution MUST be followed with exceptional precision because incorrect implementations become the patterns others copy.
+
+**Core Rules:**
+- **"Good enough" is NEVER acceptable.** Every implementation MUST precisely replicate established patterns.
+- **Deviations become bad examples.** If code is implemented incorrectly here, that incorrect implementation becomes the pattern someone copies into their project.
+- **Pattern fidelity is paramount.** Before implementing anything, find existing examples in the codebase and match them exactly - same naming conventions, same structure, same style.
+- **When in doubt, STOP and ask.** If a clear pattern cannot be found, or if multiple patterns exist, stop and ask rather than guess.
+
+**Required Workflow Before Writing Any Code:**
+1. **Find the pattern.** Search for similar implementations in neighboring files or related layers.
+2. **Study the pattern.** Understand not just what the code does, but why it's structured that way.
+3. **Replicate the pattern.** Match it precisely - naming, structure, style, everything.
+4. **Verify the pattern.** After implementing, compare code against the reference to ensure fidelity.
+
+**Rationale:** This project's entire purpose is to demonstrate the right way to do things. Shortcuts, approximations, and "close enough" implementations directly undermine that purpose. Every other principle in this constitution MUST be applied with this elevated standard in mind.
 
 ### I. MicroObjects Architecture (NON-NEGOTIABLE)
 
@@ -241,10 +263,11 @@ Operations requiring no input MUST use `NoArgsEntity` instead of void, null, or 
 - Report to user with diagnostic information
 - Do NOT continue without user intervention
 
-**Pattern Consistency:**
+**Pattern Consistency (Elevated by Principle 0):**
 - ALWAYS check existing patterns in neighboring files
 - Follow established patterns for similar functionality
 - Do NOT invent new patterns without justification
+- **CRITICAL**: In a reference project, pattern deviations become the bad examples others copy
 
 **Pragma Directive Policy:**
 - AVOID #pragma directives (they accumulate as technical debt)
@@ -320,6 +343,14 @@ Every GraphQL response type MUST follow three-part pattern:
 - Azure DevOps work items linked
 - PR template completed
 
+### Reference Project Quality Standard
+
+**Additional Review Criteria (per Principle 0):**
+- Implementation MUST be copy-worthy - assume others will replicate this exact code
+- No "temporary" or "good enough" solutions allowed
+- Every pattern deviation MUST be challenged: "Would I want someone to copy this?"
+- Code review MUST verify pattern fidelity against existing implementations
+
 ## Governance
 
 ### Amendment Process
@@ -360,4 +391,4 @@ For day-to-day development guidance:
 
 Constitution supersedes all other documentation when conflicts arise.
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-17 | **Last Amended**: 2026-01-17
+**Version**: 1.1.0 | **Ratified**: 2026-01-17 | **Last Amended**: 2026-01-28
