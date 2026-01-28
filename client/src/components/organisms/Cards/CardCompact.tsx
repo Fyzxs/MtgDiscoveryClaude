@@ -157,7 +157,7 @@ export const CardCompact: React.FC<CardCompactProps> = ({
       {...(eventHandlers as Partial<React.DOMAttributes<HTMLDivElement>>)}
     >
       {/* Card Image */}
-      <Box sx={{ position: 'relative' }}>
+      <Box sx={{ position: 'relative', height: '100%' }}>
         <CardImageDisplay
           card={card}
           size="normal"

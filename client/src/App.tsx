@@ -1,9 +1,7 @@
 import './App.css'
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
-import { Container, Typography, Box, CircularProgress } from './components/atoms'
-import { AppCard as Card } from './components/molecules/shared/AppCard'
-import { AppButton as Button } from './components/molecules/shared/AppButton'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Box, CircularProgress } from './components/atoms'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/utils/ErrorBoundaries'
 import { CollectionProvider } from './contexts/CollectionContext'
@@ -18,6 +16,7 @@ import { I18nProvider } from './components/providers/I18nProvider'
 import { globalSearchFocus } from './utils/globalSearchFocusHandler'
 
 // Lazy load page components for code splitting
+const HomePage = lazy(() => import('./components/pages/HomePage'))
 const AllSetsPage = lazy(() => import('./components/pages/AllSetsPage'))
 const SetPage = lazy(() => import('./components/pages/SetPage'))
 const BinderPage = lazy(() => import('./components/pages/BinderPage'))
@@ -46,53 +45,6 @@ function PageLoadingFallback() {
       <CircularProgress />
     </Box>
   )
-}
-
-function HomePage() {
-  const navigate = useNavigate();
-
-  return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        py: 12,
-        display: 'flex',
-        justifyContent: 'center'
-      }}
-    >
-      <Card
-        elevation={6}
-        sx={{
-          textAlign: 'center',
-          maxWidth: 600,
-          width: '100%',
-          p: 4
-        }}
-      >
-        <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
-          Welcome to MTG Discovery
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Explore our card component system built with atomic design principles. 
-          View Magic: The Gathering cards with proper styling, rarity indicators, 
-          and responsive layouts.
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Button 
-            onClick={() => navigate('/sets')}
-            size="large"
-            variant="contained"
-            color="primary"
-            sx={{ 
-              width: { xs: '100%', sm: 'auto' }
-            }}
-          >
-            Browse All Sets
-          </Button>
-        </Box>
-      </Card>
-    </Container>
-  );
 }
 
 function App() {

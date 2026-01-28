@@ -63,6 +63,7 @@ export const Header: React.FC = () => {
           position="sticky"
           role="banner"
           sx={{
+            top: 0,
             backgroundColor: 'background.paper',
             backgroundImage: 'none',
             borderBottom: '1px solid',
@@ -135,6 +136,7 @@ export const Header: React.FC = () => {
       position="sticky"
       role="banner"
       sx={{
+        top: 0,
         backgroundColor: 'background.paper',
         backgroundImage: 'none',
         borderBottom: '1px solid',

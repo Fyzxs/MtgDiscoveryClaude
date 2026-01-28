@@ -644,6 +644,8 @@ az repos pr show --id <pr-id>
 - SQLite (new, static read-only data) + Azure Cosmos DB (existing, user data + ingestion writes) + Azure Blob Storage (optional, SQLite file hosting) (010-sqlite-migration)
 - C# .NET 9.0 (backend), TypeScript/React 19 (frontend - Phase 6 only) + Microsoft.Data.Sqlite 9.0.x (new), HotChocolate (existing GraphQL), Newtonsoft.Json (existing), Azure Cosmos DB SDK (existing), Azure.Storage.Blobs 12.x (new), Azure.Identity 1.x (new) (010-sqlite-migration)
 - SQLite (new, static read-only data ~250-400MB) + Azure Cosmos DB (existing, user data + ingestion writes) + Azure Blob Storage (new, SQLite file hosting) (010-sqlite-migration)
+- TypeScript (React 19.1.1, ES2020+) + Material-UI 7.3.1, Apollo Client 4.0.0, Auth0 React SDK 2.4.0, React Router DOM 7.9.1 (003-homepage-redesign)
+- N/A (frontend-only; data from existing GraphQL API and Auth0) (003-homepage-redesign)
 
 ## Recent Changes
 - 001-auth-refactoring: Added TypeScript (React 19, modern ES2020+)
