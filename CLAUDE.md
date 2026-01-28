@@ -640,6 +640,10 @@ az repos pr show --id <pr-id>
 - TypeScript (React 19, modern ES2020+) (001-auth-refactoring)
 - C# .NET 10.0 (backend), TypeScript/React 19 (frontend) + HotChocolate (GraphQL), Auth0 React SDK, Apollo Client, Material-UI (002-auth-flow-refactor)
 - Azure Cosmos DB (user data via existing UserInfoExtEntity) (002-auth-flow-refactor)
+- C# .NET 9.0 (backend), TypeScript/React 19 (frontend - Phase 6 only) + Microsoft.Data.Sqlite (new), HotChocolate (existing GraphQL), Newtonsoft.Json (existing), Azure Cosmos DB SDK (existing) (010-sqlite-migration)
+- SQLite (new, static read-only data) + Azure Cosmos DB (existing, user data + ingestion writes) + Azure Blob Storage (optional, SQLite file hosting) (010-sqlite-migration)
+- C# .NET 9.0 (backend), TypeScript/React 19 (frontend - Phase 6 only) + Microsoft.Data.Sqlite 9.0.x (new), HotChocolate (existing GraphQL), Newtonsoft.Json (existing), Azure Cosmos DB SDK (existing), Azure.Storage.Blobs 12.x (new), Azure.Identity 1.x (new) (010-sqlite-migration)
+- SQLite (new, static read-only data ~250-400MB) + Azure Cosmos DB (existing, user data + ingestion writes) + Azure Blob Storage (new, SQLite file hosting) (010-sqlite-migration)
 
 ## Recent Changes
 - 001-auth-refactoring: Added TypeScript (React 19, modern ES2020+)

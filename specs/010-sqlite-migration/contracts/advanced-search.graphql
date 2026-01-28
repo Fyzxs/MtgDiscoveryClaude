@@ -1,0 +1,85 @@
+# GraphQL Schema Additions for Advanced Card Search
+# Phase 4-5: Scryfall Query Parser integration
+#
+# This defines the new GraphQL query endpoint that accepts Scryfall-style
+# search syntax and returns paginated card results.
+
+# --- New Query ---
+
+extend type Query {
+  """
+  Search for cards using Scryfall-style query syntax.
+
+  Supports field prefixes (name:, o:, t:, c:, cmc:, pow:, tou:, etc.),
+  comparison operators (>, <, >=, <=, =), boolean logic (AND, OR, NOT, -),
+  parenthesized grouping, and quoted phrase matching.
+
+  Examples:
+    "name:bolt"
+    "t:creature c:red cmc>=3"
+    "(t:instant OR t:sorcery) c:blue"
+    "o:\"draw a card\" -t:creature"
+  """
+  advancedCardSearch(
+    """The search query in Scryfall syntax"""
+    query: String!
+    """Number of results to return (default: 50, max: 175)"""
+    first: Int = 50
+    """Cursor for pagination (opaque string from previous result)"""
+    after: String
+  ): AdvancedCardSearchResult!
+}
+
+# --- Response Types ---
+
+union AdvancedCardSearchResult =
+    AdvancedCardSearchSuccess
+  | AdvancedCardSearchError
+
+type AdvancedCardSearchSuccess {
+  """Total number of cards matching the query"""
+  totalCount: Int!
+  """List of matching cards"""
+  cards: [CardOutEntity!]!
+  """Pagination info"""
+  pageInfo: PageInfo!
+}
+
+type AdvancedCardSearchError {
+  """Human-readable error message"""
+  message: String!
+  """Structured parse errors with position information"""
+  errors: [SearchParseError!]!
+}
+
+type SearchParseError {
+  """Character position in the query where the error occurred"""
+  position: Int!
+  """What the parser expected at this position"""
+  expected: String!
+  """What was actually found"""
+  found: String!
+  """Error description"""
+  message: String!
+}
+
+type PageInfo {
+  """Whether there are more results after this page"""
+  hasNextPage: Boolean!
+  """Cursor to pass as 'after' for the next page"""
+  endCursor: String
+}
+
+# --- Notes ---
+#
+# CardOutEntity already exists in the schema (used by cardsById, cardsBySetCode, etc.)
+# The advancedCardSearch query returns the same CardOutEntity type.
+#
+# PageInfo follows the Relay cursor-based pagination spec.
+# The cursor is an opaque base64-encoded offset, not a database cursor.
+#
+# AdvancedCardSearchResult is a union type following the existing pattern:
+# - Success type returns data
+# - Error type returns structured parse errors with position info
+#
+# This query does NOT require authentication (static card data is public).
