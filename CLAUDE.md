@@ -2,6 +2,26 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## THIS IS A REFERENCE PROJECT
+
+**This codebase exists to demonstrate patterns and practices.** It is not merely a functional application - it is a teaching tool and canonical reference that others will study and copy.
+
+### What This Means for AI Agents
+
+- **"Good enough" is not acceptable.** Every implementation must precisely replicate established patterns.
+- **Deviations become bad examples.** If you implement something incorrectly here, that incorrect implementation becomes the pattern someone copies into their project.
+- **Pattern fidelity is paramount.** Before implementing anything, find existing examples in the codebase and match them exactly - same naming conventions, same structure, same style.
+- **When in doubt, ask.** If you cannot find a clear pattern to follow, or if multiple patterns exist, stop and ask rather than guess.
+
+### Before Writing Any Code
+
+1. **Find the pattern.** Search for similar implementations in neighboring files or related layers.
+2. **Study the pattern.** Understand not just what the code does, but why it's structured that way.
+3. **Replicate the pattern.** Match it precisely - naming, structure, style, everything.
+4. **Verify the pattern.** After implementing, compare your code against the reference to ensure fidelity.
+
+This is not a place for shortcuts, approximations, or "close enough." The entire purpose of this codebase is to demonstrate the right way to do things.
+
 ## Development Commands
 
 ### Build
