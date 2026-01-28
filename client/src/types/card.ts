@@ -195,6 +195,8 @@ export interface CardContext {
   hideSetInfo?: boolean;
   hideReleaseDate?: boolean;
   hasCollector?: boolean;
+  hidePrice?: boolean;
+  hideLinks?: boolean;
 }
 
 export interface UserCardData {
