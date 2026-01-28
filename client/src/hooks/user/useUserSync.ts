@@ -135,10 +135,10 @@ export const useUserSync = (): UserSyncState => {
 
   // Auto-sync user when Auth0 authentication completes and token is ready
   useEffect(() => {
-    if (shouldQueryUserInfo && userProfile === null && userInfoLoading === false) {
+    if (shouldQueryUserInfo && userProfile === null && userInfoLoading === false && error === null) {
       syncUser();
     }
-  }, [shouldQueryUserInfo, userProfile, userInfoLoading, syncUser]);
+  }, [shouldQueryUserInfo, userProfile, userInfoLoading, syncUser, error]);
 
   return {
     userProfile,

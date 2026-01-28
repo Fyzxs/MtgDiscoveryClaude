@@ -61,6 +61,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
   const rarity = card.rarity;
   const collectorNumber = card.collectorNumber;
   const reserved = card.reserved;
+  const contentWarning = card.contentWarning;
   const releaseDate = card.releasedAt;
   const artist = card.artist;
   const artistIds = card.artistIds;
@@ -289,6 +290,7 @@ export const CardOverlay: React.FC<CardOverlayProps> = React.memo(({
               rarity={rarity}
               collectorNumber={collectorNumber}
               reserved={reserved}
+              contentWarning={contentWarning === true}
             />
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.25 }}>

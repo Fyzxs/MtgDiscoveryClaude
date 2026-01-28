@@ -173,7 +173,7 @@ public class CardItemOutEntity
 
     public string Watermark { get; set; }
 
-    public int? ContentWarning { get; set; }
+    public bool ContentWarning { get; set; }
 
     public PreviewOutEntity Preview { get; set; }
 

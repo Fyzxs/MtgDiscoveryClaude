@@ -4,6 +4,7 @@ export { CardName } from './CardName';
 export { CollectorNumber } from './CollectorNumber';
 export { ManaSymbol } from './ManaSymbol';
 export { PriceDisplay } from './PriceDisplay';
+export { ContentWarningIcon } from './ContentWarningIcon';
 export { ReservedListShield } from './ReservedListShield';
 export { SetLink } from './SetLink';
 export { ZoomIndicator } from './ZoomIndicator';

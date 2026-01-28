@@ -87,7 +87,7 @@ internal sealed class CardItemItrEntityFake : ICardItemItrEntity
     public string PrintedTypeLine { get; init; } = string.Empty;
     public string PrintedText { get; init; } = string.Empty;
     public string Watermark { get; init; } = string.Empty;
-    public int? ContentWarning { get; init; }
+    public bool ContentWarning { get; init; }
     public IPreviewItrEntity Preview { get; init; } = default!;
     public ICollection<string> ProducedMana { get; init; } = [];
     public ICollection<int> AttractionLights { get; }

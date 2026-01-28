@@ -36,6 +36,7 @@ export const GET_USER_WISHLIST = gql`
               borderCrop
             }
           }
+          contentWarning
           foil
           nonFoil
           finishes
@@ -44,6 +45,7 @@ export const GET_USER_WISHLIST = gql`
             usdFoil
             usdEtched
           }
+          scryfallUri
           purchaseUris {
             tcgplayer
           }

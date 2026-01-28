@@ -86,7 +86,7 @@ public interface ICardItemItrEntity
     string PrintedTypeLine { get; }
     string PrintedText { get; }
     string Watermark { get; }
-    int? ContentWarning { get; }
+    bool ContentWarning { get; }
     IPreviewItrEntity Preview { get; }
     ICollection<string> ProducedMana { get; }
     ICollection<int> AttractionLights { get; }

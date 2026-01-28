@@ -2,11 +2,13 @@ import React from 'react';
 import { Box } from '../../atoms';
 import { BadgePill } from './BadgePill';
 import { ReservedListShield } from '../../atoms/Cards/ReservedListShield';
+import { ContentWarningIcon } from '../../atoms/Cards/ContentWarningIcon';
 
 interface RarityCollectorBadgeProps {
   rarity?: string;
   collectorNumber?: string;
   reserved?: boolean;
+  contentWarning?: boolean;
   className?: string;
 }
 
@@ -14,6 +16,7 @@ export const RarityCollectorBadge: React.FC<RarityCollectorBadgeProps> = ({
   rarity,
   collectorNumber,
   reserved = false,
+  contentWarning = false,
   className
 }) => {
   if (!rarity && !collectorNumber) return null;
@@ -76,11 +79,20 @@ export const RarityCollectorBadge: React.FC<RarityCollectorBadgeProps> = ({
           sx={{ px: 0.5 }}
         />
       )}
+      {contentWarning && (
+        <BadgePill
+          content={<ContentWarningIcon size="small" iconSx={{ filter: 'none', width: 12, height: 12, display: 'block', color: '#fbbf24' }} />}
+          background="linear-gradient(135deg, rgba(120, 80, 20, 0.9) 0%, rgba(100, 60, 10, 0.9) 100%)"
+          borderRadiusLeft={false}
+          borderRadiusRight={false}
+          sx={{ px: 0.5 }}
+        />
+      )}
       {collectorNumber && (
         <BadgePill
           content={<>#<span style={{ fontWeight: 'bold' }}>{collectorNumber}</span></>}
           background={colors.collector}
-          borderRadiusLeft={(rarity || reserved) ? false : true}
+          borderRadiusLeft={(rarity || reserved || contentWarning) ? false : true}
           borderRadiusRight={true}
           fontFamily="monospace"
         />

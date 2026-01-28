@@ -94,7 +94,7 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
     public string PrintedTypeLine => _data?.printed_type_line;
     public string PrintedText => _data?.printed_text;
     public string Watermark => _data?.watermark;
-    public int? ContentWarning => _data?.content_warning;
+    public bool ContentWarning => _data?.content_warning ?? false;
     public IPreviewItrEntity Preview => _data?.preview != null ? new PreviewItrEntity(_data.preview) : null;
     public ICollection<string> ProducedMana => ConvertToStringArray(_data?.produced_mana);
     public ICollection<int> AttractionLights => ConvertToIntArray(_data?.attraction_lights);
