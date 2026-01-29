@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -59,7 +59,7 @@ internal sealed class RulingsPipelineService : IRulingsPipelineService
 
     public async Task WriteRulingsAsync(IEnumerable<IScryfallRuling> rulings)
     {
-        List<IScryfallRuling> rulingList = rulings.ToList();
+        List<IScryfallRuling> rulingList = [.. rulings];
         int total = rulingList.Count;
 
         _dashboard.LogWritingRulings(total);

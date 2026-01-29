@@ -59,7 +59,7 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
         if (wishlistResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(wishlistResponse.OuterException);
 
         // Step 2: Extract card IDs from wishlist entries
-        List<string> cardIds = wishlistResponse.ResponseData.Select(w => w.CardId).ToList();
+        List<string> cardIds = [.. wishlistResponse.ResponseData.Select(w => w.CardId)];
         if (cardIds.Count == 0)
         {
             return new SuccessOperationResponse<List<CardItemOutEntity>>([]);

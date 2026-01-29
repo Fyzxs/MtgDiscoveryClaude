@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,7 +50,7 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
     {
         if (collecting == null || collecting.Count == 0) return collecting;
 
-        return collecting.Select(c => UpdateCollectingEntry(c, entity, uniqueCardDelta)).ToList();
+        return [.. collecting.Select(c => UpdateCollectingEntry(c, entity, uniqueCardDelta))];
     }
 
     private UserSetCardCollectingExtEntity UpdateCollectingEntry(

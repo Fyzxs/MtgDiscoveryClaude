@@ -52,13 +52,12 @@ internal sealed class Program
 
             if (args[i].Equals("--sets", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
             {
-                return args[i + 1]
+                return [.. args[i + 1]
                     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(s => s.ToUpperInvariant())
-                    .ToList();
+                    .Select(s => s.ToUpperInvariant())];
             }
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 }

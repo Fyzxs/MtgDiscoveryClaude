@@ -44,7 +44,7 @@ internal sealed class UserCardsForSigningAggregatorService : IUserCardsForSignin
             return new FailureOperationResponse<ISigningResultOufEntity>(response.OuterException);
         }
 
-        ISigningResultOufEntity result = await _signingResultMapper.Map(response.ResponseData, input.ArtistIds.ToList()).ConfigureAwait(false);
+        ISigningResultOufEntity result = await _signingResultMapper.Map(response.ResponseData, [.. input.ArtistIds]).ConfigureAwait(false);
         return new SuccessOperationResponse<ISigningResultOufEntity>(result);
     }
 }

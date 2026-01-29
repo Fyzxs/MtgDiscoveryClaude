@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Sets.Apis.Entities;
@@ -12,7 +12,7 @@ internal sealed class CollectionStringToSetIdsXfrMapper : ICollectionStringToSet
     {
         ISetIdsXfrEntity entity = new SetIdsXfrEntity
         {
-            SetIds = setIds.ToList()
+            SetIds = [.. setIds]
         };
 
         return Task.FromResult(entity);

@@ -73,7 +73,7 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
 
         ILookup<string, SealedProduct> productsBySet = allProducts.ToLookup(p => p.SetCode);
 
-        IReadOnlyList<string> setsToProcess = _setCodes ?? productsBySet.Select(g => g.Key).OrderBy(s => s).ToList();
+        IReadOnlyList<string> setsToProcess = _setCodes ?? [.. productsBySet.Select(g => g.Key).OrderBy(s => s)];
 
         _dashboard.AddLog($"Found {allProducts.Count} sealed products across {setsToProcess.Count} sets");
 
@@ -87,7 +87,7 @@ internal sealed class ImageScraperOrchestrator : IImageScraperOrchestrator
             }
 
             setIndex++;
-            IReadOnlyList<SealedProduct> setProducts = productsBySet[setCode].ToList();
+            IReadOnlyList<SealedProduct> setProducts = [.. productsBySet[setCode]];
 
             _dashboard.SetCurrentSet(setCode, setIndex, setsToProcess.Count);
             _dashboard.SetTotalProducts(setProducts.Count);

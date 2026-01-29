@@ -53,7 +53,7 @@ internal sealed class ArtistCardsPriceUpdater : IPriceUpdater
                 };
             }
 
-            List<ScryfallArtistCardExtEntity> entities = queryResponse.Value.ToList();
+            List<ScryfallArtistCardExtEntity> entities = [.. queryResponse.Value];
 
             if (entities.Count == 0)
             {

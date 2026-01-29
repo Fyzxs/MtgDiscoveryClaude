@@ -46,7 +46,7 @@ internal sealed class UserSetCardsRecalculator
             return;
         }
 
-        List<UserCardExtEntity> userCards = response.Value.ToList();
+        List<UserCardExtEntity> userCards = [.. response.Value];
         _logger.LogInformation("Found {Count} UserCards to process", userCards.Count);
 
         // Group by SetId and calculate totals

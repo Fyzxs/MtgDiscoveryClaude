@@ -148,6 +148,6 @@ internal sealed class ReconcilerApplication : ExampleApplication
             throw new InvalidOperationException($"Failed to query user IDs: {response.StatusCode}");
         }
 
-        return response.Value.ToList();
+        return [.. response.Value];
     }
 }

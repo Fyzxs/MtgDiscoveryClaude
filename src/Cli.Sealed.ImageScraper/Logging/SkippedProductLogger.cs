@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using Cli.Sealed.ImageScraper.Models;
 
 namespace Cli.Sealed.ImageScraper.Logging;
@@ -15,12 +16,12 @@ internal sealed class SkippedProductLogger : ISkippedProductLogger
     private readonly StreamWriter _knownWriter;
     private readonly StreamWriter _noImageWriter;
     private readonly StreamWriter _unknownWriter;
-    private readonly object _lock;
+    private readonly Lock _lock;
     private bool _disposed;
 
     public SkippedProductLogger()
     {
-        _lock = new object();
+        _lock = new Lock();
         _disposed = false;
 
         if (Directory.Exists(OutputDirectory) is false)

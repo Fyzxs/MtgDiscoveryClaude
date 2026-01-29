@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Cards.Apis;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries;
-using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
@@ -18,19 +15,14 @@ namespace Lib.Aggregator.Cards.Tests.Queries;
 [TestClass]
 public sealed class CardAggregatorOperationsTests
 {
-    private sealed class TestableCardAggregatorOperations : TypeWrapper<CardsQueryAggregator>
+    private sealed class TestableCardsQueryAggregator : TypeWrapper<CardsQueryAggregator>
     {
-        public TestableCardAggregatorOperations(
-            ICardAdapterService cardAdapterService,
-            ICollectionCardItemExtToItrMapper cardItemMapper,
-            ICollectionSetCardItemExtToItrMapper setCardItemMapper,
-            ICollectionCardByNameExtToItrMapper cardByNameMapper,
-            ICardIdsItrToXfrMapper cardIdsItrToXfrMapper,
-            ISetCodeItrToXfrMapper setCodeItrToXfrMapper,
-            ICardNameItrToXfrMapper cardNameItrToXfrMapper,
-            ICardSearchTermItrToXfrMapper cardSearchTermItrToXfrMapper)
-            : base(cardAdapterService, cardItemMapper, setCardItemMapper, cardByNameMapper,
-                cardIdsItrToXfrMapper, setCodeItrToXfrMapper, cardNameItrToXfrMapper, cardSearchTermItrToXfrMapper)
+        public TestableCardsQueryAggregator(
+            ICardsByIdsAggregatorService cardsByIdsOperations,
+            ICardsBySetCodeAggregatorService cardsBySetCodeOperations,
+            ICardsByNameAggregatorService cardsByNameOperations,
+            ICardNameSearchAggregatorService cardNameSearchOperations)
+            : base(cardsByIdsOperations, cardsBySetCodeOperations, cardsByNameOperations, cardNameSearchOperations)
         { }
     }
 
@@ -52,18 +44,17 @@ public sealed class CardAggregatorOperationsTests
     {
         // Arrange
         CardIdsItrEntityFake args = new() { CardIds = [] };
-        CardAdapterServiceFake fakeAdapterService = new();
-        CollectionCardItemExtToItrMapperFake fakeCardItemMapper = new();
-        CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
-        CollectionCardByNameExtToItrMapperFake fakeCardByNameMapper = new();
-        CardIdsItrToXfrMapperFake fakeCardIdsMapper = new();
-        SetCodeItrToXfrMapperFake fakeSetCodeMapper = new();
-        CardNameItrToXfrMapperFake fakeCardNameMapper = new();
-        CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
+        CardsByIdsAggregatorServiceFake fakeCardsByIdsService = new()
+        {
+            ExecuteResult = new SuccessOperationResponse<ICardItemCollectionOufEntity>(
+                new CardItemCollectionOufEntityFake { Data = [] })
+        };
+        CardsBySetCodeAggregatorServiceFake fakeCardsBySetCodeService = new();
+        CardsByNameAggregatorServiceFake fakeCardsByNameService = new();
+        CardNameSearchAggregatorServiceFake fakeCardNameSearchService = new();
 
-        CardsQueryAggregator subject = new TestableCardAggregatorOperations(
-            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
-            fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
+        CardsQueryAggregator subject = new TestableCardsQueryAggregator(
+            fakeCardsByIdsService, fakeCardsBySetCodeService, fakeCardsByNameService, fakeCardNameSearchService);
 
         // Act
         IOperationResponse<ICardItemCollectionOufEntity> actual =
@@ -72,8 +63,7 @@ public sealed class CardAggregatorOperationsTests
         // Assert
         actual.IsSuccess.Should().BeTrue();
         actual.ResponseData.Data.Should().BeEmpty();
-        fakeAdapterService.GetCardsByIdsAsyncInvokeCount.Should().Be(1);
-        fakeCardItemMapper.MapInvokeCount.Should().Be(1);
+        fakeCardsByIdsService.ExecuteInvokeCount.Should().Be(1);
     }
 
     [TestMethod, TestCategory("unit")]
@@ -83,28 +73,20 @@ public sealed class CardAggregatorOperationsTests
         const string cardId = "test-card-id";
 
         CardItemItrEntityFake expectedCard = new() { Id = cardId };
-        List<ScryfallCardItemExtEntity> adapterResults = [new ScryfallCardItemExtEntity()];
-        List<ICardItemItrEntity> mapperResults = [expectedCard];
+        List<ICardItemItrEntity> cardResults = [expectedCard];
 
         CardIdsItrEntityFake args = new() { CardIds = [cardId] };
-        CardAdapterServiceFake fakeAdapterService = new()
+        CardsByIdsAggregatorServiceFake fakeCardsByIdsService = new()
         {
-            GetCardsByIdsAsyncResult = new SuccessOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>(adapterResults)
+            ExecuteResult = new SuccessOperationResponse<ICardItemCollectionOufEntity>(
+                new CardItemCollectionOufEntityFake { Data = cardResults })
         };
-        CollectionCardItemExtToItrMapperFake fakeCardItemMapper = new()
-        {
-            MapResult = mapperResults
-        };
-        CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
-        CollectionCardByNameExtToItrMapperFake fakeCardByNameMapper = new();
-        CardIdsItrToXfrMapperFake fakeCardIdsMapper = new();
-        SetCodeItrToXfrMapperFake fakeSetCodeMapper = new();
-        CardNameItrToXfrMapperFake fakeCardNameMapper = new();
-        CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
+        CardsBySetCodeAggregatorServiceFake fakeCardsBySetCodeService = new();
+        CardsByNameAggregatorServiceFake fakeCardsByNameService = new();
+        CardNameSearchAggregatorServiceFake fakeCardNameSearchService = new();
 
-        CardsQueryAggregator subject = new TestableCardAggregatorOperations(
-            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
-            fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
+        CardsQueryAggregator subject = new TestableCardsQueryAggregator(
+            fakeCardsByIdsService, fakeCardsBySetCodeService, fakeCardsByNameService, fakeCardNameSearchService);
 
         // Act
         IOperationResponse<ICardItemCollectionOufEntity> actual =
@@ -114,30 +96,25 @@ public sealed class CardAggregatorOperationsTests
         actual.IsSuccess.Should().BeTrue();
         actual.ResponseData.Data.Should().HaveCount(1);
         actual.ResponseData.Data.First().Id.Should().Be(cardId);
-        fakeAdapterService.GetCardsByIdsAsyncInvokeCount.Should().Be(1);
-        fakeCardItemMapper.MapInvokeCount.Should().Be(1);
+        fakeCardsByIdsService.ExecuteInvokeCount.Should().Be(1);
     }
 
     [TestMethod, TestCategory("unit")]
-    public async Task CardsByIdsAsync_WithAdapterFailure_ReturnsFailure()
+    public async Task CardsByIdsAsync_WithServiceFailure_ReturnsFailure()
     {
         // Arrange
         CardIdsItrEntityFake args = new() { CardIds = ["card1"] };
-        CardAdapterServiceFake fakeAdapterService = new()
+        CardsByIdsAggregatorServiceFake fakeCardsByIdsService = new()
         {
-            GetCardsByIdsAsyncResult = new FailureOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>(new CardAggregatorOperationException("Adapter failed"))
+            ExecuteResult = new FailureOperationResponse<ICardItemCollectionOufEntity>(
+                new CardAggregatorOperationException("Service failed"))
         };
-        CollectionCardItemExtToItrMapperFake fakeCardItemMapper = new();
-        CollectionSetCardItemExtToItrMapperFake fakeSetCardItemMapper = new();
-        CollectionCardByNameExtToItrMapperFake fakeCardByNameMapper = new();
-        CardIdsItrToXfrMapperFake fakeCardIdsMapper = new();
-        SetCodeItrToXfrMapperFake fakeSetCodeMapper = new();
-        CardNameItrToXfrMapperFake fakeCardNameMapper = new();
-        CardSearchTermItrToXfrMapperFake fakeSearchTermMapper = new();
+        CardsBySetCodeAggregatorServiceFake fakeCardsBySetCodeService = new();
+        CardsByNameAggregatorServiceFake fakeCardsByNameService = new();
+        CardNameSearchAggregatorServiceFake fakeCardNameSearchService = new();
 
-        CardsQueryAggregator subject = new TestableCardAggregatorOperations(
-            fakeAdapterService, fakeCardItemMapper, fakeSetCardItemMapper, fakeCardByNameMapper,
-            fakeCardIdsMapper, fakeSetCodeMapper, fakeCardNameMapper, fakeSearchTermMapper);
+        CardsQueryAggregator subject = new TestableCardsQueryAggregator(
+            fakeCardsByIdsService, fakeCardsBySetCodeService, fakeCardsByNameService, fakeCardNameSearchService);
 
         // Act
         IOperationResponse<ICardItemCollectionOufEntity> actual =
@@ -145,8 +122,6 @@ public sealed class CardAggregatorOperationsTests
 
         // Assert
         actual.IsFailure.Should().BeTrue();
-        fakeAdapterService.GetCardsByIdsAsyncInvokeCount.Should().Be(1);
-        fakeCardItemMapper.MapInvokeCount.Should().Be(0);
+        fakeCardsByIdsService.ExecuteInvokeCount.Should().Be(1);
     }
-
 }

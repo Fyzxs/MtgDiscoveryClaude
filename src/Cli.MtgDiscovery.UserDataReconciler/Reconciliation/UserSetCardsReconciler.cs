@@ -58,7 +58,7 @@ internal sealed class UserSetCardsReconciler
         foreach (IGrouping<string, UserCardExtEntity> setGroup in cardsBySetId)
         {
             string setId = setGroup.Key;
-            List<UserCardExtEntity> cardsInSet = setGroup.ToList();
+            List<UserCardExtEntity> cardsInSet = [.. setGroup];
 
             setIndex++;
             _dashboard.UpdateUserProgress(setId, setIndex, totalSets);
@@ -135,7 +135,7 @@ internal sealed class UserSetCardsReconciler
             return [];
         }
 
-        return response.Value.ToList();
+        return [.. response.Value];
     }
 
     private async Task<List<UserSetCardExtEntity>> GetUserSetCardsAsync(string userId)
@@ -154,7 +154,7 @@ internal sealed class UserSetCardsReconciler
             return [];
         }
 
-        return response.Value.ToList();
+        return [.. response.Value];
     }
 
     private async Task<Dictionary<string, string>> GetSetGroupIdsForSetAsync(string setId)
@@ -181,7 +181,7 @@ internal sealed class UserSetCardsReconciler
             return map;
         }
 
-        List<SetCardGroupIdResult> cards = response.Value.ToList();
+        List<SetCardGroupIdResult> cards = [.. response.Value];
 
         if (cards.Count > 0)
         {
@@ -370,7 +370,7 @@ internal sealed class UserSetCardsReconciler
             {
                 // No cards in this group - check if this is the only collecting entry
                 // and there's a group that wasn't matched (ID mismatch)
-                List<string> unmatchedGroupIds = groups.Keys.Where(k => usedGroupIds.Contains(k) is false).ToList();
+                List<string> unmatchedGroupIds = [.. groups.Keys.Where(k => usedGroupIds.Contains(k) is false)];
 
                 if (existingCollecting.Count == 1 && unmatchedGroupIds.Count == 1)
                 {

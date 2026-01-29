@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Microsoft.Extensions.Logging;
 
 namespace Cli.MtgDiscovery.PriceUpdate.Progress;
@@ -8,14 +9,14 @@ internal sealed class PriceUpdateProgressTracker : IPriceUpdateProgressTracker
     private readonly ILogger _logger;
     private int _totalRecords;
     private int _currentProgress;
-    private readonly object _lock;
+    private readonly Lock _lock;
 
     public PriceUpdateProgressTracker(ILogger logger)
     {
         _logger = logger;
         _totalRecords = 0;
         _currentProgress = 0;
-        _lock = new object();
+        _lock = new Lock();
     }
 
     public void Initialize(int totalRecords)
@@ -52,8 +53,8 @@ internal sealed class PriceUpdateProgressTracker : IPriceUpdateProgressTracker
         int barLength = 50;
         int filledLength = (percentage * barLength) / 100;
 
-        string bar = new string('=', filledLength);
-        string empty = new string('-', barLength - filledLength);
+        string bar = new('=', filledLength);
+        string empty = new('-', barLength - filledLength);
 
         Console.Write($"\r[{bar}{empty}] {percentage}% ({_currentProgress}/{_totalRecords})");
     }

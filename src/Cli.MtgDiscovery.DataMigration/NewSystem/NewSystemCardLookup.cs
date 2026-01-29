@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
@@ -23,7 +23,7 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
 
     public async Task<IOperationResponse<ICardItemItrEntity>> LookupCardByScryfallIdAsync(string scryfallId)
     {
-        ICardIdsItrEntity cardIdsArg = new CardIdsItrEntity(new[] { scryfallId });
+        ICardIdsItrEntity cardIdsArg = new CardIdsItrEntity([scryfallId]);
 
         IOperationResponse<ICardItemCollectionOufEntity> response = await _cardDomainService
             .CardsByIdsAsync(cardIdsArg)

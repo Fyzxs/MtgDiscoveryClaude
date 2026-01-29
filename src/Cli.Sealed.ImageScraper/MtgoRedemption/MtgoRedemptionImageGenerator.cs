@@ -120,7 +120,7 @@ internal sealed class MtgoRedemptionImageGenerator : IMtgoRedemptionImageGenerat
             (float)IconSize / bounds.Height);
 
         float scaledWidth = bounds.Width * scale;
-        float scaledHeight = bounds.Height * scale;
+        _ = bounds.Height * scale;
 
         float x = (ImageWidth - scaledWidth) / 2;
         float y = 80;
