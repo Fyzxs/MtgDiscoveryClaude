@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useMutation } from '@apollo/client/react';
+import { SYNC_USER } from '../graphql/mutations/user';
 import type { AuthState, AuthAction, UserProfile, AuthError } from '../types/auth';
+import type { RegisterUserMutation } from '../generated/graphql';
 import { initialAuthState } from '../types/auth';
 import { useToast } from './ToastContext';
 
@@ -120,9 +123,11 @@ interface AuthStateProviderProps {
 
 export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialAuthState);
-  const { loginWithRedirect, logout: auth0Logout, isAuthenticated, isLoading } = useAuth0();
+  const { loginWithRedirect, logout: auth0Logout, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
   const { showSuccess, showError } = useToast();
   const hasShownWelcomeToast = useRef(false);
+  const [syncUserMutation] = useMutation<RegisterUserMutation>(SYNC_USER);
+  const hasSyncedRef = useRef(false);
 
   // Initialize auth state based on Auth0 status
   useEffect(() => {
@@ -136,6 +141,60 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
     }
   }, [isLoading, isAuthenticated, state.status]);
 
+  // Sync with backend when status enters 'syncing'
+  useEffect(() => {
+    if (state.status !== 'syncing' || hasSyncedRef.current) {
+      return;
+    }
+
+    const syncWithBackend = async () => {
+      try {
+        await getAccessTokenSilently();
+        hasSyncedRef.current = true;
+
+        const result = await syncUserMutation();
+        const response = result.data?.registerUserInfo;
+
+        if (response?.__typename === 'UserRegistrationSuccessResponse') {
+          const userData = response.data;
+          const userProfile: UserProfile = {
+            id: userData.userId,
+            displayName: userData.displayName,
+            email: userData.email,
+            createdAt: String(userData.createdAt),
+            lastLoginAt: String(userData.lastLoginAt),
+          };
+          dispatch({ type: 'SYNC_SUCCESS', user: userProfile, isFirstLogin: userData.isFirstLogin });
+        } else if (response?.__typename === 'FailureResponse') {
+          const errorMessage = response.status?.message || 'Failed to sync user with backend';
+          dispatch({ type: 'SYNC_FAILURE', error: { code: 'sync_failed', message: errorMessage } });
+        } else {
+          dispatch({ type: 'SYNC_FAILURE', error: { code: 'sync_failed', message: 'Received unexpected response from server' } });
+        }
+      } catch (err) {
+        hasSyncedRef.current = false;
+        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+
+        const sessionExpiredPatterns = [
+          'Missing Refresh Token', 'login_required', 'Token Refresh Error',
+          'consent_required', 'interaction_required', 'session expired',
+        ];
+        const isSessionExpired = sessionExpiredPatterns.some((p) =>
+          errorMessage.toLowerCase().includes(p.toLowerCase())
+        );
+
+        if (isSessionExpired) {
+          dispatch({ type: 'SESSION_EXPIRED' });
+          return;
+        }
+
+        dispatch({ type: 'SYNC_FAILURE', error: { code: 'sync_failed', message: errorMessage } });
+      }
+    };
+
+    syncWithBackend();
+  }, [state.status, getAccessTokenSilently, syncUserMutation]);
+
   // Show welcome toast when sync succeeds (only once per authentication)
   useEffect(() => {
     if (state.status === 'authenticated' && state.user && hasShownWelcomeToast.current === false) {
@@ -147,10 +206,11 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
     }
   }, [state.status, state.user, state.isFirstLogin, showSuccess]);
 
-  // Reset welcome toast flag on logout
+  // Reset flags on logout
   useEffect(() => {
     if (state.status === 'unauthenticated') {
       hasShownWelcomeToast.current = false;
+      hasSyncedRef.current = false;
     }
   }, [state.status]);
 
@@ -172,6 +232,9 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
 
   const logout = useCallback(() => {
     dispatch({ type: 'LOGOUT' });
+    // Clear any cached auth state before redirecting
+    localStorage.removeItem('mtg-user-data');
+    localStorage.removeItem('mtg-discovery-active-collection');
     auth0Logout({
       logoutParams: {
         returnTo: window.location.origin,

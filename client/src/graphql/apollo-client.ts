@@ -90,6 +90,29 @@ const authLink = setContext(async (operation, { headers }) => {
   return { headers };
 });
 
+// Track network connectivity to avoid spamming requests when backend is down
+let networkErrorCount = 0;
+let lastNetworkErrorTime = 0;
+const NETWORK_ERROR_THRESHOLD = 3;
+const NETWORK_ERROR_WINDOW_MS = 10000; // 10 seconds
+
+// Export for components that need to check network status
+export const isNetworkAvailable = (): boolean => {
+  const now = Date.now();
+  // Reset counter if enough time has passed
+  if (now - lastNetworkErrorTime > NETWORK_ERROR_WINDOW_MS) {
+    networkErrorCount = 0;
+  }
+  return networkErrorCount < NETWORK_ERROR_THRESHOLD;
+};
+
+// Reset network status (call when user explicitly retries)
+export const resetNetworkStatus = (): void => {
+  networkErrorCount = 0;
+  lastNetworkErrorTime = 0;
+  logger.debug('[Network] Status reset - will retry connections');
+};
+
 // Error link to handle and enhance GraphQL errors
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors) {
@@ -119,7 +142,20 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
   }
 
   if (networkError) {
-    logger.error('[Network Error]:', networkError);
+    const now = Date.now();
+    // Reset counter if enough time has passed since last error
+    if (now - lastNetworkErrorTime > NETWORK_ERROR_WINDOW_MS) {
+      networkErrorCount = 0;
+    }
+    networkErrorCount++;
+    lastNetworkErrorTime = now;
+
+    // Only log the first few errors to avoid spam
+    if (networkErrorCount <= NETWORK_ERROR_THRESHOLD) {
+      logger.error('[Network Error]:', networkError);
+    } else if (networkErrorCount === NETWORK_ERROR_THRESHOLD + 1) {
+      logger.warn('[Network] Backend appears to be down - suppressing further connection error logs');
+    }
   }
 
   return forward(operation);

@@ -7,6 +7,7 @@ import { AppButton as Button } from './components/molecules/shared/AppButton'
 import { Layout } from './components/templates/Layout'
 import { PageErrorBoundary } from './components/utils/ErrorBoundaries'
 import { CollectionProvider } from './contexts/CollectionContext'
+import { CollectionManagementProvider } from './contexts/CollectionManagementContext'
 import { SealedCollectionProvider } from './contexts/SealedCollectionContext'
 import { WishlistProvider } from './contexts/WishlistContext'
 import { EntryModeProvider } from './contexts/EntryModeContext'
@@ -28,6 +29,9 @@ const CardAllPrintingsPage = lazy(() => import('./components/pages/CardAllPrinti
 const AuthCallbackPage = lazy(() => import('./components/pages/AuthCallbackPage'))
 const ConventionSigningPage = lazy(() => import('./components/pages/ConventionSigningPage'))
 const WishlistPage = lazy(() => import('./components/pages/WishlistPage'))
+const CollectionsPage = lazy(() => import('./components/pages/CollectionsPage'))
+const UserProfilePage = lazy(() => import('./components/pages/UserProfilePage'))
+const LogoutRedirectPage = lazy(() => import('./components/pages/LogoutRedirectPage'))
 
 // Initialize global search focus handler (double-tap Shift to focus search)
 void globalSearchFocus;
@@ -103,10 +107,11 @@ function App() {
           <ToastProvider>
             <AuthStateProvider>
               <EntryModeProvider>
-                <CollectionProvider>
-                  <SealedCollectionProvider>
-                    <WishlistProvider>
-                      <Layout>
+                <CollectionManagementProvider>
+                  <CollectionProvider>
+                    <SealedCollectionProvider>
+                      <WishlistProvider>
+                        <Layout>
               <Suspense fallback={<PageLoadingFallback />}>
                 <Routes>
                   <Route path="/" element={
@@ -170,14 +175,34 @@ function App() {
                       </ProtectedRoute>
                     </PageErrorBoundary>
                   } />
+                  <Route path="/account/collections" element={
+                    <PageErrorBoundary name="CollectionsPage">
+                      <ProtectedRoute>
+                        <CollectionsPage />
+                      </ProtectedRoute>
+                    </PageErrorBoundary>
+                  } />
+                  <Route path="/account/profile" element={
+                    <PageErrorBoundary name="UserProfilePage">
+                      <ProtectedRoute>
+                        <UserProfilePage />
+                      </ProtectedRoute>
+                    </PageErrorBoundary>
+                  } />
+                  <Route path="/logout-redirect" element={
+                    <PageErrorBoundary name="LogoutRedirectPage">
+                      <LogoutRedirectPage />
+                    </PageErrorBoundary>
+                  } />
                   {/* Handle old query param URLs for backwards compatibility */}
                   <Route path="*" element={<LegacyRedirect />} />
                 </Routes>
               </Suspense>
-                      </Layout>
-                    </WishlistProvider>
-                  </SealedCollectionProvider>
-                </CollectionProvider>
+                        </Layout>
+                      </WishlistProvider>
+                    </SealedCollectionProvider>
+                  </CollectionProvider>
+                </CollectionManagementProvider>
               </EntryModeProvider>
             </AuthStateProvider>
           </ToastProvider>

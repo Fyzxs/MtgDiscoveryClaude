@@ -4,6 +4,7 @@ import { useTheme } from '../../atoms';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '../../../contexts/UserContext';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
+import { useCollectionParam } from '../../../hooks/useCollectionParam';
 import { KeyboardIcon, CloseIcon } from '../../atoms';
 
 export const QuickEntryKeysFab: React.FC = () => {
@@ -12,6 +13,7 @@ export const QuickEntryKeysFab: React.FC = () => {
   const location = useLocation();
   const { userProfile } = useUser();
   const { isMobile, isTablet } = useResponsiveBreakpoints();
+  const { hasCollection } = useCollectionParam();
 
   // Check if current page has cards that can be added to collection
   const hasCards = () => {
@@ -20,12 +22,6 @@ export const QuickEntryKeysFab: React.FC = () => {
       pathname.includes('/artists/') ||
       pathname.includes('/card/') ||
       pathname.includes('/wishlist');
-  };
-
-  // Check if ctor parameter is in URL
-  const hasCtorParam = () => {
-    const urlParams = new URLSearchParams(location.search);
-    return urlParams.has('ctor');
   };
 
   const helpItems = [
@@ -47,9 +43,9 @@ export const QuickEntryKeysFab: React.FC = () => {
   // Only show FAB if:
   // 1. User is authenticated
   // 2. Current page has cards that can be added to collection
-  // 3. ctor parameter is present in URL
+  // 3. Collection parameter is present in URL
   // 4. Not on mobile/tablet (no keyboard entry on touch devices)
-  if (!userProfile?.id || !hasCards() || !hasCtorParam() || isMobile || isTablet) {
+  if (!userProfile?.id || !hasCards() || !hasCollection || isMobile || isTablet) {
     return null;
   }
 

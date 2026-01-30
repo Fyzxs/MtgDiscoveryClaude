@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCollectorParam } from './useCollectorParam';
+import { COLLECTION_PARAM_NAME } from './useCollectionParam';
 
 interface NavigationHelpers {
   /**
@@ -51,9 +52,9 @@ export const useCollectorNavigation = (): NavigationHelpers => {
     // Clear any existing search params to ensure we start fresh
     url.search = '';
 
-    // Add collector parameter if it exists
+    // Add collection parameter if it exists
     if (collectorParam.hasCollector && collectorParam.collectorId) {
-      url.searchParams.set('ctor', collectorParam.collectorId);
+      url.searchParams.set(COLLECTION_PARAM_NAME, collectorParam.collectorId);
     }
 
     // Add any additional parameters
