@@ -3,8 +3,24 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+## CUSTOM HERE
 # Don't track the dmt
 **/.dmt
+
+# GraphQL Schema
+**/schema.graphql
+**/schema.json
+
+# CLAUDE
+.claude/state/**
+**/.env.preview.local
+
+**/Cli.Sealed.ImageScraper/sealed-images/**
+**/Cli.Sealed.ImageScraper/custom-images/**
+**/appsettings.*.json
+**/.mtgjson-cache/**
+
+### CUSTOM ABOVE HERE
 
 # User-specific files
 *.rsuser
@@ -380,14 +396,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# VS Code files for those working on multiple tools
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
-
 # Local History for Visual Studio Code
 .history/
 
@@ -456,7 +464,6 @@ vite.config.ts.timestamp-*
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
 *.swp
 *.swo
@@ -487,16 +494,3 @@ Desktop.ini
 # Storybook
 storybook-static
 *.storybook.log
-
-# GraphQL Schema
-client/schema.graphql
-client/schema.json
-
-# CLAUDE
-.claude/state/**
-.env.preview.local
-
-src/Cli.Sealed.ImageScraper/sealed-images/**
-src/Cli.Sealed.ImageScraper/custom-images/**
-**/appsettings.*.json
-**/.mtgjson-cache/**
