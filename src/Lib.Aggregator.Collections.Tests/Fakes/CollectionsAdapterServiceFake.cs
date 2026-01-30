@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
+using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 
@@ -27,6 +28,24 @@ internal sealed class CollectionsAdapterServiceFake : ICollectionsAdapterService
     public IOperationResponse<ICollectionOufEntity> GetCollectionByIdAsyncResult { get; init; }
     public int GetCollectionByIdAsyncInvokeCount { get; private set; }
 
+    public IOperationResponse<ICollectionOufEntity> GrantCollectionAccessAsyncResult { get; init; }
+    public int GrantCollectionAccessAsyncInvokeCount { get; private set; }
+
+    public IOperationResponse<ICollectionOufEntity> RevokeCollectionAccessAsyncResult { get; init; }
+    public int RevokeCollectionAccessAsyncInvokeCount { get; private set; }
+
+    public IOperationResponse<ICollectionOufEntity> DeleteCollectionAsyncResult { get; init; }
+    public int DeleteCollectionAsyncInvokeCount { get; private set; }
+
+    public IOperationResponse<ICollectionOufEntity> TransferCollectionOwnershipAsyncResult { get; init; }
+    public int TransferCollectionOwnershipAsyncInvokeCount { get; private set; }
+
+    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetSharedCollectionsAsyncResult { get; init; }
+    public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
+
+    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
+    public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
+
     public Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
     {
         CreateCollectionAsyncInvokeCount++;
@@ -45,26 +64,23 @@ internal sealed class CollectionsAdapterServiceFake : ICollectionsAdapterService
         return Task.FromResult(UpdateCollectionVisibilityAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(string ownerId)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
     {
         GetDefaultCollectionAsyncInvokeCount++;
         return Task.FromResult(GetDefaultCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(string ownerId)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
     {
         GetCollectionsByOwnerAsyncInvokeCount++;
         return Task.FromResult(GetCollectionsByOwnerAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(string collectionId, string ownerId)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
     {
         GetCollectionByIdAsyncInvokeCount++;
         return Task.FromResult(GetCollectionByIdAsyncResult);
     }
-
-    public IOperationResponse<ICollectionOufEntity> GrantCollectionAccessAsyncResult { get; init; }
-    public int GrantCollectionAccessAsyncInvokeCount { get; private set; }
 
     public Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity)
     {
@@ -72,17 +88,11 @@ internal sealed class CollectionsAdapterServiceFake : ICollectionsAdapterService
         return Task.FromResult(GrantCollectionAccessAsyncResult);
     }
 
-    public IOperationResponse<ICollectionOufEntity> RevokeCollectionAccessAsyncResult { get; init; }
-    public int RevokeCollectionAccessAsyncInvokeCount { get; private set; }
-
     public Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity)
     {
         RevokeCollectionAccessAsyncInvokeCount++;
         return Task.FromResult(RevokeCollectionAccessAsyncResult);
     }
-
-    public IOperationResponse<ICollectionOufEntity> DeleteCollectionAsyncResult { get; init; }
-    public int DeleteCollectionAsyncInvokeCount { get; private set; }
 
     public Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity)
     {
@@ -90,28 +100,19 @@ internal sealed class CollectionsAdapterServiceFake : ICollectionsAdapterService
         return Task.FromResult(DeleteCollectionAsyncResult);
     }
 
-    public IOperationResponse<ICollectionOufEntity> TransferCollectionOwnershipAsyncResult { get; init; }
-    public int TransferCollectionOwnershipAsyncInvokeCount { get; private set; }
-
     public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity)
     {
         TransferCollectionOwnershipAsyncInvokeCount++;
         return Task.FromResult(TransferCollectionOwnershipAsyncResult);
     }
 
-    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetSharedCollectionsAsyncResult { get; init; }
-    public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
-
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(string userId)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
     {
         GetSharedCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetSharedCollectionsAsyncResult);
     }
 
-    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
-    public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
-
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(string userId)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
     {
         GetAccessibleCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetAccessibleCollectionsAsyncResult);

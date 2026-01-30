@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Mappers;
+using Lib.MtgDiscovery.Entry.Entities.Collections;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
 using Lib.MtgDiscovery.Entry.Queries.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Collections.Mappers;
+using Lib.Shared.DataModels.Entities.Args.Collections;
+using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -33,10 +36,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         _oufToOutMapper = oufToOutMapper;
     }
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(string userId)
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args)
     {
+        OwnerIdItrEntity itrEntity = new() { OwnerId = args.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> opResponse = await _domainService
-            .GetCollectionsByOwnerAsync(userId)
+            .GetCollectionsByOwnerAsync(itrEntity)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)
@@ -48,10 +52,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         return new SuccessOperationResponse<List<CollectionOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(string collectionId, string userId)
+    public async Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args)
     {
+        CollectionIdItrEntity itrEntity = new() { CollectionId = args.CollectionId, OwnerId = args.UserId };
         IOperationResponse<ICollectionOufEntity> opResponse = await _domainService
-            .GetCollectionByIdAsync(collectionId, userId)
+            .GetCollectionByIdAsync(itrEntity)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)
@@ -63,10 +68,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(string userId)
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args)
     {
+        UserIdItrEntity itrEntity = new() { UserId = args.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> opResponse = await _domainService
-            .GetSharedCollectionsAsync(userId)
+            .GetSharedCollectionsAsync(itrEntity)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)
@@ -78,10 +84,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         return new SuccessOperationResponse<List<CollectionOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(string userId)
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args)
     {
+        UserIdItrEntity itrEntity = new() { UserId = args.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> opResponse = await _domainService
-            .GetAccessibleCollectionsAsync(userId)
+            .GetAccessibleCollectionsAsync(itrEntity)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)

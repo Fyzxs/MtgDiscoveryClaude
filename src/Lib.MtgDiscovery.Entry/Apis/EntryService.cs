@@ -23,6 +23,7 @@ using Lib.MtgDiscovery.Entry.Queries.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args.Artists;
 using Lib.Shared.DataModels.Entities.Args.Cards;
+using Lib.Shared.DataModels.Entities.Args.Collections;
 using Lib.Shared.DataModels.Entities.Args.SealedProducts;
 using Lib.Shared.DataModels.Entities.Args.Sets;
 using Lib.Shared.DataModels.Entities.Args.User;
@@ -164,11 +165,11 @@ public sealed class EntryService : IEntryService
 
     public Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity) => _collectionEntryCommandService.GetCollectionAccessListAsync(argsEntity);
 
-    public Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(string userId) => _collectionEntryQueryService.MyCollectionsAsync(userId);
+    public Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args) => _collectionEntryQueryService.MyCollectionsAsync(args);
 
-    public Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(string collectionId, string userId) => _collectionEntryQueryService.GetCollectionByIdAsync(collectionId, userId);
+    public Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args) => _collectionEntryQueryService.GetCollectionByIdAsync(args);
 
-    public Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(string userId) => _collectionEntryQueryService.SharedCollectionsAsync(userId);
+    public Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args) => _collectionEntryQueryService.SharedCollectionsAsync(args);
 
-    public Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(string userId) => _collectionEntryQueryService.AccessibleCollectionsAsync(userId);
+    public Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args) => _collectionEntryQueryService.AccessibleCollectionsAsync(args);
 }

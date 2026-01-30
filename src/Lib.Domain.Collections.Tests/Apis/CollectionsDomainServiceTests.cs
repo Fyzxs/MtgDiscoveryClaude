@@ -81,9 +81,11 @@ public sealed class CollectionsDomainServiceTests
         };
         CollectionsDomainService subject = new InstanceWrapper(commandFake, queryFake);
 
+        OwnerIdItrEntityFake ownerIdItr = new() { OwnerId = "user-123" };
+
         // Act
         IOperationResponse<ICollectionOufEntity> actual = await subject
-            .GetDefaultCollectionAsync("user-123")
+            .GetDefaultCollectionAsync(ownerIdItr)
             .ConfigureAwait(false);
 
         // Assert
@@ -109,9 +111,11 @@ public sealed class CollectionsDomainServiceTests
         };
         CollectionsDomainService subject = new InstanceWrapper(commandFake, queryFake);
 
+        OwnerIdItrEntityFake ownerIdItr = new() { OwnerId = "user-123" };
+
         // Act
         IOperationResponse<IEnumerable<ICollectionOufEntity>> actual = await subject
-            .GetCollectionsByOwnerAsync("user-123")
+            .GetCollectionsByOwnerAsync(ownerIdItr)
             .ConfigureAwait(false);
 
         // Assert

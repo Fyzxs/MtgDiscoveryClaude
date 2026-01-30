@@ -10,6 +10,7 @@ using Lib.MtgDiscovery.Entry.Commands.Collections.Validators.GrantAccess;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Validators.Rename;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Validators.RevokeAccess;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Validators.Transfer;
+using Lib.MtgDiscovery.Entry.Commands.Collections.Validators.Uniqueness;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Validators.Visibility;
 using Lib.MtgDiscovery.Entry.Entities.Collections;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
@@ -17,7 +18,6 @@ using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args.Collections;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
-using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -33,6 +33,8 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
     private readonly IRevokeCollectionAccessArgEntityValidator _revokeAccessValidator;
     private readonly IDeleteCollectionArgEntityValidator _deleteValidator;
     private readonly ITransferCollectionOwnershipArgEntityValidator _transferValidator;
+    private readonly ICreateCollectionNameUniquenessValidator _createUniquenessValidator;
+    private readonly IRenameCollectionNameUniquenessValidator _renameUniquenessValidator;
     private readonly ICreateCollectionArgToItrMapper _createArgToItrMapper;
     private readonly IRenameCollectionArgToItrMapper _renameArgToItrMapper;
     private readonly IUpdateCollectionVisibilityArgToItrMapper _visibilityArgToItrMapper;
@@ -41,7 +43,6 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
     private readonly IDeleteCollectionArgToItrMapper _deleteArgToItrMapper;
     private readonly ITransferCollectionOwnershipArgToItrMapper _transferArgToItrMapper;
     private readonly ICollectionOufToOutMapper _oufToOutMapper;
-    private readonly ICollectionNameUniquenessChecker _uniquenessChecker;
 
     public CollectionEntryCommandService(ILogger logger) : this(
         new CollectionsDomainService(logger),
@@ -52,6 +53,8 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         new RevokeCollectionAccessArgEntityValidatorContainer(),
         new DeleteCollectionArgEntityValidatorContainer(),
         new TransferCollectionOwnershipArgEntityValidatorContainer(),
+        new CreateCollectionNameUniquenessValidator(new CollectionsDomainService(logger)),
+        new RenameCollectionNameUniquenessValidator(new CollectionsDomainService(logger)),
         new CreateCollectionArgToItrMapper(),
         new RenameCollectionArgToItrMapper(),
         new UpdateCollectionVisibilityArgToItrMapper(),
@@ -59,8 +62,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         new RevokeCollectionAccessArgToItrMapper(),
         new DeleteCollectionArgToItrMapper(),
         new TransferCollectionOwnershipArgToItrMapper(),
-        new CollectionOufToOutMapper(),
-        new CollectionNameUniquenessChecker(logger))
+        new CollectionOufToOutMapper())
     { }
 
     private CollectionEntryCommandService(
@@ -72,6 +74,8 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         IRevokeCollectionAccessArgEntityValidator revokeAccessValidator,
         IDeleteCollectionArgEntityValidator deleteValidator,
         ITransferCollectionOwnershipArgEntityValidator transferValidator,
+        ICreateCollectionNameUniquenessValidator createUniquenessValidator,
+        IRenameCollectionNameUniquenessValidator renameUniquenessValidator,
         ICreateCollectionArgToItrMapper createArgToItrMapper,
         IRenameCollectionArgToItrMapper renameArgToItrMapper,
         IUpdateCollectionVisibilityArgToItrMapper visibilityArgToItrMapper,
@@ -79,8 +83,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         IRevokeCollectionAccessArgToItrMapper revokeAccessArgToItrMapper,
         IDeleteCollectionArgToItrMapper deleteArgToItrMapper,
         ITransferCollectionOwnershipArgToItrMapper transferArgToItrMapper,
-        ICollectionOufToOutMapper oufToOutMapper,
-        ICollectionNameUniquenessChecker uniquenessChecker)
+        ICollectionOufToOutMapper oufToOutMapper)
     {
         _domainService = domainService;
         _createValidator = createValidator;
@@ -90,6 +93,8 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         _revokeAccessValidator = revokeAccessValidator;
         _deleteValidator = deleteValidator;
         _transferValidator = transferValidator;
+        _createUniquenessValidator = createUniquenessValidator;
+        _renameUniquenessValidator = renameUniquenessValidator;
         _createArgToItrMapper = createArgToItrMapper;
         _renameArgToItrMapper = renameArgToItrMapper;
         _visibilityArgToItrMapper = visibilityArgToItrMapper;
@@ -98,7 +103,6 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         _deleteArgToItrMapper = deleteArgToItrMapper;
         _transferArgToItrMapper = transferArgToItrMapper;
         _oufToOutMapper = oufToOutMapper;
-        _uniquenessChecker = uniquenessChecker;
     }
 
     public async Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgsEntity argsEntity)
@@ -112,10 +116,10 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
             return new FailureOperationResponse<CollectionOutEntity>(validatorResult.FailureStatus().OuterException);
         }
 
-        bool isUnique = await _uniquenessChecker.IsNameUniqueForOwnerAsync(argEntity.Name, userId).ConfigureAwait(false);
-        if (isUnique is false)
+        IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult = await _createUniquenessValidator.Validate(argsEntity).ConfigureAwait(false);
+        if (uniquenessResult.IsNotValid())
         {
-            return new FailureOperationResponse<CollectionOutEntity>(new BadRequestOperationException("A collection with this name already exists"));
+            return new FailureOperationResponse<CollectionOutEntity>(uniquenessResult.FailureStatus().OuterException);
         }
 
         ICollectionItrEntity itrEntity = await _createArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
@@ -140,10 +144,10 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
             return new FailureOperationResponse<CollectionOutEntity>(validatorResult.FailureStatus().OuterException);
         }
 
-        bool isUnique = await _uniquenessChecker.IsNameUniqueForOwnerAsync(argEntity.Name, userId, argEntity.CollectionId).ConfigureAwait(false);
-        if (isUnique is false)
+        IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult = await _renameUniquenessValidator.Validate(argsEntity).ConfigureAwait(false);
+        if (uniquenessResult.IsNotValid())
         {
-            return new FailureOperationResponse<CollectionOutEntity>(new BadRequestOperationException("A collection with this name already exists"));
+            return new FailureOperationResponse<CollectionOutEntity>(uniquenessResult.FailureStatus().OuterException);
         }
 
         IRenameCollectionItrEntity itrEntity = await _renameArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
@@ -269,10 +273,13 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
 
     public async Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity)
     {
-        string collectionId = argsEntity.CollectionId;
-        string userId = argsEntity.AuthUser.UserId;
+        CollectionIdItrEntity collectionIdItr = new()
+        {
+            CollectionId = argsEntity.CollectionId,
+            OwnerId = argsEntity.AuthUser.UserId
+        };
 
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GetCollectionByIdAsync(collectionId, userId).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GetCollectionByIdAsync(collectionIdItr).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<IEnumerable<AuthorizedUserOutEntity>>(opResponse.OuterException);

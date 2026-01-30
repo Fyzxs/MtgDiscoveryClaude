@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Lib.Adapter.Collections.Commands;
 using Lib.Adapter.Collections.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
+using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -48,18 +49,18 @@ public sealed class CollectionsAdapterService : ICollectionsAdapterService
     public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity) =>
         _commandAdapter.TransferCollectionOwnershipAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(string ownerId) =>
-        _queryAdapter.GetDefaultCollectionAsync(ownerId);
+    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args) =>
+        _queryAdapter.GetDefaultCollectionAsync(args);
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(string ownerId) =>
-        _queryAdapter.GetCollectionsByOwnerAsync(ownerId);
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args) =>
+        _queryAdapter.GetCollectionsByOwnerAsync(args);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(string collectionId, string ownerId) =>
-        _queryAdapter.GetCollectionByIdAsync(collectionId, ownerId);
+    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args) =>
+        _queryAdapter.GetCollectionByIdAsync(args);
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(string userId) =>
-        _queryAdapter.GetSharedCollectionsAsync(userId);
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args) =>
+        _queryAdapter.GetSharedCollectionsAsync(args);
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(string userId) =>
-        _queryAdapter.GetAccessibleCollectionsAsync(userId);
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args) =>
+        _queryAdapter.GetAccessibleCollectionsAsync(args);
 }

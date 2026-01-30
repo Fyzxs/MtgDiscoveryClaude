@@ -11,6 +11,7 @@ using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Collections;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
+using Lib.Shared.DataModels.Entities.Args.Collections;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 using Microsoft.Extensions.Logging;
@@ -25,13 +26,15 @@ public sealed class CollectionQueryMethods
     private readonly IOperationResponseToResponseModelMapper<CollectionOutEntity> _singleResponseMapper;
     private readonly IOperationResponseToResponseModelMapper<IEnumerable<AuthorizedUserOutEntity>> _authorizedUsersResponseMapper;
     private readonly IGetCollectionAccessListArgsMapper _getCollectionAccessListArgsMapper;
+    private readonly ICollectionIdArgsMapper _collectionIdArgsMapper;
 
     public CollectionQueryMethods(ILogger logger) : this(
         new EntryService(logger),
         new OperationResponseToResponseModelMapper<List<CollectionOutEntity>>(),
         new OperationResponseToResponseModelMapper<CollectionOutEntity>(),
         new OperationResponseToResponseModelMapper<IEnumerable<AuthorizedUserOutEntity>>(),
-        new GetCollectionAccessListArgsMapper())
+        new GetCollectionAccessListArgsMapper(),
+        new CollectionIdArgsMapper())
     { }
 
     private CollectionQueryMethods(
@@ -39,13 +42,15 @@ public sealed class CollectionQueryMethods
         IOperationResponseToResponseModelMapper<List<CollectionOutEntity>> listResponseMapper,
         IOperationResponseToResponseModelMapper<CollectionOutEntity> singleResponseMapper,
         IOperationResponseToResponseModelMapper<IEnumerable<AuthorizedUserOutEntity>> authorizedUsersResponseMapper,
-        IGetCollectionAccessListArgsMapper getCollectionAccessListArgsMapper)
+        IGetCollectionAccessListArgsMapper getCollectionAccessListArgsMapper,
+        ICollectionIdArgsMapper collectionIdArgsMapper)
     {
         _entryService = entryService;
         _listResponseMapper = listResponseMapper;
         _singleResponseMapper = singleResponseMapper;
         _authorizedUsersResponseMapper = authorizedUsersResponseMapper;
         _getCollectionAccessListArgsMapper = getCollectionAccessListArgsMapper;
+        _collectionIdArgsMapper = collectionIdArgsMapper;
     }
 
     [Authorize]
@@ -54,7 +59,7 @@ public sealed class CollectionQueryMethods
     {
         AuthUserArgEntity authUser = new(claimsPrincipal);
         IOperationResponse<List<CollectionOutEntity>> response = await _entryService
-            .MyCollectionsAsync(authUser.UserId)
+            .MyCollectionsAsync(authUser)
             .ConfigureAwait(false);
         return await _listResponseMapper.Map(response).ConfigureAwait(false);
     }
@@ -63,9 +68,11 @@ public sealed class CollectionQueryMethods
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
     public async Task<ResponseModel> GetCollectionAsync(ClaimsPrincipal claimsPrincipal, string collectionId)
     {
-        AuthUserArgEntity authUser = new(claimsPrincipal);
+        ICollectionIdArgEntity args = await _collectionIdArgsMapper
+            .Map(claimsPrincipal, collectionId)
+            .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .GetCollectionByIdAsync(collectionId, authUser.UserId)
+            .GetCollectionByIdAsync(args)
             .ConfigureAwait(false);
         return await _singleResponseMapper.Map(response).ConfigureAwait(false);
     }
@@ -89,7 +96,7 @@ public sealed class CollectionQueryMethods
     {
         AuthUserArgEntity authUser = new(claimsPrincipal);
         IOperationResponse<List<CollectionOutEntity>> response = await _entryService
-            .SharedCollectionsAsync(authUser.UserId)
+            .SharedCollectionsAsync(authUser)
             .ConfigureAwait(false);
         return await _listResponseMapper.Map(response).ConfigureAwait(false);
     }
@@ -100,7 +107,7 @@ public sealed class CollectionQueryMethods
     {
         AuthUserArgEntity authUser = new(claimsPrincipal);
         IOperationResponse<List<CollectionOutEntity>> response = await _entryService
-            .AccessibleCollectionsAsync(authUser.UserId)
+            .AccessibleCollectionsAsync(authUser)
             .ConfigureAwait(false);
         return await _listResponseMapper.Map(response).ConfigureAwait(false);
     }

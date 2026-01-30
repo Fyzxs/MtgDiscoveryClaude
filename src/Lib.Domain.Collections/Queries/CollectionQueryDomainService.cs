@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.Collections.Apis;
 using Lib.Domain.Collections.Apis;
+using Lib.Shared.DataModels.Entities.Itrs.Collections;
+using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -17,18 +19,18 @@ internal sealed class CollectionQueryDomainService : ICollectionQueryDomainServi
     private CollectionQueryDomainService(ICollectionsAggregatorService aggregatorService) =>
         _aggregatorService = aggregatorService;
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(string ownerId) =>
-        await _aggregatorService.GetDefaultCollectionAsync(ownerId).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args) =>
+        await _aggregatorService.GetDefaultCollectionAsync(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(string ownerId) =>
-        await _aggregatorService.GetCollectionsByOwnerAsync(ownerId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args) =>
+        await _aggregatorService.GetCollectionsByOwnerAsync(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(string collectionId, string ownerId) =>
-        await _aggregatorService.GetCollectionByIdAsync(collectionId, ownerId).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args) =>
+        await _aggregatorService.GetCollectionByIdAsync(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(string userId) =>
-        await _aggregatorService.GetSharedCollectionsAsync(userId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args) =>
+        await _aggregatorService.GetSharedCollectionsAsync(args).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(string userId) =>
-        await _aggregatorService.GetAccessibleCollectionsAsync(userId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args) =>
+        await _aggregatorService.GetAccessibleCollectionsAsync(args).ConfigureAwait(false);
 }

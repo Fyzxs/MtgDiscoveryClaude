@@ -3,6 +3,7 @@ using Lib.Domain.User.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.MtgDiscovery.Entry.Entities.User;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.Users;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -61,7 +62,8 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
 
         if (opResponse.ResponseData.IsFirstLogin)
         {
-            await _defaultCollectionCreator.CreateDefaultCollectionAsync(opResponse.ResponseData.UserId).ConfigureAwait(false);
+            UserIdArgEntity userIdArg = new() { UserId = opResponse.ResponseData.UserId };
+            await _defaultCollectionCreator.CreateDefaultCollectionAsync(userIdArg).ConfigureAwait(false);
         }
 
         UserSyncOutEntity outEntity = await _userSyncOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
+using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 
@@ -15,18 +16,23 @@ internal sealed class CollectionsDomainServiceFake : ICollectionsDomainService
 
     public IOperationResponse<ICollectionOufEntity> GetDefaultCollectionAsyncResult { get; init; }
     public int GetDefaultCollectionAsyncInvokeCount { get; private set; }
+    public IOwnerIdItrEntity GetDefaultCollectionAsyncLastArgs { get; private set; }
 
     public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetCollectionsByOwnerAsyncResult { get; init; }
     public int GetCollectionsByOwnerAsyncInvokeCount { get; private set; }
+    public IOwnerIdItrEntity GetCollectionsByOwnerAsyncLastArgs { get; private set; }
 
     public IOperationResponse<ICollectionOufEntity> GetCollectionByIdAsyncResult { get; init; }
     public int GetCollectionByIdAsyncInvokeCount { get; private set; }
+    public ICollectionIdItrEntity GetCollectionByIdAsyncLastArgs { get; private set; }
 
     public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetSharedCollectionsAsyncResult { get; init; }
     public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
+    public IUserIdItrEntity GetSharedCollectionsAsyncLastArgs { get; private set; }
 
     public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
     public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
+    public IUserIdItrEntity GetAccessibleCollectionsAsyncLastArgs { get; private set; }
 
     public IOperationResponse<ICollectionOufEntity> RenameCollectionAsyncResult { get; init; }
     public int RenameCollectionAsyncInvokeCount { get; private set; }
@@ -59,33 +65,38 @@ internal sealed class CollectionsDomainServiceFake : ICollectionsDomainService
         return Task.FromResult(CreateCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(string ownerId)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
     {
         GetDefaultCollectionAsyncInvokeCount++;
+        GetDefaultCollectionAsyncLastArgs = args;
         return Task.FromResult(GetDefaultCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(string ownerId)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
     {
         GetCollectionsByOwnerAsyncInvokeCount++;
+        GetCollectionsByOwnerAsyncLastArgs = args;
         return Task.FromResult(GetCollectionsByOwnerAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(string collectionId, string ownerId)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
     {
         GetCollectionByIdAsyncInvokeCount++;
+        GetCollectionByIdAsyncLastArgs = args;
         return Task.FromResult(GetCollectionByIdAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(string userId)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
     {
         GetSharedCollectionsAsyncInvokeCount++;
+        GetSharedCollectionsAsyncLastArgs = args;
         return Task.FromResult(GetSharedCollectionsAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(string userId)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
     {
         GetAccessibleCollectionsAsyncInvokeCount++;
+        GetAccessibleCollectionsAsyncLastArgs = args;
         return Task.FromResult(GetAccessibleCollectionsAsyncResult);
     }
 
