@@ -1,0 +1,55 @@
+{
+  "repository_type": "multi-part",
+  "project_name": "MtgDiscoveryVibe",
+  "project_description": "Magic: The Gathering collection management platform",
+  "parts": [
+    {
+      "part_id": "client",
+      "display_name": "React Frontend",
+      "project_type_id": "web",
+      "root_path": "client/",
+      "technology_stack": {
+        "language": "TypeScript",
+        "framework": "React 19",
+        "ui_library": "Material-UI v7",
+        "api_client": "Apollo Client v4",
+        "authentication": "Auth0",
+        "build_tool": "Vite",
+        "package_manager": "npm"
+      },
+      "architecture_pattern": "Atomic Design",
+      "entry_points": ["src/main.tsx", "src/App.tsx"]
+    },
+    {
+      "part_id": "backend",
+      "display_name": ".NET Backend",
+      "project_type_id": "backend",
+      "root_path": "src/",
+      "technology_stack": {
+        "language": "C#",
+        "framework": ".NET 10.0",
+        "api_type": "GraphQL (HotChocolate)",
+        "database": "Azure Cosmos DB",
+        "storage": "Azure Blob Storage",
+        "authentication": "Auth0 JWT"
+      },
+      "architecture_pattern": "MicroObjects Layered Architecture",
+      "entry_points": ["App.MtgDiscovery.GraphQL/Program.cs"]
+    }
+  ],
+  "integration_points": [
+    {
+      "from": "client",
+      "to": "backend",
+      "type": "GraphQL",
+      "details": "Apollo Client connects to HotChocolate GraphQL API"
+    },
+    {
+      "from": "client",
+      "to": "backend",
+      "type": "Authentication",
+      "details": "Auth0 JWT tokens passed via Authorization header"
+    }
+  ],
+  "generated_at": "2026-01-29"
+}
