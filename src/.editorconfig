@@ -3,6 +3,9 @@ root = true
 [*]
 indent_style = space
 resharper_csharp_wrap_lines = false
+  
+[*.cs]
+charset = utf-8
 
 [*.{cs,vb,vbx}]
 indent_size = 4
@@ -24,11 +27,11 @@ indent_size = 2
 [*.sh]
 end_of_line = lf
 indent_size = 2
+
 [*.{g,generated}.cs]
 generated_code = true
 dotnet_diagnostic.RS0030.severity = none
 dotnet_analyzer_diagnostic.severity = none
-
 
 [*.cs]
 max_line_length = 120
