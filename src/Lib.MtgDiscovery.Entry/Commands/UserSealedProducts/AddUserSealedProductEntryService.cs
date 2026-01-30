@@ -59,6 +59,6 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
             domainResponse.ResponseData.Select(ouf => _sealedProductMapper.Map(ouf))
         ).ConfigureAwait(false);
 
-        return new SuccessOperationResponse<List<SealedProductOutEntity>>(mappedEntities.ToList());
+        return new SuccessOperationResponse<List<SealedProductOutEntity>>([.. mappedEntities]);
     }
 }

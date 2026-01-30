@@ -18,7 +18,7 @@ internal sealed class TcgPlayerImageProvider : IImageProvider
     {
         if (product.HasTcgplayerProductId is false)
         {
-            return Task.FromResult<IReadOnlyList<string>>(Array.Empty<string>());
+            return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
         IReadOnlyList<string> urls = [$"{BaseUrl}/{product.TcgplayerProductId}_in_{size.Value}x{size.Value}.jpg"];

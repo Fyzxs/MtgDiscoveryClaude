@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Azure.Cosmos;

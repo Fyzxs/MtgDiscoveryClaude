@@ -1,11 +1,9 @@
+using Lib.Shared.DataModels.Entities.Models;
+
 namespace Lib.Shared.DataModels.Entities.Args.UserWishlistCards;
 
-/// <summary>
-/// Argument entity for removing a card from a user's wishlist.
-/// </summary>
-public interface IRemoveUserWishlistCardArgEntity
+public interface IRemoveUserWishlistCardArgEntity : IUserIdArgModel
 {
     string CardId { get; }
-    string UserId { get; }
     IUserWishlistCardDetailsArgEntity UserWishlistCardDetails { get; }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using Cli.MtgDiscovery.PriceUpdate.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ internal sealed class CsvPriceChangeLogger : IPriceChangeLogger
 {
     private readonly ILogger<CsvPriceChangeLogger> _logger;
     private readonly StreamWriter _writer;
-    private readonly object _lock;
+    private readonly Lock _lock;
     private bool _disposed;
 
     public CsvPriceChangeLogger(
@@ -17,7 +18,7 @@ internal sealed class CsvPriceChangeLogger : IPriceChangeLogger
         PriceUpdateConfiguration config)
     {
         _logger = logger;
-        _lock = new object();
+        _lock = new Lock();
         _disposed = false;
 
         string directory = Path.GetDirectoryName(config.PriceChangeLogPath) ?? ".";

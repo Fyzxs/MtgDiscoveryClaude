@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -103,7 +103,7 @@ internal sealed partial class CardGroupingMatcher : ICardGroupingMatcher
         // released_at format is YYYY-MM-DD, extract the year
         if (releasedAt.Length >= 4)
         {
-            string cardYear = releasedAt.Substring(0, 4);
+            string cardYear = releasedAt[..4];
             return string.Equals(cardYear, expectedYear, StringComparison.OrdinalIgnoreCase);
         }
 

@@ -76,4 +76,7 @@ public sealed class UserWishlistCardExtEntity : CosmosItem
     /// </summary>
     [JsonProperty("updated_at")]
     public string UpdatedAt { get; init; }
+
+    [JsonProperty("collection_id")]
+    public string CollectionId { get; init; } = string.Empty;
 }

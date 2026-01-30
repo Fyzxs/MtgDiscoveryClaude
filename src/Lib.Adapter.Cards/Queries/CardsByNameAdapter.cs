@@ -4,7 +4,7 @@ using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Identifiers;
 using Lib.Shared.Invocation.Operations;

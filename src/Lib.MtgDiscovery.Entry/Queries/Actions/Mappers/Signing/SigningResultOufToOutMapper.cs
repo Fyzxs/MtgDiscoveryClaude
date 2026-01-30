@@ -14,9 +14,7 @@ internal sealed class SigningResultOufToOutMapper : ISigningResultOufToOutMapper
 
     public Task<SigningResultOutEntity> Map(ISigningResultOufEntity oufEntity)
     {
-        List<SigningSetGroupOutEntity> allSets = oufEntity.Sets
-            .Select(MapSetGroup)
-            .ToList();
+        List<SigningSetGroupOutEntity> allSets = [.. oufEntity.Sets.Select(MapSetGroup)];
 
         // Separate vintage sets (1996 and earlier) from modern sets
         List<SigningSetGroupOutEntity> vintageSets = [];
@@ -35,15 +33,12 @@ internal sealed class SigningResultOufToOutMapper : ISigningResultOufToOutMapper
         }
 
         // Sort vintage sets by release date (ascending - oldest first)
-        vintageSets = vintageSets
-            .OrderBy(s => s.ReleasedAt)
-            .ToList();
+        vintageSets = [.. vintageSets.OrderBy(s => s.ReleasedAt)];
 
         // Sort modern sets by artist count, then unsigned count
-        modernSets = modernSets
+        modernSets = [.. modernSets
             .OrderByDescending(s => s.ArtistCount)
-            .ThenByDescending(s => s.UnsignedCardCount)
-            .ToList();
+            .ThenByDescending(s => s.UnsignedCardCount)];
 
         // Combine: vintage sets first, then modern sets
         List<SigningSetGroupOutEntity> sortedSets = [.. vintageSets, .. modernSets];
@@ -71,9 +66,7 @@ internal sealed class SigningResultOufToOutMapper : ISigningResultOufToOutMapper
 
     private static SigningSetGroupOutEntity MapSetGroup(ISigningSetGroupOufEntity setGroup)
     {
-        List<SigningArtistGroupOutEntity> artists = setGroup.Artists
-            .Select(MapArtistGroup)
-            .ToList();
+        List<SigningArtistGroupOutEntity> artists = [.. setGroup.Artists.Select(MapArtistGroup)];
 
         return new SigningSetGroupOutEntity
         {
@@ -89,9 +82,7 @@ internal sealed class SigningResultOufToOutMapper : ISigningResultOufToOutMapper
 
     private static SigningArtistGroupOutEntity MapArtistGroup(ISigningArtistGroupOufEntity artistGroup)
     {
-        List<SigningCardOutEntity> cards = artistGroup.Cards
-            .Select(MapCard)
-            .ToList();
+        List<SigningCardOutEntity> cards = [.. artistGroup.Cards.Select(MapCard)];
 
         return new SigningArtistGroupOutEntity
         {
@@ -105,14 +96,13 @@ internal sealed class SigningResultOufToOutMapper : ISigningResultOufToOutMapper
 
     private static SigningCardOutEntity MapCard(ISigningCardOufEntity card)
     {
-        List<CollectedItemOutEntity> details = card.CollectedDetails
+        List<CollectedItemOutEntity> details = [.. card.CollectedDetails
             .Select(d => new CollectedItemOutEntity
             {
                 Finish = d.Finish,
                 Special = d.Special,
                 Count = d.Count
-            })
-            .ToList();
+            })];
 
         return new SigningCardOutEntity
         {

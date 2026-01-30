@@ -1,6 +1,5 @@
+using Lib.Shared.DataModels.Entities.Models;
+
 namespace Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
-public interface IAllUserSetCardsArgEntity
-{
-    string UserId { get; }
-}
+public interface IAllUserSetCardsArgEntity : IUserIdArgModel;

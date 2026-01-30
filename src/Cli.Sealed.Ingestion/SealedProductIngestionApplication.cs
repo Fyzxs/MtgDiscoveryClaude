@@ -37,7 +37,7 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
     private readonly IReadOnlyList<string> _setCodes;
 
     public SealedProductIngestionApplication(string[] args) =>
-        _setCodes = ParseSetCodes(args ?? Array.Empty<string>());
+        _setCodes = ParseSetCodes(args ?? []);
 
     protected override async Task Execute()
     {
@@ -296,6 +296,6 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
             }
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 }

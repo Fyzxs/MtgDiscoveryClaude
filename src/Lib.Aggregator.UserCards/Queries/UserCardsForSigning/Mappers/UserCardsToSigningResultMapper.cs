@@ -16,8 +16,8 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
 
     public Task<ISigningResultOufEntity> Map(IEnumerable<UserCardExtEntity> userCards, IEnumerable<string> selectedArtistIds)
     {
-        HashSet<string> selectedArtists = selectedArtistIds.ToHashSet();
-        List<UserCardExtEntity> cardsList = userCards.ToList();
+        HashSet<string> selectedArtists = [.. selectedArtistIds];
+        List<UserCardExtEntity> cardsList = [.. userCards];
 
         // Group cards by SetId
         IEnumerable<IGrouping<string, UserCardExtEntity>> cardsBySet = cardsList.GroupBy(c => c.SetId);
@@ -27,7 +27,7 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
         foreach (IGrouping<string, UserCardExtEntity> setGroup in cardsBySet)
         {
             string setId = setGroup.Key;
-            List<UserCardExtEntity> cardsInSet = setGroup.ToList();
+            List<UserCardExtEntity> cardsInSet = [.. setGroup];
 
             // For each card, find which selected artists are on it
             // A card can have multiple artists, so we need to create artist groups
@@ -97,12 +97,11 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
                 }
 
                 // Order cards: unsigned first, then partial, then fully signed
-                List<ISigningCardOufEntity> orderedCards = signingCards
+                List<ISigningCardOufEntity> orderedCards = [.. signingCards
                     .OrderByDescending(c => c.UnsignedCopies > 0 && c.IsPartiallySigned is false) // Unsigned only first
                     .ThenByDescending(c => c.IsPartiallySigned) // Then partial
                     .ThenBy(c => c.IsFullySigned) // Fully signed last
-                    .ThenBy(c => c.CardName) // Alphabetical within groups
-                    .ToList();
+                    .ThenBy(c => c.CardName)];
 
                 setUnsignedCardCount += artistUnsignedCount;
 
@@ -152,7 +151,7 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
 
     private static (int UnsignedCopies, bool IsPartiallySigned, bool IsFullySigned, List<IUserCardDetailsOufEntity> Details) CalculateSigningStats(UserCardExtEntity card)
     {
-        List<UserCardDetailsExtEntity> collected = card.CollectedList.ToList();
+        List<UserCardDetailsExtEntity> collected = [.. card.CollectedList];
 
         bool hasSigned = collected.Any(c => c.Special == SignedSpecial);
         int unsignedCopies = collected
@@ -162,15 +161,14 @@ internal sealed class UserCardsToSigningResultMapper : IUserCardsToSigningResult
         bool isPartiallySigned = hasSigned && 0 < unsignedCopies;
         bool isFullySigned = hasSigned && unsignedCopies == 0;
 
-        List<IUserCardDetailsOufEntity> details = collected
+        List<IUserCardDetailsOufEntity> details = [.. collected
             .Select(c => new UserCardDetailsOufEntity
             {
                 Finish = c.Finish,
                 Special = c.Special,
                 Count = c.Count
             })
-            .Cast<IUserCardDetailsOufEntity>()
-            .ToList();
+            .Cast<IUserCardDetailsOufEntity>()];
 
         return (unsignedCopies, isPartiallySigned, isFullySigned, details);
     }

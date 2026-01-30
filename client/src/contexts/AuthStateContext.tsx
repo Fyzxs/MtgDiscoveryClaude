@@ -232,6 +232,9 @@ export const AuthStateProvider: React.FC<AuthStateProviderProps> = ({ children }
 
   const logout = useCallback(() => {
     dispatch({ type: 'LOGOUT' });
+    // Clear any cached auth state before redirecting
+    localStorage.removeItem('mtg-user-data');
+    localStorage.removeItem('mtg-discovery-active-collection');
     auth0Logout({
       logoutParams: {
         returnTo: window.location.origin,

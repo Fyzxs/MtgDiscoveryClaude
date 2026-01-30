@@ -1,0 +1,555 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Lib.Adapter.Collections.Apis;
+using Lib.Adapter.Collections.Entities;
+using Lib.Adapter.Collections.Exceptions;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Janitors;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
+using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Operators;
+using Lib.Shared.DataModels.Entities.Itrs.Collections;
+using Lib.Shared.DataModels.Entities.Oufs.Collections;
+using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
+
+namespace Lib.Adapter.Collections.Commands;
+
+internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
+{
+    private readonly CollectionScribe _collectionScribe;
+    private readonly CollectionGopher _collectionGopher;
+    private readonly CollectionJanitor _collectionJanitor;
+
+    public CollectionCommandAdapter(ILogger logger) : this(
+        new CollectionScribe(logger),
+        new CollectionGopher(logger),
+        new CollectionJanitor(logger))
+    { }
+
+    private CollectionCommandAdapter(
+        CollectionScribe collectionScribe,
+        CollectionGopher collectionGopher,
+        CollectionJanitor collectionJanitor)
+    {
+        _collectionScribe = collectionScribe;
+        _collectionGopher = collectionGopher;
+        _collectionJanitor = collectionJanitor;
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
+    {
+        CollectionExtEntity extEntity = new()
+        {
+            CollectionId = entity.CollectionId,
+            OwnerId = entity.OwnerId,
+            Name = entity.Name,
+            Type = entity.Type,
+            Visibility = entity.Visibility,
+            IsDefault = entity.IsDefault,
+            AuthorizedUsers = entity.AuthorizedUsers.Select(u => new AuthorizedUserExtEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            }),
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt
+        };
+
+        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
+            .UpsertAsync(extEntity)
+            .ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to create collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity result = upsertResponse.Value!;
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = result.CollectionId,
+            OwnerId = result.OwnerId,
+            Name = result.Name,
+            Type = result.Type,
+            Visibility = result.Visibility,
+            IsDefault = result.IsDefault,
+            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity)
+    {
+        ReadPointItem readItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
+        };
+
+        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
+            .ReadAsync<CollectionExtEntity>(readItem)
+            .ConfigureAwait(false);
+
+        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity existing = existingResponse.Value;
+
+        CollectionExtEntity updated = new()
+        {
+            CollectionId = existing.CollectionId,
+            OwnerId = existing.OwnerId,
+            Name = entity.Name,
+            Type = existing.Type,
+            Visibility = existing.Visibility,
+            IsDefault = existing.IsDefault,
+            AuthorizedUsers = existing.AuthorizedUsers,
+            CreatedAt = existing.CreatedAt,
+            UpdatedAt = DateTime.UtcNow.ToString("o")
+        };
+
+        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
+            .UpsertAsync(updated)
+            .ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to rename collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity result = upsertResponse.Value!;
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = result.CollectionId,
+            OwnerId = result.OwnerId,
+            Name = result.Name,
+            Type = result.Type,
+            Visibility = result.Visibility,
+            IsDefault = result.IsDefault,
+            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity)
+    {
+        ReadPointItem readItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
+        };
+
+        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
+            .ReadAsync<CollectionExtEntity>(readItem)
+            .ConfigureAwait(false);
+
+        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity existing = existingResponse.Value;
+
+        CollectionExtEntity updated = new()
+        {
+            CollectionId = existing.CollectionId,
+            OwnerId = existing.OwnerId,
+            Name = existing.Name,
+            Type = existing.Type,
+            Visibility = entity.Visibility,
+            IsDefault = existing.IsDefault,
+            AuthorizedUsers = existing.AuthorizedUsers,
+            CreatedAt = existing.CreatedAt,
+            UpdatedAt = DateTime.UtcNow.ToString("o")
+        };
+
+        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
+            .UpsertAsync(updated)
+            .ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to update collection visibility {entity.CollectionId}: {upsertResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity result = upsertResponse.Value!;
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = result.CollectionId,
+            OwnerId = result.OwnerId,
+            Name = result.Name,
+            Type = result.Type,
+            Visibility = result.Visibility,
+            IsDefault = result.IsDefault,
+            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity)
+    {
+        ReadPointItem readItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.GrantorUserId)
+        };
+
+        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
+            .ReadAsync<CollectionExtEntity>(readItem)
+            .ConfigureAwait(false);
+
+        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity existing = existingResponse.Value;
+
+        System.Collections.Generic.List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
+        AuthorizedUserExtEntity existingUser = authorizedUsers.Find(u => u.UserId == entity.TargetUserId);
+
+        if (existingUser is not null)
+        {
+            authorizedUsers.Remove(existingUser);
+        }
+
+        authorizedUsers.Add(new AuthorizedUserExtEntity
+        {
+            UserId = entity.TargetUserId,
+            Role = entity.Role,
+            GrantedAt = DateTime.UtcNow.ToString("o"),
+            GrantedBy = entity.GrantorUserId
+        });
+
+        CollectionExtEntity updated = new()
+        {
+            CollectionId = existing.CollectionId,
+            OwnerId = existing.OwnerId,
+            Name = existing.Name,
+            Type = existing.Type,
+            Visibility = existing.Visibility,
+            IsDefault = existing.IsDefault,
+            AuthorizedUsers = authorizedUsers,
+            CreatedAt = existing.CreatedAt,
+            UpdatedAt = DateTime.UtcNow.ToString("o")
+        };
+
+        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
+            .UpsertAsync(updated)
+            .ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to grant collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity result = upsertResponse.Value!;
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = result.CollectionId,
+            OwnerId = result.OwnerId,
+            Name = result.Name,
+            Type = result.Type,
+            Visibility = result.Visibility,
+            IsDefault = result.IsDefault,
+            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity)
+    {
+        ReadPointItem readItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.RevokerUserId)
+        };
+
+        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
+            .ReadAsync<CollectionExtEntity>(readItem)
+            .ConfigureAwait(false);
+
+        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity existing = existingResponse.Value;
+
+        System.Collections.Generic.List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
+        int removedCount = authorizedUsers.RemoveAll(u => u.UserId == entity.TargetUserId);
+
+        if (removedCount == 0)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"User {entity.TargetUserId} is not authorized on collection {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity updated = new()
+        {
+            CollectionId = existing.CollectionId,
+            OwnerId = existing.OwnerId,
+            Name = existing.Name,
+            Type = existing.Type,
+            Visibility = existing.Visibility,
+            IsDefault = existing.IsDefault,
+            AuthorizedUsers = authorizedUsers,
+            CreatedAt = existing.CreatedAt,
+            UpdatedAt = DateTime.UtcNow.ToString("o")
+        };
+
+        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
+            .UpsertAsync(updated)
+            .ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to revoke collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity result = upsertResponse.Value!;
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = result.CollectionId,
+            OwnerId = result.OwnerId,
+            Name = result.Name,
+            Type = result.Type,
+            Visibility = result.Visibility,
+            IsDefault = result.IsDefault,
+            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity)
+    {
+        ReadPointItem readItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
+        };
+
+        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
+            .ReadAsync<CollectionExtEntity>(readItem)
+            .ConfigureAwait(false);
+
+        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity existing = existingResponse.Value;
+
+        if (existing.IsDefault)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException("Cannot delete the default collection"));
+        }
+
+        DeletePointItem deleteItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
+        };
+
+        OpResponse<CollectionExtEntity> deleteResponse = await _collectionJanitor
+            .DeleteAsync<CollectionExtEntity>(deleteItem)
+            .ConfigureAwait(false);
+
+        if (deleteResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to delete collection {entity.CollectionId}: {deleteResponse.StatusCode}"));
+        }
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = existing.CollectionId,
+            OwnerId = existing.OwnerId,
+            Name = existing.Name,
+            Type = existing.Type,
+            Visibility = existing.Visibility,
+            IsDefault = existing.IsDefault,
+            AuthorizedUsers = [.. existing.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = existing.CreatedAt,
+            UpdatedAt = existing.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity)
+    {
+        ReadPointItem readItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.CurrentOwnerId)
+        };
+
+        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
+            .ReadAsync<CollectionExtEntity>(readItem)
+            .ConfigureAwait(false);
+
+        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
+        }
+
+        CollectionExtEntity existing = existingResponse.Value;
+
+        if (existing.IsDefault)
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException("Cannot transfer ownership of the default collection"));
+        }
+
+        System.Collections.Generic.List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
+        authorizedUsers.RemoveAll(u => u.UserId == entity.TargetUserId);
+
+        string nowTimestamp = DateTime.UtcNow.ToString("o");
+        authorizedUsers.Add(new AuthorizedUserExtEntity
+        {
+            UserId = entity.CurrentOwnerId,
+            Role = "admin",
+            GrantedAt = nowTimestamp,
+            GrantedBy = entity.CurrentOwnerId
+        });
+
+        DeletePointItem deleteItem = new()
+        {
+            Id = new ProvidedCosmosItemId(entity.CollectionId),
+            Partition = new ProvidedPartitionKeyValue(entity.CurrentOwnerId)
+        };
+
+        OpResponse<CollectionExtEntity> deleteResponse = await _collectionJanitor
+            .DeleteAsync<CollectionExtEntity>(deleteItem)
+            .ConfigureAwait(false);
+
+        if (deleteResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to remove collection from original owner: {deleteResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity updated = new()
+        {
+            CollectionId = existing.CollectionId,
+            OwnerId = entity.TargetUserId,
+            Name = existing.Name,
+            Type = existing.Type,
+            Visibility = existing.Visibility,
+            IsDefault = false,
+            AuthorizedUsers = authorizedUsers,
+            CreatedAt = existing.CreatedAt,
+            UpdatedAt = nowTimestamp
+        };
+
+        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
+            .UpsertAsync(updated)
+            .ConfigureAwait(false);
+
+        if (upsertResponse.IsNotSuccessful())
+        {
+            return new FailureOperationResponse<ICollectionOufEntity>(
+                new CollectionAdapterException($"Failed to transfer collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
+        }
+
+        CollectionExtEntity result = upsertResponse.Value!;
+
+        ICollectionOufEntity oufEntity = new CollectionOufEntity
+        {
+            CollectionId = result.CollectionId,
+            OwnerId = result.OwnerId,
+            Name = result.Name,
+            Type = result.Type,
+            Visibility = result.Visibility,
+            IsDefault = result.IsDefault,
+            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
+            {
+                UserId = u.UserId,
+                Role = u.Role,
+                GrantedAt = u.GrantedAt,
+                GrantedBy = u.GrantedBy
+            })],
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt
+        };
+
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+}

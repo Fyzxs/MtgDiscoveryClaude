@@ -14,6 +14,7 @@ import {
 } from '../../atoms';
 import { CloseIcon, SearchIcon, CollectionsBookmarkIcon, NavigateNextIcon, FavoriteBorderIcon, HotelIcon } from '../../atoms';
 import { useTheme } from '../../atoms';
+import { useAuth0 } from '@auth0/auth0-react';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
 import { AuthButton } from '../../auth/AuthButton';
@@ -49,6 +50,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   onClose
 }) => {
   const theme = useTheme();
+  const { isAuthenticated } = useAuth0();
   const { navigateWithCollector, buildUrlWithCollector, collectorParam } = useCollectorNavigation();
   const { isMobile } = useResponsiveBreakpoints();
   const [setCode, setSetCode] = useState('');
@@ -76,7 +78,7 @@ export const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
   };
 
   const filteredNavItems = NAV_ITEMS.filter(item => {
-    if (item.requiresCollector && !collectorParam.hasCollector) {
+    if (item.requiresCollector && !collectorParam.hasCollector && !isAuthenticated) {
       return false;
     }
     if (item.hideOnMobile && isMobile) {

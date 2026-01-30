@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
@@ -37,7 +37,7 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
             .Map(source.sqlRecord)
             .ConfigureAwait(false);
 
-        List<IAddCardToCollectionArgsEntity> results = specialEntries
+        List<IAddCardToCollectionArgsEntity> results = [.. specialEntries
             .Select(entry => CreateAddCardEntity(
                 source.targetUserId,
                 source.newSystemCard.Id,
@@ -46,8 +46,7 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
                 entry.special,
                 source.newSystemCard.SetGroupId,
                 entry.count,
-                source.replaceMode))
-            .ToList();
+                source.replaceMode))];
 
         return results;
     }

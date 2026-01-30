@@ -11,7 +11,8 @@ import {
 } from '../../atoms';
 import { useTheme } from '../../atoms';
 import { SearchInput } from '../../molecules/shared/SearchInput';
-import { AuthButton } from '../../auth/AuthButton';
+import { AccountMenu } from '../../molecules/auth/AccountMenu';
+import { MyCollectionButton } from '../../molecules/ui/MyCollectionButton';
 import { useCollectorNavigation } from '../../../hooks/useCollectorNavigation';
 import { SearchIcon, ArrowDropDownIcon, MenuIcon, CollectionsBookmarkIcon } from '../../atoms';
 import { useResponsiveBreakpoints } from '../../../hooks/useResponsiveBreakpoints';
@@ -25,7 +26,6 @@ export const Header: React.FC = () => {
   const theme = useTheme();
   const { buildUrlWithCollector, navigateWithCollector, collectorParam } = useCollectorNavigation();
   const { isMobile, isTablet, isDesktop } = useResponsiveBreakpoints();
-
   // Show compact header on mobile, tablet, and narrow desktop (up to 1199px)
   const showMobileHeader = isMobile || isTablet || isDesktop;
 
@@ -348,8 +348,11 @@ export const Header: React.FC = () => {
         {/* Spacer */}
         <Box sx={{ flexGrow: 1 }} />
 
-        {/* Authentication Button */}
-        <AuthButton />
+        {/* Collections Dropdown */}
+        <MyCollectionButton />
+
+        {/* Account Menu */}
+        <AccountMenu variant="desktop" />
       </Toolbar>
     </AppBar>
   );

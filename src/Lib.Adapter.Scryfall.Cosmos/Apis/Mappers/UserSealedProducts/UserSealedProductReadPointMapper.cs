@@ -15,7 +15,7 @@ public sealed class UserSealedProductReadPointMapper : IUserSealedProductReadPoi
 
     public Task<ReadPointItem> Map(string productUuid, string userId)
     {
-        ReadPointItem readPoint = new ReadPointItem
+        ReadPointItem readPoint = new()
         {
             Id = new ProvidedCosmosItemId(productUuid),
             Partition = new ProvidedPartitionKeyValue(userId)

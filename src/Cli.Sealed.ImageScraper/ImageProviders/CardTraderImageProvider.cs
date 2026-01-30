@@ -28,7 +28,7 @@ internal sealed partial class CardTraderImageProvider : IImageProvider
     {
         if (product.HasCardTraderId is false)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         try
@@ -38,14 +38,14 @@ internal sealed partial class CardTraderImageProvider : IImageProvider
 
             if (string.IsNullOrEmpty(imageUrl))
             {
-                return Array.Empty<string>();
+                return [];
             }
 
             return [imageUrl];
         }
         catch (HttpRequestException)
         {
-            return Array.Empty<string>();
+            return [];
         }
     }
 

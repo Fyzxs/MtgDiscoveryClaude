@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLazyQuery } from '@apollo/client/react';
+import { COLLECTION_PARAM_NAME } from '../../../hooks/useCollectionParam';
 import {
   Box,
   Typography,
@@ -91,9 +92,9 @@ const buildSetUrl = (setGroup: SigningSetGroup, collectorId: string | null): str
 
   const params = new URLSearchParams();
 
-  // Preserve collector parameter
+  // Preserve collection parameter
   if (collectorId) {
-    params.set('ctor', collectorId);
+    params.set(COLLECTION_PARAM_NAME, collectorId);
   }
 
   // Add artist filters as comma-separated value

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.SealedProducts.Apis.Entities;
 using Lib.Adapter.SealedProducts.Exceptions;
 using Lib.Adapter.SealedProducts.Queries.Mappers;

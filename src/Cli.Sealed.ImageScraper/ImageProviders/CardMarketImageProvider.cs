@@ -22,7 +22,7 @@ internal sealed class CardMarketImageProvider : IImageProvider
     {
         if (product.HasMcmId is false)
         {
-            return Task.FromResult<IReadOnlyList<string>>(Array.Empty<string>());
+            return Task.FromResult<IReadOnlyList<string>>([]);
         }
 
         string mcmId = product.McmId;

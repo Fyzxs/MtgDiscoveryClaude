@@ -1,6 +1,7 @@
 import { logger } from './logger';
 import { perfMonitor } from './performanceMonitor';
 import type { CardFinish, CardSpecial, CardCollectionUpdate } from '../types/collection';
+import { COLLECTION_PARAM_NAME } from '../hooks/useCollectionParam';
 
 interface CollectionEntryState {
   count: string;
@@ -193,10 +194,10 @@ class GlobalCardEntryHandler {
       return;
     }
 
-    // CRITICAL: Block all collection keyboard shortcuts if no collector ID in URL
+    // CRITICAL: Block all collection keyboard shortcuts if no collection ID in URL
     const urlParams = new URLSearchParams(window.location.search);
-    const collectorId = urlParams.get('ctor');
-    if (!collectorId) {
+    const collectionId = urlParams.get(COLLECTION_PARAM_NAME);
+    if (!collectionId) {
       return;
     }
 

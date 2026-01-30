@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { COLLECTION_PARAM_NAME } from './useCollectionParam';
 
 interface CollectorParamResult {
   hasCollector: boolean;
@@ -7,8 +8,9 @@ interface CollectorParamResult {
 }
 
 /**
- * Hook to detect and extract the collector parameter from URL query string
- * Looks for 'ctor' parameter containing a GUID
+ * Hook to detect and extract the collection parameter from URL query string
+ * Note: 'ctor' now represents collectionId, but this hook maintains 'collectorId'
+ * naming for backwards compatibility with existing components.
  *
  * @returns Object with hasCollector boolean and collectorId string
  */
@@ -17,7 +19,7 @@ export function useCollectorParam(): CollectorParamResult {
 
   return useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
-    const collectorId = searchParams.get('ctor');
+    const collectorId = searchParams.get(COLLECTION_PARAM_NAME);
 
     return {
       hasCollector: collectorId !== null && collectorId.trim() !== '',

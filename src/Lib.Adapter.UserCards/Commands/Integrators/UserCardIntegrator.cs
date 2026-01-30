@@ -27,8 +27,8 @@ internal sealed class UserCardIntegrator : IUserCardIntegrator
     public Task<UserCardExtEntity> Integrate(UserCardExtEntity current, IAddUserCardXfrEntity change)
     {
         ICollection<UserCardDetailsExtEntity> updatedCollectedList = change.ReplaceMode
-            ? _replaceMapper.Map(current.CollectedList.ToList(), change.Details)
-            : _mergeMapper.Map(current.CollectedList.ToList(), change.Details);
+            ? _replaceMapper.Map([.. current.CollectedList], change.Details)
+            : _mergeMapper.Map([.. current.CollectedList], change.Details);
 
         UserCardExtEntity result = _metadataMapper.Map(current, change, updatedCollectedList);
 

@@ -24,8 +24,8 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
 
     public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string collectionId)
     {
-        QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c");
-        PartitionKey partitionKey = new PartitionKey(collectionId);
+        QueryDefinition queryDefinition = new("SELECT * FROM c");
+        PartitionKey partitionKey = new(collectionId);
 
         OpResponse<IEnumerable<UserSealedProductExtEntity>> response =
             await _userSealedProductsInquisitor.QueryAsync<UserSealedProductExtEntity>(queryDefinition, partitionKey)

@@ -1,22 +1,8 @@
-﻿namespace Lib.Shared.DataModels.Entities.Args.User;
+using Lib.Shared.DataModels.Entities.Models;
 
-/// <summary>
-/// Interface for argument entities that support optional user identification for enrichment.
-/// </summary>
-public interface IUserIdArgEntity
+namespace Lib.Shared.DataModels.Entities.Args.User;
+
+public interface IUserIdArgEntity : IOptionalUserIdArgModel
 {
-    /// <summary>
-    /// Optional user identifier for enriching results with user-specific data.
-    /// </summary>
-    string UserId { get; }
-
-    /// <summary>
-    /// Indicates whether a UserId has been provided.
-    /// </summary>
-    bool HasUserId => string.IsNullOrEmpty(UserId) is false;
-
-    /// <summary>
-    /// Indicates whether a UserId has been provided.
-    /// </summary>
     bool DoesNotHaveUserId => HasUserId is false;
 }

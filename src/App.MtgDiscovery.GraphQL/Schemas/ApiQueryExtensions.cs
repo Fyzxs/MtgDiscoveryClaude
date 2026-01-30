@@ -1,5 +1,6 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Collections;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.Signing;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
@@ -23,6 +24,7 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<UserCardsQueryMethods>()
             .AddTypeExtension<UserInfoQueryMethods>()
             .AddTypeExtension<UserWishlistCardsQueryMethods>()
+            .AddTypeExtension<CollectionQueryMethods>()
             // Input types for queries
             .AddType<UserCardsBySetArgEntityInputType>()
             .AddType<UserCardsByIdsArgEntityInputType>()
@@ -61,6 +63,12 @@ internal static class ApiQueryExtensions
             .AddType<UserWishlistSuccessDataResponseModelType>()
             .AddType<UserWishlistCardOutEntityType>()
             .AddType<WishlistItemOutEntityType>()
+            // Collections query types
+            .AddType<CollectionsResponseModelUnionType>()
+            .AddType<CollectionsSuccessDataResponseModelType>()
+            // AuthorizedUsers query types
+            .AddType<AuthorizedUsersResponseModelUnionType>()
+            .AddType<AuthorizedUsersSuccessDataResponseModelType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

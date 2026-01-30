@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Lib.Domain.UserWishlistCards\Lib.Domain.UserWishlistCards.csproj" />
     <ProjectReference Include="..\Lib.Domain.SealedProducts\Lib.Domain.SealedProducts.csproj" />
     <ProjectReference Include="..\Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj" />
+    <ProjectReference Include="..\Lib.Domain.Collections\Lib.Domain.Collections.csproj" />
   </ItemGroup>
 
 </Project>

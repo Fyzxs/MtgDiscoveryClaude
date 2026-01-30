@@ -1,4 +1,3 @@
-﻿using System.Net;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
@@ -6,7 +5,6 @@ using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Commands;
 using Lib.Adapter.UserCards.Exceptions;
 using Lib.Adapter.UserCards.Tests.Fakes;
-using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;
@@ -31,14 +29,21 @@ public sealed class UserCardsCommandAdapterTests
     }
 
     [TestMethod, TestCategory("unit")]
-    public async Task Constructor_WithGopherAndScribe_UsesProvidedComponents()
+    public async Task Constructor_WithAddUserCardAdapter_UsesProvidedComponent()
     {
         // Arrange
-        UserCardsGopherFake gopher = new();
-        UserCardsScribeFake scribe = new();
+        AddUserCardAdapterFake fakeAdapter = new()
+        {
+            ExecuteResult = new SuccessOperationResponse<UserCardExtEntity>(new UserCardExtEntity
+            {
+                UserId = "user123",
+                CardId = "card456",
+                SetId = "set789",
+                CollectedList = []
+            })
+        };
 
-        // Use TypeWrapper to access internal constructor
-        UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
+        UserCardsCommandAdapter adapter = new InstanceWrapper(fakeAdapter);
 
         IAddUserCardXfrEntity addUserCard = new AddUserCardXfrEntityFake
         {
@@ -54,19 +59,25 @@ public sealed class UserCardsCommandAdapterTests
         // Assert
         actual.Should().NotBeNull();
         actual.IsSuccess.Should().BeTrue();
-        gopher.ReadAsyncCallCount.Should().Be(1);
-        scribe.UpsertAsyncCallCount.Should().Be(1);
+        fakeAdapter.ExecuteInvokeCount.Should().Be(1);
     }
 
     [TestMethod, TestCategory("unit")]
     public async Task AddUserCardAsync_WithValidUserCard_ReturnsSuccessResponse()
     {
         // Arrange
-        UserCardsGopherFake gopher = new();
-        UserCardsScribeFake scribe = new();
+        AddUserCardAdapterFake fakeAdapter = new()
+        {
+            ExecuteResult = new SuccessOperationResponse<UserCardExtEntity>(new UserCardExtEntity
+            {
+                UserId = "user123",
+                CardId = "card456",
+                SetId = "set789",
+                CollectedList = [new UserCardDetailsExtEntity { Finish = "nonfoil", Special = "none", Count = 1 }]
+            })
+        };
 
-        // Use TypeWrapper to access internal constructor
-        UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
+        UserCardsCommandAdapter adapter = new InstanceWrapper(fakeAdapter);
 
         IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
@@ -93,15 +104,15 @@ public sealed class UserCardsCommandAdapterTests
         actual.ResponseData.UserId.Should().Be("user123");
         actual.ResponseData.CardId.Should().Be("card456");
         actual.ResponseData.SetId.Should().Be("set789");
+        fakeAdapter.ExecuteInvokeCount.Should().Be(1);
     }
 
     [TestMethod, TestCategory("unit")]
-    public async Task AddUserCardAsync_WhenCosmosUpsertFails_ReturnsFailureResponse()
+    public async Task AddUserCardAsync_WhenAdapterFails_ReturnsFailureResponse()
     {
         // Arrange
-        UserCardsGopherFake gopher = new();
-        UserCardsScribeFake scribe = new() { ShouldReturnFailure = true, FailureStatusCode = HttpStatusCode.InternalServerError };
-        UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
+        AddUserCardAdapterFake fakeAdapter = new() { ShouldReturnFailure = true };
+        UserCardsCommandAdapter adapter = new InstanceWrapper(fakeAdapter);
 
         IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
@@ -125,25 +136,29 @@ public sealed class UserCardsCommandAdapterTests
         actual.Should().NotBeNull();
         actual.IsFailure.Should().BeTrue();
         actual.OuterException.Should().BeOfType<UserCardsAdapterException>();
-        gopher.ReadAsyncCallCount.Should().Be(1);
-        scribe.UpsertAsyncCallCount.Should().Be(1);
+        fakeAdapter.ExecuteInvokeCount.Should().Be(1);
     }
 
     [TestMethod, TestCategory("unit")]
     public async Task AddUserCardAsync_WithExistingRecord_MergesCollectedItems()
     {
         // Arrange
-        UserCardExtEntity existingRecord = new()
+        AddUserCardAdapterFake fakeAdapter = new()
         {
-            UserId = "user123",
-            CardId = "card456",
-            SetId = "set789",
-            CollectedList = [new UserCardDetailsExtEntity { Finish = "nonfoil", Special = "none", Count = 1 }]
+            ExecuteResult = new SuccessOperationResponse<UserCardExtEntity>(new UserCardExtEntity
+            {
+                UserId = "user123",
+                CardId = "card456",
+                SetId = "set789",
+                CollectedList =
+                [
+                    new UserCardDetailsExtEntity { Finish = "nonfoil", Special = "none", Count = 1 },
+                    new UserCardDetailsExtEntity { Finish = "foil", Special = "none", Count = 2 }
+                ]
+            })
         };
 
-        UserCardsGopherFake gopher = new() { ShouldReturnExistingRecord = true, ExistingRecord = existingRecord };
-        UserCardsScribeFake scribe = new();
-        UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
+        UserCardsCommandAdapter adapter = new InstanceWrapper(fakeAdapter);
 
         IUserCardDetailsXfrEntity newCollectedCard = new UserCardDetailsXfrEntityFake
         {
@@ -167,17 +182,25 @@ public sealed class UserCardsCommandAdapterTests
         actual.Should().NotBeNull();
         actual.IsSuccess.Should().BeTrue();
         actual.ResponseData.Should().NotBeNull();
-        gopher.ReadAsyncCallCount.Should().Be(1);
-        scribe.UpsertAsyncCallCount.Should().Be(1);
+        fakeAdapter.ExecuteInvokeCount.Should().Be(1);
     }
 
     [TestMethod, TestCategory("unit")]
     public async Task AddUserCardAsync_WithNoExistingRecord_CreatesNewRecord()
     {
         // Arrange
-        UserCardsGopherFake gopher = new() { ShouldReturnExistingRecord = false };
-        UserCardsScribeFake scribe = new();
-        UserCardsCommandAdapter adapter = new InstanceWrapper(gopher, scribe);
+        AddUserCardAdapterFake fakeAdapter = new()
+        {
+            ExecuteResult = new SuccessOperationResponse<UserCardExtEntity>(new UserCardExtEntity
+            {
+                UserId = "user123",
+                CardId = "card456",
+                SetId = "set789",
+                CollectedList = [new UserCardDetailsExtEntity { Finish = "nonfoil", Special = "none", Count = 3 }]
+            })
+        };
+
+        UserCardsCommandAdapter adapter = new InstanceWrapper(fakeAdapter);
 
         IUserCardDetailsXfrEntity collectedCard = new UserCardDetailsXfrEntityFake
         {
@@ -204,12 +227,11 @@ public sealed class UserCardsCommandAdapterTests
         actual.ResponseData.UserId.Should().Be("user123");
         actual.ResponseData.CardId.Should().Be("card456");
         actual.ResponseData.SetId.Should().Be("set789");
-        gopher.ReadAsyncCallCount.Should().Be(1);
-        scribe.UpsertAsyncCallCount.Should().Be(1);
+        fakeAdapter.ExecuteInvokeCount.Should().Be(1);
     }
 }
 
 internal sealed class InstanceWrapper : TypeWrapper<UserCardsCommandAdapter>
 {
-    public InstanceWrapper(ICosmosGopher gopher, ICosmosScribe scribe) : base(gopher, scribe) { }
+    public InstanceWrapper(IAddUserCardAdapter addUserCardAdapter) : base(addUserCardAdapter) { }
 }

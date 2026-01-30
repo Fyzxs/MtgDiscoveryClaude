@@ -1,19 +1,9 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Models;
 
 namespace Lib.Shared.DataModels.Entities.Args.UserCards;
 
-/// <summary>
-/// Argument entity for querying user cards by multiple artists for convention signing planning.
-/// </summary>
-public interface IUserCardsForSigningArgEntity
+public interface IUserCardsForSigningArgEntity : IUserIdArgModel
 {
-    /// <summary>
-    /// The ID of the user whose cards to query.
-    /// </summary>
-    string UserId { get; }
-
-    /// <summary>
-    /// The collection of artist IDs to query cards for.
-    /// </summary>
     ICollection<string> ArtistIds { get; }
 }

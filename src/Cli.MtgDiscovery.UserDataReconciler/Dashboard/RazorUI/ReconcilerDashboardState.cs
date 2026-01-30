@@ -127,7 +127,7 @@ internal sealed class ReconcilerDashboardState : IDisposable
 
     public IReadOnlyList<string> RecentLogs
     {
-        get { lock (_lock) { return _recentLogs.ToList(); } }
+        get { lock (_lock) { return [.. _recentLogs]; } }
     }
 
     public void StartTimer()

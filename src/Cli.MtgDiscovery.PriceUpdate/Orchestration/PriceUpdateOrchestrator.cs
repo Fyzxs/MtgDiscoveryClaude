@@ -55,7 +55,7 @@ internal sealed class PriceUpdateOrchestrator : IPriceUpdateOrchestrator
 
         IReadOnlyList<KeyValuePair<string, ManaPoolPriceItem>> priceList = _config.TestMode
             ? prices.Take(_config.TestCardLimit).ToList()
-            : prices.ToList();
+            : [.. prices];
 
         _dashboard.AddLog($"Fetched {prices.Count:N0} prices from ManaPool");
 

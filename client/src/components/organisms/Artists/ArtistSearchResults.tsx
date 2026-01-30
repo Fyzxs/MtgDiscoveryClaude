@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { Box, Typography, Paper } from '../../atoms';
 import type { SxProps, Theme } from '../../atoms';
 import { useCollectorParam } from '../../../hooks/useCollectorParam';
+import { COLLECTION_PARAM_NAME } from '../../../hooks/useCollectionParam';
 
 interface ArtistNameResult {
   artistId: string;
@@ -19,7 +20,7 @@ const buildArtistUrl = (artistName: string, collectorId: string | null): string 
   const params = new URLSearchParams();
 
   if (collectorId) {
-    params.set('ctor', collectorId);
+    params.set(COLLECTION_PARAM_NAME, collectorId);
   }
   params.set('formats', 'paper');
 

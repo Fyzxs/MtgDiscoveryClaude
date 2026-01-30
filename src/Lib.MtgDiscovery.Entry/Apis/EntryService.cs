@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands;
+using Lib.MtgDiscovery.Entry.Commands.Collections;
+using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards;
 using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Entities.Collections;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
 using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
@@ -13,9 +18,12 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.MtgDiscovery.Entry.Queries;
+using Lib.MtgDiscovery.Entry.Queries.Collections;
+using Lib.MtgDiscovery.Entry.Queries.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args.Artists;
 using Lib.Shared.DataModels.Entities.Args.Cards;
+using Lib.Shared.DataModels.Entities.Args.Collections;
 using Lib.Shared.DataModels.Entities.Args.SealedProducts;
 using Lib.Shared.DataModels.Entities.Args.Sets;
 using Lib.Shared.DataModels.Entities.Args.User;
@@ -40,6 +48,8 @@ public sealed class EntryService : IEntryService
     private readonly IUserWishlistCardsEntryService _userWishlistCardsEntryService;
     private readonly ISealedProductsEntryService _sealedProductsEntryService;
     private readonly IUserSealedProductsEntryService _userSealedProductsEntryService;
+    private readonly ICollectionEntryCommandService _collectionEntryCommandService;
+    private readonly ICollectionEntryQueryService _collectionEntryQueryService;
 
     public EntryService(ILogger logger) : this(
         new CardEntryService(logger),
@@ -52,7 +62,9 @@ public sealed class EntryService : IEntryService
         new UserSetCardsCommandEntryService(logger),
         new UserWishlistCardsEntryService(logger),
         new SealedProductsEntryService(logger),
-        new UserSealedProductsEntryService(logger))
+        new UserSealedProductsEntryService(logger),
+        new CollectionEntryCommandService(logger),
+        new CollectionEntryQueryService(logger))
     { }
 
     private EntryService(
@@ -66,7 +78,9 @@ public sealed class EntryService : IEntryService
         IUserSetCardsCommandEntryService userSetCardsCommandEntryService,
         IUserWishlistCardsEntryService userWishlistCardsEntryService,
         ISealedProductsEntryService sealedProductsEntryService,
-        IUserSealedProductsEntryService userSealedProductsEntryService)
+        IUserSealedProductsEntryService userSealedProductsEntryService,
+        ICollectionEntryCommandService collectionEntryCommandService,
+        ICollectionEntryQueryService collectionEntryQueryService)
     {
         _cardEntryService = cardEntryService;
         _setEntryService = setEntryService;
@@ -79,6 +93,8 @@ public sealed class EntryService : IEntryService
         _userWishlistCardsEntryService = userWishlistCardsEntryService;
         _sealedProductsEntryService = sealedProductsEntryService;
         _userSealedProductsEntryService = userSealedProductsEntryService;
+        _collectionEntryCommandService = collectionEntryCommandService;
+        _collectionEntryQueryService = collectionEntryQueryService;
     }
 
     public Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => _cardEntryService.CardsByIdsAsync(args);
@@ -132,4 +148,28 @@ public sealed class EntryService : IEntryService
     public Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(IAddSealedProductToCollectionArgsEntity args) => _userSealedProductsEntryService.AddSealedProductToCollectionAsync(args);
 
     public Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(string userId) => _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(userId);
+
+    public Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgsEntity argsEntity) => _collectionEntryCommandService.CreateCollectionAsync(argsEntity);
+
+    public Task<IOperationResponse<CollectionOutEntity>> RenameCollectionAsync(IRenameCollectionArgsEntity argsEntity) => _collectionEntryCommandService.RenameCollectionAsync(argsEntity);
+
+    public Task<IOperationResponse<CollectionOutEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityArgsEntity argsEntity) => _collectionEntryCommandService.UpdateCollectionVisibilityAsync(argsEntity);
+
+    public Task<IOperationResponse<CollectionOutEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessArgsEntity argsEntity) => _collectionEntryCommandService.GrantCollectionAccessAsync(argsEntity);
+
+    public Task<IOperationResponse<CollectionOutEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessArgsEntity argsEntity) => _collectionEntryCommandService.RevokeCollectionAccessAsync(argsEntity);
+
+    public Task<IOperationResponse<CollectionOutEntity>> DeleteCollectionAsync(IDeleteCollectionArgsEntity argsEntity) => _collectionEntryCommandService.DeleteCollectionAsync(argsEntity);
+
+    public Task<IOperationResponse<CollectionOutEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipArgsEntity argsEntity) => _collectionEntryCommandService.TransferCollectionOwnershipAsync(argsEntity);
+
+    public Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity) => _collectionEntryCommandService.GetCollectionAccessListAsync(argsEntity);
+
+    public Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args) => _collectionEntryQueryService.MyCollectionsAsync(args);
+
+    public Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args) => _collectionEntryQueryService.GetCollectionByIdAsync(args);
+
+    public Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args) => _collectionEntryQueryService.SharedCollectionsAsync(args);
+
+    public Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args) => _collectionEntryQueryService.AccessibleCollectionsAsync(args);
 }

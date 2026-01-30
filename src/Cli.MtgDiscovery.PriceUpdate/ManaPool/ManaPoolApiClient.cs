@@ -34,10 +34,9 @@ internal sealed class ManaPoolApiClient : IManaPoolApiClient
     {
         Dictionary<string, ManaPoolPriceItem> prices = [];
         int currentPage = 1;
-        int totalPages = 1;
-
         _logger.LogInformation("Starting to fetch prices from ManaPool API: {Url}", _config.ManaPoolApiUrl);
 
+        int totalPages;
         do
         {
             ManaPoolApiResponse response = await FetchPageWithRetryAsync(currentPage).ConfigureAwait(false);

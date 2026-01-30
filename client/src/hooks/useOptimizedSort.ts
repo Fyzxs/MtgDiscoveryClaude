@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import type { Card } from '../types/card';
 import { logger } from '../utils/logger';
+import { COLLECTION_PARAM_NAME } from './useCollectionParam';
 
 interface SortCache {
   [key: string]: {
@@ -38,9 +39,9 @@ export function useOptimizedSort(
   return useMemo(() => {
     if (!data || data.length === 0) return [];
 
-    // Disable caching if sortKey contains collector context (ctor)
+    // Disable caching if sortKey contains collection context
     // Collection data changes without changing card IDs, breaking hash-based cache
-    const hasCollectorContext = sortKey.includes('ctor');
+    const hasCollectorContext = sortKey.includes(COLLECTION_PARAM_NAME);
 
     // Small arrays don't need caching optimization, or if collector context present
     if (data.length < 100 || hasCollectorContext) {

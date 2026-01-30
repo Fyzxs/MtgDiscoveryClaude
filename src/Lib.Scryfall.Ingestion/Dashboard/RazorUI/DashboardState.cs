@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -147,7 +147,7 @@ internal sealed class DashboardState : IDisposable
 
     public IReadOnlyList<string> RecentLogs
     {
-        get { lock (_lock) { return _recentLogs.ToList(); } }
+        get { lock (_lock) { return [.. _recentLogs]; } }
     }
 
     public IReadOnlyDictionary<string, int> CompletedCounts
