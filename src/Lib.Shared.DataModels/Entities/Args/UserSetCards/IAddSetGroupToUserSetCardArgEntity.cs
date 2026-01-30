@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Models;
 
 namespace Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
-public interface IAddSetGroupToUserSetCardArgEntity
+public interface IAddSetGroupToUserSetCardArgEntity : IUserIdArgModel
 {
-    string UserId { get; }
     string SetId { get; }
     string SetGroupId { get; }
     bool Collecting { get; }

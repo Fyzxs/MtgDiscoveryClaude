@@ -1,9 +1,10 @@
-﻿namespace Lib.Shared.DataModels.Entities.Args.UserCards;
+using Lib.Shared.DataModels.Entities.Models;
 
-public interface IAddUserCardArgEntity
+namespace Lib.Shared.DataModels.Entities.Args.UserCards;
+
+public interface IAddUserCardArgEntity : IUserIdArgModel
 {
     string CardId { get; }
     string SetId { get; }
-    string UserId { get; }
     IUserCardDetailsArgEntity UserCardDetails { get; }
 }

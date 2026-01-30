@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -49,7 +49,7 @@ public sealed class RateLimitedHttpClientTests
         RateLimitedHttpClient subject = new InstanceWrapper(httpClientFake, rateLimiterFake);
 
         // Act
-        string actual = await subject.ResponseAs<string>(uri, TestContext.CancellationTokenSource.Token).ConfigureAwait(false);
+        string actual = await subject.ResponseAs<string>(uri, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         _ = actual.Should().Be(expectedResult);

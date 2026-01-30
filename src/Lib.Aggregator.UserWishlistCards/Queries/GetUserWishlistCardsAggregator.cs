@@ -52,12 +52,12 @@ internal sealed class GetUserWishlistCardsAggregator : IGetUserWishlistCardsAggr
             CardNameGuid = ext.CardNameGuid,
             CreatedAt = ext.CreatedAt,
             UpdatedAt = ext.UpdatedAt,
-            WishlistItems = (ext.WishlistItems ?? []).Select(item => new UserWishlistCardDetailsOufEntity
+            WishlistItems = [.. (ext.WishlistItems ?? []).Select(item => new UserWishlistCardDetailsOufEntity
             {
                 Finish = item.Finish,
                 Special = item.Special,
                 Count = item.Count
-            }).ToList<IUserWishlistCardDetailsOufEntity>()
+            })]
         };
     }
 

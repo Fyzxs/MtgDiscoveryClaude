@@ -12,6 +12,7 @@ internal sealed class MonoStateCosmosClientAdapter : ICosmosClientAdapter
     private readonly ICosmosConnectionConvenience _connectionConvenience;
     private readonly IGenesisDevice _genesisDevice;
     private static readonly ConcurrentDictionary<string, ICosmosGenesisClientAdapter> s_cache = [];
+    private static readonly ConcurrentDictionary<string, bool> s_genesisComplete = [];
 
     public MonoStateCosmosClientAdapter(ILogger logger, ICosmosContainerDefinition containerDefinition, ICosmosConnectionConvenience connectionConvenience)
         : this(containerDefinition, connectionConvenience, new AuthModeGenesisDevice(logger, containerDefinition, connectionConvenience))
@@ -39,7 +40,16 @@ internal sealed class MonoStateCosmosClientAdapter : ICosmosClientAdapter
     public async Task<Container> GetContainer()
     {
         ICosmosGenesisClientAdapter adapter = MonoState();
-        await _genesisDevice.LiveLongAndProsper(adapter).ConfigureAwait(false);
+        await EnsureGenesis(adapter).ConfigureAwait(false);
         return await adapter.GetContainer(_containerDefinition).ConfigureAwait(false);
+    }
+
+    private async Task EnsureGenesis(ICosmosGenesisClientAdapter adapter)
+    {
+        string cacheKey = _containerDefinition.CacheKey();
+        if (s_genesisComplete.ContainsKey(cacheKey)) { return; }
+
+        await _genesisDevice.LiveLongAndProsper(adapter).ConfigureAwait(false);
+        s_genesisComplete.TryAdd(cacheKey, true);
     }
 }

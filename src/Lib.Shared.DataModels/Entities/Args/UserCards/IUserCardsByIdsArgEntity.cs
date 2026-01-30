@@ -1,19 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Models;
 
 namespace Lib.Shared.DataModels.Entities.Args.UserCards;
 
-/// <summary>
-/// Argument entity for querying multiple user cards by their IDs.
-/// </summary>
-public interface IUserCardsByIdsArgEntity
+public interface IUserCardsByIdsArgEntity : IUserIdArgModel
 {
-    /// <summary>
-    /// The ID of the user whose cards to query.
-    /// </summary>
-    string UserId { get; }
-
-    /// <summary>
-    /// The collection of card IDs to query.
-    /// </summary>
     ICollection<string> CardIds { get; }
 }

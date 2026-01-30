@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Exceptions;
 using Lib.Adapter.UserSetCards.Queries.Mappers;

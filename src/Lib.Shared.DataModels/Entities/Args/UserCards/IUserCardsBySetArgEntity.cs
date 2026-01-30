@@ -1,17 +1,8 @@
-﻿namespace Lib.Shared.DataModels.Entities.Args.UserCards;
+using Lib.Shared.DataModels.Entities.Models;
 
-/// <summary>
-/// Argument entity for querying user cards by set.
-/// </summary>
-public interface IUserCardsBySetArgEntity
+namespace Lib.Shared.DataModels.Entities.Args.UserCards;
+
+public interface IUserCardsBySetArgEntity : IUserIdArgModel
 {
-    /// <summary>
-    /// The ID of the set to query.
-    /// </summary>
     string SetId { get; }
-
-    /// <summary>
-    /// The ID of the user whose cards to query.
-    /// </summary>
-    string UserId { get; }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 
 namespace Lib.Shared.Invocation.Exceptions;
@@ -23,6 +23,24 @@ public sealed class BadRequestOperationException : OperationException
 #pragma warning restore CA1032 // Implement standard exception constructors
 {
     public BadRequestOperationException(string message) : base(HttpStatusCode.BadRequest, message)
+    {
+    }
+}
+
+#pragma warning disable CA1032 // Implement standard exception constructors
+public sealed class NotFoundOperationException : OperationException
+#pragma warning restore CA1032 // Implement standard exception constructors
+{
+    public NotFoundOperationException(string message) : base(HttpStatusCode.NotFound, message)
+    {
+    }
+}
+
+#pragma warning disable CA1032 // Implement standard exception constructors
+public sealed class ForbiddenOperationException : OperationException
+#pragma warning restore CA1032 // Implement standard exception constructors
+{
+    public ForbiddenOperationException(string message) : base(HttpStatusCode.Forbidden, message)
     {
     }
 }

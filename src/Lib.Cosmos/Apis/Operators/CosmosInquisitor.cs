@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -39,4 +39,18 @@ public abstract class CosmosInquisitor : ICosmosInquisitor
         QueryDefinition queryDefinition,
         PartitionKey partitionKey,
         CancellationToken cancellationToken = default) => await _source.QueryAsync<T>(queryDefinition, partitionKey, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>
+    /// Asynchronously queries items from the container across all partitions.
+    /// </summary>
+    /// <typeparam name="T">The type of the items to query.</typeparam>
+    /// <param name="queryDefinition">The query definition containing the SQL query and parameters.</param>
+    /// <param name="cancellationToken">The cancellation token for the asynchronous operation.</param>
+    /// <returns>
+    /// A task that represents the asynchronous query operation. The task result contains
+    /// the response from the query operation with the queried items.
+    /// </returns>
+    public async Task<OpResponse<IEnumerable<T>>> CrossPartitionQueryAsync<T>(
+        QueryDefinition queryDefinition,
+        CancellationToken cancellationToken = default) => await _source.CrossPartitionQueryAsync<T>(queryDefinition, cancellationToken).ConfigureAwait(false);
 }

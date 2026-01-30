@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Args;
+using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Shared.Abstractions.Identifiers;
 

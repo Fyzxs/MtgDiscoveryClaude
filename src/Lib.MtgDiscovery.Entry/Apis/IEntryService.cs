@@ -1,4 +1,7 @@
-﻿namespace Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
+using Lib.MtgDiscovery.Entry.Queries.Collections.Apis;
+
+namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface IEntryService :
     ICardEntryService,
@@ -11,4 +14,6 @@ public interface IEntryService :
     IUserSetCardsCommandEntryService,
     IUserWishlistCardsEntryService,
     ISealedProductsEntryService,
-    IUserSealedProductsEntryService;
+    IUserSealedProductsEntryService,
+    ICollectionEntryCommandService,
+    ICollectionEntryQueryService;

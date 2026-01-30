@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -19,4 +19,13 @@ public interface ICosmosContainerQueryOperator
     /// <param name="cancellationToken">The cancellation token for the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous query operation. The task result contains the operation response with the queried items.</returns>
     Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(QueryDefinition queryDefinition, PartitionKey partitionKey, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Asynchronously queries items from the container across all partitions.
+    /// </summary>
+    /// <typeparam name="T">The type of the domain objects to query.</typeparam>
+    /// <param name="queryDefinition">The query definition containing the SQL query and parameters.</param>
+    /// <param name="cancellationToken">The cancellation token for the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous query operation. The task result contains the operation response with the queried items.</returns>
+    Task<OpResponse<IEnumerable<T>>> CrossPartitionQueryAsync<T>(QueryDefinition queryDefinition, CancellationToken cancellationToken = default);
 }

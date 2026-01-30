@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
@@ -52,7 +52,7 @@ public sealed class CosmosContainerQueryAsyncOperatorTests
 
         // Act
         List<OpResponse<TestItem>> results = [];
-        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
+        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationToken).ConfigureAwait(false))
         {
             results.Add(item);
         }
@@ -99,7 +99,7 @@ public sealed class CosmosContainerQueryAsyncOperatorTests
 
         // Act
         List<OpResponse<TestItem>> results = [];
-        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
+        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationToken).ConfigureAwait(false))
         {
             results.Add(item);
         }
@@ -148,7 +148,7 @@ public sealed class CosmosContainerQueryAsyncOperatorTests
 
         // Act
         List<OpResponse<TestItem>> results = [];
-        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
+        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationToken).ConfigureAwait(false))
         {
             results.Add(item);
         }
@@ -196,7 +196,7 @@ public sealed class CosmosContainerQueryAsyncOperatorTests
 
         // Act
         List<OpResponse<TestItem>> results = [];
-        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
+        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationToken).ConfigureAwait(false))
         {
             results.Add(item);
         }
@@ -285,7 +285,7 @@ public sealed class CosmosContainerQueryAsyncOperatorTests
 
         // Act
         List<OpResponse<TestItem>> results = [];
-        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationTokenSource.Token).ConfigureAwait(false))
+        await foreach (OpResponse<TestItem> item in subject.QueryYield<TestItem>(queryDefinition, partitionKey, TestContext.CancellationToken).ConfigureAwait(false))
         {
             results.Add(item);
         }

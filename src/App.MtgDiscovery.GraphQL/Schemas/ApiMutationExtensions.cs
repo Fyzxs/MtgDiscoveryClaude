@@ -1,8 +1,9 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSealedProducts;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserWishlistCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
+using App.MtgDiscovery.GraphQL.Entities.Types.Collections;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
@@ -25,6 +26,7 @@ internal static class ApiMutationExtensions
             .AddTypeExtension<UserSetCardsMutationMethods>()
             .AddTypeExtension<UserWishlistCardsMutationMethods>()
             .AddTypeExtension<UserSealedProductsMutationMethods>()
+            .AddTypeExtension<CollectionMutationMethods>()
             // Input types for mutations
             .AddType<AddCardToCollectionArgEntityInputType>()
             .AddType<CollectedItemArgEntityInputType>()
@@ -61,6 +63,11 @@ internal static class ApiMutationExtensions
             // UserSealedProducts response types
             .AddType<AddUserSealedProductResponseModelUnionType>()
             .AddType<AddUserSealedProductSuccessDataResponseModelType>()
+            // Collection types
+            .AddType<CollectionResponseModelUnionType>()
+            .AddType<CollectionsSuccessDataResponseModelType>()
+            .AddType<CollectionOutEntityType>()
+            .AddType<AuthorizedUserOutEntityType>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -29,6 +29,29 @@ internal sealed class CosmosContainerQueryOperator : ICosmosContainerQueryOperat
     public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(QueryDefinition queryDefinition, PartitionKey partitionKey, CancellationToken cancellationToken = default)
     {
         Container container = await _clientAdapter.GetContainer().ConfigureAwait(false);
+        QueryRequestOptions options = new() { PartitionKey = partitionKey };
+        FeedIterator<T> iterator = container.GetItemQueryIterator<T>(queryDefinition, requestOptions: options);
+        List<T> collection = [];
+
+        HttpStatusCode highestStatusCode = HttpStatusCode.OK;
+        while (iterator.HasMoreResults)
+        {
+            FeedResponse<T> response = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+            if (highestStatusCode < response.StatusCode)
+            {
+                highestStatusCode = response.StatusCode;
+            }
+
+            _logger.QueryInformation(response.RequestCharge, response.Diagnostics.GetClientElapsedTime());
+            collection.AddRange(response.Resource);
+        }
+
+        return new ProvidedOpResponse<IEnumerable<T>>(collection, highestStatusCode);
+    }
+
+    public async Task<OpResponse<IEnumerable<T>>> CrossPartitionQueryAsync<T>(QueryDefinition queryDefinition, CancellationToken cancellationToken = default)
+    {
+        Container container = await _clientAdapter.GetContainer().ConfigureAwait(false);
         FeedIterator<T> iterator = container.GetItemQueryIterator<T>(queryDefinition);
         List<T> collection = [];
 
@@ -36,7 +59,11 @@ internal sealed class CosmosContainerQueryOperator : ICosmosContainerQueryOperat
         while (iterator.HasMoreResults)
         {
             FeedResponse<T> response = await iterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
-            if (highestStatusCode < response.StatusCode) highestStatusCode = response.StatusCode;
+            if (highestStatusCode < response.StatusCode)
+            {
+                highestStatusCode = response.StatusCode;
+            }
+
             _logger.QueryInformation(response.RequestCharge, response.Diagnostics.GetClientElapsedTime());
             collection.AddRange(response.Resource);
         }

@@ -1,8 +1,9 @@
-﻿namespace Lib.Shared.DataModels.Entities.Args.User;
+using Lib.Shared.DataModels.Entities.Models;
 
-public interface IAuthUserArgEntity
+namespace Lib.Shared.DataModels.Entities.Args.User;
+
+public interface IAuthUserArgEntity : IUserIdArgModel
 {
-    string UserId { get; }
     string SourceId { get; }
     string DisplayName { get; }
     string Email { get; }

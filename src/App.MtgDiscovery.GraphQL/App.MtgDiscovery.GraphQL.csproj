@@ -24,25 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.json">
+    <Content Include="..\..\..\configs\appsettings.Local.json">
+      <Link>appsettings.Local.json</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="D:\src\MtgDiscoveryVibeWorkspace\configs\appsettings.Local.json">
+    <Content Include="..\..\..\configs\appsettings.Development.json">
+      <Link>appsettings.Development.json</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="D:\src\MtgDiscoveryVibeWorkspace\configs\appsettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="D:\src\MtgDiscoveryVibeWorkspace\configs\appsettings.Production.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="D:\src\MtgDiscoveryVibeWorkspace\local.settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

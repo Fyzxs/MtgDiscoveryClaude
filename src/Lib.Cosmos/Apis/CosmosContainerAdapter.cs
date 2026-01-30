@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Adapters;
@@ -51,6 +51,12 @@ public abstract class CosmosContainerAdapter : ICosmosContainerAdapter
     /// </summary>
     public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(QueryDefinition queryDefinition, PartitionKey partitionKey, CancellationToken cancellationToken = default)
         => await _query.QueryAsync<T>(queryDefinition, partitionKey, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>
+    /// Executes a cross-partition query against the container.
+    /// </summary>
+    public async Task<OpResponse<IEnumerable<T>>> CrossPartitionQueryAsync<T>(QueryDefinition queryDefinition, CancellationToken cancellationToken = default)
+        => await _query.CrossPartitionQueryAsync<T>(queryDefinition, cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Deletes an item from the container.

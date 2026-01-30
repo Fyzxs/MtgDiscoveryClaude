@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Lib.Domain.User.Apis;
+using Lib.MtgDiscovery.Entry.Commands.Collections;
+using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.Users;
@@ -18,24 +20,28 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
     private readonly IAuthUserArgEntityValidator _authUserArgEntityValidator;
     private readonly IAuthUserArgToItrMapper _authUserArgToItrMapper;
     private readonly IUserSyncOufToOutMapper _userSyncOufToOutMapper;
+    private readonly IDefaultCollectionCreator _defaultCollectionCreator;
 
     public RegisterUserEntryService(ILogger logger) : this(
         new UserDomainService(logger),
         new AuthUserArgEntityValidatorContainer(),
         new AuthUserArgToItrMapper(),
-        new UserSyncOufToOutMapper())
+        new UserSyncOufToOutMapper(),
+        new DefaultCollectionCreator(logger))
     { }
 
     private RegisterUserEntryService(
         IUserDomainService userDomainService,
         IAuthUserArgEntityValidator authUserArgEntityValidator,
         IAuthUserArgToItrMapper authUserArgToItrMapper,
-        IUserSyncOufToOutMapper userSyncOufToOutMapper)
+        IUserSyncOufToOutMapper userSyncOufToOutMapper,
+        IDefaultCollectionCreator defaultCollectionCreator)
     {
         _userDomainService = userDomainService;
         _authUserArgEntityValidator = authUserArgEntityValidator;
         _authUserArgToItrMapper = authUserArgToItrMapper;
         _userSyncOufToOutMapper = userSyncOufToOutMapper;
+        _defaultCollectionCreator = defaultCollectionCreator;
     }
 
     public async Task<IOperationResponse<UserSyncOutEntity>> Execute(IAuthUserArgEntity authUser)
@@ -51,6 +57,11 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<UserSyncOutEntity>(opResponse.OuterException);
+        }
+
+        if (opResponse.ResponseData.IsFirstLogin)
+        {
+            await _defaultCollectionCreator.CreateDefaultCollectionAsync(opResponse.ResponseData.UserId).ConfigureAwait(false);
         }
 
         UserSyncOutEntity outEntity = await _userSyncOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
