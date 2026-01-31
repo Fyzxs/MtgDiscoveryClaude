@@ -63,7 +63,7 @@ function App() {
                   <CollectionProvider>
                     <SealedCollectionProvider>
                       <WishlistProvider>
-                        <Layout>
+                      <Layout>
               <Suspense fallback={<PageLoadingFallback />}>
                 <Routes>
                   <Route path="/" element={
@@ -150,11 +150,11 @@ function App() {
                   <Route path="*" element={<LegacyRedirect />} />
                 </Routes>
               </Suspense>
-                        </Layout>
-                      </WishlistProvider>
-                    </SealedCollectionProvider>
-                  </CollectionProvider>
-                </CollectionManagementProvider>
+                      </Layout>
+                    </WishlistProvider>
+                  </SealedCollectionProvider>
+                </CollectionProvider>
+              </CollectionManagementProvider>
               </EntryModeProvider>
             </AuthStateProvider>
           </ToastProvider>
