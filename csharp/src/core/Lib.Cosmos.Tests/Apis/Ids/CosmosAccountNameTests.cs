@@ -1,7 +1,7 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Universal.Tests;
 
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
 [TestClass]
-public class CosmosAccountNameTests : BaseToSystemTypeTests<CosmosAccountName, string>;
+public sealed class CosmosAccountNameTests : BaseToSystemTypeTests<CosmosAccountName, string>;

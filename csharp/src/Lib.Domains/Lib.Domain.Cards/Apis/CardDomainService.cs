@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Domain.Cards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
@@ -17,11 +17,11 @@ public sealed class CardDomainService : ICardDomainService
 
     private CardDomainService(ICardsQueryDomainService cardDomainOperations) => _cardDomainOperations = cardDomainOperations;
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => _cardDomainOperations.CardsByIdsAsync(args);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => await _cardDomainOperations.CardsByIdsAsync(args);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => _cardDomainOperations.CardsBySetCodeAsync(setCode);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => await _cardDomainOperations.CardsBySetCodeAsync(setCode);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => _cardDomainOperations.CardsByNameAsync(cardName);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardDomainOperations.CardsByNameAsync(cardName);
 
-    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => _cardDomainOperations.CardNameSearchAsync(searchTerm);
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardDomainOperations.CardNameSearchAsync(searchTerm);
 }

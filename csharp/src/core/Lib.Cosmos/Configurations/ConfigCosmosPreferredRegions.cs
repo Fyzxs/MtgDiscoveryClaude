@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Universal.Configurations;
@@ -20,7 +20,8 @@ internal sealed class ConfigCosmosPreferredRegions : CosmosPreferredRegions
     public override IReadOnlyList<string> AsSystemType()
     {
         string value = _config[_sourceKey];
-        if (value.IzNullOrWhiteSpace()) return [];
+        if (value.IzNullOrWhiteSpace())
+            return [];
         return value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 }

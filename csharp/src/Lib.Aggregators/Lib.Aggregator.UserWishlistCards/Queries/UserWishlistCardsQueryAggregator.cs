@@ -28,7 +28,7 @@ internal sealed class UserWishlistCardsQueryAggregator : IUserWishlistCardsQuery
         _userWishlistCardsByIdsAggregatorService = userWishlistCardsByIdsAggregatorService;
     }
 
-    public Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query) => _getUserWishlistCardsOperations.Execute(query);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query) => await _getUserWishlistCardsOperations.Execute(query);
 
     public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards) => await _userWishlistCardsByIdsAggregatorService.Execute(userWishlistCards).ConfigureAwait(false);
 

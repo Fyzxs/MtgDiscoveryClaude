@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregator.Scryfall.Shared.Internals;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -101,7 +101,8 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 
     private static ICollection<int> ConvertToIntArray(dynamic value)
     {
-        if (value == null) return null;
+        if (value == null)
+            return null;
         if (value is JArray jArray)
         {
             return [.. jArray.Select(x => (int)x)];
@@ -112,7 +113,8 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 
     private static ICollection<string> ConvertToStringArray(dynamic value)
     {
-        if (value == null) return null;
+        if (value == null)
+            return null;
         if (value is JArray jArray)
         {
             return [.. jArray.Select(x => (string)x)];
@@ -123,7 +125,8 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 
     private static ICollection<ICardFaceItrEntity> MapCardFaces(dynamic cardFaces)
     {
-        if (cardFaces == null) return null;
+        if (cardFaces == null)
+            return null;
         if (cardFaces is JArray jArray)
         {
             ICardFaceItrEntity[] result = new ICardFaceItrEntity[jArray.Count];
@@ -140,7 +143,8 @@ public sealed class CardItemItrEntity : ICardItemItrEntity
 
     private static ICollection<IAllPartsItrEntity> MapAllParts(dynamic allParts)
     {
-        if (allParts == null) return null;
+        if (allParts == null)
+            return null;
         if (allParts is JArray jArray)
         {
             IAllPartsItrEntity[] result = new IAllPartsItrEntity[jArray.Count];

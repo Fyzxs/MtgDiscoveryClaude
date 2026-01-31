@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Commands;
 using Lib.Domain.UserSetCards.Queries;
@@ -23,12 +23,11 @@ public sealed class UserSetCardsDomainService : IUserSetCardsDomainService
         _commandOperations = commandOperations;
     }
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => _queryOperations.UserSetCardByUserAndSetAsync(userSetCard);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _queryOperations.UserSetCardByUserAndSetAsync(userSetCard);
 
-    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
-        _queryOperations.AllUserSetCardsAsync(userSetCards);
+    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) => _queryOperations.AllUserSetCardsAsync(userSetCards);
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _commandOperations.AddSetGroupToUserSetCardAsync(entity);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _commandOperations.AddSetGroupToUserSetCardAsync(entity);
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => _commandOperations.AddCardToSetAsync(entity);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => await _commandOperations.AddCardToSetAsync(entity);
 }

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Lib.Shared.Invocation.Exceptions;
 
 namespace Lib.Shared.Invocation.Requests;

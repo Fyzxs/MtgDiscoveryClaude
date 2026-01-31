@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Cosmos.Tests.Fakes;
 using Lib.Universal.Configurations;
@@ -8,7 +8,7 @@ using TestConvenience.Core.Reflection;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosAccountConfigTests
+public sealed class ConfigCosmosAccountConfigTests
 {
 
     [TestMethod, TestCategory("unit")]

@@ -1,4 +1,4 @@
-﻿namespace Example.Core;
+namespace Example.Core;
 
 public interface ISimpleLogger
 {

@@ -15,8 +15,7 @@ internal sealed class RenameCollectionNameUniquenessValidator : IRenameCollectio
 {
     private readonly ICollectionsDomainService _domainService;
 
-    public RenameCollectionNameUniquenessValidator(ICollectionsDomainService domainService) =>
-        _domainService = domainService;
+    public RenameCollectionNameUniquenessValidator(ICollectionsDomainService domainService) => _domainService = domainService;
 
     public async Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
         IRenameCollectionArgsEntity args)
@@ -56,8 +55,6 @@ internal sealed class RenameCollectionNameUniquenessValidator : IRenameCollectio
     {
         public bool IsValid() => false;
 
-        public IOperationResponse<ICollectionOufEntity> FailureStatus() =>
-            new FailureOperationResponse<ICollectionOufEntity>(
-                new BadRequestOperationException("A collection with this name already exists"));
+        public IOperationResponse<ICollectionOufEntity> FailureStatus() => new FailureOperationResponse<ICollectionOufEntity>(new BadRequestOperationException("A collection with this name already exists"));
     }
 }

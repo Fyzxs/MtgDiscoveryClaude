@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
+using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
 using Microsoft.Extensions.Logging;
 using TestConvenience.Core.Fakes;
 
@@ -32,6 +32,5 @@ public sealed class UserCardsCosmosContainerTests
         // Assert
         actual.Should().BeAssignableTo<Lib.Cosmos.Apis.CosmosContainerAdapter>();
     }
-
 }
 

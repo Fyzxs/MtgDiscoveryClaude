@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Cosmos.Tests.Apis.Operators;
 
 [TestClass]
-public class ReadPointItemTests
+public sealed class ReadPointItemTests
 {
     [TestMethod, TestCategory("unit")]
     public void Class_ShouldBeSealed()

@@ -1,4 +1,4 @@
-﻿namespace Cli.MtgDiscovery.DataMigration.Configuration;
+namespace Cli.MtgDiscovery.DataMigration.Configuration;
 
 internal sealed class MigrationConfiguration
 {

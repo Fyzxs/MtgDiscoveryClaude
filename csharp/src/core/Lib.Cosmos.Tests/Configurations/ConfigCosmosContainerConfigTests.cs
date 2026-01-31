@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
@@ -7,7 +7,7 @@ using TestConvenience.Core.Reflection;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosContainerConfigTests
+public sealed class ConfigCosmosContainerConfigTests
 {
     [TestMethod, TestCategory("unit")]
     public void AutoscaleMax_ShouldReturnConfigCosmosContainerAutoscaleMax()

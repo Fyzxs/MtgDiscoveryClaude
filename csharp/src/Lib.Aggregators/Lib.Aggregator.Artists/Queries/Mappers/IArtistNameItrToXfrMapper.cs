@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Artists.Apis.Entities;
+using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Configurations;
 using Microsoft.Azure.Cosmos;
 

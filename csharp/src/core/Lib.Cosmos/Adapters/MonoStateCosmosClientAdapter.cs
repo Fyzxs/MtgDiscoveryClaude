@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Configurations;
 using Microsoft.Azure.Cosmos;
@@ -47,7 +47,8 @@ internal sealed class MonoStateCosmosClientAdapter : ICosmosClientAdapter
     private async Task EnsureGenesis(ICosmosGenesisClientAdapter adapter)
     {
         string cacheKey = _containerDefinition.CacheKey();
-        if (s_genesisComplete.ContainsKey(cacheKey)) { return; }
+        if (s_genesisComplete.ContainsKey(cacheKey))
+        { return; }
 
         await _genesisDevice.LiveLongAndProsper(adapter).ConfigureAwait(false);
         s_genesisComplete.TryAdd(cacheKey, true);

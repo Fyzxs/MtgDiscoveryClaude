@@ -1,0 +1,549 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+using Newtonsoft.Json;
+
+#pragma warning disable
+
+namespace Cli.GroupingScraper;
+
+internal sealed class CliGroupingsScraperProgram
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("Starting Scryfall Set Groupings Scraper...");
+
+        // Parse command line arguments
+        string specificSet = null;
+        int maxSetsToProcess = int.MaxValue;
+
+        if (args.Length > 0)
+        {
+            // Check if first arg is a set code (letters) or a number
+            if (!int.TryParse(args[0], out maxSetsToProcess))
+            {
+                specificSet = args[0].ToLower();
+                Console.WriteLine($"Processing specific set: {specificSet}");
+            }
+
+            // Check for second argument if first was a set code
+            if (specificSet != null && args.Length > 1 && int.TryParse(args[1], out int max))
+            {
+                maxSetsToProcess = max;
+            }
+        }
+
+        using HttpClient httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "MtgDiscoveryGroupingScraper/1.0");
+
+        Dictionary<string, SetGroupingData> allGroupings;
+
+        if (specificSet != null)
+        {
+            // Process only the specific set
+            allGroupings = await ScrapeSpecificSet(httpClient, specificSet);
+        }
+        else
+        {
+            allGroupings = await ScrapeAllSetGroupings(httpClient, maxSetsToProcess);
+        }
+
+        var json = JsonConvert.SerializeObject(allGroupings, Formatting.Indented);
+        await File.WriteAllTextAsync("scryfall_set_groupings.json", json);
+
+        Console.WriteLine($"Successfully scraped {allGroupings.Count} sets");
+        Console.WriteLine($"Results saved to: scryfall_set_groupings.json");
+
+        int totalGroupings = allGroupings.Values.Sum(s => s.Groupings.Count);
+        Console.WriteLine($"Total groupings found: {totalGroupings}");
+    }
+
+    static async Task<Dictionary<string, SetGroupingData>> ScrapeSpecificSet(HttpClient httpClient, string setCode)
+    {
+        Dictionary<string, SetGroupingData> setGroupings = new Dictionary<string, SetGroupingData>();
+
+        try
+        {
+            Console.WriteLine($"\nScraping set: {setCode}");
+            List<CardGrouping> groupings = await ScrapeSetGroupings(httpClient, setCode);
+
+            // If no groupings found, add a default grouping so cards have somewhere to go
+            if (groupings.Count == 0)
+            {
+                Console.WriteLine($"No groupings found for {setCode}, adding default-cards grouping");
+                groupings.Add(new CardGrouping
+                {
+                    Id = "default-cards",
+                    DisplayName = "Cards",
+                    Order = 0,
+                    CardCount = 0, // Will be populated during ingestion
+                    RawQuery = $"set:{setCode}",
+                    ParsedFilters = new GroupingFilters
+                    {
+                        CollectorNumberRange = null,
+                        Properties = new Dictionary<string, object>()
+                    }
+                });
+            }
+
+            setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
+            Console.WriteLine($"Found {groupings.Count} groupings for {setCode}");
+
+            // Print detailed info for debugging
+            foreach (CardGrouping grouping in groupings)
+            {
+                Console.WriteLine($"\n  Grouping: {grouping.DisplayName}");
+                Console.WriteLine($"    Cards: {grouping.CardCount}");
+                Console.WriteLine($"    Query: {grouping.RawQuery}");
+                if (grouping.ParsedFilters?.CollectorNumberRange != null)
+                {
+                    CollectorNumberRange cnr = grouping.ParsedFilters.CollectorNumberRange;
+                    if (cnr.Min != null || cnr.Max != null)
+                    {
+                        Console.WriteLine($"    CN Range: {cnr.Min ?? "?"} - {cnr.Max ?? "?"}");
+                    }
+                    if (cnr.OrConditions != null && cnr.OrConditions.Count > 0)
+                    {
+                        Console.WriteLine($"    OR Conditions: {string.Join(", ", cnr.OrConditions)}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error scraping set {setCode}: {ex.Message}");
+        }
+
+        return setGroupings;
+    }
+
+    static async Task<Dictionary<string, SetGroupingData>> ScrapeAllSetGroupings(HttpClient httpClient, int maxSetsToProcess)
+    {
+        // Start fresh - don't load existing data
+        Dictionary<string, SetGroupingData> setGroupings = new Dictionary<string, SetGroupingData>();
+        const string fileName = "scryfall_set_groupings.json";
+
+        List<string> allSetCodes = await GetAllSetCodes(httpClient);
+        List<string> setsToProcess = allSetCodes;
+
+        Console.WriteLine($"Total sets available: {allSetCodes.Count}");
+
+        // Limit number of sets to process if specified
+        if (maxSetsToProcess < setsToProcess.Count)
+        {
+            setsToProcess = setsToProcess.Take(maxSetsToProcess).ToList();
+            Console.WriteLine($"Limiting to {maxSetsToProcess} sets for this run");
+        }
+
+        int processed = 0;
+        int setsAdded = 0;
+
+        Console.WriteLine($"\nStarting to process {setsToProcess.Count} sets...\n");
+
+        foreach (string setCode in setsToProcess)
+        {
+            try
+            {
+                List<CardGrouping> groupings = await ScrapeSetGroupings(httpClient, setCode);
+
+                // If no groupings found, add a default grouping so cards have somewhere to go
+                if (groupings.Count == 0)
+                {
+                    groupings.Add(new CardGrouping
+                    {
+                        Id = "default-cards",
+                        DisplayName = "Cards",
+                        Order = 0,
+                        CardCount = 0, // Will be populated during ingestion
+                        RawQuery = $"set:{setCode}",
+                        ParsedFilters = new GroupingFilters
+                        {
+                            CollectorNumberRange = null,
+                            Properties = new Dictionary<string, object>()
+                        }
+                    });
+                }
+
+                setGroupings[setCode] = new SetGroupingData { SetCode = setCode, Groupings = groupings };
+                setsAdded++;
+
+                processed++;
+
+                // Show status for every set
+                Console.WriteLine($"[{processed}/{setsToProcess.Count}] Processed {setCode} - Found {groupings.Count} groupings");
+
+                // Save progress every 5 sets
+                if (processed % 5 == 0)
+                {
+                    var progressJson = JsonConvert.SerializeObject(setGroupings, Formatting.Indented);
+                    await File.WriteAllTextAsync(fileName, progressJson);
+                    Console.WriteLine($"  -> Saved progress ({setGroupings.Count} total sets in file)");
+                }
+
+                await Task.Delay(100); // Be respectful
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error scraping set {setCode}: {ex.Message}");
+            }
+        }
+
+        Console.WriteLine($"Processed {setsAdded} sets total");
+
+        return setGroupings;
+    }
+
+    static async Task<List<string>> GetAllSetCodes(HttpClient httpClient)
+    {
+        string html = await httpClient.GetStringAsync("https://scryfall.com/sets");
+        string pattern = @"href=""/sets/([a-z0-9]+)""";
+        MatchCollection matches = Regex.Matches(html, pattern, RegexOptions.IgnoreCase);
+
+        return matches
+            .Select(m => m.Groups[1].Value)
+            .Distinct()
+            .ToList();
+    }
+
+    static async Task<List<CardGrouping>> ScrapeSetGroupings(HttpClient httpClient, string setCode)
+    {
+        string url = $"https://scryfall.com/sets/{setCode}";
+        Console.WriteLine($"  -> Fetching {url}...");
+
+        string html = await httpClient.GetStringAsync(url);
+        Console.WriteLine($"  -> Received {html.Length:N0} characters of HTML");
+
+        List<CardGrouping> groupings = new List<CardGrouping>();
+
+        // Split by the known header pattern - much faster than regex
+        string[] headerSplits = html.Split(new[] { "<h2 class=\"card-grid-header\"" }, StringSplitOptions.RemoveEmptyEntries);
+        Console.WriteLine($"  -> Found {headerSplits.Length - 1} potential card group headers");
+
+        int order = 0;
+        for (int i = 1; i < headerSplits.Length; i++) // Skip first split (before any headers)
+        {
+            string section = headerSplits[i];
+
+            // Extract anchor ID if present (can be in h2 tag or in an inner <a> tag)
+            string anchorId = "";
+
+            // First check for id in the h2 tag (within first 100 chars)
+            int h2IdIndex = section.IndexOf("id=\"");
+            if (h2IdIndex >= 0 && h2IdIndex < 100)
+            {
+                int idStart = h2IdIndex + 4;
+                int idEnd = section.IndexOf("\"", idStart);
+                if (idEnd > idStart)
+                {
+                    anchorId = section.Substring(idStart, idEnd - idStart);
+                }
+            }
+
+            // If not found in h2, look for <a id="..."> within the content
+            if (string.IsNullOrEmpty(anchorId))
+            {
+                string anchorPattern = @"<a\s+id=""([^""]+)""";
+                Match anchorMatch = Regex.Match(section.Substring(0, Math.Min(section.Length, 500)), anchorPattern);
+                if (anchorMatch.Success)
+                {
+                    anchorId = anchorMatch.Groups[1].Value;
+                }
+            }
+
+            // Find the content span
+            int contentIndex = section.IndexOf("<span class=\"card-grid-header-content\">");
+            if (contentIndex < 0) continue;
+
+            int contentStart = contentIndex + 40; // Length of the span tag
+            int dotIndex = section.IndexOf("•", contentStart);
+            if (dotIndex < 0) continue;
+
+            // Extract display name (might have <a> tags)
+            string nameSection = section.Substring(contentStart, dotIndex - contentStart);
+            string displayName = nameSection;
+
+            // Remove any <a> tags if present
+            if (displayName.Contains("<a"))
+            {
+                int linkStart = displayName.IndexOf(">") + 1;
+                int linkEnd = displayName.IndexOf("</a>");
+                if (linkEnd > linkStart)
+                {
+                    displayName = displayName.Substring(linkStart, linkEnd - linkStart);
+                }
+            }
+
+            // Clean up whitespace, newlines, and any remaining HTML entities
+            displayName = displayName.Replace("\n", " ").Replace("\r", " ").Replace("\t", " ");
+            displayName = System.Text.RegularExpressions.Regex.Replace(displayName, @"\s+", " ");
+            displayName = displayName.Trim();
+
+            // Remove any remaining HTML tags
+            if (displayName.Contains("<"))
+            {
+                displayName = System.Text.RegularExpressions.Regex.Replace(displayName, @"<[^>]+>", "");
+                displayName = displayName.Trim(); // Trim again after removing tags
+            }
+
+            // Decode HTML entities (e.g., &amp; -> &, &quot; -> ", etc.)
+            displayName = HttpUtility.HtmlDecode(displayName);
+
+            // Find the href with card count
+            int hrefIndex = section.IndexOf("href=\"", dotIndex);
+            if (hrefIndex < 0) continue;
+
+            int hrefStart = hrefIndex + 6;
+            int hrefEnd = section.IndexOf("\"", hrefStart);
+            if (hrefEnd < 0) continue;
+
+            string searchUrl = section.Substring(hrefStart, hrefEnd - hrefStart);
+
+            // Extract card count
+            int cardCountStart = hrefEnd + 2; // Skip ">
+            int cardCountEnd = section.IndexOf(" card", cardCountStart);
+            if (cardCountEnd < 0) continue;
+
+            string cardCountStr = section.Substring(cardCountStart, cardCountEnd - cardCountStart);
+            if (!int.TryParse(cardCountStr, out int cardCount)) continue;
+
+            // Extract query parameter
+            int queryIndex = searchUrl.IndexOf("q=");
+            if (queryIndex < 0) continue;
+
+            string query = HttpUtility.UrlDecode(searchUrl.Substring(queryIndex + 2).Split('&')[0]);
+
+            // Apply special case fixes for unsupported search operators
+            query = NormalizeUnsupportedQueries(query, setCode);
+
+            Console.WriteLine($"     - {displayName} ({cardCount} cards)");
+
+            // Parse the query filters
+            GroupingFilters parsedFilters;
+
+            // Special case: Alchemy groupings should always check for alchemy promo type
+            // Some sets put Alchemy cards in wrong groupings, so we override based on display name
+            if (displayName.Equals("Alchemy", StringComparison.OrdinalIgnoreCase))
+            {
+                parsedFilters = new GroupingFilters
+                {
+                    CollectorNumberRange = null,
+                    Properties = new Dictionary<string, object>
+                    {
+                        ["promoType"] = "alchemy"
+                    }
+                };
+            }
+            else
+            {
+                parsedFilters = ParseScryfallQuery(query);
+            }
+
+            groupings.Add(new CardGrouping
+            {
+                Id = string.IsNullOrEmpty(anchorId) ? $"group-{order}" : anchorId,
+                DisplayName = displayName,
+                Order = order++,
+                CardCount = cardCount,
+                RawQuery = query,
+                ParsedFilters = parsedFilters
+            });
+        }
+
+        return groupings;
+    }
+
+    static string NormalizeUnsupportedQueries(string query, string setCode)
+    {
+        // Handle is:jumpstart queries which don't have a corresponding field in bulk JSON
+        // Replace with actual collector number ranges for known sets
+        if (query.Contains("is:jumpstart"))
+        {
+            if (setCode == "dmu")
+            {
+                // DMU jumpstart cards are #282-286
+                return query.Replace("is:jumpstart", "cn≥282 cn≤286");
+            }
+            else if (setCode == "bro")
+            {
+                // BRO jumpstart cards are #288-292
+                return query.Replace("is:jumpstart", "cn≥288 cn≤292");
+            }
+        }
+
+        return query;
+    }
+
+    static GroupingFilters ParseScryfallQuery(string query)
+    {
+        GroupingFilters filters = new GroupingFilters();
+
+        // Parse all collector number patterns
+        Match cnMinMatch = Regex.Match(query, @"cn[≥>=](\d+)");
+        Match cnMaxMatch = Regex.Match(query, @"cn[≤<=](\d+)");
+
+        // Extract individual collector numbers (e.g., cn:"796" or cn:"796★")
+        string cnExactPattern = @"cn:""?([^""\s\)]+)""?";
+        MatchCollection cnExactMatches = Regex.Matches(query, cnExactPattern);
+
+        // Check if we have a complex condition (ranges AND/OR individual numbers)
+        bool hasRange = cnMinMatch.Success || cnMaxMatch.Success;
+        bool hasExactNumbers = cnExactMatches.Count > 0;
+        bool hasOrCondition = query.Contains(" OR ");
+
+        if (hasRange || hasExactNumbers)
+        {
+            CollectorNumberRange collectorNumberRange = new CollectorNumberRange();
+
+            // Set range if present
+            if (hasRange)
+            {
+                collectorNumberRange.Min = cnMinMatch.Success ? cnMinMatch.Groups[1].Value : null;
+                collectorNumberRange.Max = cnMaxMatch.Success ? cnMaxMatch.Groups[1].Value : null;
+            }
+
+            // Handle OR conditions or exact matches
+            if (hasOrCondition && hasExactNumbers)
+            {
+                // Complex case: might have ranges AND OR conditions
+                List<string> orConditions = new List<string>();
+                foreach (Match match in cnExactMatches)
+                {
+                    orConditions.Add(match.Groups[1].Value);
+                }
+
+                // If we have both range and OR conditions, keep both
+                // If we only have OR conditions (no range), just set OrConditions
+                if (orConditions.Count > 0)
+                {
+                    collectorNumberRange.OrConditions = orConditions;
+                }
+            }
+            else if (hasExactNumbers && cnExactMatches.Count == 1 && !hasRange)
+            {
+                // Single exact number with no range
+                string cnValue = cnExactMatches[0].Groups[1].Value;
+                collectorNumberRange.Min = cnValue;
+                collectorNumberRange.Max = cnValue;
+            }
+
+            filters.CollectorNumberRange = collectorNumberRange;
+        }
+
+        filters.Properties = new Dictionary<string, object>();
+
+        // -is:X patterns (negated, must check before is:X to avoid false matches)
+        MatchCollection notIsMatches = Regex.Matches(query, @"-is:(\w+)");
+        foreach (Match match in notIsMatches)
+        {
+            filters.Properties[match.Groups[1].Value] = false;
+        }
+
+        // is:X patterns with custom mappings (use negative lookbehind to exclude -is:)
+        MatchCollection isMatches = Regex.Matches(query, @"(?<!-)is:(\w+)");
+        foreach (Match match in isMatches)
+        {
+            string isValue = match.Groups[1].Value;
+
+            // Custom mappings for specific is: values to promoType
+            switch (isValue)
+            {
+                case "pwdeck":
+                    filters.Properties["promoType"] = "planeswalkerdeck";
+                    break;
+                case "bab":
+                    // Scryfall uses "buyabox" in promo_types array, not "bab"
+                    filters.Properties["promoType"] = "buyabox";
+                    break;
+                default:
+                    filters.Properties[isValue] = true;
+                    break;
+            }
+        }
+
+        // not:X patterns
+        MatchCollection notMatches = Regex.Matches(query, @"not:(\w+)");
+        foreach (Match match in notMatches)
+        {
+            filters.Properties[match.Groups[1].Value] = false;
+        }
+
+        // border:X patterns
+        Match borderMatch = Regex.Match(query, @"border:(\w+)");
+        if (borderMatch.Success)
+        {
+            filters.Properties["border"] = borderMatch.Groups[1].Value;
+        }
+
+        // frame:X patterns
+        Match frameMatch = Regex.Match(query, @"frame:(\w+)");
+        if (frameMatch.Success)
+        {
+            filters.Properties["frame"] = frameMatch.Groups[1].Value;
+        }
+
+        // -type:X patterns (must check before type:X to avoid false matches)
+        Match notTypeMatch = Regex.Match(query, @"-type:(\w+)");
+        if (notTypeMatch.Success)
+        {
+            filters.Properties["type_line_excludes"] = notTypeMatch.Groups[1].Value;
+        }
+
+        // type:X patterns (use negative lookbehind to exclude -type:)
+        Match typeMatch = Regex.Match(query, @"(?<!-)type:(\w+)");
+        if (typeMatch.Success)
+        {
+            filters.Properties["type_line_contains"] = typeMatch.Groups[1].Value;
+        }
+
+        // date:YYYY-MM-DD patterns
+        Match dateMatch = Regex.Match(query, @"date:(\d{4}-\d{2}-\d{2})");
+        if (dateMatch.Success)
+        {
+            filters.Properties["date"] = dateMatch.Groups[1].Value;
+        }
+
+        // year:YYYY patterns
+        Match yearMatch = Regex.Match(query, @"year:(\d{4})");
+        if (yearMatch.Success)
+        {
+            filters.Year = yearMatch.Groups[1].Value;
+        }
+
+        return filters;
+    }
+}
+
+public class SetGroupingData
+{
+    public string SetCode { get; set; }
+    public List<CardGrouping> Groupings { get; set; }
+}
+
+public class CardGrouping
+{
+    public string Id { get; set; }
+    public string DisplayName { get; set; }
+    public int Order { get; set; }
+    public int CardCount { get; set; }
+    public string RawQuery { get; set; }
+    public GroupingFilters ParsedFilters { get; set; }
+}
+
+public class GroupingFilters
+{
+    public CollectorNumberRange CollectorNumberRange { get; set; }
+    public Dictionary<string, object> Properties { get; set; }
+    public string Year { get; set; }
+}
+
+public class CollectorNumberRange
+{
+    public string Min { get; set; }
+    public string Max { get; set; }
+    public List<string> OrConditions { get; set; }
+}

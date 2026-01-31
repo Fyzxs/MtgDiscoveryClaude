@@ -35,14 +35,14 @@ internal sealed class UserSealedProductsEntryService : IUserSealedProductsEntryS
     }
 
     public Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(
-        IAddSealedProductToCollectionArgsEntity args) =>
-        _addUserSealedProductEntryService.Execute(args);
+        IAddSealedProductToCollectionArgsEntity args) => _addUserSealedProductEntryService.Execute(args);
 
     public async Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(
         string userId)
     {
         IOperationResponse<IEnumerable<IUserSealedProductItrEntity>> response = await _userSealedProductsByUserIdEntryService.Execute(userId).ConfigureAwait(false);
-        if (response.IsFailure) { return new FailureOperationResponse<List<UserSealedProductOutEntity>>(response.OuterException); }
+        if (response.IsFailure)
+        { return new FailureOperationResponse<List<UserSealedProductOutEntity>>(response.OuterException); }
 
         List<UserSealedProductOutEntity> outEntities = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<List<UserSealedProductOutEntity>>(outEntities);

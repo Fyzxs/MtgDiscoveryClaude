@@ -19,9 +19,7 @@ internal sealed class GetUserWishlistCardsAggregator : IGetUserWishlistCardsAggr
         new UserWishlistCardsAdapterService(logger))
     { }
 
-    private GetUserWishlistCardsAggregator(
-        IUserWishlistCardsAdapterService userWishlistCardsAdapterService) =>
-        _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
+    private GetUserWishlistCardsAggregator(IUserWishlistCardsAdapterService userWishlistCardsAdapterService) => _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
 
     public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsQueryItrEntity input)
     {

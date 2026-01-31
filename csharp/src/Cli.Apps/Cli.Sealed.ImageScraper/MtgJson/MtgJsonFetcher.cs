@@ -4,8 +4,8 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Cli.Sealed.ImageScraper.MtgJson.Dtos;
 using Cli.Sealed.ImageScraper.Models;
+using Cli.Sealed.ImageScraper.MtgJson.Dtos;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

@@ -8,7 +8,7 @@ using Microsoft.Azure.Cosmos.Fluent;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class DatabaseFake : Database
+public sealed class DatabaseFake : Database
 {
     public ContainerResponse CreateContainerIfNotExistsAsyncResult { get; init; }
     public int CreateContainerIfNotExistsAsyncInvokeCount { get; private set; }

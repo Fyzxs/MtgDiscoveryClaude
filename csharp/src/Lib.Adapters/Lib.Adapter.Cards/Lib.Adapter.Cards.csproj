@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
-    <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
-    <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Cosmos\Lib.Cosmos.csproj" />
     <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
-    <ProjectReference Include="..\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
   </ItemGroup>
 
 </Project>

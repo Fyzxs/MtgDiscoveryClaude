@@ -4,7 +4,7 @@ using Lib.Shared.DataModels.Entities.Oufs.Cards;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CardNameSearchCollectionOufEntityFake : ICardNameSearchCollectionOufEntity
+public sealed class CardNameSearchCollectionOufEntityFake : ICardNameSearchCollectionOufEntity
 {
     public ICollection<ICardNameSearchResultItrEntity> Names { get; init; } = [];
 }

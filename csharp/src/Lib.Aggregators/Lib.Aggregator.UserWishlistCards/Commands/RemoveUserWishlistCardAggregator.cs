@@ -19,9 +19,7 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
         new UserWishlistCardsAdapterService(logger))
     { }
 
-    private RemoveUserWishlistCardAggregator(
-        IUserWishlistCardsAdapterService userWishlistCardsAdapterService) =>
-        _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
+    private RemoveUserWishlistCardAggregator(IUserWishlistCardsAdapterService userWishlistCardsAdapterService) => _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
 
     public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input)
     {

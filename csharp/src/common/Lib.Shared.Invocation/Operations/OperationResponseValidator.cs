@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.Invocation.Exceptions;
 
@@ -16,7 +16,8 @@ public abstract class OperationResponseValidator<TValidationType, TReturnType> :
     }
     public async Task<IValidatorActionResult<IOperationResponse<TReturnType>>> Validate(TValidationType item)
     {
-        if (await _validator.IsValid(item).ConfigureAwait(false)) return new ValidatorActionResult<IOperationResponse<TReturnType>>();
+        if (await _validator.IsValid(item).ConfigureAwait(false))
+            return new ValidatorActionResult<IOperationResponse<TReturnType>>();
 
         return new ValidatorActionResult<IOperationResponse<TReturnType>>(new FailureOperationResponse<TReturnType>(new BadRequestOperationException(_message)));
     }

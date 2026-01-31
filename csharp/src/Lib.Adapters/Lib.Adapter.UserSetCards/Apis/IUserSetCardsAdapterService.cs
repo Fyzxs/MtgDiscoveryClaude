@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.UserSetCards.Apis;
+namespace Lib.Adapter.UserSetCards.Apis;
 
 /// <summary>
 /// Main adapter service interface for user set cards operations.

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Cosmos.Tests.Apis.Operators;
 
 [TestClass]
-public class DeletePointItemTests
+public sealed class DeletePointItemTests
 {
     [TestMethod, TestCategory("unit")]
     public void Class_ShouldBeSealed()

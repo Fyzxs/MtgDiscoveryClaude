@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
 [ExtendObjectType(typeof(ApiMutation))]
-public sealed class UserSetCardsMutationMethods
+internal sealed class UserSetCardsMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IAddSetGroupToUserSetCardArgsMapper _argsMapper;

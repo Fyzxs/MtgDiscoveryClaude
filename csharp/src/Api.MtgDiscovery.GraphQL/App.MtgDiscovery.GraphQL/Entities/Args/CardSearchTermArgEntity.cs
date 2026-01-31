@@ -1,8 +1,8 @@
-﻿using Lib.Shared.DataModels.Entities.Args.Cards;
+using Lib.Shared.DataModels.Entities.Args.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args;
 
-public sealed class CardSearchTermArgEntity : ICardSearchTermArgEntity
+internal sealed class CardSearchTermArgEntity : ICardSearchTermArgEntity
 {
     public string SearchTerm { get; set; }
 }

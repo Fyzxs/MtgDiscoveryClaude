@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Oufs.UserCards;
+namespace Lib.Shared.DataModels.Entities.Oufs.UserCards;
 
 /// <summary>
 /// Represents a specific version of a collected card with its finish and quantity.

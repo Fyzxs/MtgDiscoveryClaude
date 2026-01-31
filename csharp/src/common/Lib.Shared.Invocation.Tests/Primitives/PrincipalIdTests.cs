@@ -1,4 +1,4 @@
-﻿using Lib.Shared.Invocation.Primitives;
+using Lib.Shared.Invocation.Primitives;
 
 namespace Lib.Shared.Invocation.Tests.Primitives;
 

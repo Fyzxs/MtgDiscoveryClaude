@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.Artists;
 using HotChocolate.Types;
@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class ArtistSearchResultsSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<ArtistSearchResultOutEntity>>>
+internal sealed class ArtistSearchResultsSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<ArtistSearchResultOutEntity>>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<ArtistSearchResultOutEntity>>> descriptor)
     {

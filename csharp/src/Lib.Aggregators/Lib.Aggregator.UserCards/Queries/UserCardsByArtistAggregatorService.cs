@@ -46,5 +46,4 @@ internal sealed class UserCardsByArtistAggregatorService : IUserCardsByArtistAgg
         IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
     }
-
 }

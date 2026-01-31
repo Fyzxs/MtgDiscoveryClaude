@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Xfrs.Sets;
+namespace Lib.Shared.DataModels.Entities.Xfrs.Sets;
 
 /// <summary>
 /// Transfer entity for AllSets query operations at the adapter layer.

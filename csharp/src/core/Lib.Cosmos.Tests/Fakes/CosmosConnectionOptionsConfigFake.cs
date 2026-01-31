@@ -1,8 +1,8 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosConnectionOptionsConfigFake : ICosmosConnectionOptionsConfig
+public sealed class CosmosConnectionOptionsConfigFake : ICosmosConnectionOptionsConfig
 {
     public CosmosConnectionMode ConnectionModeResult { get; init; }
     public CosmosPreferredRegions PreferredRegionsResult { get; init; }

@@ -20,7 +20,8 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
 
     public Task<UserSetCardExtEntity> Integrate(UserSetCardExtEntity current, IAddCardToSetXfrEntity change)
     {
-        if (change.Count == 0) return Task.FromResult(current);
+        if (change.Count == 0)
+            return Task.FromResult(current);
 
         return Task.FromResult(ApplyCardCountChange(current, change));
     }
@@ -48,7 +49,8 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
         IAddCardToSetXfrEntity entity,
         int uniqueCardDelta)
     {
-        if (collecting == null || collecting.Count == 0) return collecting;
+        if (collecting == null || collecting.Count == 0)
+            return collecting;
 
         return [.. collecting.Select(c => UpdateCollectingEntry(c, entity, uniqueCardDelta))];
     }
@@ -58,8 +60,10 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
         IAddCardToSetXfrEntity entity,
         int uniqueCardDelta)
     {
-        if (entry.SetGroupId != entity.SetGroupId) return entry;
-        if (entry.Collecting is false) return entry;
+        if (entry.SetGroupId != entity.SetGroupId)
+            return entry;
+        if (entry.Collecting is false)
+            return entry;
 
         string finishTypeLower = entity.FinishType.ToLowerInvariant();
         FinishCountsExtEntity currentCounts = entry.Counts ?? new FinishCountsExtEntity();
@@ -91,7 +95,8 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
         bool isAdding = 0 < entity.Count;
         string finishTypeLower = entity.FinishType.ToLowerInvariant();
         UserSetCardFinishGroupExtEntity toModify = finishGroups[finishTypeLower];
-        if (toModify.Cards.Contains(entity.CardId) == isAdding) return 0;
+        if (toModify.Cards.Contains(entity.CardId) == isAdding)
+            return 0;
 
         if (isAdding)
         {
@@ -99,7 +104,8 @@ internal sealed class UserSetCardIntegrator : IUserSetCardIntegrator
             return 1;
         }
 
-        if (0 < entity.RemainingFinishCount) { return 0; }
+        if (0 < entity.RemainingFinishCount)
+        { return 0; }
 
         _ = toModify.Cards.Remove(entity.CardId);
         return -1;

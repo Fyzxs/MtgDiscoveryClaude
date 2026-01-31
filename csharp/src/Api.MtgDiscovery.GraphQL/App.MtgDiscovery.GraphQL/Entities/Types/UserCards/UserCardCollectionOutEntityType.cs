@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 
-public sealed class UserCardCollectionOutEntityType : ObjectType<UserCardOutEntity>
+internal sealed class UserCardCollectionOutEntityType : ObjectType<UserCardOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserCardOutEntity> descriptor)
     {

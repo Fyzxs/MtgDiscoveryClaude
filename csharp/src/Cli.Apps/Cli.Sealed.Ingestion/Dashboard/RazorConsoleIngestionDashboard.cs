@@ -28,13 +28,11 @@ internal sealed class RazorConsoleIngestionDashboard : IIngestionDashboard
 
     public void SetStatus(string status) => _state.SetStatus(status);
 
-    public void SetCurrentSet(string setCode, int setIndex, int totalSets) =>
-        _state.SetCurrentSet(setCode, setIndex, totalSets);
+    public void SetCurrentSet(string setCode, int setIndex, int totalSets) => _state.SetCurrentSet(setCode, setIndex, totalSets);
 
     public void SetTotalProducts(int total) => _state.SetTotalProducts(total);
 
-    public void UpdateProgress(int current, string productName) =>
-        _state.UpdateProgress(current, productName);
+    public void UpdateProgress(int current, string productName) => _state.UpdateProgress(current, productName);
 
     public void IncrementSuccess() => _state.IncrementSuccess();
 

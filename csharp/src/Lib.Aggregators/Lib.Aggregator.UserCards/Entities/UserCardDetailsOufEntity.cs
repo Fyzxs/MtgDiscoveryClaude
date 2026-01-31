@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 
 namespace Lib.Aggregator.UserCards.Entities;
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Args.Cards;

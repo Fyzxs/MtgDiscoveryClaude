@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CardAggregatorServiceFake : ICardAggregatorService
+public sealed class CardAggregatorServiceFake : ICardAggregatorService
 {
     public IOperationResponse<ICardItemCollectionOufEntity> CardsByIdsAsyncResult { get; init; } = new OperationResponseFake<ICardItemCollectionOufEntity>();
     public int CardsByIdsAsyncInvokeCount { get; private set; }

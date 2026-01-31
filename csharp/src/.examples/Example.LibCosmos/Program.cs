@@ -1,4 +1,4 @@
-﻿
+
 using System.Threading.Tasks;
 using Example.Core;
 using Lib.Cosmos.Apis;
@@ -19,7 +19,7 @@ internal sealed class Program
     }
 }
 
-public sealed class ExampleLibCosmosApplication : ExampleApplication
+internal sealed class ExampleLibCosmosApplication : ExampleApplication
 {
     protected override async Task Execute()
     {

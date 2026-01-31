@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.Cards.Entities;
+namespace Lib.Adapter.Cards.Entities;
 
 /// <summary>
 /// Adapter-specific search result entity.

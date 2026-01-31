@@ -1,10 +1,10 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosClientFake : CosmosClient
+public sealed class CosmosClientFake : CosmosClient
 {
     public Container GetContainerResult { get; init; }
     public int GetContainerInvokeCount { get; private set; }

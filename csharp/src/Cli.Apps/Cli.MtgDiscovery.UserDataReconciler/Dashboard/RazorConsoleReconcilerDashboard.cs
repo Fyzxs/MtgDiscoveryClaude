@@ -32,11 +32,9 @@ internal sealed class RazorConsoleReconcilerDashboard : IReconcilerDashboard
 
     public void SetTotalUsers(int count) => _state.SetTotalUsers(count);
 
-    public void StartUser(string userId, int userIndex) =>
-        _state.StartUser(userId, userIndex);
+    public void StartUser(string userId, int userIndex) => _state.StartUser(userId, userIndex);
 
-    public void UpdateUserProgress(string setCode, int setsProcessed, int totalSets) =>
-        _state.UpdateUserProgress(setCode, setsProcessed, totalSets);
+    public void UpdateUserProgress(string setCode, int setsProcessed, int totalSets) => _state.UpdateUserProgress(setCode, setsProcessed, totalSets);
 
     public void IncrementSetsProcessed() => _state.IncrementSetsProcessed();
 

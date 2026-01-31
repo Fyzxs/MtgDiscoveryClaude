@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
@@ -61,5 +61,4 @@ public sealed class CardAggregatorServiceTests
         fakeOperations.CardsByIdsAsyncInvokeCount.Should().Be(1);
         fakeOperations.CardsByIdsAsyncArgsInput.Should().BeSameAs(args);
     }
-
 }

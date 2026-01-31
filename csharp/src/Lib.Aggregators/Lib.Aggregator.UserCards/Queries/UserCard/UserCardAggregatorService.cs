@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis;
@@ -46,5 +46,4 @@ internal sealed class UserCardAggregatorService : IUserCardAggregatorService
         IEnumerable<IUserCardOufEntity> mappedUserCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IEnumerable<IUserCardOufEntity>>(mappedUserCards);
     }
-
 }

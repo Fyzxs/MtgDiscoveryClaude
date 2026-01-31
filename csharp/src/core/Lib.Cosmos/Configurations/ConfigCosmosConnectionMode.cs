@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Universal.Configurations;
 using Lib.Universal.Extensions;
@@ -20,7 +20,8 @@ internal sealed class ConfigCosmosConnectionMode : CosmosConnectionMode
     public override ConnectionMode AsSystemType()
     {
         string value = _config[_sourceKey];
-        if (value.IzNullOrWhiteSpace()) throw new CosmosConfigurationException($"{GetType().Name} requires key [{_sourceKey}]");
+        if (value.IzNullOrWhiteSpace())
+            throw new CosmosConfigurationException($"{GetType().Name} requires key [{_sourceKey}]");
         return "gateway".Equals(value, StringComparison.CurrentCultureIgnoreCase)
             ? ConnectionMode.Gateway
             : ConnectionMode.Direct;

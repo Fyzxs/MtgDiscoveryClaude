@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Shared.Invocation.Operations;
 using Lib.Shared.Invocation.Response.Models;
 
@@ -8,7 +8,8 @@ internal sealed class OperationResponseToResponseModelMapper<TData> : IOperation
 {
     public Task<ResponseModel> Map(IOperationResponse<TData> source)
     {
-        if (source.IsSuccess) return Task.FromResult((ResponseModel)new SuccessDataResponseModel<TData> { Data = source.ResponseData });
+        if (source.IsSuccess)
+            return Task.FromResult((ResponseModel)new SuccessDataResponseModel<TData> { Data = source.ResponseData });
 
         return Task.FromResult((ResponseModel)new FailureResponseModel
         {

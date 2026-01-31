@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -47,11 +47,13 @@ internal sealed class SetsByCodeEntryService : ISetsByCodeEntryService
     public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(ISetCodesArgEntity args)
     {
         IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> validatorResult = await _setCodesArgEntityValidator.Validate(args).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<SetItemOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<SetItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ISetCodesItrEntity itrEntity = await _setCodesArgToItrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsByCodeAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
 
         List<SetItemOutEntity> outEntities = await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 

@@ -2,7 +2,7 @@ using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosContainerTimeToLiveFake : CosmosContainerTimeToLive
+public sealed class CosmosContainerTimeToLiveFake : CosmosContainerTimeToLive
 {
     private readonly int? _value;
 

@@ -1,4 +1,4 @@
-﻿using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Apis;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Lib.Shared.Invocation.Operations;

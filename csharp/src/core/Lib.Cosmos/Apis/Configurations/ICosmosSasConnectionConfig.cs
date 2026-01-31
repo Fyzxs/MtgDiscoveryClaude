@@ -1,4 +1,4 @@
-﻿namespace Lib.Cosmos.Apis.Configurations;
+namespace Lib.Cosmos.Apis.Configurations;
 
 /// <summary>
 /// Defines the connection configuration for Shared Access Signature (SAS) authentication.

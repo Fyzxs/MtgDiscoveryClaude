@@ -14,8 +14,7 @@ internal sealed class NameNotReservedCreateCollectionArgEntityValidator : Operat
 
     public sealed class Validator : IValidator<ICreateCollectionArgEntity>
     {
-        public Task<bool> IsValid(ICreateCollectionArgEntity arg) =>
-            Task.FromResult(string.Equals(arg.Name, "default", StringComparison.OrdinalIgnoreCase) is false);
+        public Task<bool> IsValid(ICreateCollectionArgEntity arg) => Task.FromResult(string.Equals(arg.Name, "default", StringComparison.OrdinalIgnoreCase) is false);
     }
 
     public sealed class Message : OperationResponseMessage

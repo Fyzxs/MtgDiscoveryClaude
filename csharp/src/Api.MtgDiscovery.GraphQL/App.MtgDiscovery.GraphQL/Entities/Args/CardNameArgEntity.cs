@@ -1,8 +1,8 @@
-﻿using Lib.Shared.DataModels.Entities.Args.Cards;
+using Lib.Shared.DataModels.Entities.Args.Cards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args;
 
-public sealed class CardNameArgEntity : ICardNameArgEntity
+internal sealed class CardNameArgEntity : ICardNameArgEntity
 {
     public string CardName { get; set; }
     public string UserId { get; set; }

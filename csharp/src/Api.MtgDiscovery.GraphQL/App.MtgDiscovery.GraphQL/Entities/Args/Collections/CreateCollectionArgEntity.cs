@@ -2,7 +2,7 @@ using Lib.Shared.DataModels.Entities.Args.Collections;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.Collections;
 
-public sealed class CreateCollectionArgEntity : ICreateCollectionArgEntity
+internal sealed class CreateCollectionArgEntity : ICreateCollectionArgEntity
 {
     public string Name { get; init; }
     public string Type { get; init; }

@@ -15,10 +15,8 @@ public sealed class SealedProductsAggregatorService : ISealedProductsAggregatorS
     public SealedProductsAggregatorService(ILogger logger) : this(new SealedProductsBySetCodeAggregator(logger))
     { }
 
-    private SealedProductsAggregatorService(ISealedProductsBySetCodeAggregator sealedProductsBySetCodeAggregator) =>
-        _sealedProductsBySetCodeAggregator = sealedProductsBySetCodeAggregator;
+    private SealedProductsAggregatorService(ISealedProductsBySetCodeAggregator sealedProductsBySetCodeAggregator) => _sealedProductsBySetCodeAggregator = sealedProductsBySetCodeAggregator;
 
     public Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> SealedProductsBySetCodeAsync(
-        ISealedProductsBySetCodeItrEntity setCode) =>
-        _sealedProductsBySetCodeAggregator.Execute(setCode);
+        ISealedProductsBySetCodeItrEntity setCode) => _sealedProductsBySetCodeAggregator.Execute(setCode);
 }

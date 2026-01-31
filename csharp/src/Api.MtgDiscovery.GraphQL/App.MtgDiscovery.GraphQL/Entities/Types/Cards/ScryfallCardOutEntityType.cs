@@ -1,4 +1,4 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
+using App.MtgDiscovery.GraphQL.Entities.Types.UserCards;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 

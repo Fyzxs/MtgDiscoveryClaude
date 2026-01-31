@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -38,15 +38,11 @@ public sealed class UserSetCardsAdapterService : IUserSetCardsAdapterService
         _commandAdapter = commandAdapter;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) =>
-        await _queryAdapter.GetUserSetCardAsync(readParams).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) => await _queryAdapter.GetUserSetCardAsync(readParams).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams) =>
-        await _queryAdapter.GetAllUserSetCardsAsync(queryParams).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams) => await _queryAdapter.GetAllUserSetCardsAsync(queryParams).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) =>
-        await _commandAdapter.AddCardToSetAsync(entity).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) => await _commandAdapter.AddCardToSetAsync(entity).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity entity) =>
-        await _commandAdapter.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity entity) => await _commandAdapter.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
 }

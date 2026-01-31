@@ -2,7 +2,7 @@ using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosAutoscaleMaxFake : CosmosAutoscaleMax
+public sealed class CosmosAutoscaleMaxFake : CosmosAutoscaleMax
 {
     private readonly int _value;
 

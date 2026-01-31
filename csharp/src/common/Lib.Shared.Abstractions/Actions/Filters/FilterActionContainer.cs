@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Lib.Shared.Abstractions.Actions.Filters;
 
@@ -13,7 +13,8 @@ public abstract class FilterActionContainer<TItem, TFailureStatus> : IFilterActi
         foreach (IFilterAction<TItem, TFailureStatus> action in _actions)
         {
             IFilterActionResult<TFailureStatus> result = await action.IsFilteredOut(item).ConfigureAwait(false);
-            if (result.IsFilteredOut()) return result;
+            if (result.IsFilteredOut())
+                return result;
         }
 
         return new FilterActionResult<TFailureStatus>();

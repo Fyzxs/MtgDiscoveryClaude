@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 
 namespace Lib.Shared.DataModels.Entities.Itrs.Sets;

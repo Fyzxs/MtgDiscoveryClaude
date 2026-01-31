@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public class AddCardToCollectionResponseModelUnionType : UnionType
+internal class AddCardToCollectionResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {

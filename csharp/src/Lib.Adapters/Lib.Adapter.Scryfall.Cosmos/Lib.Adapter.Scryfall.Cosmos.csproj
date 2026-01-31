@@ -5,9 +5,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
-    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
-    <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Cosmos\Lib.Cosmos.csproj" />
   </ItemGroup>
 
 </Project>

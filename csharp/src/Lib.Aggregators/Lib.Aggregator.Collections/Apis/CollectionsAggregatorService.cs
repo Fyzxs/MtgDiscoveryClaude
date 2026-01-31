@@ -28,39 +28,27 @@ public sealed class CollectionsAggregatorService : ICollectionsAggregatorService
         _queryAggregator = queryAggregator;
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity) =>
-        _commandAggregator.CreateCollectionAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity) => await _commandAggregator.CreateCollectionAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity) =>
-        _commandAggregator.RenameCollectionAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity) => await _commandAggregator.RenameCollectionAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity) =>
-        _commandAggregator.UpdateCollectionVisibilityAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity) => await _commandAggregator.UpdateCollectionVisibilityAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity) =>
-        _commandAggregator.GrantCollectionAccessAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity) => await _commandAggregator.GrantCollectionAccessAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity) =>
-        _commandAggregator.RevokeCollectionAccessAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity) => await _commandAggregator.RevokeCollectionAccessAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity) =>
-        _commandAggregator.DeleteCollectionAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity) => await _commandAggregator.DeleteCollectionAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity) =>
-        _commandAggregator.TransferCollectionOwnershipAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity) => await _commandAggregator.TransferCollectionOwnershipAsync(entity);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args) =>
-        _queryAggregator.GetDefaultCollectionAsync(args);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args) => await _queryAggregator.GetDefaultCollectionAsync(args);
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args) =>
-        _queryAggregator.GetCollectionsByOwnerAsync(args);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args) => await _queryAggregator.GetCollectionsByOwnerAsync(args);
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args) =>
-        _queryAggregator.GetCollectionByIdAsync(args);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args) => await _queryAggregator.GetCollectionByIdAsync(args);
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args) =>
-        _queryAggregator.GetSharedCollectionsAsync(args);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args) => await _queryAggregator.GetSharedCollectionsAsync(args);
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args) =>
-        _queryAggregator.GetAccessibleCollectionsAsync(args);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args) => await _queryAggregator.GetAccessibleCollectionsAsync(args);
 }

@@ -1,7 +1,7 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Universal.Tests;
 
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
 [TestClass]
-public class CosmosPartitionKeyPathTests : BaseToSystemTypeTests<CosmosPartitionKeyPath, string>;
+public sealed class CosmosPartitionKeyPathTests : BaseToSystemTypeTests<CosmosPartitionKeyPath, string>;

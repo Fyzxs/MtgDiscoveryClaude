@@ -16,8 +16,7 @@ internal sealed partial class NameAlphanumericCreateCollectionArgEntityValidator
     {
         private static readonly Regex s_allowedPattern = AllowedCharsRegex();
 
-        public Task<bool> IsValid(ICreateCollectionArgEntity arg) =>
-            Task.FromResult(s_allowedPattern.IsMatch(arg.Name));
+        public Task<bool> IsValid(ICreateCollectionArgEntity arg) => Task.FromResult(s_allowedPattern.IsMatch(arg.Name));
     }
 
     public sealed class Message : OperationResponseMessage

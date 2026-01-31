@@ -1,8 +1,8 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-public class CosmosPartitionKeyPathFake : CosmosPartitionKeyPath
+public sealed class CosmosPartitionKeyPathFake : CosmosPartitionKeyPath
 {
     private readonly string _value;
 

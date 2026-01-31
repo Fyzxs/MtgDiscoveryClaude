@@ -1,6 +1,6 @@
-﻿namespace App.MtgDiscovery.GraphQL.Mutations;
+namespace App.MtgDiscovery.GraphQL.Mutations;
 
-public sealed class ApiMutation
+internal sealed class ApiMutation
 {
     public string TestMutation() => "Mutation endpoint is working!";
 }

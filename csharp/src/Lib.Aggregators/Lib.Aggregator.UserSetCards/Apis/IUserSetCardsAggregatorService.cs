@@ -1,3 +1,3 @@
-﻿namespace Lib.Aggregator.UserSetCards.Apis;
+namespace Lib.Aggregator.UserSetCards.Apis;
 
 public interface IUserSetCardsAggregatorService : IUserSetCardsQueryAggregator, IUserSetCardsCommandAggregator;

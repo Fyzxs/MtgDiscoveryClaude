@@ -1,6 +1,6 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class ImageUrisOutEntity
+public sealed class ImageUrisOutEntity
 {
     public string Small { get; set; }
 

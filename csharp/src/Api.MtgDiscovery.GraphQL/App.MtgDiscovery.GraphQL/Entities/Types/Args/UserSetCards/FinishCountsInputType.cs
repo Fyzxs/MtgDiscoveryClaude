@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
-using HotChocolate.Types;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
+using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserSetCards;
 
-public sealed class FinishCountsInputType : InputObjectType<FinishCountsArgEntity>
+internal sealed class FinishCountsInputType : InputObjectType<FinishCountsArgEntity>
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<FinishCountsArgEntity> descriptor)
     {

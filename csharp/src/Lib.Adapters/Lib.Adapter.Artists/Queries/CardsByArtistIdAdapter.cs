@@ -21,8 +21,7 @@ internal sealed class CardsByArtistIdAdapter : ICardsByArtistIdAdapter
 
     public CardsByArtistIdAdapter(ILogger logger) : this(new CardsByArtistIdInquisition(logger)) { }
 
-    private CardsByArtistIdAdapter(ICosmosInquisition<CardsByArtistIdInquisitionArgs> cardsByArtistIdInquisition) =>
-        _cardsByArtistIdInquisition = cardsByArtistIdInquisition;
+    private CardsByArtistIdAdapter(ICosmosInquisition<CardsByArtistIdInquisitionArgs> cardsByArtistIdInquisition) => _cardsByArtistIdInquisition = cardsByArtistIdInquisition;
 
     public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> Execute([NotNull] IArtistIdXfrEntity input)
     {

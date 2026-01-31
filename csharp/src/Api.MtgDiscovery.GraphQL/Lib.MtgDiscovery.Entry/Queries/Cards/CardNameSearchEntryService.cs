@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -42,11 +42,13 @@ internal sealed class CardNameSearchEntryService : ICardNameSearchEntryService
     public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> Execute(ICardSearchTermArgEntity searchTerm)
     {
         IValidatorActionResult<IOperationResponse<ICardNameSearchCollectionOufEntity>> validatorResult = await _cardSearchTermArgEntityValidator.Validate(searchTerm).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardNameSearchResultOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<CardNameSearchResultOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ICardSearchTermItrEntity itrEntity = await _cardSearchTermArgToItrMapper.Map(searchTerm).ConfigureAwait(false);
         IOperationResponse<ICardNameSearchCollectionOufEntity> opResponse = await _cardDomainService.CardNameSearchAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<List<CardNameSearchResultOutEntity>>(opResponse.OuterException);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<CardNameSearchResultOutEntity>>(opResponse.OuterException);
 
         List<CardNameSearchResultOutEntity> outEntities = await _cardNameSearchOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<List<CardNameSearchResultOutEntity>>(outEntities);

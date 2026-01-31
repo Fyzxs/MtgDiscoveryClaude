@@ -58,7 +58,8 @@ internal sealed class CardsByArtistNameAdapter : ICardsByArtistNameAdapter
                 .QueryAsync<ArtistNameTrigramExtEntity>(args)
                 .ConfigureAwait(false);
 
-            if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null) continue;
+            if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null)
+                continue;
 
             foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
             {

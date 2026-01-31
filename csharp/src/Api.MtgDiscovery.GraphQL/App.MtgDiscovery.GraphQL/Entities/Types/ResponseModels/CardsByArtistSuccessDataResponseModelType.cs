@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using HotChocolate.Types;
@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class CardsByArtistSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<CardItemOutEntity>>>
+internal sealed class CardsByArtistSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<CardItemOutEntity>>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<CardItemOutEntity>>> descriptor)
     {

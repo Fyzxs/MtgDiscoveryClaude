@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class ArtistSearchResponseModelUnionType : UnionType
+internal sealed class ArtistSearchResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {

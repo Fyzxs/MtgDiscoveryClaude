@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
-    <ProjectReference Include="..\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

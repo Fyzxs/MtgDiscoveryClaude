@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public sealed class ArtistQueryMethods
+internal sealed class ArtistQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<List<ArtistSearchResultOutEntity>> _artistSearchResponseMapper;

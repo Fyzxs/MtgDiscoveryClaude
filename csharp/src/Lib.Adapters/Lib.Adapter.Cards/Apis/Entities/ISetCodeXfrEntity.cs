@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.Cards.Apis.Entities;
+namespace Lib.Adapter.Cards.Apis.Entities;
 
 /// <summary>
 /// Transfer representation of a set code used by the adapter layer.

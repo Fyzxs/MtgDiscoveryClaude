@@ -1,4 +1,4 @@
-﻿using Lib.Universal.Primitives;
+using Lib.Universal.Primitives;
 using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Apis.Ids;

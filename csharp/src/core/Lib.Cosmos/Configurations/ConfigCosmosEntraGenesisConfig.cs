@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Universal.Configurations;
 using Lib.Universal.Extensions;
 
@@ -19,7 +19,8 @@ internal sealed class ConfigCosmosEntraGenesisConfig : ICosmosEntraGenesisConfig
     {
         string bypassKey = $"{_parentKey}:{ICosmosGenesisConfig.BypassKey}";
         string value = _config[bypassKey];
-        if (value.IzNullOrWhiteSpace()) throw new CosmosConfigurationException($"{GetType().Name} requires key [{bypassKey}]");
+        if (value.IzNullOrWhiteSpace())
+            throw new CosmosConfigurationException($"{GetType().Name} requires key [{bypassKey}]");
         return bool.TryParse(value, out bool result) && result;
     }
 
@@ -27,7 +28,8 @@ internal sealed class ConfigCosmosEntraGenesisConfig : ICosmosEntraGenesisConfig
     {
         string subscriptionKey = $"{_parentKey}:{ICosmosEntraGenesisConfig.SubscriptionIdKey}";
         string value = _config[subscriptionKey];
-        if (value.IzNullOrWhiteSpace()) throw new CosmosConfigurationException($"{GetType().Name} requires key [{subscriptionKey}]");
+        if (value.IzNullOrWhiteSpace())
+            throw new CosmosConfigurationException($"{GetType().Name} requires key [{subscriptionKey}]");
         return value;
     }
 
@@ -35,7 +37,8 @@ internal sealed class ConfigCosmosEntraGenesisConfig : ICosmosEntraGenesisConfig
     {
         string resourceGroupKey = $"{_parentKey}:{ICosmosEntraGenesisConfig.ResourceGroupNameKey}";
         string value = _config[resourceGroupKey];
-        if (value.IzNullOrWhiteSpace()) throw new CosmosConfigurationException($"{GetType().Name} requires key [{resourceGroupKey}]");
+        if (value.IzNullOrWhiteSpace())
+            throw new CosmosConfigurationException($"{GetType().Name} requires key [{resourceGroupKey}]");
         return value;
     }
 }

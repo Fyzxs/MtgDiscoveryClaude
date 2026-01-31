@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
 [ExtendObjectType(typeof(ApiMutation))]
-public sealed class UserSealedProductsMutationMethods
+internal sealed class UserSealedProductsMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IAddUserSealedProductArgsMapper _argsMapper;

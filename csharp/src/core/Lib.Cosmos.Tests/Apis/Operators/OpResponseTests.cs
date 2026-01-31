@@ -1,10 +1,10 @@
-﻿using System.Net;
+using System.Net;
 using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Cosmos.Tests.Apis.Operators;
 
 [TestClass]
-public class OpResponseTests
+public sealed class OpResponseTests
 {
     private sealed class TestOpResponse : OpResponse<string>
     {

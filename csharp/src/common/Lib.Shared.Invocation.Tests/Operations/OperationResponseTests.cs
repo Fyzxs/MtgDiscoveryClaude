@@ -1,4 +1,4 @@
-﻿using Lib.Shared.Invocation.Exceptions;
+using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Shared.Invocation.Tests.Operations;

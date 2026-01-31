@@ -1,10 +1,10 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
 [TestClass]
-public class ProvidedPartitionKeyValueTests
+public sealed class ProvidedPartitionKeyValueTests
 {
     [TestMethod, TestCategory("unit")]
     public void AsSystemType_ShouldReturnPartitionKeyWithProvidedValue()

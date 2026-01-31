@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserCards.Apis;
@@ -67,15 +67,18 @@ internal sealed class AddUserCardOnlyEntryService : IAddUserCardOnlyEntryService
     {
 
         IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         // Fetch card details first to extract artist_ids and generate card_name_guid
         ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [input.AddUserCard.CardId] };
         IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
-        if (cardResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
+        if (cardResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 
         List<CardItemOutEntity> cards = await _cardItemOufToOutMapper.Map(cardResponse.ResponseData).ConfigureAwait(false);
-        if (cards.Count == 0) return new FailureOperationResponse<List<CardItemOutEntity>>(new Lib.Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
+        if (cards.Count == 0)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(new Lib.Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
 
         // Extract card metadata
         CardItemOutEntity cardItem = cards[0];
@@ -106,7 +109,8 @@ internal sealed class AddUserCardOnlyEntryService : IAddUserCardOnlyEntryService
         };
 
         IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardOnlyAsync(enrichedEntity).ConfigureAwait(false);
-        if (addResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
+        if (addResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 
         // Map the user collection data to the card
         UserCardOutEntity userCardOut = await _userCardOufToOutMapper.Map(addResponse.ResponseData).ConfigureAwait(false);

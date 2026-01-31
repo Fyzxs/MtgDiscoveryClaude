@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using Lib.Universal.Primitives;
 using Microsoft.Azure.Cosmos;

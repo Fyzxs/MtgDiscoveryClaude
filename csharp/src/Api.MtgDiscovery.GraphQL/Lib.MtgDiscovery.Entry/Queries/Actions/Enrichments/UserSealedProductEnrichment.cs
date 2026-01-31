@@ -31,12 +31,14 @@ internal sealed class UserSealedProductEnrichment : IUserSealedProductEnrichment
 
     public async Task Enrich(List<SealedProductOutEntity> target, ISealedProductsBySetCodeArgEntity args)
     {
-        if (args.HasCollectionId is false) return;
+        if (args.HasCollectionId is false)
+            return;
 
         IOperationResponse<List<UserSealedProductOutEntity>> userProductsResponse =
             await _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(args.CollectionId).ConfigureAwait(false);
 
-        if (userProductsResponse.IsFailure) return;
+        if (userProductsResponse.IsFailure)
+            return;
 
         _ = await _integrator.Integrate(target, userProductsResponse.ResponseData).ConfigureAwait(false);
     }

@@ -15,8 +15,7 @@ internal sealed class HasValidCollectionIdRenameCollectionArgEntityValidator : O
 
     public sealed class Validator : IValidator<IRenameCollectionArgEntity>
     {
-        public Task<bool> IsValid(IRenameCollectionArgEntity arg) =>
-            Task.FromResult(arg.CollectionId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.CollectionId, out _));
+        public Task<bool> IsValid(IRenameCollectionArgEntity arg) => Task.FromResult(arg.CollectionId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.CollectionId, out _));
     }
 
     public sealed class Message : OperationResponseMessage

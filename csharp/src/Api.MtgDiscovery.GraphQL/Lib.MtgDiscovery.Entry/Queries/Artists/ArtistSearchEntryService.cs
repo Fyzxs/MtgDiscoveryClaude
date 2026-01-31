@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
@@ -42,11 +42,13 @@ internal sealed class ArtistSearchEntryService : IArtistSearchEntryService
     public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> Execute(IArtistSearchTermArgEntity searchTerm)
     {
         IValidatorActionResult<IOperationResponse<IArtistSearchResultCollectionOufEntity>> validatorResult = await _artistSearchTermArgEntityValidator.Validate(searchTerm).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<ArtistSearchResultOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<ArtistSearchResultOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         IArtistSearchTermItrEntity itrEntity = await _artistSearchTermArgToItrMapper.Map(searchTerm).ConfigureAwait(false);
         IOperationResponse<IArtistSearchResultCollectionOufEntity> opResponse = await _artistDomainService.ArtistSearchAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<List<ArtistSearchResultOutEntity>>(opResponse.OuterException);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<ArtistSearchResultOutEntity>>(opResponse.OuterException);
 
         List<ArtistSearchResultOutEntity> outEntities = await _artistSearchResultOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<List<ArtistSearchResultOutEntity>>(outEntities);

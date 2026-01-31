@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
 using Lib.Shared.DataModels.Entities.Oufs.Sets;
@@ -29,9 +29,9 @@ internal sealed class SetsQueryAggregator : ISetAggregatorService
         _allSetsOperations = allSetsOperations;
     }
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args) => _setsByIdOperations.Execute(args);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity args) => await _setsByIdOperations.Execute(args);
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args) => _setsByCodeOperations.Execute(args);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity args) => await _setsByCodeOperations.Execute(args);
 
-    public Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets) => _allSetsOperations.Execute(allSets);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets) => await _allSetsOperations.Execute(allSets);
 }

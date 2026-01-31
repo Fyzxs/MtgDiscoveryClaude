@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Aggregator.Cards.Queries.Mappers;
@@ -6,7 +6,7 @@ using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CollectionSetCardItemExtToItrMapperFake : ICollectionSetCardItemExtToItrMapper
+public sealed class CollectionSetCardItemExtToItrMapperFake : ICollectionSetCardItemExtToItrMapper
 {
     public IEnumerable<ICardItemItrEntity> MapResult { get; init; } = [];
     public int MapInvokeCount { get; private set; }

@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Itrs.Cards;
+namespace Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 public interface IPurchaseUrisItrEntity
 {

@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public class StatusDataModelType : ObjectType<StatusDataModel>
+internal class StatusDataModelType : ObjectType<StatusDataModel>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<StatusDataModel> descriptor)
     {

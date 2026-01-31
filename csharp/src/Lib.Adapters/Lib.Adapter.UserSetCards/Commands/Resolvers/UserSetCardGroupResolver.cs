@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -21,7 +21,8 @@ internal sealed class UserSetCardGroupResolver : IUserSetCardGroupResolver
 
     private static UserSetCardGroupExtEntity ResolvedGroup(UserSetCardExtEntity input, IAddCardToSetXfrEntity context)
     {
-        if (input.Groups.TryGetValue(context.SetGroupId, out UserSetCardGroupExtEntity group)) return group;
+        if (input.Groups.TryGetValue(context.SetGroupId, out UserSetCardGroupExtEntity group))
+            return group;
 
         group = new UserSetCardGroupExtEntity();
         input.Groups.Add(context.SetGroupId, group);

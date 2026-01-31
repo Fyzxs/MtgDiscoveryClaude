@@ -1,4 +1,4 @@
-﻿using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Shared.Invocation.Services;
 

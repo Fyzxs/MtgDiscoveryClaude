@@ -46,5 +46,4 @@ internal sealed class UserWishlistCardsByIdsAggregatorService : IUserWishlistCar
         IEnumerable<IUserWishlistCardOufEntity> mappedUserWishlistCards = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>(mappedUserWishlistCards);
     }
-
 }

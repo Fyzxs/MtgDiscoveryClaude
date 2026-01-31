@@ -15,8 +15,7 @@ internal sealed class HasValidCountDeltaAddSealedProductToCollectionArgsValidato
 
     public sealed class Validator : IValidator<IAddSealedProductToCollectionArgsEntity>
     {
-        public Task<bool> IsValid(IAddSealedProductToCollectionArgsEntity arg) =>
-            Task.FromResult(arg.AddUserSealedProduct is not null &&
+        public Task<bool> IsValid(IAddSealedProductToCollectionArgsEntity arg) => Task.FromResult(arg.AddUserSealedProduct is not null &&
                             arg.AddUserSealedProduct.UserSealedProductDetails is not null &&
                             arg.AddUserSealedProduct.UserSealedProductDetails.Count != 0);
     }

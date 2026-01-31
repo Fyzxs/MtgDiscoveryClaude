@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
@@ -25,7 +25,7 @@ internal sealed class UserSetCardsCommandAggregator : IUserSetCardsCommandAggreg
         _addCardToSetOperations = addCardToSetOperations;
     }
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => _addSetGroupOperations.Execute(entity);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _addSetGroupOperations.Execute(entity);
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => _addCardToSetOperations.Execute(entity);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => await _addCardToSetOperations.Execute(entity);
 }

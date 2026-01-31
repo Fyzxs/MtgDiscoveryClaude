@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
@@ -21,8 +21,7 @@ internal sealed class CardsByNameAdapter : ICardsByNameAdapter
 
     public CardsByNameAdapter(ILogger logger) : this(new CardsByNameGuidInquisition(logger)) { }
 
-    private CardsByNameAdapter(ICosmosInquisition<CardsByNameGuidInquisitionArgs> cardsByNameGuidInquisition) =>
-        _cardsByNameGuidInquisition = cardsByNameGuidInquisition;
+    private CardsByNameAdapter(ICosmosInquisition<CardsByNameGuidInquisitionArgs> cardsByNameGuidInquisition) => _cardsByNameGuidInquisition = cardsByNameGuidInquisition;
 
     public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> Execute(ICardNameXfrEntity input)
     {

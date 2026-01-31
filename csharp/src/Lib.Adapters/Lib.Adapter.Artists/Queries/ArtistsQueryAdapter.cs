@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
@@ -39,9 +39,9 @@ internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
         _cardsByArtistNameAdapter = cardsByArtistNameAdapter;
     }
 
-    public Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm) => _searchArtistsAdapter.Execute(searchTerm);
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm) => await _searchArtistsAdapter.Execute(searchTerm);
 
-    public Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(IArtistIdXfrEntity artistId) => _cardsByArtistIdAdapter.Execute(artistId);
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(IArtistIdXfrEntity artistId) => await _cardsByArtistIdAdapter.Execute(artistId);
 
-    public Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(IArtistNameXfrEntity artistName) => _cardsByArtistNameAdapter.Execute(artistName);
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(IArtistNameXfrEntity artistName) => await _cardsByArtistNameAdapter.Execute(artistName);
 }

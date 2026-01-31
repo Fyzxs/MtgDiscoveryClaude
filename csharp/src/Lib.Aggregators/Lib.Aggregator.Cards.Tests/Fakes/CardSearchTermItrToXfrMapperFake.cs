@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CardSearchTermItrToXfrMapperFake : ICardSearchTermItrToXfrMapper
+public sealed class CardSearchTermItrToXfrMapperFake : ICardSearchTermItrToXfrMapper
 {
     public ICardSearchTermXfrEntity MapResult { get; init; } = default!;
     public int MapInvokeCount { get; private set; }

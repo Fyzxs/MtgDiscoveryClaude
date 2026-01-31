@@ -2,7 +2,7 @@ using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
 
-public sealed class FinishCountsArgEntity : IFinishCountsArgEntity
+internal sealed class FinishCountsArgEntity : IFinishCountsArgEntity
 {
     public int Total { get; init; }
     public int NonFoil { get; init; }

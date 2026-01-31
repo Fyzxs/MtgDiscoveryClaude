@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.User;
 
-public sealed class UserSyncOutEntityType : ObjectType<UserSyncOutEntity>
+internal sealed class UserSyncOutEntityType : ObjectType<UserSyncOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserSyncOutEntity> descriptor)
     {

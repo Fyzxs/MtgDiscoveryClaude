@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Universal.Configurations;
 using Lib.Universal.Extensions;
 
@@ -18,7 +18,8 @@ internal sealed class ConfigCosmosAccountName : CosmosAccountName
     public override string AsSystemType()
     {
         string value = _config[_sourceKey];
-        if (value.IzNullOrWhiteSpace()) throw new CosmosConfigurationException($"{GetType().Name} requires key [{_sourceKey}]");
+        if (value.IzNullOrWhiteSpace())
+            throw new CosmosConfigurationException($"{GetType().Name} requires key [{_sourceKey}]");
         return value;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Cli.MtgDiscovery.DataMigration.Migration;
+namespace Cli.MtgDiscovery.DataMigration.Migration;
 
 internal interface IMigrationProgressTracker
 {

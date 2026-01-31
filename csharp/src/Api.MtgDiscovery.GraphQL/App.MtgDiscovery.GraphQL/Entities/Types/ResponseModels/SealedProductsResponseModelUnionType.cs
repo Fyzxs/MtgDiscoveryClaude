@@ -3,7 +3,7 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public class SealedProductsResponseModelUnionType : UnionType
+internal class SealedProductsResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {

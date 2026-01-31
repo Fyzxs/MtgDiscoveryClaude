@@ -27,9 +27,7 @@ public sealed class UserSealedProductsDomainService : IUserSealedProductsDomainS
         _commandOperations = commandOperations;
     }
 
-    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
-        _commandOperations.AddUserSealedProductAsync(input);
+    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) => _commandOperations.AddUserSealedProductAsync(input);
 
-    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) =>
-        _queryOperations.UserSealedProductsByUserIdAsync(input);
+    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) => _queryOperations.UserSealedProductsByUserIdAsync(input);
 }

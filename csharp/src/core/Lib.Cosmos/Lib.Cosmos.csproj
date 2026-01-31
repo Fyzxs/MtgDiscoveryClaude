@@ -9,7 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
-    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Lib.Shared.Abstractions.Actions.Validators;
 
@@ -21,7 +21,8 @@ public sealed class ValidatorActionResult<TFailureStatus> : IValidatorActionResu
 
     public TFailureStatus FailureStatus()
     {
-        if (IsValid()) throw new InvalidOperationException("Cannot retrieve failureStatus of Valid result.");
+        if (IsValid())
+            throw new InvalidOperationException("Cannot retrieve failureStatus of Valid result.");
 
         return _failureStatus;
     }

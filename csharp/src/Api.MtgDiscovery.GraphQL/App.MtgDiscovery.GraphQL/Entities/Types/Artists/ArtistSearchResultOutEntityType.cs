@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Artists;
 
-public sealed class ArtistSearchResultOutEntityType : ObjectType<ArtistSearchResultOutEntity>
+internal sealed class ArtistSearchResultOutEntityType : ObjectType<ArtistSearchResultOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<ArtistSearchResultOutEntity> descriptor)
     {

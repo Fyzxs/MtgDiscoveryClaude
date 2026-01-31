@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;

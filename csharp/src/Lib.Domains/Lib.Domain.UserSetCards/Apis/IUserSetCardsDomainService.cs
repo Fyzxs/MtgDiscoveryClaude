@@ -1,4 +1,4 @@
-﻿namespace Lib.Domain.UserSetCards.Apis;
+namespace Lib.Domain.UserSetCards.Apis;
 
 public interface IUserSetCardsDomainService : IUserSetCardsCommandDomainService, IUserSetCardsQueryDomainService
 {

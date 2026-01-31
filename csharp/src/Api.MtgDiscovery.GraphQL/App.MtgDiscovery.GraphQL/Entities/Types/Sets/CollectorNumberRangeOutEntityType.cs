@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 
-public sealed class CollectorNumberRangeOutEntityType : ObjectType<CollectorNumberRangeOutEntity>
+internal sealed class CollectorNumberRangeOutEntityType : ObjectType<CollectorNumberRangeOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<CollectorNumberRangeOutEntity> descriptor)
     {

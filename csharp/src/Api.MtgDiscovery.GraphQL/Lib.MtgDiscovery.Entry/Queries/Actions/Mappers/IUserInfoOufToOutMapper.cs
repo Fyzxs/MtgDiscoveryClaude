@@ -1,4 +1,4 @@
-﻿using Lib.MtgDiscovery.Entry.Entities.Outs.User;
+using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Oufs.User;
 

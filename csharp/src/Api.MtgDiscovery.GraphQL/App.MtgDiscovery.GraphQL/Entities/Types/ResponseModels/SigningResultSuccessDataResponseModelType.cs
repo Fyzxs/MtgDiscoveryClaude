@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class SigningResultSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<SigningResultOutEntity>>
+internal sealed class SigningResultSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<SigningResultOutEntity>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<SigningResultOutEntity>> descriptor)
     {

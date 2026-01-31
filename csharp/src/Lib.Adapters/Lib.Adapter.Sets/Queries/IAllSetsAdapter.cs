@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities.Xfrs.Sets;
 using Lib.Shared.Invocation.Services;

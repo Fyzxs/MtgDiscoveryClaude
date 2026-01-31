@@ -1,4 +1,4 @@
-﻿namespace Cli.MtgDiscovery.DataMigration.ErrorTracking;
+namespace Cli.MtgDiscovery.DataMigration.ErrorTracking;
 
 internal sealed class MigrationError
 {

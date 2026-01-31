@@ -1,4 +1,4 @@
-﻿#pragma warning disable CA1056, CA1819
+#pragma warning disable CA1056, CA1819
 namespace Lib.Shared.DataModels.Entities.Itrs.Cards;
 
 public interface IRelatedUrisItrEntity

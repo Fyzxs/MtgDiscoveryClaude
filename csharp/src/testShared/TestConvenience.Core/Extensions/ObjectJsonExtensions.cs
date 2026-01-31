@@ -1,15 +1,15 @@
-﻿using System.IO;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace TestConvenience.Core.Extensions;
 
-public static class ObjectJsonExtensions
+internal static class ObjectJsonExtensions
 {
     public static JObject ToJObject(this object obj) => JsonConvert.DeserializeObject<JObject>(JsonConvert.SerializeObject(obj));
 }
 
-public static class StringExtensions
+internal static class StringExtensions
 {
     public static Stream ToStream(this string str)
     {
@@ -23,7 +23,7 @@ public static class StringExtensions
     }
 }
 
-public static class StreamExtensions
+internal static class StreamExtensions
 {
     public static string AsString(this Stream stream)
     {

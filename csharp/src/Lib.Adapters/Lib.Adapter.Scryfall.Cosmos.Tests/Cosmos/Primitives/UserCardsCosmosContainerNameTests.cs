@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Scryfall.Cosmos.Cosmos.Primitives;
+using Lib.Adapter.Scryfall.Cosmos.Cosmos.Primitives;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.Cosmos.Primitives;
 

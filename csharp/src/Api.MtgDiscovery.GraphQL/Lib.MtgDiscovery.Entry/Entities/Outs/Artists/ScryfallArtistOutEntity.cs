@@ -1,4 +1,4 @@
-﻿#pragma warning disable CA1819
+#pragma warning disable CA1819
 using System.Collections.Generic;
 using Newtonsoft.Json;
 

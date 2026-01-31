@@ -32,14 +32,16 @@ internal sealed class UserWishlistCardByIdsEnrichment : IUserWishlistCardByIdsEn
 
     public async Task Enrich(List<CardItemOutEntity> target, IUserIdArgEntity args)
     {
-        if (args.DoesNotHaveUserId) return;
+        if (args.DoesNotHaveUserId)
+            return;
 
         // Use single efficient query to get ALL wishlist cards for user, then filter client-side
         // This is much more efficient than individual point reads per card ID
         IUserWishlistCardsQueryItrEntity queryItr = new UserWishlistCardsQueryItrEntity { UserId = args.UserId };
 
         IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> userWishlistCardResponse = await _userWishlistCardsDomainService.GetUserWishlistCardsAsync(queryItr).ConfigureAwait(false);
-        if (userWishlistCardResponse.IsFailure) return;
+        if (userWishlistCardResponse.IsFailure)
+            return;
 
         _ = await _integrator.Integrate(target, userWishlistCardResponse.ResponseData).ConfigureAwait(false);
     }

@@ -4,7 +4,7 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Collections;
 
-public sealed class CollectionResponseModelUnionType : UnionType
+internal sealed class CollectionResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {

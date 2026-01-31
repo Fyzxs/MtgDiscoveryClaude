@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Universal.Extensions;
 
 namespace Lib.Shared.Abstractions.Actions.Validators;
@@ -12,7 +12,8 @@ public abstract class ValidatorActionResponse<TToValidate, TValidatorResponse, T
     public async Task<IAsyncTryOut<TReturnResponse>> TryIsValid(TToValidate toValidate)
     {
         IValidatorActionResult<TValidatorResponse> validatorResult = await _validator.Validate(toValidate).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureAsyncTryOut<TReturnResponse>(Value(validatorResult));
+        if (validatorResult.IsNotValid())
+            return new FailureAsyncTryOut<TReturnResponse>(Value(validatorResult));
         return new SuccessAsyncTryOut<TReturnResponse>();
     }
 

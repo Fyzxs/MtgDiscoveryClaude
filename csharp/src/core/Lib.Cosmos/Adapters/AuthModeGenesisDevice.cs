@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Configurations;
 using Microsoft.Extensions.Logging;

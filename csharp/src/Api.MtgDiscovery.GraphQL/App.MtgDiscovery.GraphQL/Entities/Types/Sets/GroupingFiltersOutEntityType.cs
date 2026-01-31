@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 
-public sealed class GroupingFiltersOutEntityType : ObjectType<GroupingFiltersOutEntity>
+internal sealed class GroupingFiltersOutEntityType : ObjectType<GroupingFiltersOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<GroupingFiltersOutEntity> descriptor)
     {

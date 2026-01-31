@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
@@ -6,7 +6,7 @@ using TestConvenience.Core.Fakes;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosPreferredRegionsTests
+public sealed class ConfigCosmosPreferredRegionsTests
 {
     [TestMethod, TestCategory("unit")]
     public void AsSystemType_ShouldReturnSingleRegion()

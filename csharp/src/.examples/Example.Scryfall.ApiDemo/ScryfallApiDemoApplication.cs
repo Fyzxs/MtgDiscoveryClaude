@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Example.Core;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Example.Scryfall.ApiDemo;
 
-public sealed class ScryfallApiDemoApplication : ExampleApplication
+internal sealed class ScryfallApiDemoApplication : ExampleApplication
 {
     protected override async Task Execute()
     {
@@ -29,7 +29,8 @@ public sealed class ScryfallApiDemoApplication : ExampleApplication
             setCount++;
             await Console.Out.WriteLineAsync($"Set {setCount}: {set.Name()} ({set.Code()})").ConfigureAwait(false);
 
-            if (setCount > MaxSetsToProcess) continue;
+            if (setCount > MaxSetsToProcess)
+                continue;
 
             await Console.Out.WriteLineAsync($"  Fetching cards for {set.Name()}...").ConfigureAwait(false);
             HttpScryfallCardCollection cards = new(set, NullLogger.Instance);
@@ -40,7 +41,8 @@ public sealed class ScryfallApiDemoApplication : ExampleApplication
             await foreach (IScryfallCard card in cards.ConfigureAwait(false))
             {
                 cardCount++;
-                if (cardCount > MaxCardsToShow) continue;
+                if (cardCount > MaxCardsToShow)
+                    continue;
 
                 await Console.Out.WriteLineAsync($"    Card {cardCount}: {card.Name()}").ConfigureAwait(false);
             }

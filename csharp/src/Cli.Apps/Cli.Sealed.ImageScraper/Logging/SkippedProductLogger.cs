@@ -43,14 +43,11 @@ internal sealed class SkippedProductLogger : ISkippedProductLogger
         return writer;
     }
 
-    public void LogSkippedKnown(SealedProduct product, string reason) =>
-        WriteLog(_knownWriter, product, reason);
+    public void LogSkippedKnown(SealedProduct product, string reason) => WriteLog(_knownWriter, product, reason);
 
-    public void LogSkippedNoImage(SealedProduct product) =>
-        WriteLog(_noImageWriter, product, "No image found from any provider");
+    public void LogSkippedNoImage(SealedProduct product) => WriteLog(_noImageWriter, product, "No image found from any provider");
 
-    public void LogSkippedUnknown(SealedProduct product, string reason) =>
-        WriteLog(_unknownWriter, product, reason);
+    public void LogSkippedUnknown(SealedProduct product, string reason) => WriteLog(_unknownWriter, product, reason);
 
     private void WriteLog(StreamWriter writer, SealedProduct product, string reason)
     {

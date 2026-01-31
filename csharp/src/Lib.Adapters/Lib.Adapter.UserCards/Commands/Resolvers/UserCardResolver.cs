@@ -8,7 +8,8 @@ internal sealed class UserCardResolver : IUserCardResolver
 {
     public UserCardExtEntity Resolve(OpResponse<UserCardExtEntity> input, IAddUserCardXfrEntity context)
     {
-        if (input.IsSuccessful()) return input.Value;
+        if (input.IsSuccessful())
+            return input.Value;
 
         return new UserCardExtEntity
         {

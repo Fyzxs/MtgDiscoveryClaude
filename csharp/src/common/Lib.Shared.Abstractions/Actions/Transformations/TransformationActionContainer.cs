@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.Abstractions.Actions.Transformations;
+namespace Lib.Shared.Abstractions.Actions.Transformations;
 
 public abstract class TransformationActionContainer<TTarget> : ITransformationAction<TTarget>
 {

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public sealed class SealedProductsQueryMethods
+internal sealed class SealedProductsQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<List<SealedProductOutEntity>> _responseMapper;

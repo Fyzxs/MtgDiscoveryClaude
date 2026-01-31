@@ -28,11 +28,9 @@ internal sealed class RazorConsolePriceUpdateDashboard : IPriceUpdateDashboard
 
     public void SetStatus(string status) => _state.SetStatus(status);
 
-    public void SetContainer(string containerName, int containerIndex, int total) =>
-        _state.SetContainer(containerName, containerIndex, total);
+    public void SetContainer(string containerName, int containerIndex, int total) => _state.SetContainer(containerName, containerIndex, total);
 
-    public void UpdateProgress(int current, string cardName) =>
-        _state.UpdateProgress(current, cardName);
+    public void UpdateProgress(int current, string cardName) => _state.UpdateProgress(current, cardName);
 
     public void IncrementUpdated() => _state.IncrementUpdated();
 

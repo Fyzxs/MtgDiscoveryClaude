@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.Artists.Apis;
+namespace Lib.Adapter.Artists.Apis;
 
 /// <summary>
 /// Main adapter service interface for artist operations.

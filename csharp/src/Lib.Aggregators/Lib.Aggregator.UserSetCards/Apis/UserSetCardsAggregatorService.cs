@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Commands;
 using Lib.Aggregator.UserSetCards.Queries;
@@ -28,14 +28,11 @@ public sealed class UserSetCardsAggregatorService : IUserSetCardsAggregatorServi
         _commandOperations = commandOperations;
     }
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
-        _queryOperations.UserSetCardByUserAndSetAsync(userSetCard);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _queryOperations.UserSetCardByUserAndSetAsync(userSetCard);
 
-    public Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
-        _queryOperations.AllUserSetCardsAsync(userSetCards);
+    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) => await _queryOperations.AllUserSetCardsAsync(userSetCards);
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) =>
-        _commandOperations.AddSetGroupToUserSetCardAsync(entity);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _commandOperations.AddSetGroupToUserSetCardAsync(entity);
 
     public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => throw new System.NotImplementedException();
 }

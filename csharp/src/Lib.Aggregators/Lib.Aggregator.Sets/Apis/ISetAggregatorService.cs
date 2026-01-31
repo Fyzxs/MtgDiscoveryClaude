@@ -1,4 +1,4 @@
-﻿namespace Lib.Aggregator.Sets.Apis;
+namespace Lib.Aggregator.Sets.Apis;
 
 public interface ISetAggregatorService : ISetsQueryAggregatorService
 {

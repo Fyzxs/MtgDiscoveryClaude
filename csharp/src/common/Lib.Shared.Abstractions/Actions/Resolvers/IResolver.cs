@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.Abstractions.Actions.Resolvers;
+namespace Lib.Shared.Abstractions.Actions.Resolvers;
 
 /// <summary>
 /// Defines a resolver that resolves an input to a result using provided context.

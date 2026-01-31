@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
@@ -33,7 +33,8 @@ internal sealed class CardFaceItrEntity : ICardFaceItrEntity
 
     private static ICollection<string> ConvertToStringArray(dynamic value)
     {
-        if (value == null) return null;
+        if (value == null)
+            return null;
         if (value is Newtonsoft.Json.Linq.JArray jArray)
         {
             return [.. jArray.Select(x => (string)x)];

@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Collections;
 
-public sealed class AuthorizedUserOutEntityType : ObjectType<AuthorizedUserOutEntity>
+internal sealed class AuthorizedUserOutEntityType : ObjectType<AuthorizedUserOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<AuthorizedUserOutEntity> descriptor)
     {

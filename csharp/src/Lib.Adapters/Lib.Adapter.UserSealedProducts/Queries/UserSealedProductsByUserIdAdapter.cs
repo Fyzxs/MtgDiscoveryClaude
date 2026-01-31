@@ -14,13 +14,11 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
 {
     private readonly ICosmosInquisitor _userSealedProductsInquisitor;
 
-    public UserSealedProductsByUserIdAdapter(ILogger logger) : this(
-        new UserSealedProductsInquisitor(logger))
+    public UserSealedProductsByUserIdAdapter(ILogger logger) : this(new UserSealedProductsInquisitor(logger))
     { }
 
     private UserSealedProductsByUserIdAdapter(
-        ICosmosInquisitor userSealedProductsInquisitor) =>
-        _userSealedProductsInquisitor = userSealedProductsInquisitor;
+        ICosmosInquisitor userSealedProductsInquisitor) => _userSealedProductsInquisitor = userSealedProductsInquisitor;
 
     public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string collectionId)
     {

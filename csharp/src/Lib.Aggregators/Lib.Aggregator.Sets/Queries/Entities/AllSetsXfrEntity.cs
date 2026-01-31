@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Xfrs.Sets;
+using Lib.Shared.DataModels.Entities.Xfrs.Sets;
 
 namespace Lib.Aggregator.Sets.Queries.Entities;
 

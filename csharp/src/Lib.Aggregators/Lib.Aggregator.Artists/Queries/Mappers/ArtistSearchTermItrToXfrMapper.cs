@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Aggregator.Artists.Queries.Entities;
 using Lib.Scryfall.Shared.Entities;

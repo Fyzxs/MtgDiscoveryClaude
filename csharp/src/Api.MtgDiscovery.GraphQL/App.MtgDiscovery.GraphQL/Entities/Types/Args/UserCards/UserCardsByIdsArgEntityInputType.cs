@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 
-public sealed class UserCardsByIdsArgEntityInputType : InputObjectType<UserCardsByIdsArgEntity>
+internal sealed class UserCardsByIdsArgEntityInputType : InputObjectType<UserCardsByIdsArgEntity>
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardsByIdsArgEntity> descriptor)
     {

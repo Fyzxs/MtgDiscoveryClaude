@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;

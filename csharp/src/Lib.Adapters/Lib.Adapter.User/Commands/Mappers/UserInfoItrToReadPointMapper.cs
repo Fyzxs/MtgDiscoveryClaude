@@ -11,9 +11,7 @@ internal sealed class UserInfoItrToReadPointMapper : IUserInfoItrToReadPointMapp
     public UserInfoItrToReadPointMapper() : this(new StringToReadPointItemMapper())
     { }
 
-    private UserInfoItrToReadPointMapper(IStringToReadPointItemMapper stringToReadPointItemMapper) =>
-        _stringToReadPointItemMapper = stringToReadPointItemMapper;
+    private UserInfoItrToReadPointMapper(IStringToReadPointItemMapper stringToReadPointItemMapper) => _stringToReadPointItemMapper = stringToReadPointItemMapper;
 
-    public async Task<ReadPointItem> Map(IUserInfoItrEntity source) =>
-        await _stringToReadPointItemMapper.Map(source.UserId).ConfigureAwait(false);
+    public async Task<ReadPointItem> Map(IUserInfoItrEntity source) => await _stringToReadPointItemMapper.Map(source.UserId).ConfigureAwait(false);
 }

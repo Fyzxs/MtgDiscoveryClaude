@@ -1,11 +1,11 @@
-﻿using Lib.Cosmos.Configurations;
+using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
 
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosEntraGenesisConfigTests
+public sealed class ConfigCosmosEntraGenesisConfigTests
 {
     [TestMethod, TestCategory("unit")]
     public void Bypass_ShouldReturnTrue_WhenConfigValueIsTrue()

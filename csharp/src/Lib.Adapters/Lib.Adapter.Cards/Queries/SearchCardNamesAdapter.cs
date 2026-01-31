@@ -75,7 +75,8 @@ internal sealed class SearchCardNamesAdapter : ISearchCardNamesAdapter
                 {
                     foreach (CardNameTrigramDataExtEntity entry in trigramDoc.Cards)
                     {
-                        if (entry.Normalized.Contains(normalized) is false) continue;
+                        if (entry.Normalized.Contains(normalized) is false)
+                            continue;
                         _ = matchingCardNames.Add(entry.Name);
 
                         _ = cardNameMatchCounts.TryAdd(entry.Name, 0);

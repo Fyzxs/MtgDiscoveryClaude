@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Operators;
+using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Actions.Resolvers;
 
 namespace Lib.Cosmos.Resolvers;

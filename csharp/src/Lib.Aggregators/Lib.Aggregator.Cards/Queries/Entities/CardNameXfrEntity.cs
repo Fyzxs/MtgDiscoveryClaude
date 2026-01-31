@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Cards.Apis.Entities;
+using Lib.Adapter.Cards.Apis.Entities;
 
 namespace Lib.Aggregator.Cards.Queries.Entities;
 

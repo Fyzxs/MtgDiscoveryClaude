@@ -3,7 +3,7 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class AddCardToWishlistResponseModelUnionType : UnionType
+internal sealed class AddCardToWishlistResponseModelUnionType : UnionType
 {
     protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
     {

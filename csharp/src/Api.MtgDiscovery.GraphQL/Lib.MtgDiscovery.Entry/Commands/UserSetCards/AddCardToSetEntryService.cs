@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Apis;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards.Mappers;
 using Lib.MtgDiscovery.Entry.Entities;
@@ -42,7 +42,8 @@ internal sealed class AddCardToSetEntryService : IAddCardToSetEntryService
         IAddCardToSetItrEntity itrEntity = await _argToItrMapper.Map(argsEntity).ConfigureAwait(false);
 
         IOperationResponse<IUserSetCardOufEntity> domainResponse = await _userSetCardsDomainService.AddCardToSetAsync(itrEntity).ConfigureAwait(false);
-        if (domainResponse.IsFailure) return new FailureOperationResponse<UserSetCardOutEntity>(domainResponse.OuterException);
+        if (domainResponse.IsFailure)
+            return new FailureOperationResponse<UserSetCardOutEntity>(domainResponse.OuterException);
 
         UserSetCardOutEntity outEntity = await _oufToOutMapper.Map(domainResponse.ResponseData).ConfigureAwait(false);
 

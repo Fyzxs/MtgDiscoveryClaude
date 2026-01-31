@@ -1,4 +1,4 @@
-﻿namespace Lib.Domain.User.Apis;
+namespace Lib.Domain.User.Apis;
 
 public interface IUserDomainService : IUserCommandDomainService
 {

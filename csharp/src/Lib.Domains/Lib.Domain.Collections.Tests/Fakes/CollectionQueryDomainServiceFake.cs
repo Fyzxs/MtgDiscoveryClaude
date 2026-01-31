@@ -8,7 +8,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Collections.Tests.Fakes;
 
-internal sealed class CollectionQueryDomainServiceFake : ICollectionQueryDomainService
+public sealed class CollectionQueryDomainServiceFake : ICollectionQueryDomainService
 {
     public IOperationResponse<ICollectionOufEntity> GetDefaultCollectionAsyncResult { get; init; }
     public int GetDefaultCollectionAsyncInvokeCount { get; private set; }

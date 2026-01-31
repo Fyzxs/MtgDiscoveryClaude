@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
@@ -72,5 +72,4 @@ internal sealed class SetItemOufToOutMapper : ISetItemOufToOutMapper
 
         return groupings;
     }
-
 }

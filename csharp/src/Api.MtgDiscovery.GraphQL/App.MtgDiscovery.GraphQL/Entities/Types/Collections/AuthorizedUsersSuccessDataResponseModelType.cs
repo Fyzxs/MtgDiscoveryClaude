@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Collections;
 
-public sealed class AuthorizedUsersSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<IEnumerable<AuthorizedUserOutEntity>>>
+internal sealed class AuthorizedUsersSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<IEnumerable<AuthorizedUserOutEntity>>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<IEnumerable<AuthorizedUserOutEntity>>> descriptor)
     {

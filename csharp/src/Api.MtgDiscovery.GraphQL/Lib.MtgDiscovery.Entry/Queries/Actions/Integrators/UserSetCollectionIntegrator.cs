@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
@@ -13,8 +13,7 @@ internal sealed class UserSetCollectionIntegrator : IUserSetCollectionIntegrator
 
     public UserSetCollectionIntegrator() : this(new UserSetCardOufToSetInformationMapper()) { }
 
-    private UserSetCollectionIntegrator(IUserSetCardOufToSetInformationMapper setInformationMapper) =>
-        _setInformationMapper = setInformationMapper;
+    private UserSetCollectionIntegrator(IUserSetCardOufToSetInformationMapper setInformationMapper) => _setInformationMapper = setInformationMapper;
 
     public async Task<List<SetItemOutEntity>> Integrate(List<SetItemOutEntity> current, IEnumerable<IUserSetCardOufEntity> change)
     {
@@ -25,7 +24,8 @@ internal sealed class UserSetCollectionIntegrator : IUserSetCollectionIntegrator
 
         foreach (SetItemOutEntity set in current)
         {
-            if (dictionary.TryGetValue(set.Id, out Task<SetInformationOutEntity> setInformation) is false) continue;
+            if (dictionary.TryGetValue(set.Id, out Task<SetInformationOutEntity> setInformation) is false)
+                continue;
             set.UserCollection = await setInformation.ConfigureAwait(false);
         }
 

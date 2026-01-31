@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CardNameSearchAggregatorServiceFake : ICardNameSearchAggregatorService
+public sealed class CardNameSearchAggregatorServiceFake : ICardNameSearchAggregatorService
 {
     public IOperationResponse<ICardNameSearchCollectionOufEntity> ExecuteResult { get; init; } =
         new SuccessOperationResponse<ICardNameSearchCollectionOufEntity>(new CardNameSearchCollectionOufEntityFake());

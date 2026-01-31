@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace Lib.Cosmos.Apis;
@@ -33,5 +33,4 @@ public /* cosmos required */ class CosmosItem : CosmosEntity
     /// </summary>
     [JsonProperty("_etag")]
     public string ETag { get; set; }
-
 }

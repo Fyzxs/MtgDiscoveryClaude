@@ -427,11 +427,14 @@ internal sealed class UserSetCardsReconciler
 
         HashSet<string> uniqueCards = [];
 
-        foreach (string cardId in group.NonFoil.Cards) { uniqueCards.Add(cardId); }
+        foreach (string cardId in group.NonFoil.Cards)
+        { uniqueCards.Add(cardId); }
 
-        foreach (string cardId in group.Foil.Cards) { uniqueCards.Add(cardId); }
+        foreach (string cardId in group.Foil.Cards)
+        { uniqueCards.Add(cardId); }
 
-        foreach (string cardId in group.Etched.Cards) { uniqueCards.Add(cardId); }
+        foreach (string cardId in group.Etched.Cards)
+        { uniqueCards.Add(cardId); }
 
         return new UserSetCardCollectingExtEntity
         {
@@ -575,8 +578,7 @@ internal sealed class UserSetCardsReconciler
         return cardIds;
     }
 
-    private static int CountAllCardsInGroups(Dictionary<string, UserSetCardGroupExtEntity> groups) =>
-        GetAllCardIds(groups).Count;
+    private static int CountAllCardsInGroups(Dictionary<string, UserSetCardGroupExtEntity> groups) => GetAllCardIds(groups).Count;
 
     private static bool CheckCollectingCounts(
         ICollection<UserSetCardCollectingExtEntity> collecting,
@@ -588,11 +590,14 @@ internal sealed class UserSetCardsReconciler
             {
                 HashSet<string> uniqueCards = [];
 
-                foreach (string cardId in group.NonFoil.Cards) { uniqueCards.Add(cardId); }
+                foreach (string cardId in group.NonFoil.Cards)
+                { uniqueCards.Add(cardId); }
 
-                foreach (string cardId in group.Foil.Cards) { uniqueCards.Add(cardId); }
+                foreach (string cardId in group.Foil.Cards)
+                { uniqueCards.Add(cardId); }
 
-                foreach (string cardId in group.Etched.Cards) { uniqueCards.Add(cardId); }
+                foreach (string cardId in group.Etched.Cards)
+                { uniqueCards.Add(cardId); }
 
                 int expectedCount = uniqueCards.Count;
                 int expectedNonFoil = group.NonFoil.Cards.Count;

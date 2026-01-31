@@ -1,4 +1,4 @@
-﻿using App.MtgDiscovery.GraphQL.Entities.Types.Sets;
+using App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 using App.MtgDiscovery.GraphQL.Queries;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosDiagnosticsFake : CosmosDiagnostics
+public sealed class CosmosDiagnosticsFake : CosmosDiagnostics
 {
     public TimeSpan GetClientElapsedTimeResult { get; init; } = TimeSpan.FromMilliseconds(100);
     public int GetClientElapsedTimeInvokeCount { get; private set; }

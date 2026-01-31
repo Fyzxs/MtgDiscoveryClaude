@@ -1,4 +1,4 @@
-﻿using Azure.Core;
+using Azure.Core;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Universal.Inversion;
 

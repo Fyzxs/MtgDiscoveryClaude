@@ -1,10 +1,10 @@
-﻿using System.Net;
+using System.Net;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 
-internal sealed class UserCardsScribeFake : ICosmosScribe
+public sealed class UserCardsScribeFake : ICosmosScribe
 {
     public int UpsertAsyncCallCount { get; private set; }
     public bool ShouldReturnFailure { get; init; }
@@ -23,7 +23,7 @@ internal sealed class UserCardsScribeFake : ICosmosScribe
     }
 }
 
-internal sealed class OpResponseFake<T> : OpResponse<T>
+public sealed class OpResponseFake<T> : OpResponse<T>
 {
     public OpResponseFake(T value, HttpStatusCode statusCode)
     {

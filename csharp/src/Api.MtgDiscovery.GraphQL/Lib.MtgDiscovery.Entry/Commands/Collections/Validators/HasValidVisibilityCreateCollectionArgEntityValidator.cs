@@ -13,8 +13,7 @@ internal sealed class HasValidVisibilityCreateCollectionArgEntityValidator : Ope
 
     public sealed class Validator : IValidator<ICreateCollectionArgEntity>
     {
-        public Task<bool> IsValid(ICreateCollectionArgEntity arg) =>
-            Task.FromResult(string.IsNullOrWhiteSpace(arg.Visibility) || arg.Visibility is "private" or "public");
+        public Task<bool> IsValid(ICreateCollectionArgEntity arg) => Task.FromResult(string.IsNullOrWhiteSpace(arg.Visibility) || arg.Visibility is "private" or "public");
     }
 
     public sealed class Message : OperationResponseMessage

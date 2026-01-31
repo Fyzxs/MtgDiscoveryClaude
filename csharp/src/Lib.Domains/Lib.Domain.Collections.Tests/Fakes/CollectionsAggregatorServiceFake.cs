@@ -8,7 +8,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Collections.Tests.Fakes;
 
-internal sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorService
+public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorService
 {
     public IOperationResponse<ICollectionOufEntity> CreateCollectionAsyncResult { get; init; }
     public int CreateCollectionAsyncInvokeCount { get; private set; }

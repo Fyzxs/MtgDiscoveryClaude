@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Signing;
 
-public sealed class SigningResultOutEntityType : ObjectType<SigningResultOutEntity>
+internal sealed class SigningResultOutEntityType : ObjectType<SigningResultOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SigningResultOutEntity> descriptor)
     {

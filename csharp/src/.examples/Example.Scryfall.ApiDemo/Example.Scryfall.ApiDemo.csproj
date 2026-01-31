@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
-    <ProjectReference Include="..\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
   </ItemGroup>
 
 </Project>

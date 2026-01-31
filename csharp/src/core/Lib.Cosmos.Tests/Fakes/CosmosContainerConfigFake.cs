@@ -2,7 +2,7 @@ using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosContainerConfigFake : ICosmosContainerConfig
+public sealed class CosmosContainerConfigFake : ICosmosContainerConfig
 {
     public CosmosAutoscaleMax AutoscaleMaxResult { get; init; }
     public int AutoscaleMaxInvokeCount { get; private set; }

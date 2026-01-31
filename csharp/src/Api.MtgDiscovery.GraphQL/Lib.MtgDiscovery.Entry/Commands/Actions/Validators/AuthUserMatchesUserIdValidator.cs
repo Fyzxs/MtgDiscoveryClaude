@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -14,8 +14,7 @@ internal sealed class AuthUserMatchesUserIdValidator : OperationResponseValidato
 
     public sealed class Validator : IValidator<IAddCardToCollectionArgsEntity>
     {
-        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg) =>
-            Task.FromResult(string.Equals(arg.AuthUser.UserId, arg.AddUserCard.UserId, StringComparison.OrdinalIgnoreCase));
+        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg) => Task.FromResult(string.Equals(arg.AuthUser.UserId, arg.AddUserCard.UserId, StringComparison.OrdinalIgnoreCase));
     }
 
     public sealed class Message : OperationResponseMessage

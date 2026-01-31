@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Universal.Extensions;
 
 namespace Lib.Shared.Abstractions.Actions.Validators;
@@ -9,5 +9,5 @@ public abstract class ValidatorContainer<TItem> : IValidator<TItem>
 
     protected ValidatorContainer(params IValidator<TItem>[] actions) => _actions = actions;
 
-    public Task<bool> IsValid(TItem entity) => _actions.AllAsync(action => action.IsValid(entity));
+    public async Task<bool> IsValid(TItem entity) => await _actions.AllAsync(action => action.IsValid(entity));
 }

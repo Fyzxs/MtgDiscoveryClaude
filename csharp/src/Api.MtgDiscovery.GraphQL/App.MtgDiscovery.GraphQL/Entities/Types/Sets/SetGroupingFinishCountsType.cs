@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Sets;
 
-public sealed class SetGroupingFinishCountsType : ObjectType<FinishCountsOutEntity>
+internal sealed class SetGroupingFinishCountsType : ObjectType<FinishCountsOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<FinishCountsOutEntity> descriptor)
     {

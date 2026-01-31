@@ -34,7 +34,8 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
     public async Task LiveLongAndProsper(ICosmosGenesisClientAdapter genesisClientAdapter)
     {
         ICosmosEntraGenesisConfig genesisConfig = _connectionConfig.EntraGenesisConfig(_containerConfig);
-        if (genesisConfig.Bypass()) { return; }
+        if (genesisConfig.Bypass())
+        { return; }
 
         try
         {
@@ -95,7 +96,8 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
             };
         }
 
-        if (await databases.ExistsAsync(_containerConfig.DatabaseName()).ConfigureAwait(false)) { return await databases.GetAsync(_containerConfig.DatabaseName()).ConfigureAwait(false); }
+        if (await databases.ExistsAsync(_containerConfig.DatabaseName()).ConfigureAwait(false))
+        { return await databases.GetAsync(_containerConfig.DatabaseName()).ConfigureAwait(false); }
 
         return (await databases.CreateOrUpdateAsync(WaitUntil.Completed, _containerConfig.DatabaseName(), createOrUpdateContent).ConfigureAwait(false)).Value;
     }
@@ -103,7 +105,8 @@ internal sealed class CosmosEntraAuthGenesisDevice : IGenesisDevice
     private async Task CreateCollection(CosmosDBSqlDatabaseResource cosmosDbSqlResource, AzureLocation location, ICosmosContainerConfig containerConfig, ICosmosThroughputMode throughputMode)
     {
         CosmosDBSqlContainerCollection cosmosDbSqlContainers = cosmosDbSqlResource.GetCosmosDBSqlContainers();
-        if (await cosmosDbSqlContainers.ExistsAsync(_containerConfig.ContainerName()).ConfigureAwait(false)) { return; }
+        if (await cosmosDbSqlContainers.ExistsAsync(_containerConfig.ContainerName()).ConfigureAwait(false))
+        { return; }
 #pragma warning disable S1481 //_ is fine
         ArmOperation<CosmosDBSqlContainerResource> _ = await cosmosDbSqlContainers.CreateOrUpdateAsync(WaitUntil.Completed, _containerConfig.ContainerName(), CollectionConfig(location, containerConfig, throughputMode)).ConfigureAwait(false);
 #pragma warning restore S1481

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
 using Cli.MtgDiscovery.DataMigration.ErrorTracking;

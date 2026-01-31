@@ -1,8 +1,8 @@
-﻿using Lib.Shared.DataModels.Entities.Args.UserCards;
+using Lib.Shared.DataModels.Entities.Args.UserCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
 
-public sealed class UserCardDetailsArgEntity : IUserCardDetailsArgEntity
+internal sealed class UserCardDetailsArgEntity : IUserCardDetailsArgEntity
 {
     public string Finish { get; init; }
     public string Special { get; init; }

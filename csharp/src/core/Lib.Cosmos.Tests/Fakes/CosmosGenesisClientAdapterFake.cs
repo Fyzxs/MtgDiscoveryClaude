@@ -5,7 +5,7 @@ using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosGenesisClientAdapterFake : ICosmosGenesisClientAdapter
+public sealed class CosmosGenesisClientAdapterFake : ICosmosGenesisClientAdapter
 {
     public Container GetContainerResult { get; init; }
     public int GetContainerInvokeCount { get; private set; }

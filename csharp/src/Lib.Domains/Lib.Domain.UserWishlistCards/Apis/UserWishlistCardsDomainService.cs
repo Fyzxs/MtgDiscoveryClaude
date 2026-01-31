@@ -17,16 +17,15 @@ public sealed class UserWishlistCardsDomainService : IUserWishlistCardsDomainSer
     public UserWishlistCardsDomainService(ILogger logger) : this(new UserWishlistCardsQueryDomainService(logger), new UserWishlistCardsCommandDomainService(logger))
     { }
 
-    private UserWishlistCardsDomainService(IUserWishlistCardsQueryDomainService queryOperations, IUserWishlistCardsCommandDomainService commandOperations) =>
-        (_queryOperations, _commandOperations) = (queryOperations, commandOperations);
+    private UserWishlistCardsDomainService(IUserWishlistCardsQueryDomainService queryOperations, IUserWishlistCardsCommandDomainService commandOperations) => (_queryOperations, _commandOperations) = (queryOperations, commandOperations);
 
-    public Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => _commandOperations.AddUserWishlistCardAsync(userWishlistCard);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => await _commandOperations.AddUserWishlistCardAsync(userWishlistCard);
 
-    public Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => _commandOperations.RemoveUserWishlistCardAsync(userWishlistCard);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => await _commandOperations.RemoveUserWishlistCardAsync(userWishlistCard);
 
-    public Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query) => _queryOperations.GetUserWishlistCardsAsync(query);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query) => await _queryOperations.GetUserWishlistCardsAsync(query);
 
-    public Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsBySetAsync(IUserWishlistCardsSetItrEntity userWishlistCardsSet) => _queryOperations.UserWishlistCardsBySetAsync(userWishlistCardsSet);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsBySetAsync(IUserWishlistCardsSetItrEntity userWishlistCardsSet) => await _queryOperations.UserWishlistCardsBySetAsync(userWishlistCardsSet);
 
-    public Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards) => _queryOperations.UserWishlistCardsByIdsAsync(userWishlistCards);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards) => await _queryOperations.UserWishlistCardsByIdsAsync(userWishlistCards);
 }

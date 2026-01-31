@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.Artists.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
@@ -30,9 +30,9 @@ internal sealed class ArtistsQueryAggregator : IArtistAggregatorService
         _cardsByArtistNameOperations = cardsByArtistNameOperations;
     }
 
-    public Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistSearchOperations.Execute(searchTerm);
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => await _artistSearchOperations.Execute(searchTerm);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => _cardsByArtistOperations.Execute(artistId);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => await _cardsByArtistOperations.Execute(artistId);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => _cardsByArtistNameOperations.Execute(artistName);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => await _cardsByArtistNameOperations.Execute(artistName);
 }

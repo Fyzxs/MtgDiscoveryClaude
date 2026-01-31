@@ -4,7 +4,7 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 
-public sealed class UserCardsForSigningArgEntityInputType : InputObjectType<UserCardsForSigningArgEntity>
+internal sealed class UserCardsForSigningArgEntityInputType : InputObjectType<UserCardsForSigningArgEntity>
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserCardsForSigningArgEntity> descriptor)
     {

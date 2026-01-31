@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Lib.Shared.Abstractions.Actions.Filters;
 
@@ -15,7 +15,8 @@ public abstract class FilterContainer<TItem1, TItem2> : IFilter<TItem1, TItem2>
     {
         foreach (IFilter<TItem1, TItem2> filterAction in _actions)
         {
-            if (await filterAction.IsFilteredOut(item1, item2).ConfigureAwait(false)) return BeingFilteredOut;
+            if (await filterAction.IsFilteredOut(item1, item2).ConfigureAwait(false))
+                return BeingFilteredOut;
         }
 
         return NotFilteredOut;

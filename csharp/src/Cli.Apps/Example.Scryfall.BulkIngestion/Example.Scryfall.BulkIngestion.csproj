@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <ItemGroup>
-    <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
-    <ProjectReference Include="..\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
-    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\..\.examples\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\..\common\\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

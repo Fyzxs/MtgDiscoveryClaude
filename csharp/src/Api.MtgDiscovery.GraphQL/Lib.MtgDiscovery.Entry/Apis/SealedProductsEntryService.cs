@@ -15,9 +15,7 @@ internal sealed class SealedProductsEntryService : ISealedProductsEntryService
     public SealedProductsEntryService(ILogger logger) : this(new SealedProductsBySetCodeEntryService(logger))
     { }
 
-    private SealedProductsEntryService(ISealedProductsBySetCodeEntryService sealedProductsBySetCodeEntryService) =>
-        _sealedProductsBySetCodeEntryService = sealedProductsBySetCodeEntryService;
+    private SealedProductsEntryService(ISealedProductsBySetCodeEntryService sealedProductsBySetCodeEntryService) => _sealedProductsBySetCodeEntryService = sealedProductsBySetCodeEntryService;
 
-    public Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(ISealedProductsBySetCodeArgEntity args) =>
-        _sealedProductsBySetCodeEntryService.Execute(args);
+    public Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(ISealedProductsBySetCodeArgEntity args) => _sealedProductsBySetCodeEntryService.Execute(args);
 }

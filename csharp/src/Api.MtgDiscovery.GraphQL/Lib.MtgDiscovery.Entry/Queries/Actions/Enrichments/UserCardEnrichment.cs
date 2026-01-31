@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Args.User;
@@ -34,15 +34,11 @@ internal sealed class UserCardEnrichment : IUserCardEnrichment
         _byNameEnrichment = byNameEnrichment;
     }
 
-    public async Task Enrich(List<CardItemOutEntity> outEntities, IUserIdArgEntity args) =>
-        await _byIdsEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+    public async Task Enrich(List<CardItemOutEntity> outEntities, IUserIdArgEntity args) => await _byIdsEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
 
-    public async Task EnrichBySet(List<CardItemOutEntity> outEntities, IUserCardsSetItrEntity context) =>
-        await _bySetEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
+    public async Task EnrichBySet(List<CardItemOutEntity> outEntities, IUserCardsSetItrEntity context) => await _bySetEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
 
-    public async Task EnrichByArtist(List<CardItemOutEntity> outEntities, IUserCardsArtistItrEntity context) =>
-        await _byArtistEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
+    public async Task EnrichByArtist(List<CardItemOutEntity> outEntities, IUserCardsArtistItrEntity context) => await _byArtistEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
 
-    public async Task EnrichByName(List<CardItemOutEntity> outEntities, IUserCardsNameItrEntity context) =>
-        await _byNameEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
+    public async Task EnrichByName(List<CardItemOutEntity> outEntities, IUserCardsNameItrEntity context) => await _byNameEnrichment.Enrich(outEntities, context).ConfigureAwait(false);
 }

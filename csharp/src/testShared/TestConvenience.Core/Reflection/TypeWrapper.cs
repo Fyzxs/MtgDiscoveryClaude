@@ -1,4 +1,4 @@
-﻿using Lib.Universal.Primitives;
+using Lib.Universal.Primitives;
 
 namespace TestConvenience.Core.Reflection;
 

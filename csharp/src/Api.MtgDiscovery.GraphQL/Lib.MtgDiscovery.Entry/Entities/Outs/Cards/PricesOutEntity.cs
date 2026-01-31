@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class PricesOutEntity
+public sealed class PricesOutEntity
 {
     [JsonProperty("usd")]
     public string Usd { get; set; }

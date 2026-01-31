@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
+using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Newtonsoft.Json;
 
 namespace Lib.Aggregator.Sets.Models;

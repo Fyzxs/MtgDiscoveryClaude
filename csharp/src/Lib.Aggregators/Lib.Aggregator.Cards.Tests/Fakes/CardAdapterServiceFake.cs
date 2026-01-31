@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
 
-internal sealed class CardAdapterServiceFake : ICardAdapterService
+public sealed class CardAdapterServiceFake : ICardAdapterService
 {
     public IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>> GetCardsByIdsAsyncResult { get; init; } = new SuccessOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>([]);
     public int GetCardsByIdsAsyncInvokeCount { get; private set; }
@@ -25,10 +25,10 @@ internal sealed class CardAdapterServiceFake : ICardAdapterService
     public int SearchCardNamesAsyncInvokeCount { get; private set; }
     public ICardSearchTermXfrEntity SearchCardNamesAsyncArgsInput { get; private set; } = default!;
 
-    public Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity args)
+    public Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds)
     {
         GetCardsByIdsAsyncInvokeCount++;
-        GetCardsByIdsAsyncArgsInput = args;
+        GetCardsByIdsAsyncArgsInput = cardIds;
         return Task.FromResult(GetCardsByIdsAsyncResult);
     }
 

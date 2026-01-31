@@ -53,8 +53,8 @@ internal sealed class CosmosSasAuthGenesisDevice : IGenesisDevice
         }
     }
 
-    private static async Task CreateContainerWithoutThroughput(DatabaseResponse databaseResponse, ContainerProperties containerProperties) =>
-        await databaseResponse.Database.CreateContainerIfNotExistsAsync(containerProperties).ConfigureAwait(false);
+    private static async Task CreateContainerWithoutThroughput(DatabaseResponse databaseResponse, ContainerProperties containerProperties)
+        => await databaseResponse.Database.CreateContainerIfNotExistsAsync(containerProperties).ConfigureAwait(false);
 
     private static async Task CreateContainerWithThroughput(DatabaseResponse databaseResponse, ContainerProperties containerProperties, ICosmosContainerConfig containerConfig)
     {

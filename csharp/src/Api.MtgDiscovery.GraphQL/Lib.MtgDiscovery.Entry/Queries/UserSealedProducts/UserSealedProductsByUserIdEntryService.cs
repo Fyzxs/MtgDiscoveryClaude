@@ -39,7 +39,8 @@ internal sealed class UserSealedProductsByUserIdEntryService : IUserSealedProduc
         IUserIdItrEntity userIdItr = new UserIdItrEntity { UserId = userId };
 
         IValidatorActionResult<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> validatorResult = await _validator.Validate(userIdItr).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return validatorResult.FailureStatus();
+        if (validatorResult.IsNotValid())
+            return validatorResult.FailureStatus();
 
         return await _domainService.UserSealedProductsByUserIdAsync(userIdItr).ConfigureAwait(false);
     }

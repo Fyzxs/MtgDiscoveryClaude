@@ -1,4 +1,4 @@
-﻿using Lib.Shared.Invocation.Commands;
+using Lib.Shared.Invocation.Commands;
 
 namespace Lib.Shared.Invocation.Tests.Commands;
 

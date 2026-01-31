@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Azure.Cosmos;
 

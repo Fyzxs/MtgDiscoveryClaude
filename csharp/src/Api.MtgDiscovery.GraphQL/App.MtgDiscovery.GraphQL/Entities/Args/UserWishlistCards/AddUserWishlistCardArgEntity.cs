@@ -2,7 +2,7 @@ using Lib.Shared.DataModels.Entities.Args.UserWishlistCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserWishlistCards;
 
-public sealed class AddUserWishlistCardArgEntity : IAddUserWishlistCardArgEntity
+internal sealed class AddUserWishlistCardArgEntity : IAddUserWishlistCardArgEntity
 {
     public string CardId { get; init; }
     public string SetId { get; init; }

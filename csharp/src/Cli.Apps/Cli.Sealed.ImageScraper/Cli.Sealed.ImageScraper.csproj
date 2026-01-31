@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <ItemGroup>
-    <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\..\.examples\Example.Core\Example.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

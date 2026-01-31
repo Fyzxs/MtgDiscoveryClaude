@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lib.Universal.Primitives;
 
 namespace Lib.Shared.Abstractions.Identifiers;

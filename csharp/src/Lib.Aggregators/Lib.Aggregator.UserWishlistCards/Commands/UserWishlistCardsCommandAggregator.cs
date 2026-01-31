@@ -25,7 +25,7 @@ internal sealed class UserWishlistCardsCommandAggregator : IUserWishlistCardsCom
         _removeUserWishlistCardOperations = removeUserWishlistCardOperations;
     }
 
-    public Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity wishlistCard) => _addUserWishlistCardOperations.Execute(wishlistCard);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity wishlistCard) => await _addUserWishlistCardOperations.Execute(wishlistCard);
 
-    public Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity wishlistCard) => _removeUserWishlistCardOperations.Execute(wishlistCard);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity wishlistCard) => await _removeUserWishlistCardOperations.Execute(wishlistCard);
 }

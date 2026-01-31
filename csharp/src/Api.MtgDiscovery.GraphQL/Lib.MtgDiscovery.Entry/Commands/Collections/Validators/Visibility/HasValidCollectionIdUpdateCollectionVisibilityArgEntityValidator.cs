@@ -15,8 +15,7 @@ internal sealed class HasValidCollectionIdUpdateCollectionVisibilityArgEntityVal
 
     public sealed class Validator : IValidator<IUpdateCollectionVisibilityArgEntity>
     {
-        public Task<bool> IsValid(IUpdateCollectionVisibilityArgEntity arg) =>
-            Task.FromResult(arg.CollectionId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.CollectionId, out _));
+        public Task<bool> IsValid(IUpdateCollectionVisibilityArgEntity arg) => Task.FromResult(arg.CollectionId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.CollectionId, out _));
     }
 
     public sealed class Message : OperationResponseMessage

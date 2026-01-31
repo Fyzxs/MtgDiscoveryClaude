@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 

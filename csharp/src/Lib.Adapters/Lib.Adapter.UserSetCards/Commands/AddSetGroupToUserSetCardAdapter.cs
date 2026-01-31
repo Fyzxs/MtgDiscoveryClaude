@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -46,7 +46,8 @@ internal sealed class AddSetGroupToUserSetCardAdapter : IAddSetGroupToUserSetCar
 
         OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
 
-        if (upsertResponse.IsNotSuccessful()) return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+        if (upsertResponse.IsNotSuccessful())
+            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
     }

@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class UserRegistrationSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<UserSyncOutEntity>>
+internal sealed class UserRegistrationSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<UserSyncOutEntity>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<UserSyncOutEntity>> descriptor)
     {

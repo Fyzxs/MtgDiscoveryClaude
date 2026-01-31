@@ -13,8 +13,7 @@ internal sealed class HasValidTypeCreateCollectionArgEntityValidator : Operation
 
     public sealed class Validator : IValidator<ICreateCollectionArgEntity>
     {
-        public Task<bool> IsValid(ICreateCollectionArgEntity arg) =>
-            Task.FromResult(arg.Type is "custom" or "cube" or "trade");
+        public Task<bool> IsValid(ICreateCollectionArgEntity arg) => Task.FromResult(arg.Type is "custom" or "cube" or "trade");
     }
 
     public sealed class Message : OperationResponseMessage

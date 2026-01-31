@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using Lib.Shared.Invocation.Response.Models;
 

@@ -16,8 +16,7 @@ internal sealed class HasValidSetIdAddSealedProductToCollectionArgsValidator
 
     public sealed class Validator : IValidator<IAddSealedProductToCollectionArgsEntity>
     {
-        public Task<bool> IsValid(IAddSealedProductToCollectionArgsEntity arg) =>
-            Task.FromResult(arg.AddUserSealedProduct is not null && arg.AddUserSealedProduct.SetId.IzNotNullOrWhiteSpace());
+        public Task<bool> IsValid(IAddSealedProductToCollectionArgsEntity arg) => Task.FromResult(arg.AddUserSealedProduct is not null && arg.AddUserSealedProduct.SetId.IzNotNullOrWhiteSpace());
     }
 
     public sealed class Message : OperationResponseMessage

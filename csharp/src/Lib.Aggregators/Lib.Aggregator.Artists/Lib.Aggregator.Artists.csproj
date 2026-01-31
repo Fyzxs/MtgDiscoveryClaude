@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
-    <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
-    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
     <ProjectReference Include="..\Lib.Aggregator.Scryfall.Shared\Lib.Aggregator.Scryfall.Shared.csproj" />
-    <ProjectReference Include="..\Lib.Adapter.Artists\Lib.Adapter.Artists.csproj" />
-    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.Artists\Lib.Adapter.Artists.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

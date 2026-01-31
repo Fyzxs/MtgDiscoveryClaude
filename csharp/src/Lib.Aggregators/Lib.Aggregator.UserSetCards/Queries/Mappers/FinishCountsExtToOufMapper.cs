@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Aggregator.UserSetCards.Queries.Entities;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
@@ -9,7 +9,8 @@ internal sealed class FinishCountsExtToOufMapper : IFinishCountsExtToOufMapper
 {
     public Task<IFinishCountsOufEntity> Map(FinishCountsExtEntity source)
     {
-        if (source == null) return Task.FromResult<IFinishCountsOufEntity>(new FinishCountsOufEntity());
+        if (source == null)
+            return Task.FromResult<IFinishCountsOufEntity>(new FinishCountsOufEntity());
 
         return Task.FromResult<IFinishCountsOufEntity>(new FinishCountsOufEntity
         {

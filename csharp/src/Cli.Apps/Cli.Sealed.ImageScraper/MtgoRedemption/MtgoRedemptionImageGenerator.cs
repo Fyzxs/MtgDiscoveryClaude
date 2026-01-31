@@ -116,8 +116,8 @@ internal sealed class MtgoRedemptionImageGenerator : IMtgoRedemptionImageGenerat
         SKRect bounds = picture.CullRect;
 
         float scale = Math.Min(
-            (float)IconSize / bounds.Width,
-            (float)IconSize / bounds.Height);
+            IconSize / bounds.Width,
+            IconSize / bounds.Height);
 
         float scaledWidth = bounds.Width * scale;
         _ = bounds.Height * scale;

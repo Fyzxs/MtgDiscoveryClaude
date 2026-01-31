@@ -1,4 +1,4 @@
-﻿namespace Lib.Aggregator.Cards.Apis;
+namespace Lib.Aggregator.Cards.Apis;
 
 public interface ICardAggregatorService : ICardsQueryAggregatorService
 {

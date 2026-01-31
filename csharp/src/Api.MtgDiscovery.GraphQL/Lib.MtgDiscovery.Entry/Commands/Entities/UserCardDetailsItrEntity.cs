@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs.UserCards;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 
 namespace Lib.MtgDiscovery.Entry.Commands.Entities;
 

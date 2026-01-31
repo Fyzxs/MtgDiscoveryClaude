@@ -56,7 +56,8 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
         };
 
         IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> wishlistResponse = await _userWishlistCardsDomainService.GetUserWishlistCardsAsync(wishlistCardsItr).ConfigureAwait(false);
-        if (wishlistResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(wishlistResponse.OuterException);
+        if (wishlistResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(wishlistResponse.OuterException);
 
         // Step 2: Extract card IDs from wishlist entries
         List<string> cardIds = [.. wishlistResponse.ResponseData.Select(w => w.CardId)];
@@ -68,7 +69,8 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
         // Step 3: Fetch full card data using CardDomainService
         ICardIdsItrEntity cardIdsItr = new CardIdsItrEntity { CardIds = cardIds };
         IOperationResponse<ICardItemCollectionOufEntity> cardsResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
-        if (cardsResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardsResponse.OuterException);
+        if (cardsResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(cardsResponse.OuterException);
 
         // Step 4: Map to output entities
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(cardsResponse.ResponseData).ConfigureAwait(false);

@@ -5,6 +5,5 @@ namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 
 internal sealed class AllUserWishlistCardsQueryDefinition : InquiryDefinition
 {
-    public override QueryDefinition AsSystemType() =>
-        new("SELECT * FROM c WHERE c.partition = @userId");
+    public override QueryDefinition AsSystemType() => new("SELECT * FROM c WHERE c.partition = @userId");
 }

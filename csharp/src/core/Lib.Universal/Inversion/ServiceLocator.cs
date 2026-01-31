@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -45,7 +45,8 @@ public sealed class ServiceLocator : IServiceLocator
     {
         Type type = typeof(TRegisterType);
         bool factoryExists = s_factories.TryGetValue(type, out Func<object> factory);
-        if (factoryExists is false) throw new ArgumentException($"Service not registered [name={type.Name}].");
+        if (factoryExists is false)
+        { throw new ArgumentException($"Service not registered [name={type.Name}]."); }
 
         object orAdd = s_cached.GetOrAdd(type, (_) => factory!());
         return (TReturnType)orAdd;

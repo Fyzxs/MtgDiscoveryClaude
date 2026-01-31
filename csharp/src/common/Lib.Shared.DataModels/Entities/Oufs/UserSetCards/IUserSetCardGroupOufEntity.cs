@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
+namespace Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
 
 public interface IUserSetCardGroupOufEntity
 {

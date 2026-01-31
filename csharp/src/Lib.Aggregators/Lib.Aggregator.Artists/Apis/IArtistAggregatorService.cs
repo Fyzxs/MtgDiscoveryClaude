@@ -1,4 +1,4 @@
-﻿namespace Lib.Aggregator.Artists.Apis;
+namespace Lib.Aggregator.Artists.Apis;
 
 public interface IArtistAggregatorService : IArtistsQueryAggregatorService
 {

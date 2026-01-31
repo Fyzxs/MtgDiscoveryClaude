@@ -1,8 +1,8 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosPreferredRegionsFake : CosmosPreferredRegions
+public sealed class CosmosPreferredRegionsFake : CosmosPreferredRegions
 {
     private readonly string[] _regions;
 

@@ -117,5 +117,4 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         public required int Count { get; init; }
         public required string SetGroupId { get; init; }
     }
-
 }

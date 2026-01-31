@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Collections;
 
-public sealed class CollectionOutEntityType : ObjectType<CollectionOutEntity>
+internal sealed class CollectionOutEntityType : ObjectType<CollectionOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<CollectionOutEntity> descriptor)
     {

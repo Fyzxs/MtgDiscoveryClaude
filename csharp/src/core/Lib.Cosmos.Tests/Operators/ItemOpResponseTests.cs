@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Lib.Cosmos.Operators;
 using Lib.Cosmos.Tests.Fakes;
 

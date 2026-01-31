@@ -19,9 +19,11 @@ internal sealed class ConfigCosmosDatabaseAutoscaleMax : CosmosAutoscaleMax
     {
         string value = _config[_sourceKey];
 
-        if (value.IzNullOrWhiteSpace()) { throw new CosmosConfigurationException($"{GetType().Name} requires key [{_sourceKey}]"); }
+        if (value.IzNullOrWhiteSpace())
+        { throw new CosmosConfigurationException($"{GetType().Name} requires key [{_sourceKey}]"); }
 
-        if (int.TryParse(value, out int parsed) is false) { throw new CosmosConfigurationException($"{GetType().Name} Invalid value [{_sourceKey}={value}]"); }
+        if (int.TryParse(value, out int parsed) is false)
+        { throw new CosmosConfigurationException($"{GetType().Name} Invalid value [{_sourceKey}={value}]"); }
 
         return parsed;
     }

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.User.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.User;
@@ -16,5 +16,5 @@ internal sealed class UserCommandAggregator : IUserCommandAggregatorService
 
     private UserCommandAggregator(IRegisterUserAggregatorService registerUserOperations) => _registerUserOperations = registerUserOperations;
 
-    public Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => _registerUserOperations.Execute(userInfo);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _registerUserOperations.Execute(userInfo);
 }

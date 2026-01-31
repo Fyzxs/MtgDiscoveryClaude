@@ -1,8 +1,8 @@
-﻿using Lib.Shared.DataModels.Entities.Args.Artists;
+using Lib.Shared.DataModels.Entities.Args.Artists;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args;
 
-public sealed class ArtistSearchTermArgEntity : IArtistSearchTermArgEntity
+internal sealed class ArtistSearchTermArgEntity : IArtistSearchTermArgEntity
 {
     public string SearchTerm { get; set; }
 }

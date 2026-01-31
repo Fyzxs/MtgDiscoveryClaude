@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Adapter.UserCards.Apis.Entities;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 
-internal sealed class AddUserCardXfrEntityFake : IAddUserCardXfrEntity
+public sealed class AddUserCardXfrEntityFake : IAddUserCardXfrEntity
 {
     public string UserId { get; init; }
     public string CardId { get; init; }

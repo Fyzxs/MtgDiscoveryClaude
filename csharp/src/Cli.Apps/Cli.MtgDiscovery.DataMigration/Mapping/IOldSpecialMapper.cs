@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 using Lib.Shared.Abstractions.Actions.Mappers;
 

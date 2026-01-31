@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis;
@@ -52,5 +52,4 @@ internal sealed class SetsByCodeAggregatorService : ISetsByCodeAggregatorService
         ISetItemCollectionOufEntity oufEntity = await _setItemItrToOufMapper.Map(mappedSets).ConfigureAwait(false);
         return new SuccessOperationResponse<ISetItemCollectionOufEntity>(oufEntity);
     }
-
 }

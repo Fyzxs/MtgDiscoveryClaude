@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
@@ -7,7 +7,7 @@ using TestConvenience.Core.Reflection;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosEntraConnectionConfigTests
+public sealed class ConfigCosmosEntraConnectionConfigTests
 {
     [TestMethod, TestCategory("unit")]
     public void AccountEndpoint_ShouldReturnConfigCosmosAccountEndpoint()

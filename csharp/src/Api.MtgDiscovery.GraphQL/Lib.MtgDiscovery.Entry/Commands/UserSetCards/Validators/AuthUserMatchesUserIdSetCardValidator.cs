@@ -14,8 +14,7 @@ internal sealed class AuthUserMatchesUserIdSetCardValidator : OperationResponseV
 
     public sealed class Validator : IValidator<IAddSetGroupToUserSetCardArgsEntity>
     {
-        public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg) =>
-            Task.FromResult(string.Equals(arg.AuthUser.UserId, arg.AddSetGroupToUserSetCard.UserId, StringComparison.OrdinalIgnoreCase));
+        public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg) => Task.FromResult(string.Equals(arg.AuthUser.UserId, arg.AddSetGroupToUserSetCard.UserId, StringComparison.OrdinalIgnoreCase));
     }
 
     public sealed class Message : OperationResponseMessage

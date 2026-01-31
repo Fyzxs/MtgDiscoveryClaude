@@ -1,9 +1,9 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Apis.Ids;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-public class CosmosContainerDefinitionFake : ICosmosContainerDefinition
+public sealed class CosmosContainerDefinitionFake : ICosmosContainerDefinition
 {
     public CosmosAccountName AccountNameResult { get; init; }
     public int AccountNameInvokeCount { get; private set; }

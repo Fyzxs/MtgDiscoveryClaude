@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Azure.Core;
 using Azure.Identity;
@@ -45,12 +45,14 @@ internal static class AppMtgDiscoveryGraphQlProgram
     [Conditional("RELEASE")]
     private static void ConfigureAppConfiguration(HostBuilderContext hostingContext, IConfigurationBuilder config)
     {
-        if (hostingContext.HostingEnvironment.IsEnvironment("Local")) return;
+        if (hostingContext.HostingEnvironment.IsEnvironment("Local"))
+            return;
 
         IConfigurationRoot tempConfig = config.Build();
         string appConfigEndpoint = tempConfig["AppConfiguration:Endpoint"];
 
-        if (string.IsNullOrEmpty(appConfigEndpoint)) return;
+        if (string.IsNullOrEmpty(appConfigEndpoint))
+            return;
 
         _ = config.AddAzureAppConfiguration(options =>
         {

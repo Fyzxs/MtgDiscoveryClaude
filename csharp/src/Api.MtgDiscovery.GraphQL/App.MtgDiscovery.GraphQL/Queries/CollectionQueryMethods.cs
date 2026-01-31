@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public sealed class CollectionQueryMethods
+internal sealed class CollectionQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<List<CollectionOutEntity>> _listResponseMapper;

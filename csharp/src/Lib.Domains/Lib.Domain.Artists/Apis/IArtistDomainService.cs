@@ -1,4 +1,4 @@
-﻿namespace Lib.Domain.Artists.Apis;
+namespace Lib.Domain.Artists.Apis;
 
 public interface IArtistDomainService : IArtistsQueryDomainService
 {

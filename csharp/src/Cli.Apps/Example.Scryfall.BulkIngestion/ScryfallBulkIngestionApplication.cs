@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Example.Core;
 using Lib.Scryfall.Ingestion.Apis;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Example.Scryfall.BulkIngestion;
 
-public sealed class ScryfallBulkIngestionApplication : ExampleApplication
+internal sealed class ScryfallBulkIngestionApplication : ExampleApplication
 {
     protected override async Task Execute()
     {

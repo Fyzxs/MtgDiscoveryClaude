@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11012.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Universal", "Lib.Universal\Lib.Universal.csproj", "{FBA4AB39-5629-FEAB-5F49-9C44FF57B532}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Universal", "core\Lib.Universal\Lib.Universal.csproj", "{FBA4AB39-5629-FEAB-5F49-9C44FF57B532}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Universal.Tests", "Lib.Universal.Tests\Lib.Universal.Tests.csproj", "{E00FB2C5-434D-D5BA-165F-F0D2FB9B7F59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Universal.Tests", "core\Lib.Universal.Tests\Lib.Universal.Tests.csproj", "{E00FB2C5-434D-D5BA-165F-F0D2FB9B7F59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConvenience.Core", "TestConvenience.Core\TestConvenience.Core.csproj", "{AEF1EDBA-41AB-003F-E84A-DD65FE59C236}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConvenience.Core", "testShared\TestConvenience.Core\TestConvenience.Core.csproj", "{AEF1EDBA-41AB-003F-E84A-DD65FE59C236}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Core", "Example.Core\Example.Core.csproj", "{90596DAC-015F-DFF0-2F0B-5751F6A13485}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Core", ".examples\Example.Core\Example.Core.csproj", "{90596DAC-015F-DFF0-2F0B-5751F6A13485}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Cosmos", "Lib.Cosmos\Lib.Cosmos.csproj", "{14CD34F5-B452-759E-A758-C58CC4DE7804}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Cosmos", "core\Lib.Cosmos\Lib.Cosmos.csproj", "{14CD34F5-B452-759E-A758-C58CC4DE7804}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Cosmos.Tests", "Lib.Cosmos.Tests\Lib.Cosmos.Tests.csproj", "{244F570E-F0A7-A1C9-7667-889EBBFDDAAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Cosmos.Tests", "core\Lib.Cosmos.Tests\Lib.Cosmos.Tests.csproj", "{244F570E-F0A7-A1C9-7667-889EBBFDDAAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Ingestion", "Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj", "{8A9B5D4C-3E7F-4B8A-9C2D-1F6A8E9B7C3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Ingestion", "common\Lib.Scryfall.Ingestion\Lib.Scryfall.Ingestion.csproj", "{8A9B5D4C-3E7F-4B8A-9C2D-1F6A8E9B7C3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Ingestion.Tests", "Lib.Scryfall.Ingestion.Tests\Lib.Scryfall.Ingestion.Tests.csproj", "{21982649-E418-B194-9793-307C7895A8D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Ingestion.Tests", "common\Lib.Scryfall.Ingestion.Tests\Lib.Scryfall.Ingestion.Tests.csproj", "{21982649-E418-B194-9793-307C7895A8D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.ApiDemo", "Example.Scryfall.ApiDemo\Example.Scryfall.ApiDemo.csproj", "{8F41964F-BEFB-4980-9A80-71746A11E9F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.ApiDemo", ".examples\Example.Scryfall.ApiDemo\Example.Scryfall.ApiDemo.csproj", "{8F41964F-BEFB-4980-9A80-71746A11E9F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".toolFiles", ".toolFiles", "{96DD3C0B-3D59-72D0-DD74-F8C80B6C5F51}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,121 +29,133 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".toolFiles", ".toolFiles", 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.LibCosmos", "Example.LibCosmos\Example.LibCosmos.csproj", "{68CF26BD-5130-4BE4-A9CF-7FADFE0BF570}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.LibCosmos", ".examples\Example.LibCosmos\Example.LibCosmos.csproj", "{68CF26BD-5130-4BE4-A9CF-7FADFE0BF570}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared", "Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj", "{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared", "common\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj", "{7615005A-E235-4B4C-AC13-FA45BD5C5E9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.Cosmos", "Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj", "{07B9977E-C99B-4CCB-B307-0C1692ABA304}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.Cosmos", "Lib.Adapters\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj", "{07B9977E-C99B-4CCB-B307-0C1692ABA304}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.Cosmos.Tests", "Lib.Adapter.Scryfall.Cosmos.Tests\Lib.Adapter.Scryfall.Cosmos.Tests.csproj", "{BD7F511D-B774-42EA-8381-E29BB7615566}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Scryfall.Cosmos.Tests", "Lib.Adapters\Lib.Adapter.Scryfall.Cosmos.Tests\Lib.Adapter.Scryfall.Cosmos.Tests.csproj", "{BD7F511D-B774-42EA-8381-E29BB7615566}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared.Tests", "Lib.Scryfall.Shared.Tests\Lib.Scryfall.Shared.Tests.csproj", "{F84A9A3D-F2EF-4AA4-82EB-4390497243E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Scryfall.Shared.Tests", "common\Lib.Scryfall.Shared.Tests\Lib.Scryfall.Shared.Tests.csproj", "{F84A9A3D-F2EF-4AA4-82EB-4390497243E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.MtgDiscovery.GraphQL", "App.MtgDiscovery.GraphQL\App.MtgDiscovery.GraphQL.csproj", "{7C118DAE-2497-4309-8074-2DA69D2612BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.MtgDiscovery.GraphQL", "Api.MtgDiscovery.GraphQL\App.MtgDiscovery.GraphQL\App.MtgDiscovery.GraphQL.csproj", "{7C118DAE-2497-4309-8074-2DA69D2612BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Invocation", "Lib.Shared.Invocation\Lib.Shared.Invocation.csproj", "{CBBB4752-DEC1-E30B-28B5-233306229D3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Invocation", "common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj", "{CBBB4752-DEC1-E30B-28B5-233306229D3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Abstractions", "Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj", "{005B1DAA-1B6B-437C-92B0-7719D7F04637}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Abstractions", "common\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj", "{005B1DAA-1B6B-437C-92B0-7719D7F04637}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.DataModels", "Lib.Shared.DataModels\Lib.Shared.DataModels.csproj", "{8C0DF2B1-EC71-4D90-9CB8-7A08C428A96F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.DataModels", "common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj", "{8C0DF2B1-EC71-4D90-9CB8-7A08C428A96F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.MtgDiscovery.Entry", "Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj", "{39BAF23D-A6C3-46DC-BCF7-7F47B20593C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.MtgDiscovery.Entry", "Api.MtgDiscovery.GraphQL\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj", "{39BAF23D-A6C3-46DC-BCF7-7F47B20593C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Cards", "Lib.Domain.Cards\Lib.Domain.Cards.csproj", "{469873A5-EFC8-4E5F-A62F-287D1ED54EA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Cards", "Lib.Domains\Lib.Domain.Cards\Lib.Domain.Cards.csproj", "{469873A5-EFC8-4E5F-A62F-287D1ED54EA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Cards", "Lib.Aggregator.Cards\Lib.Aggregator.Cards.csproj", "{3E9947C3-BF89-4097-948F-C8F18F0E4D85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Cards", "Lib.Aggregators\Lib.Aggregator.Cards\Lib.Aggregator.Cards.csproj", "{3E9947C3-BF89-4097-948F-C8F18F0E4D85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Cards.Tests", "Lib.Aggregator.Cards.Tests\Lib.Aggregator.Cards.Tests.csproj", "{DBEDD1CA-EA3C-4688-BB78-4C40068A6A9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Cards.Tests", "Lib.Aggregators\Lib.Aggregator.Cards.Tests\Lib.Aggregator.Cards.Tests.csproj", "{DBEDD1CA-EA3C-4688-BB78-4C40068A6A9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Invocation.Tests", "Lib.Shared.Invocation.Tests\Lib.Shared.Invocation.Tests.csproj", "{E7BC150C-0AD3-46AB-88C5-775E539F88E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Shared.Invocation.Tests", "common\Lib.Shared.Invocation.Tests\Lib.Shared.Invocation.Tests.csproj", "{E7BC150C-0AD3-46AB-88C5-775E539F88E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Sets", "Lib.Aggregator.Sets\Lib.Aggregator.Sets.csproj", "{469ED8C9-6012-4895-9432-035E7561D056}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Sets", "Lib.Aggregators\Lib.Aggregator.Sets\Lib.Aggregator.Sets.csproj", "{469ED8C9-6012-4895-9432-035E7561D056}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Sets", "Lib.Domain.Sets\Lib.Domain.Sets.csproj", "{5020963C-2806-4D46-9430-B59240110604}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Sets", "Lib.Domains\Lib.Domain.Sets\Lib.Domain.Sets.csproj", "{5020963C-2806-4D46-9430-B59240110604}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.BulkIngestion", "Example.Scryfall.BulkIngestion\Example.Scryfall.BulkIngestion.csproj", "{F82FABF3-7721-4A43-8AFD-22389865DA32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.Scryfall.BulkIngestion", "Cli.Apps\Example.Scryfall.BulkIngestion\Example.Scryfall.BulkIngestion.csproj", "{F82FABF3-7721-4A43-8AFD-22389865DA32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Artists", "Lib.Domain.Artists\Lib.Domain.Artists.csproj", "{9749E490-723C-4A61-9E43-641F60534579}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Artists", "Lib.Domains\Lib.Domain.Artists\Lib.Domain.Artists.csproj", "{9749E490-723C-4A61-9E43-641F60534579}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Artists", "Lib.Aggregator.Artists\Lib.Aggregator.Artists.csproj", "{CD0DDD0A-A4C5-421B-963D-C2211656ACCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Artists", "Lib.Aggregators\Lib.Aggregator.Artists\Lib.Aggregator.Artists.csproj", "{CD0DDD0A-A4C5-421B-963D-C2211656ACCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Scryfall.Shared", "Lib.Aggregator.Scryfall.Shared\Lib.Aggregator.Scryfall.Shared.csproj", "{34613393-1505-4B6B-BA4A-238CC60F94D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Scryfall.Shared", "Lib.Aggregators\Lib.Aggregator.Scryfall.Shared\Lib.Aggregator.Scryfall.Shared.csproj", "{34613393-1505-4B6B-BA4A-238CC60F94D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.User", "Lib.Domain.User\Lib.Domain.User.csproj", "{C2F6245E-D1E1-4096-A863-976C2A0DF034}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.User", "Lib.Domains\Lib.Domain.User\Lib.Domain.User.csproj", "{C2F6245E-D1E1-4096-A863-976C2A0DF034}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.User", "Lib.Aggregator.User\Lib.Aggregator.User.csproj", "{1DF4B600-E361-4BFD-99E4-FB18E09AFBA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.User", "Lib.Aggregators\Lib.Aggregator.User\Lib.Aggregator.User.csproj", "{1DF4B600-E361-4BFD-99E4-FB18E09AFBA3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Examples", ".Examples", "{E7A9F9B0-67CA-E625-5641-37137B097CD9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".examples", ".examples", "{E7A9F9B0-67CA-E625-5641-37137B097CD9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Libs", ".Libs", "{1986D775-7154-3123-F80F-144B22DD78F3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{1986D775-7154-3123-F80F-144B22DD78F3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".TestSupport", ".TestSupport", "{10978B47-FFD0-284F-D285-3EF30A0CB5BE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testShared", "testShared", "{10978B47-FFD0-284F-D285-3EF30A0CB5BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Cards", "Lib.Adapter.Cards\Lib.Adapter.Cards.csproj", "{E4364D20-FE27-44B3-8D4C-384E4279F12A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Cards", "Lib.Adapters\Lib.Adapter.Cards\Lib.Adapter.Cards.csproj", "{E4364D20-FE27-44B3-8D4C-384E4279F12A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Sets", "Lib.Adapter.Sets\Lib.Adapter.Sets.csproj", "{3F90CFC9-DDB3-4A0B-A3AF-BA31D89BEB6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Sets", "Lib.Adapters\Lib.Adapter.Sets\Lib.Adapter.Sets.csproj", "{3F90CFC9-DDB3-4A0B-A3AF-BA31D89BEB6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Artists", "Lib.Adapter.Artists\Lib.Adapter.Artists.csproj", "{1CCA8893-9F0B-4AD0-92D4-5557611751B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Artists", "Lib.Adapters\Lib.Adapter.Artists\Lib.Adapter.Artists.csproj", "{1CCA8893-9F0B-4AD0-92D4-5557611751B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.User", "Lib.Adapter.User\Lib.Adapter.User.csproj", "{E18FCD38-35F2-4623-9643-9A0360D57719}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.User", "Lib.Adapters\Lib.Adapter.User\Lib.Adapter.User.csproj", "{E18FCD38-35F2-4623-9643-9A0360D57719}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserCards.Tests", "Lib.Adapter.UserCards.Tests\Lib.Adapter.UserCards.Tests.csproj", "{09ABF839-53F1-498A-B69A-B1D37429BB24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserCards.Tests", "Lib.Adapters\Lib.Adapter.UserCards.Tests\Lib.Adapter.UserCards.Tests.csproj", "{09ABF839-53F1-498A-B69A-B1D37429BB24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserCards", "Lib.Adapter.UserCards\Lib.Adapter.UserCards.csproj", "{2895A5E5-95C5-8788-4825-4B46E561CF81}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserCards", "Lib.Adapters\Lib.Adapter.UserCards\Lib.Adapter.UserCards.csproj", "{2895A5E5-95C5-8788-4825-4B46E561CF81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserCards", "Lib.Domain.UserCards\Lib.Domain.UserCards.csproj", "{9C2D7889-CEDE-41D1-9B63-5113B0B4B7E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserCards", "Lib.Domains\Lib.Domain.UserCards\Lib.Domain.UserCards.csproj", "{9C2D7889-CEDE-41D1-9B63-5113B0B4B7E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserCards", "Lib.Aggregator.UserCards\Lib.Aggregator.UserCards.csproj", "{E82B8FCF-C286-62AA-8698-72F2D8A4CE62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserCards", "Lib.Aggregators\Lib.Aggregator.UserCards\Lib.Aggregator.UserCards.csproj", "{E82B8FCF-C286-62AA-8698-72F2D8A4CE62}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App.Layer", "App.Layer", "{8E50D4FC-A025-4CB2-B88E-51BE34E656FF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api.GraphQL", "Api.GraphQL", "{8E50D4FC-A025-4CB2-B88E-51BE34E656FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserSetCards", "Lib.Adapter.UserSetCards\Lib.Adapter.UserSetCards.csproj", "{C6FFE128-8AE4-4773-9FEA-FB4E335D2E56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserSetCards", "Lib.Adapters\Lib.Adapter.UserSetCards\Lib.Adapter.UserSetCards.csproj", "{C6FFE128-8AE4-4773-9FEA-FB4E335D2E56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserSetCards", "Lib.Aggregator.UserSetCards\Lib.Aggregator.UserSetCards.csproj", "{B043CD3A-F963-4919-93C7-9F37CE279D25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserSetCards", "Lib.Aggregators\Lib.Aggregator.UserSetCards\Lib.Aggregator.UserSetCards.csproj", "{B043CD3A-F963-4919-93C7-9F37CE279D25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserSetCards", "Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj", "{F728564A-91F7-433F-BB37-E9BF875CF689}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserSetCards", "Lib.Domains\Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj", "{F728564A-91F7-433F-BB37-E9BF875CF689}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.DataMigration", "Cli.MtgDiscovery.DataMigration\Cli.MtgDiscovery.DataMigration.csproj", "{1B1BD5A2-3C49-4E00-8708-227FCA45D173}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.DataMigration", "Cli.Apps\Cli.MtgDiscovery.DataMigration\Cli.MtgDiscovery.DataMigration.csproj", "{1B1BD5A2-3C49-4E00-8708-227FCA45D173}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.PriceUpdate", "Cli.MtgDiscovery.PriceUpdate\Cli.MtgDiscovery.PriceUpdate.csproj", "{FCDC91A9-04D3-47C9-B996-0029F8E3B2C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.PriceUpdate", "Cli.Apps\Cli.MtgDiscovery.PriceUpdate\Cli.MtgDiscovery.PriceUpdate.csproj", "{FCDC91A9-04D3-47C9-B996-0029F8E3B2C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.UserDataReconciler", "Cli.MtgDiscovery.UserDataReconciler\Cli.MtgDiscovery.UserDataReconciler.csproj", "{A7B3C4D5-E6F7-4890-AB12-CD34EF567890}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.UserDataReconciler", "Cli.Apps\Cli.MtgDiscovery.UserDataReconciler\Cli.MtgDiscovery.UserDataReconciler.csproj", "{A7B3C4D5-E6F7-4890-AB12-CD34EF567890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.ImageScraper", "Cli.Sealed.ImageScraper\Cli.Sealed.ImageScraper.csproj", "{B8C9D0E1-F2A3-4B5C-6D7E-8F90A1B2C3D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.ImageScraper", "Cli.Apps\Cli.Sealed.ImageScraper\Cli.Sealed.ImageScraper.csproj", "{B8C9D0E1-F2A3-4B5C-6D7E-8F90A1B2C3D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserWishlistCards", "Lib.Adapter.UserWishlistCards\Lib.Adapter.UserWishlistCards.csproj", "{B1C2D3E4-F5A6-4B7C-8D9E-0F1A2B3C4D5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserWishlistCards", "Lib.Adapters\Lib.Adapter.UserWishlistCards\Lib.Adapter.UserWishlistCards.csproj", "{B1C2D3E4-F5A6-4B7C-8D9E-0F1A2B3C4D5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserWishlistCards", "Lib.Domain.UserWishlistCards\Lib.Domain.UserWishlistCards.csproj", "{FE375A5F-E6DB-4289-92F9-843BD4BF57C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserWishlistCards", "Lib.Domains\Lib.Domain.UserWishlistCards\Lib.Domain.UserWishlistCards.csproj", "{FE375A5F-E6DB-4289-92F9-843BD4BF57C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserWishlistCards", "Lib.Aggregator.UserWishlistCards\Lib.Aggregator.UserWishlistCards.csproj", "{7CE9EAC8-40BB-44CA-8D8D-1A9EB5459E7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserWishlistCards", "Lib.Aggregators\Lib.Aggregator.UserWishlistCards\Lib.Aggregator.UserWishlistCards.csproj", "{7CE9EAC8-40BB-44CA-8D8D-1A9EB5459E7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.Ingestion", "Cli.Sealed.Ingestion\Cli.Sealed.Ingestion.csproj", "{60163036-BE1C-4B52-9CE3-D33C7D7C8597}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.Sealed.Ingestion", "Cli.Apps\Cli.Sealed.Ingestion\Cli.Sealed.Ingestion.csproj", "{60163036-BE1C-4B52-9CE3-D33C7D7C8597}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.SealedProducts", "Lib.Adapter.SealedProducts\Lib.Adapter.SealedProducts.csproj", "{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.SealedProducts", "Lib.Adapters\Lib.Adapter.SealedProducts\Lib.Adapter.SealedProducts.csproj", "{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.SealedProducts", "Lib.Aggregator.SealedProducts\Lib.Aggregator.SealedProducts.csproj", "{407C453B-DEA0-4D79-B20B-3C4403E15D6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.SealedProducts", "Lib.Aggregators\Lib.Aggregator.SealedProducts\Lib.Aggregator.SealedProducts.csproj", "{407C453B-DEA0-4D79-B20B-3C4403E15D6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.SealedProducts", "Lib.Domain.SealedProducts\Lib.Domain.SealedProducts.csproj", "{B753BAB7-3280-43B7-B942-43294E0986A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.SealedProducts", "Lib.Domains\Lib.Domain.SealedProducts\Lib.Domain.SealedProducts.csproj", "{B753BAB7-3280-43B7-B942-43294E0986A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserSealedProducts", "Lib.Adapter.UserSealedProducts\Lib.Adapter.UserSealedProducts.csproj", "{F1064BA3-F717-4A93-8F7D-CC1038CD2B34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.UserSealedProducts", "Lib.Adapters\Lib.Adapter.UserSealedProducts\Lib.Adapter.UserSealedProducts.csproj", "{F1064BA3-F717-4A93-8F7D-CC1038CD2B34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserSealedProducts", "Lib.Aggregator.UserSealedProducts\Lib.Aggregator.UserSealedProducts.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.UserSealedProducts", "Lib.Aggregators\Lib.Aggregator.UserSealedProducts\Lib.Aggregator.UserSealedProducts.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserSealedProducts", "Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj", "{BC87EA72-B311-4F1A-A1B3-CD2D51EE0D7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.UserSealedProducts", "Lib.Domains\Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj", "{BC87EA72-B311-4F1A-A1B3-CD2D51EE0D7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Collections", "Lib.Domain.Collections\Lib.Domain.Collections.csproj", "{B5AAEF3C-FDDA-426D-984D-D0DE55EE143D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Collections", "Lib.Domains\Lib.Domain.Collections\Lib.Domain.Collections.csproj", "{B5AAEF3C-FDDA-426D-984D-D0DE55EE143D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Collections", "Lib.Aggregator.Collections\Lib.Aggregator.Collections.csproj", "{03D3C2AF-4390-4258-BFD3-2D3480CDEFE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Collections", "Lib.Aggregators\Lib.Aggregator.Collections\Lib.Aggregator.Collections.csproj", "{03D3C2AF-4390-4258-BFD3-2D3480CDEFE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Collections", "Lib.Adapter.Collections\Lib.Adapter.Collections.csproj", "{3FAC4AD5-70C2-4507-B9D6-C511256D659B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Collections", "Lib.Adapters\Lib.Adapter.Collections\Lib.Adapter.Collections.csproj", "{3FAC4AD5-70C2-4507-B9D6-C511256D659B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Collections.Tests", "Lib.Domain.Collections.Tests\Lib.Domain.Collections.Tests.csproj", "{7DCB746B-8FB0-4528-A425-3D6A3DC6C113}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Domain.Collections.Tests", "Lib.Domains\Lib.Domain.Collections.Tests\Lib.Domain.Collections.Tests.csproj", "{7DCB746B-8FB0-4528-A425-3D6A3DC6C113}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Collections.Tests", "Lib.Aggregator.Collections.Tests\Lib.Aggregator.Collections.Tests.csproj", "{33C713F2-D1E1-4A6B-ADCE-3ECF115D7AA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Aggregator.Collections.Tests", "Lib.Aggregators\Lib.Aggregator.Collections.Tests\Lib.Aggregator.Collections.Tests.csproj", "{33C713F2-D1E1-4A6B-ADCE-3ECF115D7AA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Collections.Tests", "Lib.Adapter.Collections.Tests\Lib.Adapter.Collections.Tests.csproj", "{9D74EF1E-B420-4D9E-83A0-9D8C23A039B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Adapter.Collections.Tests", "Lib.Adapters\Lib.Adapter.Collections.Tests\Lib.Adapter.Collections.Tests.csproj", "{9D74EF1E-B420-4D9E-83A0-9D8C23A039B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.DataMigration.Tests", "Cli.MtgDiscovery.DataMigration.Tests\Cli.MtgDiscovery.DataMigration.Tests.csproj", "{79C076F1-8648-453B-826F-27B1B54A6ACD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.MtgDiscovery.DataMigration.Tests", "Cli.Apps\Cli.MtgDiscovery.DataMigration.Tests\Cli.MtgDiscovery.DataMigration.Tests.csproj", "{79C076F1-8648-453B-826F-27B1B54A6ACD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli.Utils", "Cli.Utils", "{8177B434-4318-495C-93A0-DB900BAF4429}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib.Adapters", "Lib.Adapters", "{B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib.Aggregators", "Lib.Aggregators", "{8288028D-67A4-4138-9FAA-1CC5C91AE242}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib.Domains", "Lib.Domains", "{59C052B2-0631-414C-BD20-5F5EC08B60B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{1487E9D2-05F9-4E0A-85C0-867A32FC7960}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cli.GroupingScraper", "Cli.Apps\Cli.GroupingScraper\Cli.GroupingScraper.csproj", "{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -911,6 +923,18 @@ Global
 		{79C076F1-8648-453B-826F-27B1B54A6ACD}.Release|x64.Build.0 = Release|Any CPU
 		{79C076F1-8648-453B-826F-27B1B54A6ACD}.Release|x86.ActiveCfg = Release|Any CPU
 		{79C076F1-8648-453B-826F-27B1B54A6ACD}.Release|x86.Build.0 = Release|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Debug|x64.Build.0 = Debug|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Debug|x86.Build.0 = Debug|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Release|x64.ActiveCfg = Release|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Release|x64.Build.0 = Release|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Release|x86.ActiveCfg = Release|Any CPU
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -922,13 +946,64 @@ Global
 		{90596DAC-015F-DFF0-2F0B-5751F6A13485} = {E7A9F9B0-67CA-E625-5641-37137B097CD9}
 		{14CD34F5-B452-759E-A758-C58CC4DE7804} = {1986D775-7154-3123-F80F-144B22DD78F3}
 		{244F570E-F0A7-A1C9-7667-889EBBFDDAAA} = {1986D775-7154-3123-F80F-144B22DD78F3}
+		{8A9B5D4C-3E7F-4B8A-9C2D-1F6A8E9B7C3D} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
+		{21982649-E418-B194-9793-307C7895A8D8} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
 		{8F41964F-BEFB-4980-9A80-71746A11E9F5} = {E7A9F9B0-67CA-E625-5641-37137B097CD9}
 		{68CF26BD-5130-4BE4-A9CF-7FADFE0BF570} = {E7A9F9B0-67CA-E625-5641-37137B097CD9}
+		{7615005A-E235-4B4C-AC13-FA45BD5C5E9D} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
+		{07B9977E-C99B-4CCB-B307-0C1692ABA304} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{BD7F511D-B774-42EA-8381-E29BB7615566} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{F84A9A3D-F2EF-4AA4-82EB-4390497243E0} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
 		{7C118DAE-2497-4309-8074-2DA69D2612BC} = {8E50D4FC-A025-4CB2-B88E-51BE34E656FF}
-		{CBBB4752-DEC1-E30B-28B5-233306229D3C} = {1986D775-7154-3123-F80F-144B22DD78F3}
+		{CBBB4752-DEC1-E30B-28B5-233306229D3C} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
+		{005B1DAA-1B6B-437C-92B0-7719D7F04637} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
+		{8C0DF2B1-EC71-4D90-9CB8-7A08C428A96F} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
 		{39BAF23D-A6C3-46DC-BCF7-7F47B20593C6} = {8E50D4FC-A025-4CB2-B88E-51BE34E656FF}
-		{E7BC150C-0AD3-46AB-88C5-775E539F88E4} = {1986D775-7154-3123-F80F-144B22DD78F3}
-		{F82FABF3-7721-4A43-8AFD-22389865DA32} = {E7A9F9B0-67CA-E625-5641-37137B097CD9}
+		{469873A5-EFC8-4E5F-A62F-287D1ED54EA5} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{3E9947C3-BF89-4097-948F-C8F18F0E4D85} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{DBEDD1CA-EA3C-4688-BB78-4C40068A6A9A} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{E7BC150C-0AD3-46AB-88C5-775E539F88E4} = {1487E9D2-05F9-4E0A-85C0-867A32FC7960}
+		{469ED8C9-6012-4895-9432-035E7561D056} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{5020963C-2806-4D46-9430-B59240110604} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{F82FABF3-7721-4A43-8AFD-22389865DA32} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{9749E490-723C-4A61-9E43-641F60534579} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{CD0DDD0A-A4C5-421B-963D-C2211656ACCF} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{34613393-1505-4B6B-BA4A-238CC60F94D1} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{C2F6245E-D1E1-4096-A863-976C2A0DF034} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{1DF4B600-E361-4BFD-99E4-FB18E09AFBA3} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{E4364D20-FE27-44B3-8D4C-384E4279F12A} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{3F90CFC9-DDB3-4A0B-A3AF-BA31D89BEB6A} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{1CCA8893-9F0B-4AD0-92D4-5557611751B6} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{E18FCD38-35F2-4623-9643-9A0360D57719} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{09ABF839-53F1-498A-B69A-B1D37429BB24} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{2895A5E5-95C5-8788-4825-4B46E561CF81} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{9C2D7889-CEDE-41D1-9B63-5113B0B4B7E9} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{E82B8FCF-C286-62AA-8698-72F2D8A4CE62} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{C6FFE128-8AE4-4773-9FEA-FB4E335D2E56} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{B043CD3A-F963-4919-93C7-9F37CE279D25} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{F728564A-91F7-433F-BB37-E9BF875CF689} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{1B1BD5A2-3C49-4E00-8708-227FCA45D173} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{FCDC91A9-04D3-47C9-B996-0029F8E3B2C3} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{A7B3C4D5-E6F7-4890-AB12-CD34EF567890} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{B8C9D0E1-F2A3-4B5C-6D7E-8F90A1B2C3D4} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{B1C2D3E4-F5A6-4B7C-8D9E-0F1A2B3C4D5E} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{FE375A5F-E6DB-4289-92F9-843BD4BF57C6} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{7CE9EAC8-40BB-44CA-8D8D-1A9EB5459E7E} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{60163036-BE1C-4B52-9CE3-D33C7D7C8597} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{86ABFBE1-DB30-40BA-AD4E-2E229C7DF5A2} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{407C453B-DEA0-4D79-B20B-3C4403E15D6C} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{B753BAB7-3280-43B7-B942-43294E0986A6} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{F1064BA3-F717-4A93-8F7D-CC1038CD2B34} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{BC87EA72-B311-4F1A-A1B3-CD2D51EE0D7B} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{B5AAEF3C-FDDA-426D-984D-D0DE55EE143D} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{03D3C2AF-4390-4258-BFD3-2D3480CDEFE7} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{3FAC4AD5-70C2-4507-B9D6-C511256D659B} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{7DCB746B-8FB0-4528-A425-3D6A3DC6C113} = {59C052B2-0631-414C-BD20-5F5EC08B60B4}
+		{33C713F2-D1E1-4A6B-ADCE-3ECF115D7AA5} = {8288028D-67A4-4138-9FAA-1CC5C91AE242}
+		{9D74EF1E-B420-4D9E-83A0-9D8C23A039B7} = {B2B7E28A-E3C3-44E8-98EE-B93C13F3BCAF}
+		{79C076F1-8648-453B-826F-27B1B54A6ACD} = {8177B434-4318-495C-93A0-DB900BAF4429}
+		{A8AB3F89-A4D8-4D83-8F34-4D210A5FE635} = {8177B434-4318-495C-93A0-DB900BAF4429}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {66CA5B9A-F349-4235-84D4-2E1CA9DEAA23}

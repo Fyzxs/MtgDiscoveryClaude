@@ -16,8 +16,7 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
 
     public CollectionQueryAggregator(ILogger logger) : this(new CollectionsAdapterService(logger)) { }
 
-    private CollectionQueryAggregator(ICollectionsAdapterService adapterService) =>
-        _adapterService = adapterService;
+    private CollectionQueryAggregator(ICollectionsAdapterService adapterService) => _adapterService = adapterService;
 
     public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
     {

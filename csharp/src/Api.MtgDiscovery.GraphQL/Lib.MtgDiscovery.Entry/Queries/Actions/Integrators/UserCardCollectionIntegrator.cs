@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -14,8 +14,7 @@ internal sealed class UserCardCollectionIntegrator : IUserCardCollectionIntegrat
 
     public UserCardCollectionIntegrator() : this(new CollectionUserCardDetailsOufToOutMapper()) { }
 
-    private UserCardCollectionIntegrator(ICollectionUserCardDetailsOufToOutMapper cardDetailsOufToOutMapper) =>
-        _cardDetailsOufToOutMapper = cardDetailsOufToOutMapper;
+    private UserCardCollectionIntegrator(ICollectionUserCardDetailsOufToOutMapper cardDetailsOufToOutMapper) => _cardDetailsOufToOutMapper = cardDetailsOufToOutMapper;
 
     public async Task<List<CardItemOutEntity>> Integrate(List<CardItemOutEntity> current, IEnumerable<IUserCardOufEntity> change)
     {
@@ -26,7 +25,8 @@ internal sealed class UserCardCollectionIntegrator : IUserCardCollectionIntegrat
 
         foreach (CardItemOutEntity card in current)
         {
-            if (dictionary.TryGetValue(card.Id, out Task<ICollection<CollectedItemOutEntity>> collectedItems) is false) continue;
+            if (dictionary.TryGetValue(card.Id, out Task<ICollection<CollectedItemOutEntity>> collectedItems) is false)
+                continue;
             card.UserCollection = await collectedItems.ConfigureAwait(false);
         }
 

@@ -63,14 +63,17 @@ internal sealed class AddCardToWishlistEntryService : IAddCardToWishlistEntrySer
     {
 
         IValidatorActionResult<IOperationResponse<IUserWishlistCardOufEntity>> validatorResult = await _addCardToWishlistArgEntityValidator.Validate(input).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [input.AddUserWishlistCard.CardId] };
         IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
-        if (cardResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
+        if (cardResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 
         List<CardItemOutEntity> cards = await _cardItemOufToOutMapper.Map(cardResponse.ResponseData).ConfigureAwait(false);
-        if (cards.Count == 0) return new FailureOperationResponse<List<CardItemOutEntity>>(new Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
+        if (cards.Count == 0)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(new Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
 
         CardItemOutEntity cardItem = cards[0];
         IEnumerable<string> artistIds = cardItem.ArtistIds ?? [];
@@ -94,7 +97,8 @@ internal sealed class AddCardToWishlistEntryService : IAddCardToWishlistEntrySer
         };
 
         IOperationResponse<IUserWishlistCardOufEntity> addResponse = await _userWishlistCardsDomainService.AddUserWishlistCardAsync(enrichedEntity).ConfigureAwait(false);
-        if (addResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
+        if (addResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 
         UserWishlistCardOutEntity userWishlistCardOut = await _userWishlistCardOufToOutMapper.Map(addResponse.ResponseData).ConfigureAwait(false);
         cards[0].UserWishlist = userWishlistCardOut.WishlistItems;

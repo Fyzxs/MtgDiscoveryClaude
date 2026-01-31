@@ -15,8 +15,7 @@ internal sealed class CreateCollectionNameUniquenessValidator : ICreateCollectio
 {
     private readonly ICollectionsDomainService _domainService;
 
-    public CreateCollectionNameUniquenessValidator(ICollectionsDomainService domainService) =>
-        _domainService = domainService;
+    public CreateCollectionNameUniquenessValidator(ICollectionsDomainService domainService) => _domainService = domainService;
 
     public async Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
         ICreateCollectionArgsEntity args)
@@ -55,8 +54,6 @@ internal sealed class CreateCollectionNameUniquenessValidator : ICreateCollectio
     {
         public bool IsValid() => false;
 
-        public IOperationResponse<ICollectionOufEntity> FailureStatus() =>
-            new FailureOperationResponse<ICollectionOufEntity>(
-                new BadRequestOperationException("A collection with this name already exists"));
+        public IOperationResponse<ICollectionOufEntity> FailureStatus() => new FailureOperationResponse<ICollectionOufEntity>(new BadRequestOperationException("A collection with this name already exists"));
     }
 }

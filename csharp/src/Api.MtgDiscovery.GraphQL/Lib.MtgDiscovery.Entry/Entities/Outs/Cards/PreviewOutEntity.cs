@@ -1,6 +1,6 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class PreviewOutEntity
+public sealed class PreviewOutEntity
 {
     public string Source { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Args.UserCards;
+namespace Lib.Shared.DataModels.Entities.Args.UserCards;
 
 public interface IUserCardDetailsArgEntity
 {

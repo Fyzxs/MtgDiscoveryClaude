@@ -15,8 +15,7 @@ internal sealed class HasValidCollectionIdRevokeCollectionAccessArgEntityValidat
 
     public sealed class Validator : IValidator<IRevokeCollectionAccessArgEntity>
     {
-        public Task<bool> IsValid(IRevokeCollectionAccessArgEntity arg) =>
-            Task.FromResult(arg.CollectionId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.CollectionId, out _));
+        public Task<bool> IsValid(IRevokeCollectionAccessArgEntity arg) => Task.FromResult(arg.CollectionId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.CollectionId, out _));
     }
 
     public sealed class Message : OperationResponseMessage

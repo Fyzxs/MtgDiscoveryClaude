@@ -14,8 +14,7 @@ internal sealed class UserWishlistCardIntegrator : IUserWishlistCardIntegrator
 
     public UserWishlistCardIntegrator() : this(new CollectionUserWishlistCardDetailsOufToOutMapper()) { }
 
-    private UserWishlistCardIntegrator(ICollectionUserWishlistCardDetailsOufToOutMapper wishlistCardDetailsOufToOutMapper) =>
-        _wishlistCardDetailsOufToOutMapper = wishlistCardDetailsOufToOutMapper;
+    private UserWishlistCardIntegrator(ICollectionUserWishlistCardDetailsOufToOutMapper wishlistCardDetailsOufToOutMapper) => _wishlistCardDetailsOufToOutMapper = wishlistCardDetailsOufToOutMapper;
 
     public async Task<List<CardItemOutEntity>> Integrate(List<CardItemOutEntity> current, IEnumerable<IUserWishlistCardOufEntity> change)
     {
@@ -26,7 +25,8 @@ internal sealed class UserWishlistCardIntegrator : IUserWishlistCardIntegrator
 
         foreach (CardItemOutEntity card in current)
         {
-            if (dictionary.TryGetValue(card.Id, out Task<ICollection<WishlistItemOutEntity>> wishlistItems) is false) continue;
+            if (dictionary.TryGetValue(card.Id, out Task<ICollection<WishlistItemOutEntity>> wishlistItems) is false)
+                continue;
             card.UserWishlist = await wishlistItems.ConfigureAwait(false);
         }
 

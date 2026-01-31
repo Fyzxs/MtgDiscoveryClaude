@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.Sets.Apis;
+namespace Lib.Adapter.Sets.Apis;
 
 /// <summary>
 /// Main adapter service interface for set operations.

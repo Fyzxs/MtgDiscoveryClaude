@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
 [ExtendObjectType(typeof(ApiMutation))]
-public sealed class UserCardsMutationMethods
+internal sealed class UserCardsMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IAddCardToCollectionArgsMapper _argsMapper;

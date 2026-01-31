@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.UserWishlistCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.UserWishlistCards;
 
-public sealed class WishlistItemOutEntityType : ObjectType<WishlistItemOutEntity>
+internal sealed class WishlistItemOutEntityType : ObjectType<WishlistItemOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<WishlistItemOutEntity> descriptor)
     {

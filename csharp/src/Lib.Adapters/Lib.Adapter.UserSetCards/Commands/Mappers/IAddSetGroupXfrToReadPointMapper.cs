@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Operators;
+using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 

@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
 [ExtendObjectType(typeof(ApiMutation))]
-public sealed class UserWishlistCardsMutationMethods
+internal sealed class UserWishlistCardsMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IAddCardToWishlistArgsMapper _addArgsMapper;

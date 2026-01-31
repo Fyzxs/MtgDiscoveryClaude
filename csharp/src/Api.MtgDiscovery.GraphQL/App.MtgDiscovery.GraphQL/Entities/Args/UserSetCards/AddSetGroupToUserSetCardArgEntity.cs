@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
 
-public sealed class AddSetGroupToUserSetCardArgEntity : IAddSetGroupToUserSetCardArgEntity
+internal sealed class AddSetGroupToUserSetCardArgEntity : IAddSetGroupToUserSetCardArgEntity
 {
     public string UserId { get; init; }
     public string SetId { get; init; }

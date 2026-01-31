@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.Shared.DataModels.Entities.Oufs.User;
 

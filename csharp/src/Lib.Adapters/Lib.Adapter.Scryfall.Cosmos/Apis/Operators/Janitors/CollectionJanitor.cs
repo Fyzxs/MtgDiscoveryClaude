@@ -15,6 +15,5 @@ public sealed class CollectionJanitor : ICosmosContainerDeleteOperator
 
     private CollectionJanitor(ICosmosContainerAdapter container) => _container = container;
 
-    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item) =>
-        await _container.DeleteAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item) => await _container.DeleteAsync<T>(item).ConfigureAwait(false);
 }

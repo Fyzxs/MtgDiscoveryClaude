@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.Invocation.Operations;
 
@@ -17,7 +17,8 @@ public abstract class OperationStatusResponseValidator<TItem, TResponseType> : I
 
     public async Task<IValidatorActionResult<OperationResponse<TResponseType>>> Validate(TItem item)
     {
-        if (await _validator.IsValid(item).ConfigureAwait(false)) return new ValidatorActionResult<OperationResponse<TResponseType>>();
+        if (await _validator.IsValid(item).ConfigureAwait(false))
+            return new ValidatorActionResult<OperationResponse<TResponseType>>();
 
         return new ValidatorActionResult<OperationResponse<TResponseType>>(new ValidatorFailedOperationResponse<TResponseType>(_message));
     }

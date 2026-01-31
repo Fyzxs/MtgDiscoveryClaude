@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Lib.Shared.Abstractions.Actions.Filters;
 
@@ -21,7 +21,8 @@ public sealed class FilterActionResult<TFailureStatus> : IFilterActionResult<TFa
 
     public TFailureStatus FailureStatus()
     {
-        if (((IFilterActionResult<TFailureStatus>)this).IsNotFilteredOut()) throw new InvalidOperationException("Cannot retrieve failureStatus of non-filtered result.");
+        if (((IFilterActionResult<TFailureStatus>)this).IsNotFilteredOut())
+            throw new InvalidOperationException("Cannot retrieve failureStatus of non-filtered result.");
 
         return _failureStatus;
     }

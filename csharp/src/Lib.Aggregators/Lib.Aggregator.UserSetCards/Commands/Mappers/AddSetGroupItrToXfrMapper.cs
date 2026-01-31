@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Commands.Entities;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;

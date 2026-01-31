@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args.Artists;
@@ -16,7 +16,8 @@ internal sealed class HasMinimumLengthArtistNameArgEntityValidator : OperationRe
     {
         public Task<bool> IsValid(IArtistNameArgEntity arg)
         {
-            if (arg?.ArtistName == null) return Task.FromResult(false);
+            if (arg?.ArtistName == null)
+                return Task.FromResult(false);
 
             // Normalize the artist name to check minimum length
             string normalized = new([.. arg.ArtistName

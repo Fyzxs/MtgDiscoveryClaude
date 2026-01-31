@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public sealed class UserWishlistCardsQueryMethods
+internal sealed class UserWishlistCardsQueryMethods
 {
     private readonly IEntryService _entryService;
     private readonly IGetUserWishlistArgsMapper _argsMapper;

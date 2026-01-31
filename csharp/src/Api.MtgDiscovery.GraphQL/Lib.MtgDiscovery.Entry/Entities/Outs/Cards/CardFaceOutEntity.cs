@@ -1,9 +1,9 @@
-﻿#pragma warning disable CA1056, CA1819
+#pragma warning disable CA1056, CA1819
 using System.Collections.Generic;
 
 namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class CardFaceOutEntity
+public sealed class CardFaceOutEntity
 {
     public string ObjectString { get; set; }
 

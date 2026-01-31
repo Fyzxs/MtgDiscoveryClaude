@@ -1,4 +1,4 @@
-﻿namespace Lib.Cosmos.Apis.Configurations;
+namespace Lib.Cosmos.Apis.Configurations;
 
 /// <summary>
 /// Defines the optional configuration settings for an Azure Cosmos DB container.

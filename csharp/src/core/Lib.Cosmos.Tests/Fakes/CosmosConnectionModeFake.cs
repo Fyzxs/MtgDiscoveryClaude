@@ -1,9 +1,9 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Microsoft.Azure.Cosmos;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosConnectionModeFake : CosmosConnectionMode
+public sealed class CosmosConnectionModeFake : CosmosConnectionMode
 {
     private readonly ConnectionMode _connectionMode;
 

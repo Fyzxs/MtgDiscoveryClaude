@@ -20,9 +20,7 @@ internal sealed class UserSealedProductsByUserIdDomainService : IUserSealedProdu
         new UserSealedProductsAggregatorService(logger))
     { }
 
-    private UserSealedProductsByUserIdDomainService(IUserSealedProductsAggregatorService aggregator) =>
-        _aggregator = aggregator;
+    private UserSealedProductsByUserIdDomainService(IUserSealedProductsAggregatorService aggregator) => _aggregator = aggregator;
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input) =>
-        await _aggregator.UserSealedProductsByUserIdAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input) => await _aggregator.UserSealedProductsByUserIdAsync(input).ConfigureAwait(false);
 }

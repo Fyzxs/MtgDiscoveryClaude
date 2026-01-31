@@ -3,7 +3,7 @@ using Lib.Shared.DataModels.Entities.Itrs.Collections;
 
 namespace Lib.Aggregator.Collections.Tests.Fakes;
 
-internal sealed class CollectionItrEntityFake : ICollectionItrEntity
+public sealed class CollectionItrEntityFake : ICollectionItrEntity
 {
     public string CollectionId { get; init; } = string.Empty;
     public string OwnerId { get; init; } = string.Empty;

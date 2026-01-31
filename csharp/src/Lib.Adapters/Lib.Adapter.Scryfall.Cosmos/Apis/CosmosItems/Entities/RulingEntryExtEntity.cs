@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lib.Cosmos.Apis;
 using Newtonsoft.Json;
 

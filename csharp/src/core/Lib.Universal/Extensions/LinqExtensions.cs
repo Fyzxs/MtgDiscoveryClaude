@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,10 +29,12 @@ public static class LinqExtensions
 
         foreach (TSource item in source)
         {
-            if (item is null) return false;
+            if (item is null)
+            { return false; }
 
             bool result = await predicate(item).ConfigureAwait(false);
-            if (result is false) return false;
+            if (result is false)
+            { return false; }
         }
 
         return true;
@@ -58,7 +60,8 @@ public static class LinqExtensions
         foreach (Task<TSource> item in source)
         {
             TSource awaitedItem = await item.ConfigureAwait(false);
-            if (predicate(awaitedItem) is false) return false;
+            if (predicate(awaitedItem) is false)
+            { return false; }
         }
 
         return true;

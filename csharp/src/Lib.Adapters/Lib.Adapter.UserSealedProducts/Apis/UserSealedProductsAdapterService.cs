@@ -27,9 +27,7 @@ public sealed class UserSealedProductsAdapterService : IUserSealedProductsAdapte
         _queryAdapter = queryAdapter;
     }
 
-    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) =>
-        await _commandAdapter.AddUserSealedProductAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) => await _commandAdapter.AddUserSealedProductAsync(input).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId) =>
-        await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId) => await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId).ConfigureAwait(false);
 }

@@ -16,9 +16,7 @@ internal sealed class UserSealedProductsQueryDomainService : IUserSealedProducts
     { }
 
     private UserSealedProductsQueryDomainService(
-        IUserSealedProductsByUserIdDomainService userSealedProductsByUserIdOperations) =>
-        _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
+        IUserSealedProductsByUserIdDomainService userSealedProductsByUserIdOperations) => _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
 
-    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) =>
-        _userSealedProductsByUserIdOperations.Execute(input);
+    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) => _userSealedProductsByUserIdOperations.Execute(input);
 }

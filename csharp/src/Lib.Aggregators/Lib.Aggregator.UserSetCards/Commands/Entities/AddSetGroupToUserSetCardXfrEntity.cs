@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Commands.Entities;

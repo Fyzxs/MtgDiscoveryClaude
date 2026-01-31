@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public class FailureResponseModelType : ObjectType<FailureResponseModel>
+internal class FailureResponseModelType : ObjectType<FailureResponseModel>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<FailureResponseModel> descriptor)
     {

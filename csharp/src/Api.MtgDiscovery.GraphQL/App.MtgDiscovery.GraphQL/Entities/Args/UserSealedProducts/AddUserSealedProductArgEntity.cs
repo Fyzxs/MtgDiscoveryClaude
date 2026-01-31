@@ -2,7 +2,7 @@ using Lib.Shared.DataModels.Entities.Args.UserSealedProducts;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Args.UserSealedProducts;
 
-public sealed class AddUserSealedProductArgEntity : IAddUserSealedProductArgEntity
+internal sealed class AddUserSealedProductArgEntity : IAddUserSealedProductArgEntity
 {
     public string ProductUuid { get; init; }
     public string SetId { get; init; }

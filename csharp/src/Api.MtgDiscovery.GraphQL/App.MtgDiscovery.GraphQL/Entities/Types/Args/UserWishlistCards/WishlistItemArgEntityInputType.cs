@@ -4,7 +4,7 @@ using HotChocolate.Types;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Args.UserWishlistCards;
 
-public sealed class WishlistItemArgEntityInputType : InputObjectType<UserWishlistCardDetailsArgEntity>
+internal sealed class WishlistItemArgEntityInputType : InputObjectType<UserWishlistCardDetailsArgEntity>
 {
     protected override void Configure([NotNull] IInputObjectTypeDescriptor<UserWishlistCardDetailsArgEntity> descriptor)
     {

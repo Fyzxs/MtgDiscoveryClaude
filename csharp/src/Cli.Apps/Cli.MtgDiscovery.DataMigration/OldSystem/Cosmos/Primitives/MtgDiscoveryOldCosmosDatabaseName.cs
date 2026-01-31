@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 
 namespace Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Primitives;
 

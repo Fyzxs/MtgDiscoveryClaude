@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args.Cards;
@@ -28,7 +28,8 @@ internal sealed class HasMinimumLengthSearchTermArgEntityValidator : OperationRe
     {
         public Task<bool> IsValid(ICardSearchTermArgEntity arg)
         {
-            if (arg?.SearchTerm == null) return Task.FromResult(false);
+            if (arg?.SearchTerm == null)
+                return Task.FromResult(false);
 
             // Normalize the search term to check minimum length
             string normalized = new([.. arg.SearchTerm

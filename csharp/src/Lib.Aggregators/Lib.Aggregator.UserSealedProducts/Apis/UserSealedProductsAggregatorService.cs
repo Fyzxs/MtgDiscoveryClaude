@@ -27,9 +27,7 @@ public sealed class UserSealedProductsAggregatorService : IUserSealedProductsAgg
         _queryOperations = queryOperations;
     }
 
-    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
-        _commandOperations.AddUserSealedProductAsync(input);
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) => await _commandOperations.AddUserSealedProductAsync(input);
 
-    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) =>
-        _queryOperations.UserSealedProductsByUserIdAsync(input);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) => await _queryOperations.UserSealedProductsByUserIdAsync(input);
 }

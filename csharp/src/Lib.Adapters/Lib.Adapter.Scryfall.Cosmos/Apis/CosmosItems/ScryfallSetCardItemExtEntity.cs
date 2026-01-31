@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis;
+using Lib.Cosmos.Apis;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 

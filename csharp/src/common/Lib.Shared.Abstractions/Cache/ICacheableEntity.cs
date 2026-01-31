@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.Abstractions.Cache;
+namespace Lib.Shared.Abstractions.Cache;
 
 /// <summary>
 /// Base RequestEntity to enable caching

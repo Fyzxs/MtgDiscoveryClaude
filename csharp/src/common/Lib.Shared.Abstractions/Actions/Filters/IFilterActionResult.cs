@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.Abstractions.Actions.Filters;
+namespace Lib.Shared.Abstractions.Actions.Filters;
 
 public interface IFilterActionResult<out TFailureStatus>
 {

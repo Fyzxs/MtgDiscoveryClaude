@@ -15,8 +15,7 @@ internal sealed class HasValidTargetUserIdTransferCollectionOwnershipArgEntityVa
 
     public sealed class Validator : IValidator<ITransferCollectionOwnershipArgEntity>
     {
-        public Task<bool> IsValid(ITransferCollectionOwnershipArgEntity arg) =>
-            Task.FromResult(arg.TargetUserId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.TargetUserId, out _));
+        public Task<bool> IsValid(ITransferCollectionOwnershipArgEntity arg) => Task.FromResult(arg.TargetUserId.IzNotNullOrWhiteSpace() && Guid.TryParse(arg.TargetUserId, out _));
     }
 
     public sealed class Message : OperationResponseMessage

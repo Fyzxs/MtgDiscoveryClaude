@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Lib.Adapter.User.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.User;
@@ -15,8 +15,7 @@ internal sealed class RegisterUserAggregatorService : IRegisterUserAggregatorSer
     public RegisterUserAggregatorService(ILogger logger) : this(new UserAdapterService(logger))
     { }
 
-    private RegisterUserAggregatorService(IUserAdapterService userAdapterService) =>
-        _userAdapterService = userAdapterService;
+    private RegisterUserAggregatorService(IUserAdapterService userAdapterService) => _userAdapterService = userAdapterService;
 
     public async Task<IOperationResponse<IUserSyncOufEntity>> Execute([NotNull] IUserInfoItrEntity input)
     {

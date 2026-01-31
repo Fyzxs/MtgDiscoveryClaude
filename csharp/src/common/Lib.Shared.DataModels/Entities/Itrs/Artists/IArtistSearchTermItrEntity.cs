@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Itrs.Artists;
+namespace Lib.Shared.DataModels.Entities.Itrs.Artists;
 
 public interface IArtistSearchTermItrEntity
 {

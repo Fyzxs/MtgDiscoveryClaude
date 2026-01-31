@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.UserSetCards.Apis.Entities;
+namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
 /// <summary>
 /// Transfer entity for adding or removing a card from a user's set collection.

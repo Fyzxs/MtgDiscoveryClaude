@@ -1,6 +1,6 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class PurchaseUrisOutEntity
+public sealed class PurchaseUrisOutEntity
 {
     public string Tcgplayer { get; set; }
 

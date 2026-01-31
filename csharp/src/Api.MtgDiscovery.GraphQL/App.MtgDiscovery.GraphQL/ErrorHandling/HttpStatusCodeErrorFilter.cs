@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using HotChocolate;
 
 namespace App.MtgDiscovery.GraphQL.ErrorHandling;
 
-public sealed class HttpStatusCodeErrorFilter : IErrorFilter
+internal sealed class HttpStatusCodeErrorFilter : IErrorFilter
 {
     public IError OnError([NotNull] IError error)
     {

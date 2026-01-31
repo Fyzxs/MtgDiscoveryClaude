@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 
@@ -25,7 +25,8 @@ public sealed class MonoStateConfig : IConfig
 
     private static void HandleAlreadySet()
     {
-        if (s_configuration == null) return;
+        if (s_configuration == null) { return; }
+
         throw new InvalidOperationException($"{nameof(MonoStateConfig)} already set.");
     }
 

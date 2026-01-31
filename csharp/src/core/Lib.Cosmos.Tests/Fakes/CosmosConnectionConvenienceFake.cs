@@ -1,9 +1,9 @@
-﻿using Azure.Core;
+using Azure.Core;
 using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosConnectionConvenienceFake : ICosmosConnectionConvenience
+public sealed class CosmosConnectionConvenienceFake : ICosmosConnectionConvenience
 {
     public ICosmosAccountConfig AccountConfigResult { get; init; }
     public int AccountConfigInvokeCount { get; private set; }

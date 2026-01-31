@@ -4,7 +4,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
 
-public sealed class FinishCountsType : ObjectType<FinishCountsOutEntity>
+internal sealed class FinishCountsType : ObjectType<FinishCountsOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<FinishCountsOutEntity> descriptor)
     {

@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.User;
 
-public sealed class UserRegistrationOutEntityType : ObjectType<UserRegistrationOutEntity>
+internal sealed class UserRegistrationOutEntityType : ObjectType<UserRegistrationOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<UserRegistrationOutEntity> descriptor)
     {

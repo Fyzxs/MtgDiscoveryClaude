@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Tests.Fakes;
@@ -15,8 +15,7 @@ public sealed class CosmosGenesisClientAdapterTests
 
         public static CosmosClientOptions OptionsAccess(ICosmosConnectionOptionsConfig config) => Options(config);
 
-        protected override Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient, ThroughputProperties throughputProperties) =>
-            throw new System.NotImplementedException();
+        protected override Task<DatabaseResponse> InternalCreateDatabaseIfNotExistsAsync(ICosmosContainerDefinition containerDefinition, CosmosClient cosmosClient, ThroughputProperties throughputProperties) => throw new System.NotImplementedException();
     }
 
     [TestMethod, TestCategory("unit")]

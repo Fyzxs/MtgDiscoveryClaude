@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Collections.Tests.Fakes;
 
-internal sealed class CollectionCommandDomainServiceFake : ICollectionCommandDomainService
+public sealed class CollectionCommandDomainServiceFake : ICollectionCommandDomainService
 {
     public IOperationResponse<ICollectionOufEntity> CreateCollectionAsyncResult { get; init; }
     public int CreateCollectionAsyncInvokeCount { get; private set; }

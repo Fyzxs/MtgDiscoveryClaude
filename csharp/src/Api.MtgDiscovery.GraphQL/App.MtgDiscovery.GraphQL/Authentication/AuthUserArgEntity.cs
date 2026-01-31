@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Universal.Utilities;
 
 namespace App.MtgDiscovery.GraphQL.Authentication;
 
-public sealed class AuthUserArgEntity : IAuthUserArgEntity
+internal sealed class AuthUserArgEntity : IAuthUserArgEntity
 {
     // Use a consistent namespace GUID for all user subjects
     // This is "MtgUserSubject" encoded as a GUID

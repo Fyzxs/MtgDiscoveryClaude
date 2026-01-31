@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.User.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.User;
@@ -19,9 +19,7 @@ internal sealed class RegisterUserDomainService : IRegisterUserDomainService
     public RegisterUserDomainService(ILogger logger) : this(new UserAggregatorService(logger))
     { }
 
-    private RegisterUserDomainService(IUserAggregatorService userAggregatorService) =>
-        _userAggregatorService = userAggregatorService;
+    private RegisterUserDomainService(IUserAggregatorService userAggregatorService) => _userAggregatorService = userAggregatorService;
 
-    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute(IUserInfoItrEntity input) =>
-        await _userAggregatorService.RegisterUserAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute(IUserInfoItrEntity input) => await _userAggregatorService.RegisterUserAsync(input).ConfigureAwait(false);
 }

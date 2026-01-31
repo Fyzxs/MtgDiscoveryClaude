@@ -42,7 +42,8 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
         IAddSealedProductToCollectionArgsEntity input)
     {
         IValidatorActionResult<IOperationResponse<List<SealedProductOutEntity>>> validatorResult = await _validator.Validate(input).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) { return validatorResult.FailureStatus(); }
+        if (validatorResult.IsNotValid())
+        { return validatorResult.FailureStatus(); }
 
         IAddUserSealedProductItrEntity itrEntity = new AddUserSealedProductItrEntity
         {
@@ -53,7 +54,8 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
         };
 
         IOperationResponse<List<ISealedProductOufEntity>> domainResponse = await _domainService.AddUserSealedProductAsync(itrEntity).ConfigureAwait(false);
-        if (domainResponse.IsFailure) { return new FailureOperationResponse<List<SealedProductOutEntity>>(domainResponse.OuterException); }
+        if (domainResponse.IsFailure)
+        { return new FailureOperationResponse<List<SealedProductOutEntity>>(domainResponse.OuterException); }
 
         SealedProductOutEntity[] mappedEntities = await Task.WhenAll(
             domainResponse.ResponseData.Select(ouf => _sealedProductMapper.Map(ouf))

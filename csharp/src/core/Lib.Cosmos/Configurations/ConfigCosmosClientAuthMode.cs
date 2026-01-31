@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Universal.Configurations;
 

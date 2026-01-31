@@ -7,7 +7,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public class SealedProductsSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<SealedProductOutEntity>>>
+internal class SealedProductsSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<SealedProductOutEntity>>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<SealedProductOutEntity>>> descriptor)
     {

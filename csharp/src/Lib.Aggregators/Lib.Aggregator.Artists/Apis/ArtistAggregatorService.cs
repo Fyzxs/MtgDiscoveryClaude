@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.Artists.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
@@ -17,9 +17,9 @@ public sealed class ArtistAggregatorService : IArtistAggregatorService
 
     private ArtistAggregatorService(IArtistsQueryAggregatorService artistAggregatorOperations) => _artistAggregatorOperations = artistAggregatorOperations;
 
-    public Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => _artistAggregatorOperations.ArtistSearchAsync(searchTerm);
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm) => await _artistAggregatorOperations.ArtistSearchAsync(searchTerm);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => _artistAggregatorOperations.CardsByArtistAsync(artistId);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId) => await _artistAggregatorOperations.CardsByArtistAsync(artistId);
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => _artistAggregatorOperations.CardsByArtistNameAsync(artistName);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName) => await _artistAggregatorOperations.CardsByArtistNameAsync(artistName);
 }

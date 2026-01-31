@@ -1,9 +1,9 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 
 namespace Lib.Cosmos.Tests.Apis.Ids;
 
 [TestClass]
-public class PartitionCosmosPartitionKeyPathTests
+public sealed class PartitionCosmosPartitionKeyPathTests
 {
     [TestMethod, TestCategory("unit")]
     public void AsSystemType_ShouldReturnSlashPartition()

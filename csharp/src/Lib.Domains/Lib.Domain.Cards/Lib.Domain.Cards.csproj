@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
-    <ProjectReference Include="..\Lib.Aggregator.Cards\Lib.Aggregator.Cards.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\Lib.Aggregators\Lib.Aggregator.Cards\Lib.Aggregator.Cards.csproj" />
   </ItemGroup>
 
 </Project>

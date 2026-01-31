@@ -1,8 +1,8 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-public class CosmosContainerNameFake : CosmosContainerName
+public sealed class CosmosContainerNameFake : CosmosContainerName
 {
     private readonly string _value;
 

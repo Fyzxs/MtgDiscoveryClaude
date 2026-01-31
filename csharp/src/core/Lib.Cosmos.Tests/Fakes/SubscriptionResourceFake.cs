@@ -1,4 +1,4 @@
-﻿using Azure.ResourceManager.Resources;
+using Azure.ResourceManager.Resources;
 
 namespace Lib.Cosmos.Tests.Fakes;
 

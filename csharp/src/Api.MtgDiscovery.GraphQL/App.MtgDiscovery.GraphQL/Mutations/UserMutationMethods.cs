@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
 [ExtendObjectType(typeof(ApiMutation))]
-public sealed class UserMutationMethods
+internal sealed class UserMutationMethods
 {
     private readonly IEntryService _entryService;
     private readonly IOperationResponseToResponseModelMapper<UserSyncOutEntity> _userSyncResponseMapper;

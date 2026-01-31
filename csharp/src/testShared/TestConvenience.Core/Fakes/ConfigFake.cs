@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Universal.Configurations;
 
 namespace TestConvenience.Core.Fakes;
 
-public class ConfigFake : IConfig
+public sealed class ConfigFake : IConfig
 {
     private readonly Dictionary<string, string> _values = [];
 

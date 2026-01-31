@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.Abstractions.Actions.Transformations;
+namespace Lib.Shared.Abstractions.Actions.Transformations;
 
 public interface ITransformationAction<in TTarget>
 {

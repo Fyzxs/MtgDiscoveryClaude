@@ -4,4 +4,4 @@ using Lib.Universal.Tests;
 namespace Lib.Cosmos.Tests.Apis.Configurations;
 
 [TestClass]
-public class CosmosAutoscaleMaxTests : BaseToSystemTypeTests<CosmosAutoscaleMax, int>;
+public sealed class CosmosAutoscaleMaxTests : BaseToSystemTypeTests<CosmosAutoscaleMax, int>;

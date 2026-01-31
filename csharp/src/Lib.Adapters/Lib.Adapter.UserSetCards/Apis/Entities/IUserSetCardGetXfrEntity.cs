@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.UserSetCards.Apis.Entities;
+namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
 /// <summary>
 /// Transfer entity for getting user set card data from storage.

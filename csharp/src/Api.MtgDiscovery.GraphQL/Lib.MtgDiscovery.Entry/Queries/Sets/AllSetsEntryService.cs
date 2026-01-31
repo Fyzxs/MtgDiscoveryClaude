@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
@@ -42,7 +42,8 @@ internal sealed class AllSetsEntryService : IAllSetsEntryService
     {
         IAllSetsItrEntity allSetsItr = await _allSetsMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.AllSetsAsync(allSetsItr).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
 
         List<SetItemOutEntity> outEntities = await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 

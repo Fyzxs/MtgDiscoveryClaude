@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.Artists.Apis.Entities;
+namespace Lib.Adapter.Artists.Apis.Entities;
 
 /// <summary>
 /// Transfer representation of an artist identifier used by the adapter layer.

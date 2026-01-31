@@ -7,19 +7,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
-    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
-    <ProjectReference Include="..\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
-    <ProjectReference Include="..\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
-    <ProjectReference Include="..\Lib.Domain.Sets\Lib.Domain.Sets.csproj" />
-    <ProjectReference Include="..\Lib.Domain.Artists\Lib.Domain.Artists.csproj" />
-    <ProjectReference Include="..\Lib.Domain.User\Lib.Domain.User.csproj" />
-    <ProjectReference Include="..\Lib.Domain.UserCards\Lib.Domain.UserCards.csproj" />
-    <ProjectReference Include="..\Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj" />
-    <ProjectReference Include="..\Lib.Domain.UserWishlistCards\Lib.Domain.UserWishlistCards.csproj" />
-    <ProjectReference Include="..\Lib.Domain.SealedProducts\Lib.Domain.SealedProducts.csproj" />
-    <ProjectReference Include="..\Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj" />
-    <ProjectReference Include="..\Lib.Domain.Collections\Lib.Domain.Collections.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.Sets\Lib.Domain.Sets.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.Artists\Lib.Domain.Artists.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.User\Lib.Domain.User.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.UserCards\Lib.Domain.UserCards.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.UserSetCards\Lib.Domain.UserSetCards.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.UserWishlistCards\Lib.Domain.UserWishlistCards.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.SealedProducts\Lib.Domain.SealedProducts.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.UserSealedProducts\Lib.Domain.UserSealedProducts.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.Collections\Lib.Domain.Collections.csproj" />
   </ItemGroup>
-
 </Project>

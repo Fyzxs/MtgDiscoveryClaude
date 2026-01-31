@@ -1,4 +1,4 @@
-﻿namespace Lib.Universal.Extensions;
+namespace Lib.Universal.Extensions;
 
 public static class StringExtensions
 {

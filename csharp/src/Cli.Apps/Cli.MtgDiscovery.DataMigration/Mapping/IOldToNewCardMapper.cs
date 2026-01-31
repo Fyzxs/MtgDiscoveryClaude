@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 using Lib.MtgDiscovery.Entry.Entities;

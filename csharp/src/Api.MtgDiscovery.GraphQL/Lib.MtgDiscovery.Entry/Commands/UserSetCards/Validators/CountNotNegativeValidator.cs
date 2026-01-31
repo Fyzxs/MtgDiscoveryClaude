@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
@@ -15,9 +15,11 @@ internal sealed class CountNotNegativeValidator : OperationResponseValidator<IAd
     {
         public Task<bool> IsValid(IAddSetGroupToUserSetCardArgsEntity arg)
         {
-            if (arg.AddSetGroupToUserSetCard is null) return Task.FromResult(false);
+            if (arg.AddSetGroupToUserSetCard is null)
+                return Task.FromResult(false);
 
-            if (arg.AddSetGroupToUserSetCard.Counts is null) return Task.FromResult(false);
+            if (arg.AddSetGroupToUserSetCard.Counts is null)
+                return Task.FromResult(false);
 
             bool allCountsValid = 0 <= arg.AddSetGroupToUserSetCard.Counts.Total
                                   && 0 <= arg.AddSetGroupToUserSetCard.Counts.NonFoil

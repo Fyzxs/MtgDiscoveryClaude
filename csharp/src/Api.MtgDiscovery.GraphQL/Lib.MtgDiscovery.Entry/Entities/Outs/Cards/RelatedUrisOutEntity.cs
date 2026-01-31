@@ -1,6 +1,6 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class RelatedUrisOutEntity
+public sealed class RelatedUrisOutEntity
 {
     public string Gatherer { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Lib.Shared.Abstractions.Actions.Validators;
 
@@ -13,7 +13,8 @@ public abstract class ValidatorActionContainer<TItem, TFailureStatus> : IValidat
         foreach (IValidatorAction<TItem, TFailureStatus> action in _actions)
         {
             IValidatorActionResult<TFailureStatus> result = await action.Validate(item).ConfigureAwait(false);
-            if (result.IsNotValid()) return result;
+            if (result.IsNotValid())
+                return result;
         }
 
         return new ValidatorActionResult<TFailureStatus>();

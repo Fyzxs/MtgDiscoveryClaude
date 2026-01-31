@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Operators;
 
@@ -12,9 +12,7 @@ internal sealed class CollectionSetIdToReadPointItemMapper : ICollectionSetIdToR
     {
     }
 
-    private CollectionSetIdToReadPointItemMapper(IStringCollectionToReadPointItemMapper mapper) =>
-        _mapper = mapper;
+    private CollectionSetIdToReadPointItemMapper(IStringCollectionToReadPointItemMapper mapper) => _mapper = mapper;
 
-    public Task<ICollection<ReadPointItem>> Map(IEnumerable<string> setIds) =>
-        _mapper.Map(setIds);
+    public async Task<ICollection<ReadPointItem>> Map(IEnumerable<string> setIds) => await _mapper.Map(setIds);
 }

@@ -1,0 +1,8 @@
+root = false
+
+# CLI project analyzers - suppressed rules for command-line applications
+# CA2254: Template string should be a static constant
+dotnet_diagnostic.CA2254.severity = none
+
+# CA1848: Use logger delegate
+dotnet_diagnostic.CA1848.severity = none

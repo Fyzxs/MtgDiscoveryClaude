@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Actions.Validators;
@@ -24,7 +24,8 @@ internal sealed class CollectedItemFinishValidator : OperationResponseValidator<
 
         public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg)
         {
-            if (arg.AddUserCard.UserCardDetails is null) return Task.FromResult(true); // Skip if null, handled by null validator
+            if (arg.AddUserCard.UserCardDetails is null)
+                return Task.FromResult(true); // Skip if null, handled by null validator
 
             return Task.FromResult(s_validFinishes.Contains(arg.AddUserCard.UserCardDetails.Finish));
         }

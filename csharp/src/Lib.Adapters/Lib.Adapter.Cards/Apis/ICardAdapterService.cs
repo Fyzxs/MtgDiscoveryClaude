@@ -1,4 +1,4 @@
-﻿
+
 namespace Lib.Adapter.Cards.Apis;
 
 /// <summary>

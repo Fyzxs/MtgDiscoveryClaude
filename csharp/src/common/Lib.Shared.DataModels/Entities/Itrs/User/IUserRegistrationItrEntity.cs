@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Itrs.User;
+namespace Lib.Shared.DataModels.Entities.Itrs.User;
 
 public interface IUserRegistrationItrEntity
 {

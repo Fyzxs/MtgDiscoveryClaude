@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -20,8 +20,7 @@ internal sealed class AllSetsAdapter : IAllSetsAdapter
 
     public AllSetsAdapter(ILogger logger) : this(new AllSetItemsInquisition(logger)) { }
 
-    private AllSetsAdapter(ICosmosInquisition allSetsInquisition) =>
-        _allSetsInquisition = allSetsInquisition;
+    private AllSetsAdapter(ICosmosInquisition allSetsInquisition) => _allSetsInquisition = allSetsInquisition;
 
     public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(IAllSetsXfrEntity input)
     {

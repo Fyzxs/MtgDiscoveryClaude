@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Azure.Core;
 using Azure.ResourceManager.Resources;
 using Lib.Cosmos.Apis.Configurations;

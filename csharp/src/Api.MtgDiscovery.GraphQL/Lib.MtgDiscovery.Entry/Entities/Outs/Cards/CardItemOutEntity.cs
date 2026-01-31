@@ -1,10 +1,11 @@
-﻿#pragma warning disable CA1056, CA1819
+#pragma warning disable CA1056, CA1819
 using System.Collections.Generic;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserWishlistCards;
 
 namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class CardItemOutEntity
+public sealed class CardItemOutEntity
 {
 
     public string Id { get; set; }
@@ -185,5 +186,5 @@ public class CardItemOutEntity
     public ICollection<CollectedItemOutEntity> UserCollection { get; set; }
 
     // User wishlist data (populated when UserId provided)
-    public ICollection<Lib.MtgDiscovery.Entry.Entities.Outs.UserWishlistCards.WishlistItemOutEntity> UserWishlist { get; set; }
+    public ICollection<WishlistItemOutEntity> UserWishlist { get; set; }
 }

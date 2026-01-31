@@ -15,10 +15,8 @@ public sealed class SealedProductsDomainService : ISealedProductsDomainService
     public SealedProductsDomainService(ILogger logger) : this(new SealedProductsBySetCodeDomainService(logger))
     { }
 
-    private SealedProductsDomainService(ISealedProductsBySetCodeDomainService sealedProductsBySetCodeDomainService) =>
-        _sealedProductsBySetCodeDomainService = sealedProductsBySetCodeDomainService;
+    private SealedProductsDomainService(ISealedProductsBySetCodeDomainService sealedProductsBySetCodeDomainService) => _sealedProductsBySetCodeDomainService = sealedProductsBySetCodeDomainService;
 
     public Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> SealedProductsBySetCodeAsync(
-        ISealedProductsBySetCodeItrEntity setCode) =>
-        _sealedProductsBySetCodeDomainService.Execute(setCode);
+        ISealedProductsBySetCodeItrEntity setCode) => _sealedProductsBySetCodeDomainService.Execute(setCode);
 }

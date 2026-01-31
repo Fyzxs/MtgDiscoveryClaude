@@ -1,4 +1,4 @@
-﻿namespace Lib.Cosmos.Apis;
+namespace Lib.Cosmos.Apis;
 
 public /* cosmos required */ class CosmosEntity
 {

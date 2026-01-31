@@ -2,7 +2,7 @@ using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosThroughputModeFake : ICosmosThroughputMode
+public sealed class CosmosThroughputModeFake : ICosmosThroughputMode
 {
     public bool IsDatabaseSharedResult { get; init; }
     public int IsDatabaseSharedInvokeCount { get; private set; }

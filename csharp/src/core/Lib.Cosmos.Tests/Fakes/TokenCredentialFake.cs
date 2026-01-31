@@ -1,10 +1,10 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Core;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class TokenCredentialFake : TokenCredential
+public sealed class TokenCredentialFake : TokenCredential
 {
     public AccessToken GetTokenResult { get; init; }
     public int GetTokenInvokeCount { get; private set; }

@@ -22,8 +22,7 @@ internal sealed class SearchArtistsAdapter : ISearchArtistsAdapter
 
     public SearchArtistsAdapter(ILogger logger) : this(new ArtistNameTrigramSearchInquisition(logger)) { }
 
-    private SearchArtistsAdapter(ICosmosInquisition<ArtistNameTrigramSearchInquisitionArgs> artistNameTrigramSearchInquisition) =>
-        _artistNameTrigramSearchInquisition = artistNameTrigramSearchInquisition;
+    private SearchArtistsAdapter(ICosmosInquisition<ArtistNameTrigramSearchInquisitionArgs> artistNameTrigramSearchInquisition) => _artistNameTrigramSearchInquisition = artistNameTrigramSearchInquisition;
 
     public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> Execute([NotNull] IArtistSearchTermXfrEntity input)
     {
@@ -46,14 +45,16 @@ internal sealed class SearchArtistsAdapter : ISearchArtistsAdapter
                 .QueryAsync<ArtistNameTrigramExtEntity>(args)
                 .ConfigureAwait(false);
 
-            if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null) continue;
+            if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null)
+                continue;
 
             foreach (ArtistNameTrigramExtEntity trigramDoc in trigramResponse.Value)
             {
                 foreach (ArtistNameTrigramDataExtEntity entry in trigramDoc.Artists)
                 {
                     // Server-side filtering should have already filtered, but double-check
-                    if (entry.Normalized.Contains(input.Normalized) is false) continue;
+                    if (entry.Normalized.Contains(input.Normalized) is false)
+                        continue;
 
                     // Track unique artists and their match counts for sorting
                     if (seenArtistIds.Add(entry.ArtistId))

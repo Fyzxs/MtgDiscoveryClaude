@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;

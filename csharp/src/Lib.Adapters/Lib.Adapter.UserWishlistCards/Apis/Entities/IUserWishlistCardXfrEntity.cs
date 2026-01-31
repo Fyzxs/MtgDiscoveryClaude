@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.UserWishlistCards.Apis.Entities;
+namespace Lib.Adapter.UserWishlistCards.Apis.Entities;
 
 public interface IUserWishlistCardXfrEntity
 {

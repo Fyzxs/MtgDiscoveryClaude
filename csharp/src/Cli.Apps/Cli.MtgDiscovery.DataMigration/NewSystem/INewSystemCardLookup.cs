@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.Invocation.Operations;
 

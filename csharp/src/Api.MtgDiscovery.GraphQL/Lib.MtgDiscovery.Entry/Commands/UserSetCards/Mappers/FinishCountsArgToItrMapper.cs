@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.UserSetCards.Entities;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;

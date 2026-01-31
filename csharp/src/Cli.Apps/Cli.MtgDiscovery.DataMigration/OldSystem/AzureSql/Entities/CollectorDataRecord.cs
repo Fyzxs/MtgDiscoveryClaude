@@ -1,4 +1,4 @@
-﻿namespace Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
+namespace Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 
 internal sealed class CollectorDataRecord
 {

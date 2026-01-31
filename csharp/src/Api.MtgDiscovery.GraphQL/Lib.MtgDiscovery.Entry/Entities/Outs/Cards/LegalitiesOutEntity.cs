@@ -1,6 +1,6 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
-public class LegalitiesOutEntity
+public sealed class LegalitiesOutEntity
 {
     public string Standard { get; set; }
 

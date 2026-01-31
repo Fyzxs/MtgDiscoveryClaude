@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis.Configurations;
+using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using TestConvenience.Core.Fakes;
@@ -6,7 +6,7 @@ using TestConvenience.Core.Fakes;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosClientAuthModeTests
+public sealed class ConfigCosmosClientAuthModeTests
 {
     [TestMethod, TestCategory("unit")]
     public void AsSystemType_ShouldReturnKeyAuth_WhenConfigValueIsKeyAuth()

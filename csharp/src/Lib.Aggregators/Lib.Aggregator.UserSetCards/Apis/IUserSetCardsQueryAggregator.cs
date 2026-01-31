@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 
 namespace Lib.Aggregator.UserCards.Entities;

@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using App.MtgDiscovery.GraphQL.Authentication;
 using App.MtgDiscovery.GraphQL.Entities.Types.User;
 using HotChocolate;
@@ -8,7 +8,7 @@ using HotChocolate.Types;
 namespace App.MtgDiscovery.GraphQL.Queries;
 
 [ExtendObjectType(typeof(ApiQuery))]
-public sealed class UserInfoQueryMethods
+internal sealed class UserInfoQueryMethods
 {
     [Authorize]
     [GraphQLType(typeof(UserInfoOutEntityType))]

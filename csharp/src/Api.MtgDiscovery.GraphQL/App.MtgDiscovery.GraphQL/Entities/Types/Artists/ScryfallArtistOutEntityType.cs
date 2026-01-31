@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Artists;
 
-public sealed class ScryfallArtistOutEntityType : ObjectType<ScryfallArtistOutEntity>
+internal sealed class ScryfallArtistOutEntityType : ObjectType<ScryfallArtistOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<ScryfallArtistOutEntity> descriptor)
     {

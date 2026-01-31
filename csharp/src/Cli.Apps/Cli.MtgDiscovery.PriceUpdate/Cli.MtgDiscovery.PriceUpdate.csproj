@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <ItemGroup>
-    <ProjectReference Include="..\Example.Core\Example.Core.csproj" />
-    <ProjectReference Include="..\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
-    <ProjectReference Include="..\Lib.Cosmos\Lib.Cosmos.csproj" />
-    <ProjectReference Include="..\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\..\.examples\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Cosmos\Lib.Cosmos.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

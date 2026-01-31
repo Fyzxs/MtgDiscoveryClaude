@@ -1,4 +1,4 @@
-﻿using Lib.Cosmos.Apis;
+using Lib.Cosmos.Apis;
 using Lib.Cosmos.Apis.Configurations;
 using Lib.Cosmos.Configurations;
 using Lib.Cosmos.Tests.Fakes;
@@ -9,7 +9,7 @@ using TestConvenience.Core.Reflection;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosConfigurationTests
+public sealed class ConfigCosmosConfigurationTests
 {
     private sealed class InstanceWrapper : TypeWrapper<ConfigCosmosConfiguration>
     {

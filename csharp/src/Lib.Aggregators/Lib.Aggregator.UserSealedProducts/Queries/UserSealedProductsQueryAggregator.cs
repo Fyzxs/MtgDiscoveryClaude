@@ -16,9 +16,7 @@ internal sealed class UserSealedProductsQueryAggregator : IUserSealedProductsQue
     { }
 
     private UserSealedProductsQueryAggregator(
-        IUserSealedProductsByUserIdAggregatorService userSealedProductsByUserIdOperations) =>
-        _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
+        IUserSealedProductsByUserIdAggregatorService userSealedProductsByUserIdOperations) => _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
 
-    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) =>
-        _userSealedProductsByUserIdOperations.Execute(input);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) => await _userSealedProductsByUserIdOperations.Execute(input);
 }

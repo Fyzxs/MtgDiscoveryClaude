@@ -1,4 +1,4 @@
-﻿using Lib.Shared.Abstractions.Actions.Filters;
+using Lib.Shared.Abstractions.Actions.Filters;
 
 namespace Lib.Shared.Invocation.Commands;
 

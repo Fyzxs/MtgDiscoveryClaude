@@ -13,14 +13,19 @@ internal sealed class OldFinishMapper : IOldFinishMapper
     public Task<string> Map((bool foil, bool nonfoil, bool etched) source)
     {
         int trueCount = 0;
-        if (source.foil) trueCount++;
-        if (source.nonfoil) trueCount++;
-        if (source.etched) trueCount++;
+        if (source.foil)
+            trueCount++;
+        if (source.nonfoil)
+            trueCount++;
+        if (source.etched)
+            trueCount++;
 
         if (trueCount != 1)
         {
             string message = $"Exactly one finish flag must be true. Found {trueCount} true values (foil:{source.foil}, nonfoil:{source.nonfoil}, etched:{source.etched})";
+#pragma warning disable CA2254
             _logger.LogError(message);
+#pragma warning restore CA2254
             throw new InvalidOperationException(message);
         }
 

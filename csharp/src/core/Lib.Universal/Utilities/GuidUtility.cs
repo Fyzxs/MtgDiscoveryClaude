@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Security.Cryptography;
 using System.Text;
+
+#pragma warning disable // Externally pulled in
 
 namespace Lib.Universal.Utilities;
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -106,7 +106,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static ImageUrisOutEntity MapImageUris(IImageUrisItrEntity source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return new ImageUrisOutEntity
         {
@@ -121,7 +122,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static LegalitiesOutEntity MapLegalities(ILegalitiesItrEntity source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return new LegalitiesOutEntity
         {
@@ -152,7 +154,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static PricesOutEntity MapPrices(IPricesItrEntity source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return new PricesOutEntity
         {
@@ -167,7 +170,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static RelatedUrisOutEntity MapRelatedUris(IRelatedUrisItrEntity source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return new RelatedUrisOutEntity
         {
@@ -180,7 +184,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static PurchaseUrisOutEntity MapPurchaseUris(IPurchaseUrisItrEntity source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return new PurchaseUrisOutEntity
         {
@@ -192,7 +197,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static ICollection<CardFaceOutEntity> MapCardFaces(ICollection<ICardFaceItrEntity> source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return [.. source.Select(face => new CardFaceOutEntity
         {
@@ -222,7 +228,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static ICollection<AllPartsOutEntity> MapAllParts(ICollection<IAllPartsItrEntity> source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return [.. source.Select(part => new AllPartsOutEntity
         {
@@ -236,7 +243,8 @@ internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 
     private static PreviewOutEntity MapPreview(IPreviewItrEntity source)
     {
-        if (source == null) return null;
+        if (source == null)
+            return null;
 
         return new PreviewOutEntity
         {

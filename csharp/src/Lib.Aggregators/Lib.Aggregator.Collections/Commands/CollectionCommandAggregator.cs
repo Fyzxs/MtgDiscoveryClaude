@@ -14,8 +14,7 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
 
     public CollectionCommandAggregator(ILogger logger) : this(new CollectionsAdapterService(logger)) { }
 
-    private CollectionCommandAggregator(ICollectionsAdapterService adapterService) =>
-        _adapterService = adapterService;
+    private CollectionCommandAggregator(ICollectionsAdapterService adapterService) => _adapterService = adapterService;
 
     public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
     {

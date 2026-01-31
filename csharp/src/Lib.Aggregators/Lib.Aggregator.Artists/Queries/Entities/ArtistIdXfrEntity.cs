@@ -1,4 +1,4 @@
-﻿using Lib.Adapter.Artists.Apis.Entities;
+using Lib.Adapter.Artists.Apis.Entities;
 
 namespace Lib.Aggregator.Artists.Queries.Entities;
 

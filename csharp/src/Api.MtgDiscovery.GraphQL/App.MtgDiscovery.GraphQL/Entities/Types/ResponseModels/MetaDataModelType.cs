@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Types;
 using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public class MetaDataModelType : ObjectType<MetaDataModel>
+internal class MetaDataModelType : ObjectType<MetaDataModel>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<MetaDataModel> descriptor)
     {

@@ -8,7 +8,7 @@ using TestConvenience.Core.Reflection;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosDatabaseConfigTests
+public sealed class ConfigCosmosDatabaseConfigTests
 {
     [TestMethod, TestCategory("unit")]
     public void ContainerConfig_ShouldReturnConfigCosmosContainerConfig()

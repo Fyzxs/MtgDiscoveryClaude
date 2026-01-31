@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 

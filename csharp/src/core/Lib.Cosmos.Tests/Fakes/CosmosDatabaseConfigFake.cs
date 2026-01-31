@@ -2,7 +2,7 @@ using Lib.Cosmos.Apis.Configurations;
 
 namespace Lib.Cosmos.Tests.Fakes;
 
-internal sealed class CosmosDatabaseConfigFake : ICosmosDatabaseConfig
+public sealed class CosmosDatabaseConfigFake : ICosmosDatabaseConfig
 {
     public ICosmosContainerConfig ContainerConfigResult { get; init; }
     public int ContainerConfigInvokeCount { get; private set; }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.Universal.Primitives;
 
 namespace Lib.Cosmos.Apis.Configurations;

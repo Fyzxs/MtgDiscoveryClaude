@@ -15,10 +15,8 @@ internal sealed class SealedProductsBySetCodeDomainService : ISealedProductsBySe
     public SealedProductsBySetCodeDomainService(ILogger logger) : this(new SealedProductsAggregatorService(logger))
     { }
 
-    private SealedProductsBySetCodeDomainService(ISealedProductsAggregatorService aggregatorService) =>
-        _aggregatorService = aggregatorService;
+    private SealedProductsBySetCodeDomainService(ISealedProductsAggregatorService aggregatorService) => _aggregatorService = aggregatorService;
 
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(
-        ISealedProductsBySetCodeItrEntity input) =>
-        await _aggregatorService.SealedProductsBySetCodeAsync(input).ConfigureAwait(false);
+        ISealedProductsBySetCodeItrEntity input) => await _aggregatorService.SealedProductsBySetCodeAsync(input).ConfigureAwait(false);
 }

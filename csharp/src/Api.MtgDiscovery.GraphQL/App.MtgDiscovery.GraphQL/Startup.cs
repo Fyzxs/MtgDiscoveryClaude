@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using App.MtgDiscovery.GraphQL.ErrorHandling;
 using App.MtgDiscovery.GraphQL.Schemas;
 using HotChocolate.AspNetCore;

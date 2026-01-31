@@ -1,4 +1,4 @@
-﻿using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Apis;
 using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 

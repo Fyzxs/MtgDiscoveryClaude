@@ -36,8 +36,7 @@ internal sealed class SealedProductIngestionApplication : ExampleApplication
 
     private readonly IReadOnlyList<string> _setCodes;
 
-    public SealedProductIngestionApplication(string[] args) =>
-        _setCodes = ParseSetCodes(args ?? []);
+    public SealedProductIngestionApplication(string[] args) => _setCodes = ParseSetCodes(args ?? []);
 
     protected override async Task Execute()
     {

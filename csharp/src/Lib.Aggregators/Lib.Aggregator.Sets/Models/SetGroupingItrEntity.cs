@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Newtonsoft.Json;

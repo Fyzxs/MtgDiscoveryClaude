@@ -1,10 +1,10 @@
-﻿using Lib.Cosmos.Apis.Ids;
+using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 
 namespace Lib.Cosmos.Tests.Apis.Operators;
 
 [TestClass]
-public class PointItemTests
+public sealed class PointItemTests
 {
     [TestMethod, TestCategory("unit")]
     public void Id_ShouldBeInitializable()

@@ -1,4 +1,4 @@
-﻿namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+namespace Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 
 public sealed class CardNameSearchResultOutEntity
 {

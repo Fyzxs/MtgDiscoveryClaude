@@ -8,7 +8,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.UserCards.Tests.Fakes;
 
-internal sealed class AddUserCardAdapterFake : IAddUserCardAdapter
+public sealed class AddUserCardAdapterFake : IAddUserCardAdapter
 {
     public IOperationResponse<UserCardExtEntity> ExecuteResult { get; set; } =
         new SuccessOperationResponse<UserCardExtEntity>(new UserCardExtEntity

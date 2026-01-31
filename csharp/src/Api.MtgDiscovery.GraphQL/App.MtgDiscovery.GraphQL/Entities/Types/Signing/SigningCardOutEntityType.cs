@@ -5,7 +5,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.Signing;
 
-public sealed class SigningCardOutEntityType : ObjectType<SigningCardOutEntity>
+internal sealed class SigningCardOutEntityType : ObjectType<SigningCardOutEntity>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SigningCardOutEntity> descriptor)
     {

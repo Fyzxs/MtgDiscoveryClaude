@@ -1,4 +1,4 @@
-﻿using Lib.Shared.DataModels.Entities.Itrs.Artists;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Entities;
 

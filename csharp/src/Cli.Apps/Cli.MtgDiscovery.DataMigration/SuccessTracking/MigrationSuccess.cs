@@ -1,4 +1,4 @@
-﻿namespace Cli.MtgDiscovery.DataMigration.SuccessTracking;
+namespace Cli.MtgDiscovery.DataMigration.SuccessTracking;
 
 internal sealed class MigrationSuccess
 {

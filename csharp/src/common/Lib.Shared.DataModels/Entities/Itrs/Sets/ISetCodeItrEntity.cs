@@ -1,4 +1,4 @@
-﻿namespace Lib.Shared.DataModels.Entities.Itrs.Sets;
+namespace Lib.Shared.DataModels.Entities.Itrs.Sets;
 
 public interface ISetCodeItrEntity
 {

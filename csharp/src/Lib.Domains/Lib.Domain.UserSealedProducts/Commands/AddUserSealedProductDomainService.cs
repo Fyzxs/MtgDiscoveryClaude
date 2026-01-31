@@ -16,9 +16,7 @@ internal sealed class AddUserSealedProductDomainService : IAddUserSealedProductD
         new UserSealedProductsAggregatorService(logger))
     { }
 
-    private AddUserSealedProductDomainService(IUserSealedProductsAggregatorService aggregator) =>
-        _aggregator = aggregator;
+    private AddUserSealedProductDomainService(IUserSealedProductsAggregatorService aggregator) => _aggregator = aggregator;
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input) =>
-        await _aggregator.AddUserSealedProductAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input) => await _aggregator.AddUserSealedProductAsync(input).ConfigureAwait(false);
 }

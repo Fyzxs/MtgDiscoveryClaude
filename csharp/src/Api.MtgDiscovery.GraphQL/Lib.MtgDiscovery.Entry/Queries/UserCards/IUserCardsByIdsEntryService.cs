@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
 using Lib.Shared.Invocation.Services;

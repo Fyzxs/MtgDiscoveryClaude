@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Response.Models;
 
 namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
 
-public sealed class UserWishlistSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<UserWishlistCardOutEntity>>>
+internal sealed class UserWishlistSuccessDataResponseModelType : ObjectType<SuccessDataResponseModel<List<UserWishlistCardOutEntity>>>
 {
     protected override void Configure([NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<UserWishlistCardOutEntity>>> descriptor)
     {

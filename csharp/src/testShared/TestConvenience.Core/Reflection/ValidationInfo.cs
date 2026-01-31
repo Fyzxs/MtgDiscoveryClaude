@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 
 namespace TestConvenience.Core.Reflection;
 
-internal sealed class ValidationInfo
+public sealed class ValidationInfo
 {
     private static readonly object s_undefinedExpectedValue = new();
     private readonly string _name;
@@ -38,20 +38,23 @@ internal sealed class ValidationInfo
     private void AssertValue(object actualValue)
     {
 
-        if (_expectedValue == s_undefinedExpectedValue) return;
+        if (_expectedValue == s_undefinedExpectedValue)
+            return;
         AssertPrimitiveValue(actualValue);
         AssertReferenceValue(actualValue);
     }
 
     private void AssertReferenceValue(object actualValue)
     {
-        if (ReferenceEquals(_expectedValue, actualValue)) return;
+        if (ReferenceEquals(_expectedValue, actualValue))
+            return;
         _asserter.AssertIf(_expectedValue.Equals(actualValue) is false, $"Field [name={_name}] is not the same reference as expected and does not '#Equals()' actual. [expected={_expectedValue}] [actual  ={actualValue}]");
     }
 
     private void AssertPrimitiveValue(object actualValue)
     {
-        if (actualValue.GetType().IsPrimitive is false) return;
+        if (actualValue.GetType().IsPrimitive is false)
+            return;
         _asserter.AssertIf(_expectedValue.Equals(actualValue) is false, $"Expected [name={_name}] to have a value of [expected={_expectedValue}] but found [actual={actualValue}].");
     }
 

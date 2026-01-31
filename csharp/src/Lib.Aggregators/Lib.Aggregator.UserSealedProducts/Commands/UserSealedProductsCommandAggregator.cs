@@ -17,9 +17,7 @@ internal sealed class UserSealedProductsCommandAggregator : IUserSealedProductsC
     { }
 
     private UserSealedProductsCommandAggregator(
-        IAddUserSealedProductAggregatorService addUserSealedProductOperations) =>
-        _addUserSealedProductOperations = addUserSealedProductOperations;
+        IAddUserSealedProductAggregatorService addUserSealedProductOperations) => _addUserSealedProductOperations = addUserSealedProductOperations;
 
-    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
-        _addUserSealedProductOperations.Execute(input);
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) => await _addUserSealedProductOperations.Execute(input);
 }

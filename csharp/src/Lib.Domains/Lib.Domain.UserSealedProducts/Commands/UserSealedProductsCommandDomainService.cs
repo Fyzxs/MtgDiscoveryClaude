@@ -17,9 +17,7 @@ internal sealed class UserSealedProductsCommandDomainService : IUserSealedProduc
     { }
 
     private UserSealedProductsCommandDomainService(
-        IAddUserSealedProductDomainService addUserSealedProductOperations) =>
-        _addUserSealedProductOperations = addUserSealedProductOperations;
+        IAddUserSealedProductDomainService addUserSealedProductOperations) => _addUserSealedProductOperations = addUserSealedProductOperations;
 
-    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) =>
-        _addUserSealedProductOperations.Execute(input);
+    public Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) => _addUserSealedProductOperations.Execute(input);
 }

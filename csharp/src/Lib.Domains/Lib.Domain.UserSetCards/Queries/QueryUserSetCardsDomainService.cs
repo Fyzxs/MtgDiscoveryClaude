@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Domain.UserSetCards.Apis;
@@ -17,12 +17,9 @@ internal sealed class QueryUserSetCardsDomainService : IUserSetCardsQueryDomainS
     {
     }
 
-    private QueryUserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) =>
-        _userSetCardsAggregatorService = userSetCardsAggregatorService;
+    private QueryUserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) => _userSetCardsAggregatorService = userSetCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) =>
-        await _userSetCardsAggregatorService.UserSetCardByUserAndSetAsync(userSetCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _userSetCardsAggregatorService.UserSetCardByUserAndSetAsync(userSetCard).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) =>
-        await _userSetCardsAggregatorService.AllUserSetCardsAsync(userSetCards).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) => await _userSetCardsAggregatorService.AllUserSetCardsAsync(userSetCards).ConfigureAwait(false);
 }

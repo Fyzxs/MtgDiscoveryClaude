@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Lib.Cosmos.Configurations;
 using Lib.Universal.Configurations;
 using Microsoft.Azure.Cosmos;
@@ -7,7 +7,7 @@ using TestConvenience.Core.Fakes;
 namespace Lib.Cosmos.Tests.Configurations;
 
 [TestClass]
-public class ConfigCosmosConnectionModeTests
+public sealed class ConfigCosmosConnectionModeTests
 {
     [TestMethod, TestCategory("unit")]
     public void AsSystemType_ShouldReturnGateway_WhenConfigValueIsGateway()

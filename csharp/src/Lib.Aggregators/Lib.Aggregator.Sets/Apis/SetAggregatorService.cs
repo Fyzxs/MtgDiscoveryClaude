@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
 using Lib.Shared.DataModels.Entities.Oufs.Sets;

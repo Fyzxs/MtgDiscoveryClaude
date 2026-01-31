@@ -1,4 +1,4 @@
-﻿namespace Lib.Adapter.Cards.Apis.Entities;
+namespace Lib.Adapter.Cards.Apis.Entities;
 
 /// <summary>
 /// Transfer representation of a card name used by the adapter layer.

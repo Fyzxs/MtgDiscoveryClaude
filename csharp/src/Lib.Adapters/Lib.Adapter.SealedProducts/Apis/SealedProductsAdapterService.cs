@@ -16,11 +16,9 @@ public sealed class SealedProductsAdapterService : ISealedProductsAdapterService
     public SealedProductsAdapterService(ILogger logger) : this(new SealedProductsBySetCodeAdapter(logger))
     { }
 
-    private SealedProductsAdapterService(ISealedProductsBySetCodeAdapter sealedProductsBySetCodeAdapter) =>
-        _sealedProductsBySetCodeAdapter = sealedProductsBySetCodeAdapter;
+    private SealedProductsAdapterService(ISealedProductsBySetCodeAdapter sealedProductsBySetCodeAdapter) => _sealedProductsBySetCodeAdapter = sealedProductsBySetCodeAdapter;
 
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> GetBySetCodeAsync(
         ISealedProductsBySetCodeXfrEntity setCode,
-        CancellationToken cancellationToken) =>
-        await _sealedProductsBySetCodeAdapter.Execute(setCode).ConfigureAwait(false);
+        CancellationToken cancellationToken) => await _sealedProductsBySetCodeAdapter.Execute(setCode).ConfigureAwait(false);
 }

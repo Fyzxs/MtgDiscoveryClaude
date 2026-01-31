@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -51,11 +51,13 @@ internal sealed class CardsByIdsEntryService : ICardsByIdsEntryService
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ICardIdsArgEntity args)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _cardIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
-        if (validatorResult.IsNotValid()) return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ICardIdsItrEntity itrEntity = await _cardIdsArgToItrMapper.Map(args).ConfigureAwait(false);
         IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByIdsAsync(itrEntity).ConfigureAwait(false);
-        if (opResponse.IsFailure) return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 

@@ -6,7 +6,7 @@ using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.Collections.Tests.Fakes;
 
-internal sealed class CollectionCommandAdapterFake : ICollectionCommandAdapter
+public sealed class CollectionCommandAdapterFake : ICollectionCommandAdapter
 {
     public IOperationResponse<ICollectionOufEntity> CreateCollectionAsyncResult { get; init; }
     public int CreateCollectionAsyncInvokeCount { get; private set; }
