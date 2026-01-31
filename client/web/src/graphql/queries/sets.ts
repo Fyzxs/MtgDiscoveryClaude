@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_ALL_SETS = gql`
-  query GetAllSets($args: AllSetsInput) {
+  query GetAllSets($args: AllSetsInput!) {
     allSets(args: $args) {
       __typename
       ... on SetsSuccessResponse {

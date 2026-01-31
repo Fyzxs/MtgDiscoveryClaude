@@ -188,7 +188,7 @@ export function useHomePageData(): UseHomePageDataResult {
   const { auth0User, userProfile } = useUser();
 
   const { data: setsData, error: setsError } = useQuery(GET_ALL_SETS, {
-    variables: { args: isAuthenticated ? { userId: userProfile?.id } : null },
+    variables: { args: isAuthenticated ? { userId: userProfile?.id } : {} },
   });
 
   const { data: wishlistData, error: wishlistError } = useQuery(GET_USER_WISHLIST, {

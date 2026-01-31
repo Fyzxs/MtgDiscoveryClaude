@@ -23,7 +23,7 @@ export const FeaturedSetsCarousel: React.FC = () => {
   const [isHovering, setIsHovering] = useState(false);
 
   const { data, loading, error } = useQuery(GET_ALL_SETS, {
-    variables: { args: null },
+    variables: { args: {} },
   });
 
   const featuredSets = useMemo(() => {
