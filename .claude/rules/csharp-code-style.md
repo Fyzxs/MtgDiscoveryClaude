@@ -1,80 +1,44 @@
-# MicroObjects - Bulletpoint Summary
-MicroObjects is about creating a rich domain model where every concept is explicitly represented. By following these practices, you create code that is:
+# MicroObjects Philosophy
+
+This codebase uses MicroObjects—a design philosophy where every concept is explicitly represented as an object.
+
+## Core Principle
+
+**Have a representation for every concept.** If you can name it, make it an object. This creates code that is:
 - Self-documenting through meaningful types
 - Highly maintainable through low coupling
 - Extremely flexible through composition
 - Nearly bug-free through simplicity
 
-## Core Principle
-- **Have a representation for every concept** - If you can name it, make it an object
+## The Philosophy
 
-## Scoping
-Non-test classes creted should be `internal`; unless in an `Apis` folder. Everything in the `Apis` folder is `public`.
+- **Trust collaborators** — Objects behave as designed
+- **Minimal knowledge** — Each class knows only what it needs
+- **Single responsibility** — One thing, done well
+- **Thoughts as types** — Explicit over implicit
+- **Continuous refinement** — Refactor until the code is obvious
+- **Code-free constructors** — Only assign dependencies, never initialize logic
 
-## 18 Technical Practices
+## Red Flags
 
-### Object Design
-- **No Getters/Setters** - Expose behavior, not data
-- **Be Immutable** - Use `private readonly` fields, return new instances for changes
-- **Interface Everything** - Every non-primitive-obsession class should have an interface in it's heirarchy
-- **No Logic in Constructors** - Only assign dependencies to fields
+Watch for these signals that a design needs rethinking:
 
-### Dependencies & Coupling
-- **Abstract 3rd Party Code** - Wrap external dependencies
-- **No Public Statics** - Use instance methods instead
-- **No New Inline** - Use dependency injection, never instantiate in methods
-- **Composition Over Inheritance** - Prefer composition for flexibility
+- Classes with more than 5-7 methods (sign of multiple responsibilities)
+- Methods with more than 3-4 lines (overly complex logic)
+- Type checking or inspection (`typeof`, `instanceof`)
+- Mutable state (prefer immutability)
+- Static methods or properties
+- Utility/Manager/Service/Helper classes (symptoms of unclear responsibility)
 
-### Control Flow
-- **If Only as Guard Clauses** - Early returns only, no branching
-- **No Switch/Else** - Replace with polymorphism
-- **No Greater Than** - Use only `<` operator for consistency
-- **No Boolean Negation** - Use `is false` or explicit inverse methods
+**When you see these patterns in the codebase, look at how they're handled.** Understanding the *why* matters more than following rules.
 
-### Type Safety
-- **No Nulls** - Use Null Object pattern
-- **No Primitives** - Wrap in domain objects
-- **No Enums** - Replace with polymorphic objects
-- **Never Reflection** - Breaks encapsulation
-- **No Type Inspection** - No instanceof/typeof checks
+## Learning the Style
 
-## Key Philosophies
-- **Trust collaborators** to behave properly
-- **Make classes ignorant** - Minimal knowledge of collaborators
-- **Single responsibility extreme** - One thing done well
-- **Represent thoughts as types** - Explicit over implicit
-- **Refactor until impossible** - Continuous breakdown
-- **Code-free constructors** - More maintainable and testable
+The best way to learn this style is to read the existing code. Look for:
+- How objects expose behavior instead of data
+- How conditional logic is replaced with polymorphism
+- How primitives are wrapped in domain objects
+- How external dependencies are abstracted
+- How constructors stay simple and dependency-focused
 
-## CLEAN Principles
-- **Cohesive** - Parts work together for single purpose
-- **Loosely Coupled** - Minimal dependencies
-- **Encapsulated** - Hidden implementation
-- **Assertive** - Objects manage own state/rules
-- **Nonredundant** - No duplicate code/concepts
-
-## Red Flags to Avoid
-- Classes with >5-7 methods
-- Methods with >3-4 lines
-- Type checking/instanceof
-- Mutable state
-- Static methods/properties
-- Utility/Manager/Service/Helper classes
-- Greater than operators
-- Boolean negation operator
-
-## Implementation Patterns
-
-### Creating Objects
-1. Define interface first (behavior contract)
-2. Create concrete implementation
-3. Use constructor injection
-4. Keep constructors logic-free
-5. Make fields private readonly
-
-### Refactoring Process
-1. Identify implicit concepts
-2. Extract into explicit objects
-3. Replace conditionals with polymorphism
-4. Wrap primitives in domain objects
-5. Abstract external dependencies
+See your team lead or code examples for real patterns in action.

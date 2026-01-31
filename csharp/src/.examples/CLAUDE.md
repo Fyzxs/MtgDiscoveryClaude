@@ -1,38 +1,33 @@
-# .examples Projects
+# Examples
 
 ## Purpose
-Educational code demonstrating how to use the MTG Discovery platform layers and patterns. Each project shows developers concrete examples of interacting with specific components (Cosmos DB, Scryfall API, filtering patterns, etc.).
+Educational code demonstrating how to use platform layers and patterns. Show developers concrete examples without production complexity.
 
-## Projects
+## Example.Core
 
-### Example.Core
-Shared base for all example applications:
-- `ExampleApplication` abstract class: Template method pattern with `StartUp()` → `Execute()` lifecycle
-- `SimpleConsoleLogger`: Basic logging for console examples
-- Configuration loading: Reads `appsettings.json` and `local.settings.json`
-- Static `MonoStateConfig`: Sets application-wide configuration (acceptable for examples only)
+Base class and utilities for all examples:
+- `ExampleApplication` — Template method: `StartUp()` → `Execute()`
+- `SimpleConsoleLogger` — Basic logging
+- Configuration loading from `appsettings.json` + `local.settings.json`
 
-Extend `ExampleApplication` in executable projects to get automatic configuration and logging setup.
+Extend `ExampleApplication` to get automatic config and logging setup.
 
-## Code Style Rules
-- Skip production-level null checks and validation where clarity matters
-- Omit defensive programming for non-critical paths
-- Focus on demonstrating the pattern, not production hardening
+## Creating Examples
 
-**Always follow:**
+1. Extend `Example.Core.ExampleApplication`
+2. Name project: `Example.<FeatureName>`
+3. Implement `Execute()` async method
+4. Provide `appsettings.json`
+5. Focus on ONE pattern only
+
+## Code Style
+
 - File-scoped namespaces
 - Constructor injection only
-- No comments unless explaining a non-obvious pattern
-
-## Creating New Examples
-
-1. Extend `Example.Core.ExampleApplication` for new executable examples
-2. Name your project `Example.<FeatureName>` (e.g., `Example.SealedProducts`)
-3. Implement `Execute()` async method with your demonstration logic
-4. Update `Example.Core.csproj` if adding shared utilities
-5. Provide `appsettings.json` with configuration for your example
-6. Keep code focused on demonstrating ONE pattern or layer interaction
+- Skip production null checks if clarity matters
+- No defensive programming for non-critical paths
+- Only add comments for non-obvious patterns
 
 ## Key Principle
 
-Examples prioritize **clarity and demonstration** over production robustness. They show "how to use X" not "how to build production X". When developers read your example, they should immediately see the pattern you're demonstrating.
+Examples are for **clarity, not robustness**. Show "how to use X", not "how to build production X". Reader should immediately see the pattern.

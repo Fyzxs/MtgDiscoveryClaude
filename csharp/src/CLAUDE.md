@@ -1,64 +1,65 @@
-# CSHARP SOURCE CODE
+# C# Source Code
 
-## Tech stack
+## Tech Stack
 - .NET 10 / C# (modern style)
 - ASP.NET Core (Minimal APIs)
 - Azure hosting (App Service / Containers)
-- Observability: Application Insights (logs + metrics)
+- Observability: Application Insights
 
-## Repo map
-- Api.MtgDiscovery.GraphQl  → The GraphQL Entry project, thin as can be
-- Lib.Domains               → Access Layer for higher layers, knows about aggregators
-- Lib.Aggregators           → Translates/aggregates to/from Adapters
-- Lib.Adapters              → Knows about external entities
-- common/                   → common libraries used across the project
-- core                      → core libraries
-- testShared/               → functionality shared across tests
+## Repo Structure
 
-## Hard rules (do not violate)
-- NEVER add new framework layers or "Clean Architecture cosplay".
-- NEVER introduce patterns we don't use (AutoMapper, repositories, magic abstractions).
-- NEVER use dependency injection frameworks.
-- Always pass CancellationToken through all async calls.
-- No sync-over-async (no .Result/.Wait).
-- No Task.Run inside request handlers.
-- Outbound HTTP MUST have timeouts + cancellation.
-- Caching MUST have: time budget, stampede protection strategy, and key versioning.
+| Directory | Purpose |
+|-----------|---------|
+| **Api.MtgDiscovery.GraphQL** | Thin GraphQL HTTP entry point |
+| **Lib.Domains** | Orchestration layer (delegates to Aggregators) |
+| **Lib.Aggregators** | Coordinates adapter calls, combines responses |
+| **Lib.Adapters** | External system integration (Cosmos, APIs) |
+| **common/** | Cross-cutting libraries and abstractions |
+| **core/** | Core infrastructure (Cosmos, config, HTTP) |
 
-## Code Style
-Use `.claude/rules/csharp-code-style.md` for details when writing C# code.
+## Core Constraints
 
-## Default workflow 
-1) Ask for missing requirements before changing code.
-2) Propose a plan + list files to touch.
-3) Implement smallest change that works.
-4) Add/update tests when relevant.
+- No framework DI containers (constructor chaining only)
+- No AutoMapper, repositories, or "magic" abstractions
+- No new architectural layers (7 layers exist, don't add more)
+- Always use `CancellationToken` in async calls
+- No sync-over-async (no `.Result`/`.Wait`)
+- No `Task.Run` in request handlers
+- Outbound HTTP: must have timeouts + cancellation
+- Caching: must have time budget + stampede protection + key versioning
 
-## Commands (edit to match your codebase)
-- Build: `dotnet build`
-- Test: `dotnet test`
-- Format: `dotnet format --severity info`
+## Dependency Injection
 
-## Output format
-- Prefer short sections, small code blocks, and explain trade-offs.
-- When making changes: show diff-level guidance + why.
+Constructor chaining pattern (no DI framework):
+- Public constructor with logger/config
+- Private constructor with actual dependencies
+- Example: `Api.MtgDiscovery.GraphQL/Queries/ArtistQueryMethods.cs:24-29`
 
-## Common Patterns
-Common patterns are represented by "Actions"
-- Actions are cross-cutting patterns. Base abstractions are in Lib.Shared.Abstractions/Actions/
+## Cross-Cutting Patterns
 
-Common Action types:
-- Validators (check if input valid)
-- Mappers (transform between entity types)
-- Enrichments (add data to results)
-- Filters (exclude items by criteria)
-- Integrators (merge delta changes)
-- Transformations (sync in-place modifications)
-- Resolvers (resolve input with context)
+All layer operations use standardized "Actions":
+- **ICreateMapper<TSource, TResult>** — Transform data
+- **IFilterAction<TItem, TStatus>** — Exclude by criteria
+- **IEnrichmentAction<TTarget>** — Add data to results
+- **IValidatorAction<TItem, TStatus>** — Validate input/output
+- **IResolver<TId, TResult>** — Resolve identifiers
+- **IIntegrator<TTarget, TSource>** — Merge changes
+- **ITransformationAction<TItem>** — Transform in-place
 
-Whenever this type of operation is happening, the interface for it should implement one of the interfaces for these actions.
+See: `common/csharp-layer-patterns.md` for complete documentation
 
-# Dependency Inversion
-- Through Constructor Chaining
-- Real Example: Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Queries/ArtistQueryMethods .cs (lines 24-29)
+## Build & Test
+
+```bash
+dotnet build
+dotnet test
+dotnet format --severity info
+```
+
+## Workflow
+
+1. Clarify missing requirements before coding
+2. Propose plan + files to change
+3. Implement smallest working change
+4. Add/update tests when relevant
 
