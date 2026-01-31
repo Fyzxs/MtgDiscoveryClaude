@@ -2,6 +2,7 @@ using System;
 using App.MtgDiscovery.GraphQL.ErrorHandling;
 using App.MtgDiscovery.GraphQL.Schemas;
 using HotChocolate.AspNetCore;
+using HotChocolate.Execution.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -58,7 +59,7 @@ internal sealed class Startup
         _ = services.AddLogging();
 
         // Register ILogger as a singleton service
-        _ = services.AddSingleton<ILogger>(sp =>
+        _ = services.AddSingleton(sp =>
             sp.GetRequiredService<ILoggerFactory>().CreateLogger("GraphQL"));
 
         // Configure Auth0 JWT Authentication

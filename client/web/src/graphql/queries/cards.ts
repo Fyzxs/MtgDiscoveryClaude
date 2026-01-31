@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_CARDS_BY_NAME = gql`
-  query GetCardsByName($cardName: CardNameArgEntityInput!) {
+  query GetCardsByName($cardName: CardNameInput!) {
     cardsByName(cardName: $cardName) {
       __typename
       ... on CardsSuccessResponse {
@@ -193,7 +193,7 @@ export const GET_CARDS_BY_NAME = gql`
 `;
 
 export const GET_CARDS_BY_SET_CODE = gql`
-  query GetCardsBySetCode($setCode: SetCodeArgEntityInput!) {
+  query GetCardsBySetCode($setCode: SetCodeInput!) {
     cardsBySetCode(setCode: $setCode) {
       __typename
       ... on CardsSuccessResponse {
@@ -385,7 +385,7 @@ export const GET_CARDS_BY_SET_CODE = gql`
 `;
 
 export const GET_CARDS_BY_IDS = gql`
-  query GetCardsBatch($ids: CardIdsArgEntityInput!) {
+  query GetCardsBatch($ids: CardIdsInput!) {
     cardsById(ids: $ids) {
       __typename
       ... on CardsSuccessResponse {
@@ -471,7 +471,7 @@ export const GET_CARDS_BY_IDS = gql`
 `;
 
 export const GET_CARDS_BY_ARTIST = gql`
-  query CardsByArtistName($artistName: ArtistNameArgEntityInput!) {
+  query CardsByArtistName($artistName: ArtistNameInput!) {
     cardsByArtistName(artistName: $artistName) {
       __typename
       ... on CardsByArtistSuccessResponse {

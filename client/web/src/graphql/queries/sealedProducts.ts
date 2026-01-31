@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 // Query to get sealed products by set code
 // Optionally enriched with user collection data if collectionId is provided
 export const GET_SEALED_PRODUCTS_BY_SET_CODE = gql`
-  query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeArgEntityInput!) {
+  query GetSealedProductsBySetCode($args: GetSealedProductsBySetCodeInput!) {
     sealedProductsBySetCode(args: $args) {
       __typename
       ... on SealedProductsSuccessResponse {

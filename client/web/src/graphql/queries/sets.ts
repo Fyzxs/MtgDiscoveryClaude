@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const GET_ALL_SETS = gql`
-  query GetAllSets($args: AllSetsArgEntityInput) {
+  query GetAllSets($args: AllSetsInput) {
     allSets(args: $args) {
       __typename
       ... on SetsSuccessResponse {
@@ -59,7 +59,7 @@ export const GET_ALL_SETS = gql`
 `;
 
 export const GET_SETS_BY_CODE = gql`
-  query GetMultipleSetsByCode($codes: SetCodesArgEntityInput!) {
+  query GetMultipleSetsByCode($codes: SetCodesInput!) {
     setsByCode(codes: $codes) {
       __typename
       ... on SetsSuccessResponse {
@@ -93,7 +93,7 @@ export const GET_SETS_BY_CODE = gql`
 `;
 
 export const GET_SET_BY_CODE_WITH_GROUPINGS = gql`
-  query GetSetByCodeWithGroupings($codes: SetCodesArgEntityInput!) {
+  query GetSetByCodeWithGroupings($codes: SetCodesInput!) {
     setsByCode(codes: $codes) {
       __typename
       ... on SetsSuccessResponse {

@@ -20,9 +20,9 @@ internal static class AppMtgDiscoveryGraphQlProgram
         return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
-                _ = config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
+                _ = config.SetBasePath(AppContext.BaseDirectory);
                 _ = config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-                _ = config.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                _ = config.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: true);
                 _ = config.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true);
                 _ = config.AddEnvironmentVariables();
 

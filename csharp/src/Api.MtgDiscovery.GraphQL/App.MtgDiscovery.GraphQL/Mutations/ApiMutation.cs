@@ -1,6 +1,8 @@
+#pragma warning disable CA1515
+
+using HotChocolate.Types;
+
 namespace App.MtgDiscovery.GraphQL.Mutations;
 
-internal sealed class ApiMutation
-{
-    public string TestMutation() => "Mutation endpoint is working!";
-}
+[ObjectType]
+public sealed class ApiMutation;

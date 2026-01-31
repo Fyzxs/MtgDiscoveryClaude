@@ -1,3 +1,5 @@
+using App.MtgDiscovery.GraphQL.Entities.Types.Args;
+using App.MtgDiscovery.GraphQL.Entities.Types.Args.SealedProducts;
 using App.MtgDiscovery.GraphQL.Entities.Types.Args.UserCards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Cards;
 using App.MtgDiscovery.GraphQL.Entities.Types.Collections;
@@ -25,11 +27,26 @@ internal static class ApiQueryExtensions
             .AddTypeExtension<UserInfoQueryMethods>()
             .AddTypeExtension<UserWishlistCardsQueryMethods>()
             .AddTypeExtension<CollectionQueryMethods>()
-            // Input types for queries
+            // Input types for queries - Cards
+            .AddType<CardIdsArgEntityInputType>()
+            .AddType<CardNameArgEntityInputType>()
+            .AddType<CardSearchTermArgEntityInputType>()
+            .AddType<SetCodeArgEntityInputType>()
+            // Input types for queries - Sets
+            .AddType<SetIdsArgEntityInputType>()
+            .AddType<SetCodesArgEntityInputType>()
+            .AddType<AllSetsArgEntityInputType>()
+            // Input types for queries - Artists
+            .AddType<ArtistIdArgEntityInputType>()
+            .AddType<ArtistNameArgEntityInputType>()
+            .AddType<ArtistSearchTermArgEntityInputType>()
+            // Input types for queries - UserCards
             .AddType<UserCardsBySetArgEntityInputType>()
             .AddType<UserCardsByIdsArgEntityInputType>()
             .AddType<UserCardArgEntityInputType>()
             .AddType<UserCardsForSigningArgEntityInputType>()
+            // Input types for queries - SealedProducts
+            .AddType<GetSealedProductsBySetCodeArgEntityInputType>()
             .AddType<CardResponseModelUnionType>()
             .AddType<FailureResponseModelType>()
             .AddType<CardsSuccessDataResponseModelType>()

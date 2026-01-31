@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const CARD_NAME_SEARCH = gql`
-  query CardNameSearch($searchTerm: CardSearchTermArgEntityInput!) {
+  query CardNameSearch($searchTerm: CardSearchTermInput!) {
     cardNameSearch(searchTerm: $searchTerm) {
       __typename
       ... on CardNameSearchResultsSuccessResponse {
