@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.User\Lib.Adapter.User.csproj" />
+  </ItemGroup>
+
+</Project>

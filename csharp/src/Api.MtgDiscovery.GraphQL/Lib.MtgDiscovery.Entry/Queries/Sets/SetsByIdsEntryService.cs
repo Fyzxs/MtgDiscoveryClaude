@@ -1,0 +1,68 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lib.Domain.Sets.Apis;
+using Lib.MtgDiscovery.Entry.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Enrichments;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.Sets;
+using Lib.Shared.Abstractions.Actions.Validators;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
+using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
+
+namespace Lib.MtgDiscovery.Entry.Queries.Sets;
+
+internal sealed class SetsByIdsEntryService : ISetsByIdsEntryService
+{
+    private readonly ISetDomainService _setDomainService;
+    private readonly ISetIdsArgEntityValidator _setIdsArgEntityValidator;
+    private readonly ISetIdsArgToItrMapper _setIdsArgToItrMapper;
+    private readonly ICollectionSetItemOufToOutMapper _setItemOufToOutMapper;
+    private readonly IUserSetEnrichment _userSetEnrichment;
+
+    public SetsByIdsEntryService(ILogger logger) : this(
+        new SetDomainService(logger),
+        new SetIdsArgEntityValidatorContainer(),
+        new SetIdsArgToItrMapper(),
+        new CollectionSetItemOufToOutMapper(),
+        new UserSetEnrichment(logger))
+    { }
+
+    private SetsByIdsEntryService(
+        ISetDomainService setDomainService,
+        ISetIdsArgEntityValidator setIdsArgEntityValidator,
+        ISetIdsArgToItrMapper setIdsArgToItrMapper,
+        ICollectionSetItemOufToOutMapper setItemOufToOutMapper,
+        IUserSetEnrichment userSetEnrichment)
+    {
+        _setDomainService = setDomainService;
+        _setIdsArgEntityValidator = setIdsArgEntityValidator;
+        _setIdsArgToItrMapper = setIdsArgToItrMapper;
+        _setItemOufToOutMapper = setItemOufToOutMapper;
+        _userSetEnrichment = userSetEnrichment;
+    }
+
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(ISetIdsArgEntity args)
+    {
+        IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> validatorResult = await _setIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<SetItemOutEntity>>(validatorResult.FailureStatus().OuterException);
+
+        ISetIdsItrEntity itrEntity = await _setIdsArgToItrMapper.Map(args).ConfigureAwait(false);
+        IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
+
+        List<SetItemOutEntity> outEntities = await _setItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        // Enrich with user set card information if userId is present
+        if (args.HasUserId)
+        {
+            await _userSetEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+        }
+
+        return new SuccessOperationResponse<List<SetItemOutEntity>>(outEntities);
+    }
+}

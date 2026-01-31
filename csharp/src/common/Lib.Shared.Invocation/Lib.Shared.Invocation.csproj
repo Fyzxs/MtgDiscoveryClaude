@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+        <PackageReference Include="Newtonsoft.Json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\core\Lib.Cosmos\Lib.Cosmos.csproj" />
+      <ProjectReference Include="..\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+    </ItemGroup>
+</Project>

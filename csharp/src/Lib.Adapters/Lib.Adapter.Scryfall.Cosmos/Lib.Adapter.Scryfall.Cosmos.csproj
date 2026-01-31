@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Lib.Scryfall.Shared\Lib.Scryfall.Shared.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Cosmos\Lib.Cosmos.csproj" />
+  </ItemGroup>
+
+</Project>

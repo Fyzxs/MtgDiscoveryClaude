@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\TestConvenience.Core\TestConvenience.Core.csproj" />
-    <ProjectReference Include="..\Lib.Domain.Collections\Lib.Domain.Collections.csproj" />
-  </ItemGroup>
-
-</Project>

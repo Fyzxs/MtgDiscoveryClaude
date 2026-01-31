@@ -1,0 +1,23 @@
+using System.Threading.Tasks;
+using Lib.Shared.Abstractions.Actions.Validators;
+using Lib.Shared.DataModels.Entities.Args.UserSetCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
+using Lib.Shared.Invocation.Operations;
+
+namespace Lib.MtgDiscovery.Entry.Queries.Actions.Validators.UserSetCards;
+
+internal sealed class SetIdNotNullUserSetCardArgEntityValidator : OperationResponseValidator<IUserSetCardArgEntity, IUserSetCardOufEntity>
+{
+    public SetIdNotNullUserSetCardArgEntityValidator() : base(new Validator(), new Message())
+    { }
+
+    public sealed class Validator : IValidator<IUserSetCardArgEntity>
+    {
+        public Task<bool> IsValid(IUserSetCardArgEntity arg) => Task.FromResult(arg.SetId is not null);
+    }
+
+    public sealed class Message : OperationResponseMessage
+    {
+        public override string AsSystemType() => "SetId is null";
+    }
+}

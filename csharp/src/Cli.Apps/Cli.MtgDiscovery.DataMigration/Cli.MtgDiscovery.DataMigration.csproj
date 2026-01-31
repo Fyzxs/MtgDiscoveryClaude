@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\.examples\Example.Core\Example.Core.csproj" />
+    <ProjectReference Include="..\..\Api.MtgDiscovery.GraphQL\Lib.MtgDiscovery.Entry\Lib.MtgDiscovery.Entry.csproj" />
+    <ProjectReference Include="..\..\Lib.Domains\Lib.Domain.Cards\Lib.Domain.Cards.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Cosmos\Lib.Cosmos.csproj" />
+    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Abstractions\Lib.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

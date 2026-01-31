@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\Lib.Universal.Tests\Lib.Universal.Tests.csproj" />
+    <ProjectReference Include="..\..\testShared\TestConvenience.Core\TestConvenience.Core.csproj" />
+  </ItemGroup>
+
+</Project>

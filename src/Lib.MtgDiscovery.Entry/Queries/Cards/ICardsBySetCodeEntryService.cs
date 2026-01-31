@@ -1,8 +1,0 @@
-﻿using System.Collections.Generic;
-using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
-using Lib.Shared.DataModels.Entities.Args.Sets;
-using Lib.Shared.Invocation.Services;
-
-namespace Lib.MtgDiscovery.Entry.Queries.Cards;
-
-internal interface ICardsBySetCodeEntryService : IOperationResponseService<ISetCodeArgEntity, List<CardItemOutEntity>>;

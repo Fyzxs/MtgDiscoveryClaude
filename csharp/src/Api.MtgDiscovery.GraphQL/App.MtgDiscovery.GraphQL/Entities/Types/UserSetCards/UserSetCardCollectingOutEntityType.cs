@@ -1,0 +1,31 @@
+using System.Diagnostics.CodeAnalysis;
+using HotChocolate.Types;
+using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
+
+namespace App.MtgDiscovery.GraphQL.Entities.Types.UserSetCards;
+
+internal sealed class UserSetCardCollectingOutEntityType : ObjectType<UserSetCardCollectingOutEntity>
+{
+    protected override void Configure([NotNull] IObjectTypeDescriptor<UserSetCardCollectingOutEntity> descriptor)
+    {
+        descriptor.Name("UserSetCardCollecting")
+            .Description("Collecting status for a specific set group");
+
+        descriptor.Field(f => f.SetGroupId)
+            .Name("setGroupId")
+            .Type<NonNullType<StringType>>()
+            .Description("The set group ID (e.g., 'normal', 'borderless')");
+        descriptor.Field(f => f.Collecting)
+            .Name("collecting")
+            .Type<NonNullType<BooleanType>>()
+            .Description("Whether the user is actively collecting this set group");
+        descriptor.Field(f => f.Counts)
+            .Name("counts")
+            .Type<NonNullType<FinishCountsType>>()
+            .Description("The card counts by finish type for this collecting group");
+        descriptor.Field(f => f.CollectingFinishes)
+            .Name("collectingFinishes")
+            .Type<NonNullType<ListType<NonNullType<StringType>>>>()
+            .Description("The finishes being collected for this set group (e.g., 'nonFoil', 'foil', 'etched')");
+    }
+}

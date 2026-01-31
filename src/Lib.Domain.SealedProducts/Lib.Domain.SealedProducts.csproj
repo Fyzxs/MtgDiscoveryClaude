@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
-    <ProjectReference Include="..\Lib.Aggregator.SealedProducts\Lib.Aggregator.SealedProducts.csproj" />
-  </ItemGroup>
-
-</Project>

@@ -1,0 +1,13 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lib.MtgDiscovery.Entry.Entities;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+using Lib.Shared.Invocation.Operations;
+
+namespace Lib.MtgDiscovery.Entry.Apis;
+
+public interface IUserCardsEntryService
+{
+    Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args);
+    Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args);
+}

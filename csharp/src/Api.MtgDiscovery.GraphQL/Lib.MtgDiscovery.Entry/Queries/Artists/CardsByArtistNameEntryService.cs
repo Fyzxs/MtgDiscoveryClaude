@@ -1,0 +1,86 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lib.Domain.Artists.Apis;
+using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Enrichments;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
+using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.Artists;
+using Lib.Shared.Abstractions.Actions.Validators;
+using Lib.Shared.DataModels.Entities.Args.Artists;
+using Lib.Shared.DataModels.Entities.Itrs.Artists;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
+using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
+
+namespace Lib.MtgDiscovery.Entry.Queries.Artists;
+
+internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntryService
+{
+    private readonly IArtistDomainService _artistDomainService;
+    private readonly IArtistNameArgEntityValidator _artistNameArgEntityValidator;
+    private readonly IArtistNameArgToItrMapper _artistNameArgToItrMapper;
+    private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
+    private readonly IUserCardEnrichment _userCardEnrichment;
+    private readonly IUserWishlistCardByIdsEnrichment _userWishlistCardEnrichment;
+    private readonly IArtistNameArgToUserCardsArtistContextCollectionMapper _artistContextCollectionMapper;
+
+    public CardsByArtistNameEntryService(ILogger logger) : this(
+        new ArtistDomainService(logger),
+        new ArtistNameArgEntityValidatorContainer(),
+        new ArtistNameArgToItrMapper(),
+        new CollectionCardItemOufToOutMapper(),
+        new UserCardEnrichment(logger),
+        new UserWishlistCardByIdsEnrichment(logger),
+        new ArtistNameArgToUserCardsArtistContextCollectionMapper())
+    { }
+
+    private CardsByArtistNameEntryService(
+        IArtistDomainService artistDomainService,
+        IArtistNameArgEntityValidator artistNameArgEntityValidator,
+        IArtistNameArgToItrMapper artistNameArgToItrMapper,
+        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
+        IUserCardEnrichment userCardEnrichment,
+        IUserWishlistCardByIdsEnrichment userWishlistCardEnrichment,
+        IArtistNameArgToUserCardsArtistContextCollectionMapper artistContextCollectionMapper)
+    {
+        _artistDomainService = artistDomainService;
+        _artistNameArgEntityValidator = artistNameArgEntityValidator;
+        _artistNameArgToItrMapper = artistNameArgToItrMapper;
+        _cardItemOufToOutMapper = cardItemOufToOutMapper;
+        _userCardEnrichment = userCardEnrichment;
+        _userWishlistCardEnrichment = userWishlistCardEnrichment;
+        _artistContextCollectionMapper = artistContextCollectionMapper;
+    }
+
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IArtistNameArgEntity artistName)
+    {
+        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _artistNameArgEntityValidator.Validate(artistName).ConfigureAwait(false);
+        if (validatorResult.IsNotValid())
+            return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
+
+        IArtistNameItrEntity itrEntity = await _artistNameArgToItrMapper.Map(artistName).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistNameAsync(itrEntity).ConfigureAwait(false);
+        if (opResponse.IsFailure)
+            return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
+
+        List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
+
+        // Use efficient query by artist ID if userId is present
+        if (string.IsNullOrEmpty(artistName.UserId) is false)
+        {
+            // Extract all unique artist IDs from the returned cards and create contexts
+            IEnumerable<IUserCardsArtistItrEntity> artistContexts = await _artistContextCollectionMapper.Map(artistName, outEntities).ConfigureAwait(false);
+
+            // Enrich by each artist ID to collect all user cards for these artists
+            foreach (IUserCardsArtistItrEntity artistContext in artistContexts)
+            {
+                await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
+            }
+        }
+
+        await _userWishlistCardEnrichment.Enrich(outEntities, artistName).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
+    }
+}

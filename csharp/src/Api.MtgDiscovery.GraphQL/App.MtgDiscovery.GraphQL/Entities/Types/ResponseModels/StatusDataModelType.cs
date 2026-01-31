@@ -1,0 +1,23 @@
+using System.Diagnostics.CodeAnalysis;
+using HotChocolate.Types;
+using Lib.Shared.Invocation.Response.Models;
+
+namespace App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
+
+internal class StatusDataModelType : ObjectType<StatusDataModel>
+{
+    protected override void Configure([NotNull] IObjectTypeDescriptor<StatusDataModel> descriptor)
+    {
+        descriptor.Name("StatusData")
+            .Description("Status information for the response");
+
+        descriptor.Field(f => f.StatusCode)
+            .Name("statusCode")
+            .Type<IntType>()
+            .Description("HTTP status code");
+        descriptor.Field(f => f.Message)
+            .Name("message")
+            .Type<StringType>()
+            .Description("Status message");
+    }
+}

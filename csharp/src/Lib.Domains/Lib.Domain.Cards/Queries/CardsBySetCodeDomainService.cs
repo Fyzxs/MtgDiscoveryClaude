@@ -1,0 +1,24 @@
+using System.Threading.Tasks;
+using Lib.Aggregator.Cards.Apis;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
+using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
+
+namespace Lib.Domain.Cards.Queries;
+
+/// <summary>
+/// Single-method service for retrieving cards by set code.
+/// Delegates to aggregator layer for data retrieval.
+/// </summary>
+internal sealed class CardsBySetCodeDomainService : ICardsBySetCodeDomainService
+{
+    private readonly ICardAggregatorService _cardAggregatorService;
+
+    public CardsBySetCodeDomainService(ILogger logger) : this(new CardAggregatorService(logger))
+    { }
+
+    private CardsBySetCodeDomainService(ICardAggregatorService cardAggregatorService) => _cardAggregatorService = cardAggregatorService;
+
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ISetCodeItrEntity input) => await _cardAggregatorService.CardsBySetCodeAsync(input).ConfigureAwait(false);
+}

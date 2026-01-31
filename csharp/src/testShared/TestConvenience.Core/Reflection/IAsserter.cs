@@ -1,0 +1,16 @@
+using System;
+
+namespace TestConvenience.Core.Reflection;
+
+/// <summary>
+/// Provides Assert capability without relying on any specific framework.
+/// </summary>
+internal interface IAsserter
+{
+    /// <summary>
+    /// Throws an <see cref="Exception"/> with <paramref name="exceptionMsg"/> as the message if <paramref name="condition"/> is true.
+    /// </summary>
+    /// <param name="condition">Will throw an <see cref="Exception"/> when this is true.</param>
+    /// <param name="exceptionMsg">The message of the <see cref="Exception"/></param>
+    void AssertIf(bool condition, string exceptionMsg);
+}

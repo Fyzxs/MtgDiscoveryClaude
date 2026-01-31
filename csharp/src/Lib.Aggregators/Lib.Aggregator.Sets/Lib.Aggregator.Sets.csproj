@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.Scryfall.Cosmos\Lib.Adapter.Scryfall.Cosmos.csproj" />
+    <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
+    <ProjectReference Include="..\..\Lib.Adapters\Lib.Adapter.Sets\Lib.Adapter.Sets.csproj" />
+  </ItemGroup>
+
+</Project>

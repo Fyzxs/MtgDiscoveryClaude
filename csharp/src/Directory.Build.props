@@ -1,0 +1,185 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>warnings</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
+    <IncludeSymbols>true</IncludeSymbols>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <ReportAnalyzer>true</ReportAnalyzer>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <Features>strict</Features>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnableEditorConfigSupport>true</EnableEditorConfigSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorconfig"
+      Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Set useful custom variables here -->
+    <IsExampleProject>false</IsExampleProject>
+    <IsExampleProject Condition="$(MSBuildProjectName.StartsWith('Example.'))">true</IsExampleProject>
+    <IsExampleProject Condition="$(MSBuildProjectName.StartsWith('Examples.'))">true</IsExampleProject>
+
+    <IsCliProject>false</IsCliProject>
+    <IsCliProject Condition="$(MSBuildProjectName.StartsWith('Cli.'))">true</IsCliProject>
+
+    <IsNotExampleProject>true</IsNotExampleProject>
+    <IsNotExampleProject Condition="$(IsExampleProject)">false</IsNotExampleProject>
+
+    <IsExampleCore>false</IsExampleCore>
+    <IsExampleCore Condition="$(MSBuildProjectName.Equals('Example.Core'))">true</IsExampleCore>
+
+    <IsExampleCli>false</IsExampleCli>
+    <IsExampleCli Condition="$(IsExampleProject) and !$(IsExampleCore)">true</IsExampleCli>
+
+    <IsTestConvenienceBuild>false</IsTestConvenienceBuild>
+    <IsTestConvenienceBuild Condition="$(MSBuildProjectName.StartsWith('TestConvenience.'))">true</IsTestConvenienceBuild>
+
+    <IsTestProjectBuild>false</IsTestProjectBuild>
+    <IsTestProjectBuild Condition="$(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProjectBuild>
+
+    <IsAcceptanceTestProjectBuild>false</IsAcceptanceTestProjectBuild>
+    <IsAcceptanceTestProjectBuild Condition="$(MSBuildProjectName.EndsWith('.AcceptanceTests'))">true</IsAcceptanceTestProjectBuild>
+
+    <IsUnitTestBuild>false</IsUnitTestBuild>
+    <IsUnitTestBuild Condition="$(IsTestProjectBuild) or $(IsAcceptanceTestProjectBuild)">true</IsUnitTestBuild>
+
+    <IsTestBuild>false</IsTestBuild>
+    <IsTestBuild Condition="$(IsTestProjectBuild) or $(IsTestConvenienceBuild) or $(IsAcceptanceTestProjectBuild)">true</IsTestBuild>
+
+    <IsNotTestBuild>true</IsNotTestBuild>
+    <IsNotTestBuild Condition="$(IsTestBuild)">false</IsNotTestBuild>
+
+    <IsSdkBuild>false</IsSdkBuild>
+    <IsSdkBuild Condition="$(MSBuildProjectName.StartsWith('Sdk.')) and !$(IsTestBuild)">true</IsSdkBuild>
+
+    <TestSourceProjectName Condition="!$(IsTestBuild)">NotATestProject</TestSourceProjectName>
+    <TestSourceProjectName Condition="$(IsTestBuild)">$(MSBuildProjectName.Substring(0,$(MSBuildProjectName.LastIndexOf('.'))))</TestSourceProjectName>
+
+    <IsCssArchProject>false</IsCssArchProject>
+    <IsCssArchProject Condition="$(MSBuildProjectName.StartsWith('lib.'))">true</IsCssArchProject>
+    <IsCssArchProject Condition="$(MSBuildProjectName.Contains('.Shared.'))">false</IsCssArchProject>
+    <IsCssArchProject Condition="$(IsTestBuild)">false</IsCssArchProject>
+    <IsCssArchProject Condition="$(IsExampleProject)">false</IsCssArchProject>
+    <IsCssArchProject Condition="$(MSBuildProjectName.Equals('Lib.UniversalLocal'))">false</IsCssArchProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsExampleCli)">
+    <OutputType>Exe</OutputType>
+    <!-- Exclude the project from analysis -->
+    <SonarQubeExclude>true</SonarQubeExclude>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsCliProject)">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsUnitTestBuild)">
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsCssArchProject)">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsSdkBuild)">
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(IsNotTestBuild)">
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsNotExampleProject) and $(IsNotTestBuild)">
+    <InternalsVisibleTo Include="Example$(MSBuildProjectName.Substring($(MSBuildProjectName.IndexOf('.'))))" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestProjectBuild)">
+    <ProjectReference Include="..\$(TestSourceProjectName)\$(TestSourceProjectName).csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestBuild)">
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="AwesomeAssertions.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestBuild)">
+    <PackageReference Include="AwesomeAssertions" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsUnitTestBuild)">
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(IsTestBuild)">
+    <Using Include="AwesomeAssertions" />
+  </ItemGroup>
+
+  <!-- Register the EditorConfig files to the project -->
+  <!-- Remember that a particular .NET analysis rule can only be configured once across all imported global EditorConfig files -->
+  <ItemGroup>
+    <!-- Basic EditorConfig settings such as encoding, indentation, etc. -->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)\.editorConfigs\1_FileDefaults.editorconfig" />
+
+    <!-- C# code style -->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)\.editorConfigs\2_CodeStyle.editorconfig" />
+
+    <!-- .NET analyzers configuration for all projects, enforcing C# code style, quality, performance and security -->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)\.editorConfigs\analyzers\*.editorconfig" />
+
+    <!-- Configure ReSharper analyzers that overlaps with built-in .NET analyzers (only appears in Rider and VisualStudio IDEs) -->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)\.editorConfigs\3_ReSharperAnalyzers.editorconfig" />
+
+    <!-- .NET analyzers configuration only for test projects -->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)\.editorConfigs\4_TestProjectsAnalyzers.editorconfig" Condition="$(IsTestBuild)" />
+
+  </ItemGroup>
+
+  <!-- Banned Symbols -->
+  <PropertyGroup>
+    <IncludeDefaultBannedSymbols Condition="$(IncludeDefaultBannedSymbols) == ''">true</IncludeDefaultBannedSymbols>
+    <BanNewtonsoftJsonSymbols Condition="$(BanNewtonsoftJsonSymbols) == ''">false</BanNewtonsoftJsonSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorConfigs\BannedSymbols.txt"
+      Condition="$(IncludeDefaultBannedSymbols) == 'true'"
+      Visible="false" />
+  </ItemGroup>
+
+</Project>
