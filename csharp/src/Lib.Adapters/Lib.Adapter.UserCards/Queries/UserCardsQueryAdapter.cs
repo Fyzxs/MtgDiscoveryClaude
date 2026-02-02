@@ -36,15 +36,15 @@ internal sealed class UserCardsQueryAdapter : IUserCardsQueryAdapter
         _userCardsForSigningAdapter = userCardsForSigningAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet) => await _userCardsBySetAdapter.Execute(userCardsSet);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet) => await _userCardsBySetAdapter.Execute(userCardsSet).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(IUserCardXfrEntity userCard) => await _userCardAdapter.Execute(userCard);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(IUserCardXfrEntity userCard) => await _userCardAdapter.Execute(userCard).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards) => await _userCardsByIdsAdapter.Execute(userCards);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards) => await _userCardsByIdsAdapter.Execute(userCards).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist) => await _userCardsByArtistAdapter.Execute(userCardsArtist);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist) => await _userCardsByArtistAdapter.Execute(userCardsArtist).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName) => await _userCardsByNameAdapter.Execute(userCardsName);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName) => await _userCardsByNameAdapter.Execute(userCardsName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning) => await _userCardsForSigningAdapter.Execute(userCardsForSigning);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning) => await _userCardsForSigningAdapter.Execute(userCardsForSigning).ConfigureAwait(false);
 }

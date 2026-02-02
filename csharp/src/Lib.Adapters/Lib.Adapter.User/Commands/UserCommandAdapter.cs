@@ -22,5 +22,5 @@ internal sealed class UserCommandAdapter : IUserCommandAdapter
 
     private UserCommandAdapter(IRegisterUserAdapter registerUserAdapter) => _registerUserAdapter = registerUserAdapter;
 
-    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _registerUserAdapter.Execute(userInfo);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _registerUserAdapter.Execute(userInfo).ConfigureAwait(false);
 }

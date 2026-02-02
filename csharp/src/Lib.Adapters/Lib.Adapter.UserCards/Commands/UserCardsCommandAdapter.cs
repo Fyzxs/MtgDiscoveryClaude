@@ -22,5 +22,5 @@ internal sealed class UserCardsCommandAdapter : IUserCardsCommandAdapter
 
     private UserCardsCommandAdapter(IAddUserCardAdapter addUserCardAdapter) => _addUserCardAdapter = addUserCardAdapter;
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard) => await _addUserCardAdapter.Execute(addUserCard);
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard) => await _addUserCardAdapter.Execute(addUserCard).ConfigureAwait(false);
 }

@@ -9,15 +9,17 @@ namespace Lib.Adapter.UserCards.Tests.Exceptions;
 public sealed class UserCardsAdapterExceptionTests
 {
     [TestMethod, TestCategory("unit")]
-    public void Constructor_Default_CreatesInstanceWithDefaultMessage()
+    public void Constructor_WithMessage_SetsStatusCodeToInternalServerError()
     {
+        // Arrange
+        string message = "Test error message";
+
         // Act
-        UserCardsAdapterException actual = new();
+        UserCardsAdapterException actual = new(message);
 
         // Assert
         actual.Should().NotBeNull();
         actual.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-        actual.StatusMessage.Should().Be("UserCards adapter operation failed");
     }
 
     [TestMethod, TestCategory("unit")]
@@ -55,8 +57,11 @@ public sealed class UserCardsAdapterExceptionTests
     [TestMethod, TestCategory("unit")]
     public void Constructor_InheritsFromOperationException()
     {
+        // Arrange
+        string message = "Test message";
+
         // Act
-        UserCardsAdapterException actual = new();
+        UserCardsAdapterException actual = new(message);
 
         // Assert
         actual.Should().BeAssignableTo<OperationException>();

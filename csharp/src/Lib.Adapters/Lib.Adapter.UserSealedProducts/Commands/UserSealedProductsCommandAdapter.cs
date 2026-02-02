@@ -17,5 +17,5 @@ internal sealed class UserSealedProductsCommandAdapter : IUserSealedProductsComm
 
     private UserSealedProductsCommandAdapter(IAddUserSealedProductAdapter addUserSealedProductAdapter) => _addUserSealedProductAdapter = addUserSealedProductAdapter;
 
-    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) => await _addUserSealedProductAdapter.Execute(input);
+    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) => await _addUserSealedProductAdapter.Execute(input).ConfigureAwait(false);
 }

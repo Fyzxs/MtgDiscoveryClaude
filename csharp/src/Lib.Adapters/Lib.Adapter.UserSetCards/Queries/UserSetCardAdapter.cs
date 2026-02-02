@@ -51,7 +51,7 @@ internal sealed class UserSetCardAdapter : IUserSetCardAdapter
                 return new SuccessOperationResponse<UserSetCardExtEntity>(emptyCard);
             }
 
-            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException("Failed to read user set card"));
         }
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(readResponse.Value);

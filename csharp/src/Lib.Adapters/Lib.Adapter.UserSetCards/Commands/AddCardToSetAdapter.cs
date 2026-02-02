@@ -58,7 +58,7 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
 
                 if (upsertResponse.IsNotSuccessful())
                 {
-                    return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+                    return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException("Failed to upsert user set card"));
                 }
 
                 return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
@@ -83,6 +83,6 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
         }
 
         // Should never reach here due to loop logic, but satisfy compiler
-        return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+        return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException("Unexpected termination of retry loop"));
     }
 }

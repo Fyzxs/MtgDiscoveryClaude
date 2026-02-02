@@ -6,6 +6,16 @@ Interface with external systems (Cosmos DB, Scryfall API, etc.), transforming be
 ## Architecture Pattern
 
 **Composite Service → Passthrough Service → Specialized Adapters**
+Composite Interface Inheritance Patterns
+
+Expected Pattern
+```
+// Composite interface inherits from specialized adapters
+public interface I{Domain}AdapterService : I{Domain}QueryAdapter, I{Domain}CommandAdapter
+{
+    // No additional methods - all inherited
+}
+```
 
 Example: `Lib.Adapter.Artists/Apis/`
 - Interface: `IArtistAdapterService.cs` (composite, inherits all specialized adapters)

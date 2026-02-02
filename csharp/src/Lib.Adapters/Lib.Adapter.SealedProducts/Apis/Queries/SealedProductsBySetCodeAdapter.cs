@@ -52,7 +52,7 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
             .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint)
             .ConfigureAwait(false);
 
-        if (indexResponse.IsSuccessful() is false || indexResponse.Value == null)
+        if (indexResponse.IsNotSuccessful() || indexResponse.Value == null)
         {
             return new FailureOperationResponse<IEnumerable<ISealedProductOufEntity>>(
                 new SealedProductsAdapterException($"Set code '{setCodeValue}' not found"));
@@ -66,7 +66,7 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
             .QueryAsync<SealedProductExtEntity>(args, default)
             .ConfigureAwait(false);
 
-        if (productsResponse.IsSuccessful() is false)
+        if (productsResponse.IsNotSuccessful())
         {
             return new FailureOperationResponse<IEnumerable<ISealedProductOufEntity>>(
                 new SealedProductsAdapterException($"Failed to retrieve sealed products for set '{setCodeValue}'", productsResponse.Exception()));

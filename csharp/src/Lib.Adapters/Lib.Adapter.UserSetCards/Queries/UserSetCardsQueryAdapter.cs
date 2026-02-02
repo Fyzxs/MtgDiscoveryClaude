@@ -34,7 +34,7 @@ internal sealed class UserSetCardsQueryAdapter : IUserSetCardsQueryAdapter
         _getAllUserSetCardsAdapter = getAllUserSetCardsAdapter;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) => await _getUserSetCardAdapter.Execute(readParams);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams) => await _getUserSetCardAdapter.Execute(readParams).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams) => await _getAllUserSetCardsAdapter.Execute(queryParams);
+    public async Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams) => await _getAllUserSetCardsAdapter.Execute(queryParams).ConfigureAwait(false);
 }

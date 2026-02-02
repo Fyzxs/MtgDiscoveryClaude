@@ -28,7 +28,7 @@ internal sealed class UserSetCardsCommandAdapter : IUserSetCardsCommandAdapter
         _addSetGroupAdapter = addSetGroupAdapter;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) => await _addCardToSetAdapter.Execute(entity);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) => await _addCardToSetAdapter.Execute(entity).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity addSetGroup) => await _addSetGroupAdapter.Execute(addSetGroup);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity addSetGroup) => await _addSetGroupAdapter.Execute(addSetGroup).ConfigureAwait(false);
 }

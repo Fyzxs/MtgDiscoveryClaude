@@ -17,5 +17,5 @@ internal sealed class UserSealedProductsQueryAdapter : IUserSealedProductsQueryA
 
     private UserSealedProductsQueryAdapter(IUserSealedProductsByUserIdAdapter userSealedProductsByUserIdAdapter) => _userSealedProductsByUserIdAdapter = userSealedProductsByUserIdAdapter;
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string userId) => await _userSealedProductsByUserIdAdapter.Execute(userId);
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string userId) => await _userSealedProductsByUserIdAdapter.Execute(userId).ConfigureAwait(false);
 }

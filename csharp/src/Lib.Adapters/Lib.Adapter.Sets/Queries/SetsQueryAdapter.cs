@@ -38,9 +38,9 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
         _allSetsAdapter = allSetsAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setsByIdsAdapter.Execute(setIds);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setsByIdsAdapter.Execute(setIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setsByCodesAdapter.Execute(setCodes);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setsByCodesAdapter.Execute(setCodes).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets) => await _allSetsAdapter.Execute(allSets);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets) => await _allSetsAdapter.Execute(allSets).ConfigureAwait(false);
 }

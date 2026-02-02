@@ -47,7 +47,7 @@ internal sealed class AddSetGroupToUserSetCardAdapter : IAddSetGroupToUserSetCar
         OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
-            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException("Failed to add set group to user set card"));
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(upsertResponse.Value);
     }

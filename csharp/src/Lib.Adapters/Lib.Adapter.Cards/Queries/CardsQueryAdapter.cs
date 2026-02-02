@@ -41,11 +41,11 @@ internal sealed class CardsQueryAdapter : ICardQueryAdapter
         _searchCardNamesAdapter = searchCardNamesAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds) => await _cardsByIdsAdapter.Execute(cardIds);
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds) => await _cardsByIdsAdapter.Execute(cardIds).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode) => await _cardsBySetCodeAdapter.Execute(setCode);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode) => await _cardsBySetCodeAdapter.Execute(setCode).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName) => await _cardsByNameAdapter.Execute(cardName);
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName) => await _cardsByNameAdapter.Execute(cardName).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm) => await _searchCardNamesAdapter.Execute(searchTerm);
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm) => await _searchCardNamesAdapter.Execute(searchTerm).ConfigureAwait(false);
 }
