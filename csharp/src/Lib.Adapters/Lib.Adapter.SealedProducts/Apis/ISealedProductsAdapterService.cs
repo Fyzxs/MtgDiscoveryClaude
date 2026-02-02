@@ -1,15 +1,8 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Lib.Adapter.SealedProducts.Apis.Entities;
-using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
-using Lib.Shared.Invocation.Operations;
-
 namespace Lib.Adapter.SealedProducts.Apis;
 
-public interface ISealedProductsAdapterService
-{
-    Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> GetBySetCodeAsync(
-        ISealedProductsBySetCodeXfrEntity setCode,
-        CancellationToken cancellationToken);
-}
+/// <summary>
+/// Composite service interface for sealed products adapter operations.
+/// Inherits from specialized query adapter interfaces following the 3-tier pattern:
+///   AdapterService → QueryAdapter/CommandAdapter → Single-Operation Adapters
+/// </summary>
+public interface ISealedProductsAdapterService : ISealedProductsQueryAdapter;

@@ -1,9 +1,9 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
-using Lib.Adapter.Collections.Entities;
 using Lib.Adapter.Collections.Exceptions;
+using Lib.Adapter.Collections.Queries.Mappers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -20,24 +20,28 @@ namespace Lib.Adapter.Collections.Commands;
 
 internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 {
-    private readonly CollectionScribe _collectionScribe;
-    private readonly CollectionGopher _collectionGopher;
-    private readonly CollectionJanitor _collectionJanitor;
+    private readonly ICosmosScribe _collectionScribe;
+    private readonly ICosmosGopher _collectionGopher;
+    private readonly ICosmosContainerDeleteOperator _collectionJanitor;
+    private readonly ICollectionExtToOufMapper _mapper;
 
     public CollectionCommandAdapter(ILogger logger) : this(
         new CollectionScribe(logger),
         new CollectionGopher(logger),
-        new CollectionJanitor(logger))
+        new CollectionJanitor(logger),
+        new CollectionExtToOufMapper())
     { }
 
     private CollectionCommandAdapter(
-        CollectionScribe collectionScribe,
-        CollectionGopher collectionGopher,
-        CollectionJanitor collectionJanitor)
+        ICosmosScribe collectionScribe,
+        ICosmosGopher collectionGopher,
+        ICosmosContainerDeleteOperator collectionJanitor,
+        ICollectionExtToOufMapper mapper)
     {
         _collectionScribe = collectionScribe;
         _collectionGopher = collectionGopher;
         _collectionJanitor = collectionJanitor;
+        _mapper = mapper;
     }
 
     public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
@@ -50,13 +54,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
             Type = entity.Type,
             Visibility = entity.Visibility,
             IsDefault = entity.IsDefault,
-            AuthorizedUsers = entity.AuthorizedUsers.Select(u => new AuthorizedUserExtEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            }),
+            AuthorizedUsers = MapAuthorizedUsersToExt(entity.AuthorizedUsers),
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt
         };
@@ -71,27 +69,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to create collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        CollectionExtEntity result = upsertResponse.Value!;
-
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = result.CollectionId,
-            OwnerId = result.OwnerId,
-            Name = result.Name,
-            Type = result.Type,
-            Visibility = result.Visibility,
-            IsDefault = result.IsDefault,
-            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = result.CreatedAt,
-            UpdatedAt = result.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
@@ -138,27 +116,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to rename collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        CollectionExtEntity result = upsertResponse.Value!;
-
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = result.CollectionId,
-            OwnerId = result.OwnerId,
-            Name = result.Name,
-            Type = result.Type,
-            Visibility = result.Visibility,
-            IsDefault = result.IsDefault,
-            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = result.CreatedAt,
-            UpdatedAt = result.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
@@ -205,27 +163,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to update collection visibility {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        CollectionExtEntity result = upsertResponse.Value!;
-
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = result.CollectionId,
-            OwnerId = result.OwnerId,
-            Name = result.Name,
-            Type = result.Type,
-            Visibility = result.Visibility,
-            IsDefault = result.IsDefault,
-            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = result.CreatedAt,
-            UpdatedAt = result.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
@@ -249,7 +187,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         CollectionExtEntity existing = existingResponse.Value;
 
-        System.Collections.Generic.List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
+        List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
         AuthorizedUserExtEntity existingUser = authorizedUsers.Find(u => u.UserId == entity.TargetUserId);
 
         if (existingUser is not null)
@@ -288,27 +226,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to grant collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        CollectionExtEntity result = upsertResponse.Value!;
-
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = result.CollectionId,
-            OwnerId = result.OwnerId,
-            Name = result.Name,
-            Type = result.Type,
-            Visibility = result.Visibility,
-            IsDefault = result.IsDefault,
-            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = result.CreatedAt,
-            UpdatedAt = result.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
@@ -332,7 +250,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         CollectionExtEntity existing = existingResponse.Value;
 
-        System.Collections.Generic.List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
+        List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
         int removedCount = authorizedUsers.RemoveAll(u => u.UserId == entity.TargetUserId);
 
         if (removedCount == 0)
@@ -364,27 +282,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to revoke collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        CollectionExtEntity result = upsertResponse.Value!;
-
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = result.CollectionId,
-            OwnerId = result.OwnerId,
-            Name = result.Name,
-            Type = result.Type,
-            Visibility = result.Visibility,
-            IsDefault = result.IsDefault,
-            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = result.CreatedAt,
-            UpdatedAt = result.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
@@ -430,25 +328,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to delete collection {entity.CollectionId}: {deleteResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = existing.CollectionId,
-            OwnerId = existing.OwnerId,
-            Name = existing.Name,
-            Type = existing.Type,
-            Visibility = existing.Visibility,
-            IsDefault = existing.IsDefault,
-            AuthorizedUsers = [.. existing.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = existing.CreatedAt,
-            UpdatedAt = existing.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(existing).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
@@ -478,7 +358,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException("Cannot transfer ownership of the default collection"));
         }
 
-        System.Collections.Generic.List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
+        List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
         authorizedUsers.RemoveAll(u => u.UserId == entity.TargetUserId);
 
         string nowTimestamp = DateTime.UtcNow.ToString("o");
@@ -529,27 +409,21 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
                 new CollectionAdapterException($"Failed to transfer collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        CollectionExtEntity result = upsertResponse.Value!;
-
-        ICollectionOufEntity oufEntity = new CollectionOufEntity
-        {
-            CollectionId = result.CollectionId,
-            OwnerId = result.OwnerId,
-            Name = result.Name,
-            Type = result.Type,
-            Visibility = result.Visibility,
-            IsDefault = result.IsDefault,
-            AuthorizedUsers = [.. result.AuthorizedUsers.Select(u => (IAuthorizedUserOufEntity)new AuthorizedUserOufEntity
-            {
-                UserId = u.UserId,
-                Role = u.Role,
-                GrantedAt = u.GrantedAt,
-                GrantedBy = u.GrantedBy
-            })],
-            CreatedAt = result.CreatedAt,
-            UpdatedAt = result.UpdatedAt
-        };
-
+        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+    }
+
+    private static IEnumerable<AuthorizedUserExtEntity> MapAuthorizedUsersToExt(IEnumerable<IAuthorizedUserItrEntity> users)
+    {
+        foreach (IAuthorizedUserItrEntity user in users)
+        {
+            yield return new AuthorizedUserExtEntity
+            {
+                UserId = user.UserId,
+                Role = user.Role,
+                GrantedAt = user.GrantedAt,
+                GrantedBy = user.GrantedBy
+            };
+        }
     }
 }
