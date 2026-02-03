@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -39,7 +40,8 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
     }
 
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(
-        ISealedProductsBySetCodeXfrEntity input)
+        ISealedProductsBySetCodeXfrEntity input,
+        CancellationToken cancellationToken)
     {
         string setCodeValue = input.SetCode;
         ReadPointItem readPoint = new()
@@ -63,7 +65,7 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
         SealedProductsBySetIdArgs args = new() { SetId = setId };
 
         OpResponse<IEnumerable<SealedProductExtEntity>> productsResponse = await _sealedProductsInquisition
-            .QueryAsync<SealedProductExtEntity>(args, default)
+            .QueryAsync<SealedProductExtEntity>(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (productsResponse.IsNotSuccessful())

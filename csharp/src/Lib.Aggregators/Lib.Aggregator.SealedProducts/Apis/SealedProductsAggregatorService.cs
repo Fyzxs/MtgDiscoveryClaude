@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.SealedProducts.Apis.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.SealedProducts;
@@ -18,5 +19,6 @@ public sealed class SealedProductsAggregatorService : ISealedProductsAggregatorS
     private SealedProductsAggregatorService(ISealedProductsBySetCodeAggregator sealedProductsBySetCodeAggregator) => _sealedProductsBySetCodeAggregator = sealedProductsBySetCodeAggregator;
 
     public Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> SealedProductsBySetCodeAsync(
-        ISealedProductsBySetCodeItrEntity setCode) => _sealedProductsBySetCodeAggregator.Execute(setCode);
+        ISealedProductsBySetCodeItrEntity setCode,
+        CancellationToken cancellationToken) => _sealedProductsBySetCodeAggregator.Execute(setCode, cancellationToken);
 }

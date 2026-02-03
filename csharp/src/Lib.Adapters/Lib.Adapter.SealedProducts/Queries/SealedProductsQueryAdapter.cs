@@ -29,5 +29,5 @@ internal sealed class SealedProductsQueryAdapter : ISealedProductsQueryAdapter
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> GetBySetCodeAsync(
         ISealedProductsBySetCodeXfrEntity query,
         CancellationToken cancellationToken)
-        => await _sealedProductsBySetCodeAdapter.Execute(query).ConfigureAwait(false);
+        => await _sealedProductsBySetCodeAdapter.Execute(query, cancellationToken).ConfigureAwait(false);
 }

@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
@@ -29,11 +30,11 @@ internal sealed class DefaultCollectionCreator : IDefaultCollectionCreator
         _mapper = mapper;
     }
 
-    public async Task CreateDefaultCollectionAsync(IUserIdArgEntity args)
+    public async Task CreateDefaultCollectionAsync(IUserIdArgEntity args, CancellationToken cancellationToken)
     {
         OwnerIdItrEntity ownerIdItr = new() { OwnerId = args.UserId };
         IOperationResponse<ICollectionOufEntity> existingDefault =
-            await _domainService.GetDefaultCollectionAsync(ownerIdItr).ConfigureAwait(false);
+            await _domainService.GetDefaultCollectionAsync(ownerIdItr, cancellationToken).ConfigureAwait(false);
 
         if (existingDefault.IsSuccess)
         {

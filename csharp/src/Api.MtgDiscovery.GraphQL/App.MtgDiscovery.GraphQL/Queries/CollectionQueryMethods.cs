@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Actions.Mappers.Collections;
@@ -55,24 +56,24 @@ internal sealed class CollectionQueryMethods
 
     [Authorize]
     [GraphQLType(typeof(CollectionsResponseModelUnionType))]
-    public async Task<ResponseModel> MyCollectionsAsync(ClaimsPrincipal claimsPrincipal)
+    public async Task<ResponseModel> MyCollectionsAsync(ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
     {
         AuthUserArgEntity authUser = new(claimsPrincipal);
         IOperationResponse<List<CollectionOutEntity>> response = await _entryService
-            .MyCollectionsAsync(authUser)
+            .MyCollectionsAsync(authUser, cancellationToken)
             .ConfigureAwait(false);
         return await _listResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> GetCollectionAsync(ClaimsPrincipal claimsPrincipal, string collectionId)
+    public async Task<ResponseModel> GetCollectionAsync(ClaimsPrincipal claimsPrincipal, string collectionId, CancellationToken cancellationToken)
     {
         ICollectionIdArgEntity args = await _collectionIdArgsMapper
             .Map(claimsPrincipal, collectionId)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .GetCollectionByIdAsync(args)
+            .GetCollectionByIdAsync(args, cancellationToken)
             .ConfigureAwait(false);
         return await _singleResponseMapper.Map(response).ConfigureAwait(false);
     }
@@ -92,22 +93,22 @@ internal sealed class CollectionQueryMethods
 
     [Authorize]
     [GraphQLType(typeof(CollectionsResponseModelUnionType))]
-    public async Task<ResponseModel> SharedCollectionsAsync(ClaimsPrincipal claimsPrincipal)
+    public async Task<ResponseModel> SharedCollectionsAsync(ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
     {
         AuthUserArgEntity authUser = new(claimsPrincipal);
         IOperationResponse<List<CollectionOutEntity>> response = await _entryService
-            .SharedCollectionsAsync(authUser)
+            .SharedCollectionsAsync(authUser, cancellationToken)
             .ConfigureAwait(false);
         return await _listResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionsResponseModelUnionType))]
-    public async Task<ResponseModel> AccessibleCollectionsAsync(ClaimsPrincipal claimsPrincipal)
+    public async Task<ResponseModel> AccessibleCollectionsAsync(ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
     {
         AuthUserArgEntity authUser = new(claimsPrincipal);
         IOperationResponse<List<CollectionOutEntity>> response = await _entryService
-            .AccessibleCollectionsAsync(authUser)
+            .AccessibleCollectionsAsync(authUser, cancellationToken)
             .ConfigureAwait(false);
         return await _listResponseMapper.Map(response).ConfigureAwait(false);
     }

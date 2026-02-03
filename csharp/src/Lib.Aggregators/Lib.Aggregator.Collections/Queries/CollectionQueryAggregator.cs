@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
 using Lib.Aggregator.Collections.Apis;
@@ -18,10 +19,10 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
 
     private CollectionQueryAggregator(ICollectionsAdapterService adapterService) => _adapterService = adapterService;
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .GetDefaultCollectionAsync(args)
+            .GetDefaultCollectionAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -32,10 +33,10 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _adapterService
-            .GetCollectionsByOwnerAsync(args)
+            .GetCollectionsByOwnerAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -46,10 +47,10 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
         return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .GetCollectionByIdAsync(args)
+            .GetCollectionByIdAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -60,10 +61,10 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _adapterService
-            .GetSharedCollectionsAsync(args)
+            .GetSharedCollectionsAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -74,10 +75,10 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
         return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _adapterService
-            .GetAccessibleCollectionsAsync(args)
+            .GetAccessibleCollectionsAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

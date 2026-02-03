@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.SealedProducts.Apis;
 using Lib.Adapter.SealedProducts.Apis.Entities;
@@ -30,11 +31,12 @@ internal sealed class SealedProductsBySetCodeAggregator : ISealedProductsBySetCo
     }
 
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(
-        ISealedProductsBySetCodeItrEntity input)
+        ISealedProductsBySetCodeItrEntity input,
+        CancellationToken cancellationToken)
     {
         ISealedProductsBySetCodeXfrEntity xfrEntity = await _mapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ISealedProductOufEntity>> response = await _adapterService
-            .GetBySetCodeAsync(xfrEntity, default)
+            .GetBySetCodeAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Collections.Commands;
 using Lib.Aggregator.Collections.Queries;
@@ -42,13 +43,13 @@ public sealed class CollectionsAggregatorService : ICollectionsAggregatorService
 
     public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity) => await _commandAggregator.TransferCollectionOwnershipAsync(entity);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args) => await _queryAggregator.GetDefaultCollectionAsync(args);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken) => await _queryAggregator.GetDefaultCollectionAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args) => await _queryAggregator.GetCollectionsByOwnerAsync(args);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken) => await _queryAggregator.GetCollectionsByOwnerAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args) => await _queryAggregator.GetCollectionByIdAsync(args);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken) => await _queryAggregator.GetCollectionByIdAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args) => await _queryAggregator.GetSharedCollectionsAsync(args);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken) => await _queryAggregator.GetSharedCollectionsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args) => await _queryAggregator.GetAccessibleCollectionsAsync(args);
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken) => await _queryAggregator.GetAccessibleCollectionsAsync(args, cancellationToken).ConfigureAwait(false);
 }

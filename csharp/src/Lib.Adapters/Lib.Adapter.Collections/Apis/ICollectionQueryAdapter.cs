@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.DataModels.Entities.Itrs.User;
@@ -30,26 +31,26 @@ public interface ICollectionQueryAdapter
     /// <summary>
     /// Retrieves the default collection for an owner.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args);
+    Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all collections owned by a specific user.
     /// </summary>
-    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args);
+    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves a specific collection by its ID.
     /// Supports owner lookup first, then cross-partition query for public collections.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args);
+    Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all collections shared with a specific user (where user is in authorized_users).
     /// </summary>
-    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args);
+    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all collections accessible to a user (owned + shared).
     /// </summary>
-    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args);
+    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken);
 }

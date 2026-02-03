@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.Collections.Apis;
@@ -85,7 +86,7 @@ public sealed class CollectionsAdapterServiceTests
 
         // Act
         IOperationResponse<ICollectionOufEntity> actual = await subject
-            .GetDefaultCollectionAsync(ownerIdItr)
+            .GetDefaultCollectionAsync(ownerIdItr, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
@@ -115,7 +116,7 @@ public sealed class CollectionsAdapterServiceTests
 
         // Act
         IOperationResponse<IEnumerable<ICollectionOufEntity>> actual = await subject
-            .GetCollectionsByOwnerAsync(ownerIdItr)
+            .GetCollectionsByOwnerAsync(ownerIdItr, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert

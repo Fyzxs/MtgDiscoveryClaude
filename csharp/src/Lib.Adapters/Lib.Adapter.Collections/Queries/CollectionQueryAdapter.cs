@@ -43,13 +43,13 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.owner_id = @ownerId AND c.is_default = true")
             .WithParameter("@ownerId", args.OwnerId);
 
         OpResponse<IEnumerable<CollectionExtEntity>> queryResponse = await _collectionsInquisitor
-            .QueryAsync<CollectionExtEntity>(query, new PartitionKey(args.OwnerId), CancellationToken.None)
+            .QueryAsync<CollectionExtEntity>(query, new PartitionKey(args.OwnerId), cancellationToken)
             .ConfigureAwait(false);
 
         if (queryResponse.IsNotSuccessful())
@@ -69,13 +69,13 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.owner_id = @ownerId")
             .WithParameter("@ownerId", args.OwnerId);
 
         OpResponse<IEnumerable<CollectionExtEntity>> queryResponse = await _collectionsInquisitor
-            .QueryAsync<CollectionExtEntity>(query, new PartitionKey(args.OwnerId), CancellationToken.None)
+            .QueryAsync<CollectionExtEntity>(query, new PartitionKey(args.OwnerId), cancellationToken)
             .ConfigureAwait(false);
 
         if (queryResponse.IsNotSuccessful())
@@ -90,7 +90,7 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(results);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
+    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -112,7 +112,7 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
             .WithParameter("@collectionId", args.CollectionId);
 
         OpResponse<IEnumerable<CollectionExtEntity>> queryResponse = await _collectionsInquisitor
-            .CrossPartitionQueryAsync<CollectionExtEntity>(query, CancellationToken.None)
+            .CrossPartitionQueryAsync<CollectionExtEntity>(query, cancellationToken)
             .ConfigureAwait(false);
 
         if (queryResponse.IsNotSuccessful() || queryResponse.Value?.Any() is false)
@@ -133,14 +133,14 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
             new ForbiddenOperationException("Access denied to private collection"));
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         QueryDefinition query = new QueryDefinition(
             "SELECT * FROM c WHERE EXISTS (SELECT VALUE au FROM au IN c.authorized_users WHERE au.user_id = @userId)")
             .WithParameter("@userId", args.UserId);
 
         OpResponse<IEnumerable<CollectionExtEntity>> queryResponse = await _collectionsInquisitor
-            .CrossPartitionQueryAsync<CollectionExtEntity>(query, CancellationToken.None)
+            .CrossPartitionQueryAsync<CollectionExtEntity>(query, cancellationToken)
             .ConfigureAwait(false);
 
         if (queryResponse.IsNotSuccessful())
@@ -155,9 +155,9 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
         return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(results);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
+    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> ownedResponse = await GetCollectionsByOwnerAsync(new OwnerIdItrEntity { OwnerId = args.UserId })
+        IOperationResponse<IEnumerable<ICollectionOufEntity>> ownedResponse = await GetCollectionsByOwnerAsync(new OwnerIdItrEntity { OwnerId = args.UserId }, cancellationToken)
             .ConfigureAwait(false);
 
         if (ownedResponse.IsFailure)
@@ -165,7 +165,7 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
             return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(ownedResponse.OuterException);
         }
 
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> sharedResponse = await GetSharedCollectionsAsync(args)
+        IOperationResponse<IEnumerable<ICollectionOufEntity>> sharedResponse = await GetSharedCollectionsAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (sharedResponse.IsFailure)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Collections;
@@ -22,7 +23,7 @@ internal sealed class RenameCollectionNameUniquenessValidator : IRenameCollectio
     {
         OwnerIdItrEntity ownerIdItr = new() { OwnerId = args.AuthUser.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _domainService
-            .GetCollectionsByOwnerAsync(ownerIdItr)
+            .GetCollectionsByOwnerAsync(ownerIdItr, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

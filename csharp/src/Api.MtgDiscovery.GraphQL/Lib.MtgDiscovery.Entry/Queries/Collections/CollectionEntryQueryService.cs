@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Mappers;
@@ -36,11 +37,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         _oufToOutMapper = oufToOutMapper;
     }
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args)
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken)
     {
         OwnerIdItrEntity itrEntity = new() { OwnerId = args.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> opResponse = await _domainService
-            .GetCollectionsByOwnerAsync(itrEntity)
+            .GetCollectionsByOwnerAsync(itrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)
@@ -52,11 +53,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         return new SuccessOperationResponse<List<CollectionOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args)
+    public async Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args, CancellationToken cancellationToken)
     {
         CollectionIdItrEntity itrEntity = new() { CollectionId = args.CollectionId, OwnerId = args.UserId };
         IOperationResponse<ICollectionOufEntity> opResponse = await _domainService
-            .GetCollectionByIdAsync(itrEntity)
+            .GetCollectionByIdAsync(itrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)
@@ -68,11 +69,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args)
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken)
     {
         UserIdItrEntity itrEntity = new() { UserId = args.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> opResponse = await _domainService
-            .GetSharedCollectionsAsync(itrEntity)
+            .GetSharedCollectionsAsync(itrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)
@@ -84,11 +85,11 @@ internal sealed class CollectionEntryQueryService : ICollectionEntryQueryService
         return new SuccessOperationResponse<List<CollectionOutEntity>>(outEntities);
     }
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args)
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken)
     {
         UserIdItrEntity itrEntity = new() { UserId = args.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> opResponse = await _domainService
-            .GetAccessibleCollectionsAsync(itrEntity)
+            .GetAccessibleCollectionsAsync(itrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (opResponse.IsFailure)

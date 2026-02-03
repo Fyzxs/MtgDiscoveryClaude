@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
@@ -279,7 +280,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
             OwnerId = argsEntity.AuthUser.UserId
         };
 
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GetCollectionByIdAsync(collectionIdItr).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GetCollectionByIdAsync(collectionIdItr, CancellationToken.None).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<IEnumerable<AuthorizedUserOutEntity>>(opResponse.OuterException);

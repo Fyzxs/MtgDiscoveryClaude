@@ -9,13 +9,12 @@ Interface with external systems (Cosmos DB, Scryfall API, etc.), transforming be
 Composite Interface Inheritance Patterns
 
 Expected Pattern
-```
-// Composite interface inherits from specialized adapters
-public interface I{Domain}AdapterService : I{Domain}QueryAdapter, I{Domain}CommandAdapter
-{
-    // No additional methods - all inherited
-}
-```
+I{Domain}AdapterService implements the I{Domain}QueryAdapter and I{Domain}CommandAdapter
+I{Domain}QueryAdapter and I{Domain}CommandAdapter implement well-named-methods
+{Domain}QueryAdapter and {Domain}CommandAdapter ctor-chain instantiation of one to many {WellNamedMethod}Adapter
+{WellNamedMethod}Adapter implements I{WellNamedMethod}Adapter
+I{WellNamedMethod}Adapter implements IOperationResponseService<inputType, outputType>
+
 
 Example: `Lib.Adapter.Artists/Apis/`
 - Interface: `IArtistAdapterService.cs` (composite, inherits all specialized adapters)

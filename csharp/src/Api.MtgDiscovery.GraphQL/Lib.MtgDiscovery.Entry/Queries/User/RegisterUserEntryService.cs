@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.User.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections;
@@ -63,7 +64,7 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
         if (opResponse.ResponseData.IsFirstLogin)
         {
             UserIdArgEntity userIdArg = new() { UserId = opResponse.ResponseData.UserId };
-            await _defaultCollectionCreator.CreateDefaultCollectionAsync(userIdArg).ConfigureAwait(false);
+            await _defaultCollectionCreator.CreateDefaultCollectionAsync(userIdArg, CancellationToken.None).ConfigureAwait(false);
         }
 
         UserSyncOutEntity outEntity = await _userSyncOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);

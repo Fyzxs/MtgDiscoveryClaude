@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
@@ -25,31 +26,31 @@ public sealed class CollectionQueryAdapterFake : ICollectionQueryAdapter
     public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
     public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         GetDefaultCollectionAsyncInvokeCount++;
         return Task.FromResult(GetDefaultCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         GetCollectionsByOwnerAsyncInvokeCount++;
         return Task.FromResult(GetCollectionsByOwnerAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken)
     {
         GetCollectionByIdAsyncInvokeCount++;
         return Task.FromResult(GetCollectionByIdAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         GetSharedCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetSharedCollectionsAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         GetAccessibleCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetAccessibleCollectionsAsyncResult);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.SealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
@@ -44,7 +45,9 @@ internal sealed class SealedProductsBySetCodeEntryService : ISealedProductsBySet
         _userSealedProductEnrichment = userSealedProductEnrichment;
     }
 
-    public async Task<IOperationResponse<List<SealedProductOutEntity>>> Execute(ISealedProductsBySetCodeArgEntity args)
+    public async Task<IOperationResponse<List<SealedProductOutEntity>>> Execute(
+        ISealedProductsBySetCodeArgEntity args,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> validatorResult = await _validator.Validate(args).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
@@ -53,7 +56,7 @@ internal sealed class SealedProductsBySetCodeEntryService : ISealedProductsBySet
         }
 
         ISealedProductsBySetCodeItrEntity itrEntity = await _argToItrMapper.Map(args).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ISealedProductOufEntity>> opResponse = await _domainService.SealedProductsBySetCodeAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ISealedProductOufEntity>> opResponse = await _domainService.SealedProductsBySetCodeAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<List<SealedProductOutEntity>>(opResponse.OuterException);

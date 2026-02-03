@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands;
 using Lib.MtgDiscovery.Entry.Commands.Collections;
@@ -143,7 +144,9 @@ public sealed class EntryService : IEntryService
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args) => await _userWishlistCardsEntryService.GetUserWishlistAsync(args);
 
-    public async Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(ISealedProductsBySetCodeArgEntity args) => await _sealedProductsEntryService.SealedProductsBySetCodeAsync(args);
+    public async Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(
+        ISealedProductsBySetCodeArgEntity args,
+        CancellationToken cancellationToken) => await _sealedProductsEntryService.SealedProductsBySetCodeAsync(args, cancellationToken);
 
     public async Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(IAddSealedProductToCollectionArgsEntity args) => await _userSealedProductsEntryService.AddSealedProductToCollectionAsync(args);
 
@@ -165,11 +168,11 @@ public sealed class EntryService : IEntryService
 
     public async Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity) => await _collectionEntryCommandService.GetCollectionAccessListAsync(argsEntity);
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args) => await _collectionEntryQueryService.MyCollectionsAsync(args);
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken) => await _collectionEntryQueryService.MyCollectionsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args) => await _collectionEntryQueryService.GetCollectionByIdAsync(args);
+    public async Task<IOperationResponse<CollectionOutEntity>> GetCollectionByIdAsync(ICollectionIdArgEntity args, CancellationToken cancellationToken) => await _collectionEntryQueryService.GetCollectionByIdAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args) => await _collectionEntryQueryService.SharedCollectionsAsync(args);
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> SharedCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken) => await _collectionEntryQueryService.SharedCollectionsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args) => await _collectionEntryQueryService.AccessibleCollectionsAsync(args);
+    public async Task<IOperationResponse<List<CollectionOutEntity>>> AccessibleCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken) => await _collectionEntryQueryService.AccessibleCollectionsAsync(args, cancellationToken).ConfigureAwait(false);
 }
