@@ -10,6 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Collections.Apis;
 
+/// <summary>
+/// Composite service that coordinates all collection adapter operations.
+/// Implements the passthrough pattern, delegating to specialized query and command adapters.
+///
+/// Architecture: AdapterService → QueryAdapter/CommandAdapter → Single-Operation Adapters
+///
+/// This service provides a unified API for all collection operations while internally
+/// organizing the implementation across specialized adapters for queries and commands.
+/// </summary>
 public sealed class CollectionsAdapterService : ICollectionsAdapterService
 {
     private readonly ICollectionCommandAdapter _commandAdapter;

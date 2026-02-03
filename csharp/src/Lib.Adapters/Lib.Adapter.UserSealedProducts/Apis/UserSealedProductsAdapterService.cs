@@ -9,6 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.UserSealedProducts.Apis;
 
+/// <summary>
+/// Composite service that coordinates all user sealed products adapter operations.
+/// Implements the passthrough pattern, delegating to specialized query and command adapters.
+///
+/// Architecture: AdapterService → QueryAdapter/CommandAdapter → Single-Operation Adapters
+///
+/// This service provides a unified API for all user sealed products operations while internally
+/// organizing the implementation across specialized adapters for queries and commands.
+/// </summary>
 public sealed class UserSealedProductsAdapterService : IUserSealedProductsAdapterService
 {
     private readonly IUserSealedProductsCommandAdapter _commandAdapter;
