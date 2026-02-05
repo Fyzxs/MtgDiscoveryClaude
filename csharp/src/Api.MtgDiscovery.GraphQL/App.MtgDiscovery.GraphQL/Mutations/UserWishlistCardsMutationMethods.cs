@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserWishlistCards;
@@ -42,10 +43,10 @@ internal sealed class UserWishlistCardsMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(AddCardToWishlistResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToWishlistAsync(ClaimsPrincipal claimsPrincipal, AddUserWishlistCardArgEntity args)
+    public async Task<ResponseModel> AddCardToWishlistAsync(ClaimsPrincipal claimsPrincipal, AddUserWishlistCardArgEntity args, CancellationToken cancellationToken)
     {
         IAddCardToWishlistArgsEntity combinedArgs = await _addArgsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToWishlistAsync(combinedArgs).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToWishlistAsync(combinedArgs, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

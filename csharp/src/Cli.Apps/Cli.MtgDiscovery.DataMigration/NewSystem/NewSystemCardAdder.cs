@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities;
@@ -19,19 +20,19 @@ internal sealed class NewSystemCardAdder : INewSystemCardAdder
         _userCardsEntryService = userCardsEntryService;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _userCardsEntryService
-            .AddCardToCollectionAsync(args)
+            .AddCardToCollectionAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         return response;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken)
     {
         IOperationResponse<List<CardItemOutEntity>> response = await _userCardsEntryService
-            .AddUserCardOnlyAsync(args)
+            .AddUserCardOnlyAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         return response;

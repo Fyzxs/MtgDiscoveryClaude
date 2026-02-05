@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
@@ -39,9 +40,15 @@ internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
         _cardsByArtistNameAdapter = cardsByArtistNameAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm) => await _searchArtistsAdapter.Execute(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(
+        IArtistSearchTermXfrEntity searchTerm,
+        CancellationToken cancellationToken) => await _searchArtistsAdapter.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(IArtistIdXfrEntity artistId) => await _cardsByArtistIdAdapter.Execute(artistId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(
+        IArtistIdXfrEntity artistId,
+        CancellationToken cancellationToken) => await _cardsByArtistIdAdapter.Execute(artistId, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(IArtistNameXfrEntity artistName) => await _cardsByArtistNameAdapter.Execute(artistName).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(
+        IArtistNameXfrEntity artistName,
+        CancellationToken cancellationToken) => await _cardsByArtistNameAdapter.Execute(artistName, cancellationToken).ConfigureAwait(false);
 }

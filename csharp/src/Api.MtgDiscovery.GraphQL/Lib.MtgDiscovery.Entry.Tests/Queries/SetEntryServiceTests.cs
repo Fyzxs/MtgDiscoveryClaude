@@ -21,5 +21,4 @@ public sealed class SetEntryServiceTests
         // Assert
         // Constructor should create instance without throwing
     }
-
 }

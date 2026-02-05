@@ -99,7 +99,7 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
         };
 
         OpResponse<CollectionExtEntity> ownerReadResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (ownerReadResponse.IsSuccessful() && ownerReadResponse.Value is not null)

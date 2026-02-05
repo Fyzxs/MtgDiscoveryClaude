@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis;
@@ -28,7 +29,13 @@ internal sealed class UserSetCardsCommandAdapter : IUserSetCardsCommandAdapter
         _addSetGroupAdapter = addSetGroupAdapter;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity) => await _addCardToSetAdapter.Execute(entity).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(
+        IAddCardToSetXfrEntity entity,
+        CancellationToken cancellationToken)
+        => await _addCardToSetAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity addSetGroup) => await _addSetGroupAdapter.Execute(addSetGroup).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(
+        IAddSetGroupToUserSetCardXfrEntity addSetGroup,
+        CancellationToken cancellationToken)
+        => await _addSetGroupAdapter.Execute(addSetGroup, cancellationToken).ConfigureAwait(false);
 }

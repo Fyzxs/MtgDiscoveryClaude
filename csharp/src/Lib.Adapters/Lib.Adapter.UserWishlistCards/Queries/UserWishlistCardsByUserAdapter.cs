@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
@@ -20,11 +21,11 @@ internal sealed class UserWishlistCardsByUserAdapter : IUserWishlistCardsByUserA
 
     private UserWishlistCardsByUserAdapter(ICosmosInquisition<AllUserWishlistCardsExtEntitys> inquisition) => _inquisition = inquisition;
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> Execute([NotNull] IUserWishlistCardXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> Execute([NotNull] IUserWishlistCardXfrEntity input, CancellationToken cancellationToken)
     {
         AllUserWishlistCardsExtEntitys args = new() { UserId = input.UserId };
 
-        OpResponse<IEnumerable<UserWishlistCardExtEntity>> queryResponse = await _inquisition.QueryAsync<UserWishlistCardExtEntity>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserWishlistCardExtEntity>> queryResponse = await _inquisition.QueryAsync<UserWishlistCardExtEntity>(args, cancellationToken).ConfigureAwait(false);
 
         if (queryResponse.IsNotSuccessful())
         {

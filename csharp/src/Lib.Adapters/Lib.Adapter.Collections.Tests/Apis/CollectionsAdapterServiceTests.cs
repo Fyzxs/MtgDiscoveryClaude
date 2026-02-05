@@ -56,7 +56,7 @@ public sealed class CollectionsAdapterServiceTests
 
         // Act
         IOperationResponse<ICollectionOufEntity> actual = await subject
-            .CreateCollectionAsync(itrEntity)
+            .CreateCollectionAsync(itrEntity, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert

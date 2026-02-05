@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis;
@@ -37,10 +38,12 @@ internal sealed class AddCardToSetAggregatorService : IAddCardToSetAggregatorSer
         _extToItrMapper = extToItrMapper;
     }
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> Execute(IAddCardToSetItrEntity input)
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> Execute(
+        IAddCardToSetItrEntity input,
+        CancellationToken cancellationToken)
     {
         IAddCardToSetXfrEntity xfrEntity = await _itrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<UserSetCardExtEntity> response = await _userSetCardsAdapterService.AddCardToSetAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserSetCardExtEntity> response = await _userSetCardsAdapterService.AddCardToSetAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

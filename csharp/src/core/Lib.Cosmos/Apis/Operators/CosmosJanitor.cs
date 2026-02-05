@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lib.Cosmos.Apis.Operators;
@@ -26,9 +27,10 @@ public abstract class CosmosJanitor : ICosmosJanitor
     /// </summary>
     /// <typeparam name="T">The type of the item to delete.</typeparam>
     /// <param name="item">The item instance to be deleted.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains
     /// the response from the delete operation with the item details.
     /// </returns>
-    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item) => await _source.DeleteAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item, CancellationToken cancellationToken = default) => await _source.DeleteAsync<T>(item, cancellationToken).ConfigureAwait(false);
 }

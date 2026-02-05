@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -28,11 +29,13 @@ internal sealed class UserSetCardAdapter : IUserSetCardAdapter
         _readPointMapper = readPointMapper;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute([NotNull] IUserSetCardGetXfrEntity input)
+    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute(
+        [NotNull] IUserSetCardGetXfrEntity input,
+        CancellationToken cancellationToken)
     {
         ReadPointItem readPoint = await _readPointMapper.Map(input).ConfigureAwait(false);
 
-        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
         if (readResponse.IsNotSuccessful())
         {

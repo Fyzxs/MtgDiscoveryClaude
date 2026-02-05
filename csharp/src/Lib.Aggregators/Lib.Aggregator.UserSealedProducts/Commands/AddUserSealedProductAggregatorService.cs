@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSealedProducts.Apis;
@@ -29,7 +30,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
         _oufMapper = oufMapper;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input)
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken)
     {
         IUserSealedProductXfrEntity xfrEntity = new UserSealedProductXfrEntity
         {
@@ -39,7 +40,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
             CountDelta = input.CountDelta
         };
 
-        IOperationResponse<UserSealedProductExtEntity> extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserSealedProductExtEntity> extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (extResponse.IsFailure)
         {

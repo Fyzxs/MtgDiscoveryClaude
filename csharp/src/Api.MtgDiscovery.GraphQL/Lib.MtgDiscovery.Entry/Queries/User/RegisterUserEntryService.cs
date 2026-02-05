@@ -46,7 +46,7 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
         _defaultCollectionCreator = defaultCollectionCreator;
     }
 
-    public async Task<IOperationResponse<UserSyncOutEntity>> Execute(IAuthUserArgEntity authUser)
+    public async Task<IOperationResponse<UserSyncOutEntity>> Execute(IAuthUserArgEntity authUser, CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<IUserRegistrationItrEntity>> validatorResult = await _authUserArgEntityValidator.Validate(authUser).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
@@ -55,7 +55,7 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
         }
 
         IUserInfoItrEntity itrEntity = await _authUserArgToItrMapper.Map(authUser).ConfigureAwait(false);
-        IOperationResponse<IUserSyncOufEntity> opResponse = await _userDomainService.RegisterUserAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<IUserSyncOufEntity> opResponse = await _userDomainService.RegisterUserAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<UserSyncOutEntity>(opResponse.OuterException);
@@ -64,7 +64,7 @@ internal sealed class RegisterUserEntryService : IRegisterUserEntryService
         if (opResponse.ResponseData.IsFirstLogin)
         {
             UserIdArgEntity userIdArg = new() { UserId = opResponse.ResponseData.UserId };
-            await _defaultCollectionCreator.CreateDefaultCollectionAsync(userIdArg, CancellationToken.None).ConfigureAwait(false);
+            await _defaultCollectionCreator.CreateDefaultCollectionAsync(userIdArg, cancellationToken).ConfigureAwait(false);
         }
 
         UserSyncOutEntity outEntity = await _userSyncOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);

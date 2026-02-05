@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.Shared.DataModels.Entities.Args.User;
@@ -7,5 +8,5 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface IUserEntryService
 {
-    Task<IOperationResponse<UserSyncOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser);
+    Task<IOperationResponse<UserSyncOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser, CancellationToken cancellationToken);
 }

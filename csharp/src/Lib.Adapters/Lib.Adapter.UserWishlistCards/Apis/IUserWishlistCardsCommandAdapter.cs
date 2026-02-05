@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
@@ -28,10 +29,14 @@ public interface IUserWishlistCardsCommandAdapter
     /// <summary>
     /// Adds a card to the user's wishlist.
     /// </summary>
-    Task<IOperationResponse<UserWishlistCardExtEntity>> AddUserWishlistCardAsync(IAddUserWishlistCardXfrEntity addUserWishlistCard);
+    /// <param name="addUserWishlistCard">The entity containing the card to add</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task<IOperationResponse<UserWishlistCardExtEntity>> AddUserWishlistCardAsync(IAddUserWishlistCardXfrEntity addUserWishlistCard, CancellationToken cancellationToken);
 
     /// <summary>
     /// Removes a card from the user's wishlist.
     /// </summary>
-    Task<IOperationResponse<UserWishlistCardExtEntity>> RemoveUserWishlistCardAsync(IRemoveUserWishlistCardXfrEntity removeUserWishlistCard);
+    /// <param name="removeUserWishlistCard">The entity containing the card to remove</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task<IOperationResponse<UserWishlistCardExtEntity>> RemoveUserWishlistCardAsync(IRemoveUserWishlistCardXfrEntity removeUserWishlistCard, CancellationToken cancellationToken);
 }

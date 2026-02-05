@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserWishlistCards.Apis;
@@ -59,7 +60,7 @@ internal sealed class AddCardToWishlistEntryService : IAddCardToWishlistEntrySer
         _cardNameGuidGenerator = cardNameGuidGenerator;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToWishlistArgsEntity input)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToWishlistArgsEntity input, CancellationToken cancellationToken)
     {
 
         IValidatorActionResult<IOperationResponse<IUserWishlistCardOufEntity>> validatorResult = await _addCardToWishlistArgEntityValidator.Validate(input).ConfigureAwait(false);
@@ -67,7 +68,7 @@ internal sealed class AddCardToWishlistEntryService : IAddCardToWishlistEntrySer
             return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [input.AddUserWishlistCard.CardId] };
-        IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr, cancellationToken).ConfigureAwait(false);
         if (cardResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 
@@ -96,7 +97,7 @@ internal sealed class AddCardToWishlistEntryService : IAddCardToWishlistEntrySer
             Details = itrEntity.Details
         };
 
-        IOperationResponse<IUserWishlistCardOufEntity> addResponse = await _userWishlistCardsDomainService.AddUserWishlistCardAsync(enrichedEntity).ConfigureAwait(false);
+        IOperationResponse<IUserWishlistCardOufEntity> addResponse = await _userWishlistCardsDomainService.AddUserWishlistCardAsync(enrichedEntity, cancellationToken).ConfigureAwait(false);
         if (addResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 

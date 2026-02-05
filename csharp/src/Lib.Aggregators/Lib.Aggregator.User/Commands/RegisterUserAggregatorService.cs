@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.User.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.User;
@@ -17,10 +18,10 @@ internal sealed class RegisterUserAggregatorService : IRegisterUserAggregatorSer
 
     private RegisterUserAggregatorService(IUserAdapterService userAdapterService) => _userAdapterService = userAdapterService;
 
-    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute([NotNull] IUserInfoItrEntity input)
+    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute([NotNull] IUserInfoItrEntity input, CancellationToken cancellationToken)
     {
         IOperationResponse<IUserSyncOufEntity> response = await _userAdapterService
-            .RegisterUserAsync(input)
+            .RegisterUserAsync(input, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

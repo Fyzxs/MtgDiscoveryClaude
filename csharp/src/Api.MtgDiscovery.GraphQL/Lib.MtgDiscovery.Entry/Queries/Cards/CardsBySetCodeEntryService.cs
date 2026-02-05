@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -53,14 +54,16 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
         _setContextMapper = setContextMapper;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ISetCodeArgEntity setCode)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
+        ISetCodeArgEntity setCode,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _setCodeArgEntityValidator.Validate(setCode).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ISetCodeItrEntity itrEntity = await _setCodeArgToItrMapper.Map(setCode).ConfigureAwait(false);
-        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsBySetCodeAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsBySetCodeAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
@@ -72,11 +75,11 @@ internal sealed class CardsBySetCodeEntryService : ICardsBySetCodeEntryService
             IUserCardsSetItrEntity userCardsSetContext = await _setContextMapper.Map(setCode, outEntities).ConfigureAwait(false);
             if (userCardsSetContext is not null)
             {
-                await _userCardEnrichment.EnrichBySet(outEntities, userCardsSetContext).ConfigureAwait(false);
+                await _userCardEnrichment.EnrichBySet(outEntities, userCardsSetContext, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        await _userWishlistCardEnrichment.Enrich(outEntities, setCode).ConfigureAwait(false);
+        await _userWishlistCardEnrichment.Enrich(outEntities, setCode, cancellationToken).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lib.Cosmos.Apis.Operators;
@@ -26,9 +27,10 @@ public abstract class CosmosGopher : ICosmosGopher
     /// </summary>
     /// <typeparam name="T">The type of the item to read.</typeparam>
     /// <param name="item">The item identifier containing the ID and partition key.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>
     /// A task that represents the asynchronous read operation. The task result contains
     /// the response from the read operation with the read item.
     /// </returns>
-    public async Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item) => await _source.ReadAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item, CancellationToken cancellationToken = default) => await _source.ReadAsync<T>(item, cancellationToken).ConfigureAwait(false);
 }

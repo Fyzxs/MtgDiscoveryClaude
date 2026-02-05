@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Cosmos.Containers;
 using Lib.Cosmos.Apis.Adapters;
@@ -15,5 +16,5 @@ public sealed class CollectionJanitor : ICosmosContainerDeleteOperator
 
     private CollectionJanitor(ICosmosContainerAdapter container) => _container = container;
 
-    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item) => await _container.DeleteAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item, CancellationToken cancellationToken = default) => await _container.DeleteAsync<T>(item, cancellationToken).ConfigureAwait(false);
 }

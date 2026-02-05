@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -43,17 +44,38 @@ public sealed class UserCardsAdapterService : IUserCardsAdapterService
         _userCardsQueryAdapter = userCardsQueryAdapter;
     }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard) => await _userCardsCommandAdapter.AddUserCardAsync(addUserCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(
+        IAddUserCardXfrEntity addUserCard,
+        CancellationToken cancellationToken)
+        => await _userCardsCommandAdapter.AddUserCardAsync(addUserCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(IUserCardsSetXfrEntity userCardsSet) => await _userCardsQueryAdapter.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsBySetAsync(
+        IUserCardsSetXfrEntity userCardsSet,
+        CancellationToken cancellationToken)
+        => await _userCardsQueryAdapter.UserCardsBySetAsync(userCardsSet, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(IUserCardXfrEntity userCard) => await _userCardsQueryAdapter.UserCardAsync(userCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardAsync(
+        IUserCardXfrEntity userCard,
+        CancellationToken cancellationToken)
+        => await _userCardsQueryAdapter.UserCardAsync(userCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(IUserCardsByIdsXfrEntity userCards) => await _userCardsQueryAdapter.UserCardsByIdsAsync(userCards).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByIdsAsync(
+        IUserCardsByIdsXfrEntity userCards,
+        CancellationToken cancellationToken)
+        => await _userCardsQueryAdapter.UserCardsByIdsAsync(userCards, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(IUserCardsArtistXfrEntity userCardsArtist) => await _userCardsQueryAdapter.UserCardsByArtistAsync(userCardsArtist).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByArtistAsync(
+        IUserCardsArtistXfrEntity userCardsArtist,
+        CancellationToken cancellationToken)
+        => await _userCardsQueryAdapter.UserCardsByArtistAsync(userCardsArtist, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(IUserCardsNameXfrEntity userCardsName) => await _userCardsQueryAdapter.UserCardsByNameAsync(userCardsName).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsByNameAsync(
+        IUserCardsNameXfrEntity userCardsName,
+        CancellationToken cancellationToken)
+        => await _userCardsQueryAdapter.UserCardsByNameAsync(userCardsName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(IUserCardsForSigningXfrEntity userCardsForSigning) => await _userCardsQueryAdapter.UserCardsForSigningAsync(userCardsForSigning).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> UserCardsForSigningAsync(
+        IUserCardsForSigningXfrEntity userCardsForSigning,
+        CancellationToken cancellationToken)
+        => await _userCardsQueryAdapter.UserCardsForSigningAsync(userCardsForSigning, cancellationToken).ConfigureAwait(false);
 }

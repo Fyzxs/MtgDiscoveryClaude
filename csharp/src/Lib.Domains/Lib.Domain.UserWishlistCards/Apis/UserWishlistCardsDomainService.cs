@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserWishlistCards.Commands;
 using Lib.Domain.UserWishlistCards.Queries;
@@ -19,13 +20,13 @@ public sealed class UserWishlistCardsDomainService : IUserWishlistCardsDomainSer
 
     private UserWishlistCardsDomainService(IUserWishlistCardsQueryDomainService queryOperations, IUserWishlistCardsCommandDomainService commandOperations) => (_queryOperations, _commandOperations) = (queryOperations, commandOperations);
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => await _commandOperations.AddUserWishlistCardAsync(userWishlistCard);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard, CancellationToken cancellationToken) => await _commandOperations.AddUserWishlistCardAsync(userWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => await _commandOperations.RemoveUserWishlistCardAsync(userWishlistCard);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard, CancellationToken cancellationToken) => await _commandOperations.RemoveUserWishlistCardAsync(userWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query) => await _queryOperations.GetUserWishlistCardsAsync(query);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query, CancellationToken cancellationToken) => await _queryOperations.GetUserWishlistCardsAsync(query, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsBySetAsync(IUserWishlistCardsSetItrEntity userWishlistCardsSet) => await _queryOperations.UserWishlistCardsBySetAsync(userWishlistCardsSet);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsBySetAsync(IUserWishlistCardsSetItrEntity userWishlistCardsSet, CancellationToken cancellationToken) => await _queryOperations.UserWishlistCardsBySetAsync(userWishlistCardsSet, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards) => await _queryOperations.UserWishlistCardsByIdsAsync(userWishlistCards);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards, CancellationToken cancellationToken) => await _queryOperations.UserWishlistCardsByIdsAsync(userWishlistCards, cancellationToken).ConfigureAwait(false);
 }

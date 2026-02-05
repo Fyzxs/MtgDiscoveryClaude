@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis.Entities;
@@ -34,9 +35,18 @@ public sealed class SetAdapterService : ISetAdapterService
 
     private SetAdapterService(ISetQueryAdapter setQueryAdapter) => _setQueryAdapter = setQueryAdapter;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setQueryAdapter.SetsByIdsAsync(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(
+        ISetIdsXfrEntity setIds,
+        CancellationToken cancellationToken)
+        => await _setQueryAdapter.SetsByIdsAsync(setIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setQueryAdapter.SetsByCodesAsync(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(
+        ISetCodesXfrEntity setCodes,
+        CancellationToken cancellationToken)
+        => await _setQueryAdapter.SetsByCodesAsync(setCodes, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets) => await _setQueryAdapter.AllSetsAsync(allSets).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(
+        IAllSetsXfrEntity allSets,
+        CancellationToken cancellationToken)
+        => await _setQueryAdapter.AllSetsAsync(allSets, cancellationToken).ConfigureAwait(false);
 }

@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
@@ -28,36 +29,36 @@ public interface ICollectionCommandAdapter
     /// <summary>
     /// Creates a new collection for a user.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Renames an existing collection.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Updates the visibility setting of a collection (public/private).
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Grants a user access to a collection with a specified role.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Revokes a user's access to a collection.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Deletes a collection. Cannot delete the default collection.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Transfers ownership of a collection to another user.
     /// Cannot transfer the default collection.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity);
+    Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken);
 }

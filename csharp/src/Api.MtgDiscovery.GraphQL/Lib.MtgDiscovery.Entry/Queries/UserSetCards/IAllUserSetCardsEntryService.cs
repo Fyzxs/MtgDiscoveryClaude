@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
@@ -8,5 +9,5 @@ namespace Lib.MtgDiscovery.Entry.Queries.UserSetCards;
 
 internal interface IAllUserSetCardsEntryService
 {
-    Task<IOperationResponse<List<UserSetCardOutEntity>>> Execute(IAllUserSetCardsArgEntity userSetCardsArgs);
+    Task<IOperationResponse<List<UserSetCardOutEntity>>> Execute(IAllUserSetCardsArgEntity userSetCardsArgs, CancellationToken cancellationToken);
 }

@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
@@ -16,9 +17,18 @@ public sealed class SetAggregatorService : ISetAggregatorService
 
     private SetAggregatorService(ISetsQueryAggregatorService querySetAggregatorService) => _querySetAggregatorService = querySetAggregatorService;
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds) => await _querySetAggregatorService.SetsAsync(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(
+        ISetIdsItrEntity setIds,
+        CancellationToken cancellationToken)
+        => await _querySetAggregatorService.SetsAsync(setIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes) => await _querySetAggregatorService.SetsByCodeAsync(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(
+        ISetCodesItrEntity setCodes,
+        CancellationToken cancellationToken)
+        => await _querySetAggregatorService.SetsByCodeAsync(setCodes, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets) => await _querySetAggregatorService.AllSetsAsync(allSets).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(
+        IAllSetsItrEntity allSets,
+        CancellationToken cancellationToken)
+        => await _querySetAggregatorService.AllSetsAsync(allSets, cancellationToken).ConfigureAwait(false);
 }

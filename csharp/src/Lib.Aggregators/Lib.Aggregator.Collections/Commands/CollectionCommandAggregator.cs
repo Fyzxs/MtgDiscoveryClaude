@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
 using Lib.Aggregator.Collections.Apis;
@@ -16,10 +17,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
 
     private CollectionCommandAggregator(ICollectionsAdapterService adapterService) => _adapterService = adapterService;
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .CreateCollectionAsync(entity)
+            .CreateCollectionAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -30,10 +31,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .RenameCollectionAsync(entity)
+            .RenameCollectionAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -44,10 +45,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .UpdateCollectionVisibilityAsync(entity)
+            .UpdateCollectionVisibilityAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -58,10 +59,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .GrantCollectionAccessAsync(entity)
+            .GrantCollectionAccessAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -72,10 +73,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .RevokeCollectionAccessAsync(entity)
+            .RevokeCollectionAccessAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -86,10 +87,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .DeleteCollectionAsync(entity)
+            .DeleteCollectionAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -100,10 +101,10 @@ internal sealed class CollectionCommandAggregator : ICollectionCommandAggregator
         return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken)
     {
         IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .TransferCollectionOwnershipAsync(entity)
+            .TransferCollectionOwnershipAsync(entity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

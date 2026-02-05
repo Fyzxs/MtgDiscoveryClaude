@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Artists.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
@@ -20,5 +21,7 @@ internal sealed class ArtistSearchDomainService : IArtistSearchDomainService
 
     private ArtistSearchDomainService(IArtistAggregatorService artistAggregatorService) => _artistAggregatorService = artistAggregatorService;
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(IArtistSearchTermItrEntity input) => await _artistAggregatorService.ArtistSearchAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(
+        IArtistSearchTermItrEntity input,
+        CancellationToken cancellationToken) => await _artistAggregatorService.ArtistSearchAsync(input, cancellationToken).ConfigureAwait(false);
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
@@ -26,7 +27,7 @@ internal sealed class UserSetCardsQueryEntryService : IUserSetCardsQueryEntrySer
         _allUserSetCardsEntryService = allUserSetCardsEntryService;
     }
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => await _userSetCardEntryService.Execute(userSetCardArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs, CancellationToken cancellationToken) => await _userSetCardEntryService.Execute(userSetCardArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) => await _allUserSetCardsEntryService.Execute(userSetCardsArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs, CancellationToken cancellationToken) => await _allUserSetCardsEntryService.Execute(userSetCardsArgs, cancellationToken).ConfigureAwait(false);
 }

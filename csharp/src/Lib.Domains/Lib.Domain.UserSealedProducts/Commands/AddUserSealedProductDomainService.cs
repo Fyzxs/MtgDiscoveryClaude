@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
@@ -18,5 +19,5 @@ internal sealed class AddUserSealedProductDomainService : IAddUserSealedProductD
 
     private AddUserSealedProductDomainService(IUserSealedProductsAggregatorService aggregator) => _aggregator = aggregator;
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input) => await _aggregator.AddUserSealedProductAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken) => await _aggregator.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
 }

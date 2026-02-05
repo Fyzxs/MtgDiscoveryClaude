@@ -22,10 +22,12 @@ internal sealed class AllSetsAdapter : IAllSetsAdapter
 
     private AllSetsAdapter(ICosmosInquisition allSetsInquisition) => _allSetsInquisition = allSetsInquisition;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(IAllSetsXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(
+        IAllSetsXfrEntity input,
+        CancellationToken cancellationToken)
     {
         OpResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _allSetsInquisition
-            .QueryAsync<ScryfallSetItemExtEntity>(CancellationToken.None)
+            .QueryAsync<ScryfallSetItemExtEntity>(cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsNotSuccessful())

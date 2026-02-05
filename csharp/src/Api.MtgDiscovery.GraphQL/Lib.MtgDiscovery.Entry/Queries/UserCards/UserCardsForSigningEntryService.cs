@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
@@ -38,7 +39,7 @@ internal sealed class UserCardsForSigningEntryService : IUserCardsForSigningEntr
         _oufToOutMapper = oufToOutMapper;
     }
 
-    public async Task<IOperationResponse<SigningResultOutEntity>> Execute(IUserCardsForSigningArgEntity argEntity)
+    public async Task<IOperationResponse<SigningResultOutEntity>> Execute(IUserCardsForSigningArgEntity argEntity, CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ISigningResultOufEntity>> validatorResult = await _validator.Validate(argEntity).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
@@ -47,7 +48,7 @@ internal sealed class UserCardsForSigningEntryService : IUserCardsForSigningEntr
         }
 
         IUserCardsForSigningItrEntity itrEntity = await _argToItrMapper.Map(argEntity).ConfigureAwait(false);
-        IOperationResponse<ISigningResultOufEntity> opResponse = await _userCardsDomainService.UserCardsForSigningAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ISigningResultOufEntity> opResponse = await _userCardsDomainService.UserCardsForSigningAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<SigningResultOutEntity>(opResponse.OuterException);

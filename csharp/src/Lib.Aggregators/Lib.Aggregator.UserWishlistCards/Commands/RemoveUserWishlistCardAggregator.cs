@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserWishlistCards.Apis;
@@ -21,11 +22,11 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
 
     private RemoveUserWishlistCardAggregator(IUserWishlistCardsAdapterService userWishlistCardsAdapterService) => _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input)
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input, CancellationToken cancellationToken)
     {
         RemoveUserWishlistCardXfrEntity xfrEntity = MapItrToXfr(input);
 
-        IOperationResponse<UserWishlistCardExtEntity> response = await _userWishlistCardsAdapterService.RemoveUserWishlistCardAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserWishlistCardExtEntity> response = await _userWishlistCardsAdapterService.RemoveUserWishlistCardAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

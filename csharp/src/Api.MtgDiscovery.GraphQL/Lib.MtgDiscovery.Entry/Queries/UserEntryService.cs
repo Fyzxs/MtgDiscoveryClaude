@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
@@ -18,5 +19,5 @@ internal sealed class UserEntryService : IUserEntryService
 
     private UserEntryService(IRegisterUserEntryService registerUser) => _registerUser = registerUser;
 
-    public async Task<IOperationResponse<UserSyncOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => await _registerUser.Execute(authUser).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSyncOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser, CancellationToken cancellationToken) => await _registerUser.Execute(authUser, cancellationToken).ConfigureAwait(false);
 }

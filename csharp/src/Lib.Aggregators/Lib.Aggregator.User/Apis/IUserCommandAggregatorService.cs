@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.User;
@@ -7,5 +8,5 @@ namespace Lib.Aggregator.User.Apis;
 
 public interface IUserCommandAggregatorService
 {
-    Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo);
+    Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo, CancellationToken cancellationToken);
 }

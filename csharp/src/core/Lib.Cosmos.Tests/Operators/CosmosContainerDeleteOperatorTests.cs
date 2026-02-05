@@ -44,7 +44,7 @@ public sealed class CosmosContainerDeleteOperatorTests
         CosmosContainerDeleteOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> result = await subject.DeleteAsync<TestItem>(deleteItem).ConfigureAwait(false);
+        OpResponse<TestItem> result = await subject.DeleteAsync<TestItem>(deleteItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         containerFake.DeleteItemAsyncInvokeCount.Should().Be(1);
@@ -83,7 +83,7 @@ public sealed class CosmosContainerDeleteOperatorTests
         CosmosContainerDeleteOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> result = await subject.DeleteAsync<TestItem>(deleteItem).ConfigureAwait(false);
+        OpResponse<TestItem> result = await subject.DeleteAsync<TestItem>(deleteItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         result.Value.Should().Be(expectedItem);
@@ -99,4 +99,6 @@ public sealed class CosmosContainerDeleteOperatorTests
     {
         public string Id { get; init; }
     }
+
+    public TestContext TestContext { get; set; }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
@@ -32,9 +33,18 @@ internal sealed class ArtistEntryService : IArtistEntryService
         _cardsByArtistName = cardsByArtistName;
     }
 
-    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm) => await _artistSearch.Execute(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(
+        IArtistSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _artistSearch.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(IArtistIdArgEntity artistId) => await _cardsByArtist.Execute(artistId).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(
+        IArtistIdArgEntity artistId,
+        CancellationToken cancellationToken)
+        => await _cardsByArtist.Execute(artistId, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(IArtistNameArgEntity artistName) => await _cardsByArtistName.Execute(artistName).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(
+        IArtistNameArgEntity artistName,
+        CancellationToken cancellationToken)
+        => await _cardsByArtistName.Execute(artistName, cancellationToken).ConfigureAwait(false);
 }

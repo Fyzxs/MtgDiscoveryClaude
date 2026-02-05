@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserSealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.UserSealedProducts;
@@ -9,10 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.MtgDiscovery.Entry.Queries.UserSealedProducts;
 
-/// <summary>
-/// Entry service for retrieving all sealed products for a specific user.
-/// Validates input and delegates to domain layer for data retrieval.
-/// </summary>
 internal sealed class UserSealedProductsByUserIdEntryService : IUserSealedProductsByUserIdEntryService
 {
     private readonly IUserSealedProductsQueryDomainService _domainService;
@@ -34,14 +31,14 @@ internal sealed class UserSealedProductsByUserIdEntryService : IUserSealedProduc
     }
 
     public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(
-        string userId)
+        string userId, CancellationToken cancellationToken)
     {
         IUserIdItrEntity userIdItr = new UserIdItrEntity { UserId = userId };
 
         IValidatorActionResult<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> validatorResult = await _validator.Validate(userIdItr).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
-            return validatorResult.FailureStatus();
+        { return validatorResult.FailureStatus(); }
 
-        return await _domainService.UserSealedProductsByUserIdAsync(userIdItr).ConfigureAwait(false);
+        return await _domainService.UserSealedProductsByUserIdAsync(userIdItr, cancellationToken).ConfigureAwait(false);
     }
 }

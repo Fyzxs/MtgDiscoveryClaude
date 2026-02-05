@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
@@ -29,11 +30,13 @@ internal sealed class UserCardsBySetAdapter : IUserCardsBySetAdapter
         _setXfrToArgsMapper = setXfrToArgsMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute([NotNull] IUserCardsSetXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        [NotNull] IUserCardsSetXfrEntity input,
+        CancellationToken cancellationToken)
     {
         UserCardItemsBySetExtEntitys args = await _setXfrToArgsMapper.Map(input).ConfigureAwait(false);
 
-        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsSetInquisition.QueryAsync<UserCardExtEntity>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsSetInquisition.QueryAsync<UserCardExtEntity>(args, cancellationToken).ConfigureAwait(false);
 
         if (response.IsNotSuccessful())
         {

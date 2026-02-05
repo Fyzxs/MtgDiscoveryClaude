@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserSealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Actions.Validators.UserSealedProducts;
@@ -39,7 +40,7 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
     }
 
     public async Task<IOperationResponse<List<SealedProductOutEntity>>> Execute(
-        IAddSealedProductToCollectionArgsEntity input)
+        IAddSealedProductToCollectionArgsEntity input, CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<List<SealedProductOutEntity>>> validatorResult = await _validator.Validate(input).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
@@ -53,7 +54,7 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
             CountDelta = input.AddUserSealedProduct.UserSealedProductDetails.Count
         };
 
-        IOperationResponse<List<ISealedProductOufEntity>> domainResponse = await _domainService.AddUserSealedProductAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<List<ISealedProductOufEntity>> domainResponse = await _domainService.AddUserSealedProductAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (domainResponse.IsFailure)
         { return new FailureOperationResponse<List<SealedProductOutEntity>>(domainResponse.OuterException); }
 

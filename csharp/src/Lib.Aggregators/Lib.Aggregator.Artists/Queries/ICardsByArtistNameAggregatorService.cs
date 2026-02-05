@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Artists.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Aggregator.Artists.Queries;
 /// Implements single-method delegation pattern with Execute method.
 /// </summary>
 internal interface ICardsByArtistNameAggregatorService
-    : IOperationResponseService<IArtistNameItrEntity, ICardItemCollectionOufEntity>;
+{
+    Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        IArtistNameItrEntity input,
+        CancellationToken cancellationToken);
+}

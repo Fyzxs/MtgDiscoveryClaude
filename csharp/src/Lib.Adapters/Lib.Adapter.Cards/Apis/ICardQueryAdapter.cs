@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -27,8 +28,16 @@ namespace Lib.Adapter.Cards.Apis;
 /// </summary>
 public interface ICardQueryAdapter
 {
-    Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds);
-    Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode);
-    Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName);
-    Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm);
+    Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(
+        ICardIdsXfrEntity cardIds,
+        CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(
+        ISetCodeXfrEntity setCode,
+        CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(
+        ICardNameXfrEntity cardName,
+        CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(
+        ICardSearchTermXfrEntity searchTerm,
+        CancellationToken cancellationToken);
 }

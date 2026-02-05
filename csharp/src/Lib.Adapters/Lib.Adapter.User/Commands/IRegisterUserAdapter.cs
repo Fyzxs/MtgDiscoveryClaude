@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.User;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.User.Commands;
 
@@ -9,4 +11,6 @@ namespace Lib.Adapter.User.Commands;
 /// Returns isFirstLogin flag to indicate new vs returning user.
 /// </summary>
 internal interface IRegisterUserAdapter
-    : IOperationResponseService<IUserInfoItrEntity, IUserSyncOufEntity>;
+{
+    Task<IOperationResponse<IUserSyncOufEntity>> Execute(IUserInfoItrEntity input, CancellationToken cancellationToken);
+}

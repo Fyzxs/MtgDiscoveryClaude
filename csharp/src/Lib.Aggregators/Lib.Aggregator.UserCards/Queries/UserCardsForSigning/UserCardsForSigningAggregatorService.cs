@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis;
@@ -34,10 +35,12 @@ internal sealed class UserCardsForSigningAggregatorService : IUserCardsForSignin
         _signingResultMapper = signingResultMapper;
     }
 
-    public async Task<IOperationResponse<ISigningResultOufEntity>> Execute(IUserCardsForSigningItrEntity input)
+    public async Task<IOperationResponse<ISigningResultOufEntity>> Execute(
+        IUserCardsForSigningItrEntity input,
+        CancellationToken cancellationToken)
     {
         IUserCardsForSigningXfrEntity xfrEntity = await _itrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsForSigningAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsAdapterService.UserCardsForSigningAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

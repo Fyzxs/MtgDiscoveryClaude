@@ -1,4 +1,5 @@
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Cosmos.Apis.Operators;
 
@@ -10,7 +11,7 @@ public sealed class UserCardsScribeFake : ICosmosScribe
     public bool ShouldReturnFailure { get; init; }
     public HttpStatusCode FailureStatusCode { get; init; } = HttpStatusCode.InternalServerError;
 
-    public Task<OpResponse<T>> UpsertAsync<T>(T item)
+    public Task<OpResponse<T>> UpsertAsync<T>(T item, CancellationToken cancellationToken = default)
     {
         UpsertAsyncCallCount++;
 

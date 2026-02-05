@@ -64,8 +64,7 @@ internal sealed class SealedProductsBySetCodeEntryService : ISealedProductsBySet
 
         List<SealedProductOutEntity> outEntities = await _oufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        // Enrich with user collection data if collectionId is provided
-        await _userSealedProductEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+        await _userSealedProductEnrichment.Enrich(outEntities, args, cancellationToken).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<SealedProductOutEntity>>(outEntities);
     }

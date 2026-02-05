@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
@@ -29,12 +30,18 @@ internal sealed class SetsQueryDomainService : ISetsQueryDomainService
         _allSetsService = allSetsService;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(ISetIdsItrEntity setIds)
-        => await _setsService.Execute(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(
+        ISetIdsItrEntity setIds,
+        CancellationToken cancellationToken)
+        => await _setsService.Execute(setIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(ISetCodesItrEntity setCodes)
-        => await _setsByCodeService.Execute(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(
+        ISetCodesItrEntity setCodes,
+        CancellationToken cancellationToken)
+        => await _setsByCodeService.Execute(setCodes, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(IAllSetsItrEntity allSets)
-        => await _allSetsService.Execute(allSets).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(
+        IAllSetsItrEntity allSets,
+        CancellationToken cancellationToken)
+        => await _allSetsService.Execute(allSets, cancellationToken).ConfigureAwait(false);
 }

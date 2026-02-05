@@ -18,12 +18,15 @@ internal sealed class CreateCollectionNameUniquenessValidator : ICreateCollectio
 
     public CreateCollectionNameUniquenessValidator(ICollectionsDomainService domainService) => _domainService = domainService;
 
+    public Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
+        ICreateCollectionArgsEntity args) => Validate(args, CancellationToken.None);
+
     public async Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
-        ICreateCollectionArgsEntity args)
+        ICreateCollectionArgsEntity args, CancellationToken cancellationToken)
     {
         OwnerIdItrEntity ownerIdItr = new() { OwnerId = args.AuthUser.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _domainService
-            .GetCollectionsByOwnerAsync(ownerIdItr, CancellationToken.None)
+            .GetCollectionsByOwnerAsync(ownerIdItr, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
@@ -34,10 +35,12 @@ internal sealed class CardNameSearchAggregatorService : ICardNameSearchAggregato
         _stringToSearchResultMapper = stringToSearchResultMapper;
     }
 
-    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> Execute(ICardSearchTermItrEntity input)
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> Execute(
+        ICardSearchTermItrEntity input,
+        CancellationToken cancellationToken)
     {
         ICardSearchTermXfrEntity xfrEntity = await _cardSearchTermItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<string>> response = await _cardAdapterService.SearchCardNamesAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

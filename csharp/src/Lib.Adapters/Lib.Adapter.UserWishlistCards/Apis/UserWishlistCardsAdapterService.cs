@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
@@ -36,11 +37,11 @@ public sealed class UserWishlistCardsAdapterService : IUserWishlistCardsAdapterS
         _userWishlistCardsQueryAdapter = userWishlistCardsQueryAdapter;
     }
 
-    public async Task<IOperationResponse<UserWishlistCardExtEntity>> AddUserWishlistCardAsync(IAddUserWishlistCardXfrEntity addUserWishlistCard) => await _userWishlistCardsCommandAdapter.AddUserWishlistCardAsync(addUserWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserWishlistCardExtEntity>> AddUserWishlistCardAsync(IAddUserWishlistCardXfrEntity addUserWishlistCard, CancellationToken cancellationToken) => await _userWishlistCardsCommandAdapter.AddUserWishlistCardAsync(addUserWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserWishlistCardExtEntity>> RemoveUserWishlistCardAsync(IRemoveUserWishlistCardXfrEntity removeUserWishlistCard) => await _userWishlistCardsCommandAdapter.RemoveUserWishlistCardAsync(removeUserWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserWishlistCardExtEntity>> RemoveUserWishlistCardAsync(IRemoveUserWishlistCardXfrEntity removeUserWishlistCard, CancellationToken cancellationToken) => await _userWishlistCardsCommandAdapter.RemoveUserWishlistCardAsync(removeUserWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByUserAsync(IUserWishlistCardXfrEntity userWishlistCard) => await _userWishlistCardsQueryAdapter.UserWishlistCardsByUserAsync(userWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByUserAsync(IUserWishlistCardXfrEntity userWishlistCard, CancellationToken cancellationToken) => await _userWishlistCardsQueryAdapter.UserWishlistCardsByUserAsync(userWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsXfrEntity userWishlistCards) => await _userWishlistCardsQueryAdapter.UserWishlistCardsByIdsAsync(userWishlistCards).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsXfrEntity userWishlistCards, CancellationToken cancellationToken) => await _userWishlistCardsQueryAdapter.UserWishlistCardsByIdsAsync(userWishlistCards, cancellationToken).ConfigureAwait(false);
 }

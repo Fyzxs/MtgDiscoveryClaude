@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
@@ -38,10 +39,12 @@ internal sealed class CardsByArtistNameAggregatorService : ICardsByArtistNameAgg
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(IArtistNameItrEntity input)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        IArtistNameItrEntity input,
+        CancellationToken cancellationToken)
     {
         IArtistNameXfrEntity xfrEntity = await _artistNameToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistNameAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistNameAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (adapterResponse.IsFailure)
         {

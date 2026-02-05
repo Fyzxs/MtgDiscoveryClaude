@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
@@ -23,7 +24,9 @@ internal sealed class CardsByNameAdapter : ICardsByNameAdapter
 
     private CardsByNameAdapter(ICosmosInquisition<CardsByNameGuidInquisitionArgs> cardsByNameGuidInquisition) => _cardsByNameGuidInquisition = cardsByNameGuidInquisition;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> Execute(ICardNameXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> Execute(
+        ICardNameXfrEntity input,
+        CancellationToken cancellationToken)
     {
         string cardNameValue = input.CardName;
         ICardNameGuidGenerator guidGenerator = new CardNameGuidGenerator();
@@ -32,7 +35,7 @@ internal sealed class CardsByNameAdapter : ICardsByNameAdapter
         CardsByNameGuidInquisitionArgs args = new() { NameGuid = nameGuid.AsSystemType().ToString() };
 
         OpResponse<IEnumerable<ScryfallCardByNameExtEntity>> cardsResponse = await _cardsByNameGuidInquisition
-            .QueryAsync<ScryfallCardByNameExtEntity>(args)
+            .QueryAsync<ScryfallCardByNameExtEntity>(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (cardsResponse.IsSuccessful() is false)

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Mappers.UserSealedProducts;
@@ -47,12 +48,12 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
     }
 
     public async Task<IOperationResponse<UserSealedProductExtEntity>> Execute(
-        [NotNull] IUserSealedProductXfrEntity input)
+        [NotNull] IUserSealedProductXfrEntity input, CancellationToken cancellationToken)
     {
         ReadPointItem productReadPoint = await _readPointMapper.Map(input.ProductUuid, input.SetId).ConfigureAwait(false);
 
         OpResponse<SealedProductExtEntity> productResponse =
-            await _sealedProductsGopher.ReadAsync<SealedProductExtEntity>(productReadPoint).ConfigureAwait(false);
+            await _sealedProductsGopher.ReadAsync<SealedProductExtEntity>(productReadPoint, cancellationToken).ConfigureAwait(false);
 
         if (productResponse.IsNotSuccessful())
         {
@@ -69,7 +70,7 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
             Partition = new ProvidedPartitionKeyValue(input.UserId)
         };
         OpResponse<UserSealedProductExtEntity> existingResponse =
-            await _userSealedProductsGopher.ReadAsync<UserSealedProductExtEntity>(userProductReadPoint).ConfigureAwait(false);
+            await _userSealedProductsGopher.ReadAsync<UserSealedProductExtEntity>(userProductReadPoint, cancellationToken).ConfigureAwait(false);
 
         int currentCount = existingResponse.IsSuccessful() ? existingResponse.Value.Count : 0;
         int newCount = currentCount + input.CountDelta;
@@ -84,7 +85,7 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
                     Partition = new ProvidedPartitionKeyValue(input.UserId)
                 };
                 OpResponse<UserSealedProductExtEntity> deleteResponse =
-                    await _userSealedProductsJanitor.DeleteAsync<UserSealedProductExtEntity>(deletePoint).ConfigureAwait(false);
+                    await _userSealedProductsJanitor.DeleteAsync<UserSealedProductExtEntity>(deletePoint, cancellationToken).ConfigureAwait(false);
 
                 if (deleteResponse.IsNotSuccessful())
                 {
@@ -139,7 +140,7 @@ internal sealed class AddUserSealedProductAdapter : IAddUserSealedProductAdapter
         };
 
         OpResponse<UserSealedProductExtEntity> upsertResponse =
-            await _userSealedProductsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+            await _userSealedProductsScribe.UpsertAsync(itemToUpsert, cancellationToken).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
         {

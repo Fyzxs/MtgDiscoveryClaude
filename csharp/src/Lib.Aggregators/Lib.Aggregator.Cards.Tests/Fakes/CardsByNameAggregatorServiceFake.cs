@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -13,7 +14,9 @@ public sealed class CardsByNameAggregatorServiceFake : ICardsByNameAggregatorSer
 
     public int ExecuteInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ICardNameItrEntity input)
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        ICardNameItrEntity input,
+        CancellationToken cancellationToken)
     {
         ExecuteInvokeCount++;
         return Task.FromResult(ExecuteResult);

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -36,15 +37,17 @@ internal sealed class AddSetGroupToUserSetCardAdapter : IAddSetGroupToUserSetCar
         _setGroupIntegrator = setGroupIntegrator;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute([NotNull] IAddSetGroupToUserSetCardXfrEntity input)
+    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute(
+        [NotNull] IAddSetGroupToUserSetCardXfrEntity input,
+        CancellationToken cancellationToken)
     {
         ReadPointItem readPoint = await _setGroupMapper.Map(input).ConfigureAwait(false);
-        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
         UserSetCardExtEntity existingRecord = _setGroupResolver.Resolve(readResponse, input);
         UserSetCardExtEntity updatedRecord = await _setGroupIntegrator.Integrate(existingRecord, input).ConfigureAwait(false);
 
-        OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
+        OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord, cancellationToken).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
             return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException("Failed to add set group to user set card"));

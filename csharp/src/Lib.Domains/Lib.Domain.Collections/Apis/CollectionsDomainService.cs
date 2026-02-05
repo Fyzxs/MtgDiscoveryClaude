@@ -29,19 +29,19 @@ public sealed class CollectionsDomainService : ICollectionsDomainService
         _queryService = queryService;
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity) => await _commandService.CreateCollectionAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken) => await _commandService.CreateCollectionAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity) => await _commandService.RenameCollectionAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken) => await _commandService.RenameCollectionAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity) => await _commandService.UpdateCollectionVisibilityAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken) => await _commandService.UpdateCollectionVisibilityAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity) => await _commandService.GrantCollectionAccessAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken) => await _commandService.GrantCollectionAccessAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity) => await _commandService.RevokeCollectionAccessAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken) => await _commandService.RevokeCollectionAccessAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity) => await _commandService.DeleteCollectionAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken) => await _commandService.DeleteCollectionAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity) => await _commandService.TransferCollectionOwnershipAsync(entity);
+    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken) => await _commandService.TransferCollectionOwnershipAsync(entity, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken) => await _queryService.GetDefaultCollectionAsync(args, cancellationToken).ConfigureAwait(false);
 

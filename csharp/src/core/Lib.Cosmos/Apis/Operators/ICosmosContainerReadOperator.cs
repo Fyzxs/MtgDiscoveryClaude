@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lib.Cosmos.Apis.Operators;
@@ -12,6 +13,7 @@ public interface ICosmosContainerReadOperator
     /// </summary>
     /// <typeparam name="T">The type of the domain object to read.</typeparam>
     /// <param name="item">The item identifier containing the ID and partition key.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous read operation. The task result contains the operation response with the read item.</returns>
-    Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item);
+    Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item, CancellationToken cancellationToken = default);
 }

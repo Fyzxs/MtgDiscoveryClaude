@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -34,8 +35,11 @@ public interface IUserSetCardsQueryAdapter
     /// Returns failure if the record does not exist (does NOT create defaults).
     /// </summary>
     /// <param name="readParams">Parameters for getting user set card (userId, setId)</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>User set card ExtEntity wrapped in operation response, or failure if not found</returns>
-    Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(IUserSetCardGetXfrEntity readParams);
+    Task<IOperationResponse<UserSetCardExtEntity>> GetUserSetCardAsync(
+        IUserSetCardGetXfrEntity readParams,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets all user set card data for a given user from storage.
@@ -44,6 +48,9 @@ public interface IUserSetCardsQueryAdapter
     /// Returns empty collection if no records exist (does NOT fail on empty results).
     /// </summary>
     /// <param name="queryParams">Parameters for querying user set cards (userId)</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection of user set card ExtEntities wrapped in operation response</returns>
-    Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(IAllUserSetCardsXfrEntity queryParams);
+    Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> GetAllUserSetCardsAsync(
+        IAllUserSetCardsXfrEntity queryParams,
+        CancellationToken cancellationToken);
 }

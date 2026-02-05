@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
@@ -9,15 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.UserSealedProducts.Apis;
 
-/// <summary>
-/// Composite service that coordinates all user sealed products adapter operations.
-/// Implements the passthrough pattern, delegating to specialized query and command adapters.
-///
-/// Architecture: AdapterService → QueryAdapter/CommandAdapter → Single-Operation Adapters
-///
-/// This service provides a unified API for all user sealed products operations while internally
-/// organizing the implementation across specialized adapters for queries and commands.
-/// </summary>
 public sealed class UserSealedProductsAdapterService : IUserSealedProductsAdapterService
 {
     private readonly IUserSealedProductsCommandAdapter _commandAdapter;
@@ -36,7 +28,7 @@ public sealed class UserSealedProductsAdapterService : IUserSealedProductsAdapte
         _queryAdapter = queryAdapter;
     }
 
-    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) => await _commandAdapter.AddUserSealedProductAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input, CancellationToken cancellationToken) => await _commandAdapter.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId) => await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId, CancellationToken cancellationToken) => await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId, cancellationToken).ConfigureAwait(false);
 }

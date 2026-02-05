@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis;
@@ -38,9 +39,18 @@ internal sealed class SetsQueryAdapter : ISetQueryAdapter
         _allSetsAdapter = allSetsAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(ISetIdsXfrEntity setIds) => await _setsByIdsAdapter.Execute(setIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByIdsAsync(
+        ISetIdsXfrEntity setIds,
+        CancellationToken cancellationToken)
+        => await _setsByIdsAdapter.Execute(setIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(ISetCodesXfrEntity setCodes) => await _setsByCodesAdapter.Execute(setCodes).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> SetsByCodesAsync(
+        ISetCodesXfrEntity setCodes,
+        CancellationToken cancellationToken)
+        => await _setsByCodesAdapter.Execute(setCodes, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(IAllSetsXfrEntity allSets) => await _allSetsAdapter.Execute(allSets).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> AllSetsAsync(
+        IAllSetsXfrEntity allSets,
+        CancellationToken cancellationToken)
+        => await _allSetsAdapter.Execute(allSets, cancellationToken).ConfigureAwait(false);
 }

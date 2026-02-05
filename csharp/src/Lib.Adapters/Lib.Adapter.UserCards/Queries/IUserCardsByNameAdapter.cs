@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.UserCards.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Adapter.UserCards.Queries;
 /// Adapter for retrieving all user cards with a specific card name.
 /// </summary>
 internal interface IUserCardsByNameAdapter
-    : IOperationResponseService<IUserCardsNameXfrEntity, IEnumerable<UserCardExtEntity>>;
+{
+    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        IUserCardsNameXfrEntity input,
+        CancellationToken cancellationToken);
+}

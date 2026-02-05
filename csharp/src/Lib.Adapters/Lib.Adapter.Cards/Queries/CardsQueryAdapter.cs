@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
@@ -41,11 +42,23 @@ internal sealed class CardsQueryAdapter : ICardQueryAdapter
         _searchCardNamesAdapter = searchCardNamesAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds) => await _cardsByIdsAdapter.Execute(cardIds).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(
+        ICardIdsXfrEntity cardIds,
+        CancellationToken cancellationToken)
+        => await _cardsByIdsAdapter.Execute(cardIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode) => await _cardsBySetCodeAdapter.Execute(setCode).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(
+        ISetCodeXfrEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardsBySetCodeAdapter.Execute(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName) => await _cardsByNameAdapter.Execute(cardName).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(
+        ICardNameXfrEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardsByNameAdapter.Execute(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm) => await _searchCardNamesAdapter.Execute(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(
+        ICardSearchTermXfrEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _searchCardNamesAdapter.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 }

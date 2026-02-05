@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.User.Apis;
@@ -57,7 +58,7 @@ public sealed class UserAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<IUserSyncOufEntity> actual = await subject.RegisterUserAsync(userInfo).ConfigureAwait(false);
+        IOperationResponse<IUserSyncOufEntity> actual = await subject.RegisterUserAsync(userInfo, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(operationResponse);

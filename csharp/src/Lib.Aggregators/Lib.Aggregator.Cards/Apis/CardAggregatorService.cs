@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -17,11 +18,23 @@ public sealed class CardAggregatorService : ICardAggregatorService
 
     private CardAggregatorService(ICardsQueryAggregatorService cardAggregatorOperations) => _cardAggregatorOperations = cardAggregatorOperations;
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => await _cardAggregatorOperations.CardsByIdsAsync(args);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(
+        ICardIdsItrEntity args,
+        CancellationToken cancellationToken)
+        => await _cardAggregatorOperations.CardsByIdsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => await _cardAggregatorOperations.CardsBySetCodeAsync(setCode);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(
+        ISetCodeItrEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardAggregatorOperations.CardsBySetCodeAsync(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardAggregatorOperations.CardsByNameAsync(cardName);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(
+        ICardNameItrEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardAggregatorOperations.CardsByNameAsync(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardAggregatorOperations.CardNameSearchAsync(searchTerm);
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(
+        ICardSearchTermItrEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _cardAggregatorOperations.CardNameSearchAsync(searchTerm, cancellationToken).ConfigureAwait(false);
 }

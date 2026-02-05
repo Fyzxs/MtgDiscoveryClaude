@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
@@ -38,10 +39,12 @@ internal sealed class CardsByNameAggregatorService : ICardsByNameAggregatorServi
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ICardNameItrEntity input)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        ICardNameItrEntity input,
+        CancellationToken cancellationToken)
     {
         ICardNameXfrEntity xfrEntity = await _cardNameItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> response = await _cardAdapterService.GetCardsByNameAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>> response = await _cardAdapterService.GetCardsByNameAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

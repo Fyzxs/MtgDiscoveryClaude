@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -49,14 +50,16 @@ internal sealed class CardsByArtistEntryService : ICardsByArtistEntryService
         _artistContextMapper = artistContextMapper;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IArtistIdArgEntity artistId)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
+        IArtistIdArgEntity artistId,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _artistIdArgEntityValidator.Validate(artistId).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         IArtistIdItrEntity itrEntity = await _artistIdArgToItrMapper.Map(artistId).ConfigureAwait(false);
-        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
@@ -66,7 +69,7 @@ internal sealed class CardsByArtistEntryService : ICardsByArtistEntryService
         if (string.IsNullOrEmpty(artistId.UserId) is false)
         {
             IUserCardsArtistItrEntity artistContext = await _artistContextMapper.Map(artistId).ConfigureAwait(false);
-            await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
+            await _userCardEnrichment.EnrichByArtist(outEntities, artistContext, cancellationToken).ConfigureAwait(false);
         }
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);

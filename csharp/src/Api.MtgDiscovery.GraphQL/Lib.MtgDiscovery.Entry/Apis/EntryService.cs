@@ -98,75 +98,105 @@ public sealed class EntryService : IEntryService
         _collectionEntryQueryService = collectionEntryQueryService;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => await _cardEntryService.CardsByIdsAsync(args);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(
+        ICardIdsArgEntity args,
+        CancellationToken cancellationToken)
+        => await _cardEntryService.CardsByIdsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(ISetCodeArgEntity setCode) => await _cardEntryService.CardsBySetCodeAsync(setCode);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(
+        ISetCodeArgEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardEntryService.CardsBySetCodeAsync(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(ICardNameArgEntity cardName) => await _cardEntryService.CardsByNameAsync(cardName);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(
+        ICardNameArgEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardEntryService.CardsByNameAsync(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm) => await _cardEntryService.CardNameSearchAsync(searchTerm);
+    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(
+        ICardSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _cardEntryService.CardNameSearchAsync(searchTerm, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity setIds) => await _setEntryService.SetsByIdsAsync(setIds);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByIdsAsync(
+        ISetIdsArgEntity setIds,
+        CancellationToken cancellationToken)
+        => await _setEntryService.SetsByIdsAsync(setIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity setCodes) => await _setEntryService.SetsByCodeAsync(setCodes);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByCodeAsync(
+        ISetCodesArgEntity setCodes,
+        CancellationToken cancellationToken)
+        => await _setEntryService.SetsByCodeAsync(setCodes, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> AllSetsAsync(IAllSetsArgEntity args) => await _setEntryService.AllSetsAsync(args);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> AllSetsAsync(
+        IAllSetsArgEntity args,
+        CancellationToken cancellationToken)
+        => await _setEntryService.AllSetsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm) => await _artistEntryService.ArtistSearchAsync(searchTerm);
+    public async Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(
+        IArtistSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _artistEntryService.ArtistSearchAsync(searchTerm, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(IArtistIdArgEntity artistId) => await _artistEntryService.CardsByArtistAsync(artistId);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(
+        IArtistIdArgEntity artistId,
+        CancellationToken cancellationToken)
+        => await _artistEntryService.CardsByArtistAsync(artistId, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(IArtistNameArgEntity artistName) => await _artistEntryService.CardsByArtistNameAsync(artistName);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(
+        IArtistNameArgEntity artistName,
+        CancellationToken cancellationToken)
+        => await _artistEntryService.CardsByArtistNameAsync(artistName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSyncOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser) => await _userEntryService.RegisterUserAsync(authUser);
+    public async Task<IOperationResponse<UserSyncOutEntity>> RegisterUserAsync(IAuthUserArgEntity authUser, CancellationToken cancellationToken) => await _userEntryService.RegisterUserAsync(authUser, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args) => await _userCardsEntryService.AddCardToCollectionAsync(args);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken) => await _userCardsEntryService.AddCardToCollectionAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args) => await _userCardsEntryService.AddUserCardOnlyAsync(args);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken) => await _userCardsEntryService.AddUserCardOnlyAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => await _userCardsQueryEntryService.UserCardAsync(cardArgs);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs, CancellationToken cancellationToken) => await _userCardsQueryEntryService.UserCardAsync(cardArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => await _userCardsQueryEntryService.UserCardsBySetAsync(bySetArgs);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs, CancellationToken cancellationToken) => await _userCardsQueryEntryService.UserCardsBySetAsync(bySetArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => await _userCardsQueryEntryService.UserCardsByIdsAsync(cardsArgs);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs, CancellationToken cancellationToken) => await _userCardsQueryEntryService.UserCardsByIdsAsync(cardsArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs) => await _userCardsQueryEntryService.UserCardsForSigningAsync(forSigningArgs);
+    public async Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs, CancellationToken cancellationToken) => await _userCardsQueryEntryService.UserCardsForSigningAsync(forSigningArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs) => await _userSetCardsQueryEntryService.UserSetCardByUserAndSetAsync(userSetCardArgs);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs, CancellationToken cancellationToken) => await _userSetCardsQueryEntryService.UserSetCardByUserAndSetAsync(userSetCardArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs) => await _userSetCardsQueryEntryService.AllUserSetCardsAsync(userSetCardsArgs);
+    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs, CancellationToken cancellationToken) => await _userSetCardsQueryEntryService.AllUserSetCardsAsync(userSetCardsArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args) => await _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args, CancellationToken cancellationToken) => await _userSetCardsCommandEntryService.AddSetGroupToUserSetCardAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args) => await _userSetCardsCommandEntryService.AddCardToSetAsync(args);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args, CancellationToken cancellationToken) => await _userSetCardsCommandEntryService.AddCardToSetAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToWishlistAsync(IAddCardToWishlistArgsEntity args) => await _userWishlistCardsEntryService.AddCardToWishlistAsync(args);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToWishlistAsync(IAddCardToWishlistArgsEntity args, CancellationToken cancellationToken) => await _userWishlistCardsEntryService.AddCardToWishlistAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args) => await _userWishlistCardsEntryService.GetUserWishlistAsync(args);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args, CancellationToken cancellationToken) => await _userWishlistCardsEntryService.GetUserWishlistAsync(args, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(
         ISealedProductsBySetCodeArgEntity args,
         CancellationToken cancellationToken) => await _sealedProductsEntryService.SealedProductsBySetCodeAsync(args, cancellationToken);
 
-    public async Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(IAddSealedProductToCollectionArgsEntity args) => await _userSealedProductsEntryService.AddSealedProductToCollectionAsync(args);
+    public async Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(IAddSealedProductToCollectionArgsEntity args, CancellationToken cancellationToken) => await _userSealedProductsEntryService.AddSealedProductToCollectionAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(string userId) => await _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(userId);
+    public async Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(string userId, CancellationToken cancellationToken) => await _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(userId, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgsEntity argsEntity) => await _collectionEntryCommandService.CreateCollectionAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.CreateCollectionAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> RenameCollectionAsync(IRenameCollectionArgsEntity argsEntity) => await _collectionEntryCommandService.RenameCollectionAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> RenameCollectionAsync(IRenameCollectionArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.RenameCollectionAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityArgsEntity argsEntity) => await _collectionEntryCommandService.UpdateCollectionVisibilityAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.UpdateCollectionVisibilityAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessArgsEntity argsEntity) => await _collectionEntryCommandService.GrantCollectionAccessAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.GrantCollectionAccessAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessArgsEntity argsEntity) => await _collectionEntryCommandService.RevokeCollectionAccessAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.RevokeCollectionAccessAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> DeleteCollectionAsync(IDeleteCollectionArgsEntity argsEntity) => await _collectionEntryCommandService.DeleteCollectionAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> DeleteCollectionAsync(IDeleteCollectionArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.DeleteCollectionAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<CollectionOutEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipArgsEntity argsEntity) => await _collectionEntryCommandService.TransferCollectionOwnershipAsync(argsEntity);
+    public async Task<IOperationResponse<CollectionOutEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.TransferCollectionOwnershipAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity) => await _collectionEntryCommandService.GetCollectionAccessListAsync(argsEntity);
+    public async Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity, CancellationToken cancellationToken) => await _collectionEntryCommandService.GetCollectionAccessListAsync(argsEntity, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<List<CollectionOutEntity>>> MyCollectionsAsync(IUserIdArgEntity args, CancellationToken cancellationToken) => await _collectionEntryQueryService.MyCollectionsAsync(args, cancellationToken).ConfigureAwait(false);
 

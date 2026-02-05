@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -30,6 +31,9 @@ public interface IUserCardsCommandAdapter
     /// Adds a card to a user's collection with the specified collection details.
     /// </summary>
     /// <param name="addUserCard">The user card collection information to add</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>The added user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard);
+    Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(
+        IAddUserCardXfrEntity addUserCard,
+        CancellationToken cancellationToken);
 }

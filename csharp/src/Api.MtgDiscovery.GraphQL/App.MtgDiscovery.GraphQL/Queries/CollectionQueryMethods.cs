@@ -80,13 +80,13 @@ internal sealed class CollectionQueryMethods
 
     [Authorize]
     [GraphQLType(typeof(AuthorizedUsersResponseModelUnionType))]
-    public async Task<ResponseModel> CollectionAccessListAsync(ClaimsPrincipal claimsPrincipal, string collectionId)
+    public async Task<ResponseModel> CollectionAccessListAsync(ClaimsPrincipal claimsPrincipal, string collectionId, CancellationToken cancellationToken)
     {
         IGetCollectionAccessListArgsEntity argsEntity = await _getCollectionAccessListArgsMapper
             .Map(claimsPrincipal, collectionId)
             .ConfigureAwait(false);
         IOperationResponse<IEnumerable<AuthorizedUserOutEntity>> response = await _entryService
-            .GetCollectionAccessListAsync(argsEntity)
+            .GetCollectionAccessListAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await _authorizedUsersResponseMapper.Map(response).ConfigureAwait(false);
     }

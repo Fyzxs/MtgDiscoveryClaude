@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
@@ -31,9 +32,18 @@ internal sealed class SetEntryService : ISetEntryService
         _allSets = allSets;
     }
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByIdsAsync(ISetIdsArgEntity args) => await _setsByIds.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByIdsAsync(
+        ISetIdsArgEntity args,
+        CancellationToken cancellationToken)
+        => await _setsByIds.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByCodeAsync(ISetCodesArgEntity args) => await _setsByCode.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> SetsByCodeAsync(
+        ISetCodesArgEntity args,
+        CancellationToken cancellationToken)
+        => await _setsByCode.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> AllSetsAsync(IAllSetsArgEntity args) => await _allSets.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> AllSetsAsync(
+        IAllSetsArgEntity args,
+        CancellationToken cancellationToken)
+        => await _allSets.Execute(args, cancellationToken).ConfigureAwait(false);
 }

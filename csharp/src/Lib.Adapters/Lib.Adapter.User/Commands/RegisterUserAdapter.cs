@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -48,12 +49,12 @@ internal sealed class RegisterUserAdapter : IRegisterUserAdapter
         _syncOufMapper = syncOufMapper;
     }
 
-    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute([NotNull] IUserInfoItrEntity input)
+    public async Task<IOperationResponse<IUserSyncOufEntity>> Execute([NotNull] IUserInfoItrEntity input, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = await _readPointMapper.Map(input).ConfigureAwait(false);
 
         OpResponse<UserInfoExtEntity> existingUserResponse = await _userInfoGopher
-            .ReadAsync<UserInfoExtEntity>(readItem)
+            .ReadAsync<UserInfoExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         bool isFirstLogin = existingUserResponse.IsNotSuccessful() ||
@@ -62,7 +63,7 @@ internal sealed class RegisterUserAdapter : IRegisterUserAdapter
         UserInfoExtEntity resolvedUser = _userInfoResolver.Resolve(existingUserResponse, input);
 
         OpResponse<UserInfoExtEntity> upsertResponse = await _userInfoScribe
-            .UpsertAsync(resolvedUser)
+            .UpsertAsync(resolvedUser, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())

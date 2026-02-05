@@ -44,7 +44,7 @@ public sealed class CosmosContainerReadOperatorTests
         CosmosContainerReadOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         containerFake.ReadItemAsyncInvokeCount.Should().Be(1);
@@ -83,7 +83,7 @@ public sealed class CosmosContainerReadOperatorTests
         CosmosContainerReadOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().Be(expectedItem);
@@ -120,7 +120,7 @@ public sealed class CosmosContainerReadOperatorTests
         CosmosContainerReadOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().BeNull();
@@ -158,7 +158,7 @@ public sealed class CosmosContainerReadOperatorTests
         CosmosContainerReadOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        _ = await subject.ReadAsync<TestItem>(readItem).ConfigureAwait(false);
+        _ = await subject.ReadAsync<TestItem>(readItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         loggerFake.LogInvokeCount.Should().Be(1);
@@ -195,7 +195,7 @@ public sealed class CosmosContainerReadOperatorTests
         CosmosContainerReadOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.ReadAsync<TestItem>(readItem, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().Be(expectedItem);
@@ -212,4 +212,6 @@ public sealed class CosmosContainerReadOperatorTests
         public string Id { get; init; }
         public string Name { get; init; }
     }
+
+    public TestContext TestContext { get; set; }
 }

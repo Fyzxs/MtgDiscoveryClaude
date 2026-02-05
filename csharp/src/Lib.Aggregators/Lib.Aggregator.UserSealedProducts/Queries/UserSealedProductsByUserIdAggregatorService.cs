@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSealedProducts.Apis;
@@ -28,9 +28,9 @@ internal sealed class UserSealedProductsByUserIdAggregatorService : IUserSealedP
         _itrMapper = itrMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input)
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<UserSealedProductExtEntity>> extResponse = await _adapter.UserSealedProductsByUserIdAsync(input.UserId).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<UserSealedProductExtEntity>> extResponse = await _adapter.UserSealedProductsByUserIdAsync(input.UserId, cancellationToken).ConfigureAwait(false);
 
         if (extResponse.IsFailure)
         {

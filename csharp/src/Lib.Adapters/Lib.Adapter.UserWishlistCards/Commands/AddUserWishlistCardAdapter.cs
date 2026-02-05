@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
@@ -32,14 +33,14 @@ internal sealed class AddUserWishlistCardAdapter : IAddUserWishlistCardAdapter
         _addUserWishlistCardMapper = addUserWishlistCardMapper;
     }
 
-    public async Task<IOperationResponse<UserWishlistCardExtEntity>> Execute([NotNull] IAddUserWishlistCardXfrEntity input)
+    public async Task<IOperationResponse<UserWishlistCardExtEntity>> Execute([NotNull] IAddUserWishlistCardXfrEntity input, CancellationToken cancellationToken)
     {
         ReadPointItem readPoint = new()
         {
             Id = new ProvidedCosmosItemId(input.CardId),
             Partition = new ProvidedPartitionKeyValue(input.UserId)
         };
-        OpResponse<UserWishlistCardExtEntity> existingResponse = await _userWishlistCardsGopher.ReadAsync<UserWishlistCardExtEntity>(readPoint).ConfigureAwait(false);
+        OpResponse<UserWishlistCardExtEntity> existingResponse = await _userWishlistCardsGopher.ReadAsync<UserWishlistCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
         UserWishlistCardExtEntity itemToUpsert;
 
@@ -53,7 +54,7 @@ internal sealed class AddUserWishlistCardAdapter : IAddUserWishlistCardAdapter
             itemToUpsert = await _addUserWishlistCardMapper.Map(input).ConfigureAwait(false);
         }
 
-        OpResponse<UserWishlistCardExtEntity> upsertResponse = await _userWishlistCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<UserWishlistCardExtEntity> upsertResponse = await _userWishlistCardsScribe.UpsertAsync(itemToUpsert, cancellationToken).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
         {

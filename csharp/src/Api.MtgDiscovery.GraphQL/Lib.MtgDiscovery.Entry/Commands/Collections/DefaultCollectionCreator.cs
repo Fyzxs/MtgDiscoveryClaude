@@ -43,6 +43,6 @@ internal sealed class DefaultCollectionCreator : IDefaultCollectionCreator
 
         ICollectionItrEntity itrEntity = await _mapper.Map(args).ConfigureAwait(false);
 
-        await _domainService.CreateCollectionAsync(itrEntity).ConfigureAwait(false);
+        await _domainService.CreateCollectionAsync(itrEntity, cancellationToken).ConfigureAwait(false);
     }
 }

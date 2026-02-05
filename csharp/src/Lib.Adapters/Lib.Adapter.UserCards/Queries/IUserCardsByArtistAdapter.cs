@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.UserCards.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Adapter.UserCards.Queries;
 /// Adapter for retrieving all user cards by a specific artist.
 /// </summary>
 internal interface IUserCardsByArtistAdapter
-    : IOperationResponseService<IUserCardsArtistXfrEntity, IEnumerable<UserCardExtEntity>>;
+{
+    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        IUserCardsArtistXfrEntity input,
+        CancellationToken cancellationToken);
+}

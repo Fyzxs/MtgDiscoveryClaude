@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis;
@@ -38,10 +39,12 @@ internal sealed class SetsByCodeAggregatorService : ISetsByCodeAggregatorService
         _setItemItrToOufMapper = setItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(ISetCodesItrEntity input)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(
+        ISetCodesItrEntity input,
+        CancellationToken cancellationToken)
     {
         ISetCodesXfrEntity xfrEntity = await _setCodesItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByCodesAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByCodesAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
@@ -12,13 +13,15 @@ public interface IUserWishlistCardsQueryAdapter
     /// Retrieves all user wishlist cards for a specific user.
     /// </summary>
     /// <param name="userWishlistCard">The user wishlist card entity containing userId</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Collection of user wishlist card information wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByUserAsync(IUserWishlistCardXfrEntity userWishlistCard);
+    Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByUserAsync(IUserWishlistCardXfrEntity userWishlistCard, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves multiple user wishlist cards using parallel point read operations.
     /// </summary>
     /// <param name="userWishlistCards">The user wishlist cards entity containing userId and collection of cardIds</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Collection of found user wishlist cards wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsXfrEntity userWishlistCards);
+    Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsXfrEntity userWishlistCards, CancellationToken cancellationToken);
 }

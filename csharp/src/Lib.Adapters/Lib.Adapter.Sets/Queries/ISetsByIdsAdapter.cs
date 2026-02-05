@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Sets.Apis.Entities;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.Sets.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Adapter.Sets.Queries;
 /// Single-method adapter for retrieving sets by their IDs.
 /// </summary>
 internal interface ISetsByIdsAdapter
-    : IOperationResponseService<ISetIdsXfrEntity, IEnumerable<ScryfallSetItemExtEntity>>;
+{
+    Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(
+        ISetIdsXfrEntity input,
+        CancellationToken cancellationToken);
+}

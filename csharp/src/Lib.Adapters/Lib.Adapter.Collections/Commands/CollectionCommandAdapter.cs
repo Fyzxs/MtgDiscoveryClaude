@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
 using Lib.Adapter.Collections.Exceptions;
@@ -44,7 +45,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken)
     {
         CollectionExtEntity extEntity = new()
         {
@@ -60,7 +61,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(extEntity)
+            .UpsertAsync(extEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
@@ -73,7 +74,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -82,7 +83,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
@@ -107,7 +108,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated)
+            .UpsertAsync(updated, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
@@ -120,7 +121,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -129,7 +130,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
@@ -154,7 +155,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated)
+            .UpsertAsync(updated, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
@@ -167,7 +168,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -176,7 +177,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
@@ -217,7 +218,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated)
+            .UpsertAsync(updated, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
@@ -230,7 +231,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -239,7 +240,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
@@ -273,7 +274,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated)
+            .UpsertAsync(updated, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
@@ -286,7 +287,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -295,7 +296,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
@@ -319,7 +320,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> deleteResponse = await _collectionJanitor
-            .DeleteAsync<CollectionExtEntity>(deleteItem)
+            .DeleteAsync<CollectionExtEntity>(deleteItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (deleteResponse.IsNotSuccessful())
@@ -332,7 +333,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity)
+    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -341,7 +342,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem)
+            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
@@ -377,7 +378,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> deleteResponse = await _collectionJanitor
-            .DeleteAsync<CollectionExtEntity>(deleteItem)
+            .DeleteAsync<CollectionExtEntity>(deleteItem, cancellationToken)
             .ConfigureAwait(false);
 
         if (deleteResponse.IsNotSuccessful())
@@ -400,7 +401,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
         };
 
         OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated)
+            .UpsertAsync(updated, cancellationToken)
             .ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())

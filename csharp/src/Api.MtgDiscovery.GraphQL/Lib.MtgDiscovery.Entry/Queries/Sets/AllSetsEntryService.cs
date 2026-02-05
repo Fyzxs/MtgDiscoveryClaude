@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
@@ -38,10 +39,12 @@ internal sealed class AllSetsEntryService : IAllSetsEntryService
         _userSetEnrichment = userSetEnrichment;
     }
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(IAllSetsArgEntity input)
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(
+        IAllSetsArgEntity input,
+        CancellationToken cancellationToken)
     {
         IAllSetsItrEntity allSetsItr = await _allSetsMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.AllSetsAsync(allSetsItr).ConfigureAwait(false);
+        IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.AllSetsAsync(allSetsItr, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
 
@@ -50,7 +53,7 @@ internal sealed class AllSetsEntryService : IAllSetsEntryService
         // Enrich with user set card information if userId is present
         if (input.HasUserId)
         {
-            await _userSetEnrichment.Enrich(outEntities, input).ConfigureAwait(false);
+            await _userSetEnrichment.Enrich(outEntities, input, cancellationToken).ConfigureAwait(false);
         }
 
         return new SuccessOperationResponse<List<SetItemOutEntity>>(outEntities);

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Apis;
@@ -23,7 +24,7 @@ internal sealed class CosmosContainerUpsertOperator : ICosmosContainerUpsertOper
         _logger = logger;
         _clientAdapter = clientAdapter;
     }
-    public async Task<OpResponse<T>> UpsertAsync<T>(T item)
+    public async Task<OpResponse<T>> UpsertAsync<T>(T item, CancellationToken cancellationToken = default)
     {
         Container container = await _clientAdapter.GetContainer().ConfigureAwait(false);
 
@@ -37,7 +38,7 @@ internal sealed class CosmosContainerUpsertOperator : ICosmosContainerUpsertOper
             };
         }
 
-        ItemResponse<T> itemResponse = await container.UpsertItemAsync(item, requestOptions: requestOptions).ConfigureAwait(false);
+        ItemResponse<T> itemResponse = await container.UpsertItemAsync(item, requestOptions: requestOptions, cancellationToken: cancellationToken).ConfigureAwait(false);
         _logger.UpsertInformation(itemResponse.RequestCharge, itemResponse.Diagnostics.GetClientElapsedTime());
         return new ItemOpResponse<T>(itemResponse);
     }

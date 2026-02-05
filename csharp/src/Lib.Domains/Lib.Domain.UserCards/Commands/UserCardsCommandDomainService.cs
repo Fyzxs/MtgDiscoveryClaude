@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
@@ -29,7 +30,11 @@ internal sealed class UserCardsCommandDomainService : IUserCardsCommandDomainSer
         _addUserCardOnlyService = addUserCardOnlyService;
     }
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => await _addUserCardService.Execute(userCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(
+        IUserCardItrEntity userCard,
+        CancellationToken cancellationToken) => await _addUserCardService.Execute(userCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard) => await _addUserCardOnlyService.Execute(userCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(
+        IUserCardItrEntity userCard,
+        CancellationToken cancellationToken) => await _addUserCardOnlyService.Execute(userCard, cancellationToken).ConfigureAwait(false);
 }

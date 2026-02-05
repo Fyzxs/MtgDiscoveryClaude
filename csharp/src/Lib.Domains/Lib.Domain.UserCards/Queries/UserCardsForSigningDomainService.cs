@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
@@ -20,5 +21,7 @@ internal sealed class UserCardsForSigningDomainService : IUserCardsForSigningDom
 
     private UserCardsForSigningDomainService(IUserCardsQueryAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
-    public async Task<IOperationResponse<ISigningResultOufEntity>> Execute(IUserCardsForSigningItrEntity input) => await _userCardsAggregatorService.UserCardsForSigningAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISigningResultOufEntity>> Execute(
+        IUserCardsForSigningItrEntity input,
+        CancellationToken cancellationToken) => await _userCardsAggregatorService.UserCardsForSigningAsync(input, cancellationToken).ConfigureAwait(false);
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserWishlistCards.Apis;
@@ -47,7 +48,7 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
         _userWishlistCardEnrichment = userWishlistCardEnrichment;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IGetUserWishlistArgsEntity input)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IGetUserWishlistArgsEntity input, CancellationToken cancellationToken)
     {
         // Step 1: Get wishlist entries to extract card IDs
         IUserWishlistCardsQueryItrEntity wishlistCardsItr = new UserWishlistCardsQueryItrEntity
@@ -55,7 +56,7 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
             UserId = input.TargetUserId
         };
 
-        IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> wishlistResponse = await _userWishlistCardsDomainService.GetUserWishlistCardsAsync(wishlistCardsItr).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> wishlistResponse = await _userWishlistCardsDomainService.GetUserWishlistCardsAsync(wishlistCardsItr, cancellationToken).ConfigureAwait(false);
         if (wishlistResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(wishlistResponse.OuterException);
 
@@ -68,7 +69,7 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
 
         // Step 3: Fetch full card data using CardDomainService
         ICardIdsItrEntity cardIdsItr = new CardIdsItrEntity { CardIds = cardIds };
-        IOperationResponse<ICardItemCollectionOufEntity> cardsResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> cardsResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr, cancellationToken).ConfigureAwait(false);
         if (cardsResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(cardsResponse.OuterException);
 
@@ -77,8 +78,8 @@ internal sealed class GetUserWishlistEntryService : IGetUserWishlistEntryService
 
         // Step 5: Apply enrichments (collection and wishlist data)
         IUserIdArgEntity enrichmentArgs = new UserIdArgsEntity { UserId = input.TargetUserId };
-        await _userCardEnrichment.Enrich(outEntities, enrichmentArgs).ConfigureAwait(false);
-        await _userWishlistCardEnrichment.Enrich(outEntities, enrichmentArgs).ConfigureAwait(false);
+        await _userCardEnrichment.Enrich(outEntities, enrichmentArgs, cancellationToken).ConfigureAwait(false);
+        await _userWishlistCardEnrichment.Enrich(outEntities, enrichmentArgs, cancellationToken).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

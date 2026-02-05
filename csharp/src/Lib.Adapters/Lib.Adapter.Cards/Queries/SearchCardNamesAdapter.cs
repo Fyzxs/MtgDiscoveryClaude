@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
@@ -37,7 +38,9 @@ internal sealed class SearchCardNamesAdapter : ISearchCardNamesAdapter
         _trigramMapper = trigramMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<string>>> Execute([NotNull] ICardSearchTermXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<string>>> Execute(
+        [NotNull] ICardSearchTermXfrEntity input,
+        CancellationToken cancellationToken)
     {
         // Extract primitives for external system interface
         string searchTermValue = input.SearchTerm;
@@ -66,7 +69,7 @@ internal sealed class SearchCardNamesAdapter : ISearchCardNamesAdapter
             };
 
             OpResponse<IEnumerable<CardNameTrigramExtEntity>> trigramResponse = await _cardNameTrigramSearchInquisition
-                .QueryAsync<CardNameTrigramExtEntity>(args)
+                .QueryAsync<CardNameTrigramExtEntity>(args, cancellationToken)
                 .ConfigureAwait(false);
 
             if (trigramResponse.IsSuccessful() && trigramResponse.Value != null)

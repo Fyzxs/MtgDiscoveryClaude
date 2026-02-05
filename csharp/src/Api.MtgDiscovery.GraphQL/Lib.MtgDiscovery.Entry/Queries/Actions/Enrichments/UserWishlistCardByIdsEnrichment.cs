@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserWishlistCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -30,7 +31,7 @@ internal sealed class UserWishlistCardByIdsEnrichment : IUserWishlistCardByIdsEn
         _integrator = integrator;
     }
 
-    public async Task Enrich(List<CardItemOutEntity> target, IUserIdArgEntity args)
+    public async Task Enrich(List<CardItemOutEntity> target, IUserIdArgEntity args, CancellationToken cancellationToken)
     {
         if (args.DoesNotHaveUserId)
             return;
@@ -39,7 +40,7 @@ internal sealed class UserWishlistCardByIdsEnrichment : IUserWishlistCardByIdsEn
         // This is much more efficient than individual point reads per card ID
         IUserWishlistCardsQueryItrEntity queryItr = new UserWishlistCardsQueryItrEntity { UserId = args.UserId };
 
-        IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> userWishlistCardResponse = await _userWishlistCardsDomainService.GetUserWishlistCardsAsync(queryItr).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> userWishlistCardResponse = await _userWishlistCardsDomainService.GetUserWishlistCardsAsync(queryItr, cancellationToken).ConfigureAwait(false);
         if (userWishlistCardResponse.IsFailure)
             return;
 

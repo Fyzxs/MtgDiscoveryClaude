@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
@@ -30,12 +31,18 @@ internal sealed class ArtistsQueryDomainService : IArtistsQueryDomainService
         _cardsByArtistNameService = cardsByArtistNameService;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm)
-        => await _artistSearchService.Execute(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(
+        IArtistSearchTermItrEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _artistSearchService.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId)
-        => await _cardsByArtistService.Execute(artistId).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(
+        IArtistIdItrEntity artistId,
+        CancellationToken cancellationToken)
+        => await _cardsByArtistService.Execute(artistId, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName)
-        => await _cardsByArtistNameService.Execute(artistName).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(
+        IArtistNameItrEntity artistName,
+        CancellationToken cancellationToken)
+        => await _cardsByArtistNameService.Execute(artistName, cancellationToken).ConfigureAwait(false);
 }

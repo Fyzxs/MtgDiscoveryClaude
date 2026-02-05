@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -23,7 +24,7 @@ internal sealed class UserWishlistCardsByIdsAdapter : IUserWishlistCardsByIdsAda
 
     private UserWishlistCardsByIdsAdapter(ICosmosGopher userWishlistCardsGopher) => _userWishlistCardsGopher = userWishlistCardsGopher;
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> Execute([NotNull] IUserWishlistCardsByIdsXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> Execute([NotNull] IUserWishlistCardsByIdsXfrEntity input, CancellationToken cancellationToken)
     {
         const int BatchSize = 20;
         List<UserWishlistCardExtEntity> foundCards = [];

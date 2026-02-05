@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Cli.MtgDiscovery.DataMigration.Configuration;
 using Cli.MtgDiscovery.DataMigration.ErrorTracking;
@@ -198,7 +199,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
         foreach (IAddCardToCollectionArgsEntity addCardEntity in addCardEntities)
         {
             IOperationResponse<List<CardItemOutEntity>> addResponse = await _cardAdder
-                .AddCardToCollectionAsync(addCardEntity)
+                .AddCardToCollectionAsync(addCardEntity, CancellationToken.None)
                 .ConfigureAwait(false);
 
             if (addResponse.IsFailure)

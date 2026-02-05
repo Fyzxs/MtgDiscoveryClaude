@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserSealedProducts;
@@ -42,10 +43,10 @@ internal sealed class UserSealedProductsMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(AddUserSealedProductResponseModelUnionType))]
-    public async Task<ResponseModel> AddUserSealedProductAsync(ClaimsPrincipal claimsPrincipal, AddUserSealedProductArgEntity args)
+    public async Task<ResponseModel> AddUserSealedProductAsync(ClaimsPrincipal claimsPrincipal, AddUserSealedProductArgEntity args, CancellationToken cancellationToken)
     {
         IAddSealedProductToCollectionArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
-        IOperationResponse<List<SealedProductOutEntity>> response = await _entryService.AddSealedProductToCollectionAsync(combinedArgs).ConfigureAwait(false);
+        IOperationResponse<List<SealedProductOutEntity>> response = await _entryService.AddSealedProductToCollectionAsync(combinedArgs, cancellationToken).ConfigureAwait(false);
         return await _responseMapper.Map(response).ConfigureAwait(false);
     }
 }

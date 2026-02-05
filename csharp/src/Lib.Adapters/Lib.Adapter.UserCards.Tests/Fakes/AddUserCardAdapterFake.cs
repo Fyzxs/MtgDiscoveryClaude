@@ -1,4 +1,5 @@
 #nullable enable
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -25,7 +26,9 @@ public sealed class AddUserCardAdapterFake : IAddUserCardAdapter
 
     public IAddUserCardXfrEntity? LastExecuteInput { get; private set; }
 
-    public Task<IOperationResponse<UserCardExtEntity>> Execute(IAddUserCardXfrEntity input)
+    public Task<IOperationResponse<UserCardExtEntity>> Execute(
+        IAddUserCardXfrEntity input,
+        CancellationToken cancellationToken)
     {
         ExecuteInvokeCount++;
         LastExecuteInput = input;

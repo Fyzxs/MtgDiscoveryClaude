@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
@@ -39,14 +40,14 @@ internal sealed class UserCardsByIdsEntryService : IUserCardsByIdsEntryService
         _userCardOufToOutMapper = userCardOufToOutMapper;
     }
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> Execute(IUserCardsByIdsArgEntity cardsArgs)
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> Execute(IUserCardsByIdsArgEntity cardsArgs, CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<IEnumerable<IUserCardOufEntity>>> validatorResult = await _userCardsByIdsArgEntityValidator.Validate(cardsArgs).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<UserCardOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         IUserCardsByIdsItrEntity itrEntity = await _userCardsByIdsArgToItrMapper.Map(cardsArgs).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<IUserCardOufEntity>> opResponse = await _userCardsDomainService.UserCardsByIdsAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> opResponse = await _userCardsDomainService.UserCardsByIdsAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<UserCardOutEntity>>(opResponse.OuterException);
 

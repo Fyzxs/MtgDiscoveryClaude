@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -15,6 +16,9 @@ internal interface IUserCardsForSigningAdapter
     /// Retrieves all user cards that match any of the specified artist IDs.
     /// </summary>
     /// <param name="input">The user cards for signing entity containing userId and artistIds</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(IUserCardsForSigningXfrEntity input);
+    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        IUserCardsForSigningXfrEntity input,
+        CancellationToken cancellationToken);
 }

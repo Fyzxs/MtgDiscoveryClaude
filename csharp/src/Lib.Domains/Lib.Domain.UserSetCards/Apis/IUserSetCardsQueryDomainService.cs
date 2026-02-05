@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
@@ -12,13 +13,19 @@ public interface IUserSetCardsQueryDomainService
     /// Retrieves user set card collection summary for a specific user and set.
     /// </summary>
     /// <param name="userSetCard">The user set card entity containing userId and setId</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>User set card collection summary wrapped in an operation response</returns>
-    Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard);
+    Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(
+        IUserSetCardItrEntity userSetCard,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all user set card collection summaries for a specific user.
     /// </summary>
     /// <param name="userSetCards">The entity containing userId</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection of user set card summaries wrapped in an operation response</returns>
-    Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards);
+    Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(
+        IAllUserSetCardsItrEntity userSetCards,
+        CancellationToken cancellationToken);
 }

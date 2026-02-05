@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.UserCards.Commands;
 
@@ -9,4 +11,8 @@ namespace Lib.Domain.UserCards.Commands;
 /// Implements single-method delegation pattern with Execute method.
 /// </summary>
 internal interface IAddUserCardDomainService
-    : IOperationResponseService<IUserCardItrEntity, IUserCardOufEntity>;
+{
+    Task<IOperationResponse<IUserCardOufEntity>> Execute(
+        IUserCardItrEntity input,
+        CancellationToken cancellationToken);
+}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
@@ -29,16 +30,16 @@ internal sealed class UserSealedProductEnrichment : IUserSealedProductEnrichment
         _integrator = integrator;
     }
 
-    public async Task Enrich(List<SealedProductOutEntity> target, ISealedProductsBySetCodeArgEntity args)
+    public async Task Enrich(List<SealedProductOutEntity> target, ISealedProductsBySetCodeArgEntity args, CancellationToken cancellationToken)
     {
         if (args.HasCollectionId is false)
-            return;
+        { return; }
 
         IOperationResponse<List<UserSealedProductOutEntity>> userProductsResponse =
-            await _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(args.CollectionId).ConfigureAwait(false);
+            await _userSealedProductsEntryService.GetUserSealedProductsByUserIdAsync(args.CollectionId, cancellationToken).ConfigureAwait(false);
 
         if (userProductsResponse.IsFailure)
-            return;
+        { return; }
 
         _ = await _integrator.Integrate(target, userProductsResponse.ResponseData).ConfigureAwait(false);
     }

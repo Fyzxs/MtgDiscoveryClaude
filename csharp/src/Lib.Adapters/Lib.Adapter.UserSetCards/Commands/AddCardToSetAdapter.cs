@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
@@ -39,7 +40,9 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
         _resolver = resolver;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute([NotNull] IAddCardToSetXfrEntity input)
+    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute(
+        [NotNull] IAddCardToSetXfrEntity input,
+        CancellationToken cancellationToken)
     {
         const int MaxRetries = 5;
         int retryCount = 0;
@@ -49,12 +52,12 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
             try
             {
                 ReadPointItem readPoint = await _readPointMapper.Map(input).ConfigureAwait(false);
-                OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+                OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
                 UserSetCardExtEntity existingRecord = _resolver.Resolve(readResponse, input);
                 UserSetCardExtEntity updatedRecord = await _integrator.Integrate(existingRecord, input).ConfigureAwait(false);
 
-                OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord).ConfigureAwait(false);
+                OpResponse<UserSetCardExtEntity> upsertResponse = await _userSetCardsScribe.UpsertAsync(updatedRecord, cancellationToken).ConfigureAwait(false);
 
                 if (upsertResponse.IsNotSuccessful())
                 {
@@ -76,7 +79,7 @@ internal sealed class AddCardToSetAdapter : IAddCardToSetAdapter
 
                 // Exponential backoff: 50ms, 100ms, 200ms, 400ms, 800ms
                 int delayMs = 50 * (1 << (retryCount - 1));
-                await Task.Delay(delayMs).ConfigureAwait(false);
+                await Task.Delay(delayMs, cancellationToken).ConfigureAwait(false);
 
                 // Loop will retry with fresh read
             }

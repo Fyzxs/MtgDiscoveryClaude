@@ -51,7 +51,7 @@ internal sealed class SealedProductsBySetCodeAdapter : ISealedProductsBySetCodeA
         };
 
         OpResponse<ScryfallSetCodeIndexExtEntity> indexResponse = await _setCodeIndexGopher
-            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint)
+            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint, cancellationToken)
             .ConfigureAwait(false);
 
         if (indexResponse.IsNotSuccessful() || indexResponse.Value == null)

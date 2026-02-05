@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.UserSetCards.Commands;
 
@@ -9,4 +11,8 @@ namespace Lib.Adapter.UserSetCards.Commands;
 /// Implements atomic read-modify-write pattern.
 /// </summary>
 internal interface IAddSetGroupToUserSetCardAdapter
-    : IOperationResponseService<IAddSetGroupToUserSetCardXfrEntity, UserSetCardExtEntity>;
+{
+    Task<IOperationResponse<UserSetCardExtEntity>> Execute(
+        IAddSetGroupToUserSetCardXfrEntity input,
+        CancellationToken cancellationToken);
+}

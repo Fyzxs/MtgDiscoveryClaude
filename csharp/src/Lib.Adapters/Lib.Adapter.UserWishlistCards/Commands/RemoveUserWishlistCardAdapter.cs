@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
@@ -39,14 +40,14 @@ internal sealed class RemoveUserWishlistCardAdapter : IRemoveUserWishlistCardAda
         _userWishlistCardsJanitor = userWishlistCardsJanitor;
     }
 
-    public async Task<IOperationResponse<UserWishlistCardExtEntity>> Execute([NotNull] IRemoveUserWishlistCardXfrEntity input)
+    public async Task<IOperationResponse<UserWishlistCardExtEntity>> Execute([NotNull] IRemoveUserWishlistCardXfrEntity input, CancellationToken cancellationToken)
     {
         ReadPointItem readPoint = new()
         {
             Id = new ProvidedCosmosItemId(input.CardId),
             Partition = new ProvidedPartitionKeyValue(input.UserId)
         };
-        OpResponse<UserWishlistCardExtEntity> existingResponse = await _userWishlistCardsGopher.ReadAsync<UserWishlistCardExtEntity>(readPoint).ConfigureAwait(false);
+        OpResponse<UserWishlistCardExtEntity> existingResponse = await _userWishlistCardsGopher.ReadAsync<UserWishlistCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
         if (existingResponse.IsNotSuccessful())
         {
@@ -65,7 +66,7 @@ internal sealed class RemoveUserWishlistCardAdapter : IRemoveUserWishlistCardAda
                 Partition = new ProvidedPartitionKeyValue(input.UserId)
             };
 
-            OpResponse<UserWishlistCardExtEntity> deleteResponse = await _userWishlistCardsJanitor.DeleteAsync<UserWishlistCardExtEntity>(deletePoint).ConfigureAwait(false);
+            OpResponse<UserWishlistCardExtEntity> deleteResponse = await _userWishlistCardsJanitor.DeleteAsync<UserWishlistCardExtEntity>(deletePoint, cancellationToken).ConfigureAwait(false);
 
             if (deleteResponse.IsNotSuccessful())
             {
@@ -76,7 +77,7 @@ internal sealed class RemoveUserWishlistCardAdapter : IRemoveUserWishlistCardAda
             return new SuccessOperationResponse<UserWishlistCardExtEntity>(existingItem);
         }
 
-        OpResponse<UserWishlistCardExtEntity> upsertResponse = await _userWishlistCardsScribe.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<UserWishlistCardExtEntity> upsertResponse = await _userWishlistCardsScribe.UpsertAsync(itemToUpsert, cancellationToken).ConfigureAwait(false);
 
         if (upsertResponse.IsNotSuccessful())
         {

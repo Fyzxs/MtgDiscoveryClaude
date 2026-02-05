@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -8,5 +9,7 @@ namespace Lib.Adapter.UserSetCards.Queries;
 
 internal interface IAllUserSetCardsAdapter
 {
-    Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> Execute(IAllUserSetCardsXfrEntity userSetCards);
+    Task<IOperationResponse<IEnumerable<UserSetCardExtEntity>>> Execute(
+        IAllUserSetCardsXfrEntity userSetCards,
+        CancellationToken cancellationToken);
 }

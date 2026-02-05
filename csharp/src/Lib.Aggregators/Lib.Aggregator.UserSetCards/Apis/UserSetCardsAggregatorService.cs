@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Commands;
 using Lib.Aggregator.UserSetCards.Queries;
@@ -28,11 +29,19 @@ public sealed class UserSetCardsAggregatorService : IUserSetCardsAggregatorServi
         _commandOperations = commandOperations;
     }
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _queryOperations.UserSetCardByUserAndSetAsync(userSetCard);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(
+        IUserSetCardItrEntity userSetCard,
+        CancellationToken cancellationToken) => await _queryOperations.UserSetCardByUserAndSetAsync(userSetCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) => await _queryOperations.AllUserSetCardsAsync(userSetCards);
+    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(
+        IAllUserSetCardsItrEntity userSetCards,
+        CancellationToken cancellationToken) => await _queryOperations.AllUserSetCardsAsync(userSetCards, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _commandOperations.AddSetGroupToUserSetCardAsync(entity);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(
+        IAddSetGroupToUserSetCardItrEntity entity,
+        CancellationToken cancellationToken) => await _commandOperations.AddSetGroupToUserSetCardAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => throw new System.NotImplementedException();
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(
+        IAddCardToSetItrEntity entity,
+        CancellationToken cancellationToken) => await _commandOperations.AddCardToSetAsync(entity, cancellationToken).ConfigureAwait(false);
 }

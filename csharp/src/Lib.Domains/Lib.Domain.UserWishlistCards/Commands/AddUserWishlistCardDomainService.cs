@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserWishlistCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
@@ -16,5 +17,5 @@ internal sealed class AddUserWishlistCardDomainService : IAddUserWishlistCardDom
 
     private AddUserWishlistCardDomainService(IUserWishlistCardsCommandAggregatorService userWishlistCardsAggregatorService) => _userWishlistCardsAggregatorService = userWishlistCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input) => await _userWishlistCardsAggregatorService.AddUserWishlistCardAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input, CancellationToken cancellationToken) => await _userWishlistCardsAggregatorService.AddUserWishlistCardAsync(input, cancellationToken).ConfigureAwait(false);
 }

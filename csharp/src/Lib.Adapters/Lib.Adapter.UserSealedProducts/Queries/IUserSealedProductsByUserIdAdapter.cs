@@ -1,8 +1,12 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.UserSealedProducts.Queries;
 
 internal interface IUserSealedProductsByUserIdAdapter
-    : IOperationResponseService<string, IEnumerable<UserSealedProductExtEntity>>;
+{
+    Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string collectionId, CancellationToken cancellationToken);
+}

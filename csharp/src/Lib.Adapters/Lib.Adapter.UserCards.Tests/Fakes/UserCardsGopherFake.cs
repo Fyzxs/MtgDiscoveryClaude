@@ -1,4 +1,5 @@
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Cosmos.Apis.Operators;
@@ -12,7 +13,7 @@ public sealed class UserCardsGopherFake : ICosmosGopher
     public bool ShouldReturnExistingRecord { get; init; }
     public UserCardExtEntity ExistingRecord { get; init; } = default!;
 
-    public Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item)
+    public Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item, CancellationToken cancellationToken = default)
     {
         ReadAsyncCallCount++;
         ReadAsyncReadPointItemInput = item;

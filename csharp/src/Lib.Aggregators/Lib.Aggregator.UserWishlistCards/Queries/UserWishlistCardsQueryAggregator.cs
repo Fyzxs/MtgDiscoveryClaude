@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserWishlistCards.Apis;
 using Lib.Aggregator.UserWishlistCards.Queries.UserWishlistCardsByIds;
@@ -28,14 +29,14 @@ internal sealed class UserWishlistCardsQueryAggregator : IUserWishlistCardsQuery
         _userWishlistCardsByIdsAggregatorService = userWishlistCardsByIdsAggregatorService;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query) => await _getUserWishlistCardsOperations.Execute(query);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> GetUserWishlistCardsAsync(IUserWishlistCardsQueryItrEntity query, CancellationToken cancellationToken) => await _getUserWishlistCardsOperations.Execute(query, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards) => await _userWishlistCardsByIdsAggregatorService.Execute(userWishlistCards).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsItrEntity userWishlistCards, CancellationToken cancellationToken) => await _userWishlistCardsByIdsAggregatorService.Execute(userWishlistCards, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsBySetAsync(IUserWishlistCardsSetItrEntity userWishlistCardsSet)
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> UserWishlistCardsBySetAsync(IUserWishlistCardsSetItrEntity userWishlistCardsSet, CancellationToken cancellationToken)
     {
         UserWishlistCardsQueryItrEntity query = new() { UserId = userWishlistCardsSet.UserId };
-        IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> response = await _getUserWishlistCardsOperations.Execute(query).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>> response = await _getUserWishlistCardsOperations.Execute(query, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

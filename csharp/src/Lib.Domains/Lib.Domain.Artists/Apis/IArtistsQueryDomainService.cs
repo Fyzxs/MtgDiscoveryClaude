@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
@@ -8,7 +9,15 @@ namespace Lib.Domain.Artists.Apis;
 
 public interface IArtistsQueryDomainService
 {
-    Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(IArtistSearchTermItrEntity searchTerm);
-    Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(IArtistIdItrEntity artistId);
-    Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(IArtistNameItrEntity artistName);
+    Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(
+        IArtistSearchTermItrEntity searchTerm,
+        CancellationToken cancellationToken);
+
+    Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(
+        IArtistIdItrEntity artistId,
+        CancellationToken cancellationToken);
+
+    Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(
+        IArtistNameItrEntity artistName,
+        CancellationToken cancellationToken);
 }

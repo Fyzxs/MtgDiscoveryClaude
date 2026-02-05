@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserCards.Apis;
@@ -43,10 +44,12 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         _addCardToSetMapper = addCardToSetMapper;
     }
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(IUserCardItrEntity input)
+    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(
+        IUserCardItrEntity input,
+        CancellationToken cancellationToken)
     {
         IAddUserCardXfrEntity xfrEntity = await _addUserCardItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<UserCardExtEntity> response = await _userCardsAdapterService.AddUserCardAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> response = await _userCardsAdapterService.AddUserCardAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -54,12 +57,12 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         }
 
         IAddCardToSetXfrEntity setCardEntity = await _addCardToSetMapper.Map(xfrEntity, response.ResponseData.CollectedList).ConfigureAwait(false);
-        IOperationResponse<UserSetCardExtEntity> setCardResponse = await _userSetCardsAdapterService.AddCardToSetAsync(setCardEntity).ConfigureAwait(false);
+        IOperationResponse<UserSetCardExtEntity> setCardResponse = await _userSetCardsAdapterService.AddCardToSetAsync(setCardEntity, cancellationToken).ConfigureAwait(false);
 
         if (setCardResponse.IsFailure)
         {
             IAddUserCardXfrEntity rollbackEntity = CreateRollbackEntity(xfrEntity);
-            await _userCardsAdapterService.AddUserCardAsync(rollbackEntity).ConfigureAwait(false);
+            await _userCardsAdapterService.AddUserCardAsync(rollbackEntity, cancellationToken).ConfigureAwait(false);
 
             return new FailureOperationResponse<IUserCardOufEntity>(setCardResponse.OuterException);
         }

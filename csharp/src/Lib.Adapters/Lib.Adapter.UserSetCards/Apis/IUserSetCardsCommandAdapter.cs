@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSetCards.Apis.Entities;
@@ -33,8 +34,11 @@ public interface IUserSetCardsCommandAdapter
     /// This logic is intrinsic to maintaining UserSetCard data integrity.
     /// </summary>
     /// <param name="entity">Card modification parameters</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Updated user set card ExtEntity wrapped in operation response</returns>
-    Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(IAddCardToSetXfrEntity entity);
+    Task<IOperationResponse<UserSetCardExtEntity>> AddCardToSetAsync(
+        IAddCardToSetXfrEntity entity,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Adds a set group to a user's set collection tracking.
@@ -47,6 +51,9 @@ public interface IUserSetCardsCommandAdapter
     /// This logic is intrinsic to maintaining UserSetCard collecting status.
     /// </summary>
     /// <param name="entity">Set group modification parameters</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Updated user set card ExtEntity wrapped in operation response</returns>
-    Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardXfrEntity entity);
+    Task<IOperationResponse<UserSetCardExtEntity>> AddSetGroupToUserSetCardAsync(
+        IAddSetGroupToUserSetCardXfrEntity entity,
+        CancellationToken cancellationToken);
 }

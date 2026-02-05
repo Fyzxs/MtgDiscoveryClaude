@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserWishlistCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
@@ -21,5 +22,5 @@ internal sealed class UserWishlistCardsByIdsDomainService : IUserWishlistCardsBy
 
     private UserWishlistCardsByIdsDomainService(IUserWishlistCardsQueryAggregatorService userWishlistCardsAggregatorService) => _userWishlistCardsAggregatorService = userWishlistCardsAggregatorService;
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsByIdsItrEntity input) => await _userWishlistCardsAggregatorService.UserWishlistCardsByIdsAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsByIdsItrEntity input, CancellationToken cancellationToken) => await _userWishlistCardsAggregatorService.UserWishlistCardsByIdsAsync(input, cancellationToken).ConfigureAwait(false);
 }

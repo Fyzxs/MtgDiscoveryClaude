@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Queries.Mappers;
@@ -33,7 +34,9 @@ internal sealed class CardsByIdsAdapter : ICardsByIdsAdapter
         _cardIdsToReadPointMapper = cardIdsToReadPointMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> Execute([NotNull] ICardIdsXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> Execute(
+        [NotNull] ICardIdsXfrEntity input,
+        CancellationToken cancellationToken)
     {
         ICollection<ReadPointItem> items = await _cardIdsToReadPointMapper.Map(input.CardIds).ConfigureAwait(false);
         IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem));

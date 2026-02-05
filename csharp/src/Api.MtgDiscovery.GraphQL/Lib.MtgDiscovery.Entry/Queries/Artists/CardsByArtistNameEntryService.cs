@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Artists.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -53,14 +54,16 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
         _artistContextCollectionMapper = artistContextCollectionMapper;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IArtistNameArgEntity artistName)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
+        IArtistNameArgEntity artistName,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _artistNameArgEntityValidator.Validate(artistName).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         IArtistNameItrEntity itrEntity = await _artistNameArgToItrMapper.Map(artistName).ConfigureAwait(false);
-        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistNameAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _artistDomainService.CardsByArtistNameAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
@@ -75,11 +78,11 @@ internal sealed class CardsByArtistNameEntryService : ICardsByArtistNameEntrySer
             // Enrich by each artist ID to collect all user cards for these artists
             foreach (IUserCardsArtistItrEntity artistContext in artistContexts)
             {
-                await _userCardEnrichment.EnrichByArtist(outEntities, artistContext).ConfigureAwait(false);
+                await _userCardEnrichment.EnrichByArtist(outEntities, artistContext, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        await _userWishlistCardEnrichment.Enrich(outEntities, artistName).ConfigureAwait(false);
+        await _userWishlistCardEnrichment.Enrich(outEntities, artistName, cancellationToken).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

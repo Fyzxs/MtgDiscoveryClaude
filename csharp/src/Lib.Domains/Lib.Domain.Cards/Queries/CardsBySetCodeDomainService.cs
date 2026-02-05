@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
@@ -20,5 +21,8 @@ internal sealed class CardsBySetCodeDomainService : ICardsBySetCodeDomainService
 
     private CardsBySetCodeDomainService(ICardAggregatorService cardAggregatorService) => _cardAggregatorService = cardAggregatorService;
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ISetCodeItrEntity input) => await _cardAggregatorService.CardsBySetCodeAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        ISetCodeItrEntity input,
+        CancellationToken cancellationToken)
+        => await _cardAggregatorService.CardsBySetCodeAsync(input, cancellationToken).ConfigureAwait(false);
 }

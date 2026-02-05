@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
@@ -18,5 +19,5 @@ internal sealed class UserSealedProductsQueryDomainService : IUserSealedProducts
     private UserSealedProductsQueryDomainService(
         IUserSealedProductsByUserIdDomainService userSealedProductsByUserIdOperations) => _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
 
-    public Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) => _userSealedProductsByUserIdOperations.Execute(input);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _userSealedProductsByUserIdOperations.Execute(input, cancellationToken).ConfigureAwait(false);
 }

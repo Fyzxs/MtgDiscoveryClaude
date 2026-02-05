@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries;
@@ -58,7 +59,7 @@ public sealed class CardAggregatorOperationsTests
 
         // Act
         IOperationResponse<ICardItemCollectionOufEntity> actual =
-            await subject.CardsByIdsAsync(args).ConfigureAwait(false);
+            await subject.CardsByIdsAsync(args, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.IsSuccess.Should().BeTrue();
@@ -90,7 +91,7 @@ public sealed class CardAggregatorOperationsTests
 
         // Act
         IOperationResponse<ICardItemCollectionOufEntity> actual =
-            await subject.CardsByIdsAsync(args).ConfigureAwait(false);
+            await subject.CardsByIdsAsync(args, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.IsSuccess.Should().BeTrue();
@@ -118,7 +119,7 @@ public sealed class CardAggregatorOperationsTests
 
         // Act
         IOperationResponse<ICardItemCollectionOufEntity> actual =
-            await subject.CardsByIdsAsync(args).ConfigureAwait(false);
+            await subject.CardsByIdsAsync(args, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.IsFailure.Should().BeTrue();

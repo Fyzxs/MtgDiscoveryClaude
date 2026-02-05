@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Aggregator.UserCards.Queries.UserCardsForSigning;
@@ -44,15 +45,33 @@ internal sealed class UserCardsQueryAggregator : IUserCardsQueryAggregatorServic
         _userCardsForSigningOperations = userCardsForSigningOperations;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(IUserCardItrEntity userCard) => await _userCardOperations.Execute(userCard);
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardAsync(
+        IUserCardItrEntity userCard,
+        CancellationToken cancellationToken)
+        => await _userCardOperations.Execute(userCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(IUserCardsSetItrEntity userCardsSet) => await _userCardsBySetOperations.Execute(userCardsSet);
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsBySetAsync(
+        IUserCardsSetItrEntity userCardsSet,
+        CancellationToken cancellationToken)
+        => await _userCardsBySetOperations.Execute(userCardsSet, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(IUserCardsByIdsItrEntity userCards) => await _userCardsByIdsOperations.Execute(userCards);
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByIdsAsync(
+        IUserCardsByIdsItrEntity userCards,
+        CancellationToken cancellationToken)
+        => await _userCardsByIdsOperations.Execute(userCards, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(IUserCardsArtistItrEntity userCardsArtist) => await _userCardsByArtistOperations.Execute(userCardsArtist);
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByArtistAsync(
+        IUserCardsArtistItrEntity userCardsArtist,
+        CancellationToken cancellationToken)
+        => await _userCardsByArtistOperations.Execute(userCardsArtist, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(IUserCardsNameItrEntity userCardsName) => await _userCardsByNameOperations.Execute(userCardsName);
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> UserCardsByNameAsync(
+        IUserCardsNameItrEntity userCardsName,
+        CancellationToken cancellationToken)
+        => await _userCardsByNameOperations.Execute(userCardsName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(IUserCardsForSigningItrEntity userCardsForSigning) => await _userCardsForSigningOperations.Execute(userCardsForSigning);
+    public async Task<IOperationResponse<ISigningResultOufEntity>> UserCardsForSigningAsync(
+        IUserCardsForSigningItrEntity userCardsForSigning,
+        CancellationToken cancellationToken)
+        => await _userCardsForSigningOperations.Execute(userCardsForSigning, cancellationToken).ConfigureAwait(false);
 }

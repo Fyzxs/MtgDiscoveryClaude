@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -8,5 +9,5 @@ namespace Lib.MtgDiscovery.Entry.Commands.UserCards;
 
 internal interface IAddCardToCollectionEntryService
 {
-    Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity args);
+    Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken);
 }

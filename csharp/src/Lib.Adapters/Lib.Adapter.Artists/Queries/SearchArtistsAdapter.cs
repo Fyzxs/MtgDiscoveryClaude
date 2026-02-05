@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
@@ -24,7 +25,7 @@ internal sealed class SearchArtistsAdapter : ISearchArtistsAdapter
 
     private SearchArtistsAdapter(ICosmosInquisition<ArtistNameTrigramSearchInquisitionArgs> artistNameTrigramSearchInquisition) => _artistNameTrigramSearchInquisition = artistNameTrigramSearchInquisition;
 
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> Execute([NotNull] IArtistSearchTermXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> Execute([NotNull] IArtistSearchTermXfrEntity input, CancellationToken cancellationToken)
     {
         // Query each trigram and collect all matching artist data entities
         HashSet<string> seenArtistIds = [];
@@ -42,7 +43,7 @@ internal sealed class SearchArtistsAdapter : ISearchArtistsAdapter
             };
 
             OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramSearchInquisition
-                .QueryAsync<ArtistNameTrigramExtEntity>(args)
+                .QueryAsync<ArtistNameTrigramExtEntity>(args, cancellationToken)
                 .ConfigureAwait(false);
 
             if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null)

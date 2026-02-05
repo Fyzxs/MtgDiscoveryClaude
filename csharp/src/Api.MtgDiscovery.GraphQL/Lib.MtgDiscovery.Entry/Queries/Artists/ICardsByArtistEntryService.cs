@@ -1,10 +1,15 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Args.Artists;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Artists;
 
-internal interface ICardsByArtistEntryService : IOperationResponseService<IArtistIdArgEntity, List<CardItemOutEntity>>
+internal interface ICardsByArtistEntryService
 {
+    Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
+        IArtistIdArgEntity artistId,
+        CancellationToken cancellationToken);
 }

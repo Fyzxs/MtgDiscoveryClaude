@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
 using Lib.Adapter.UserSealedProducts.Apis;
@@ -17,5 +18,5 @@ internal sealed class UserSealedProductsQueryAdapter : IUserSealedProductsQueryA
 
     private UserSealedProductsQueryAdapter(IUserSealedProductsByUserIdAdapter userSealedProductsByUserIdAdapter) => _userSealedProductsByUserIdAdapter = userSealedProductsByUserIdAdapter;
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string userId) => await _userSealedProductsByUserIdAdapter.Execute(userId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string userId, CancellationToken cancellationToken) => await _userSealedProductsByUserIdAdapter.Execute(userId, cancellationToken).ConfigureAwait(false);
 }

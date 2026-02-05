@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.User.Commands;
 using Lib.Shared.DataModels.Entities.Itrs.User;
@@ -9,16 +10,16 @@ namespace Lib.Adapter.User.Apis;
 
 /// <summary>
 /// Main user adapter service implementation following the passthrough pattern.
-/// 
+///
 /// This service coordinates all user-related adapter operations by delegating
 /// to specialized adapters. Currently delegates to IUserPersistenceAdapter for all
 /// operations, but provides the architectural structure for future expansion.
-/// 
+///
 /// Future Expansion Examples:
 ///   - IUserCacheAdapter for caching layer
 ///   - IUserFallbackAdapter for redundancy
 ///   - IUserMetricsAdapter for telemetry
-/// 
+///
 /// Pattern Consistency:
 /// Matches EntryService, DomainService, and AggregatorService patterns
 /// to maintain predictable architecture across all layers.
@@ -32,5 +33,5 @@ public sealed class UserAdapterService : IUserAdapterService
 
     private UserAdapterService(IUserCommandAdapter userCommandAdapter) => _userCommandAdapter = userCommandAdapter;
 
-    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userCommandAdapter.RegisterUserAsync(userInfo).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo, CancellationToken cancellationToken) => await _userCommandAdapter.RegisterUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
 }
