@@ -7,4 +7,5 @@ internal sealed class ArtistSearchTermXfrEntity : IArtistSearchTermXfrEntity
 {
     public ICollection<string> SearchTerms { get; set; }
     public string Normalized { get; set; }
+    public string CacheKey => $"artist:search:{Normalized}";
 }

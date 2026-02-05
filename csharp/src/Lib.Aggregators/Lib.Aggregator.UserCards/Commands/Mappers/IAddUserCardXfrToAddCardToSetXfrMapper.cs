@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Shared.Abstractions.Actions.Mappers;

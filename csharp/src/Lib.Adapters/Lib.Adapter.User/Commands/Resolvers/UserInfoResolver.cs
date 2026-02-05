@@ -1,5 +1,5 @@
 using System;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserInfo;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 

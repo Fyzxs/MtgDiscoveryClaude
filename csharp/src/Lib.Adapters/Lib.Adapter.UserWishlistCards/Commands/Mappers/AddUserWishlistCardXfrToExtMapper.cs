@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
 
 namespace Lib.Adapter.UserWishlistCards.Commands.Mappers;

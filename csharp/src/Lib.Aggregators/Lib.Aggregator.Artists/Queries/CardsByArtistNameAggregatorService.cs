@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
 using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;

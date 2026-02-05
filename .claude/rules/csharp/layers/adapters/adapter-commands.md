@@ -1,9 +1,9 @@
 ---
 paths:
-  - "csharp/src/Lib.Adapters/**/Queries/*"
+  - "csharp/src/Lib.Adapters/**/Commands/*"
 ---
 
-The concrete implementation of the `I{Type}QueryAdapter` interface defined in the APIs folder is here.
+The concrete implementation of the `I{Type}CommandAdapter` interface defined in the APIs folder is here.
 It uses constructor chaining to create instances of each behavior it exposes.
 
 These are very targeted classes, following single responsibility by implementing a single behavior.
@@ -12,5 +12,3 @@ The class and interfaces are named like `{Behavior}Adapter` Interfaces having th
 
 The `I{Behavior}Adapter` must implement `IOperationResponseService` with the appropriate types.
 The `TInput` must be a `IXferEntity` and the `TOutput` must be an `IExtEntity`
-
-Queries can have an `Entities` folder with concrete implementation of an `XferEntity` from ANOTHER `Lib.Adapter.{TYPE}` that it calls.

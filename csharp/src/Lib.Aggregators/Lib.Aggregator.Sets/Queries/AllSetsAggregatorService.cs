@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Sets.Apis;
 using Lib.Aggregator.Sets.Exceptions;
 using Lib.Aggregator.Sets.Queries.Mappers;

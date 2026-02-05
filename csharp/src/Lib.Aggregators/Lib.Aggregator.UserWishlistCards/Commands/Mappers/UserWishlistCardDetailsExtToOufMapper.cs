@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Aggregator.UserWishlistCards.Entities;
 using Lib.Shared.DataModels.Entities.Oufs.UserWishlistCards;
 

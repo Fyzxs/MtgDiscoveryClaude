@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
 

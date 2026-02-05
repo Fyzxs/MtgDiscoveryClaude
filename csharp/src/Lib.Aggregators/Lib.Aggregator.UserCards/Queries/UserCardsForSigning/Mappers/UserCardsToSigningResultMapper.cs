@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Aggregator.UserCards.Entities;
 using Lib.Aggregator.UserCards.Queries.UserCardsForSigning.Entities;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;

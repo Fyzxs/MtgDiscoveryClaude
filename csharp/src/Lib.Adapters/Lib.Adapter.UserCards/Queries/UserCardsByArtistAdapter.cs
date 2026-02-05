@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.UserCards.Apis.Entities;

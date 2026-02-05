@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;

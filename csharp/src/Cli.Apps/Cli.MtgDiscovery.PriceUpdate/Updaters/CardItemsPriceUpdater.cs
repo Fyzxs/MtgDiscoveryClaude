@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Cli.MtgDiscovery.PriceUpdate.Cosmos.Containers;
 using Cli.MtgDiscovery.PriceUpdate.ManaPool.Entities;
 using Cli.MtgDiscovery.PriceUpdate.Mapping;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardItems;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Extensions.Logging;

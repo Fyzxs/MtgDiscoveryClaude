@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Shared.DataModels.Entities.Xfrs.UserSetCards;
 using Lib.Shared.Invocation.Operations;
 

@@ -1,7 +1,7 @@
 #nullable enable
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Commands;
 using Lib.Adapter.UserCards.Exceptions;

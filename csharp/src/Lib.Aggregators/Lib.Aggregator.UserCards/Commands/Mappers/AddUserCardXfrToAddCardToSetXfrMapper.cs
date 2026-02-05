@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 

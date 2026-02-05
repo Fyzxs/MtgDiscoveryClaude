@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserInfo;
 using Lib.Shared.DataModels.Entities.Oufs.User;
 
 namespace Lib.Adapter.User.Commands.Mappers;

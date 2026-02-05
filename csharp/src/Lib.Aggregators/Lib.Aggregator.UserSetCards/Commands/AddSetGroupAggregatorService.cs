@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Adapter.UserSetCards.Apis;
 using Lib.Aggregator.UserSetCards.Commands.Mappers;
 using Lib.Aggregator.UserSetCards.Queries.Mappers;

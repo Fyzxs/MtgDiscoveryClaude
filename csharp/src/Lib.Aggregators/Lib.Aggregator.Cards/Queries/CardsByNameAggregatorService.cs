@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardsByName;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
