@@ -6,7 +6,7 @@ using Lib.Adapter.Collections.Apis;
 using Lib.Adapter.Collections.Entities;
 using Lib.Adapter.Collections.Exceptions;
 using Lib.Adapter.Collections.Queries.Mappers;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Cosmos.Apis.Ids;

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 
 namespace Lib.Adapter.Collections.Entities;
 

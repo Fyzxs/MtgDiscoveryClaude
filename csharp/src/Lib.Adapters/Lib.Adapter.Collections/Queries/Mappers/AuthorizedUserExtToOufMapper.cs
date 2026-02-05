@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 
 namespace Lib.Adapter.Collections.Queries.Mappers;
