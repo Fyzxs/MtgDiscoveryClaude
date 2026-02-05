@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardItems;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.Cards.Queries;
 
@@ -11,8 +9,4 @@ namespace Lib.Adapter.Cards.Queries;
 /// Single-method adapter for retrieving cards by their IDs.
 /// </summary>
 internal interface ICardsByIdsAdapter
-{
-    Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> Execute(
-        ICardIdsXfrEntity input,
-        CancellationToken cancellationToken);
-}
+    : IOperationResponseService<ICardIdsXfrEntity, IEnumerable<ScryfallCardItemExtEntity>>;

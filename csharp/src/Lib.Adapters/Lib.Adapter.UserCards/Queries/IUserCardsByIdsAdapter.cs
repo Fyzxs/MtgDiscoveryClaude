@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.UserCards.Apis.Entities;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.UserCards.Queries;
 
@@ -11,8 +9,4 @@ namespace Lib.Adapter.UserCards.Queries;
 /// Adapter for retrieving multiple user cards using parallel point reads.
 /// </summary>
 internal interface IUserCardsByIdsAdapter
-{
-    Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
-        IUserCardsByIdsXfrEntity input,
-        CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IUserCardsByIdsXfrEntity, IEnumerable<UserCardExtEntity>>;

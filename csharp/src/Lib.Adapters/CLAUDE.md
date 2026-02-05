@@ -24,18 +24,18 @@ Example: `Lib.Adapter.Artists/Apis/`
 ## Entity Transformation Pipeline
 
 ```
-XfrEntity (input from Aggregator)  →  [Extract primitives]  →  ExtEntity (external format)
+XfrEntity (input from Aggregator)  →  [Extract primitives]  →  Cosmos Query/Read
                                                                       ↓
-                                                        [External system call]  ↓  ExtEntity
-                                                                ↓
-                                  [ICreateMapper]  ←  [Handle external response]
-                                        ↓
-                                    OufEntity (to Aggregator)
+                                                        [External system call]
+                                                                      ↓
+                                      ExtEntity  ←  [Handle external response]
+                                          ↓
+                              IOperationResponse<ExtEntity> (to Aggregator)
 ```
 
 **Entity Types**:
-- **XfrEntity** (Transfer): Input from Aggregator (complete ItrEntity objects)
-- **ExtEntity** (External): Format for external systems (Cosmos docs, API responses)
+- **XfrEntity** (Transfer): Input from Aggregator layer
+- **ExtEntity** (External): Format for/from external systems (Cosmos docs, API responses)
 
 See: `Lib.Adapter.Artists/Apis/Entities/` for XfrEntity definitions
 
@@ -58,7 +58,7 @@ See: `Lib.Adapter.Artists/Apis/Entities/` for XfrEntity definitions
 
 Adapters use action patterns from `Lib.Shared.Abstractions/Actions/`. See: `common/csharp-layer-patterns.md`
 
-**Primary pattern**: `ICreateMapper<TSource, TResult>` for all transformations (ExtEntity → OufEntity)
+**Primary pattern**: `ICreateMapper<TSource, TResult>` for transformations (XfrEntity → query args, etc.)
 
 ## Key Rules
 
@@ -68,6 +68,7 @@ Adapters use action patterns from `Lib.Shared.Abstractions/Actions/`. See: `comm
 4. **IOperationResponse**: Return responses, never throw exceptions
 5. **No Business Logic**: Translate between systems only; logic belongs in Domain/Aggregator
 6. **Error Handling**: Wrap external exceptions in `IOperationResponse`
+7. **Entity Types**: Input is `IXfrEntity`, output is `ExtEntity` — never `ItrEntity` or `OufEntity`
 
 ## Naming Conventions
 
@@ -86,9 +87,9 @@ Adapters use action patterns from `Lib.Shared.Abstractions/Actions/`. See: `comm
 
 1. Create composite interface in `Apis/`
 2. Create passthrough service in `Apis/`
-3. Create XfrEntity if accepting Aggregator input
+3. Create XfrEntity interface in `Apis/Entities/`
 4. Create specialized adapter (query/write logic)
-5. Create mappers (ExtEntity → OufEntity)
+5. Create mappers (XfrEntity → query args, etc.)
 6. Register in composite interface
 
 See: `Lib.Adapter.Artists/` for complete example

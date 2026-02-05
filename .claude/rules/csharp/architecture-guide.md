@@ -32,11 +32,12 @@ Request → App → Entry → Shared → Domain → Aggregator → Adapter → I
 ## Entity Transformation Pipeline
 
 ```
-ArgEntity  →  [Entry validates]  →  ItrEntity
-(App input)   [Mappers]             (Internal)
-
-              →  OufEntity  →  OutEntity
-                 (Adapter)      (App output)
+ArgEntity  →  [Entry validates]  →  ItrEntity  →  XfrEntity  →  Adapter
+(App input)   [Mappers]             (Internal)    (Transfer)      ↓
+                                                              ExtEntity
+                                                                  ↓
+OutEntity  ←  OufEntity  ←  [Aggregator maps]  ←  ExtEntity (from Adapter)
+(App output)  (Output)
 ```
 
 ### Naming Conventions
@@ -44,8 +45,9 @@ ArgEntity  →  [Entry validates]  →  ItrEntity
 Use these patterns consistently across layers:
 
 - **App layer**: `*ArgEntity` (input), `*OutEntity` (output)
-- **Internal**: `*ItrEntity`
-- **Adapter**: `*ExtEntity`, `*ExtArgs`, `*Item`
+- **Entry/Domain/Aggregator**: `*ItrEntity` (internal), `*XfrEntity` (transfer to adapter)
+- **Adapter**: `*ExtEntity` (external system format)
+- **Aggregator output**: `*OufEntity` (output from aggregator)
 - **Services**: `*EntryService`, `*DomainService`, `*AggregatorService`
 - **Validators**: `*ArgEntityValidator`, `*ArgEntityValidatorContainer`
 - **Mappers**: `*To*Mapper`

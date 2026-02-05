@@ -1,7 +1,7 @@
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserInfo;
+using Lib.Adapter.User.Apis.Entities;
 using Lib.Cosmos.Resolvers;
-using Lib.Shared.DataModels.Entities.Itrs.User;
 
 namespace Lib.Adapter.User.Commands.Resolvers;
 
-internal interface IUserInfoResolver : ICosmosResolver<UserInfoExtEntity, IUserInfoItrEntity>;
+internal interface IUserInfoResolver : ICosmosResolver<UserInfoExtEntity, IUserInfoXfrEntity>;

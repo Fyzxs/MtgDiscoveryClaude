@@ -1,12 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.UserSealedProducts.Commands;
 
 internal interface IAddUserSealedProductAdapter
-{
-    Task<IOperationResponse<UserSealedProductExtEntity>> Execute(IUserSealedProductXfrEntity input, CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IUserSealedProductXfrEntity, UserSealedProductExtEntity>;

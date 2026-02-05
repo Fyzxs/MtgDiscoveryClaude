@@ -1,13 +1,13 @@
 using System;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserInfo;
+using Lib.Adapter.User.Apis.Entities;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities.Itrs.User;
 
 namespace Lib.Adapter.User.Commands.Resolvers;
 
 internal sealed class UserInfoResolver : IUserInfoResolver
 {
-    public UserInfoExtEntity Resolve(OpResponse<UserInfoExtEntity> input, IUserInfoItrEntity context)
+    public UserInfoExtEntity Resolve(OpResponse<UserInfoExtEntity> input, IUserInfoXfrEntity context)
     {
         DateTime now = DateTime.UtcNow;
 

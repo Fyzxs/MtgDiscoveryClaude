@@ -1,8 +1,6 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Adapter.UserSetCards.Apis.Entities;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.UserSetCards.Queries;
 
@@ -10,8 +8,4 @@ namespace Lib.Adapter.UserSetCards.Queries;
 /// Adapter for retrieving user set card data from storage.
 /// </summary>
 internal interface IUserSetCardAdapter
-{
-    Task<IOperationResponse<UserSetCardExtEntity>> Execute(
-        IUserSetCardGetXfrEntity input,
-        CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IUserSetCardGetXfrEntity, UserSetCardExtEntity>;
