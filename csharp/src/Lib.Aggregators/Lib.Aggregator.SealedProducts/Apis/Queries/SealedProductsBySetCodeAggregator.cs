@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SealedProducts;
 using Lib.Adapter.SealedProducts.Apis;
 using Lib.Adapter.SealedProducts.Apis.Entities;
 using Lib.Aggregator.SealedProducts.Exceptions;
@@ -15,27 +17,31 @@ namespace Lib.Aggregator.SealedProducts.Apis.Queries;
 internal sealed class SealedProductsBySetCodeAggregator : ISealedProductsBySetCodeAggregator
 {
     private readonly ISealedProductsAdapterService _adapterService;
-    private readonly ISealedProductsBySetCodeItrToXfrMapper _mapper;
+    private readonly ISealedProductsBySetCodeItrToXfrMapper _itrToXfrMapper;
+    private readonly ISealedProductExtToOufMapper _extToOufMapper;
 
     public SealedProductsBySetCodeAggregator(ILogger logger) : this(
         new SealedProductsAdapterService(logger),
-        new SealedProductsBySetCodeItrToXfrMapper())
+        new SealedProductsBySetCodeItrToXfrMapper(),
+        new SealedProductExtToOufMapper())
     { }
 
     private SealedProductsBySetCodeAggregator(
         ISealedProductsAdapterService adapterService,
-        ISealedProductsBySetCodeItrToXfrMapper mapper)
+        ISealedProductsBySetCodeItrToXfrMapper itrToXfrMapper,
+        ISealedProductExtToOufMapper extToOufMapper)
     {
         _adapterService = adapterService;
-        _mapper = mapper;
+        _itrToXfrMapper = itrToXfrMapper;
+        _extToOufMapper = extToOufMapper;
     }
 
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(
         ISealedProductsBySetCodeItrEntity input,
         CancellationToken cancellationToken)
     {
-        ISealedProductsBySetCodeXfrEntity xfrEntity = await _mapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ISealedProductOufEntity>> response = await _adapterService
+        ISealedProductsBySetCodeXfrEntity xfrEntity = await _itrToXfrMapper.Map(input).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<SealedProductExtEntity>> response = await _adapterService
             .GetBySetCodeAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
@@ -45,6 +51,9 @@ internal sealed class SealedProductsBySetCodeAggregator : ISealedProductsBySetCo
                 new SealedProductsAggregatorException($"Failed to retrieve sealed products for set '{input.SetCode}'", response.OuterException));
         }
 
-        return new SuccessOperationResponse<IEnumerable<ISealedProductOufEntity>>(response.ResponseData);
+        IEnumerable<ISealedProductOufEntity> oufEntities = await Task.WhenAll(
+            response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<IEnumerable<ISealedProductOufEntity>>(oufEntities);
     }
 }

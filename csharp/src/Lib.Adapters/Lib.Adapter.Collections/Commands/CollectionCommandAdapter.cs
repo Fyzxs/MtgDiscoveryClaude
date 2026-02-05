@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
+using Lib.Adapter.Collections.Apis.Entities;
 using Lib.Adapter.Collections.Exceptions;
-using Lib.Adapter.Collections.Queries.Mappers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Janitors;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities.Itrs.Collections;
-using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -23,28 +21,24 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
     private readonly ICosmosScribe _collectionScribe;
     private readonly ICosmosGopher _collectionGopher;
     private readonly ICosmosContainerDeleteOperator _collectionJanitor;
-    private readonly ICollectionExtToOufMapper _mapper;
 
     public CollectionCommandAdapter(ILogger logger) : this(
         new CollectionScribe(logger),
         new CollectionGopher(logger),
-        new CollectionJanitor(logger),
-        new CollectionExtToOufMapper())
+        new CollectionJanitor(logger))
     { }
 
     private CollectionCommandAdapter(
         ICosmosScribe collectionScribe,
         ICosmosGopher collectionGopher,
-        ICosmosContainerDeleteOperator collectionJanitor,
-        ICollectionExtToOufMapper mapper)
+        ICosmosContainerDeleteOperator collectionJanitor)
     {
         _collectionScribe = collectionScribe;
         _collectionGopher = collectionGopher;
         _collectionJanitor = collectionJanitor;
-        _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> CreateCollectionAsync(ICollectionXfrEntity entity, CancellationToken cancellationToken)
     {
         CollectionExtEntity extEntity = new()
         {
@@ -65,15 +59,14 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to create collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> RenameCollectionAsync(IRenameCollectionXfrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -87,7 +80,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
         }
 
@@ -112,15 +105,14 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to rename collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityXfrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -134,7 +126,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
         }
 
@@ -159,15 +151,14 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to update collection visibility {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessXfrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -181,7 +172,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
         }
 
@@ -222,15 +213,14 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to grant collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessXfrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -244,7 +234,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
         }
 
@@ -255,7 +245,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (removedCount == 0)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"User {entity.TargetUserId} is not authorized on collection {entity.CollectionId}"));
         }
 
@@ -278,15 +268,14 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to revoke collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> DeleteCollectionAsync(IDeleteCollectionXfrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -300,7 +289,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
         }
 
@@ -308,7 +297,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existing.IsDefault)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException("Cannot delete the default collection"));
         }
 
@@ -324,15 +313,14 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (deleteResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to delete collection {entity.CollectionId}: {deleteResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(existing).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(existing);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipXfrEntity entity, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -346,7 +334,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
         }
 
@@ -354,7 +342,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (existing.IsDefault)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException("Cannot transfer ownership of the default collection"));
         }
 
@@ -382,7 +370,7 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (deleteResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to remove collection from original owner: {deleteResponse.StatusCode}"));
         }
 
@@ -405,17 +393,16 @@ internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 
         if (upsertResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to transfer collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(upsertResponse.Value!).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
     }
 
-    private static IEnumerable<AuthorizedUserExtEntity> MapAuthorizedUsersToExt(IEnumerable<IAuthorizedUserItrEntity> users)
+    private static IEnumerable<AuthorizedUserExtEntity> MapAuthorizedUsersToExt(IEnumerable<IAuthorizedUserXfrEntity> users)
     {
-        foreach (IAuthorizedUserItrEntity user in users)
+        foreach (IAuthorizedUserXfrEntity user in users)
         {
             yield return new AuthorizedUserExtEntity
             {

@@ -96,27 +96,21 @@ public Task<ReadPointItem> Map(IAddUserCardXfrEntity source)
 }
 ```
 
-## Specialized Mappers
+## Three-Input Mappers
 
-Some operations have specialized semantics that don't fit standard mapper bases:
+The base interfaces support 1-2 inputs. For mappers requiring 3+ inputs, define a custom interface:
 
-**Merge/Replace Mappers** — Take existing collection and new item, returning merged result:
-```csharp
-internal interface ICollectedItemsMergeMapper
-{
-    ICollection<TResult> Map(ICollection<TResult> existing, TDelta newItem);
-}
-```
-
-**Metadata Mappers** — Combine multiple sources with specialized semantics:
 ```csharp
 internal interface IUserCardMetadataMapper
 {
-    UserCardExtEntity Map(UserCardExtEntity existing, IAddUserCardXfrEntity newData, IEnumerable<Details> list);
+    UserCardExtEntity Map(
+        UserCardExtEntity existing,
+        IAddUserCardXfrEntity newData,
+        IEnumerable<UserCardDetailsExtEntity> updatedCollectedList);
 }
 ```
 
-These helper mappers are typically used internally by Integrators and don't cross layer boundaries.
+These are rare and typically used internally by Integrators. If you find yourself needing 3+ inputs frequently, consider whether your design could be simplified.
 
 ## Location in Adapters
 

@@ -2,7 +2,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.Collections.Apis;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Aggregator.Collections.Commands;
+using Lib.Aggregator.Collections.Commands.Mappers;
+using Lib.Aggregator.Collections.Mappers;
 using Lib.Aggregator.Collections.Tests.Fakes;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
@@ -19,7 +22,7 @@ public sealed class CollectionCommandAggregatorTests
     public async Task CreateCollectionAsync_WithSuccess_ReturnsDelegatedResponse()
     {
         // Arrange
-        CollectionOufEntityFake expectedOuf = new()
+        CollectionExtEntity expectedExt = new()
         {
             CollectionId = "col-123",
             OwnerId = "user-123",
@@ -29,14 +32,23 @@ public sealed class CollectionCommandAggregatorTests
 
         CollectionsAdapterServiceFake adapterFake = new()
         {
-            CreateCollectionAsyncResult = new OperationResponseFake<ICollectionOufEntity>
+            CreateCollectionAsyncResult = new OperationResponseFake<CollectionExtEntity>
             {
                 IsSuccess = true,
-                ResponseData = expectedOuf
+                ResponseData = expectedExt
             }
         };
 
-        CollectionCommandAggregator subject = new InstanceWrapper(adapterFake);
+        CollectionCommandAggregator subject = new InstanceWrapper(
+            adapterFake,
+            new CollectionExtToOufMapper(),
+            new CollectionItrToXfrMapper(),
+            new RenameCollectionItrToXfrMapper(),
+            new UpdateCollectionVisibilityItrToXfrMapper(),
+            new GrantCollectionAccessItrToXfrMapper(),
+            new RevokeCollectionAccessItrToXfrMapper(),
+            new DeleteCollectionItrToXfrMapper(),
+            new TransferCollectionOwnershipItrToXfrMapper());
 
         CollectionItrEntityFake itrEntity = new()
         {
@@ -63,14 +75,23 @@ public sealed class CollectionCommandAggregatorTests
         // Arrange
         CollectionsAdapterServiceFake adapterFake = new()
         {
-            CreateCollectionAsyncResult = new OperationResponseFake<ICollectionOufEntity>
+            CreateCollectionAsyncResult = new OperationResponseFake<CollectionExtEntity>
             {
                 IsSuccess = false,
                 OuterException = new Lib.Shared.Invocation.Exceptions.BadRequestOperationException("Adapter error")
             }
         };
 
-        CollectionCommandAggregator subject = new InstanceWrapper(adapterFake);
+        CollectionCommandAggregator subject = new InstanceWrapper(
+            adapterFake,
+            new CollectionExtToOufMapper(),
+            new CollectionItrToXfrMapper(),
+            new RenameCollectionItrToXfrMapper(),
+            new UpdateCollectionVisibilityItrToXfrMapper(),
+            new GrantCollectionAccessItrToXfrMapper(),
+            new RevokeCollectionAccessItrToXfrMapper(),
+            new DeleteCollectionItrToXfrMapper(),
+            new TransferCollectionOwnershipItrToXfrMapper());
 
         CollectionItrEntityFake itrEntity = new()
         {
@@ -91,6 +112,27 @@ public sealed class CollectionCommandAggregatorTests
 
     private sealed class InstanceWrapper : TypeWrapper<CollectionCommandAggregator>
     {
-        public InstanceWrapper(ICollectionsAdapterService adapterService) : base(adapterService) { }
+        public InstanceWrapper(
+            ICollectionsAdapterService adapterService,
+            ICollectionExtToOufMapper extToOufMapper,
+            ICollectionItrToXfrMapper collectionItrToXfrMapper,
+            IRenameCollectionItrToXfrMapper renameCollectionItrToXfrMapper,
+            IUpdateCollectionVisibilityItrToXfrMapper updateVisibilityItrToXfrMapper,
+            IGrantCollectionAccessItrToXfrMapper grantAccessItrToXfrMapper,
+            IRevokeCollectionAccessItrToXfrMapper revokeAccessItrToXfrMapper,
+            IDeleteCollectionItrToXfrMapper deleteCollectionItrToXfrMapper,
+            ITransferCollectionOwnershipItrToXfrMapper transferOwnershipItrToXfrMapper)
+            : base(
+                adapterService,
+                extToOufMapper,
+                collectionItrToXfrMapper,
+                renameCollectionItrToXfrMapper,
+                updateVisibilityItrToXfrMapper,
+                grantAccessItrToXfrMapper,
+                revokeAccessItrToXfrMapper,
+                deleteCollectionItrToXfrMapper,
+                transferOwnershipItrToXfrMapper)
+        {
+        }
     }
 }

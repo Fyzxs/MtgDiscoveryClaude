@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SealedProducts;
 using Lib.Adapter.SealedProducts.Apis.Entities;
-using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.SealedProducts.Apis;
@@ -22,8 +22,7 @@ namespace Lib.Adapter.SealedProducts.Apis;
 ///
 /// Entity Mapping Approach:
 /// - Input: Uses XfrEntity parameters following the layered architecture pattern
-/// - Output: Returns OufEntity types for the aggregator layer
-/// - Aggregator layer handles mapping from ItrEntity to XfrEntity
+/// - Output: Returns ExtEntity types (Aggregator handles ExtToOuf mapping)
 /// </summary>
 public interface ISealedProductsQueryAdapter
 {
@@ -32,8 +31,8 @@ public interface ISealedProductsQueryAdapter
     /// </summary>
     /// <param name="query">The query entity containing the set code</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>Collection of sealed product output entities for the specified set</returns>
-    Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> GetBySetCodeAsync(
+    /// <returns>Collection of sealed product external entities for the specified set</returns>
+    Task<IOperationResponse<IEnumerable<SealedProductExtEntity>>> GetBySetCodeAsync(
         ISealedProductsBySetCodeXfrEntity query,
         CancellationToken cancellationToken);
 }

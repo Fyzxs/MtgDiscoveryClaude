@@ -1,8 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
+using Lib.Adapter.Collections.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Aggregator.Collections.Apis;
+using Lib.Aggregator.Collections.Mappers;
+using Lib.Aggregator.Collections.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
@@ -14,15 +19,39 @@ namespace Lib.Aggregator.Collections.Queries;
 internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorService
 {
     private readonly ICollectionsAdapterService _adapterService;
+    private readonly ICollectionExtToOufMapper _extToOufMapper;
+    private readonly IOwnerIdItrToXfrMapper _ownerIdItrToXfrMapper;
+    private readonly ICollectionIdItrToXfrMapper _collectionIdItrToXfrMapper;
+    private readonly IUserIdItrToXfrMapper _userIdItrToXfrMapper;
 
-    public CollectionQueryAggregator(ILogger logger) : this(new CollectionsAdapterService(logger)) { }
+    public CollectionQueryAggregator(ILogger logger) : this(
+        new CollectionsAdapterService(logger),
+        new CollectionExtToOufMapper(),
+        new OwnerIdItrToXfrMapper(),
+        new CollectionIdItrToXfrMapper(),
+        new UserIdItrToXfrMapper())
+    { }
 
-    private CollectionQueryAggregator(ICollectionsAdapterService adapterService) => _adapterService = adapterService;
+    private CollectionQueryAggregator(
+        ICollectionsAdapterService adapterService,
+        ICollectionExtToOufMapper extToOufMapper,
+        IOwnerIdItrToXfrMapper ownerIdItrToXfrMapper,
+        ICollectionIdItrToXfrMapper collectionIdItrToXfrMapper,
+        IUserIdItrToXfrMapper userIdItrToXfrMapper)
+    {
+        _adapterService = adapterService;
+        _extToOufMapper = extToOufMapper;
+        _ownerIdItrToXfrMapper = ownerIdItrToXfrMapper;
+        _collectionIdItrToXfrMapper = collectionIdItrToXfrMapper;
+        _userIdItrToXfrMapper = userIdItrToXfrMapper;
+    }
 
     public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .GetDefaultCollectionAsync(args, cancellationToken)
+        IOwnerIdXfrEntity xfrEntity = await _ownerIdItrToXfrMapper.Map(args).ConfigureAwait(false);
+
+        IOperationResponse<CollectionExtEntity> response = await _adapterService
+            .GetDefaultCollectionAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -30,13 +59,16 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
             return new FailureOperationResponse<ICollectionOufEntity>(response.OuterException);
         }
 
-        return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
+        ICollectionOufEntity oufEntity = await _extToOufMapper.Map(response.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _adapterService
-            .GetCollectionsByOwnerAsync(args, cancellationToken)
+        IOwnerIdXfrEntity xfrEntity = await _ownerIdItrToXfrMapper.Map(args).ConfigureAwait(false);
+
+        IOperationResponse<IEnumerable<CollectionExtEntity>> response = await _adapterService
+            .GetCollectionsByOwnerAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -44,13 +76,18 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
             return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(response.OuterException);
         }
 
-        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(response.ResponseData);
+        ICollectionOufEntity[] oufEntities = await Task.WhenAll(
+            response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(oufEntities);
     }
 
     public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<ICollectionOufEntity> response = await _adapterService
-            .GetCollectionByIdAsync(args, cancellationToken)
+        ICollectionIdXfrEntity xfrEntity = await _collectionIdItrToXfrMapper.Map(args).ConfigureAwait(false);
+
+        IOperationResponse<CollectionExtEntity> response = await _adapterService
+            .GetCollectionByIdAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -58,13 +95,16 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
             return new FailureOperationResponse<ICollectionOufEntity>(response.OuterException);
         }
 
-        return new SuccessOperationResponse<ICollectionOufEntity>(response.ResponseData);
+        ICollectionOufEntity oufEntity = await _extToOufMapper.Map(response.ResponseData).ConfigureAwait(false);
+        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
     }
 
     public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _adapterService
-            .GetSharedCollectionsAsync(args, cancellationToken)
+        IUserIdXfrEntity xfrEntity = await _userIdItrToXfrMapper.Map(args).ConfigureAwait(false);
+
+        IOperationResponse<IEnumerable<CollectionExtEntity>> response = await _adapterService
+            .GetSharedCollectionsAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -72,13 +112,18 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
             return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(response.OuterException);
         }
 
-        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(response.ResponseData);
+        ICollectionOufEntity[] oufEntities = await Task.WhenAll(
+            response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(oufEntities);
     }
 
     public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _adapterService
-            .GetAccessibleCollectionsAsync(args, cancellationToken)
+        IUserIdXfrEntity xfrEntity = await _userIdItrToXfrMapper.Map(args).ConfigureAwait(false);
+
+        IOperationResponse<IEnumerable<CollectionExtEntity>> response = await _adapterService
+            .GetAccessibleCollectionsAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -86,6 +131,9 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
             return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(response.OuterException);
         }
 
-        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(response.ResponseData);
+        ICollectionOufEntity[] oufEntities = await Task.WhenAll(
+            response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+
+        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(oufEntities);
     }
 }

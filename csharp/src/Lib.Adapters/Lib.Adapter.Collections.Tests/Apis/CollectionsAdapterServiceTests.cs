@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.Collections.Apis;
 using Lib.Adapter.Collections.Tests.Fakes;
-using Lib.Shared.DataModels.Entities.Itrs.Collections;
-using Lib.Shared.DataModels.Entities.Oufs.Collections;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestConvenience.Core.Reflection;
@@ -33,11 +32,11 @@ public sealed class CollectionsAdapterServiceTests
     public async Task CreateCollectionAsync_DelegatesToCommandAdapter()
     {
         // Arrange
-        CollectionOufEntityFake expectedOuf = new() { CollectionId = "col-123", Name = "Test" };
-        OperationResponseFake<ICollectionOufEntity> expectedResponse = new()
+        CollectionExtEntity expectedExt = new() { CollectionId = "col-123", Name = "Test" };
+        OperationResponseFake<CollectionExtEntity> expectedResponse = new()
         {
             IsSuccess = true,
-            ResponseData = expectedOuf
+            ResponseData = expectedExt
         };
 
         CollectionCommandAdapterFake commandFake = new()
@@ -47,7 +46,7 @@ public sealed class CollectionsAdapterServiceTests
         CollectionQueryAdapterFake queryFake = new();
         CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
 
-        CollectionItrEntityFake itrEntity = new()
+        CollectionXfrEntityFake xfrEntity = new()
         {
             CollectionId = "col-123",
             Name = "Test",
@@ -55,8 +54,8 @@ public sealed class CollectionsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<ICollectionOufEntity> actual = await subject
-            .CreateCollectionAsync(itrEntity, CancellationToken.None)
+        IOperationResponse<CollectionExtEntity> actual = await subject
+            .CreateCollectionAsync(xfrEntity, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
@@ -68,11 +67,11 @@ public sealed class CollectionsAdapterServiceTests
     public async Task GetDefaultCollectionAsync_DelegatesToQueryAdapter()
     {
         // Arrange
-        CollectionOufEntityFake expectedOuf = new() { CollectionId = "col-default", IsDefault = true };
-        OperationResponseFake<ICollectionOufEntity> expectedResponse = new()
+        CollectionExtEntity expectedExt = new() { CollectionId = "col-default", IsDefault = true };
+        OperationResponseFake<CollectionExtEntity> expectedResponse = new()
         {
             IsSuccess = true,
-            ResponseData = expectedOuf
+            ResponseData = expectedExt
         };
 
         CollectionCommandAdapterFake commandFake = new();
@@ -82,11 +81,11 @@ public sealed class CollectionsAdapterServiceTests
         };
         CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
 
-        OwnerIdItrEntityFake ownerIdItr = new() { OwnerId = "user-123" };
+        OwnerIdXfrEntityFake ownerIdXfr = new() { OwnerId = "user-123" };
 
         // Act
-        IOperationResponse<ICollectionOufEntity> actual = await subject
-            .GetDefaultCollectionAsync(ownerIdItr, CancellationToken.None)
+        IOperationResponse<CollectionExtEntity> actual = await subject
+            .GetDefaultCollectionAsync(ownerIdXfr, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
@@ -98,8 +97,8 @@ public sealed class CollectionsAdapterServiceTests
     public async Task GetCollectionsByOwnerAsync_DelegatesToQueryAdapter()
     {
         // Arrange
-        List<ICollectionOufEntity> expectedList = [new CollectionOufEntityFake { CollectionId = "col-1" }];
-        OperationResponseFake<IEnumerable<ICollectionOufEntity>> expectedResponse = new()
+        List<CollectionExtEntity> expectedList = [new CollectionExtEntity { CollectionId = "col-1" }];
+        OperationResponseFake<IEnumerable<CollectionExtEntity>> expectedResponse = new()
         {
             IsSuccess = true,
             ResponseData = expectedList
@@ -112,11 +111,11 @@ public sealed class CollectionsAdapterServiceTests
         };
         CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
 
-        OwnerIdItrEntityFake ownerIdItr = new() { OwnerId = "user-123" };
+        OwnerIdXfrEntityFake ownerIdXfr = new() { OwnerId = "user-123" };
 
         // Act
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> actual = await subject
-            .GetCollectionsByOwnerAsync(ownerIdItr, CancellationToken.None)
+        IOperationResponse<IEnumerable<CollectionExtEntity>> actual = await subject
+            .GetCollectionsByOwnerAsync(ownerIdXfr, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert

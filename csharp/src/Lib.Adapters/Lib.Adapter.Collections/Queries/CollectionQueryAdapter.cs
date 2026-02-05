@@ -3,17 +3,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
-using Lib.Adapter.Collections.Entities;
+using Lib.Adapter.Collections.Apis.Entities;
 using Lib.Adapter.Collections.Exceptions;
-using Lib.Adapter.Collections.Queries.Mappers;
+using Lib.Adapter.Collections.Queries.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Cosmos.Apis.Ids;
 using Lib.Cosmos.Apis.Operators;
-using Lib.Shared.DataModels.Entities.Itrs.Collections;
-using Lib.Shared.DataModels.Entities.Itrs.User;
-using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Azure.Cosmos;
@@ -25,25 +22,21 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 {
     private readonly ICosmosInquisitor _collectionsInquisitor;
     private readonly ICosmosGopher _collectionGopher;
-    private readonly ICollectionExtToOufMapper _mapper;
 
     public CollectionQueryAdapter(ILogger logger) : this(
         new CollectionsInquisitor(logger),
-        new CollectionGopher(logger),
-        new CollectionExtToOufMapper())
+        new CollectionGopher(logger))
     { }
 
     private CollectionQueryAdapter(
         ICosmosInquisitor collectionsInquisitor,
-        ICosmosGopher collectionGopher,
-        ICollectionExtToOufMapper mapper)
+        ICosmosGopher collectionGopher)
     {
         _collectionsInquisitor = collectionsInquisitor;
         _collectionGopher = collectionGopher;
-        _mapper = mapper;
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> GetDefaultCollectionAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken)
     {
         QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.owner_id = @ownerId AND c.is_default = true")
             .WithParameter("@ownerId", args.OwnerId);
@@ -54,22 +47,21 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 
         if (queryResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"Failed to query default collection for owner {args.OwnerId}"));
         }
 
         CollectionExtEntity defaultCollection = queryResponse.Value?.FirstOrDefault();
         if (defaultCollection is null)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new CollectionAdapterException($"No default collection found for owner {args.OwnerId}"));
         }
 
-        ICollectionOufEntity oufEntity = await _mapper.Map(defaultCollection).ConfigureAwait(false);
-        return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+        return new SuccessOperationResponse<CollectionExtEntity>(defaultCollection);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetCollectionsByOwnerAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken)
     {
         QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.owner_id = @ownerId")
             .WithParameter("@ownerId", args.OwnerId);
@@ -80,17 +72,14 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 
         if (queryResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(
+            return new FailureOperationResponse<IEnumerable<CollectionExtEntity>>(
                 new CollectionAdapterException($"Failed to query collections for owner {args.OwnerId}"));
         }
 
-        ICollectionOufEntity[] results = await Task.WhenAll(
-            queryResponse.Value?.Select(ext => _mapper.Map(ext)) ?? []).ConfigureAwait(false);
-
-        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(results);
+        return new SuccessOperationResponse<IEnumerable<CollectionExtEntity>>(queryResponse.Value ?? []);
     }
 
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<CollectionExtEntity>> GetCollectionByIdAsync(ICollectionIdXfrEntity args, CancellationToken cancellationToken)
     {
         ReadPointItem readItem = new()
         {
@@ -104,8 +93,7 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 
         if (ownerReadResponse.IsSuccessful() && ownerReadResponse.Value is not null)
         {
-            ICollectionOufEntity oufEntity = await _mapper.Map(ownerReadResponse.Value).ConfigureAwait(false);
-            return new SuccessOperationResponse<ICollectionOufEntity>(oufEntity);
+            return new SuccessOperationResponse<CollectionExtEntity>(ownerReadResponse.Value);
         }
 
         QueryDefinition query = new QueryDefinition("SELECT * FROM c WHERE c.id = @collectionId")
@@ -117,7 +105,7 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 
         if (queryResponse.IsNotSuccessful() || queryResponse.Value?.Any() is false)
         {
-            return new FailureOperationResponse<ICollectionOufEntity>(
+            return new FailureOperationResponse<CollectionExtEntity>(
                 new NotFoundOperationException($"Collection not found: {args.CollectionId}"));
         }
 
@@ -125,15 +113,14 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 
         if (collection.Visibility == "public")
         {
-            ICollectionOufEntity publicOufEntity = await _mapper.Map(collection).ConfigureAwait(false);
-            return new SuccessOperationResponse<ICollectionOufEntity>(publicOufEntity);
+            return new SuccessOperationResponse<CollectionExtEntity>(collection);
         }
 
-        return new FailureOperationResponse<ICollectionOufEntity>(
+        return new FailureOperationResponse<CollectionExtEntity>(
             new ForbiddenOperationException("Access denied to private collection"));
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
     {
         QueryDefinition query = new QueryDefinition(
             "SELECT * FROM c WHERE EXISTS (SELECT VALUE au FROM au IN c.authorized_users WHERE au.user_id = @userId)")
@@ -145,37 +132,35 @@ internal sealed class CollectionQueryAdapter : ICollectionQueryAdapter
 
         if (queryResponse.IsNotSuccessful())
         {
-            return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(
+            return new FailureOperationResponse<IEnumerable<CollectionExtEntity>>(
                 new CollectionAdapterException($"Failed to query shared collections for user {args.UserId}"));
         }
 
-        ICollectionOufEntity[] results = await Task.WhenAll(
-            queryResponse.Value?.Select(ext => _mapper.Map(ext)) ?? []).ConfigureAwait(false);
-
-        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(results);
+        return new SuccessOperationResponse<IEnumerable<CollectionExtEntity>>(queryResponse.Value ?? []);
     }
 
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> ownedResponse = await GetCollectionsByOwnerAsync(new OwnerIdItrEntity { OwnerId = args.UserId }, cancellationToken)
+        IOperationResponse<IEnumerable<CollectionExtEntity>> ownedResponse = await GetCollectionsByOwnerAsync(
+            new OwnerIdXfrEntity { OwnerId = args.UserId }, cancellationToken)
             .ConfigureAwait(false);
 
         if (ownedResponse.IsFailure)
         {
-            return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(ownedResponse.OuterException);
+            return new FailureOperationResponse<IEnumerable<CollectionExtEntity>>(ownedResponse.OuterException);
         }
 
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> sharedResponse = await GetSharedCollectionsAsync(args, cancellationToken)
+        IOperationResponse<IEnumerable<CollectionExtEntity>> sharedResponse = await GetSharedCollectionsAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (sharedResponse.IsFailure)
         {
-            return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(sharedResponse.OuterException);
+            return new FailureOperationResponse<IEnumerable<CollectionExtEntity>>(sharedResponse.OuterException);
         }
 
-        List<ICollectionOufEntity> combined = [.. ownedResponse.ResponseData];
+        List<CollectionExtEntity> combined = [.. ownedResponse.ResponseData];
         combined.AddRange(sharedResponse.ResponseData);
 
-        return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(combined);
+        return new SuccessOperationResponse<IEnumerable<CollectionExtEntity>>(combined);
     }
 }

@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Shared.DataModels.Entities.Itrs.Collections;
-using Lib.Shared.DataModels.Entities.Itrs.User;
-using Lib.Shared.DataModels.Entities.Oufs.Collections;
+using Lib.Adapter.Collections.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.Collections.Apis;
@@ -22,35 +21,34 @@ namespace Lib.Adapter.Collections.Apis;
 /// to allow the main service interface to inherit from them and provide a unified API.
 ///
 /// Entity Mapping Approach:
-/// - Input: Currently uses ItrEntity parameters (to be migrated to XfrEntity)
-/// - Output: Returns OufEntity types for the aggregator layer
-/// - Aggregator layer handles mapping from ItrEntity to XfrEntity
+/// - Input: Uses XfrEntity parameters following the layered architecture pattern
+/// - Output: Returns ExtEntity types (Aggregator handles ExtToOuf mapping)
 /// </summary>
 public interface ICollectionQueryAdapter
 {
     /// <summary>
     /// Retrieves the default collection for an owner.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken);
+    Task<IOperationResponse<CollectionExtEntity>> GetDefaultCollectionAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all collections owned by a specific user.
     /// </summary>
-    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetCollectionsByOwnerAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves a specific collection by its ID.
     /// Supports owner lookup first, then cross-partition query for public collections.
     /// </summary>
-    Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken);
+    Task<IOperationResponse<CollectionExtEntity>> GetCollectionByIdAsync(ICollectionIdXfrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all collections shared with a specific user (where user is in authorized_users).
     /// </summary>
-    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all collections accessible to a user (owned + shared).
     /// </summary>
-    Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken);
 }
