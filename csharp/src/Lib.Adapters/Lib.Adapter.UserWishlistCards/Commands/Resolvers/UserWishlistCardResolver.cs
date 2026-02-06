@@ -1,18 +1,24 @@
-using System;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
 using Lib.Cosmos.Apis.Operators;
+using Lib.Universal.Primitives;
 
 namespace Lib.Adapter.UserWishlistCards.Commands.Resolvers;
 
 internal sealed class UserWishlistCardResolver : IUserWishlistCardResolver
 {
+    private readonly TimeInstantString _timestamp;
+
+    public UserWishlistCardResolver()
+        : this(new Iso8601UtcNowString())
+    { }
+
+    private UserWishlistCardResolver(TimeInstantString timestamp) => _timestamp = timestamp;
+
     public UserWishlistCardExtEntity Resolve(OpResponse<UserWishlistCardExtEntity> input, IAddUserWishlistCardXfrEntity context)
     {
         if (input.IsSuccessful())
             return input.Value;
-
-        string timestamp = DateTime.UtcNow.ToString("o");
 
         return new UserWishlistCardExtEntity
         {
@@ -25,8 +31,8 @@ internal sealed class UserWishlistCardResolver : IUserWishlistCardResolver
             ArtistIds = context.ArtistIds,
             CardNameGuid = context.CardNameGuid,
             WishlistItems = [],
-            CreatedAt = timestamp,
-            UpdatedAt = timestamp
+            CreatedAt = _timestamp,
+            UpdatedAt = _timestamp
         };
     }
 }

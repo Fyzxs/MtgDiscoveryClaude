@@ -1,14 +1,22 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
+using Lib.Universal.Primitives;
 
 namespace Lib.Adapter.UserWishlistCards.Commands.Integrators;
 
 internal sealed class UserWishlistCardIntegrator : IUserWishlistCardIntegrator
 {
+    private readonly TimeInstantString _timestamp;
+
+    public UserWishlistCardIntegrator()
+        : this(new Iso8601UtcNowString())
+    { }
+
+    private UserWishlistCardIntegrator(TimeInstantString timestamp) => _timestamp = timestamp;
+
     public Task<UserWishlistCardExtEntity> Integrate(
         UserWishlistCardExtEntity current,
         IAddUserWishlistCardXfrEntity change)
@@ -28,7 +36,7 @@ internal sealed class UserWishlistCardIntegrator : IUserWishlistCardIntegrator
             CardNameGuid = change.CardNameGuid,
             WishlistItems = updatedItems,
             CreatedAt = current.CreatedAt,
-            UpdatedAt = DateTime.UtcNow.ToString("o")
+            UpdatedAt = _timestamp
         };
 
         return Task.FromResult(result);

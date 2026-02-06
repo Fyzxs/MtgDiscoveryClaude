@@ -5,7 +5,7 @@ paths:
 
 # MicroObjects Philosophy
 
-This codebase uses MicroObjects—a design philosophy where every concept is explicitly represented as an object.
+This codebase uses MicroObjects — a design philosophy where every concept is explicitly represented as an object.
 
 ## Core Principle
 
@@ -46,4 +46,11 @@ The best way to learn this style is to read the existing code. Look for:
 - How external dependencies are abstracted
 - How constructors stay simple and dependency-focused
 
-See your team lead or code examples for real patterns in action.
+## Expected implementations regularly missed
+
+- **No default values on entities** — Never set default values for any entity properties, especially `ArgEntitys`
+- **No `required` keyword on entity properties** — Do not use `required` for entity properties
+- **EntryServices implement IOperationResponseService** — All `EntryService` classes must implement the `IOperationResponseService` interface, following the pattern of other EntryServices
+- **GraphQL descriptors must include `Name`** — Every GraphQL descriptor must have the `Name` property set
+- **No `>` operator** — Do not use `>`; reverse the comparison to use `<` instead. Same for `>=`, it should e `<=`
+- **No internal scope access for projects** — Do not grant projects access to `internal` scope

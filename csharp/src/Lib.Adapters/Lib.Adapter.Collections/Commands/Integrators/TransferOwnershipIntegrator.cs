@@ -1,24 +1,31 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
+using Lib.Universal.Primitives;
 
 namespace Lib.Adapter.Collections.Commands.Integrators;
 
 internal sealed class TransferOwnershipIntegrator : ITransferOwnershipIntegrator
 {
+    private readonly TimeInstantString _timestamp;
+
+    public TransferOwnershipIntegrator()
+        : this(new Iso8601UtcNowString())
+    { }
+
+    private TransferOwnershipIntegrator(TimeInstantString timestamp) => _timestamp = timestamp;
+
     public Task<CollectionExtEntity> Integrate(CollectionExtEntity current, ITransferCollectionOwnershipXfrEntity change)
     {
         List<AuthorizedUserExtEntity> authorizedUsers = [.. current.AuthorizedUsers];
         authorizedUsers.RemoveAll(u => u.UserId == change.TargetUserId);
 
-        string nowTimestamp = DateTime.UtcNow.ToString("o");
         authorizedUsers.Add(new AuthorizedUserExtEntity
         {
             UserId = change.CurrentOwnerId,
             Role = "admin",
-            GrantedAt = nowTimestamp,
+            GrantedAt = _timestamp,
             GrantedBy = change.CurrentOwnerId
         });
 
@@ -32,7 +39,7 @@ internal sealed class TransferOwnershipIntegrator : ITransferOwnershipIntegrator
             IsDefault = false,
             AuthorizedUsers = authorizedUsers,
             CreatedAt = current.CreatedAt,
-            UpdatedAt = nowTimestamp
+            UpdatedAt = _timestamp
         };
 
         return Task.FromResult(result);

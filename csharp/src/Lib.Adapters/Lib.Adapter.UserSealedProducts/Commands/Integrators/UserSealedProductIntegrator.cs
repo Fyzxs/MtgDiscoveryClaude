@@ -1,12 +1,20 @@
-using System;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SealedProducts;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
+using Lib.Universal.Primitives;
 
 namespace Lib.Adapter.UserSealedProducts.Commands.Integrators;
 
 internal sealed class UserSealedProductIntegrator : IUserSealedProductIntegrator
 {
+    private readonly TimeInstantString _timestamp;
+
+    public UserSealedProductIntegrator()
+        : this(new Iso8601UtcNowString())
+    { }
+
+    private UserSealedProductIntegrator(TimeInstantString timestamp) => _timestamp = timestamp;
+
     public UserSealedProductExtEntity Integrate(
         UserSealedProductExtEntity current,
         IUserSealedProductXfrEntity change,
@@ -32,7 +40,7 @@ internal sealed class UserSealedProductIntegrator : IUserSealedProductIntegrator
             PurchaseUrlCardmarket = product.PurchaseUrlCardmarket,
             PurchaseUrlCardKingdom = product.PurchaseUrlCardKingdom,
             CardCount = product.CardCount,
-            UpdatedAt = DateTime.UtcNow.ToString("O")
+            UpdatedAt = _timestamp
         };
     }
 }
