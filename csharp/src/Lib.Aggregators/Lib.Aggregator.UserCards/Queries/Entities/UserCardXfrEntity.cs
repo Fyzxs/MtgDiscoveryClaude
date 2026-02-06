@@ -6,4 +6,5 @@ internal sealed class UserCardXfrEntity : IUserCardXfrEntity
 {
     public string UserId { get; init; }
     public string CardId { get; init; }
+    public string CacheKey => $"user_card:{UserId}:{CardId}";
 }

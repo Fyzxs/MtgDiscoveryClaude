@@ -5,4 +5,5 @@ namespace Lib.Aggregator.Cards.Queries.Entities;
 internal sealed class CardSearchTermXfrEntity : ICardSearchTermXfrEntity
 {
     public string SearchTerm { get; init; }
+    public string CacheKey => $"card:search:{SearchTerm}";
 }

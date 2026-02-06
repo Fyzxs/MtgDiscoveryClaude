@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.UserWishlistCards.Apis.Entities;
 
@@ -7,7 +8,7 @@ namespace Lib.Adapter.UserWishlistCards.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary for batch point read operations,
 /// providing a simple wrapper for user wishlist cards batch query values in external system operations.
 /// </summary>
-public interface IUserWishlistCardsByIdsXfrEntity
+public interface IUserWishlistCardsByIdsXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The unique identifier for the user.

@@ -93,6 +93,7 @@ internal sealed class AddUserWishlistCardAggregator : IAddUserWishlistCardAggreg
         public required IEnumerable<string> ArtistIds { get; init; }
         public required string CardNameGuid { get; init; }
         public required IUserWishlistCardDetailsXfrEntity Details { get; init; }
+        public string CacheKey => $"add_user_wishlist_card:{UserId}:{CardId}";
     }
 
     private sealed class UserWishlistCardDetailsXfrEntity : IUserWishlistCardDetailsXfrEntity
@@ -100,6 +101,7 @@ internal sealed class AddUserWishlistCardAggregator : IAddUserWishlistCardAggreg
         public required string Finish { get; init; }
         public required string Special { get; init; }
         public required int Count { get; init; }
+        public string CacheKey => $"user_wishlist_card_details:{Finish}:{Special}";
     }
 
     private sealed class UserWishlistCardOufEntity : IUserWishlistCardOufEntity

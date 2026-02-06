@@ -7,4 +7,5 @@ internal sealed class UserCardsForSigningXfrEntity : IUserCardsForSigningXfrEnti
 {
     public string UserId { get; init; }
     public IEnumerable<string> ArtistIds { get; init; }
+    public string CacheKey => $"user_cards:signing:{UserId}";
 }

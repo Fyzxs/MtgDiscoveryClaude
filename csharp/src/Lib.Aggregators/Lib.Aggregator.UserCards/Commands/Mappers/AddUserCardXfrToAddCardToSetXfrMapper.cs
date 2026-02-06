@@ -44,5 +44,6 @@ internal sealed class AddUserCardXfrToAddCardToSetXfrMapper : IAddUserCardXfrToA
         public required string FinishType { get; init; }
         public required int Count { get; init; }
         public required int RemainingFinishCount { get; init; }
+        public string CacheKey => $"add_card_to_set:{UserId}:{SetId}:{CardId}";
     }
 }

@@ -6,4 +6,5 @@ public sealed class UserCardsSetXfrEntityFake : IUserCardsSetXfrEntity
 {
     public string UserId { get; init; }
     public string SetId { get; init; }
+    public string CacheKey => $"user_cards:set:{UserId}:{SetId}";
 }

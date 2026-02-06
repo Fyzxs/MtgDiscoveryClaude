@@ -63,6 +63,7 @@ internal sealed class GetUserWishlistCardsAggregator : IGetUserWishlistCardsAggr
     private sealed class UserWishlistCardXfrEntity : IUserWishlistCardXfrEntity
     {
         public required string UserId { get; init; }
+        public string CacheKey => $"user_wishlist_card:{UserId}";
     }
 
     private sealed class UserWishlistCardOufEntity : IUserWishlistCardOufEntity

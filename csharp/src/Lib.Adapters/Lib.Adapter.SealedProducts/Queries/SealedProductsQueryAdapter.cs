@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SealedProducts;
 using Lib.Adapter.SealedProducts.Apis;
 using Lib.Adapter.SealedProducts.Apis.Entities;
-using Lib.Adapter.SealedProducts.Apis.Queries;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

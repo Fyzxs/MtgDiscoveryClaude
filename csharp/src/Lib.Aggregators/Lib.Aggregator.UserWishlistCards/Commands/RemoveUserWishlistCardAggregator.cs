@@ -80,6 +80,7 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
         public required string UserId { get; init; }
         public required string CardId { get; init; }
         public required IUserWishlistCardDetailsXfrEntity Details { get; init; }
+        public string CacheKey => $"remove_user_wishlist_card:{UserId}:{CardId}";
     }
 
     private sealed class UserWishlistCardDetailsXfrEntity : IUserWishlistCardDetailsXfrEntity
@@ -87,6 +88,7 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
         public required string Finish { get; init; }
         public required string Special { get; init; }
         public required int Count { get; init; }
+        public string CacheKey => $"user_wishlist_card_details:{Finish}:{Special}";
     }
 
     private sealed class UserWishlistCardOufEntity : IUserWishlistCardOufEntity

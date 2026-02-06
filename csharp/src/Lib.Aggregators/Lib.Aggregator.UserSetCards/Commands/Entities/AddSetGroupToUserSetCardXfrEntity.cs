@@ -11,4 +11,5 @@ internal sealed class AddSetGroupToUserSetCardXfrEntity : IAddSetGroupToUserSetC
     public bool Collecting { get; init; }
     public IFinishCountsXfrEntity Counts { get; init; }
     public IReadOnlyCollection<string> CollectingFinishes { get; init; }
+    public string CacheKey => $"add_set_group:{UserId}:{SetId}:{SetGroupId}";
 }

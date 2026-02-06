@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.UserCards.Apis.Entities;
 
@@ -7,7 +8,7 @@ namespace Lib.Adapter.UserCards.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary when querying cards by multiple artists
 /// for convention signing planning functionality.
 /// </summary>
-public interface IUserCardsForSigningXfrEntity
+public interface IUserCardsForSigningXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The unique identifier for the user.

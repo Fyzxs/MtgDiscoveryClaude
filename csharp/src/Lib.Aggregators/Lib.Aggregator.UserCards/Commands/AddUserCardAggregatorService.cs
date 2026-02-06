@@ -112,6 +112,7 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         public required string CardNameGuid { get; init; }
         public required IUserCardDetailsXfrEntity Details { get; init; }
         public bool ReplaceMode { get; init; }
+        public string CacheKey => $"add_user_card:{UserId}:{CardId}";
     }
 
     private sealed class UserCardDetailsXfrEntity : IUserCardDetailsXfrEntity
@@ -120,5 +121,6 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         public required string Special { get; init; }
         public required int Count { get; init; }
         public required string SetGroupId { get; init; }
+        public string CacheKey => $"user_card_details:{Finish}:{Special}";
     }
 }

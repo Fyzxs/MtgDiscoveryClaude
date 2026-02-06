@@ -1,10 +1,12 @@
+using Lib.Shared.DataModels.Abstractions;
+
 namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
 /// <summary>
 /// Transfer entity for adding or removing a card from a user's set collection.
 /// Represents a single card modification operation (add or remove).
 /// </summary>
-public interface IAddCardToSetXfrEntity
+public interface IAddCardToSetXfrEntity : IXfrEntity
 {
     /// <summary>
     /// User identifier (partition key for Cosmos).

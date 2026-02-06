@@ -57,5 +57,6 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
         public required string ProductUuid { get; init; }
         public required string SetId { get; init; }
         public required int CountDelta { get; init; }
+        public string CacheKey => $"user_sealed_product:{UserId}:{ProductUuid}";
     }
 }

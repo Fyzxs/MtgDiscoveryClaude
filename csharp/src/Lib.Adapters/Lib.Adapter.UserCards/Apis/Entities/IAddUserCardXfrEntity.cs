@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.UserCards.Apis.Entities;
 
@@ -7,7 +8,7 @@ namespace Lib.Adapter.UserCards.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary when no actual entity mapping is needed,
 /// providing a simple wrapper for user card values in external system operations.
 /// </summary>
-public interface IAddUserCardXfrEntity
+public interface IAddUserCardXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The unique identifier for the user.

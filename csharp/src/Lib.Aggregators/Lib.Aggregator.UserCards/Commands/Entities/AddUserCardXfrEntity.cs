@@ -17,4 +17,5 @@ internal sealed class AddUserCardXfrEntity : IAddUserCardXfrEntity
     public string CardNameGuid { get; init; }
     public IUserCardDetailsXfrEntity Details { get; init; }
     public bool ReplaceMode { get; init; }
+    public string CacheKey => $"add_user_card:{UserId}:{CardId}";
 }

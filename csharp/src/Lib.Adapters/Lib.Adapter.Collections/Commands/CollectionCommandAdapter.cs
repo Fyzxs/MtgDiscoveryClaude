@@ -1,16 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
 using Lib.Adapter.Collections.Apis.Entities;
-using Lib.Adapter.Collections.Exceptions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Janitors;
-using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
-using Lib.Cosmos.Apis.Ids;
-using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -18,399 +10,67 @@ namespace Lib.Adapter.Collections.Commands;
 
 internal sealed class CollectionCommandAdapter : ICollectionCommandAdapter
 {
-    private readonly ICosmosScribe _collectionScribe;
-    private readonly ICosmosGopher _collectionGopher;
-    private readonly ICosmosContainerDeleteOperator _collectionJanitor;
+    private readonly ICreateCollectionAdapter _createAdapter;
+    private readonly IRenameCollectionAdapter _renameAdapter;
+    private readonly IUpdateCollectionVisibilityAdapter _updateVisibilityAdapter;
+    private readonly IGrantCollectionAccessAdapter _grantAccessAdapter;
+    private readonly IRevokeCollectionAccessAdapter _revokeAccessAdapter;
+    private readonly IDeleteCollectionAdapter _deleteAdapter;
+    private readonly ITransferCollectionOwnershipAdapter _transferOwnershipAdapter;
 
     public CollectionCommandAdapter(ILogger logger) : this(
-        new CollectionScribe(logger),
-        new CollectionGopher(logger),
-        new CollectionJanitor(logger))
+        new CreateCollectionAdapter(logger),
+        new RenameCollectionAdapter(logger),
+        new UpdateCollectionVisibilityAdapter(logger),
+        new GrantCollectionAccessAdapter(logger),
+        new RevokeCollectionAccessAdapter(logger),
+        new DeleteCollectionAdapter(logger),
+        new TransferCollectionOwnershipAdapter(logger))
     { }
 
     private CollectionCommandAdapter(
-        ICosmosScribe collectionScribe,
-        ICosmosGopher collectionGopher,
-        ICosmosContainerDeleteOperator collectionJanitor)
+        ICreateCollectionAdapter createAdapter,
+        IRenameCollectionAdapter renameAdapter,
+        IUpdateCollectionVisibilityAdapter updateVisibilityAdapter,
+        IGrantCollectionAccessAdapter grantAccessAdapter,
+        IRevokeCollectionAccessAdapter revokeAccessAdapter,
+        IDeleteCollectionAdapter deleteAdapter,
+        ITransferCollectionOwnershipAdapter transferOwnershipAdapter)
     {
-        _collectionScribe = collectionScribe;
-        _collectionGopher = collectionGopher;
-        _collectionJanitor = collectionJanitor;
+        _createAdapter = createAdapter;
+        _renameAdapter = renameAdapter;
+        _updateVisibilityAdapter = updateVisibilityAdapter;
+        _grantAccessAdapter = grantAccessAdapter;
+        _revokeAccessAdapter = revokeAccessAdapter;
+        _deleteAdapter = deleteAdapter;
+        _transferOwnershipAdapter = transferOwnershipAdapter;
     }
 
-    public async Task<IOperationResponse<CollectionExtEntity>> CreateCollectionAsync(ICollectionXfrEntity entity, CancellationToken cancellationToken)
-    {
-        CollectionExtEntity extEntity = new()
-        {
-            CollectionId = entity.CollectionId,
-            OwnerId = entity.OwnerId,
-            Name = entity.Name,
-            Type = entity.Type,
-            Visibility = entity.Visibility,
-            IsDefault = entity.IsDefault,
-            AuthorizedUsers = MapAuthorizedUsersToExt(entity.AuthorizedUsers),
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt
-        };
-
-        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(extEntity, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to create collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
-    }
-
-    public async Task<IOperationResponse<CollectionExtEntity>> RenameCollectionAsync(IRenameCollectionXfrEntity entity, CancellationToken cancellationToken)
-    {
-        ReadPointItem readItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
-        };
-
-        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity existing = existingResponse.Value;
-
-        CollectionExtEntity updated = new()
-        {
-            CollectionId = existing.CollectionId,
-            OwnerId = existing.OwnerId,
-            Name = entity.Name,
-            Type = existing.Type,
-            Visibility = existing.Visibility,
-            IsDefault = existing.IsDefault,
-            AuthorizedUsers = existing.AuthorizedUsers,
-            CreatedAt = existing.CreatedAt,
-            UpdatedAt = DateTime.UtcNow.ToString("o")
-        };
-
-        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to rename collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
-    }
-
-    public async Task<IOperationResponse<CollectionExtEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityXfrEntity entity, CancellationToken cancellationToken)
-    {
-        ReadPointItem readItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
-        };
-
-        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity existing = existingResponse.Value;
-
-        CollectionExtEntity updated = new()
-        {
-            CollectionId = existing.CollectionId,
-            OwnerId = existing.OwnerId,
-            Name = existing.Name,
-            Type = existing.Type,
-            Visibility = entity.Visibility,
-            IsDefault = existing.IsDefault,
-            AuthorizedUsers = existing.AuthorizedUsers,
-            CreatedAt = existing.CreatedAt,
-            UpdatedAt = DateTime.UtcNow.ToString("o")
-        };
-
-        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to update collection visibility {entity.CollectionId}: {upsertResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
-    }
-
-    public async Task<IOperationResponse<CollectionExtEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessXfrEntity entity, CancellationToken cancellationToken)
-    {
-        ReadPointItem readItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.GrantorUserId)
-        };
-
-        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity existing = existingResponse.Value;
-
-        List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
-        AuthorizedUserExtEntity existingUser = authorizedUsers.Find(u => u.UserId == entity.TargetUserId);
-
-        if (existingUser is not null)
-        {
-            authorizedUsers.Remove(existingUser);
-        }
-
-        authorizedUsers.Add(new AuthorizedUserExtEntity
-        {
-            UserId = entity.TargetUserId,
-            Role = entity.Role,
-            GrantedAt = DateTime.UtcNow.ToString("o"),
-            GrantedBy = entity.GrantorUserId
-        });
-
-        CollectionExtEntity updated = new()
-        {
-            CollectionId = existing.CollectionId,
-            OwnerId = existing.OwnerId,
-            Name = existing.Name,
-            Type = existing.Type,
-            Visibility = existing.Visibility,
-            IsDefault = existing.IsDefault,
-            AuthorizedUsers = authorizedUsers,
-            CreatedAt = existing.CreatedAt,
-            UpdatedAt = DateTime.UtcNow.ToString("o")
-        };
-
-        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to grant collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
-    }
-
-    public async Task<IOperationResponse<CollectionExtEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessXfrEntity entity, CancellationToken cancellationToken)
-    {
-        ReadPointItem readItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.RevokerUserId)
-        };
-
-        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity existing = existingResponse.Value;
-
-        List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
-        int removedCount = authorizedUsers.RemoveAll(u => u.UserId == entity.TargetUserId);
-
-        if (removedCount == 0)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"User {entity.TargetUserId} is not authorized on collection {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity updated = new()
-        {
-            CollectionId = existing.CollectionId,
-            OwnerId = existing.OwnerId,
-            Name = existing.Name,
-            Type = existing.Type,
-            Visibility = existing.Visibility,
-            IsDefault = existing.IsDefault,
-            AuthorizedUsers = authorizedUsers,
-            CreatedAt = existing.CreatedAt,
-            UpdatedAt = DateTime.UtcNow.ToString("o")
-        };
-
-        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to revoke collection access {entity.CollectionId}: {upsertResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
-    }
-
-    public async Task<IOperationResponse<CollectionExtEntity>> DeleteCollectionAsync(IDeleteCollectionXfrEntity entity, CancellationToken cancellationToken)
-    {
-        ReadPointItem readItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
-        };
-
-        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity existing = existingResponse.Value;
-
-        if (existing.IsDefault)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException("Cannot delete the default collection"));
-        }
-
-        DeletePointItem deleteItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.OwnerId)
-        };
-
-        OpResponse<CollectionExtEntity> deleteResponse = await _collectionJanitor
-            .DeleteAsync<CollectionExtEntity>(deleteItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (deleteResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to delete collection {entity.CollectionId}: {deleteResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(existing);
-    }
-
-    public async Task<IOperationResponse<CollectionExtEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipXfrEntity entity, CancellationToken cancellationToken)
-    {
-        ReadPointItem readItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.CurrentOwnerId)
-        };
-
-        OpResponse<CollectionExtEntity> existingResponse = await _collectionGopher
-            .ReadAsync<CollectionExtEntity>(readItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (existingResponse.IsNotSuccessful() || existingResponse.Value is null)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Collection not found: {entity.CollectionId}"));
-        }
-
-        CollectionExtEntity existing = existingResponse.Value;
-
-        if (existing.IsDefault)
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException("Cannot transfer ownership of the default collection"));
-        }
-
-        List<AuthorizedUserExtEntity> authorizedUsers = [.. existing.AuthorizedUsers];
-        authorizedUsers.RemoveAll(u => u.UserId == entity.TargetUserId);
-
-        string nowTimestamp = DateTime.UtcNow.ToString("o");
-        authorizedUsers.Add(new AuthorizedUserExtEntity
-        {
-            UserId = entity.CurrentOwnerId,
-            Role = "admin",
-            GrantedAt = nowTimestamp,
-            GrantedBy = entity.CurrentOwnerId
-        });
-
-        DeletePointItem deleteItem = new()
-        {
-            Id = new ProvidedCosmosItemId(entity.CollectionId),
-            Partition = new ProvidedPartitionKeyValue(entity.CurrentOwnerId)
-        };
-
-        OpResponse<CollectionExtEntity> deleteResponse = await _collectionJanitor
-            .DeleteAsync<CollectionExtEntity>(deleteItem, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (deleteResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to remove collection from original owner: {deleteResponse.StatusCode}"));
-        }
-
-        CollectionExtEntity updated = new()
-        {
-            CollectionId = existing.CollectionId,
-            OwnerId = entity.TargetUserId,
-            Name = existing.Name,
-            Type = existing.Type,
-            Visibility = existing.Visibility,
-            IsDefault = false,
-            AuthorizedUsers = authorizedUsers,
-            CreatedAt = existing.CreatedAt,
-            UpdatedAt = nowTimestamp
-        };
-
-        OpResponse<CollectionExtEntity> upsertResponse = await _collectionScribe
-            .UpsertAsync(updated, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (upsertResponse.IsNotSuccessful())
-        {
-            return new FailureOperationResponse<CollectionExtEntity>(
-                new CollectionAdapterException($"Failed to transfer collection {entity.CollectionId}: {upsertResponse.StatusCode}"));
-        }
-
-        return new SuccessOperationResponse<CollectionExtEntity>(upsertResponse.Value!);
-    }
-
-    private static IEnumerable<AuthorizedUserExtEntity> MapAuthorizedUsersToExt(IEnumerable<IAuthorizedUserXfrEntity> users)
-    {
-        foreach (IAuthorizedUserXfrEntity user in users)
-        {
-            yield return new AuthorizedUserExtEntity
-            {
-                UserId = user.UserId,
-                Role = user.Role,
-                GrantedAt = user.GrantedAt,
-                GrantedBy = user.GrantedBy
-            };
-        }
-    }
+    public async Task<IOperationResponse<CollectionExtEntity>> CreateCollectionAsync(
+        ICollectionXfrEntity entity, CancellationToken cancellationToken)
+        => await _createAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<CollectionExtEntity>> RenameCollectionAsync(
+        IRenameCollectionXfrEntity entity, CancellationToken cancellationToken)
+        => await _renameAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<CollectionExtEntity>> UpdateCollectionVisibilityAsync(
+        IUpdateCollectionVisibilityXfrEntity entity, CancellationToken cancellationToken)
+        => await _updateVisibilityAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<CollectionExtEntity>> GrantCollectionAccessAsync(
+        IGrantCollectionAccessXfrEntity entity, CancellationToken cancellationToken)
+        => await _grantAccessAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<CollectionExtEntity>> RevokeCollectionAccessAsync(
+        IRevokeCollectionAccessXfrEntity entity, CancellationToken cancellationToken)
+        => await _revokeAccessAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<CollectionExtEntity>> DeleteCollectionAsync(
+        IDeleteCollectionXfrEntity entity, CancellationToken cancellationToken)
+        => await _deleteAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
+
+    public async Task<IOperationResponse<CollectionExtEntity>> TransferCollectionOwnershipAsync(
+        ITransferCollectionOwnershipXfrEntity entity, CancellationToken cancellationToken)
+        => await _transferOwnershipAdapter.Execute(entity, cancellationToken).ConfigureAwait(false);
 }
