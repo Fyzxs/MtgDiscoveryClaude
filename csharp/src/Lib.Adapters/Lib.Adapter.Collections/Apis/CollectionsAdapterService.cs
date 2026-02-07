@@ -90,9 +90,6 @@ public sealed class CollectionsAdapterService : ICollectionsAdapterService
     public async Task<IOperationResponse<CollectionExtEntity>> GetCollectionByIdAsync(ICollectionIdXfrEntity args, CancellationToken cancellationToken)
         => await _collectionByIdAdapter.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
-        => await _accessibleCollectionsAdapter.Execute(args, cancellationToken).ConfigureAwait(false);
-
     public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
         => await _accessibleCollectionsAdapter.Execute(args, cancellationToken).ConfigureAwait(false);
 }

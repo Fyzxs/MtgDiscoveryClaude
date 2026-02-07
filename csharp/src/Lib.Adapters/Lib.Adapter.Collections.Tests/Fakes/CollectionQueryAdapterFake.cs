@@ -19,9 +19,6 @@ public sealed class CollectionQueryAdapterFake : ICollectionQueryAdapter
     public IOperationResponse<CollectionExtEntity> GetCollectionByIdAsyncResult { get; init; }
     public int GetCollectionByIdAsyncInvokeCount { get; private set; }
 
-    public IOperationResponse<IEnumerable<CollectionExtEntity>> GetSharedCollectionsAsyncResult { get; init; }
-    public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
-
     public IOperationResponse<IEnumerable<CollectionExtEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
     public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
 
@@ -41,12 +38,6 @@ public sealed class CollectionQueryAdapterFake : ICollectionQueryAdapter
     {
         GetCollectionByIdAsyncInvokeCount++;
         return Task.FromResult(GetCollectionByIdAsyncResult);
-    }
-
-    public Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
-    {
-        GetSharedCollectionsAsyncInvokeCount++;
-        return Task.FromResult(GetSharedCollectionsAsyncResult);
     }
 
     public Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
