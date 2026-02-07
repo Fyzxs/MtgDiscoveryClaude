@@ -43,11 +43,6 @@ public interface ICollectionQueryAdapter
     Task<IOperationResponse<CollectionExtEntity>> GetCollectionByIdAsync(ICollectionIdXfrEntity args, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Retrieves all collections shared with a specific user (where user is in authorized_users).
-    /// </summary>
-    Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Retrieves all collections accessible to a user (owned + shared).
     /// </summary>
     Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken);

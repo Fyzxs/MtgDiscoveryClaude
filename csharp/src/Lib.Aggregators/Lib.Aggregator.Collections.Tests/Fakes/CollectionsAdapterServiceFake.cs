@@ -40,9 +40,6 @@ public sealed class CollectionsAdapterServiceFake : ICollectionsAdapterService
     public IOperationResponse<CollectionExtEntity> TransferCollectionOwnershipAsyncResult { get; init; }
     public int TransferCollectionOwnershipAsyncInvokeCount { get; private set; }
 
-    public IOperationResponse<IEnumerable<CollectionExtEntity>> GetSharedCollectionsAsyncResult { get; init; }
-    public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
-
     public IOperationResponse<IEnumerable<CollectionExtEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
     public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
 
@@ -104,12 +101,6 @@ public sealed class CollectionsAdapterServiceFake : ICollectionsAdapterService
     {
         TransferCollectionOwnershipAsyncInvokeCount++;
         return Task.FromResult(TransferCollectionOwnershipAsyncResult);
-    }
-
-    public Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
-    {
-        GetSharedCollectionsAsyncInvokeCount++;
-        return Task.FromResult(GetSharedCollectionsAsyncResult);
     }
 
     public Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)

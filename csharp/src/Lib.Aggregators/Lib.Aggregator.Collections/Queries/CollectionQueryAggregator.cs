@@ -104,7 +104,7 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
         IUserIdXfrEntity xfrEntity = await _userIdItrToXfrMapper.Map(args).ConfigureAwait(false);
 
         IOperationResponse<IEnumerable<CollectionExtEntity>> response = await _adapterService
-            .GetSharedCollectionsAsync(xfrEntity, cancellationToken)
+            .GetAccessibleCollectionsAsync(xfrEntity, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)
@@ -112,8 +112,11 @@ internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorServ
             return new FailureOperationResponse<IEnumerable<ICollectionOufEntity>>(response.OuterException);
         }
 
+        IEnumerable<CollectionExtEntity> sharedOnly = response.ResponseData
+            .Where(c => c.OwnerId != args.UserId);
+
         ICollectionOufEntity[] oufEntities = await Task.WhenAll(
-            response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+            sharedOnly.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
 
         return new SuccessOperationResponse<IEnumerable<ICollectionOufEntity>>(oufEntities);
     }

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.Collections.Apis;
 using Lib.Adapter.Collections.Queries;
+using Lib.Adapter.Collections.Queries.Mappers;
 using Lib.Adapter.Collections.Tests.Fakes;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.Invocation.Operations;
@@ -51,7 +51,8 @@ public sealed class CollectionsAdapterServiceTests
             new DefaultCollectionAdapterFake(),
             new CollectionsByOwnerAdapterFake(),
             new CollectionByIdAdapterFake(),
-            new AccessibleCollectionsAdapterFake());
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
 
         CollectionXfrEntityFake xfrEntity = new()
         {
@@ -88,7 +89,8 @@ public sealed class CollectionsAdapterServiceTests
             defaultFake,
             new CollectionsByOwnerAdapterFake(),
             new CollectionByIdAdapterFake(),
-            new AccessibleCollectionsAdapterFake());
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
 
         OwnerIdXfrEntityFake ownerIdXfr = new() { OwnerId = "user-123" };
 
@@ -121,7 +123,8 @@ public sealed class CollectionsAdapterServiceTests
             new DefaultCollectionAdapterFake(),
             ownerFake,
             new CollectionByIdAdapterFake(),
-            new AccessibleCollectionsAdapterFake());
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
 
         OwnerIdXfrEntityFake ownerIdXfr = new() { OwnerId = "user-123" };
 
@@ -154,7 +157,8 @@ public sealed class CollectionsAdapterServiceTests
             new DefaultCollectionAdapterFake(),
             new CollectionsByOwnerAdapterFake(),
             byIdFake,
-            new AccessibleCollectionsAdapterFake());
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
 
         CollectionIdXfrEntityFake input = new()
         {
@@ -194,7 +198,8 @@ public sealed class CollectionsAdapterServiceTests
             new DefaultCollectionAdapterFake(),
             new CollectionsByOwnerAdapterFake(),
             new CollectionByIdAdapterFake(),
-            accessibleFake);
+            accessibleFake,
+            new OwnerIdXfrToUserIdXfrMapperFake());
 
         UserIdXfrEntityFake input = new() { UserId = "user-123" };
 
@@ -208,68 +213,6 @@ public sealed class CollectionsAdapterServiceTests
         accessibleFake.ExecuteInvokeCount.Should().Be(1);
     }
 
-    [TestMethod, TestCategory("unit")]
-    public async Task GetSharedCollectionsAsync_FiltersToOnlySharedCollections()
-    {
-        // Arrange
-        List<CollectionExtEntity> allAccessible =
-        [
-            new CollectionExtEntity { CollectionId = "col-owned", OwnerId = "user-123" },
-            new CollectionExtEntity { CollectionId = "col-shared-1", OwnerId = "other-user-1" },
-            new CollectionExtEntity { CollectionId = "col-shared-2", OwnerId = "other-user-2" }
-        ];
-
-        AccessibleCollectionsAdapterFake accessibleFake = new()
-        {
-            ExecuteResult = new SuccessOperationResponse<IEnumerable<CollectionExtEntity>>(allAccessible)
-        };
-
-        CollectionsAdapterService subject = new InstanceWrapper(
-            new CollectionCommandAdapterFake(),
-            new DefaultCollectionAdapterFake(),
-            new CollectionsByOwnerAdapterFake(),
-            new CollectionByIdAdapterFake(),
-            accessibleFake);
-
-        UserIdXfrEntityFake input = new() { UserId = "user-123" };
-
-        // Act
-        IOperationResponse<IEnumerable<CollectionExtEntity>> actual = await subject
-            .GetSharedCollectionsAsync(input, CancellationToken.None)
-            .ConfigureAwait(false);
-
-        // Assert
-        actual.IsSuccess.Should().BeTrue();
-        CollectionExtEntity[] results = actual.ResponseData.ToArray();
-        results.Should().HaveCount(2);
-        results.Should().NotContain(c => c.OwnerId == "user-123");
-        accessibleFake.ExecuteInvokeCount.Should().Be(1);
-    }
-
-    [TestMethod, TestCategory("unit")]
-    public async Task GetSharedCollectionsAsync_WhenAccessibleFails_ReturnsFailure()
-    {
-        // Arrange
-        AccessibleCollectionsAdapterFake accessibleFake = new() { ShouldReturnFailure = true };
-
-        CollectionsAdapterService subject = new InstanceWrapper(
-            new CollectionCommandAdapterFake(),
-            new DefaultCollectionAdapterFake(),
-            new CollectionsByOwnerAdapterFake(),
-            new CollectionByIdAdapterFake(),
-            accessibleFake);
-
-        UserIdXfrEntityFake input = new() { UserId = "user-123" };
-
-        // Act
-        IOperationResponse<IEnumerable<CollectionExtEntity>> actual = await subject
-            .GetSharedCollectionsAsync(input, CancellationToken.None)
-            .ConfigureAwait(false);
-
-        // Assert
-        actual.IsFailure.Should().BeTrue();
-    }
-
     private sealed class InstanceWrapper : TypeWrapper<CollectionsAdapterService>
     {
         public InstanceWrapper(
@@ -277,8 +220,9 @@ public sealed class CollectionsAdapterServiceTests
             IDefaultCollectionAdapter defaultAdapter,
             ICollectionsByOwnerAdapter ownerAdapter,
             ICollectionByIdAdapter byIdAdapter,
-            IAccessibleCollectionsAdapter accessibleAdapter)
-            : base(commandAdapter, defaultAdapter, ownerAdapter, byIdAdapter, accessibleAdapter)
+            IAccessibleCollectionsAdapter accessibleAdapter,
+            IOwnerIdXfrToUserIdXfrMapper ownerIdXfrToUserIdXfrMapper)
+            : base(commandAdapter, defaultAdapter, ownerAdapter, byIdAdapter, accessibleAdapter, ownerIdXfrToUserIdXfrMapper)
         { }
     }
 }

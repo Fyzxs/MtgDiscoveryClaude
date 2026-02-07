@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis.Entities;
 using Lib.Adapter.Collections.Commands;
 using Lib.Adapter.Collections.Queries;
-using Lib.Adapter.Collections.Queries.Entities;
+using Lib.Adapter.Collections.Queries.Mappers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -28,13 +27,15 @@ public sealed class CollectionsAdapterService : ICollectionsAdapterService
     private readonly ICollectionsByOwnerAdapter _collectionsByOwnerAdapter;
     private readonly ICollectionByIdAdapter _collectionByIdAdapter;
     private readonly IAccessibleCollectionsAdapter _accessibleCollectionsAdapter;
+    private readonly IOwnerIdXfrToUserIdXfrMapper _ownerIdXfrToUserIdXfrMapper;
 
     public CollectionsAdapterService(ILogger logger) : this(
         new CollectionCommandAdapter(logger),
         new DefaultCollectionAdapter(logger),
         new CollectionsByOwnerAdapter(logger),
         new CollectionByIdAdapter(logger),
-        new AccessibleCollectionsAdapter(logger))
+        new AccessibleCollectionsAdapter(logger),
+        new OwnerIdXfrToUserIdXfrMapper())
     { }
 
     private CollectionsAdapterService(
@@ -42,13 +43,15 @@ public sealed class CollectionsAdapterService : ICollectionsAdapterService
         IDefaultCollectionAdapter defaultCollectionAdapter,
         ICollectionsByOwnerAdapter collectionsByOwnerAdapter,
         ICollectionByIdAdapter collectionByIdAdapter,
-        IAccessibleCollectionsAdapter accessibleCollectionsAdapter)
+        IAccessibleCollectionsAdapter accessibleCollectionsAdapter,
+        IOwnerIdXfrToUserIdXfrMapper ownerIdXfrToUserIdXfrMapper)
     {
         _commandAdapter = commandAdapter;
         _defaultCollectionAdapter = defaultCollectionAdapter;
         _collectionsByOwnerAdapter = collectionsByOwnerAdapter;
         _collectionByIdAdapter = collectionByIdAdapter;
         _accessibleCollectionsAdapter = accessibleCollectionsAdapter;
+        _ownerIdXfrToUserIdXfrMapper = ownerIdXfrToUserIdXfrMapper;
     }
 
     public async Task<IOperationResponse<CollectionExtEntity>> CreateCollectionAsync(ICollectionXfrEntity entity, CancellationToken cancellationToken)
@@ -74,35 +77,18 @@ public sealed class CollectionsAdapterService : ICollectionsAdapterService
 
     public async Task<IOperationResponse<CollectionExtEntity>> GetDefaultCollectionAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken)
     {
-        UserIdXfrEntity userIdArgs = new() { UserId = args.OwnerId };
+        IUserIdXfrEntity userIdArgs = await _ownerIdXfrToUserIdXfrMapper.Map(args).ConfigureAwait(false);
         return await _defaultCollectionAdapter.Execute(userIdArgs, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetCollectionsByOwnerAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken)
     {
-        UserIdXfrEntity userIdArgs = new() { UserId = args.OwnerId };
+        IUserIdXfrEntity userIdArgs = await _ownerIdXfrToUserIdXfrMapper.Map(args).ConfigureAwait(false);
         return await _collectionsByOwnerAdapter.Execute(userIdArgs, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IOperationResponse<CollectionExtEntity>> GetCollectionByIdAsync(ICollectionIdXfrEntity args, CancellationToken cancellationToken)
         => await _collectionByIdAdapter.Execute(args, cancellationToken).ConfigureAwait(false);
-
-    public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetSharedCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
-    {
-        IOperationResponse<IEnumerable<CollectionExtEntity>> allAccessible = await _accessibleCollectionsAdapter
-            .Execute(args, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (allAccessible.IsFailure)
-        {
-            return allAccessible;
-        }
-
-        IEnumerable<CollectionExtEntity> sharedOnly = allAccessible.ResponseData
-            .Where(c => c.OwnerId != args.UserId);
-
-        return new SuccessOperationResponse<IEnumerable<CollectionExtEntity>>(sharedOnly);
-    }
 
     public async Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
         => await _accessibleCollectionsAdapter.Execute(args, cancellationToken).ConfigureAwait(false);
