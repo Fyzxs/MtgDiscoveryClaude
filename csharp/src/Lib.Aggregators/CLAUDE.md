@@ -32,7 +32,7 @@ See: `Lib.Aggregator.Artists/Queries/Mappers/` for implementation examples
 
 **Mapper Examples**:
 - Request mapping: `ArtistSearchTermItrToXfrMapper.cs:10-32`
-- Response mapping: `ArtistSearchExtToItrMapper.cs:11-32` (note: parallel mapping with Task.WhenAll)
+- Response mapping: `ArtistSearchExtToOufMapper.cs:11-32` (note: parallel mapping with Task.WhenAll)
 
 **Aggregator Example**:
 - Complete operation: `ArtistSearchAggregatorService.cs:36-48` (map request → call adapter → handle response → return)
@@ -64,7 +64,7 @@ Aggregators use action patterns from `Lib.Shared.Abstractions/Actions/`. See: `c
 | Aggregator Interface | `I{Operation}{Domain}AggregatorService` | `IArtistSearchAggregatorService` |
 | Aggregator Implementation | `{Operation}{Domain}AggregatorService` | `ArtistSearchAggregatorService` |
 | Request Mapper | `I{Entity}ItrToXfrMapper` | `IArtistSearchTermItrToXfrMapper` |
-| Response Mapper | `I{Entity}ExtToOufMapper` | `IArtistSearchExtToItrMapper` |
+| Response Mapper | `I{Entity}ExtToOufMapper` | `IArtistSearchExtToOufMapper` |
 
 ## When Adding a New Aggregator
 
@@ -75,3 +75,42 @@ Aggregators use action patterns from `Lib.Shared.Abstractions/Actions/`. See: `c
 5. Register in composite interface
 
 See: `Lib.Aggregator.Artists/` for complete example
+
+## Additional Patterns
+
+### CacheKey on XfrEntities
+
+Every `XfrEntity` includes a computed `CacheKey` string property used for adapter-level caching:
+
+```csharp
+public string CacheKey => $"artist:search:{Normalized}";
+```
+
+### Execute Method Convention
+
+All internal aggregator operation services use `Execute(IItrEntity, CancellationToken)` as their single method:
+
+```csharp
+public async Task<IOperationResponse<IOufEntity>> Execute(
+    IItrEntity input, CancellationToken cancellationToken)
+```
+
+### Exception Wrapping
+
+Aggregators may wrap adapter failures in domain-specific exceptions for context:
+
+```csharp
+new FailureOperationResponse<IEnumerable<ISealedProductOufEntity>>(
+    new SealedProductsAggregatorException($"Failed to retrieve sealed products for set '{input.SetCode}'", response.OuterException));
+```
+
+Exception classes live in `Exceptions/` within the aggregator project.
+
+### Collection Mapping with Task.WhenAll
+
+When mapping collections of `ExtEntity` → `OufEntity`, use `Task.WhenAll` for parallel execution:
+
+```csharp
+IEnumerable<IOufEntity> oufEntities = await Task.WhenAll(
+    response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+```
