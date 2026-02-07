@@ -1,12 +1,9 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.User;
 using Lib.Shared.DataModels.Entities.Args.User;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.MtgDiscovery.Entry.Queries.User;
 
-internal interface IRegisterUserEntryService
+internal interface IRegisterUserEntryService : IOperationResponseService<IAuthUserArgEntity, UserSyncOutEntity>
 {
-    Task<IOperationResponse<UserSyncOutEntity>> Execute(IAuthUserArgEntity input, CancellationToken cancellationToken);
 }

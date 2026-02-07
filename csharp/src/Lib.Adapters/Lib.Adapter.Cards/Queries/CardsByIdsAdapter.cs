@@ -39,7 +39,7 @@ internal sealed class CardsByIdsAdapter : ICardsByIdsAdapter
         CancellationToken cancellationToken)
     {
         ICollection<ReadPointItem> items = await _cardIdsToReadPointMapper.Map(input.CardIds).ConfigureAwait(false);
-        IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem));
+        IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem, cancellationToken));
 
         OpResponse<ScryfallCardItemExtEntity>[] responses = await Task.WhenAll(collection).ConfigureAwait(false);
 

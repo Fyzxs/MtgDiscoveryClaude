@@ -1,15 +1,10 @@
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
 using Lib.Shared.DataModels.Entities.Args.Sets;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Sets;
 
-internal interface IAllSetsEntryService
+internal interface IAllSetsEntryService : IOperationResponseService<IAllSetsArgEntity, List<SetItemOutEntity>>
 {
-    Task<IOperationResponse<List<SetItemOutEntity>>> Execute(
-        IAllSetsArgEntity input,
-        CancellationToken cancellationToken);
 }

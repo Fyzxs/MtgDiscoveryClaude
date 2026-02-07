@@ -1,13 +1,10 @@
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.MtgDiscovery.Entry.Queries.UserCards;
 
-internal interface IUserCardsBySetEntryService
+internal interface IUserCardsBySetEntryService : IOperationResponseService<IUserCardsBySetArgEntity, List<UserCardOutEntity>>
 {
-    Task<IOperationResponse<List<UserCardOutEntity>>> Execute(IUserCardsBySetArgEntity input, CancellationToken cancellationToken);
 }

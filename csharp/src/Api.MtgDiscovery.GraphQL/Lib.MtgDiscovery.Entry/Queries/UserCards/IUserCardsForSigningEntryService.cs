@@ -1,12 +1,7 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.MtgDiscovery.Entry.Queries.UserCards;
 
-internal interface IUserCardsForSigningEntryService
-{
-    Task<IOperationResponse<SigningResultOutEntity>> Execute(IUserCardsForSigningArgEntity input, CancellationToken cancellationToken);
-}
+internal interface IUserCardsForSigningEntryService : IOperationResponseService<IUserCardsForSigningArgEntity, SigningResultOutEntity>;
