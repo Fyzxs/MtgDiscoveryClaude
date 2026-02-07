@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistNameTrigrams;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -39,9 +40,15 @@ internal sealed class ArtistsQueryAdapter : IArtistQueryAdapter
         _cardsByArtistNameAdapter = cardsByArtistNameAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(IArtistSearchTermXfrEntity searchTerm) => await _searchArtistsAdapter.Execute(searchTerm);
+    public async Task<IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>>> SearchArtistsAsync(
+        IArtistSearchTermXfrEntity searchTerm,
+        CancellationToken cancellationToken) => await _searchArtistsAdapter.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(IArtistIdXfrEntity artistId) => await _cardsByArtistIdAdapter.Execute(artistId);
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistIdAsync(
+        IArtistIdXfrEntity artistId,
+        CancellationToken cancellationToken) => await _cardsByArtistIdAdapter.Execute(artistId, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(IArtistNameXfrEntity artistName) => await _cardsByArtistNameAdapter.Execute(artistName);
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> CardsByArtistNameAsync(
+        IArtistNameXfrEntity artistName,
+        CancellationToken cancellationToken) => await _cardsByArtistNameAdapter.Execute(artistName, cancellationToken).ConfigureAwait(false);
 }

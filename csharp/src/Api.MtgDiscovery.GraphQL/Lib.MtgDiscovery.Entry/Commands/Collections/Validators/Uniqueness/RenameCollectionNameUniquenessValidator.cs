@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Collections;
@@ -17,12 +18,15 @@ internal sealed class RenameCollectionNameUniquenessValidator : IRenameCollectio
 
     public RenameCollectionNameUniquenessValidator(ICollectionsDomainService domainService) => _domainService = domainService;
 
+    public Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
+        IRenameCollectionArgsEntity args) => Validate(args, CancellationToken.None);
+
     public async Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
-        IRenameCollectionArgsEntity args)
+        IRenameCollectionArgsEntity args, CancellationToken cancellationToken)
     {
         OwnerIdItrEntity ownerIdItr = new() { OwnerId = args.AuthUser.UserId };
         IOperationResponse<IEnumerable<ICollectionOufEntity>> response = await _domainService
-            .GetCollectionsByOwnerAsync(ownerIdItr)
+            .GetCollectionsByOwnerAsync(ownerIdItr, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

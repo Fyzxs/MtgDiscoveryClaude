@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Artists.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Domain.Artists.Queries;
 /// Implements single-method delegation pattern with Execute method.
 /// </summary>
 internal interface IArtistSearchDomainService
-    : IOperationResponseService<IArtistSearchTermItrEntity, IArtistSearchResultCollectionOufEntity>;
+{
+    Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(
+        IArtistSearchTermItrEntity input,
+        CancellationToken cancellationToken);
+}

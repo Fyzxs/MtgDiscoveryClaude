@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Apis.Configurations;
@@ -23,10 +24,10 @@ internal sealed class CosmosContainerDeleteOperator : ICosmosContainerDeleteOper
         _clientAdapter = clientAdapter;
     }
 
-    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item)
+    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item, CancellationToken cancellationToken = default)
     {
         Container container = await _clientAdapter.GetContainer().ConfigureAwait(false);
-        ItemResponse<T> itemResponse = await container.DeleteItemAsync<T>(item.Id, item.Partition).ConfigureAwait(false);
+        ItemResponse<T> itemResponse = await container.DeleteItemAsync<T>(item.Id, item.Partition, cancellationToken: cancellationToken).ConfigureAwait(false);
         _logger.DeleteInformation(itemResponse.RequestCharge, itemResponse.Diagnostics.GetClientElapsedTime());
         return new ItemOpResponse<T>(itemResponse);
     }

@@ -5,4 +5,5 @@ namespace Lib.Aggregator.Cards.Queries.Entities;
 internal sealed class CardNameXfrEntity : ICardNameXfrEntity
 {
     public string CardName { get; init; }
+    public string CacheKey => $"card:name:{CardName}";
 }

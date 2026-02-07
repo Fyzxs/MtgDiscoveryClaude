@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Collections.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
@@ -28,37 +29,37 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<ICollectionOufEntity> GetCollectionByIdAsyncResult { get; init; }
     public int GetCollectionByIdAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken)
     {
         CreateCollectionAsyncInvokeCount++;
         return Task.FromResult(CreateCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         RenameCollectionAsyncInvokeCount++;
         return Task.FromResult(RenameCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken)
     {
         UpdateCollectionVisibilityAsyncInvokeCount++;
         return Task.FromResult(UpdateCollectionVisibilityAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         GetDefaultCollectionAsyncInvokeCount++;
         return Task.FromResult(GetDefaultCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args, CancellationToken cancellationToken)
     {
         GetCollectionsByOwnerAsyncInvokeCount++;
         return Task.FromResult(GetCollectionsByOwnerAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
+    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args, CancellationToken cancellationToken)
     {
         GetCollectionByIdAsyncInvokeCount++;
         return Task.FromResult(GetCollectionByIdAsyncResult);
@@ -67,7 +68,7 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<ICollectionOufEntity> GrantCollectionAccessAsyncResult { get; init; }
     public int GrantCollectionAccessAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         GrantCollectionAccessAsyncInvokeCount++;
         return Task.FromResult(GrantCollectionAccessAsyncResult);
@@ -76,7 +77,7 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<ICollectionOufEntity> RevokeCollectionAccessAsyncResult { get; init; }
     public int RevokeCollectionAccessAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         RevokeCollectionAccessAsyncInvokeCount++;
         return Task.FromResult(RevokeCollectionAccessAsyncResult);
@@ -85,7 +86,7 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<ICollectionOufEntity> DeleteCollectionAsyncResult { get; init; }
     public int DeleteCollectionAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         DeleteCollectionAsyncInvokeCount++;
         return Task.FromResult(DeleteCollectionAsyncResult);
@@ -94,7 +95,7 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<ICollectionOufEntity> TransferCollectionOwnershipAsyncResult { get; init; }
     public int TransferCollectionOwnershipAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken)
     {
         TransferCollectionOwnershipAsyncInvokeCount++;
         return Task.FromResult(TransferCollectionOwnershipAsyncResult);
@@ -103,7 +104,7 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetSharedCollectionsAsyncResult { get; init; }
     public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         GetSharedCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetSharedCollectionsAsyncResult);
@@ -112,7 +113,7 @@ public sealed class CollectionsAggregatorServiceFake : ICollectionsAggregatorSer
     public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
     public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args, CancellationToken cancellationToken)
     {
         GetAccessibleCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetAccessibleCollectionsAsyncResult);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
@@ -27,7 +28,11 @@ internal sealed class UserSetCardsQueryAggregator : IUserSetCardsQueryAggregator
         _getAllUserSetCardsOperations = getAllUserSetCardsOperations;
     }
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(IUserSetCardItrEntity userSetCard) => await _getUserSetCardOperations.Execute(userSetCard);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> UserSetCardByUserAndSetAsync(
+        IUserSetCardItrEntity userSetCard,
+        CancellationToken cancellationToken) => await _getUserSetCardOperations.Execute(userSetCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(IAllUserSetCardsItrEntity userSetCards) => await _getAllUserSetCardsOperations.Execute(userSetCards);
+    public async Task<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> AllUserSetCardsAsync(
+        IAllUserSetCardsItrEntity userSetCards,
+        CancellationToken cancellationToken) => await _getAllUserSetCardsOperations.Execute(userSetCards, cancellationToken).ConfigureAwait(false);
 }

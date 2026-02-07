@@ -5,4 +5,5 @@ namespace Lib.Aggregator.SealedProducts.Queries.Entities;
 internal sealed class SetCodeXfrEntity : ISealedProductsBySetCodeXfrEntity
 {
     public string SetCode { get; init; }
+    public string CacheKey => $"sealed_products:set:{SetCode}";
 }

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
@@ -14,17 +15,17 @@ namespace Lib.Adapter.UserWishlistCards.Queries;
 
 internal sealed class UserWishlistCardsByUserAdapter : IUserWishlistCardsByUserAdapter
 {
-    private readonly ICosmosInquisition<AllUserWishlistCardsExtEntitys> _inquisition;
+    private readonly ICosmosInquisition<AllUserWishlistCardsExtEntity> _inquisition;
 
     public UserWishlistCardsByUserAdapter(ILogger logger) : this(new AllUserWishlistCardsInquisition(logger)) { }
 
-    private UserWishlistCardsByUserAdapter(ICosmosInquisition<AllUserWishlistCardsExtEntitys> inquisition) => _inquisition = inquisition;
+    private UserWishlistCardsByUserAdapter(ICosmosInquisition<AllUserWishlistCardsExtEntity> inquisition) => _inquisition = inquisition;
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> Execute([NotNull] IUserWishlistCardXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> Execute([NotNull] IUserWishlistCardXfrEntity input, CancellationToken cancellationToken)
     {
-        AllUserWishlistCardsExtEntitys args = new() { UserId = input.UserId };
+        AllUserWishlistCardsExtEntity args = new() { UserId = input.UserId };
 
-        OpResponse<IEnumerable<UserWishlistCardExtEntity>> queryResponse = await _inquisition.QueryAsync<UserWishlistCardExtEntity>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserWishlistCardExtEntity>> queryResponse = await _inquisition.QueryAsync<UserWishlistCardExtEntity>(args, cancellationToken).ConfigureAwait(false);
 
         if (queryResponse.IsNotSuccessful())
         {

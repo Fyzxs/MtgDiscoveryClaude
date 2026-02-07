@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Aggregator.Collections.Apis;
@@ -47,7 +48,7 @@ public sealed class CollectionCommandDomainServiceTests
 
         // Act
         IOperationResponse<ICollectionOufEntity> actual = await subject
-            .CreateCollectionAsync(itrEntity)
+            .CreateCollectionAsync(itrEntity, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
@@ -80,7 +81,7 @@ public sealed class CollectionCommandDomainServiceTests
 
         // Act
         IOperationResponse<ICollectionOufEntity> actual = await subject
-            .CreateCollectionAsync(itrEntity)
+            .CreateCollectionAsync(itrEntity, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert

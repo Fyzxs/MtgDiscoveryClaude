@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -36,11 +37,23 @@ internal sealed class CardEntryService : ICardEntryService
         _cardNameSearch = cardNameSearch;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(ICardIdsArgEntity args) => await _cardsByIds.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(
+        ICardIdsArgEntity args,
+        CancellationToken cancellationToken)
+        => await _cardsByIds.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(ISetCodeArgEntity setCode) => await _cardsBySetCode.Execute(setCode).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(
+        ISetCodeArgEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardsBySetCode.Execute(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(ICardNameArgEntity cardName) => await _cardsByName.Execute(cardName).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByNameAsync(
+        ICardNameArgEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardsByName.Execute(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(ICardSearchTermArgEntity searchTerm) => await _cardNameSearch.Execute(searchTerm).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardNameSearchResultOutEntity>>> CardNameSearchAsync(
+        ICardSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _cardNameSearch.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 }

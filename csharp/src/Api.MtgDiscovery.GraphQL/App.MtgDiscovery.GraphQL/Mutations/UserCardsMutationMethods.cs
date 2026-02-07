@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
@@ -42,10 +43,10 @@ internal sealed class UserCardsMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(AddCardToCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
+    public async Task<ResponseModel> AddCardToCollectionAsync(ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args, CancellationToken cancellationToken)
     {
         IAddCardToCollectionArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToCollectionAsync(combinedArgs).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.AddCardToCollectionAsync(combinedArgs, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

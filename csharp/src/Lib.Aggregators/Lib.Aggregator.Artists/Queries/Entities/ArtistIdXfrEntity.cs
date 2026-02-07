@@ -5,4 +5,5 @@ namespace Lib.Aggregator.Artists.Queries.Entities;
 internal sealed class ArtistIdXfrEntity : IArtistIdXfrEntity
 {
     public string ArtistId { get; init; }
+    public string CacheKey => $"artist:{ArtistId}";
 }

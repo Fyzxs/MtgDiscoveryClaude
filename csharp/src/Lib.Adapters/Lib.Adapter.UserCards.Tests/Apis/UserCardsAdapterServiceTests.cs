@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Tests.Fakes;
@@ -59,7 +60,7 @@ public sealed class UserCardsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<UserCardExtEntity> actual = await subject.AddUserCardAsync(addUserCard).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> actual = await subject.AddUserCardAsync(addUserCard, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(operationResponse);
@@ -94,7 +95,7 @@ public sealed class UserCardsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<IEnumerable<UserCardExtEntity>> actual = await subject.UserCardsBySetAsync(userCardsSet).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<UserCardExtEntity>> actual = await subject.UserCardsBySetAsync(userCardsSet, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(operationResponse);

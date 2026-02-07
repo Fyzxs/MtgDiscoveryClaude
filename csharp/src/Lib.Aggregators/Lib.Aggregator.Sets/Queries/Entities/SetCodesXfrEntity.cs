@@ -6,4 +6,5 @@ namespace Lib.Aggregator.Sets.Queries.Entities;
 internal sealed class SetCodesXfrEntity : ISetCodesXfrEntity
 {
     public IEnumerable<string> SetCodes { get; init; }
+    public string CacheKey => $"sets:codes:{string.Join(",", SetCodes)}";
 }

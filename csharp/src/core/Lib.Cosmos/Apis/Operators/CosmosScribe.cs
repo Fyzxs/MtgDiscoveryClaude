@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lib.Cosmos.Apis.Operators;
@@ -26,9 +27,10 @@ public abstract class CosmosScribe : ICosmosScribe
     /// </summary>
     /// <typeparam name="T">The type of the item to upsert.</typeparam>
     /// <param name="item">The instance of the item to be upserted.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains
     /// the response from the upsert operation with the upserted item.
     /// </returns>
-    public async Task<OpResponse<T>> UpsertAsync<T>(T item) => await _source.UpsertAsync(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> UpsertAsync<T>(T item, CancellationToken cancellationToken = default) => await _source.UpsertAsync(item, cancellationToken).ConfigureAwait(false);
 }

@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Aggregator.Cards.Tests.Fakes;
@@ -54,7 +55,7 @@ public sealed class CardAggregatorServiceTests
         CardAggregatorService subject = new TestableCardAggregatorService(fakeOperations);
 
         // Act
-        IOperationResponse<ICardItemCollectionOufEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> actual = await subject.CardsByIdsAsync(args, CancellationToken.None).ConfigureAwait(false);
 
         // Assert
         actual.Should().BeSameAs(expectedResponse);

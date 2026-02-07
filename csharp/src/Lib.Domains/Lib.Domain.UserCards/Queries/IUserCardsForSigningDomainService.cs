@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards.Signing;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.UserCards.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Domain.UserCards.Queries;
 /// Implements single-method delegation pattern with Execute method.
 /// </summary>
 internal interface IUserCardsForSigningDomainService
-    : IOperationResponseService<IUserCardsForSigningItrEntity, ISigningResultOufEntity>;
+{
+    Task<IOperationResponse<ISigningResultOufEntity>> Execute(
+        IUserCardsForSigningItrEntity input,
+        CancellationToken cancellationToken);
+}

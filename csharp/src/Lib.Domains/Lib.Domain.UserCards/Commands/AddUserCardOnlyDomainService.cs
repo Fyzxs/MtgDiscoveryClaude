@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
@@ -20,5 +21,7 @@ internal sealed class AddUserCardOnlyDomainService : IAddUserCardOnlyDomainServi
 
     private AddUserCardOnlyDomainService(IUserCardsCommandAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(IUserCardItrEntity input) => await _userCardsAggregatorService.AddUserCardOnlyAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(
+        IUserCardItrEntity input,
+        CancellationToken cancellationToken) => await _userCardsAggregatorService.AddUserCardOnlyAsync(input, cancellationToken).ConfigureAwait(false);
 }

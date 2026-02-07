@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserSetCards;
@@ -43,11 +44,12 @@ internal sealed class UserSetCardsMutationMethods
     [GraphQLType(typeof(UserSetCardResponseModelUnionType))]
     public async Task<ResponseModel> AddSetGroupToUserSetCardAsync(
         ClaimsPrincipal claimsPrincipal,
-        AddSetGroupToUserSetCardArgEntity input)
+        AddSetGroupToUserSetCardArgEntity input,
+        CancellationToken cancellationToken)
     {
         IAddSetGroupToUserSetCardArgsEntity combinedArgs = await _argsMapper.Map(claimsPrincipal, input).ConfigureAwait(false);
         IOperationResponse<UserSetCardOutEntity> response = await _entryService
-            .AddSetGroupToUserSetCardAsync(combinedArgs)
+            .AddSetGroupToUserSetCardAsync(combinedArgs, cancellationToken)
             .ConfigureAwait(false);
         return await _userSetCardResponseMapper.Map(response).ConfigureAwait(false);
     }

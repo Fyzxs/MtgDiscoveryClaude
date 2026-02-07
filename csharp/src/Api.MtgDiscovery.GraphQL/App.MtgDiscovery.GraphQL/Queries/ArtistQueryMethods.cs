@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args;
@@ -39,23 +40,29 @@ internal sealed class ArtistQueryMethods
     }
 
     [GraphQLType(typeof(ArtistSearchResponseModelUnionType))]
-    public async Task<ResponseModel> ArtistSearch(ArtistSearchTermArgEntity searchTerm)
+    public async Task<ResponseModel> ArtistSearch(
+        ArtistSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<ArtistSearchResultOutEntity>> response = await _entryService.ArtistSearchAsync(searchTerm).ConfigureAwait(false);
+        IOperationResponse<List<ArtistSearchResultOutEntity>> response = await _entryService.ArtistSearchAsync(searchTerm, cancellationToken).ConfigureAwait(false);
         return await _artistSearchResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
-    public async Task<ResponseModel> CardsByArtist(ArtistIdArgEntity artistId)
+    public async Task<ResponseModel> CardsByArtist(
+        ArtistIdArgEntity artistId,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByArtistAsync(artistId).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByArtistAsync(artistId, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(CardsByArtistResponseModelUnionType))]
-    public async Task<ResponseModel> CardsByArtistName(ArtistNameArgEntity artistName)
+    public async Task<ResponseModel> CardsByArtistName(
+        ArtistNameArgEntity artistName,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByArtistNameAsync(artistName).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByArtistNameAsync(artistName, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

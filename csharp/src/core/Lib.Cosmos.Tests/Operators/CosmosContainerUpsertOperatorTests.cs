@@ -42,7 +42,7 @@ public sealed class CosmosContainerUpsertOperatorTests
         CosmosContainerUpsertOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         containerFake.UpsertItemAsyncInvokeCount.Should().Be(1);
@@ -78,7 +78,7 @@ public sealed class CosmosContainerUpsertOperatorTests
         CosmosContainerUpsertOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().Be(itemToUpsert);
@@ -113,7 +113,7 @@ public sealed class CosmosContainerUpsertOperatorTests
         CosmosContainerUpsertOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().Be(itemToUpsert);
@@ -149,7 +149,7 @@ public sealed class CosmosContainerUpsertOperatorTests
         CosmosContainerUpsertOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        _ = await subject.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        _ = await subject.UpsertAsync(itemToUpsert, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         loggerFake.LogInvokeCount.Should().Be(1);
@@ -193,7 +193,7 @@ public sealed class CosmosContainerUpsertOperatorTests
         CosmosContainerUpsertOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<ComplexTestItem> actual = await subject.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<ComplexTestItem> actual = await subject.UpsertAsync(itemToUpsert, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Value.Should().Be(itemToUpsert);
@@ -229,7 +229,7 @@ public sealed class CosmosContainerUpsertOperatorTests
         CosmosContainerUpsertOperator subject = new InstanceWrapper(loggerFake, clientAdapterFake);
 
         // Act
-        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert).ConfigureAwait(false);
+        OpResponse<TestItem> actual = await subject.UpsertAsync(itemToUpsert, TestContext.CancellationToken).ConfigureAwait(false);
 
         // Assert
         actual.Should().BeOfType<ItemOpResponse<TestItem>>();
@@ -253,4 +253,6 @@ public sealed class CosmosContainerUpsertOperatorTests
         public List<string> Tags { get; init; }
         public Dictionary<string, string> Metadata { get; init; }
     }
+
+    public TestContext TestContext { get; set; }
 }

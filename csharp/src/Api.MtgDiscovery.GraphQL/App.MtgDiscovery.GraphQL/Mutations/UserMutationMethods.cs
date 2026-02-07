@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Authentication;
@@ -36,10 +37,10 @@ internal sealed class UserMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(UserRegistrationResponseModelUnionType))]
-    public async Task<ResponseModel> RegisterUserInfoAsync(ClaimsPrincipal claimsPrincipal)
+    public async Task<ResponseModel> RegisterUserInfoAsync(ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
     {
         AuthUserArgEntity authUserArg = new(claimsPrincipal);
-        IOperationResponse<UserSyncOutEntity> response = await _entryService.RegisterUserAsync(authUserArg).ConfigureAwait(false);
+        IOperationResponse<UserSyncOutEntity> response = await _entryService.RegisterUserAsync(authUserArg, cancellationToken).ConfigureAwait(false);
         return await _userSyncResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Artists.Exceptions;
 using Lib.Adapter.Artists.Queries.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistNameTrigrams;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Cosmos.Apis.Operators;
@@ -36,7 +37,7 @@ internal sealed class CardsByArtistNameAdapter : ICardsByArtistNameAdapter
         _cardsByArtistIdAdapter = cardsByArtistIdAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> Execute([NotNull] IArtistNameXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> Execute([NotNull] IArtistNameXfrEntity input, CancellationToken cancellationToken)
     {
         // Query each trigram and collect all matching artist names
         HashSet<string> matchingArtistIds = [];
@@ -55,7 +56,7 @@ internal sealed class CardsByArtistNameAdapter : ICardsByArtistNameAdapter
             };
 
             OpResponse<IEnumerable<ArtistNameTrigramExtEntity>> trigramResponse = await _artistNameTrigramSearchInquisition
-                .QueryAsync<ArtistNameTrigramExtEntity>(args)
+                .QueryAsync<ArtistNameTrigramExtEntity>(args, cancellationToken)
                 .ConfigureAwait(false);
 
             if (trigramResponse.IsNotSuccessful() || trigramResponse.Value == null)
@@ -124,6 +125,6 @@ internal sealed class CardsByArtistNameAdapter : ICardsByArtistNameAdapter
 
         // Use existing GetCardsByArtistIdAsync method to get complete card data
         ArtistIdXfrEntity artistIdEntity = new() { ArtistId = topMatchArtistId };
-        return await _cardsByArtistIdAdapter.Execute(artistIdEntity).ConfigureAwait(false);
+        return await _cardsByArtistIdAdapter.Execute(artistIdEntity, cancellationToken).ConfigureAwait(false);
     }
 }

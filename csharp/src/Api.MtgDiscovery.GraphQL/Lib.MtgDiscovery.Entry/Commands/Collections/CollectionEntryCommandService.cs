@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
@@ -105,7 +106,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         _oufToOutMapper = oufToOutMapper;
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(ICreateCollectionArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         ICreateCollectionArgEntity argEntity = argsEntity.CreateCollection;
         string userId = argsEntity.AuthUser.UserId;
@@ -116,14 +117,14 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
             return new FailureOperationResponse<CollectionOutEntity>(validatorResult.FailureStatus().OuterException);
         }
 
-        IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult = await _createUniquenessValidator.Validate(argsEntity).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult = await _createUniquenessValidator.Validate(argsEntity, cancellationToken).ConfigureAwait(false);
         if (uniquenessResult.IsNotValid())
         {
             return new FailureOperationResponse<CollectionOutEntity>(uniquenessResult.FailureStatus().OuterException);
         }
 
         ICollectionItrEntity itrEntity = await _createArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.CreateCollectionAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.CreateCollectionAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -133,7 +134,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> RenameCollectionAsync(IRenameCollectionArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> RenameCollectionAsync(IRenameCollectionArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         IRenameCollectionArgEntity argEntity = argsEntity.RenameCollection;
         string userId = argsEntity.AuthUser.UserId;
@@ -144,14 +145,14 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
             return new FailureOperationResponse<CollectionOutEntity>(validatorResult.FailureStatus().OuterException);
         }
 
-        IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult = await _renameUniquenessValidator.Validate(argsEntity).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult = await _renameUniquenessValidator.Validate(argsEntity, cancellationToken).ConfigureAwait(false);
         if (uniquenessResult.IsNotValid())
         {
             return new FailureOperationResponse<CollectionOutEntity>(uniquenessResult.FailureStatus().OuterException);
         }
 
         IRenameCollectionItrEntity itrEntity = await _renameArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.RenameCollectionAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.RenameCollectionAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -161,7 +162,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         IUpdateCollectionVisibilityArgEntity argEntity = argsEntity.UpdateVisibility;
         string userId = argsEntity.AuthUser.UserId;
@@ -173,7 +174,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         }
 
         IUpdateCollectionVisibilityItrEntity itrEntity = await _visibilityArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.UpdateCollectionVisibilityAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.UpdateCollectionVisibilityAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -183,7 +184,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         IGrantCollectionAccessArgEntity argEntity = argsEntity.GrantAccess;
         string userId = argsEntity.AuthUser.UserId;
@@ -195,7 +196,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         }
 
         IGrantCollectionAccessItrEntity itrEntity = await _grantAccessArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GrantCollectionAccessAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GrantCollectionAccessAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -205,7 +206,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         IRevokeCollectionAccessArgEntity argEntity = argsEntity.RevokeAccess;
         string userId = argsEntity.AuthUser.UserId;
@@ -217,7 +218,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         }
 
         IRevokeCollectionAccessItrEntity itrEntity = await _revokeAccessArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.RevokeCollectionAccessAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.RevokeCollectionAccessAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -227,7 +228,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> DeleteCollectionAsync(IDeleteCollectionArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> DeleteCollectionAsync(IDeleteCollectionArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         IDeleteCollectionArgEntity argEntity = argsEntity.DeleteCollection;
         string userId = argsEntity.AuthUser.UserId;
@@ -239,7 +240,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         }
 
         IDeleteCollectionItrEntity itrEntity = await _deleteArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.DeleteCollectionAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.DeleteCollectionAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -249,7 +250,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<CollectionOutEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipArgsEntity argsEntity)
+    public async Task<IOperationResponse<CollectionOutEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         ITransferCollectionOwnershipArgEntity argEntity = argsEntity.TransferOwnership;
         string userId = argsEntity.AuthUser.UserId;
@@ -261,7 +262,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         }
 
         ITransferCollectionOwnershipItrEntity itrEntity = await _transferArgToItrMapper.Map(argEntity, userId).ConfigureAwait(false);
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.TransferCollectionOwnershipAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.TransferCollectionOwnershipAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
@@ -271,7 +272,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
         return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
     }
 
-    public async Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity)
+    public async Task<IOperationResponse<IEnumerable<AuthorizedUserOutEntity>>> GetCollectionAccessListAsync(IGetCollectionAccessListArgsEntity argsEntity, CancellationToken cancellationToken)
     {
         CollectionIdItrEntity collectionIdItr = new()
         {
@@ -279,7 +280,7 @@ internal sealed class CollectionEntryCommandService : ICollectionEntryCommandSer
             OwnerId = argsEntity.AuthUser.UserId
         };
 
-        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GetCollectionByIdAsync(collectionIdItr).ConfigureAwait(false);
+        IOperationResponse<ICollectionOufEntity> opResponse = await _domainService.GetCollectionByIdAsync(collectionIdItr, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
         {
             return new FailureOperationResponse<IEnumerable<AuthorizedUserOutEntity>>(opResponse.OuterException);

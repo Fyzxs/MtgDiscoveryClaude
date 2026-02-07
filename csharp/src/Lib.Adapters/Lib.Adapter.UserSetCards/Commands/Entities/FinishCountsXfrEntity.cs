@@ -8,4 +8,5 @@ internal sealed class FinishCountsXfrEntity : IFinishCountsXfrEntity
     public required int NonFoil { get; init; }
     public required int Foil { get; init; }
     public required int Etched { get; init; }
+    public string CacheKey => $"finish_counts:{Foil}:{NonFoil}";
 }

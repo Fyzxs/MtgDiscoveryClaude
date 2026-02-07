@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserWishlistCards;
@@ -8,5 +9,5 @@ namespace Lib.Domain.UserWishlistCards.Queries;
 
 internal interface IUserWishlistCardsByIdsDomainService
 {
-    Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsByIdsItrEntity input);
+    Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsByIdsItrEntity input, CancellationToken cancellationToken);
 }

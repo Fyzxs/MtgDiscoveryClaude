@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.Artists.Apis.Entities;
 
@@ -7,7 +8,7 @@ namespace Lib.Adapter.Artists.Apis.Entities;
 /// Provides the original artist name, a normalized form suitable for comparisons,
 /// and a collection of trigrams used to support trigram-based search/matching.
 /// </summary>
-public interface IArtistNameXfrEntity
+public interface IArtistNameXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The artist's original display name as provided by the source.

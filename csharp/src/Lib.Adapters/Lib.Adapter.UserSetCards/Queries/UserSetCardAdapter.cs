@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.UserSetCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Exceptions;
@@ -28,11 +29,13 @@ internal sealed class UserSetCardAdapter : IUserSetCardAdapter
         _readPointMapper = readPointMapper;
     }
 
-    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute([NotNull] IUserSetCardGetXfrEntity input)
+    public async Task<IOperationResponse<UserSetCardExtEntity>> Execute(
+        [NotNull] IUserSetCardGetXfrEntity input,
+        CancellationToken cancellationToken)
     {
         ReadPointItem readPoint = await _readPointMapper.Map(input).ConfigureAwait(false);
 
-        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint).ConfigureAwait(false);
+        OpResponse<UserSetCardExtEntity> readResponse = await _userSetCardsGopher.ReadAsync<UserSetCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
         if (readResponse.IsNotSuccessful())
         {
@@ -51,7 +54,7 @@ internal sealed class UserSetCardAdapter : IUserSetCardAdapter
                 return new SuccessOperationResponse<UserSetCardExtEntity>(emptyCard);
             }
 
-            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException());
+            return new FailureOperationResponse<UserSetCardExtEntity>(new UserSetCardsAdapterException("Failed to read user set card"));
         }
 
         return new SuccessOperationResponse<UserSetCardExtEntity>(readResponse.Value);

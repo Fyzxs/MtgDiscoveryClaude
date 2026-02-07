@@ -8,4 +8,5 @@ public sealed class UserCardDetailsXfrEntityFake : IUserCardDetailsXfrEntity
     public string Special { get; init; }
     public int Count { get; init; }
     public string SetGroupId { get; init; }
+    public string CacheKey => $"user_card_details:{Finish}:{Special}";
 }

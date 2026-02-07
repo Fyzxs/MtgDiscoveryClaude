@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -17,11 +18,23 @@ public sealed class CardDomainService : ICardDomainService
 
     private CardDomainService(ICardsQueryDomainService cardDomainOperations) => _cardDomainOperations = cardDomainOperations;
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => await _cardDomainOperations.CardsByIdsAsync(args);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(
+        ICardIdsItrEntity args,
+        CancellationToken cancellationToken)
+        => await _cardDomainOperations.CardsByIdsAsync(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => await _cardDomainOperations.CardsBySetCodeAsync(setCode);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(
+        ISetCodeItrEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardDomainOperations.CardsBySetCodeAsync(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardDomainOperations.CardsByNameAsync(cardName);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(
+        ICardNameItrEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardDomainOperations.CardsByNameAsync(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardDomainOperations.CardNameSearchAsync(searchTerm);
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(
+        ICardSearchTermItrEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _cardDomainOperations.CardNameSearchAsync(searchTerm, cancellationToken).ConfigureAwait(false);
 }

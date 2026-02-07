@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCodeIndex;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Queries.Mappers;
@@ -41,7 +43,9 @@ internal sealed class SetsByCodesAdapter : ISetsByCodesAdapter
         _stringToSetIdsXfrMapper = stringToSetIdsXfrMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute([NotNull] ISetCodesXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(
+        [NotNull] ISetCodesXfrEntity input,
+        CancellationToken cancellationToken)
     {
         // TODO: Mapper should take the xfrEntity
         IEnumerable<string> setCodeList = input.SetCodes;
@@ -50,7 +54,7 @@ internal sealed class SetsByCodesAdapter : ISetsByCodesAdapter
         List<Task<OpResponse<ScryfallSetCodeIndexExtEntity>>> indexTasks = [];
         foreach (ReadPointItem readPoint in readPoints)
         {
-            indexTasks.Add(_setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint));
+            indexTasks.Add(_setCodeIndexGopher.ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint, cancellationToken));
         }
 
         OpResponse<ScryfallSetCodeIndexExtEntity>[] indexResponses = await Task.WhenAll(indexTasks).ConfigureAwait(false);
@@ -65,6 +69,6 @@ internal sealed class SetsByCodesAdapter : ISetsByCodesAdapter
         }
 
         ISetIdsXfrEntity setIdsEntity = await _stringToSetIdsXfrMapper.Map(setIds).ConfigureAwait(false);
-        return await _setsByIdsAdapter.Execute(setIdsEntity).ConfigureAwait(false);
+        return await _setsByIdsAdapter.Execute(setIdsEntity, cancellationToken).ConfigureAwait(false);
     }
 }

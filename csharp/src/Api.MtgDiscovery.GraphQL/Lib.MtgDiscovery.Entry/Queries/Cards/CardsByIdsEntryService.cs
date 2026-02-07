@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -48,21 +49,23 @@ internal sealed class CardsByIdsEntryService : ICardsByIdsEntryService
         _userWishlistCardEnrichment = userWishlistCardEnrichment;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ICardIdsArgEntity args)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
+        ICardIdsArgEntity args,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _cardIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ICardIdsItrEntity itrEntity = await _cardIdsArgToItrMapper.Map(args).ConfigureAwait(false);
-        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByIdsAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByIdsAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
         List<CardItemOutEntity> outEntities = await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
 
-        await _userCardEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
-        await _userWishlistCardEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+        await _userCardEnrichment.Enrich(outEntities, args, cancellationToken).ConfigureAwait(false);
+        await _userWishlistCardEnrichment.Enrich(outEntities, args, cancellationToken).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

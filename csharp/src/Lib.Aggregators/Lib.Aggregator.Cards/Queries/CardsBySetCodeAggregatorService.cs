@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -39,10 +40,12 @@ internal sealed class CardsBySetCodeAggregatorService : ICardsBySetCodeAggregato
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(ISetCodeItrEntity input)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        ISetCodeItrEntity input,
+        CancellationToken cancellationToken)
     {
         ISetCodeXfrEntity xfrEntity = await _setCodeItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> response = await _cardAdapterService.GetCardsBySetCodeAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>> response = await _cardAdapterService.GetCardsBySetCodeAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

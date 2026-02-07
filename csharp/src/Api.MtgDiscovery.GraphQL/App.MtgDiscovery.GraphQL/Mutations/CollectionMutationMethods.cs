@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Actions.Mappers.Collections;
@@ -66,91 +67,91 @@ internal sealed class CollectionMutationMethods
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> CreateCollectionAsync(ClaimsPrincipal claimsPrincipal, CreateCollectionArgEntity args)
+    public async Task<ResponseModel> CreateCollectionAsync(ClaimsPrincipal claimsPrincipal, CreateCollectionArgEntity args, CancellationToken cancellationToken)
     {
         ICreateCollectionArgsEntity argsEntity = await _createCollectionArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .CreateCollectionAsync(argsEntity)
+            .CreateCollectionAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> RenameCollectionAsync(ClaimsPrincipal claimsPrincipal, RenameCollectionArgEntity args)
+    public async Task<ResponseModel> RenameCollectionAsync(ClaimsPrincipal claimsPrincipal, RenameCollectionArgEntity args, CancellationToken cancellationToken)
     {
         IRenameCollectionArgsEntity argsEntity = await _renameCollectionArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .RenameCollectionAsync(argsEntity)
+            .RenameCollectionAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> UpdateCollectionVisibilityAsync(ClaimsPrincipal claimsPrincipal, UpdateCollectionVisibilityArgEntity args)
+    public async Task<ResponseModel> UpdateCollectionVisibilityAsync(ClaimsPrincipal claimsPrincipal, UpdateCollectionVisibilityArgEntity args, CancellationToken cancellationToken)
     {
         IUpdateCollectionVisibilityArgsEntity argsEntity = await _updateCollectionVisibilityArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .UpdateCollectionVisibilityAsync(argsEntity)
+            .UpdateCollectionVisibilityAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> GrantCollectionAccessAsync(ClaimsPrincipal claimsPrincipal, GrantCollectionAccessArgEntity args)
+    public async Task<ResponseModel> GrantCollectionAccessAsync(ClaimsPrincipal claimsPrincipal, GrantCollectionAccessArgEntity args, CancellationToken cancellationToken)
     {
         IGrantCollectionAccessArgsEntity argsEntity = await _grantCollectionAccessArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .GrantCollectionAccessAsync(argsEntity)
+            .GrantCollectionAccessAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> RevokeCollectionAccessAsync(ClaimsPrincipal claimsPrincipal, RevokeCollectionAccessArgEntity args)
+    public async Task<ResponseModel> RevokeCollectionAccessAsync(ClaimsPrincipal claimsPrincipal, RevokeCollectionAccessArgEntity args, CancellationToken cancellationToken)
     {
         IRevokeCollectionAccessArgsEntity argsEntity = await _revokeCollectionAccessArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .RevokeCollectionAccessAsync(argsEntity)
+            .RevokeCollectionAccessAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> DeleteCollectionAsync(ClaimsPrincipal claimsPrincipal, DeleteCollectionArgEntity args)
+    public async Task<ResponseModel> DeleteCollectionAsync(ClaimsPrincipal claimsPrincipal, DeleteCollectionArgEntity args, CancellationToken cancellationToken)
     {
         IDeleteCollectionArgsEntity argsEntity = await _deleteCollectionArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .DeleteCollectionAsync(argsEntity)
+            .DeleteCollectionAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }
 
     [Authorize]
     [GraphQLType(typeof(CollectionResponseModelUnionType))]
-    public async Task<ResponseModel> TransferCollectionOwnershipAsync(ClaimsPrincipal claimsPrincipal, TransferCollectionOwnershipArgEntity args)
+    public async Task<ResponseModel> TransferCollectionOwnershipAsync(ClaimsPrincipal claimsPrincipal, TransferCollectionOwnershipArgEntity args, CancellationToken cancellationToken)
     {
         ITransferCollectionOwnershipArgsEntity argsEntity = await _transferCollectionOwnershipArgsMapper
             .Map(claimsPrincipal, args)
             .ConfigureAwait(false);
         IOperationResponse<CollectionOutEntity> response = await _entryService
-            .TransferCollectionOwnershipAsync(argsEntity)
+            .TransferCollectionOwnershipAsync(argsEntity, cancellationToken)
             .ConfigureAwait(false);
         return await MapSingleToList(response).ConfigureAwait(false);
     }

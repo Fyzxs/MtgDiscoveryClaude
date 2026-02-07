@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Exceptions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCodeIndex;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
@@ -34,7 +36,9 @@ internal sealed class CardsBySetCodeAdapter : ICardsBySetCodeAdapter
         _cardsBySetIdInquisition = cardsBySetIdInquisition;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> Execute(ISetCodeXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> Execute(
+        ISetCodeXfrEntity input,
+        CancellationToken cancellationToken)
     {
         string setCodeValue = input.SetCode;
         ReadPointItem readPoint = new()
@@ -44,7 +48,7 @@ internal sealed class CardsBySetCodeAdapter : ICardsBySetCodeAdapter
         };
 
         OpResponse<ScryfallSetCodeIndexExtEntity> indexResponse = await _setCodeIndexGopher
-            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint)
+            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint, cancellationToken)
             .ConfigureAwait(false);
 
         if (indexResponse.IsSuccessful() is false || indexResponse.Value == null)
@@ -58,7 +62,7 @@ internal sealed class CardsBySetCodeAdapter : ICardsBySetCodeAdapter
         CardsBySetIdInquisitionArgs args = new() { SetId = setId };
 
         OpResponse<IEnumerable<ScryfallSetCardItemExtEntity>> cardsResponse = await _cardsBySetIdInquisition
-            .QueryAsync<ScryfallSetCardItemExtEntity>(args)
+            .QueryAsync<ScryfallSetCardItemExtEntity>(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (cardsResponse.IsSuccessful() is false)

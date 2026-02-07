@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -17,14 +18,18 @@ public sealed class CardAggregatorServiceFake : ICardAggregatorService
     public int CardsBySetCodeAsyncInvokeCount { get; private set; }
     public ISetCodeItrEntity CardsBySetCodeAsyncArgsInput { get; private set; } = default!;
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(
+        ICardIdsItrEntity args,
+        CancellationToken cancellationToken)
     {
         CardsByIdsAsyncInvokeCount++;
         CardsByIdsAsyncArgsInput = args;
         return Task.FromResult(CardsByIdsAsyncResult);
     }
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(
+        ISetCodeItrEntity setCode,
+        CancellationToken cancellationToken)
     {
         CardsBySetCodeAsyncInvokeCount++;
         CardsBySetCodeAsyncArgsInput = setCode;
@@ -35,7 +40,9 @@ public sealed class CardAggregatorServiceFake : ICardAggregatorService
     public int CardsByNameAsyncInvokeCount { get; private set; }
     public ICardNameItrEntity CardsByNameAsyncArgsInput { get; private set; } = default!;
 
-    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+    public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(
+        ICardNameItrEntity cardName,
+        CancellationToken cancellationToken)
     {
         CardsByNameAsyncInvokeCount++;
         CardsByNameAsyncArgsInput = cardName;
@@ -46,7 +53,9 @@ public sealed class CardAggregatorServiceFake : ICardAggregatorService
     public int CardNameSearchAsyncInvokeCount { get; private set; }
     public ICardSearchTermItrEntity CardNameSearchAsyncArgsInput { get; private set; } = default!;
 
-    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm)
+    public Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(
+        ICardSearchTermItrEntity searchTerm,
+        CancellationToken cancellationToken)
     {
         CardNameSearchAsyncInvokeCount++;
         CardNameSearchAsyncArgsInput = searchTerm;

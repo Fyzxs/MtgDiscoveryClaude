@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -52,7 +53,9 @@ internal sealed class AddUserCardAdapter : IAddUserCardAdapter
         _retryStrategy = retryStrategy;
     }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> Execute([NotNull] IAddUserCardXfrEntity input)
+    public async Task<IOperationResponse<UserCardExtEntity>> Execute(
+        [NotNull] IAddUserCardXfrEntity input,
+        CancellationToken cancellationToken)
     {
         return await _retryStrategy.ExecuteWithRetry<UserCardExtEntity>(async () =>
         {

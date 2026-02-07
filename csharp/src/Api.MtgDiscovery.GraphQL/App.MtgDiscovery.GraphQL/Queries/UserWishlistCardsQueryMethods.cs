@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Types.ResponseModels;
@@ -38,10 +39,10 @@ internal sealed class UserWishlistCardsQueryMethods
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
-    public async Task<ResponseModel> GetUserWishlistAsync(string userId)
+    public async Task<ResponseModel> GetUserWishlistAsync(string userId, CancellationToken cancellationToken)
     {
         IGetUserWishlistArgsEntity combinedArgs = await _argsMapper.Map(userId).ConfigureAwait(false);
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.GetUserWishlistAsync(combinedArgs).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.GetUserWishlistAsync(combinedArgs, cancellationToken).ConfigureAwait(false);
         return await _responseMapper.Map(response).ConfigureAwait(false);
     }
 }

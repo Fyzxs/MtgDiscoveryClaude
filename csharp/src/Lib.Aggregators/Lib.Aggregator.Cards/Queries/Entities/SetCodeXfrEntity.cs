@@ -5,4 +5,5 @@ namespace Lib.Aggregator.Cards.Queries.Entities;
 internal sealed class SetCodeXfrEntity : ISetCodeXfrEntity
 {
     public string SetCode { get; init; }
+    public string CacheKey => $"cards:set:{SetCode}";
 }

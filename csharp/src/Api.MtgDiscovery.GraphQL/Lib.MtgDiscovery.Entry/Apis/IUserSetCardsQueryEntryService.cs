@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Args.UserSetCards;
@@ -15,13 +16,15 @@ public interface IUserSetCardsQueryEntryService
     /// Retrieves user set card collection summary for a specific user and set.
     /// </summary>
     /// <param name="userSetCardArgs">Arguments containing the user ID and set ID to query</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>User set card collection summary wrapped in an operation response</returns>
-    Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs);
+    Task<IOperationResponse<UserSetCardOutEntity>> UserSetCardByUserAndSetAsync(IUserSetCardArgEntity userSetCardArgs, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all user set card collection summaries for a specific user.
     /// </summary>
     /// <param name="userSetCardsArgs">Arguments containing the user ID to query</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection of user set card summaries wrapped in an operation response</returns>
-    Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs);
+    Task<IOperationResponse<List<UserSetCardOutEntity>>> AllUserSetCardsAsync(IAllUserSetCardsArgEntity userSetCardsArgs, CancellationToken cancellationToken);
 }

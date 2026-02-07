@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Adapter.Sets.Queries.Mappers;
@@ -33,7 +34,9 @@ internal sealed class SetsByIdsAdapter : ISetsByIdsAdapter
         _setIdToReadPointMapper = setIdToReadPointMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute([NotNull] ISetIdsXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(
+        [NotNull] ISetIdsXfrEntity input,
+        CancellationToken cancellationToken)
     {
         IEnumerable<string> setIdList = input.SetIds;
         ICollection<ReadPointItem> readPoints = await _setIdToReadPointMapper.Map(setIdList).ConfigureAwait(false);
@@ -41,7 +44,7 @@ internal sealed class SetsByIdsAdapter : ISetsByIdsAdapter
         List<Task<OpResponse<ScryfallSetItemExtEntity>>> tasks = [];
         foreach (ReadPointItem readPoint in readPoints)
         {
-            tasks.Add(_setGopher.ReadAsync<ScryfallSetItemExtEntity>(readPoint));
+            tasks.Add(_setGopher.ReadAsync<ScryfallSetItemExtEntity>(readPoint, cancellationToken));
         }
 
         OpResponse<ScryfallSetItemExtEntity>[] responses = await Task.WhenAll(tasks).ConfigureAwait(false);

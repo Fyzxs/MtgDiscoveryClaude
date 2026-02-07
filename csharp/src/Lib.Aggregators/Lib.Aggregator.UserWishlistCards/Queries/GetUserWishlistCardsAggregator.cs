@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
@@ -21,11 +22,11 @@ internal sealed class GetUserWishlistCardsAggregator : IGetUserWishlistCardsAggr
 
     private GetUserWishlistCardsAggregator(IUserWishlistCardsAdapterService userWishlistCardsAdapterService) => _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
 
-    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsQueryItrEntity input)
+    public async Task<IOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>> Execute(IUserWishlistCardsQueryItrEntity input, CancellationToken cancellationToken)
     {
         UserWishlistCardXfrEntity xfrEntity = new() { UserId = input.UserId };
 
-        IOperationResponse<IEnumerable<UserWishlistCardExtEntity>> response = await _userWishlistCardsAdapterService.UserWishlistCardsByUserAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<UserWishlistCardExtEntity>> response = await _userWishlistCardsAdapterService.UserWishlistCardsByUserAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -62,6 +63,7 @@ internal sealed class GetUserWishlistCardsAggregator : IGetUserWishlistCardsAggr
     private sealed class UserWishlistCardXfrEntity : IUserWishlistCardXfrEntity
     {
         public required string UserId { get; init; }
+        public string CacheKey => $"user_wishlist_card:{UserId}";
     }
 
     private sealed class UserWishlistCardOufEntity : IUserWishlistCardOufEntity

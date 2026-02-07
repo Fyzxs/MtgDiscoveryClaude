@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserSetCards.Apis;
@@ -43,10 +45,12 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         _addCardToSetMapper = addCardToSetMapper;
     }
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(IUserCardItrEntity input)
+    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(
+        IUserCardItrEntity input,
+        CancellationToken cancellationToken)
     {
         IAddUserCardXfrEntity xfrEntity = await _addUserCardItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<UserCardExtEntity> response = await _userCardsAdapterService.AddUserCardAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserCardExtEntity> response = await _userCardsAdapterService.AddUserCardAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -54,12 +58,12 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         }
 
         IAddCardToSetXfrEntity setCardEntity = await _addCardToSetMapper.Map(xfrEntity, response.ResponseData.CollectedList).ConfigureAwait(false);
-        IOperationResponse<UserSetCardExtEntity> setCardResponse = await _userSetCardsAdapterService.AddCardToSetAsync(setCardEntity).ConfigureAwait(false);
+        IOperationResponse<UserSetCardExtEntity> setCardResponse = await _userSetCardsAdapterService.AddCardToSetAsync(setCardEntity, cancellationToken).ConfigureAwait(false);
 
         if (setCardResponse.IsFailure)
         {
             IAddUserCardXfrEntity rollbackEntity = CreateRollbackEntity(xfrEntity);
-            await _userCardsAdapterService.AddUserCardAsync(rollbackEntity).ConfigureAwait(false);
+            await _userCardsAdapterService.AddUserCardAsync(rollbackEntity, cancellationToken).ConfigureAwait(false);
 
             return new FailureOperationResponse<IUserCardOufEntity>(setCardResponse.OuterException);
         }
@@ -108,6 +112,7 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         public required string CardNameGuid { get; init; }
         public required IUserCardDetailsXfrEntity Details { get; init; }
         public bool ReplaceMode { get; init; }
+        public string CacheKey => $"add_user_card:{UserId}:{CardId}";
     }
 
     private sealed class UserCardDetailsXfrEntity : IUserCardDetailsXfrEntity
@@ -116,5 +121,6 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
         public required string Special { get; init; }
         public required int Count { get; init; }
         public required string SetGroupId { get; init; }
+        public string CacheKey => $"user_card_details:{Finish}:{Special}";
     }
 }

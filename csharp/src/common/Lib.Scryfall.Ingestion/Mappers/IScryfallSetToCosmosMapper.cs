@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Scryfall.Shared.Apis.Models;
 using Lib.Shared.Abstractions.Actions.Mappers;
 

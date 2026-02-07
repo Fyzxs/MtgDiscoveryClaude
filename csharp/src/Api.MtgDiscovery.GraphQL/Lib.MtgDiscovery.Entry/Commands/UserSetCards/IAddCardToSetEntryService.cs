@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
@@ -11,5 +12,5 @@ namespace Lib.MtgDiscovery.Entry.Commands.UserSetCards;
 /// </summary>
 internal interface IAddCardToSetEntryService
 {
-    Task<IOperationResponse<UserSetCardOutEntity>> Execute(IAddCardToSetArgsEntity argsEntity);
+    Task<IOperationResponse<UserSetCardOutEntity>> Execute(IAddCardToSetArgsEntity argsEntity, CancellationToken cancellationToken);
 }

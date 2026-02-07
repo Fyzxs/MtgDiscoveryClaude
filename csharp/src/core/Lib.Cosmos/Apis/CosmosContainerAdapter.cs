@@ -61,20 +61,20 @@ public abstract class CosmosContainerAdapter : ICosmosContainerAdapter
     /// <summary>
     /// Deletes an item from the container.
     /// </summary>
-    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item)
-        => await _delete.DeleteAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item, CancellationToken cancellationToken = default)
+        => await _delete.DeleteAsync<T>(item, cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Reads an item from the container.
     /// </summary>
-    public async Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item)
-        => await _readItem.ReadAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item, CancellationToken cancellationToken = default)
+        => await _readItem.ReadAsync<T>(item, cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Upserts an item into the container.
     /// </summary>
-    public async Task<OpResponse<T>> UpsertAsync<T>(T item)
-        => await _upsert.UpsertAsync<T>(item).ConfigureAwait(false);
+    public async Task<OpResponse<T>> UpsertAsync<T>(T item, CancellationToken cancellationToken = default)
+        => await _upsert.UpsertAsync<T>(item, cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Executes a query against the container.

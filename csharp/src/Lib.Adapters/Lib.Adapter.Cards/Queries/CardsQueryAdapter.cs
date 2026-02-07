@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardsByName;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -41,11 +44,23 @@ internal sealed class CardsQueryAdapter : ICardQueryAdapter
         _searchCardNamesAdapter = searchCardNamesAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds) => await _cardsByIdsAdapter.Execute(cardIds);
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(
+        ICardIdsXfrEntity cardIds,
+        CancellationToken cancellationToken)
+        => await _cardsByIdsAdapter.Execute(cardIds, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode) => await _cardsBySetCodeAdapter.Execute(setCode);
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(
+        ISetCodeXfrEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardsBySetCodeAdapter.Execute(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName) => await _cardsByNameAdapter.Execute(cardName);
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(
+        ICardNameXfrEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardsByNameAdapter.Execute(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm) => await _searchCardNamesAdapter.Execute(searchTerm);
+    public async Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(
+        ICardSearchTermXfrEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _searchCardNamesAdapter.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 }

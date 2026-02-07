@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.UserCards;
@@ -39,37 +40,37 @@ internal sealed class UserCardsQueryMethods
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> UserCardsBySet(UserCardsBySetArgEntity setArgs)
+    public async Task<ResponseModel> UserCardsBySet(UserCardsBySetArgEntity setArgs, CancellationToken cancellationToken)
     {
         IOperationResponse<List<UserCardOutEntity>> response = await _entryService
-            .UserCardsBySetAsync(setArgs)
+            .UserCardsBySetAsync(setArgs, cancellationToken)
             .ConfigureAwait(false);
         return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> UserCard(UserCardArgEntity cardArgs)
+    public async Task<ResponseModel> UserCard(UserCardArgEntity cardArgs, CancellationToken cancellationToken)
     {
         IOperationResponse<List<UserCardOutEntity>> response = await _entryService
-            .UserCardAsync(cardArgs)
+            .UserCardAsync(cardArgs, cancellationToken)
             .ConfigureAwait(false);
         return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(UserCardsCollectionResponseModelUnionType))]
-    public async Task<ResponseModel> UserCardsByIds(UserCardsByIdsArgEntity cardsArgs)
+    public async Task<ResponseModel> UserCardsByIds(UserCardsByIdsArgEntity cardsArgs, CancellationToken cancellationToken)
     {
         IOperationResponse<List<UserCardOutEntity>> response = await _entryService
-            .UserCardsByIdsAsync(cardsArgs)
+            .UserCardsByIdsAsync(cardsArgs, cancellationToken)
             .ConfigureAwait(false);
         return await _userCardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(SigningResultResponseModelUnionType))]
-    public async Task<ResponseModel> UserCardsForSigning(UserCardsForSigningArgEntity forSigningArgs)
+    public async Task<ResponseModel> UserCardsForSigning(UserCardsForSigningArgEntity forSigningArgs, CancellationToken cancellationToken)
     {
         IOperationResponse<SigningResultOutEntity> response = await _entryService
-            .UserCardsForSigningAsync(forSigningArgs)
+            .UserCardsForSigningAsync(forSigningArgs, cancellationToken)
             .ConfigureAwait(false);
         return await _signingResultResponseMapper.Map(response).ConfigureAwait(false);
     }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -26,7 +27,7 @@ internal sealed class UserWishlistCardsQueryAdapter : IUserWishlistCardsQueryAda
         _userWishlistCardsByIdsAdapter = userWishlistCardsByIdsAdapter;
     }
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByUserAsync(IUserWishlistCardXfrEntity userWishlistCard) => await _userWishlistCardsByUserAdapter.Execute(userWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByUserAsync(IUserWishlistCardXfrEntity userWishlistCard, CancellationToken cancellationToken) => await _userWishlistCardsByUserAdapter.Execute(userWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsXfrEntity userWishlistCards) => await _userWishlistCardsByIdsAdapter.Execute(userWishlistCards).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserWishlistCardExtEntity>>> UserWishlistCardsByIdsAsync(IUserWishlistCardsByIdsXfrEntity userWishlistCards, CancellationToken cancellationToken) => await _userWishlistCardsByIdsAdapter.Execute(userWishlistCards, cancellationToken).ConfigureAwait(false);
 }

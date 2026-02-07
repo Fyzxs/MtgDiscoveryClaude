@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Shared.Invocation.Services;
 

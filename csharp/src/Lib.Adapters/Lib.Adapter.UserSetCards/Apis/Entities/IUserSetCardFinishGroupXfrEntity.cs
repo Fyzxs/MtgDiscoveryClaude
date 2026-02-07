@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
@@ -10,7 +11,7 @@ namespace Lib.Adapter.UserSetCards.Apis.Entities;
 ///
 /// Entity Type: XfrEntity - crosses Aggregator→Adapter boundary
 /// </summary>
-public interface IUserSetCardFinishGroupXfrEntity
+public interface IUserSetCardFinishGroupXfrEntity : IXfrEntity
 {
     /// <summary>
     /// Collection of card IDs in this finish group.

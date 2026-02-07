@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args;
@@ -40,30 +41,38 @@ internal sealed class CardQueryMethods
     public string Test() => "Card query endpoint is working!";
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
-    public async Task<ResponseModel> CardsById(CardIdsArgEntity ids)
+    public async Task<ResponseModel> CardsById(
+        CardIdsArgEntity ids,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByIdsAsync(ids).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByIdsAsync(ids, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
-    public async Task<ResponseModel> CardsBySetCode(SetCodeArgEntity setCode)
+    public async Task<ResponseModel> CardsBySetCode(
+        SetCodeArgEntity setCode,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsBySetCodeAsync(setCode).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsBySetCodeAsync(setCode, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(CardResponseModelUnionType))]
-    public async Task<ResponseModel> CardsByName(CardNameArgEntity cardName)
+    public async Task<ResponseModel> CardsByName(
+        CardNameArgEntity cardName,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByNameAsync(cardName).ConfigureAwait(false);
+        IOperationResponse<List<CardItemOutEntity>> response = await _entryService.CardsByNameAsync(cardName, cancellationToken).ConfigureAwait(false);
         return await _cardResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(CardNameSearchResponseModelUnionType))]
-    public async Task<ResponseModel> CardNameSearch(CardSearchTermArgEntity searchTerm)
+    public async Task<ResponseModel> CardNameSearch(
+        CardSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<CardNameSearchResultOutEntity>> response = await _entryService.CardNameSearchAsync(searchTerm).ConfigureAwait(false);
+        IOperationResponse<List<CardNameSearchResultOutEntity>> response = await _entryService.CardNameSearchAsync(searchTerm, cancellationToken).ConfigureAwait(false);
         return await _cardNameSearchResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

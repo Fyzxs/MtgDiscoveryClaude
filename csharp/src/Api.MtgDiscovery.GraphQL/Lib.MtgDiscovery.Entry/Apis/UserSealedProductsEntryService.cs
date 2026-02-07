@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.UserSealedProducts;
 using Lib.MtgDiscovery.Entry.Entities;
@@ -34,13 +35,13 @@ internal sealed class UserSealedProductsEntryService : IUserSealedProductsEntryS
         _collectionMapper = collectionMapper;
     }
 
-    public Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(
-        IAddSealedProductToCollectionArgsEntity args) => _addUserSealedProductEntryService.Execute(args);
+    public async Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(
+        IAddSealedProductToCollectionArgsEntity args, CancellationToken cancellationToken) => await _addUserSealedProductEntryService.Execute(args, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(
-        string userId)
+        string userId, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<IUserSealedProductItrEntity>> response = await _userSealedProductsByUserIdEntryService.Execute(userId).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserSealedProductItrEntity>> response = await _userSealedProductsByUserIdEntryService.Execute(userId, cancellationToken).ConfigureAwait(false);
         if (response.IsFailure)
         { return new FailureOperationResponse<List<UserSealedProductOutEntity>>(response.OuterException); }
 

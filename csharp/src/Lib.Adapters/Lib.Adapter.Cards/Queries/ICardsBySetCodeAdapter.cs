@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Lib.Adapter.Cards.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
 using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.Cards.Queries;

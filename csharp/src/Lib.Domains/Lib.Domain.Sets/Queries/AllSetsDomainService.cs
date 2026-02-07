@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Sets.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
@@ -20,5 +21,8 @@ internal sealed class AllSetsDomainService : IAllSetsDomainService
 
     private AllSetsDomainService(ISetAggregatorService setAggregatorService) => _setAggregatorService = setAggregatorService;
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(IAllSetsItrEntity input) => await _setAggregatorService.AllSetsAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(
+        IAllSetsItrEntity input,
+        CancellationToken cancellationToken)
+        => await _setAggregatorService.AllSetsAsync(input, cancellationToken).ConfigureAwait(false);
 }

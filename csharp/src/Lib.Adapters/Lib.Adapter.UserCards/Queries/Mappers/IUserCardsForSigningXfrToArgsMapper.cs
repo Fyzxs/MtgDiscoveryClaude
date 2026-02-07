@@ -4,4 +4,4 @@ using Lib.Shared.Abstractions.Actions.Mappers;
 
 namespace Lib.Adapter.UserCards.Queries.Mappers;
 
-internal interface IUserCardsForSigningXfrToArgsMapper : ICreateMapper<IUserCardsForSigningXfrEntity, UserCardItemsByArtistsExtEntitys>;
+internal interface IUserCardsForSigningXfrToArgsMapper : ICreateMapper<IUserCardsForSigningXfrEntity, UserCardItemsByArtistsExtEntity>;

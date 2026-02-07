@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
@@ -21,5 +22,7 @@ internal sealed class UserCardsByArtistDomainService : IUserCardsByArtistDomainS
 
     private UserCardsByArtistDomainService(IUserCardsQueryAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
 
-    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> Execute(IUserCardsArtistItrEntity input) => await _userCardsAggregatorService.UserCardsByArtistAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> Execute(
+        IUserCardsArtistItrEntity input,
+        CancellationToken cancellationToken) => await _userCardsAggregatorService.UserCardsByArtistAsync(input, cancellationToken).ConfigureAwait(false);
 }

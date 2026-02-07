@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Sets.Apis;
 using Lib.Adapter.Sets.Apis.Entities;
 using Lib.Aggregator.Sets.Exceptions;
@@ -38,10 +39,12 @@ internal sealed class SetsByIdAggregatorService : ISetsByIdAggregatorService
         _setItemItrToOufMapper = setItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(ISetIdsItrEntity input)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(
+        ISetIdsItrEntity input,
+        CancellationToken cancellationToken)
     {
         ISetIdsXfrEntity xfrEntity = await _setIdsItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByIdsAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.SetsByIdsAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

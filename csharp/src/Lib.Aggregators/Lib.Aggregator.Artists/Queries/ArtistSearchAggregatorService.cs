@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistNameTrigrams;
 using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
@@ -33,10 +34,12 @@ internal sealed class ArtistSearchAggregatorService : IArtistSearchAggregatorSer
         _artistSearchResultCollectionMapper = artistSearchResultCollectionMapper;
     }
 
-    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(IArtistSearchTermItrEntity input)
+    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(
+        IArtistSearchTermItrEntity input,
+        CancellationToken cancellationToken)
     {
         IArtistSearchTermXfrEntity mappedEntity = await _artistSearchItrToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>> adapterResponse = await _artistAdapterService.SearchArtistsAsync(mappedEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ArtistNameTrigramDataExtEntity>> adapterResponse = await _artistAdapterService.SearchArtistsAsync(mappedEntity, cancellationToken).ConfigureAwait(false);
 
         if (adapterResponse.IsFailure)
         {

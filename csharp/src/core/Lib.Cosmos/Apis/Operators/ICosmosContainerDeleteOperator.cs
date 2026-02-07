@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lib.Cosmos.Apis.Operators;
@@ -12,6 +13,7 @@ public interface ICosmosContainerDeleteOperator
     /// </summary>
     /// <typeparam name="T">The type of the domain object being deleted.</typeparam>
     /// <param name="item">The item identifier containing the ID and partition key.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous delete operation. The task result contains the operation response.</returns>
-    Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item);
+    Task<OpResponse<T>> DeleteAsync<T>(DeletePointItem item, CancellationToken cancellationToken = default);
 }

@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Reflection;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Newtonsoft.Json;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Tests.CosmosItems;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
@@ -36,11 +37,11 @@ internal sealed class UserCardsQueryEntryService : IUserCardsQueryEntryService
         _userCardsForSigning = userCardsForSigning;
     }
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs) => await _userCard.Execute(cardArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs, CancellationToken cancellationToken) => await _userCard.Execute(cardArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs) => await _userCardsBySet.Execute(bySetArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs, CancellationToken cancellationToken) => await _userCardsBySet.Execute(bySetArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs) => await _userCardsByIds.Execute(cardsArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs, CancellationToken cancellationToken) => await _userCardsByIds.Execute(cardsArgs, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs) => await _userCardsForSigning.Execute(forSigningArgs).ConfigureAwait(false);
+    public async Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs, CancellationToken cancellationToken) => await _userCardsForSigning.Execute(forSigningArgs, cancellationToken).ConfigureAwait(false);
 }

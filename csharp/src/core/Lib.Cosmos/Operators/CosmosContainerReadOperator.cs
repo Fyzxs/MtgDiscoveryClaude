@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Cosmos.Adapters;
 using Lib.Cosmos.Apis.Configurations;
@@ -25,12 +26,12 @@ internal sealed class CosmosContainerReadOperator : ICosmosContainerReadOperator
         _clientAdapter = clientAdapter;
     }
 
-    public async Task<OpResponse<T>> ReadAsync<T>([NotNull] ReadPointItem item)
+    public async Task<OpResponse<T>> ReadAsync<T>([NotNull] ReadPointItem item, CancellationToken cancellationToken = default)
     {
         Container container = await _clientAdapter.GetContainer().ConfigureAwait(false);
         try
         {
-            ItemResponse<T> itemResponse = await container.ReadItemAsync<T>(item.Id, item.Partition).ConfigureAwait(false);
+            ItemResponse<T> itemResponse = await container.ReadItemAsync<T>(item.Id, item.Partition, cancellationToken: cancellationToken).ConfigureAwait(false);
             _logger.ReadInformation(itemResponse.RequestCharge, itemResponse.Diagnostics.GetClientElapsedTime());
             return new ItemOpResponse<T>(itemResponse);
         }

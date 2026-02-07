@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Sets.Exceptions;
 using Lib.Cosmos.Apis.Operators;
@@ -22,10 +22,12 @@ internal sealed class AllSetsAdapter : IAllSetsAdapter
 
     private AllSetsAdapter(ICosmosInquisition allSetsInquisition) => _allSetsInquisition = allSetsInquisition;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(IAllSetsXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>>> Execute(
+        IAllSetsXfrEntity input,
+        CancellationToken cancellationToken)
     {
         OpResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _allSetsInquisition
-            .QueryAsync<ScryfallSetItemExtEntity>(CancellationToken.None)
+            .QueryAsync<ScryfallSetItemExtEntity>(cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsNotSuccessful())

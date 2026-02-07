@@ -1,12 +1,12 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.UserSealedProducts.Queries;
 
-/// <summary>
-/// Marker interface for retrieving all sealed products for a specific user.
-/// Implements single-method delegation pattern with Execute method.
-/// </summary>
 internal interface IUserSealedProductsByUserIdDomainService
-    : IOperationResponseService<IUserIdItrEntity, IEnumerable<IUserSealedProductItrEntity>>;
+{
+    Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input, CancellationToken cancellationToken);
+}

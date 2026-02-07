@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSetCards;
@@ -40,7 +41,7 @@ internal sealed class AllUserSetCardsEntryService : IAllUserSetCardsEntryService
         _oufToOutMapper = oufToOutMapper;
     }
 
-    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> Execute(IAllUserSetCardsArgEntity userSetCardsArgs)
+    public async Task<IOperationResponse<List<UserSetCardOutEntity>>> Execute(IAllUserSetCardsArgEntity userSetCardsArgs, CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<IEnumerable<IUserSetCardOufEntity>>> validatorResult =
             await _validator.Validate(userSetCardsArgs).ConfigureAwait(false);
@@ -55,7 +56,7 @@ internal sealed class AllUserSetCardsEntryService : IAllUserSetCardsEntryService
             await _argToItrMapper.Map(userSetCardsArgs).ConfigureAwait(false);
 
         IOperationResponse<IEnumerable<IUserSetCardOufEntity>> opResponse =
-            await _domainService.AllUserSetCardsAsync(itrEntity).ConfigureAwait(false);
+            await _domainService.AllUserSetCardsAsync(itrEntity, cancellationToken).ConfigureAwait(false);
 
         if (opResponse.IsFailure)
         {

@@ -1,3 +1,5 @@
+using Lib.Shared.DataModels.Abstractions;
+
 namespace Lib.Adapter.Artists.Apis.Entities;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace Lib.Adapter.Artists.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary when no actual entity mapping is needed,
 /// providing a simple wrapper for artist ID values in external system operations.
 /// </summary>
-public interface IArtistIdXfrEntity
+public interface IArtistIdXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The unique identifier for the artist.

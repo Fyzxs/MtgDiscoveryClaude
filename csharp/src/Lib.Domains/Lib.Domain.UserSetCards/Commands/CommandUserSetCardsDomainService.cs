@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSetCards.Apis;
 using Lib.Domain.UserSetCards.Apis;
@@ -17,7 +18,11 @@ internal sealed class CommandUserSetCardsDomainService : IUserSetCardsCommandDom
 
     private CommandUserSetCardsDomainService(IUserSetCardsAggregatorService userSetCardsAggregatorService) => _userSetCardsAggregatorService = userSetCardsAggregatorService;
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardItrEntity entity) => await _userSetCardsAggregatorService.AddSetGroupToUserSetCardAsync(entity).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddSetGroupToUserSetCardAsync(
+        IAddSetGroupToUserSetCardItrEntity entity,
+        CancellationToken cancellationToken) => await _userSetCardsAggregatorService.AddSetGroupToUserSetCardAsync(entity, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(IAddCardToSetItrEntity entity) => await _userSetCardsAggregatorService.AddCardToSetAsync(entity).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserSetCardOufEntity>> AddCardToSetAsync(
+        IAddCardToSetItrEntity entity,
+        CancellationToken cancellationToken) => await _userSetCardsAggregatorService.AddCardToSetAsync(entity, cancellationToken).ConfigureAwait(false);
 }

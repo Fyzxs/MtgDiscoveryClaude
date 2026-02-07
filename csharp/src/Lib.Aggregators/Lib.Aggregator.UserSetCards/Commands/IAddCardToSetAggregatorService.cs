@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserSetCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
@@ -11,5 +12,7 @@ namespace Lib.Aggregator.UserSetCards.Commands;
 /// </summary>
 internal interface IAddCardToSetAggregatorService
 {
-    Task<IOperationResponse<IUserSetCardOufEntity>> Execute(IAddCardToSetItrEntity input);
+    Task<IOperationResponse<IUserSetCardOufEntity>> Execute(
+        IAddCardToSetItrEntity input,
+        CancellationToken cancellationToken);
 }

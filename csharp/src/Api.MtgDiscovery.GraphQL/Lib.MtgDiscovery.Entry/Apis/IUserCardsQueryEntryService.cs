@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Signing;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
@@ -17,27 +18,31 @@ public interface IUserCardsQueryEntryService
     /// Retrieves a specific user card using point read operation.
     /// </summary>
     /// <param name="cardArgs">Arguments containing the user ID and card ID to query</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection containing zero or one user card wrapped in an operation response</returns>
-    Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs);
+    Task<IOperationResponse<List<UserCardOutEntity>>> UserCardAsync(IUserCardArgEntity cardArgs, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves all user cards for a specific user within a given set.
     /// </summary>
     /// <param name="bySetArgs">Arguments containing the set ID and user ID to query</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection of user card collection information wrapped in an operation response</returns>
-    Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs);
+    Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsBySetAsync(IUserCardsBySetArgEntity bySetArgs, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves multiple user cards by their IDs using batch point read operation.
     /// </summary>
     /// <param name="cardsArgs">Arguments containing the user ID and card IDs to query</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Collection of user cards wrapped in an operation response</returns>
-    Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs);
+    Task<IOperationResponse<List<UserCardOutEntity>>> UserCardsByIdsAsync(IUserCardsByIdsArgEntity cardsArgs, CancellationToken cancellationToken);
 
     /// <summary>
     /// Retrieves user cards for multiple artists grouped by set for convention signing planning.
     /// </summary>
     /// <param name="forSigningArgs">Arguments containing the user ID and artist IDs to query</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
     /// <returns>Signing result grouped by set and artist wrapped in an operation response</returns>
-    Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs);
+    Task<IOperationResponse<SigningResultOutEntity>> UserCardsForSigningAsync(IUserCardsForSigningArgEntity forSigningArgs, CancellationToken cancellationToken);
 }

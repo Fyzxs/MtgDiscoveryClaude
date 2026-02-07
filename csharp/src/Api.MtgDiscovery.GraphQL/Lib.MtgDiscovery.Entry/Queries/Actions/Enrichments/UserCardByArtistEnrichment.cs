@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -29,9 +30,9 @@ internal sealed class UserCardByArtistEnrichment : IUserCardByArtistEnrichment
         _integrator = integrator;
     }
 
-    public async Task Enrich(List<CardItemOutEntity> target, IUserCardsArtistItrEntity context)
+    public async Task Enrich(List<CardItemOutEntity> target, IUserCardsArtistItrEntity context, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<IUserCardOufEntity>> userCardResponse = await _userCardsDomainService.UserCardsByArtistAsync(context).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserCardOufEntity>> userCardResponse = await _userCardsDomainService.UserCardsByArtistAsync(context, cancellationToken).ConfigureAwait(false);
         if (userCardResponse.IsFailure)
             return;
 

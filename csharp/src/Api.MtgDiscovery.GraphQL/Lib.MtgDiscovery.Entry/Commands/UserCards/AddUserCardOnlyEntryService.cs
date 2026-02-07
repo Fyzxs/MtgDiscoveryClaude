@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserCards.Apis;
@@ -63,7 +64,7 @@ internal sealed class AddUserCardOnlyEntryService : IAddUserCardOnlyEntryService
         _cardNameGuidGenerator = cardNameGuidGenerator;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity input)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity input, CancellationToken cancellationToken)
     {
 
         IValidatorActionResult<IOperationResponse<IUserCardOufEntity>> validatorResult = await _addCardToCollectionArgEntityValidator.Validate(input).ConfigureAwait(false);
@@ -72,7 +73,7 @@ internal sealed class AddUserCardOnlyEntryService : IAddUserCardOnlyEntryService
 
         // Fetch card details first to extract artist_ids and generate card_name_guid
         ICardIdsItrEntity cardIdsItr = new EntryCardIdsItrEntity { CardIds = [input.AddUserCard.CardId] };
-        IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> cardResponse = await _cardDomainService.CardsByIdsAsync(cardIdsItr, cancellationToken).ConfigureAwait(false);
         if (cardResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(cardResponse.OuterException);
 
@@ -108,7 +109,7 @@ internal sealed class AddUserCardOnlyEntryService : IAddUserCardOnlyEntryService
             ReplaceMode = itrEntity.ReplaceMode
         };
 
-        IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardOnlyAsync(enrichedEntity).ConfigureAwait(false);
+        IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardOnlyAsync(enrichedEntity, cancellationToken).ConfigureAwait(false);
         if (addResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(addResponse.OuterException);
 

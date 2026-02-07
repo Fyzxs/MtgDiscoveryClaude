@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
@@ -11,5 +12,7 @@ namespace Lib.Domain.UserCards.Commands;
 /// </summary>
 internal interface IAddUserCardOnlyDomainService
 {
-    Task<IOperationResponse<IUserCardOufEntity>> Execute(IUserCardItrEntity input);
+    Task<IOperationResponse<IUserCardOufEntity>> Execute(
+        IUserCardItrEntity input,
+        CancellationToken cancellationToken);
 }

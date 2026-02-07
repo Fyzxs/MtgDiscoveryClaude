@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Sets.Apis;
 using Lib.MtgDiscovery.Entry.Apis;
@@ -44,14 +45,16 @@ internal sealed class SetsByCodeEntryService : ISetsByCodeEntryService
         _userSetEnrichment = userSetEnrichment;
     }
 
-    public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(ISetCodesArgEntity args)
+    public async Task<IOperationResponse<List<SetItemOutEntity>>> Execute(
+        ISetCodesArgEntity args,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ISetItemCollectionOufEntity>> validatorResult = await _setCodesArgEntityValidator.Validate(args).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<SetItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ISetCodesItrEntity itrEntity = await _setCodesArgToItrMapper.Map(args).ConfigureAwait(false);
-        IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsByCodeAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ISetItemCollectionOufEntity> opResponse = await _setDomainService.SetsByCodeAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<SetItemOutEntity>>(opResponse.OuterException);
 
@@ -60,7 +63,7 @@ internal sealed class SetsByCodeEntryService : ISetsByCodeEntryService
         // Enrich with user set card information if userId is present
         if (args.HasUserId)
         {
-            await _userSetEnrichment.Enrich(outEntities, args).ConfigureAwait(false);
+            await _userSetEnrichment.Enrich(outEntities, args, cancellationToken).ConfigureAwait(false);
         }
 
         return new SuccessOperationResponse<List<SetItemOutEntity>>(outEntities);

@@ -1,6 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Scryfall.Shared.Apis.Models;

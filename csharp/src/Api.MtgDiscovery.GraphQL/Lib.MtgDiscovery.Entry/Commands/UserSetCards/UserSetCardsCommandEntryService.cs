@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Entities;
@@ -25,9 +26,9 @@ internal sealed class UserSetCardsCommandEntryService : IUserSetCardsCommandEntr
         _addCardToSet = addCardToSet;
     }
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args)
-        => await _addSetGroupToUserSetCard.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> AddSetGroupToUserSetCardAsync(IAddSetGroupToUserSetCardArgsEntity args, CancellationToken cancellationToken)
+        => await _addSetGroupToUserSetCard.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args)
-        => await _addCardToSet.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSetCardOutEntity>> AddCardToSetAsync(IAddCardToSetArgsEntity args, CancellationToken cancellationToken)
+        => await _addCardToSet.Execute(args, cancellationToken).ConfigureAwait(false);
 }

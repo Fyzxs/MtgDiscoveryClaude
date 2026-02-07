@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Adapter.UserSealedProducts.Commands;
 using Lib.Adapter.UserSealedProducts.Queries;
@@ -27,7 +28,7 @@ public sealed class UserSealedProductsAdapterService : IUserSealedProductsAdapte
         _queryAdapter = queryAdapter;
     }
 
-    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input) => await _commandAdapter.AddUserSealedProductAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserSealedProductExtEntity>> AddUserSealedProductAsync(IUserSealedProductXfrEntity input, CancellationToken cancellationToken) => await _commandAdapter.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId) => await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> UserSealedProductsByUserIdAsync(string collectionId, CancellationToken cancellationToken) => await _queryAdapter.UserSealedProductsByUserIdAsync(collectionId, cancellationToken).ConfigureAwait(false);
 }

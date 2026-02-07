@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSealedProducts.Commands;
 using Lib.Aggregator.UserSealedProducts.Queries;
@@ -27,7 +28,7 @@ public sealed class UserSealedProductsAggregatorService : IUserSealedProductsAgg
         _queryOperations = queryOperations;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input) => await _commandOperations.AddUserSealedProductAsync(input);
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken) => await _commandOperations.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input) => await _queryOperations.UserSealedProductsByUserIdAsync(input);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _queryOperations.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
 }

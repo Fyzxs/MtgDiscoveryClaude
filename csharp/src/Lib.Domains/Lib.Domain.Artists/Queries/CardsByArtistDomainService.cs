@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Artists.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
@@ -20,5 +21,7 @@ internal sealed class CardsByArtistDomainService : ICardsByArtistDomainService
 
     private CardsByArtistDomainService(IArtistAggregatorService artistAggregatorService) => _artistAggregatorService = artistAggregatorService;
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(IArtistIdItrEntity input) => await _artistAggregatorService.CardsByArtistAsync(input).ConfigureAwait(false);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        IArtistIdItrEntity input,
+        CancellationToken cancellationToken) => await _artistAggregatorService.CardsByArtistAsync(input, cancellationToken).ConfigureAwait(false);
 }

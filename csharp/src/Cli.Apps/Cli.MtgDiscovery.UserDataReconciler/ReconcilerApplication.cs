@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Cli.MtgDiscovery.UserDataReconciler.Dashboard;
 using Cli.MtgDiscovery.UserDataReconciler.Reconciliation;
 using Example.Core;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Cosmos.Apis.Operators;
 using Microsoft.Azure.Cosmos;

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args;
@@ -40,23 +41,29 @@ internal sealed class SetQueryMethods
     public string TestSet() => "Set query endpoint is working!";
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
-    public async Task<ResponseModel> SetsById(SetIdsArgEntity ids)
+    public async Task<ResponseModel> SetsById(
+        SetIdsArgEntity ids,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.SetsByIdsAsync(ids).ConfigureAwait(false);
+        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.SetsByIdsAsync(ids, cancellationToken).ConfigureAwait(false);
         return await _setResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
-    public async Task<ResponseModel> SetsByCode(SetCodesArgEntity codes)
+    public async Task<ResponseModel> SetsByCode(
+        SetCodesArgEntity codes,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.SetsByCodeAsync(codes).ConfigureAwait(false);
+        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.SetsByCodeAsync(codes, cancellationToken).ConfigureAwait(false);
         return await _setResponseMapper.Map(response).ConfigureAwait(false);
     }
 
     [GraphQLType(typeof(SetResponseModelUnionType))]
-    public async Task<ResponseModel> AllSets(AllSetsArgEntity args)
+    public async Task<ResponseModel> AllSets(
+        AllSetsArgEntity args,
+        CancellationToken cancellationToken)
     {
-        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.AllSetsAsync(args).ConfigureAwait(false);
+        IOperationResponse<List<SetItemOutEntity>> response = await _entryService.AllSetsAsync(args, cancellationToken).ConfigureAwait(false);
         return await _setResponseMapper.Map(response).ConfigureAwait(false);
     }
 }

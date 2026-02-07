@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Artists;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -9,7 +10,15 @@ namespace Lib.MtgDiscovery.Entry.Apis;
 
 public interface IArtistEntryService
 {
-    Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(IArtistSearchTermArgEntity searchTerm);
-    Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(IArtistIdArgEntity artistId);
-    Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(IArtistNameArgEntity artistName);
+    Task<IOperationResponse<List<ArtistSearchResultOutEntity>>> ArtistSearchAsync(
+        IArtistSearchTermArgEntity searchTerm,
+        CancellationToken cancellationToken);
+
+    Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistAsync(
+        IArtistIdArgEntity artistId,
+        CancellationToken cancellationToken);
+
+    Task<IOperationResponse<List<CardItemOutEntity>>> CardsByArtistNameAsync(
+        IArtistNameArgEntity artistName,
+        CancellationToken cancellationToken);
 }

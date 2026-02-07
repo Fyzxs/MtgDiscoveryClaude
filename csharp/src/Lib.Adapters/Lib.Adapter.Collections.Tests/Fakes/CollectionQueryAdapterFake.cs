@@ -1,55 +1,46 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Collections.Apis;
-using Lib.Shared.DataModels.Entities.Itrs.Collections;
-using Lib.Shared.DataModels.Entities.Itrs.User;
-using Lib.Shared.DataModels.Entities.Oufs.Collections;
+using Lib.Adapter.Collections.Apis.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Adapter.Collections.Tests.Fakes;
 
 public sealed class CollectionQueryAdapterFake : ICollectionQueryAdapter
 {
-    public IOperationResponse<ICollectionOufEntity> GetDefaultCollectionAsyncResult { get; init; }
+    public IOperationResponse<CollectionExtEntity> GetDefaultCollectionAsyncResult { get; init; }
     public int GetDefaultCollectionAsyncInvokeCount { get; private set; }
 
-    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetCollectionsByOwnerAsyncResult { get; init; }
+    public IOperationResponse<IEnumerable<CollectionExtEntity>> GetCollectionsByOwnerAsyncResult { get; init; }
     public int GetCollectionsByOwnerAsyncInvokeCount { get; private set; }
 
-    public IOperationResponse<ICollectionOufEntity> GetCollectionByIdAsyncResult { get; init; }
+    public IOperationResponse<CollectionExtEntity> GetCollectionByIdAsyncResult { get; init; }
     public int GetCollectionByIdAsyncInvokeCount { get; private set; }
 
-    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetSharedCollectionsAsyncResult { get; init; }
-    public int GetSharedCollectionsAsyncInvokeCount { get; private set; }
-
-    public IOperationResponse<IEnumerable<ICollectionOufEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
+    public IOperationResponse<IEnumerable<CollectionExtEntity>> GetAccessibleCollectionsAsyncResult { get; init; }
     public int GetAccessibleCollectionsAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(IOwnerIdItrEntity args)
+    public Task<IOperationResponse<CollectionExtEntity>> GetDefaultCollectionAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken)
     {
         GetDefaultCollectionAsyncInvokeCount++;
         return Task.FromResult(GetDefaultCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByOwnerAsync(IOwnerIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetCollectionsByOwnerAsync(IOwnerIdXfrEntity args, CancellationToken cancellationToken)
     {
         GetCollectionsByOwnerAsyncInvokeCount++;
         return Task.FromResult(GetCollectionsByOwnerAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GetCollectionByIdAsync(ICollectionIdItrEntity args)
+    public Task<IOperationResponse<CollectionExtEntity>> GetCollectionByIdAsync(ICollectionIdXfrEntity args, CancellationToken cancellationToken)
     {
         GetCollectionByIdAsyncInvokeCount++;
         return Task.FromResult(GetCollectionByIdAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetSharedCollectionsAsync(IUserIdItrEntity args)
-    {
-        GetSharedCollectionsAsyncInvokeCount++;
-        return Task.FromResult(GetSharedCollectionsAsyncResult);
-    }
-
-    public Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetAccessibleCollectionsAsync(IUserIdItrEntity args)
+    public Task<IOperationResponse<IEnumerable<CollectionExtEntity>>> GetAccessibleCollectionsAsync(IUserIdXfrEntity args, CancellationToken cancellationToken)
     {
         GetAccessibleCollectionsAsyncInvokeCount++;
         return Task.FromResult(GetAccessibleCollectionsAsyncResult);

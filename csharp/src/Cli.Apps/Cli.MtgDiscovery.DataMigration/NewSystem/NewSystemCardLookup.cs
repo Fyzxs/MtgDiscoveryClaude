@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -23,10 +24,11 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
 
     public async Task<IOperationResponse<ICardItemItrEntity>> LookupCardByScryfallIdAsync(string scryfallId)
     {
+        // TODO: Propagate CancellationToken when CLI apps support cancellation
         ICardIdsItrEntity cardIdsArg = new CardIdsItrEntity([scryfallId]);
 
         IOperationResponse<ICardItemCollectionOufEntity> response = await _cardDomainService
-            .CardsByIdsAsync(cardIdsArg)
+            .CardsByIdsAsync(cardIdsArg, CancellationToken.None)
             .ConfigureAwait(false);
 
         if (response.IsFailure)

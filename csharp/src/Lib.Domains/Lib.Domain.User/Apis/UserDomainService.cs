@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.User.Commands;
 using Lib.Shared.DataModels.Entities.Itrs.User;
@@ -16,5 +17,5 @@ public sealed class UserDomainService : IUserDomainService
 
     private UserDomainService(IUserCommandDomainService userDomainOperations) => _userDomainOperations = userDomainOperations;
 
-    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo) => await _userDomainOperations.RegisterUserAsync(userInfo);
+    public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo, CancellationToken cancellationToken) => await _userDomainOperations.RegisterUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
 }

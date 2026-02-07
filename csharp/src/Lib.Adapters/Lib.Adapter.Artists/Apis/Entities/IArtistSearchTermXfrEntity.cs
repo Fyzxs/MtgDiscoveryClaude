@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.Artists.Apis.Entities;
 
@@ -7,7 +8,7 @@ namespace Lib.Adapter.Artists.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary containing preprocessed search data
 /// optimized for external system queries.
 /// </summary>
-public interface IArtistSearchTermXfrEntity
+public interface IArtistSearchTermXfrEntity : IXfrEntity
 {
     /// <summary>
     /// Collection of three-character tokens (trigrams) derived from the search term.

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 
 namespace Lib.Aggregator.UserSealedProducts.Commands.Mappers;

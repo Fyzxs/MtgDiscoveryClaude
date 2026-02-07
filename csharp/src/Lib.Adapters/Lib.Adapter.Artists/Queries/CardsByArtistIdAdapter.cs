@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Artists.Exceptions;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Cosmos.Apis.Operators;
@@ -23,13 +24,13 @@ internal sealed class CardsByArtistIdAdapter : ICardsByArtistIdAdapter
 
     private CardsByArtistIdAdapter(ICosmosInquisition<CardsByArtistIdInquisitionArgs> cardsByArtistIdInquisition) => _cardsByArtistIdInquisition = cardsByArtistIdInquisition;
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> Execute([NotNull] IArtistIdXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>>> Execute([NotNull] IArtistIdXfrEntity input, CancellationToken cancellationToken)
     {
         // Query all cards for this artist ID using the artist ID as partition key
         CardsByArtistIdInquisitionArgs args = new() { ArtistId = input.ArtistId };
 
         OpResponse<IEnumerable<ScryfallArtistCardExtEntity>> cardsResponse = await _cardsByArtistIdInquisition
-            .QueryAsync<ScryfallArtistCardExtEntity>(args)
+            .QueryAsync<ScryfallArtistCardExtEntity>(args, cancellationToken)
             .ConfigureAwait(false);
 
         if (cardsResponse.IsNotSuccessful())

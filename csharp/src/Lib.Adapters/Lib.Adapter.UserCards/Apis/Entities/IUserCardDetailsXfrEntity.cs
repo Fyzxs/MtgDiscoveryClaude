@@ -1,3 +1,5 @@
+using Lib.Shared.DataModels.Abstractions;
+
 namespace Lib.Adapter.UserCards.Apis.Entities;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace Lib.Adapter.UserCards.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary when no actual entity mapping is needed,
 /// providing a simple wrapper for user card detail values in external system operations.
 /// </summary>
-public interface IUserCardDetailsXfrEntity
+public interface IUserCardDetailsXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The finish type of the card (e.g., "nonfoil", "foil", "etched").

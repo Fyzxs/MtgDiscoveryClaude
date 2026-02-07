@@ -7,4 +7,5 @@ internal sealed class UserCardsByIdsXfrEntity : IUserCardsByIdsXfrEntity
 {
     public string UserId { get; init; }
     public ICollection<string> CardIds { get; init; }
+    public string CacheKey => $"user_cards:ids:{UserId}";
 }

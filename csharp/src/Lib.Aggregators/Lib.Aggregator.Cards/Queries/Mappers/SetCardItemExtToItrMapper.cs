@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
 using Lib.Aggregator.Scryfall.Shared.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
 

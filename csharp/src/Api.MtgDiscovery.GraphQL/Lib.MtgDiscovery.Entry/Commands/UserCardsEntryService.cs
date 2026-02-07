@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Commands.UserCards;
@@ -27,9 +28,9 @@ internal sealed class UserCardsEntryService : IUserCardsEntryService
         _addUserCardOnly = addUserCardOnly;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args)
-        => await _addCardToCollection.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken)
+        => await _addCardToCollection.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args)
-        => await _addUserCardOnly.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken)
+        => await _addUserCardOnly.Execute(args, cancellationToken).ConfigureAwait(false);
 }

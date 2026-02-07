@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lib.Shared.Abstractions.Services;
@@ -14,6 +15,7 @@ public interface IServiceExecute<in TInput, TOutput>
     /// Executes the service operation with the provided input.
     /// </summary>
     /// <param name="input">The input parameter for the operation.</param>
+    /// <param name="cancellationToken">Cancellation Token</param>
     /// <returns>A task that represents the asynchronous operation, containing the result.</returns>
-    Task<TOutput> Execute(TInput input);
+    Task<TOutput> Execute(TInput input, CancellationToken cancellationToken);
 }

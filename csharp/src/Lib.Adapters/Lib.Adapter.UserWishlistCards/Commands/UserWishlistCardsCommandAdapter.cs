@@ -1,5 +1,6 @@
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -25,7 +26,7 @@ internal sealed class UserWishlistCardsCommandAdapter : IUserWishlistCardsComman
         _removeUserWishlistCardAdapter = removeUserWishlistCardAdapter;
     }
 
-    public async Task<IOperationResponse<UserWishlistCardExtEntity>> AddUserWishlistCardAsync(IAddUserWishlistCardXfrEntity addUserWishlistCard) => await _addUserWishlistCardAdapter.Execute(addUserWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserWishlistCardExtEntity>> AddUserWishlistCardAsync(IAddUserWishlistCardXfrEntity addUserWishlistCard, CancellationToken cancellationToken) => await _addUserWishlistCardAdapter.Execute(addUserWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<UserWishlistCardExtEntity>> RemoveUserWishlistCardAsync(IRemoveUserWishlistCardXfrEntity removeUserWishlistCard) => await _removeUserWishlistCardAdapter.Execute(removeUserWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<UserWishlistCardExtEntity>> RemoveUserWishlistCardAsync(IRemoveUserWishlistCardXfrEntity removeUserWishlistCard, CancellationToken cancellationToken) => await _removeUserWishlistCardAdapter.Execute(removeUserWishlistCard, cancellationToken).ConfigureAwait(false);
 }

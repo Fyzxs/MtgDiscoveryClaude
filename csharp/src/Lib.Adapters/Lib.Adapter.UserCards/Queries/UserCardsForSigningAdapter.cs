@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -18,22 +19,24 @@ namespace Lib.Adapter.UserCards.Queries;
 /// </summary>
 internal sealed class UserCardsForSigningAdapter : IUserCardsForSigningAdapter
 {
-    private readonly ICosmosInquisition<UserCardItemsByArtistsExtEntitys> _userCardsArtistsInquisition;
+    private readonly ICosmosInquisition<UserCardItemsByArtistsExtEntity> _userCardsArtistsInquisition;
     private readonly IUserCardsForSigningXfrToArgsMapper _forSigningXfrToArgsMapper;
 
     public UserCardsForSigningAdapter(ILogger logger) : this(new UserCardItemsByArtistsInquisition(logger), new UserCardsForSigningXfrToArgsMapper()) { }
 
-    private UserCardsForSigningAdapter(ICosmosInquisition<UserCardItemsByArtistsExtEntitys> userCardsArtistsInquisition, IUserCardsForSigningXfrToArgsMapper forSigningXfrToArgsMapper)
+    private UserCardsForSigningAdapter(ICosmosInquisition<UserCardItemsByArtistsExtEntity> userCardsArtistsInquisition, IUserCardsForSigningXfrToArgsMapper forSigningXfrToArgsMapper)
     {
         _userCardsArtistsInquisition = userCardsArtistsInquisition;
         _forSigningXfrToArgsMapper = forSigningXfrToArgsMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute([NotNull] IUserCardsForSigningXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        [NotNull] IUserCardsForSigningXfrEntity input,
+        CancellationToken cancellationToken)
     {
-        UserCardItemsByArtistsExtEntitys args = await _forSigningXfrToArgsMapper.Map(input).ConfigureAwait(false);
+        UserCardItemsByArtistsExtEntity args = await _forSigningXfrToArgsMapper.Map(input).ConfigureAwait(false);
 
-        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsArtistsInquisition.QueryAsync<UserCardExtEntity>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsArtistsInquisition.QueryAsync<UserCardExtEntity>(args, cancellationToken).ConfigureAwait(false);
 
         if (response.IsNotSuccessful())
         {

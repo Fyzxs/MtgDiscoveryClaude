@@ -8,4 +8,5 @@ internal sealed class ArtistNameXfrEntity : IArtistNameXfrEntity
     public string ArtistName { get; init; }
     public string Normalized { get; init; }
     public ICollection<string> Trigrams { get; init; }
+    public string CacheKey => $"artist:name:{Normalized}";
 }

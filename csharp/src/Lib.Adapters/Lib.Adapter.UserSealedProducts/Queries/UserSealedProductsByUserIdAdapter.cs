@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitors;
 using Lib.Adapter.UserSealedProducts.Exceptions;
 using Lib.Cosmos.Apis.Operators;
@@ -20,13 +21,13 @@ internal sealed class UserSealedProductsByUserIdAdapter : IUserSealedProductsByU
     private UserSealedProductsByUserIdAdapter(
         ICosmosInquisitor userSealedProductsInquisitor) => _userSealedProductsInquisitor = userSealedProductsInquisitor;
 
-    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string collectionId)
+    public async Task<IOperationResponse<IEnumerable<UserSealedProductExtEntity>>> Execute(string collectionId, CancellationToken cancellationToken)
     {
         QueryDefinition queryDefinition = new("SELECT * FROM c");
         PartitionKey partitionKey = new(collectionId);
 
         OpResponse<IEnumerable<UserSealedProductExtEntity>> response =
-            await _userSealedProductsInquisitor.QueryAsync<UserSealedProductExtEntity>(queryDefinition, partitionKey)
+            await _userSealedProductsInquisitor.QueryAsync<UserSealedProductExtEntity>(queryDefinition, partitionKey, cancellationToken)
                 .ConfigureAwait(false);
 
         if (response.IsNotSuccessful())

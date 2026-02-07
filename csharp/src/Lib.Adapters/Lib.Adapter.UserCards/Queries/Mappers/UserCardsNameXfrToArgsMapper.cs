@@ -14,13 +14,13 @@ internal sealed class UserCardsNameXfrToArgsMapper : IUserCardsNameXfrToArgsMapp
 
     private UserCardsNameXfrToArgsMapper(ICardNameGuidGenerator guidGenerator) => _guidGenerator = guidGenerator;
 
-    public Task<UserCardItemsByNameExtEntitys> Map(IUserCardsNameXfrEntity source)
+    public Task<UserCardItemsByNameExtEntity> Map(IUserCardsNameXfrEntity source)
     {
         // Generate deterministic GUID from card name (matches CardsByName collection)
         CardNameGuid nameGuid = _guidGenerator.GenerateGuid(source.CardName);
         string cardNameGuid = nameGuid.AsSystemType().ToString();
 
-        UserCardItemsByNameExtEntitys args = new()
+        UserCardItemsByNameExtEntity args = new()
         {
             UserId = source.UserId,
             CardNameGuid = cardNameGuid

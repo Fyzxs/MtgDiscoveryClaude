@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.Cards.Apis.Entities;
 
@@ -7,7 +8,7 @@ namespace Lib.Adapter.Cards.Apis.Entities;
 /// This entity crosses the Aggregator→Adapter boundary when no actual entity mapping is needed,
 /// providing a simple wrapper for card ID collection values in external system operations.
 /// </summary>
-public interface ICardIdsXfrEntity
+public interface ICardIdsXfrEntity : IXfrEntity
 {
     /// <summary>
     /// The collection of unique identifiers for cards.

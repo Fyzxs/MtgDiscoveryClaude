@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Adapter.UserCards.Exceptions;
@@ -23,7 +24,9 @@ internal sealed class UserCardAdapter : IUserCardAdapter
 
     private UserCardAdapter(ICosmosGopher userCardsGopher) => _userCardsGopher = userCardsGopher;
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute([NotNull] IUserCardXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        [NotNull] IUserCardXfrEntity input,
+        CancellationToken cancellationToken)
     {
         //TODO Needs a mapper
         ReadPointItem readPoint = new()
@@ -32,7 +35,7 @@ internal sealed class UserCardAdapter : IUserCardAdapter
             Partition = new ProvidedPartitionKeyValue(input.UserId)
         };
 
-        OpResponse<UserCardExtEntity> response = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint).ConfigureAwait(false);
+        OpResponse<UserCardExtEntity> response = await _userCardsGopher.ReadAsync<UserCardExtEntity>(readPoint, cancellationToken).ConfigureAwait(false);
 
         // Handle "not found" as successful with empty collection (HTTP 404 is valid for point reads)
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

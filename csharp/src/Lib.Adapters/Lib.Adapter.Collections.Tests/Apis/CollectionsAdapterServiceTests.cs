@@ -1,12 +1,15 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using Lib.Adapter.Collections.Apis;
+using Lib.Adapter.Collections.Queries;
+using Lib.Adapter.Collections.Queries.Mappers;
 using Lib.Adapter.Collections.Tests.Fakes;
-using Lib.Shared.DataModels.Entities.Itrs.Collections;
-using Lib.Shared.DataModels.Entities.Oufs.Collections;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Collections;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestConvenience.Core.Fakes;
 using TestConvenience.Core.Reflection;
 
 namespace Lib.Adapter.Collections.Tests.Apis;
@@ -15,14 +18,13 @@ namespace Lib.Adapter.Collections.Tests.Apis;
 public sealed class CollectionsAdapterServiceTests
 {
     [TestMethod, TestCategory("unit")]
-    public void Constructor_ImplementsInterface()
+    public void Constructor_WithLogger_CreatesInstance()
     {
         // Arrange
-        CollectionCommandAdapterFake commandFake = new();
-        CollectionQueryAdapterFake queryFake = new();
+        LoggerFake logger = new();
 
         // Act
-        CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
+        CollectionsAdapterService subject = new(logger);
 
         // Assert
         subject.Should().BeAssignableTo<ICollectionsAdapterService>();
@@ -32,21 +34,27 @@ public sealed class CollectionsAdapterServiceTests
     public async Task CreateCollectionAsync_DelegatesToCommandAdapter()
     {
         // Arrange
-        CollectionOufEntityFake expectedOuf = new() { CollectionId = "col-123", Name = "Test" };
-        OperationResponseFake<ICollectionOufEntity> expectedResponse = new()
+        CollectionExtEntity expectedExt = new() { CollectionId = "col-123", Name = "Test" };
+        OperationResponseFake<CollectionExtEntity> expectedResponse = new()
         {
             IsSuccess = true,
-            ResponseData = expectedOuf
+            ResponseData = expectedExt
         };
 
         CollectionCommandAdapterFake commandFake = new()
         {
             CreateCollectionAsyncResult = expectedResponse
         };
-        CollectionQueryAdapterFake queryFake = new();
-        CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
 
-        CollectionItrEntityFake itrEntity = new()
+        CollectionsAdapterService subject = new InstanceWrapper(
+            commandFake,
+            new DefaultCollectionAdapterFake(),
+            new CollectionsByOwnerAdapterFake(),
+            new CollectionByIdAdapterFake(),
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
+
+        CollectionXfrEntityFake xfrEntity = new()
         {
             CollectionId = "col-123",
             Name = "Test",
@@ -54,8 +62,8 @@ public sealed class CollectionsAdapterServiceTests
         };
 
         // Act
-        IOperationResponse<ICollectionOufEntity> actual = await subject
-            .CreateCollectionAsync(itrEntity)
+        IOperationResponse<CollectionExtEntity> actual = await subject
+            .CreateCollectionAsync(xfrEntity, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
@@ -64,69 +72,157 @@ public sealed class CollectionsAdapterServiceTests
     }
 
     [TestMethod, TestCategory("unit")]
-    public async Task GetDefaultCollectionAsync_DelegatesToQueryAdapter()
+    public async Task GetDefaultCollectionAsync_DelegatesToDefaultCollectionAdapter()
     {
         // Arrange
-        CollectionOufEntityFake expectedOuf = new() { CollectionId = "col-default", IsDefault = true };
-        OperationResponseFake<ICollectionOufEntity> expectedResponse = new()
+        CollectionExtEntity expectedExt = new() { CollectionId = "col-default", IsDefault = true };
+        OperationResponseFake<CollectionExtEntity> expectedResponse = new()
         {
             IsSuccess = true,
-            ResponseData = expectedOuf
+            ResponseData = expectedExt
         };
 
-        CollectionCommandAdapterFake commandFake = new();
-        CollectionQueryAdapterFake queryFake = new()
-        {
-            GetDefaultCollectionAsyncResult = expectedResponse
-        };
-        CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
+        DefaultCollectionAdapterFake defaultFake = new() { ExecuteResult = expectedResponse };
 
-        OwnerIdItrEntityFake ownerIdItr = new() { OwnerId = "user-123" };
+        CollectionsAdapterService subject = new InstanceWrapper(
+            new CollectionCommandAdapterFake(),
+            defaultFake,
+            new CollectionsByOwnerAdapterFake(),
+            new CollectionByIdAdapterFake(),
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
+
+        OwnerIdXfrEntityFake ownerIdXfr = new() { OwnerId = "user-123" };
 
         // Act
-        IOperationResponse<ICollectionOufEntity> actual = await subject
-            .GetDefaultCollectionAsync(ownerIdItr)
+        IOperationResponse<CollectionExtEntity> actual = await subject
+            .GetDefaultCollectionAsync(ownerIdXfr, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(expectedResponse);
-        queryFake.GetDefaultCollectionAsyncInvokeCount.Should().Be(1);
+        defaultFake.ExecuteInvokeCount.Should().Be(1);
+        defaultFake.LastExecuteInput!.UserId.Should().Be("user-123");
     }
 
     [TestMethod, TestCategory("unit")]
-    public async Task GetCollectionsByOwnerAsync_DelegatesToQueryAdapter()
+    public async Task GetCollectionsByOwnerAsync_DelegatesToCollectionsByOwnerAdapter()
     {
         // Arrange
-        List<ICollectionOufEntity> expectedList = [new CollectionOufEntityFake { CollectionId = "col-1" }];
-        OperationResponseFake<IEnumerable<ICollectionOufEntity>> expectedResponse = new()
+        List<CollectionExtEntity> expectedList = [new CollectionExtEntity { CollectionId = "col-1" }];
+        OperationResponseFake<IEnumerable<CollectionExtEntity>> expectedResponse = new()
         {
             IsSuccess = true,
             ResponseData = expectedList
         };
 
-        CollectionCommandAdapterFake commandFake = new();
-        CollectionQueryAdapterFake queryFake = new()
-        {
-            GetCollectionsByOwnerAsyncResult = expectedResponse
-        };
-        CollectionsAdapterService subject = new InstanceWrapper(commandFake, queryFake);
+        CollectionsByOwnerAdapterFake ownerFake = new() { ExecuteResult = expectedResponse };
 
-        OwnerIdItrEntityFake ownerIdItr = new() { OwnerId = "user-123" };
+        CollectionsAdapterService subject = new InstanceWrapper(
+            new CollectionCommandAdapterFake(),
+            new DefaultCollectionAdapterFake(),
+            ownerFake,
+            new CollectionByIdAdapterFake(),
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
+
+        OwnerIdXfrEntityFake ownerIdXfr = new() { OwnerId = "user-123" };
 
         // Act
-        IOperationResponse<IEnumerable<ICollectionOufEntity>> actual = await subject
-            .GetCollectionsByOwnerAsync(ownerIdItr)
+        IOperationResponse<IEnumerable<CollectionExtEntity>> actual = await subject
+            .GetCollectionsByOwnerAsync(ownerIdXfr, CancellationToken.None)
             .ConfigureAwait(false);
 
         // Assert
         actual.Should().Be(expectedResponse);
-        queryFake.GetCollectionsByOwnerAsyncInvokeCount.Should().Be(1);
+        ownerFake.ExecuteInvokeCount.Should().Be(1);
+        ownerFake.LastExecuteInput!.UserId.Should().Be("user-123");
+    }
+
+    [TestMethod, TestCategory("unit")]
+    public async Task GetCollectionByIdAsync_DelegatesToCollectionByIdAdapter()
+    {
+        // Arrange
+        CollectionExtEntity expectedExt = new() { CollectionId = "col-123" };
+        OperationResponseFake<CollectionExtEntity> expectedResponse = new()
+        {
+            IsSuccess = true,
+            ResponseData = expectedExt
+        };
+
+        CollectionByIdAdapterFake byIdFake = new() { ExecuteResult = expectedResponse };
+
+        CollectionsAdapterService subject = new InstanceWrapper(
+            new CollectionCommandAdapterFake(),
+            new DefaultCollectionAdapterFake(),
+            new CollectionsByOwnerAdapterFake(),
+            byIdFake,
+            new AccessibleCollectionsAdapterFake(),
+            new OwnerIdXfrToUserIdXfrMapperFake());
+
+        CollectionIdXfrEntityFake input = new()
+        {
+            CollectionId = "col-123",
+            OwnerId = "owner-123"
+        };
+
+        // Act
+        IOperationResponse<CollectionExtEntity> actual = await subject
+            .GetCollectionByIdAsync(input, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        // Assert
+        actual.Should().Be(expectedResponse);
+        byIdFake.ExecuteInvokeCount.Should().Be(1);
+    }
+
+    [TestMethod, TestCategory("unit")]
+    public async Task GetAccessibleCollectionsAsync_DelegatesToAccessibleCollectionsAdapter()
+    {
+        // Arrange
+        List<CollectionExtEntity> expectedList =
+        [
+            new CollectionExtEntity { CollectionId = "col-owned", OwnerId = "user-123" },
+            new CollectionExtEntity { CollectionId = "col-shared", OwnerId = "other-user" }
+        ];
+        OperationResponseFake<IEnumerable<CollectionExtEntity>> expectedResponse = new()
+        {
+            IsSuccess = true,
+            ResponseData = expectedList
+        };
+
+        AccessibleCollectionsAdapterFake accessibleFake = new() { ExecuteResult = expectedResponse };
+
+        CollectionsAdapterService subject = new InstanceWrapper(
+            new CollectionCommandAdapterFake(),
+            new DefaultCollectionAdapterFake(),
+            new CollectionsByOwnerAdapterFake(),
+            new CollectionByIdAdapterFake(),
+            accessibleFake,
+            new OwnerIdXfrToUserIdXfrMapperFake());
+
+        UserIdXfrEntityFake input = new() { UserId = "user-123" };
+
+        // Act
+        IOperationResponse<IEnumerable<CollectionExtEntity>> actual = await subject
+            .GetAccessibleCollectionsAsync(input, CancellationToken.None)
+            .ConfigureAwait(false);
+
+        // Assert
+        actual.Should().Be(expectedResponse);
+        accessibleFake.ExecuteInvokeCount.Should().Be(1);
     }
 
     private sealed class InstanceWrapper : TypeWrapper<CollectionsAdapterService>
     {
         public InstanceWrapper(
             ICollectionCommandAdapter commandAdapter,
-            ICollectionQueryAdapter queryAdapter) : base(commandAdapter, queryAdapter) { }
+            IDefaultCollectionAdapter defaultAdapter,
+            ICollectionsByOwnerAdapter ownerAdapter,
+            ICollectionByIdAdapter byIdAdapter,
+            IAccessibleCollectionsAdapter accessibleAdapter,
+            IOwnerIdXfrToUserIdXfrMapper ownerIdXfrToUserIdXfrMapper)
+            : base(commandAdapter, defaultAdapter, ownerAdapter, byIdAdapter, accessibleAdapter, ownerIdXfrToUserIdXfrMapper)
+        { }
     }
 }

@@ -1,4 +1,4 @@
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetParentAssociations;
 using Lib.Scryfall.Shared.Apis.Models;
 
 namespace Lib.Scryfall.Ingestion.Mappers;

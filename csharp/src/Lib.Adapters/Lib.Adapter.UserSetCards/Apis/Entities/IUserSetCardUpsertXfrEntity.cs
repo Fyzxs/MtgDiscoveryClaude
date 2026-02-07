@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Abstractions;
 
 namespace Lib.Adapter.UserSetCards.Apis.Entities;
 
-public interface IUserSetCardUpsertXfrEntity
+public interface IUserSetCardUpsertXfrEntity : IXfrEntity
 {
     string UserId { get; }
     string SetId { get; }

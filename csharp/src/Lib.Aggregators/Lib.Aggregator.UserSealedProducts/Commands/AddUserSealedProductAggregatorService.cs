@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
 using Lib.Adapter.UserSealedProducts.Apis;
 using Lib.Adapter.UserSealedProducts.Apis.Entities;
 using Lib.Aggregator.UserSealedProducts.Commands.Mappers;
@@ -29,7 +30,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
         _oufMapper = oufMapper;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input)
+    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken)
     {
         IUserSealedProductXfrEntity xfrEntity = new UserSealedProductXfrEntity
         {
@@ -39,7 +40,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
             CountDelta = input.CountDelta
         };
 
-        IOperationResponse<UserSealedProductExtEntity> extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserSealedProductExtEntity> extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (extResponse.IsFailure)
         {
@@ -56,5 +57,6 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
         public required string ProductUuid { get; init; }
         public required string SetId { get; init; }
         public required int CountDelta { get; init; }
+        public string CacheKey => $"user_sealed_product:{UserId}:{ProductUuid}";
     }
 }

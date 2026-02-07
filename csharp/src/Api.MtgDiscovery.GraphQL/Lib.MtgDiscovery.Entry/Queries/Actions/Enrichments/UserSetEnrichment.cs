@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserSetCards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
@@ -35,10 +36,10 @@ internal sealed class UserSetEnrichment : IUserSetEnrichment
         _userIdArgToAllUserSetCardsItrMapper = userIdArgToAllUserSetCardsItrMapper;
     }
 
-    public async Task Enrich(List<SetItemOutEntity> outEntities, IUserIdArgEntity args)
+    public async Task Enrich(List<SetItemOutEntity> outEntities, IUserIdArgEntity args, CancellationToken cancellationToken)
     {
         IAllUserSetCardsItrEntity itrEntity = await _userIdArgToAllUserSetCardsItrMapper.Map(args).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<IUserSetCardOufEntity>> userSetCardResponse = await _userSetCardsDomainService.AllUserSetCardsAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserSetCardOufEntity>> userSetCardResponse = await _userSetCardsDomainService.AllUserSetCardsAsync(itrEntity, cancellationToken).ConfigureAwait(false);
 
         if (userSetCardResponse.IsFailure)
             return;

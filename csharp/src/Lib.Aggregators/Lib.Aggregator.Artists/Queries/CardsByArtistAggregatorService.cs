@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Artists.Apis;
 using Lib.Adapter.Artists.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
 using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -38,10 +39,12 @@ internal sealed class CardsByArtistAggregatorService : ICardsByArtistAggregatorS
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(IArtistIdItrEntity input)
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        IArtistIdItrEntity input,
+        CancellationToken cancellationToken)
     {
         IArtistIdXfrEntity xfrEntity = await _aristIdToXfrMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistIdAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistIdAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (adapterResponse.IsFailure)
         {

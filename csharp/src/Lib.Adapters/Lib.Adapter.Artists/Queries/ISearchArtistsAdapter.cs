@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Lib.Adapter.Artists.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistNameTrigrams;
 using Lib.Shared.Invocation.Services;
 
 namespace Lib.Adapter.Artists.Queries;

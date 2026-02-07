@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.UserWishlistCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
@@ -25,7 +26,7 @@ internal sealed class UserWishlistCardsCommandDomainService : IUserWishlistCards
         _removeUserWishlistCardService = removeUserWishlistCardService;
     }
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => await _addUserWishlistCardService.Execute(userWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> AddUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard, CancellationToken cancellationToken) => await _addUserWishlistCardService.Execute(userWishlistCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard) => await _removeUserWishlistCardService.Execute(userWishlistCard).ConfigureAwait(false);
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> RemoveUserWishlistCardAsync(IUserWishlistCardItrEntity userWishlistCard, CancellationToken cancellationToken) => await _removeUserWishlistCardService.Execute(userWishlistCard, cancellationToken).ConfigureAwait(false);
 }

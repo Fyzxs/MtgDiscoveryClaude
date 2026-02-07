@@ -1,5 +1,6 @@
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.UserCards.Apis;
 using Lib.Adapter.UserCards.Apis.Entities;
 using Lib.Shared.Invocation.Operations;
@@ -11,7 +12,9 @@ public sealed class UserCardsCommandAdapterFake : IUserCardsCommandAdapter
     public IOperationResponse<UserCardExtEntity> AddUserCardAsyncResult { get; init; }
     public int AddUserCardAsyncInvokeCount { get; private set; }
 
-    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(IAddUserCardXfrEntity addUserCard)
+    public async Task<IOperationResponse<UserCardExtEntity>> AddUserCardAsync(
+        IAddUserCardXfrEntity addUserCard,
+        CancellationToken cancellationToken)
     {
         AddUserCardAsyncInvokeCount++;
         return await Task.FromResult(AddUserCardAsyncResult).ConfigureAwait(false);

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 
-public sealed class AllUserWishlistCardsInquisition : ICosmosInquisition<AllUserWishlistCardsExtEntitys>
+public sealed class AllUserWishlistCardsInquisition : ICosmosInquisition<AllUserWishlistCardsExtEntity>
 {
     private readonly ICosmosInquisitor _inquisitor;
     private readonly InquiryDefinition _inquiry;
@@ -29,7 +29,7 @@ public sealed class AllUserWishlistCardsInquisition : ICosmosInquisition<AllUser
     }
 
     public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(
-        [NotNull] AllUserWishlistCardsExtEntitys args,
+        [NotNull] AllUserWishlistCardsExtEntity args,
         CancellationToken cancellationToken = default)
     {
         QueryDefinition query = _inquiry.AsSystemType()

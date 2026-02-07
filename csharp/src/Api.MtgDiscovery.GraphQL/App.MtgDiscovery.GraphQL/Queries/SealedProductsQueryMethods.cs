@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using App.MtgDiscovery.GraphQL.Actions.Mappers;
 using App.MtgDiscovery.GraphQL.Entities.Args.SealedProducts;
@@ -34,10 +35,12 @@ internal sealed class SealedProductsQueryMethods
     }
 
     [GraphQLType(typeof(SealedProductsResponseModelUnionType))]
-    public async Task<ResponseModel> SealedProductsBySetCode(GetSealedProductsBySetCodeArgEntity args)
+    public async Task<ResponseModel> SealedProductsBySetCode(
+        GetSealedProductsBySetCodeArgEntity args,
+        CancellationToken cancellationToken)
     {
         IOperationResponse<List<SealedProductOutEntity>> response = await _entryService
-            .SealedProductsBySetCodeAsync(args)
+            .SealedProductsBySetCodeAsync(args, cancellationToken)
             .ConfigureAwait(false);
 
         return await _responseMapper.Map(response).ConfigureAwait(false);

@@ -6,4 +6,7 @@ namespace Lib.Aggregator.Sets.Queries.Entities;
 /// Concrete implementation of IAllSetsXfrEntity for Aggregator layer.
 /// Represents AllSets query operations at the adapter layer.
 /// </summary>
-internal sealed class AllSetsXfrEntity : IAllSetsXfrEntity;
+internal sealed class AllSetsXfrEntity : IAllSetsXfrEntity
+{
+    public string CacheKey => $"sets:all";
+}

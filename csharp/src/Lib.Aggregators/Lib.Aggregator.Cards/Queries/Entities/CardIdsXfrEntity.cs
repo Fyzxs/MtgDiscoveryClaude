@@ -6,4 +6,5 @@ namespace Lib.Aggregator.Cards.Queries.Entities;
 internal sealed class CardIdsXfrEntity : ICardIdsXfrEntity
 {
     public IEnumerable<string> CardIds { get; init; }
+    public string CacheKey => $"cards:ids:{string.Join(",", CardIds)}";
 }

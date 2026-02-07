@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Domain.Cards.Apis;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
@@ -53,14 +54,16 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         _nameContextMapper = nameContextMapper;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(ICardNameArgEntity cardName)
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
+        ICardNameArgEntity cardName,
+        CancellationToken cancellationToken)
     {
         IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult = await _cardNameArgEntityValidator.Validate(cardName).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
             return new FailureOperationResponse<List<CardItemOutEntity>>(validatorResult.FailureStatus().OuterException);
 
         ICardNameItrEntity itrEntity = await _cardNameArgToItrMapper.Map(cardName).ConfigureAwait(false);
-        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByNameAsync(itrEntity).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> opResponse = await _cardDomainService.CardsByNameAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (opResponse.IsFailure)
             return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
 
@@ -70,10 +73,10 @@ internal sealed class CardsByNameEntryService : ICardsByNameEntryService
         if (string.IsNullOrEmpty(cardName.UserId) is false)
         {
             IUserCardsNameItrEntity nameContext = await _nameContextMapper.Map(cardName).ConfigureAwait(false);
-            await _userCardEnrichment.EnrichByName(outEntities, nameContext).ConfigureAwait(false);
+            await _userCardEnrichment.EnrichByName(outEntities, nameContext, cancellationToken).ConfigureAwait(false);
         }
 
-        await _userWishlistCardEnrichment.Enrich(outEntities, cardName).ConfigureAwait(false);
+        await _userWishlistCardEnrichment.Enrich(outEntities, cardName, cancellationToken).ConfigureAwait(false);
 
         return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
     }

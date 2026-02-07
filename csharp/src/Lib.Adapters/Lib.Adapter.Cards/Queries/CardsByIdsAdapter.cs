@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis.Entities;
 using Lib.Adapter.Cards.Queries.Mappers;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardItems;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Cosmos.Apis.Operators;
 using Lib.Shared.Invocation.Operations;
@@ -33,10 +34,12 @@ internal sealed class CardsByIdsAdapter : ICardsByIdsAdapter
         _cardIdsToReadPointMapper = cardIdsToReadPointMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> Execute([NotNull] ICardIdsXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> Execute(
+        [NotNull] ICardIdsXfrEntity input,
+        CancellationToken cancellationToken)
     {
         ICollection<ReadPointItem> items = await _cardIdsToReadPointMapper.Map(input.CardIds).ConfigureAwait(false);
-        IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem));
+        IEnumerable<Task<OpResponse<ScryfallCardItemExtEntity>>> collection = items.Select(readPointItem => _cardGopher.ReadAsync<ScryfallCardItemExtEntity>(readPointItem, cancellationToken));
 
         OpResponse<ScryfallCardItemExtEntity>[] responses = await Task.WhenAll(collection).ConfigureAwait(false);
 

@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
-using Lib.Shared.Invocation.Services;
+using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Domain.Cards.Queries;
 
@@ -9,4 +11,8 @@ namespace Lib.Domain.Cards.Queries;
 /// Implements single-method delegation pattern with Execute method.
 /// </summary>
 internal interface ICardsBySetCodeDomainService
-    : IOperationResponseService<ISetCodeItrEntity, ICardItemCollectionOufEntity>;
+{
+    Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
+        ISetCodeItrEntity input,
+        CancellationToken cancellationToken);
+}

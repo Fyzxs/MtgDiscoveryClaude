@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Apis;
 using Lib.MtgDiscovery.Entry.Commands.UserWishlistCards;
@@ -28,9 +29,9 @@ internal sealed class UserWishlistCardsEntryService : IUserWishlistCardsEntrySer
         _getUserWishlist = getUserWishlist;
     }
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToWishlistAsync(IAddCardToWishlistArgsEntity args)
-        => await _addCardToWishlist.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToWishlistAsync(IAddCardToWishlistArgsEntity args, CancellationToken cancellationToken)
+        => await _addCardToWishlist.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args)
-        => await _getUserWishlist.Execute(args).ConfigureAwait(false);
+    public async Task<IOperationResponse<List<CardItemOutEntity>>> GetUserWishlistAsync(IGetUserWishlistArgsEntity args, CancellationToken cancellationToken)
+        => await _getUserWishlist.Execute(args, cancellationToken).ConfigureAwait(false);
 }

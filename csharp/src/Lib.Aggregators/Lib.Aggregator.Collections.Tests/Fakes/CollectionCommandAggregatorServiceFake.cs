@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Collections.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
@@ -17,19 +18,19 @@ public sealed class CollectionCommandAggregatorServiceFake : ICollectionCommandA
     public IOperationResponse<ICollectionOufEntity> UpdateCollectionVisibilityAsyncResult { get; init; }
     public int UpdateCollectionVisibilityAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(ICollectionItrEntity entity, CancellationToken cancellationToken)
     {
         CreateCollectionAsyncInvokeCount++;
         return Task.FromResult(CreateCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> RenameCollectionAsync(IRenameCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         RenameCollectionAsyncInvokeCount++;
         return Task.FromResult(RenameCollectionAsyncResult);
     }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> UpdateCollectionVisibilityAsync(IUpdateCollectionVisibilityItrEntity entity, CancellationToken cancellationToken)
     {
         UpdateCollectionVisibilityAsyncInvokeCount++;
         return Task.FromResult(UpdateCollectionVisibilityAsyncResult);
@@ -38,7 +39,7 @@ public sealed class CollectionCommandAggregatorServiceFake : ICollectionCommandA
     public IOperationResponse<ICollectionOufEntity> GrantCollectionAccessAsyncResult { get; init; }
     public int GrantCollectionAccessAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> GrantCollectionAccessAsync(IGrantCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         GrantCollectionAccessAsyncInvokeCount++;
         return Task.FromResult(GrantCollectionAccessAsyncResult);
@@ -47,7 +48,7 @@ public sealed class CollectionCommandAggregatorServiceFake : ICollectionCommandA
     public IOperationResponse<ICollectionOufEntity> RevokeCollectionAccessAsyncResult { get; init; }
     public int RevokeCollectionAccessAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> RevokeCollectionAccessAsync(IRevokeCollectionAccessItrEntity entity, CancellationToken cancellationToken)
     {
         RevokeCollectionAccessAsyncInvokeCount++;
         return Task.FromResult(RevokeCollectionAccessAsyncResult);
@@ -56,7 +57,7 @@ public sealed class CollectionCommandAggregatorServiceFake : ICollectionCommandA
     public IOperationResponse<ICollectionOufEntity> DeleteCollectionAsyncResult { get; init; }
     public int DeleteCollectionAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(IDeleteCollectionItrEntity entity, CancellationToken cancellationToken)
     {
         DeleteCollectionAsyncInvokeCount++;
         return Task.FromResult(DeleteCollectionAsyncResult);
@@ -65,7 +66,7 @@ public sealed class CollectionCommandAggregatorServiceFake : ICollectionCommandA
     public IOperationResponse<ICollectionOufEntity> TransferCollectionOwnershipAsyncResult { get; init; }
     public int TransferCollectionOwnershipAsyncInvokeCount { get; private set; }
 
-    public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity)
+    public Task<IOperationResponse<ICollectionOufEntity>> TransferCollectionOwnershipAsync(ITransferCollectionOwnershipItrEntity entity, CancellationToken cancellationToken)
     {
         TransferCollectionOwnershipAsyncInvokeCount++;
         return Task.FromResult(TransferCollectionOwnershipAsyncResult);

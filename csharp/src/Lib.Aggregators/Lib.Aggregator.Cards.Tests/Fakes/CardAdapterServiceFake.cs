@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Cards.Apis;
 using Lib.Adapter.Cards.Apis.Entities;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardsByName;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
 using Lib.Shared.Invocation.Operations;
 
 namespace Lib.Aggregator.Cards.Tests.Fakes;
@@ -25,28 +28,36 @@ public sealed class CardAdapterServiceFake : ICardAdapterService
     public int SearchCardNamesAsyncInvokeCount { get; private set; }
     public ICardSearchTermXfrEntity SearchCardNamesAsyncArgsInput { get; private set; } = default!;
 
-    public Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(ICardIdsXfrEntity cardIds)
+    public Task<IOperationResponse<IEnumerable<ScryfallCardItemExtEntity>>> GetCardsByIdsAsync(
+        ICardIdsXfrEntity cardIds,
+        CancellationToken cancellationToken)
     {
         GetCardsByIdsAsyncInvokeCount++;
         GetCardsByIdsAsyncArgsInput = cardIds;
         return Task.FromResult(GetCardsByIdsAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(ISetCodeXfrEntity setCode)
+    public Task<IOperationResponse<IEnumerable<ScryfallSetCardItemExtEntity>>> GetCardsBySetCodeAsync(
+        ISetCodeXfrEntity setCode,
+        CancellationToken cancellationToken)
     {
         GetCardsBySetCodeAsyncInvokeCount++;
         GetCardsBySetCodeAsyncArgsInput = setCode;
         return Task.FromResult(GetCardsBySetCodeAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(ICardNameXfrEntity cardName)
+    public Task<IOperationResponse<IEnumerable<ScryfallCardByNameExtEntity>>> GetCardsByNameAsync(
+        ICardNameXfrEntity cardName,
+        CancellationToken cancellationToken)
     {
         GetCardsByNameAsyncInvokeCount++;
         GetCardsByNameAsyncArgsInput = cardName;
         return Task.FromResult(GetCardsByNameAsyncResult);
     }
 
-    public Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(ICardSearchTermXfrEntity searchTerm)
+    public Task<IOperationResponse<IEnumerable<string>>> SearchCardNamesAsync(
+        ICardSearchTermXfrEntity searchTerm,
+        CancellationToken cancellationToken)
     {
         SearchCardNamesAsyncInvokeCount++;
         SearchCardNamesAsyncArgsInput = searchTerm;

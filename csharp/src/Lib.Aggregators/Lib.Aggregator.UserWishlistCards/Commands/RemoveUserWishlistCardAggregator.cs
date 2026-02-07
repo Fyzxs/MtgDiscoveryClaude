@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserWishlistCards;
 using Lib.Adapter.UserWishlistCards.Apis;
 using Lib.Adapter.UserWishlistCards.Apis.Entities;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
@@ -21,11 +22,11 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
 
     private RemoveUserWishlistCardAggregator(IUserWishlistCardsAdapterService userWishlistCardsAdapterService) => _userWishlistCardsAdapterService = userWishlistCardsAdapterService;
 
-    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input)
+    public async Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input, CancellationToken cancellationToken)
     {
         RemoveUserWishlistCardXfrEntity xfrEntity = MapItrToXfr(input);
 
-        IOperationResponse<UserWishlistCardExtEntity> response = await _userWishlistCardsAdapterService.RemoveUserWishlistCardAsync(xfrEntity).ConfigureAwait(false);
+        IOperationResponse<UserWishlistCardExtEntity> response = await _userWishlistCardsAdapterService.RemoveUserWishlistCardAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {
@@ -79,6 +80,7 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
         public required string UserId { get; init; }
         public required string CardId { get; init; }
         public required IUserWishlistCardDetailsXfrEntity Details { get; init; }
+        public string CacheKey => $"remove_user_wishlist_card:{UserId}:{CardId}";
     }
 
     private sealed class UserWishlistCardDetailsXfrEntity : IUserWishlistCardDetailsXfrEntity
@@ -86,6 +88,7 @@ internal sealed class RemoveUserWishlistCardAggregator : IRemoveUserWishlistCard
         public required string Finish { get; init; }
         public required string Special { get; init; }
         public required int Count { get; init; }
+        public string CacheKey => $"user_wishlist_card_details:{Finish}:{Special}";
     }
 
     private sealed class UserWishlistCardOufEntity : IUserWishlistCardOufEntity

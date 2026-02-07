@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
@@ -8,5 +9,5 @@ namespace Lib.Aggregator.UserSealedProducts.Apis;
 
 public interface IUserSealedProductsCommandAggregatorService
 {
-    Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input);
+    Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken);
 }

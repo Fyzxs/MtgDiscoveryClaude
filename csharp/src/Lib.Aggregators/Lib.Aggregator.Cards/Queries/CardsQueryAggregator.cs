@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
@@ -34,11 +35,23 @@ internal sealed class CardsQueryAggregator : ICardAggregatorService
         _cardNameSearchOperations = cardNameSearchOperations;
     }
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args) => await _cardsByIdsOperations.Execute(args);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(
+        ICardIdsItrEntity args,
+        CancellationToken cancellationToken)
+        => await _cardsByIdsOperations.Execute(args, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode) => await _cardsBySetCodeOperations.Execute(setCode);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(
+        ISetCodeItrEntity setCode,
+        CancellationToken cancellationToken)
+        => await _cardsBySetCodeOperations.Execute(setCode, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName) => await _cardsByNameOperations.Execute(cardName);
+    public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(
+        ICardNameItrEntity cardName,
+        CancellationToken cancellationToken)
+        => await _cardsByNameOperations.Execute(cardName, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(ICardSearchTermItrEntity searchTerm) => await _cardNameSearchOperations.Execute(searchTerm);
+    public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(
+        ICardSearchTermItrEntity searchTerm,
+        CancellationToken cancellationToken)
+        => await _cardNameSearchOperations.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 }

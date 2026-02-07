@@ -3,7 +3,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Cli.Sealed.Ingestion.Dtos;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SealedProducts;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCodeIndex;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Gophers;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Scribes;
 using Lib.Cosmos.Apis;
@@ -35,7 +36,7 @@ internal sealed class SealedProductIngestionService : ISealedProductIngestionSer
     {
         try
         {
-            string setId = await GetSetIdAsync(setCode).ConfigureAwait(false);
+            string setId = await GetSetIdAsync(setCode, cancellationToken).ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(setId))
             {
@@ -46,7 +47,7 @@ internal sealed class SealedProductIngestionService : ISealedProductIngestionSer
             SealedProductExtEntity entity = CreateEntity(setCode, setName, setId, product);
 
             OpResponse<SealedProductExtEntity> response = await _sealedProductsScribe
-                .UpsertAsync(entity)
+                .UpsertAsync(entity, cancellationToken)
                 .ConfigureAwait(false);
 
             if (response.IsSuccessful())
@@ -67,7 +68,7 @@ internal sealed class SealedProductIngestionService : ISealedProductIngestionSer
         }
     }
 
-    private async Task<string> GetSetIdAsync(string setCode)
+    private async Task<string> GetSetIdAsync(string setCode, CancellationToken cancellationToken)
     {
         if (_setIdCache.TryGetValue(setCode, out string cachedSetId))
         {
@@ -85,7 +86,7 @@ internal sealed class SealedProductIngestionService : ISealedProductIngestionSer
         };
 
         OpResponse<ScryfallSetCodeIndexExtEntity> response = await _setCodeIndexGopher
-            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint)
+            .ReadAsync<ScryfallSetCodeIndexExtEntity>(readPoint, cancellationToken)
             .ConfigureAwait(false);
 
         if (response.IsSuccessful() && response.Value is not null)

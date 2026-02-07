@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserCards.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
@@ -25,7 +26,13 @@ internal sealed class UserCardsCommandAggregator : IUserCardsCommandAggregatorSe
         _addUserCardOnlyOperations = addUserCardOnlyOperations;
     }
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(IUserCardItrEntity userCard) => await _addUserCardOperations.Execute(userCard);
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(
+        IUserCardItrEntity userCard,
+        CancellationToken cancellationToken)
+        => await _addUserCardOperations.Execute(userCard, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(IUserCardItrEntity userCard) => await _addUserCardOnlyOperations.Execute(userCard);
+    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(
+        IUserCardItrEntity userCard,
+        CancellationToken cancellationToken)
+        => await _addUserCardOnlyOperations.Execute(userCard, cancellationToken).ConfigureAwait(false);
 }

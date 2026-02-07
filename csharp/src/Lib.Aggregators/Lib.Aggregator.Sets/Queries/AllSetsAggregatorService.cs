@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Adapter.Sets.Apis;
 using Lib.Aggregator.Sets.Exceptions;
 using Lib.Aggregator.Sets.Queries.Mappers;
@@ -38,10 +39,12 @@ internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
         _allSetsMapper = allSetsMapper;
     }
 
-    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(IAllSetsItrEntity input)
+    public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(
+        IAllSetsItrEntity input,
+        CancellationToken cancellationToken)
     {
         IAllSetsXfrEntity allSetsXfr = await _allSetsMapper.Map(input).ConfigureAwait(false);
-        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.AllSetsAsync(allSetsXfr).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ScryfallSetItemExtEntity>> response = await _setAdapterService.AllSetsAsync(allSetsXfr, cancellationToken).ConfigureAwait(false);
 
         if (response.IsFailure)
         {

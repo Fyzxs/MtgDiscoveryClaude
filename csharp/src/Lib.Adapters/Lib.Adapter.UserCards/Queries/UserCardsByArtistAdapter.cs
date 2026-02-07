@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 using Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 using Lib.Adapter.UserCards.Apis.Entities;
@@ -18,22 +19,24 @@ namespace Lib.Adapter.UserCards.Queries;
 /// </summary>
 internal sealed class UserCardsByArtistAdapter : IUserCardsByArtistAdapter
 {
-    private readonly ICosmosInquisition<UserCardItemsByArtistExtEntitys> _userCardsArtistInquisition;
+    private readonly ICosmosInquisition<UserCardItemsByArtistExtEntity> _userCardsArtistInquisition;
     private readonly IUserCardsArtistXfrToArgsMapper _artistXfrToArgsMapper;
 
     public UserCardsByArtistAdapter(ILogger logger) : this(new UserCardItemsByArtistInquisition(logger), new UserCardsArtistXfrToArgsMapper()) { }
 
-    private UserCardsByArtistAdapter(ICosmosInquisition<UserCardItemsByArtistExtEntitys> userCardsArtistInquisition, IUserCardsArtistXfrToArgsMapper artistXfrToArgsMapper)
+    private UserCardsByArtistAdapter(ICosmosInquisition<UserCardItemsByArtistExtEntity> userCardsArtistInquisition, IUserCardsArtistXfrToArgsMapper artistXfrToArgsMapper)
     {
         _userCardsArtistInquisition = userCardsArtistInquisition;
         _artistXfrToArgsMapper = artistXfrToArgsMapper;
     }
 
-    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute([NotNull] IUserCardsArtistXfrEntity input)
+    public async Task<IOperationResponse<IEnumerable<UserCardExtEntity>>> Execute(
+        [NotNull] IUserCardsArtistXfrEntity input,
+        CancellationToken cancellationToken)
     {
-        UserCardItemsByArtistExtEntitys args = await _artistXfrToArgsMapper.Map(input).ConfigureAwait(false);
+        UserCardItemsByArtistExtEntity args = await _artistXfrToArgsMapper.Map(input).ConfigureAwait(false);
 
-        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsArtistInquisition.QueryAsync<UserCardExtEntity>(args).ConfigureAwait(false);
+        OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsArtistInquisition.QueryAsync<UserCardExtEntity>(args, cancellationToken).ConfigureAwait(false);
 
         if (response.IsNotSuccessful())
         {

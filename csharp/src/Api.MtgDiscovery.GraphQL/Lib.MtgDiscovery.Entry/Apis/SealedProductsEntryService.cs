@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
 using Lib.MtgDiscovery.Entry.Queries.SealedProducts;
@@ -17,5 +18,7 @@ internal sealed class SealedProductsEntryService : ISealedProductsEntryService
 
     private SealedProductsEntryService(ISealedProductsBySetCodeEntryService sealedProductsBySetCodeEntryService) => _sealedProductsBySetCodeEntryService = sealedProductsBySetCodeEntryService;
 
-    public Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(ISealedProductsBySetCodeArgEntity args) => _sealedProductsBySetCodeEntryService.Execute(args);
+    public Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(
+        ISealedProductsBySetCodeArgEntity args,
+        CancellationToken cancellationToken) => _sealedProductsBySetCodeEntryService.Execute(args, cancellationToken);
 }

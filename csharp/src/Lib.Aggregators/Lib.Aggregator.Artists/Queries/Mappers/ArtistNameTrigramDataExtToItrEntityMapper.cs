@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.Entities;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistNameTrigrams;
 using Lib.Aggregator.Artists.Queries.Entities;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
 
