@@ -4,4 +4,4 @@ using Lib.Shared.Abstractions.Actions.Mappers;
 
 namespace Lib.Adapter.UserSetCards.Queries.Mappers;
 
-internal interface IAllUserSetCardsXfrToArgsMapper : ICreateMapper<IAllUserSetCardsXfrEntity, AllUserSetCardsExtEntitys>;
+internal interface IAllUserSetCardsXfrToArgsMapper : ICreateMapper<IAllUserSetCardsXfrEntity, AllUserSetCardsExtEntity>;

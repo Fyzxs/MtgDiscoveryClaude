@@ -19,7 +19,7 @@ namespace Lib.Adapter.Collections.Queries;
 internal sealed class CollectionByIdAdapter : ICollectionByIdAdapter
 {
     private readonly ICosmosGopher _gopher;
-    private readonly ICosmosInquisition<CollectionIdExtEntitys> _inquisition;
+    private readonly ICosmosInquisition<CollectionIdExtEntity> _inquisition;
     private readonly ICollectionIdXfrToReadPointMapper _readPointMapper;
 
     public CollectionByIdAdapter(ILogger logger) : this(
@@ -30,7 +30,7 @@ internal sealed class CollectionByIdAdapter : ICollectionByIdAdapter
 
     private CollectionByIdAdapter(
         ICosmosGopher gopher,
-        ICosmosInquisition<CollectionIdExtEntitys> inquisition,
+        ICosmosInquisition<CollectionIdExtEntity> inquisition,
         ICollectionIdXfrToReadPointMapper readPointMapper)
     {
         _gopher = gopher;
@@ -56,7 +56,7 @@ internal sealed class CollectionByIdAdapter : ICollectionByIdAdapter
             }
         }
 
-        CollectionIdExtEntitys args = new() { CollectionId = input.CollectionId };
+        CollectionIdExtEntity args = new() { CollectionId = input.CollectionId };
 
         OpResponse<IEnumerable<CollectionExtEntity>> queryResponse = await _inquisition
             .QueryAsync<CollectionExtEntity>(args, cancellationToken)

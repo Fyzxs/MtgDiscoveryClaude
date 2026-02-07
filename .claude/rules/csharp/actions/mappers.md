@@ -63,14 +63,14 @@ The secondary parameter (e.g., `bool isFirstLogin`) is not reflected in the name
 ```csharp
 // Interface extends base
 internal interface IUserCardsSetXfrToArgsMapper
-    : ICreateMapper<IUserCardsSetXfrEntity, UserCardItemsBySetExtEntitys>;
+    : ICreateMapper<IUserCardsSetXfrEntity, UserCardItemsBySetExtEntity>;
 
 // Implementation
 internal sealed class UserCardsSetXfrToArgsMapper : IUserCardsSetXfrToArgsMapper
 {
-    public Task<UserCardItemsBySetExtEntitys> Map(IUserCardsSetXfrEntity source)
+    public Task<UserCardItemsBySetExtEntity> Map(IUserCardsSetXfrEntity source)
     {
-        UserCardItemsBySetExtEntitys args = new()
+        UserCardItemsBySetExtEntity args = new()
         {
             UserId = source.UserId,
             SetId = source.SetId

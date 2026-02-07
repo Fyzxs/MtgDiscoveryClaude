@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions;
 
-public sealed class CollectionByIdInquisition : ICosmosInquisition<CollectionIdExtEntitys>
+public sealed class CollectionByIdInquisition : ICosmosInquisition<CollectionIdExtEntity>
 {
     private readonly ICosmosInquisitor _inquisitor;
     private readonly InquiryDefinition _inquiry;
@@ -24,7 +24,7 @@ public sealed class CollectionByIdInquisition : ICosmosInquisition<CollectionIdE
         _inquiry = inquiry;
     }
 
-    public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>([NotNull] CollectionIdExtEntitys args, CancellationToken cancellationToken = default)
+    public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>([NotNull] CollectionIdExtEntity args, CancellationToken cancellationToken = default)
     {
         QueryDefinition query = _inquiry.AsSystemType()
             .WithParameter("@collectionId", args.CollectionId);

@@ -5,4 +5,4 @@ using Lib.Shared.Abstractions.Actions.Mappers;
 namespace Lib.Adapter.Collections.Queries.Mappers;
 
 internal interface IUserIdXfrToArgsMapper
-    : ICreateMapper<IUserIdXfrEntity, UserIdExtEntitys>;
+    : ICreateMapper<IUserIdXfrEntity, UserIdExtEntity>;

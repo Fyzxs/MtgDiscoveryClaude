@@ -1,7 +1,7 @@
 namespace Lib.Adapter.Scryfall.Cosmos.Apis.Operators.Inquisitions.Entities;
 
-public sealed class UserCardItemsByNameExtEntitys
+public sealed class UserCardItemsByArtistExtEntity
 {
     public string UserId { get; init; }
-    public string CardNameGuid { get; init; }
+    public string ArtistId { get; init; }
 }

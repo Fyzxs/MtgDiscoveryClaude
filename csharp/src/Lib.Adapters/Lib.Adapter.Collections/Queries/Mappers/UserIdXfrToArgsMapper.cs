@@ -6,9 +6,9 @@ namespace Lib.Adapter.Collections.Queries.Mappers;
 
 internal sealed class UserIdXfrToArgsMapper : IUserIdXfrToArgsMapper
 {
-    public Task<UserIdExtEntitys> Map(IUserIdXfrEntity source)
+    public Task<UserIdExtEntity> Map(IUserIdXfrEntity source)
     {
-        UserIdExtEntitys args = new() { UserId = source.UserId };
+        UserIdExtEntity args = new() { UserId = source.UserId };
 
         return Task.FromResult(args);
     }

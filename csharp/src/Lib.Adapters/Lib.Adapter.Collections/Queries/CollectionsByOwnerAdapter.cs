@@ -16,13 +16,13 @@ namespace Lib.Adapter.Collections.Queries;
 
 internal sealed class CollectionsByOwnerAdapter : ICollectionsByOwnerAdapter
 {
-    private readonly ICosmosInquisition<UserIdExtEntitys> _inquisition;
+    private readonly ICosmosInquisition<UserIdExtEntity> _inquisition;
     private readonly IUserIdXfrToArgsMapper _mapper;
 
     public CollectionsByOwnerAdapter(ILogger logger) : this(new CollectionsByOwnerInquisition(logger), new UserIdXfrToArgsMapper())
     { }
 
-    private CollectionsByOwnerAdapter(ICosmosInquisition<UserIdExtEntitys> inquisition, IUserIdXfrToArgsMapper mapper)
+    private CollectionsByOwnerAdapter(ICosmosInquisition<UserIdExtEntity> inquisition, IUserIdXfrToArgsMapper mapper)
     {
         _inquisition = inquisition;
         _mapper = mapper;
@@ -32,7 +32,7 @@ internal sealed class CollectionsByOwnerAdapter : ICollectionsByOwnerAdapter
         [NotNull] IUserIdXfrEntity input,
         CancellationToken cancellationToken)
     {
-        UserIdExtEntitys args = await _mapper.Map(input).ConfigureAwait(false);
+        UserIdExtEntity args = await _mapper.Map(input).ConfigureAwait(false);
 
         OpResponse<IEnumerable<CollectionExtEntity>> response = await _inquisition
             .QueryAsync<CollectionExtEntity>(args, cancellationToken)

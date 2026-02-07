@@ -19,12 +19,12 @@ namespace Lib.Adapter.UserCards.Queries;
 /// </summary>
 internal sealed class UserCardsByNameAdapter : IUserCardsByNameAdapter
 {
-    private readonly ICosmosInquisition<UserCardItemsByNameExtEntitys> _userCardsNameInquisition;
+    private readonly ICosmosInquisition<UserCardItemsByNameExtEntity> _userCardsNameInquisition;
     private readonly IUserCardsNameXfrToArgsMapper _nameXfrToArgsMapper;
 
     public UserCardsByNameAdapter(ILogger logger) : this(new UserCardItemsByNameInquisition(logger), new UserCardsNameXfrToArgsMapper()) { }
 
-    private UserCardsByNameAdapter(ICosmosInquisition<UserCardItemsByNameExtEntitys> userCardsNameInquisition, IUserCardsNameXfrToArgsMapper nameXfrToArgsMapper)
+    private UserCardsByNameAdapter(ICosmosInquisition<UserCardItemsByNameExtEntity> userCardsNameInquisition, IUserCardsNameXfrToArgsMapper nameXfrToArgsMapper)
     {
         _userCardsNameInquisition = userCardsNameInquisition;
         _nameXfrToArgsMapper = nameXfrToArgsMapper;
@@ -34,7 +34,7 @@ internal sealed class UserCardsByNameAdapter : IUserCardsByNameAdapter
         [NotNull] IUserCardsNameXfrEntity input,
         CancellationToken cancellationToken)
     {
-        UserCardItemsByNameExtEntitys args = await _nameXfrToArgsMapper.Map(input).ConfigureAwait(false);
+        UserCardItemsByNameExtEntity args = await _nameXfrToArgsMapper.Map(input).ConfigureAwait(false);
 
         OpResponse<IEnumerable<UserCardExtEntity>> response = await _userCardsNameInquisition.QueryAsync<UserCardExtEntity>(args, cancellationToken).ConfigureAwait(false);
 

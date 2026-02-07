@@ -6,9 +6,9 @@ namespace Lib.Adapter.UserSetCards.Queries.Mappers;
 
 internal sealed class AllUserSetCardsXfrToArgsMapper : IAllUserSetCardsXfrToArgsMapper
 {
-    public Task<AllUserSetCardsExtEntitys> Map(IAllUserSetCardsXfrEntity xfr)
+    public Task<AllUserSetCardsExtEntity> Map(IAllUserSetCardsXfrEntity xfr)
     {
-        AllUserSetCardsExtEntitys args = new()
+        AllUserSetCardsExtEntity args = new()
         {
             UserId = xfr.UserId
         };

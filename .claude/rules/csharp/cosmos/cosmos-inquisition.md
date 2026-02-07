@@ -25,14 +25,14 @@ Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(TParameters parameters, Cancellat
 | Type | Pattern | Example |
 |------|---------|---------|
 | Inquisition | `{Query}Inquisition` | `UserCardItemsBySetInquisition` |
-| Parameters | `{Query}InquisitionArgs` or `{Query}ExtEntitys` | `UserCardItemsBySetExtEntitys` |
+| Parameters | `{Query}InquisitionArgs` or `{Query}ExtEntity` | `UserCardItemsBySetExtEntity` |
 
-**Note**: Parameter entities use the plural suffix `ExtEntitys` (not `ExtEntities`).
+**Note**: Parameter entities use the singular suffix `ExtEntity`.
 
 ## Implementation Pattern
 
 ```csharp
-public sealed class UserCardItemsBySetInquisition : ICosmosInquisition<UserCardItemsBySetExtEntitys>
+public sealed class UserCardItemsBySetInquisition : ICosmosInquisition<UserCardItemsBySetExtEntity>
 {
     private readonly ICosmosInquisitor _inquisitor;
     private readonly InquiryDefinition _inquiry;
@@ -48,7 +48,7 @@ public sealed class UserCardItemsBySetInquisition : ICosmosInquisition<UserCardI
     }
 
     public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(
-        UserCardItemsBySetExtEntitys args,
+        UserCardItemsBySetExtEntity args,
         CancellationToken cancellationToken = default)
     {
         QueryDefinition query = _inquiry.AsSystemType()
@@ -94,8 +94,8 @@ public sealed class CardsBySetIdInquisitionArgs
 
 | Inquisition | Parameters |
 |-------------|------------|
-| `UserCardItemsBySetInquisition` | `UserCardItemsBySetExtEntitys` |
-| `UserCardItemsByNameInquisition` | `UserCardItemsByNameExtEntitys` |
+| `UserCardItemsBySetInquisition` | `UserCardItemsBySetExtEntity` |
+| `UserCardItemsByNameInquisition` | `UserCardItemsByNameExtEntity` |
 | `CardsByArtistIdInquisition` | `CardsByArtistIdInquisitionArgs` |
 | `CardNameTrigramSearchInquisition` | `CardNameTrigramSearchInquisitionArgs` |
 | `AllUserSetCardsInquisition` | (non-parameterized) |

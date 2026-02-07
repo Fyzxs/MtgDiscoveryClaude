@@ -17,7 +17,7 @@ public sealed class UserIdXfrToArgsMapperTests
         UserIdXfrToArgsMapper subject = new();
 
         // Act
-        UserIdExtEntitys actual = await subject.Map(input).ConfigureAwait(false);
+        UserIdExtEntity actual = await subject.Map(input).ConfigureAwait(false);
 
         // Assert
         actual.UserId.Should().Be(expectedUserId);
@@ -31,7 +31,7 @@ public sealed class UserIdXfrToArgsMapperTests
         UserIdXfrToArgsMapper subject = new();
 
         // Act
-        UserIdExtEntitys actual = await subject.Map(input).ConfigureAwait(false);
+        UserIdExtEntity actual = await subject.Map(input).ConfigureAwait(false);
 
         // Assert
         actual.UserId.Should().BeEmpty();
@@ -45,8 +45,8 @@ public sealed class UserIdXfrToArgsMapperTests
         UserIdXfrToArgsMapper subject = new();
 
         // Act
-        UserIdExtEntitys firstCall = await subject.Map(input).ConfigureAwait(false);
-        UserIdExtEntitys secondCall = await subject.Map(input).ConfigureAwait(false);
+        UserIdExtEntity firstCall = await subject.Map(input).ConfigureAwait(false);
+        UserIdExtEntity secondCall = await subject.Map(input).ConfigureAwait(false);
 
         // Assert
         firstCall.Should().NotBeSameAs(secondCall);

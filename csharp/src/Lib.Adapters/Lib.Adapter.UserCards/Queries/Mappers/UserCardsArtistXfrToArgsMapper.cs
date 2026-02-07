@@ -6,9 +6,9 @@ namespace Lib.Adapter.UserCards.Queries.Mappers;
 
 internal sealed class UserCardsArtistXfrToArgsMapper : IUserCardsArtistXfrToArgsMapper
 {
-    public Task<UserCardItemsByArtistExtEntitys> Map(IUserCardsArtistXfrEntity source)
+    public Task<UserCardItemsByArtistExtEntity> Map(IUserCardsArtistXfrEntity source)
     {
-        UserCardItemsByArtistExtEntitys args = new()
+        UserCardItemsByArtistExtEntity args = new()
         {
             UserId = source.UserId,
             ArtistId = source.ArtistId
