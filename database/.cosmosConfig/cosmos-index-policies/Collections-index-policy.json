@@ -1,0 +1,20 @@
+{
+  "indexingMode": "consistent",
+  "automatic": true,
+  "includedPaths": [
+    {
+      "path": "/authorized_users/[]/user_id/?"
+    },
+    {
+      "path": "/visibility/?"
+    }
+  ],
+  "excludedPaths": [
+    {
+      "path": "/*"
+    },
+    {
+      "path": "/\"_etag\"/?"
+    }
+  ]
+}

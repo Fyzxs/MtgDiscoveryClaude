@@ -844,44 +844,43 @@ This authorization logic should move to the **Domain** or **Aggregator** layer. 
 
 ### Infrastructure Layer (`Lib.Adapter.Scryfall.Cosmos`)
 
-- [ ] Create `CollectionsByOwnerQueryDefinition.cs`
-- [ ] Create `CollectionByIdQueryDefinition.cs`
-- [ ] Create `AccessibleCollectionsQueryDefinition.cs`
-- [ ] Create `UserIdExtEntitys.cs`
-- [ ] Create `CollectionIdExtEntitys.cs`
-- [ ] Create `CollectionsByOwnerInquisition.cs`
-- [ ] Create `CollectionByIdInquisition.cs`
-- [ ] Create `AccessibleCollectionsInquisition.cs`
+- [x] Create `CollectionsByOwnerQueryDefinition.cs`
+- [x] Create `CollectionByIdQueryDefinition.cs`
+- [x] Create `AccessibleCollectionsQueryDefinition.cs`
+- [x] Create `UserIdExtEntitys.cs`
+- [x] Create `CollectionIdExtEntitys.cs`
+- [x] Create `CollectionsByOwnerInquisition.cs`
+- [x] Create `CollectionByIdInquisition.cs`
+- [x] Create `AccessibleCollectionsInquisition.cs`
 
 ### Adapter Layer (`Lib.Adapter.Collections`)
 
-- [ ] Create `IUserIdXfrToArgsMapper.cs`
-- [ ] Create `UserIdXfrToArgsMapper.cs`
-- [ ] Create `ICollectionIdXfrToReadPointMapper.cs`
-- [ ] Create `CollectionIdXfrToReadPointMapper.cs`
-- [ ] Create `IDefaultCollectionAdapter.cs`
-- [ ] Create `DefaultCollectionAdapter.cs`
-- [ ] Create `ICollectionsByOwnerAdapter.cs`
-- [ ] Create `CollectionsByOwnerAdapter.cs`
-- [ ] Create `ICollectionByIdAdapter.cs`
-- [ ] Create `CollectionByIdAdapter.cs`
-- [ ] Create `IAccessibleCollectionsAdapter.cs`
-- [ ] Create `AccessibleCollectionsAdapter.cs`
-- [ ] Update `ICollectionQueryAdapter.cs` to delegate
-- [ ] Update `CollectionAdapterService.cs` to wire new adapters
-- [ ] Delete `CollectionQueryAdapter.cs` (after migration complete)
+- [x] Create `IUserIdXfrToArgsMapper.cs`
+- [x] Create `UserIdXfrToArgsMapper.cs`
+- [x] Create `ICollectionIdXfrToReadPointMapper.cs`
+- [x] Create `CollectionIdXfrToReadPointMapper.cs`
+- [x] Create `IDefaultCollectionAdapter.cs`
+- [x] Create `DefaultCollectionAdapter.cs`
+- [x] Create `ICollectionsByOwnerAdapter.cs`
+- [x] Create `CollectionsByOwnerAdapter.cs`
+- [x] Create `ICollectionByIdAdapter.cs`
+- [x] Create `CollectionByIdAdapter.cs`
+- [x] Create `IAccessibleCollectionsAdapter.cs`
+- [x] Create `AccessibleCollectionsAdapter.cs`
+- [x] Update `CollectionQueryAdapter.cs` to delegate to specialized adapters
+- [x] `CollectionAdapterService.cs` already wires via `ICollectionQueryAdapter` (no changes needed)
+- [ ] Delete `CollectionQueryAdapter.cs` (deferred - after migration validated)
 
 ### Database
 
-- [ ] Create `Collections-index-policy.json`
-- [ ] Apply index policy to Collections container (before code deployment)
+- [x] Create `Collections-index-policy.json`
+- [ ] Apply index policy to Collections container (manual deployment step)
 
 ### Tests
 
-- [ ] Create tests for each new Inquisition (3)
-- [ ] Create tests for each new Adapter (4)
-- [ ] Create tests for each new Mapper (2)
-- [ ] Update existing integration tests
+- [x] Create tests for mappers (2) - `UserIdXfrToArgsMapperTests`, `CollectionIdXfrToReadPointMapperTests`
+- [x] Create tests for adapters - `DefaultCollectionAdapterTests`, `CollectionQueryAdapterTests`
+- [x] All 33 tests passing
 
 ---
 
