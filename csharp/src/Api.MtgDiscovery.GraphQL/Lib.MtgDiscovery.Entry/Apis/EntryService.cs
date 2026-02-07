@@ -176,7 +176,7 @@ public sealed class EntryService : IEntryService
 
     public async Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(
         ISealedProductsBySetCodeArgEntity args,
-        CancellationToken cancellationToken) => await _sealedProductsEntryService.SealedProductsBySetCodeAsync(args, cancellationToken);
+        CancellationToken cancellationToken) => await _sealedProductsEntryService.SealedProductsBySetCodeAsync(args, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<List<SealedProductOutEntity>>> AddSealedProductToCollectionAsync(IAddSealedProductToCollectionArgsEntity args, CancellationToken cancellationToken) => await _userSealedProductsEntryService.AddSealedProductToCollectionAsync(args, cancellationToken).ConfigureAwait(false);
 
