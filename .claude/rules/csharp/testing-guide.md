@@ -7,6 +7,7 @@ paths:
 
 This guide documents patterns used in the test suite. These are natural outcomes of good test design, not prescriptive rules.
 
+
 ## Test Structure
 
 Tests in this codebase follow a consistent pattern:
@@ -68,3 +69,6 @@ Tests follow the codebase structure:
 ## Learning by Example
 
 Read existing tests to understand the patterns. The code is the documentation.
+
+## Extensive Documentation
+While code is the authority, disagreements can be settled with the [../../TESTING_GUIDELINES.md]

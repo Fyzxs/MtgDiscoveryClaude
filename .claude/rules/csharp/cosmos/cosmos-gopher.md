@@ -1,3 +1,8 @@
+---
+paths:
+  - "csharp/src/**/*Gopher.cs"
+---
+
 # Cosmos Gopher Pattern
 
 ## Purpose

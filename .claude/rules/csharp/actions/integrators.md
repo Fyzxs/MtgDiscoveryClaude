@@ -1,3 +1,8 @@
+---
+paths:
+  - "csharp/src/**/Integrators/**
+---
+
 # Integrator Pattern
 
 ## Purpose

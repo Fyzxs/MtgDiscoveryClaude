@@ -1,3 +1,8 @@
+---
+paths:
+  - "csharp/src/**/*Inquisition.cs"
+---
+
 # Cosmos Inquisition Pattern
 
 ## Purpose
