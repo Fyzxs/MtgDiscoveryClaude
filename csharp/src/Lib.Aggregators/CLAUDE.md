@@ -5,12 +5,29 @@ Orchestrate data retrieval from multiple adapters and transform between represen
 
 ## Architecture Pattern
 
-**Composite Service → Passthrough Service → Specialized Aggregators → (Adapters)**
+**Passthrough Facade → Router → Behavior Aggregators → (Adapters)**
 
-Example: `Lib.Aggregator.Artists/Apis/`
-- Interface: `IArtistAggregatorService.cs` (composite, inherits all specialized interfaces)
-- Service: `ArtistAggregatorService.cs` (passthrough pattern)
-- Operations: `ArtistSearchAggregatorService.cs`, `CardsByArtistAggregatorService.cs`
+```
+Apis/{Domain}AggregatorService         (public passthrough facade)
+  ├── Commands/{Domain}CommandAggregator   (internal router)
+  │     ├── {Behavior}Aggregator           (internal behavior)
+  │     └── {Behavior}Aggregator
+  └── Queries/{Domain}QueryAggregator      (internal router)
+        ├── {Behavior}Aggregator           (internal behavior)
+        └── {Behavior}Aggregator
+```
+
+### Passthrough Facade
+
+The `{Domain}AggregatorService` in `Apis/` delegates every call to a command or query router. It contains NO logic — pure passthrough with `await ... .ConfigureAwait(false)`.
+
+See: `.claude/rules/csharp/layers/aggregator/apis.md` for full documentation.
+
+### Router Classes
+
+`{Domain}CommandAggregator` and `{Domain}QueryAggregator` sit between the facade and individual behaviors. They construct all behavior classes via constructor chaining and delegate each method to the appropriate behavior's `Execute()`.
+
+See: `cqrs-commands.md` and `cqrs-queries.md` for full documentation.
 
 ## Entity Transformation Pipeline
 
@@ -28,6 +45,21 @@ Three mappers: **ItrToXfr** (request), **ExtToOuf** (response), **ItemToItem** (
 
 See: `Lib.Aggregator.Artists/Queries/Mappers/` for implementation examples
 
+## Naming Conventions
+
+| Item | Scope | Pattern | Example |
+|------|-------|---------|---------|
+| Facade Interface | public | `I{Domain}AggregatorService` | `IArtistAggregatorService` |
+| Facade Implementation | public | `{Domain}AggregatorService` | `ArtistAggregatorService` |
+| Command Router | internal | `{Domain}CommandAggregator` | `CollectionCommandAggregator` |
+| Query Router | internal | `{Domain}QueryAggregator` | `CollectionQueryAggregator` |
+| Behavior Interface | internal | `I{Behavior}Aggregator` | `IArtistSearchAggregator` |
+| Behavior Implementation | internal | `{Behavior}Aggregator` | `ArtistSearchAggregator` |
+| Request Mapper | internal | `I{Entity}ItrToXfrMapper` | `IArtistSearchTermItrToXfrMapper` |
+| Response Mapper | internal | `I{Entity}ExtToOufMapper` | `IArtistSearchExtToOufMapper` |
+
+**Key rule**: `AggregatorService` suffix = public scope (`Apis/`). `Aggregator` suffix = internal scope (`Commands/`, `Queries/`).
+
 ## Key Patterns
 
 **Mapper Examples**:
@@ -39,6 +71,124 @@ See: `Lib.Aggregator.Artists/Queries/Mappers/` for implementation examples
 
 **Constructor Pattern**:
 - Public with logger, private with dependencies (adapter service + mappers): `ArtistSearchAggregatorService.cs:20-34`
+
+## Collection Mapper Base Classes
+
+Two base classes in `Lib.Shared.Abstractions/Actions/Mappers/` support collection mapping:
+
+### CollectionCreateMapper<TSource, TResult>
+
+Maps `IEnumerable<TSource>` → `TResult[]` using `Task.WhenAll` for parallel execution. Used for top-level collection mapping in services (e.g., mapping an entire adapter response collection).
+
+```csharp
+// Base class wraps an item mapper and applies it to each element in parallel
+public abstract class CollectionCreateMapper<TSource, TResult>
+    : ICreateMapper<IEnumerable<TSource>, IEnumerable<TResult>>
+{
+    private readonly ICreateMapper<TSource, TResult> _mapper;
+
+    protected CollectionCreateMapper(ICreateMapper<TSource, TResult> mapper) => _mapper = mapper;
+
+    public async Task<IEnumerable<TResult>> Map(IEnumerable<TSource> source)
+    {
+        ICollection<Task<TResult>> tasks = [.. source.Select(item => _mapper.Map(item))];
+        TResult[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
+        return results;
+    }
+}
+```
+
+**Usage**:
+```csharp
+internal sealed class CollectionCollectionExtToOufMapper
+    : CollectionCreateMapper<CollectionExtEntity, ICollectionOufEntity>,
+      ICollectionCollectionExtToOufMapper
+{
+    public CollectionCollectionExtToOufMapper() : this(new CollectionExtToOufMapper()) { }
+    private CollectionCollectionExtToOufMapper(ICollectionExtToOufMapper mapper) : base(mapper) { }
+}
+```
+
+### ChildCollectionMapper<TChildSource, TChildResult>
+
+Abstract base for mappers that internally map child collections via `MapChildren()`. Used when a parent entity contains a nested collection that needs mapping (e.g., a `CollectionExtEntity` with an `AuthorizedUsers` list).
+
+```csharp
+public abstract class ChildCollectionMapper<TChildSource, TChildResult>
+{
+    private readonly ICreateMapper<TChildSource, TChildResult> _childMapper;
+
+    protected ChildCollectionMapper(ICreateMapper<TChildSource, TChildResult> childMapper)
+        => _childMapper = childMapper;
+
+    protected async Task<TChildResult[]> MapChildren(IEnumerable<TChildSource> children)
+    {
+        return await Task.WhenAll(children.Select(child => _childMapper.Map(child)))
+            .ConfigureAwait(false);
+    }
+}
+```
+
+**Usage**:
+```csharp
+internal sealed class CollectionExtToOufMapper
+    : ChildCollectionMapper<AuthorizedUserExtEntity, IAuthorizedUserOufEntity>,
+      ICollectionExtToOufMapper
+{
+    public CollectionExtToOufMapper() : this(new AuthorizedUserExtToOufMapper()) { }
+    private CollectionExtToOufMapper(IAuthorizedUserExtToOufMapper mapper) : base(mapper) { }
+
+    public async Task<ICollectionOufEntity> Map(CollectionExtEntity source)
+    {
+        IAuthorizedUserOufEntity[] authorizedUsers = await MapChildren(source.AuthorizedUsers)
+            .ConfigureAwait(false);
+        // ... map remaining properties
+    }
+}
+```
+
+## Exception Pattern
+
+Aggregator-specific exceptions provide domain context for adapter failures. Not all projects need them.
+
+- **Naming**: `{Domain}AggregatorOperationException` or `{Domain}AggregatorException`
+- **Base class**: Extends `OperationException` with `HttpStatusCode.InternalServerError`
+- **Location**: `Exceptions/` at project root
+- **Pragma**: Requires `#pragma warning disable CA1032`
+
+```csharp
+#pragma warning disable CA1032
+internal sealed class CardAggregatorOperationException : OperationException
+#pragma warning restore CA1032
+{
+    public CardAggregatorOperationException(string message, Exception innerException = null)
+        : base(HttpStatusCode.InternalServerError, message, innerException)
+    { }
+}
+```
+
+**Projects with exceptions**: Cards, Sets, SealedProducts.
+
+## Scryfall.Shared — Shared Aggregator Library
+
+`Lib.Aggregator.Scryfall.Shared` is a **shared library** consumed by other aggregator projects. It does NOT follow the standard aggregator project structure (no `Apis/`, `Commands/`, or `Queries/`).
+
+### Structure
+
+```
+Lib.Aggregator.Scryfall.Shared/
+├── Entities/          (shared OufEntities: CardItemOufEntity, CardItemCollectionOufEntity)
+├── Internals/         (ItrEntity implementations used internally by the shared mapper)
+└── Mappers/           (shared mappers: DynamicToCardItemOufEntityMapper)
+```
+
+### When to Use
+
+Create a shared aggregator library when multiple aggregator projects need the same OufEntities and mappers (e.g., multiple Scryfall-sourced aggregators share `CardItemOufEntity`).
+
+### Internals/ Folder
+
+The `Internals/` folder contains ItrEntity implementations that are internal to the shared library. These are an exception to the ItrEntity exclusion rule because they support the shared mapper's internal transformation logic (mapping Scryfall's dynamic JSON into typed entities).
 
 ## Cross-Cutting Patterns
 
@@ -55,26 +205,16 @@ Aggregators use action patterns from `Lib.Shared.Abstractions/Actions/`. See: `c
 5. **ConfigureAwait(false)**: All async calls
 6. **Entity boundaries**: ItrEntity in, OufEntity out (never expose ExtEntity upward)
 
-## Naming Conventions
-
-| Item | Pattern | Example |
-|------|---------|---------|
-| Service Interface | `I{Domain}AggregatorService` | `IArtistAggregatorService` |
-| Service Implementation | `{Domain}AggregatorService` | `ArtistAggregatorService` |
-| Aggregator Interface | `I{Operation}{Domain}AggregatorService` | `IArtistSearchAggregatorService` |
-| Aggregator Implementation | `{Operation}{Domain}AggregatorService` | `ArtistSearchAggregatorService` |
-| Request Mapper | `I{Entity}ItrToXfrMapper` | `IArtistSearchTermItrToXfrMapper` |
-| Response Mapper | `I{Entity}ExtToOufMapper` | `IArtistSearchExtToOufMapper` |
-
 ## When Adding a New Aggregator
 
 1. Create composite interface in `Apis/`
-2. Create passthrough service in `Apis/`
-3. Create specialized operation class
-4. Create mappers (request and response)
-5. Register in composite interface
+2. Create passthrough facade in `Apis/`
+3. Create router class(es) in `Commands/` and/or `Queries/`
+4. Create behavior class(es) with interface
+5. Create mappers (request and response)
+6. Register in router and facade
 
-See: `Lib.Aggregator.Artists/` for complete example
+See: `Lib.Aggregator.Collections/` for complete example
 
 ## Additional Patterns
 
@@ -88,29 +228,4 @@ public string CacheKey => $"artist:search:{Normalized}";
 
 ### Execute Method Convention
 
-All internal aggregator operation services use `Execute(IItrEntity, CancellationToken)` as their single method:
-
-```csharp
-public async Task<IOperationResponse<IOufEntity>> Execute(
-    IItrEntity input, CancellationToken cancellationToken)
-```
-
-### Exception Wrapping
-
-Aggregators may wrap adapter failures in domain-specific exceptions for context:
-
-```csharp
-new FailureOperationResponse<IEnumerable<ISealedProductOufEntity>>(
-    new SealedProductsAggregatorException($"Failed to retrieve sealed products for set '{input.SetCode}'", response.OuterException));
-```
-
-Exception classes live in `Exceptions/` within the aggregator project.
-
-### Collection Mapping with Task.WhenAll
-
-When mapping collections of `ExtEntity` → `OufEntity`, use `Task.WhenAll` for parallel execution:
-
-```csharp
-IEnumerable<IOufEntity> oufEntities = await Task.WhenAll(
-    response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
-```
+All internal aggregator behavior classes use `Execute(IItrEntity, CancellationToken)` as their single method, inherited from `IOperationResponseService<TInput, TOutput>`.
