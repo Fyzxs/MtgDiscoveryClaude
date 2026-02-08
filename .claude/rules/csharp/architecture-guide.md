@@ -60,9 +60,10 @@ See: `CLAUDE.md` (Naming Conventions section) for full table.
 ## Key Patterns
 
 - **Constructor Chain (DI)** — See: `ArtistQueryMethods.cs:24-29`
-- **Validator Container** — Many small validator classes composed together
-- **Explicit Mappers** — Every layer crossing gets a dedicated `ICreateMapper<TSource, TDestination>`
-- **Inquisition Pattern** — Parameterized Cosmos queries with strongly typed parameters
+- **Validator Container** — Many small validator classes composed together — see `actions/validators.md`
+- **Explicit Mappers** — Every layer crossing gets a dedicated `ICreateMapper<TSource, TDestination>` — see `actions/mappers.md`
+- **Enrichments** — Post-query data enrichment at the Entry layer — see `actions/enrichments.md`
+- **Inquisition Pattern** — Parameterized Cosmos queries with strongly typed parameters — see `cosmos/cosmos-inquisition.md`
 - **Null Object Pattern** — Use instead of null checks; trust objects to handle absence
 
 **Explore the codebase** to see these patterns in action. Real examples are better teachers than descriptions.
@@ -71,6 +72,22 @@ See: `CLAUDE.md` (Naming Conventions section) for full table.
 
 ## What to Read Next
 
-- **Adding a GraphQL query?** → `.claude/rules/graphql-conventions.md`
-- **Writing tests?** → `.claude/rules/testing-guide.md`
-- **C# design principles?** → `.claude/rules/microobjects-philosophy.md`
+### By layer
+- **App/GraphQL layer** → `layers/app/folder-structure.md`, `layers/app/response-models.md`, `layers/app/authentication.md`, `layers/app/schema-extensions.md`, `layers/app/input-types.md`, `layers/app/error-handling.md`, `layers/app/startup-configuration.md`, `graphql-conventions.md`
+- **Entry layer** → `layers/entry/folder-structure.md`, `layers/entry/apis.md`, `layers/entry/cqrs-queries.md`, `layers/entry/cqrs-commands.md`, `layers/entry/entities.md`
+- **Domain layer** → `layers/domain/`
+- **Aggregator layer** → `layers/aggregator/`
+- **Adapter layer** → `layers/adapters/`
+
+### By concern
+- **Adding a GraphQL query?** → `graphql-conventions.md`
+- **Writing tests?** → `testing-guide.md`
+- **C# design principles?** → `csharp-code-style.md`
+- **Writing validators?** → `actions/validators.md`
+- **Writing enrichments?** → `actions/enrichments.md`
+- **Error handling?** → `layers/app/error-handling.md`
+- **Schema registration?** → `layers/app/schema-extensions.md`
+- **Startup/configuration?** → `layers/app/startup-configuration.md`
+
+### Domain-specific
+- **Signing** — Artist autograph tracking: organizes user cards by artist for signing sessions. Query: `UserCardsForSigning`. Entities: `SigningResultOutEntity`, `SigningSetGroupOutEntity`, `SigningArtistGroupOutEntity`, `SigningCardOutEntity`. See: `Queries/UserCardsQueryMethods.cs`, `Entities/Types/Signing/`

@@ -1,6 +1,6 @@
 using Lib.Shared.Abstractions.Actions.Validators;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class ValidatorActionResultFake<TFailureStatus> : IValidatorActionResult<TFailureStatus>
 {

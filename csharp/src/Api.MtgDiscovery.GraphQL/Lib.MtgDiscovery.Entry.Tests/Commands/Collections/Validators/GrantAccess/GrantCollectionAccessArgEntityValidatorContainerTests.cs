@@ -29,7 +29,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsValid().Should().BeTrue();
     }
 
@@ -44,7 +43,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(null!).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -65,7 +63,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -86,7 +83,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -107,7 +103,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -128,7 +123,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -149,7 +143,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsValid().Should().BeTrue();
     }
 
@@ -170,7 +163,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsValid().Should().BeTrue();
     }
 
@@ -191,7 +183,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -212,7 +203,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -233,7 +223,6 @@ public sealed class GrantCollectionAccessArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 

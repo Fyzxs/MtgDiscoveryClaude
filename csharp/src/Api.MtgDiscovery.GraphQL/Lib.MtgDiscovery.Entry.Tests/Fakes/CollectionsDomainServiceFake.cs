@@ -7,7 +7,7 @@ using Lib.Shared.DataModels.Entities.Itrs.User;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 using Lib.Shared.Invocation.Operations;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class CollectionsDomainServiceFake : ICollectionsDomainService
 {

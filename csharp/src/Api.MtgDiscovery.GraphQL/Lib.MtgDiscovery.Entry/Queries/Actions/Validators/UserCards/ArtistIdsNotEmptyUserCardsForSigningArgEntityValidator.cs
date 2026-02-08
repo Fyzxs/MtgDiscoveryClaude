@@ -13,7 +13,7 @@ internal sealed class ArtistIdsNotEmptyUserCardsForSigningArgEntityValidator : O
 
     public sealed class Validator : IValidator<IUserCardsForSigningArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsForSigningArgEntity arg) => Task.FromResult(arg.ArtistIds.Count > 0);
+        public Task<bool> IsValid(IUserCardsForSigningArgEntity arg) => Task.FromResult(0 < arg.ArtistIds.Count);
     }
 
     public sealed class Message : OperationResponseMessage

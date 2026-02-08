@@ -37,6 +37,47 @@ Implementation Checklist
   - These handle validation, mapping, domain calls
   - GraphQL never touches these layers
 
+## ExtendObjectType Pattern
+
+Query and mutation methods use marker classes extended via `[ExtendObjectType]`:
+
+```csharp
+// Marker class (empty root type)
+[ObjectType]
+public sealed class ApiQuery { }
+
+// Extension class (methods become GraphQL fields)
+[ExtendObjectType(typeof(ApiQuery))]
+internal sealed class CardQueryMethods
+{
+    public CardQueryMethods(ILogger logger) : this(
+        new EntryService(logger),
+        new OperationResponseToResponseModelMapper<List<CardItemOutEntity>>())
+    { }
+
+    private CardQueryMethods(
+        IEntryService entryService,
+        IOperationResponseToResponseModelMapper<List<CardItemOutEntity>> cardResponseMapper)
+    { ... }
+
+    [GraphQLType(typeof(CardResponseModelUnionType))]
+    public async Task<ResponseModel> CardsById(
+        CardIdsArgEntity ids, CancellationToken cancellationToken)
+    {
+        IOperationResponse<List<CardItemOutEntity>> response =
+            await _entryService.CardsByIdsAsync(ids, cancellationToken).ConfigureAwait(false);
+        return await _cardResponseMapper.Map(response).ConfigureAwait(false);
+    }
+}
+```
+
+**Key elements:**
+- `[ObjectType]` on empty marker class (`ApiQuery`, `ApiMutation`)
+- `[ExtendObjectType(typeof(...))]` on method classes
+- `[GraphQLType(typeof(...))]` specifies the union return type
+- `[Authorize]` on mutations that require authentication
+- Constructor chain: `public(ILogger)` → `private(all dependencies)`
+
 ## Key Rules
 - GraphQL = Request/Response translation only
 - No business logic, validation, or mapping in queries/mutations
@@ -49,3 +90,14 @@ Implementation Checklist
 - Complete mutation endpoint: Mutations/UserMutationMethods.cs (lines 17-45)
 - Full type registration: Schemas/ApiQueryExtensions.cs (lines 17-72)
 - Mapper usage: Queries/CardQueryMethods.cs:45-46 or Mutations/UserMutationMethods.cs:42-43
+
+## Detailed Documentation
+
+For deeper coverage of specific App-layer topics:
+- **Folder structure** → `layers/app/folder-structure.md`
+- **Schema registration** → `layers/app/schema-extensions.md`
+- **Response models** → `layers/app/response-models.md`
+- **InputType descriptors** → `layers/app/input-types.md`
+- **Authentication** → `layers/app/authentication.md`
+- **Error handling** → `layers/app/error-handling.md`
+- **Startup configuration** → `layers/app/startup-configuration.md`

@@ -17,10 +17,14 @@ When working on tasks, consult the appropriate guide:
 
 | Task | Guide |
 |------|-------|
-| Adding a GraphQL query or mutation | `.claude/rules/graphql-conventions.md` |
-| Understanding architecture & layers | `.claude/rules/architecture-guide.md` |
-| Writing C# code | `.claude/rules/microobjects-philosophy.md` |
-| Writing or maintaining tests | `.claude/rules/testing-guide.md` |
+| Adding a GraphQL query or mutation | `.claude/rules/csharp/graphql-conventions.md` |
+| Understanding architecture & layers | `.claude/rules/csharp/architecture-guide.md` |
+| Writing C# code | `.claude/rules/csharp/csharp-code-style.md` |
+| Writing or maintaining tests | `.claude/rules/csharp/testing-guide.md` |
+| Working in the Entry layer | `.claude/rules/csharp/layers/entry/` |
+| Working in the App/GraphQL layer | `.claude/rules/csharp/layers/app/` |
+| Writing validators | `.claude/rules/csharp/actions/validators.md` |
+| Writing enrichments | `.claude/rules/csharp/actions/enrichments.md` |
 
 ## Core Principles
 

@@ -5,7 +5,7 @@ using Lib.Domain.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Collections.Mappers;
-using Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+using Lib.MtgDiscovery.Entry.Tests.Fakes;
 using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
@@ -60,7 +60,6 @@ public sealed class DefaultCollectionCreatorTests
         // Assert
         domainFake.GetDefaultCollectionAsyncInvokeCount.Should().Be(1);
         domainFake.CreateCollectionAsyncInvokeCount.Should().Be(1);
-        domainFake.CreateCollectionAsyncLastEntity.Should().NotBeNull();
         domainFake.CreateCollectionAsyncLastEntity.OwnerId.Should().Be("user-123");
         domainFake.CreateCollectionAsyncLastEntity.Name.Should().Be("My Collection");
         domainFake.CreateCollectionAsyncLastEntity.Type.Should().Be("default");

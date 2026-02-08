@@ -28,7 +28,6 @@ public sealed class TransferCollectionOwnershipArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsValid().Should().BeTrue();
     }
 
@@ -43,7 +42,6 @@ public sealed class TransferCollectionOwnershipArgEntityValidatorContainerTests
             await subject.Validate(null!).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -63,7 +61,6 @@ public sealed class TransferCollectionOwnershipArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -83,7 +80,6 @@ public sealed class TransferCollectionOwnershipArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -103,7 +99,6 @@ public sealed class TransferCollectionOwnershipArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -123,7 +118,6 @@ public sealed class TransferCollectionOwnershipArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 

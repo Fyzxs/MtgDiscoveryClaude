@@ -3,7 +3,7 @@ using Lib.MtgDiscovery.Entry.Commands.Collections.Mappers;
 using Lib.Shared.DataModels.Entities.Args.Collections;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class CreateCollectionArgToItrMapperFake : ICreateCollectionArgToItrMapper
 {

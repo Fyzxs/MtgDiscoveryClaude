@@ -2,7 +2,7 @@ using System.Net;
 using Lib.Shared.Invocation.Exceptions;
 using Lib.Shared.Invocation.Operations;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class OperationResponseFake<T> : IOperationResponse<T>
 {

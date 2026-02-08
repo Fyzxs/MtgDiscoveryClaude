@@ -18,7 +18,7 @@ See `.claude/rules/csharp/graphql-conventions.md` for the full implementation ch
 - `Queries/ApiQuery.cs`, `Mutations/ApiMutation.cs` — Marker classes
 - `Entities/Args/` — Input entities (ArgEntity)
 - `Entities/Types/ResponseModels/` — Union response types
-- `Entities/Types/Schemas/` — Schema extensions (SetSchemaExtensions.cs, etc.)
+- `Schemas/` — Schema extensions (ApiQueryExtensions.cs, SetSchemaExtensions.cs, etc.)
 - `Lib.MtgDiscovery.Entry/Apis/IEntryService.cs` — Main service composition
 
 ## Authentication

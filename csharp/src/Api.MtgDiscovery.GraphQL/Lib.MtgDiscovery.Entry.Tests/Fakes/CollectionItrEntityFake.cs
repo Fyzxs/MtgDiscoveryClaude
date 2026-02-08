@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class CollectionItrEntityFake : ICollectionItrEntity
 {

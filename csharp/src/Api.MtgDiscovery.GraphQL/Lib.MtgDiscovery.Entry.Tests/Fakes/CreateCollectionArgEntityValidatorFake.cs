@@ -5,7 +5,7 @@ using Lib.Shared.DataModels.Entities.Args.Collections;
 using Lib.Shared.DataModels.Entities.Itrs.Collections;
 using Lib.Shared.Invocation.Operations;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class CreateCollectionArgEntityValidatorFake : ICreateCollectionArgEntityValidator
 {

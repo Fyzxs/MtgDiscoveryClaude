@@ -3,7 +3,7 @@ using Lib.MtgDiscovery.Entry.Commands.Collections.Mappers;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Collections;
 using Lib.Shared.DataModels.Entities.Oufs.Collections;
 
-namespace Lib.MtgDiscovery.Entry.Tests.Commands.Collections.Fakes;
+namespace Lib.MtgDiscovery.Entry.Tests.Fakes;
 
 internal sealed class CollectionOufToOutMapperFake : ICollectionOufToOutMapper
 {
