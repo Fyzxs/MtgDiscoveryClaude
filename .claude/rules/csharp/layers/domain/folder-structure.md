@@ -16,23 +16,29 @@ Lib.Domain.{Domain}/
 │   └── I{Domain}QueryDomainService.cs               (query interface)
 ├── Commands/                                    (command implementations)
 │   ├── {Domain}CommandDomainService.cs              (router — implements command interface)
-│   ├── I{Behavior}DomainService.cs                  (specialized operation interface)
-│   └── {Behavior}DomainService.cs                   (specialized operation implementation)
+│   ├── I{Behavior}Domain.cs                         (specialized operation interface)
+│   └── {Behavior}Domain.cs                          (specialized operation implementation)
 └── Queries/                                     (query implementations)
     ├── {Domain}QueryDomainService.cs                (router — implements query interface)
-    ├── I{Behavior}DomainService.cs                  (specialized operation interface)
-    └── {Behavior}DomainService.cs                   (specialized operation implementation)
+    ├── I{Behavior}Domain.cs                         (specialized operation interface)
+    └── {Behavior}Domain.cs                          (specialized operation implementation)
 ```
 
 ## Key Rules
 
 ### Naming
 
-All domain classes use the `DomainService` suffix — there is no scope-based suffix distinction (unlike the aggregator layer).
+The domain layer uses scope-based suffix distinction, matching the aggregator layer pattern:
 
-- Facade: `{Domain}DomainService` (public)
-- Router: `{Domain}CommandDomainService` / `{Domain}QueryDomainService` (internal)
-- Specialized: `{Behavior}DomainService` (internal)
+- **Public scope** (`Apis/` + routers): Uses `DomainService` suffix
+- **Internal scope** (specialized operations): Uses `Domain` suffix
+
+| Scope | Pattern | Example |
+|-------|---------|---------|
+| Facade (public) | `{Domain}DomainService` | `CollectionsDomainService` |
+| Router (public) | `{Domain}CommandDomainService` / `{Domain}QueryDomainService` | `CollectionCommandDomainService` |
+| Specialized interface (internal) | `I{Behavior}Domain` | `IArtistSearchDomain` |
+| Specialized implementation (internal) | `{Behavior}Domain` | `ArtistSearchDomain` |
 
 The router naming pattern is `{Domain}{Command|Query}DomainService` — domain name first, then CQRS type.
 

@@ -81,17 +81,17 @@ public sealed class CollectionsDomainService : ICollectionsDomainService
 ```csharp
 public sealed class ArtistDomainService : IArtistDomainService
 {
-    private readonly IArtistsQueryDomainService _artistDomainOperations;
+    private readonly IArtistsQueryDomainService _queryService;
 
     public ArtistDomainService(ILogger logger) : this(new ArtistsQueryDomainService(logger))
     { }
 
-    private ArtistDomainService(IArtistsQueryDomainService artistDomainOperations)
-        => _artistDomainOperations = artistDomainOperations;
+    private ArtistDomainService(IArtistsQueryDomainService queryService)
+        => _queryService = queryService;
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(
         IArtistSearchTermItrEntity searchTerm, CancellationToken cancellationToken)
-        => await _artistDomainOperations.ArtistSearchAsync(searchTerm, cancellationToken)
+        => await _queryService.ArtistSearchAsync(searchTerm, cancellationToken)
             .ConfigureAwait(false);
 }
 ```

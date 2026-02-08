@@ -67,62 +67,58 @@ The router injects **multiple specialized single-method services** and delegates
 ```csharp
 internal sealed class ArtistsQueryDomainService : IArtistsQueryDomainService
 {
-    private readonly IArtistSearchDomainService _artistSearchService;
-    private readonly ICardsByArtistDomainService _cardsByArtistService;
-    private readonly ICardsByArtistNameDomainService _cardsByArtistNameService;
+    private readonly IArtistSearchDomain _artistSearch;
+    private readonly ICardsByArtistDomain _cardsByArtist;
+    private readonly ICardsByArtistNameDomain _cardsByArtistName;
 
     public ArtistsQueryDomainService(ILogger logger) : this(
-        new ArtistSearchDomainService(logger),
-        new CardsByArtistDomainService(logger),
-        new CardsByArtistNameDomainService(logger))
+        new ArtistSearchDomain(logger),
+        new CardsByArtistDomain(logger),
+        new CardsByArtistNameDomain(logger))
     { }
 
     private ArtistsQueryDomainService(
-        IArtistSearchDomainService artistSearchService,
-        ICardsByArtistDomainService cardsByArtistService,
-        ICardsByArtistNameDomainService cardsByArtistNameService)
+        IArtistSearchDomain artistSearch,
+        ICardsByArtistDomain cardsByArtist,
+        ICardsByArtistNameDomain cardsByArtistName)
     {
-        _artistSearchService = artistSearchService;
-        _cardsByArtistService = cardsByArtistService;
-        _cardsByArtistNameService = cardsByArtistNameService;
+        _artistSearch = artistSearch;
+        _cardsByArtist = cardsByArtist;
+        _cardsByArtistName = cardsByArtistName;
     }
 
     public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(
         IArtistSearchTermItrEntity searchTerm, CancellationToken cancellationToken)
-        => await _artistSearchService.Execute(searchTerm, cancellationToken)
+        => await _artistSearch.Execute(searchTerm, cancellationToken)
             .ConfigureAwait(false);
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistAsync(
         IArtistIdItrEntity artistId, CancellationToken cancellationToken)
-        => await _cardsByArtistService.Execute(artistId, cancellationToken)
+        => await _cardsByArtist.Execute(artistId, cancellationToken)
             .ConfigureAwait(false);
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByArtistNameAsync(
         IArtistNameItrEntity artistName, CancellationToken cancellationToken)
-        => await _cardsByArtistNameService.Execute(artistName, cancellationToken)
+        => await _cardsByArtistName.Execute(artistName, cancellationToken)
             .ConfigureAwait(false);
 }
 ```
 
-**Specialized operation service:**
+**Specialized operation:**
 
 ```csharp
-internal interface IArtistSearchDomainService
-{
-    Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(
-        IArtistSearchTermItrEntity input,
-        CancellationToken cancellationToken);
-}
+internal interface IArtistSearchDomain
+    : IOperationResponseService<IArtistSearchTermItrEntity, IArtistSearchResultCollectionOufEntity>;
 
-internal sealed class ArtistSearchDomainService : IArtistSearchDomainService
+internal sealed class ArtistSearchDomain : IArtistSearchDomain
 {
     private readonly IArtistAggregatorService _artistAggregatorService;
 
-    public ArtistSearchDomainService(ILogger logger)
+    public ArtistSearchDomain(ILogger logger)
         : this(new ArtistAggregatorService(logger))
     { }
 
-    private ArtistSearchDomainService(
+    private ArtistSearchDomain(
         IArtistAggregatorService artistAggregatorService)
         => _artistAggregatorService = artistAggregatorService;
 
@@ -134,11 +130,11 @@ internal sealed class ArtistSearchDomainService : IArtistSearchDomainService
 ```
 
 **Key characteristics:**
-- Router depends on multiple specialized services (1 per behavior)
-- Each specialized service has a single `Execute()` method
-- Each specialized service has its own interface (`I{Behavior}DomainService`)
-- Specialized services inject the aggregator directly
-- Router delegates via `_service.Execute(input, cancellationToken)`
+- Router depends on multiple specialized operations (1 per behavior)
+- Each specialized operation inherits `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually
+- Naming: `I{Behavior}Domain` / `{Behavior}Domain` (`Domain` suffix, not `DomainService`)
+- Specialized operations inject the aggregator directly
+- Router delegates via `_operation.Execute(input, cancellationToken)`
 
 ## Common Rules
 

@@ -67,17 +67,17 @@ The router injects **multiple specialized single-method services** and delegates
 ```csharp
 internal sealed class UserCardsCommandDomainService : IUserCardsCommandDomainService
 {
-    private readonly IAddUserCardDomainService _addUserCard;
-    private readonly IAddUserCardOnlyDomainService _addUserCardOnly;
+    private readonly IAddUserCardDomain _addUserCard;
+    private readonly IAddUserCardOnlyDomain _addUserCardOnly;
 
     public UserCardsCommandDomainService(ILogger logger) : this(
-        new AddUserCardDomainService(logger),
-        new AddUserCardOnlyDomainService(logger))
+        new AddUserCardDomain(logger),
+        new AddUserCardOnlyDomain(logger))
     { }
 
     private UserCardsCommandDomainService(
-        IAddUserCardDomainService addUserCard,
-        IAddUserCardOnlyDomainService addUserCardOnly)
+        IAddUserCardDomain addUserCard,
+        IAddUserCardOnlyDomain addUserCardOnly)
     {
         _addUserCard = addUserCard;
         _addUserCardOnly = addUserCardOnly;
@@ -93,25 +93,21 @@ internal sealed class UserCardsCommandDomainService : IUserCardsCommandDomainSer
 }
 ```
 
-**Specialized operation service:**
+**Specialized operation:**
 
 ```csharp
-internal interface IAddUserCardDomainService
-{
-    Task<IOperationResponse<IUserCardOufEntity>> Execute(
-        IUserCardItrEntity input,
-        CancellationToken cancellationToken);
-}
+internal interface IAddUserCardDomain
+    : IOperationResponseService<IUserCardItrEntity, IUserCardOufEntity>;
 
-internal sealed class AddUserCardDomainService : IAddUserCardDomainService
+internal sealed class AddUserCardDomain : IAddUserCardDomain
 {
     private readonly IUserCardsAggregatorService _aggregatorService;
 
-    public AddUserCardDomainService(ILogger logger)
+    public AddUserCardDomain(ILogger logger)
         : this(new UserCardsAggregatorService(logger))
     { }
 
-    private AddUserCardDomainService(
+    private AddUserCardDomain(
         IUserCardsAggregatorService aggregatorService)
         => _aggregatorService = aggregatorService;
 
@@ -123,11 +119,11 @@ internal sealed class AddUserCardDomainService : IAddUserCardDomainService
 ```
 
 **Key characteristics:**
-- Router depends on multiple specialized services (1 per behavior)
-- Each specialized service has a single `Execute()` method
-- Each specialized service has its own interface (`I{Behavior}DomainService`)
-- Specialized services inject the aggregator directly
-- Router delegates via `_service.Execute(input, cancellationToken)`
+- Router depends on multiple specialized operations (1 per behavior)
+- Each specialized operation inherits `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually
+- Naming: `I{Behavior}Domain` / `{Behavior}Domain` (`Domain` suffix, not `DomainService`)
+- Specialized operations inject the aggregator directly
+- Router delegates via `_operation.Execute(input, cancellationToken)`
 
 ## Common Rules
 
