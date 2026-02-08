@@ -22,7 +22,7 @@ public sealed class MonoStateArtistTrigramAggregatorTests
         subject.TrackArtist("artist-1", ["John Avon"]);
 
         // Assert
-        List<IArtistTrigramAggregate> trigrams = subject.GetTrigrams().ToList();
+        List<IArtistTrigramAggregate> trigrams = [.. subject.GetTrigrams()];
         trigrams.Should().NotBeEmpty();
         trigrams.Select(t => t.Trigram()).Should().Contain("joh");
         trigrams.Select(t => t.Trigram()).Should().Contain("ohn");
@@ -53,7 +53,7 @@ public sealed class MonoStateArtistTrigramAggregatorTests
         subject.TrackArtist("artist-1", ["John", "Avon"]);
 
         // Assert
-        List<IArtistTrigramAggregate> trigrams = subject.GetTrigrams().ToList();
+        List<IArtistTrigramAggregate> trigrams = [.. subject.GetTrigrams()];
         trigrams.Select(t => t.Trigram()).Should().Contain("joh");
         trigrams.Select(t => t.Trigram()).Should().Contain("avo");
     }

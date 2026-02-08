@@ -1,0 +1,19 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
+using Lib.Aggregator.Scryfall.Shared.Mappers;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
+
+namespace Lib.Aggregator.Artists.Queries.Mappers;
+
+internal sealed class ArtistCardExtToOufEntityMapper : IArtistCardExtToOufEntityMapper
+{
+    private readonly IDynamicToCardItemItrEntityMapper _mapper;
+
+    public ArtistCardExtToOufEntityMapper() : this(new DynamicToCardItemItrEntityMapper())
+    { }
+
+    private ArtistCardExtToOufEntityMapper(IDynamicToCardItemItrEntityMapper mapper) => _mapper = mapper;
+
+    public async Task<ICardItemItrEntity> Map([NotNull] ScryfallArtistCardExtEntity source) => await _mapper.Map(source.Data).ConfigureAwait(false);
+}

@@ -16,18 +16,18 @@ internal sealed class AddSetGroupAggregatorService : IAddSetGroupAggregatorServi
 {
     private readonly IUserSetCardsAdapterService _adapter;
     private readonly IAddSetGroupItrToXfrMapper _itrToXfrMapper;
-    private readonly IUserSetCardExtToItrMapper _extToOufMapper;
+    private readonly IUserSetCardExtToOufMapper _extToOufMapper;
 
     public AddSetGroupAggregatorService(ILogger logger) : this(
         new UserSetCardsAdapterService(logger),
         new AddSetGroupItrToXfrMapper(),
-        new UserSetCardExtToItrMapper())
+        new UserSetCardExtToOufMapper())
     { }
 
     private AddSetGroupAggregatorService(
         IUserSetCardsAdapterService adapter,
         IAddSetGroupItrToXfrMapper itrToXfrMapper,
-        IUserSetCardExtToItrMapper extToOufMapper)
+        IUserSetCardExtToOufMapper extToOufMapper)
     {
         _adapter = adapter;
         _itrToXfrMapper = itrToXfrMapper;

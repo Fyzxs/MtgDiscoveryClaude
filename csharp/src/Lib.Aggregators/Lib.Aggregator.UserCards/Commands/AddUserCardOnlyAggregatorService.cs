@@ -18,18 +18,18 @@ namespace Lib.Aggregator.UserCards.Commands;
 internal sealed class AddUserCardOnlyAggregatorService : IAddUserCardOnlyAggregatorService
 {
     private readonly IUserCardsAdapterService _userCardsAdapterService;
-    private readonly IUserCardExtToItrEntityMapper _userCardMapper;
+    private readonly IUserCardExtToOufEntityMapper _userCardMapper;
     private readonly IAddUserCardItrToXfrMapper _addUserCardItrToXfrMapper;
 
     public AddUserCardOnlyAggregatorService(ILogger logger) : this(
         new UserCardsAdapterService(logger),
-        new UserCardExtToItrEntityMapper(),
+        new UserCardExtToOufEntityMapper(),
         new AddUserCardItrToXfrMapper())
     { }
 
     private AddUserCardOnlyAggregatorService(
         IUserCardsAdapterService userCardsAdapterService,
-        IUserCardExtToItrEntityMapper userCardMapper,
+        IUserCardExtToOufEntityMapper userCardMapper,
         IAddUserCardItrToXfrMapper addUserCardItrToXfrMapper)
     {
         _userCardsAdapterService = userCardsAdapterService;

@@ -8,5 +8,5 @@ internal sealed class UserSetCardCollectingOufEntity : IUserSetCardCollectingOuf
     public string SetGroupId { get; init; }
     public bool Collecting { get; init; }
     public IFinishCountsOufEntity Counts { get; init; }
-    public IReadOnlyCollection<string> CollectingFinishes { get; init; } = [];
+    public IReadOnlyCollection<string> CollectingFinishes { get; init; }
 }

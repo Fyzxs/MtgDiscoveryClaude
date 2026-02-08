@@ -17,20 +17,20 @@ namespace Lib.Aggregator.Cards.Queries;
 internal sealed class CardsBySetCodeAggregatorService : ICardsBySetCodeAggregatorService
 {
     private readonly ICardAdapterService _cardAdapterService;
-    private readonly ICollectionSetCardItemExtToItrMapper _setCardItemMapper;
+    private readonly ICollectionSetCardItemExtToOufMapper _setCardItemMapper;
     private readonly ISetCodeItrToXfrMapper _setCodeItrToXfrMapper;
     private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
 
     public CardsBySetCodeAggregatorService(ILogger logger) : this(
         new CardAdapterService(logger),
-        new CollectionSetCardItemExtToItrMapper(),
+        new CollectionSetCardItemExtToOufMapper(),
         new SetCodeItrToXfrMapper(),
         new CollectionCardItemItrToOufMapper())
     { }
 
     private CardsBySetCodeAggregatorService(
         ICardAdapterService cardAdapterService,
-        ICollectionSetCardItemExtToItrMapper setCardItemMapper,
+        ICollectionSetCardItemExtToOufMapper setCardItemMapper,
         ISetCodeItrToXfrMapper setCodeItrToXfrMapper,
         ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
     {

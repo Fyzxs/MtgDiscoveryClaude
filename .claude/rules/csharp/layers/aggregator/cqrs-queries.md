@@ -13,14 +13,11 @@ These are very targeted classes, following single responsibility by implementing
 ## Interface Pattern
 
 The class and interfaces are named like `{Operation}{Domain}AggregatorService` with interfaces having the `I` prefix.
+All interfaces must inherit from `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually.
 
 ```csharp
 internal interface IArtistSearchAggregatorService
-{
-    Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> Execute(
-        IArtistSearchTermItrEntity input,
-        CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IArtistSearchTermItrEntity, IArtistSearchResultCollectionOufEntity>;
 ```
 
 ## Constructor Pattern

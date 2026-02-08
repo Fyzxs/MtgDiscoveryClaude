@@ -17,20 +17,20 @@ internal sealed class CardsByArtistNameAggregatorService : ICardsByArtistNameAgg
 {
     private readonly IArtistAdapterService _artistAdapterService;
     private readonly IArtistNameItrToXfrMapper _artistNameToXfrMapper;
-    private readonly ICollectionArtistCardExtToItrMapper _artistCardCollectionMapper;
+    private readonly ICollectionArtistCardExtToOufMapper _artistCardCollectionMapper;
     private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
 
     public CardsByArtistNameAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
         new ArtistNameItrToXfrMapper(),
-        new CollectionArtistCardExtToItrMapper(),
+        new CollectionArtistCardExtToOufMapper(),
         new CollectionCardItemItrToOufMapper())
     { }
 
     private CardsByArtistNameAggregatorService(
         IArtistAdapterService artistAdapterService,
         IArtistNameItrToXfrMapper artistNameToXfrMapper,
-        ICollectionArtistCardExtToItrMapper artistCardCollectionMapper,
+        ICollectionArtistCardExtToOufMapper artistCardCollectionMapper,
         ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
     {
         _artistAdapterService = artistAdapterService;

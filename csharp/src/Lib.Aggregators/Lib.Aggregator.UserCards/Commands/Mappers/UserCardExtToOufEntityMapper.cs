@@ -1,0 +1,36 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
+using Lib.Aggregator.UserCards.Entities;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+
+namespace Lib.Aggregator.UserCards.Commands.Mappers;
+
+/// <summary>
+/// Maps UserCardExtEntity to IUserCardItrEntity.
+/// </summary>
+internal sealed class UserCardExtToOufEntityMapper : IUserCardExtToOufEntityMapper
+{
+    private readonly IUserCardDetailsExtToOufMapper _mapper;
+
+    public UserCardExtToOufEntityMapper() : this(new UserCardDetailsExtToOufMapper())
+    { }
+
+    internal UserCardExtToOufEntityMapper(IUserCardDetailsExtToOufMapper mapper) => _mapper = mapper;
+
+    public async Task<IUserCardOufEntity> Map([NotNull] UserCardExtEntity source)
+    {
+        IUserCardDetailsOufEntity[] mappedDetails = await Task.WhenAll(
+            source.CollectedList.Select(detail => _mapper.Map(detail))
+        ).ConfigureAwait(false);
+
+        return new UserCardOufEntity
+        {
+            UserId = source.UserId,
+            CardId = source.CardId,
+            SetId = source.SetId,
+            CollectedList = mappedDetails
+        };
+    }
+}

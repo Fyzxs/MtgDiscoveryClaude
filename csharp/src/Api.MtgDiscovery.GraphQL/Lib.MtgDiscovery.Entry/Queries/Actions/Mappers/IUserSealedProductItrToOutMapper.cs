@@ -1,7 +1,7 @@
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
 using Lib.Shared.Abstractions.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
-internal interface IUserSealedProductItrToOutMapper : ICreateMapper<IUserSealedProductItrEntity, UserSealedProductOutEntity>;
+internal interface IUserSealedProductItrToOutMapper : ICreateMapper<IUserSealedProductOufEntity, UserSealedProductOutEntity>;

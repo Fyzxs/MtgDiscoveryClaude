@@ -16,20 +16,20 @@ namespace Lib.Aggregator.Cards.Queries;
 internal sealed class CardsByNameAggregatorService : ICardsByNameAggregatorService
 {
     private readonly ICardAdapterService _cardAdapterService;
-    private readonly ICollectionCardByNameExtToItrMapper _cardByNameMapper;
+    private readonly ICollectionCardByNameExtToOufMapper _cardByNameMapper;
     private readonly ICardNameItrToXfrMapper _cardNameItrToXfrMapper;
     private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
 
     public CardsByNameAggregatorService(ILogger logger) : this(
         new CardAdapterService(logger),
-        new CollectionCardByNameExtToItrMapper(),
+        new CollectionCardByNameExtToOufMapper(),
         new CardNameItrToXfrMapper(),
         new CollectionCardItemItrToOufMapper())
     { }
 
     private CardsByNameAggregatorService(
         ICardAdapterService cardAdapterService,
-        ICollectionCardByNameExtToItrMapper cardByNameMapper,
+        ICollectionCardByNameExtToOufMapper cardByNameMapper,
         ICardNameItrToXfrMapper cardNameItrToXfrMapper,
         ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
     {

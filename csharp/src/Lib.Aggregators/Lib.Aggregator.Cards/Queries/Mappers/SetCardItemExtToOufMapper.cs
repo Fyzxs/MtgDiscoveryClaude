@@ -1,0 +1,19 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetCards;
+using Lib.Aggregator.Scryfall.Shared.Mappers;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
+
+namespace Lib.Aggregator.Cards.Queries.Mappers;
+
+internal sealed class SetCardItemExtToOufMapper : ISetCardItemExtToOufMapper
+{
+    private readonly IDynamicToCardItemItrEntityMapper _mapper;
+
+    public SetCardItemExtToOufMapper() : this(new DynamicToCardItemItrEntityMapper())
+    { }
+
+    private SetCardItemExtToOufMapper(IDynamicToCardItemItrEntityMapper mapper) => _mapper = mapper;
+
+    public async Task<ICardItemItrEntity> Map([NotNull] ScryfallSetCardItemExtEntity source) => await _mapper.Map(source.Data).ConfigureAwait(false);
+}

@@ -11,7 +11,7 @@ internal sealed class CollectionXfrEntity : ICollectionXfrEntity
     public string Type { get; init; }
     public string Visibility { get; init; }
     public bool IsDefault { get; init; }
-    public IReadOnlyList<IAuthorizedUserXfrEntity> AuthorizedUsers { get; init; } = [];
+    public IReadOnlyList<IAuthorizedUserXfrEntity> AuthorizedUsers { get; init; }
     public string CreatedAt { get; init; }
     public string UpdatedAt { get; init; }
     public string CacheKey => $"collection:{CollectionId}:owner:{OwnerId}";

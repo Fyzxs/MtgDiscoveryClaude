@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserInfo;
-using Lib.Adapter.User.Commands;
 using Lib.Adapter.User.Apis.Entities;
+using Lib.Adapter.User.Commands;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 

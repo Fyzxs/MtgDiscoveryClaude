@@ -23,12 +23,12 @@ internal sealed class AddCardToSetItrToXfrMapper : IAddCardToSetItrToXfrMapper
 
     private sealed class AddCardToSetXfrEntity : IAddCardToSetXfrEntity
     {
-        public required string UserId { get; init; }
-        public required string SetId { get; init; }
-        public required string CardId { get; init; }
-        public required string SetGroupId { get; init; }
-        public required string FinishType { get; init; }
-        public required int Count { get; init; }
+        public string UserId { get; init; }
+        public string SetId { get; init; }
+        public string CardId { get; init; }
+        public string SetGroupId { get; init; }
+        public string FinishType { get; init; }
+        public int Count { get; init; }
         public int RemainingFinishCount { get; init; }
         public string CacheKey => $"add_card_to_set:{UserId}:{SetId}:{CardId}";
     }

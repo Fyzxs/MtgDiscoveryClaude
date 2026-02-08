@@ -13,14 +13,11 @@ These are very targeted classes, following single responsibility by implementing
 ## Interface Pattern
 
 The class and interfaces are named like `{Behavior}Aggregator` with interfaces having the `I` prefix.
+All interfaces must inherit from `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually.
 
 ```csharp
 internal interface IAddUserWishlistCardAggregator
-{
-    Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(
-        IUserWishlistCardItrEntity input,
-        CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IUserWishlistCardItrEntity, IUserWishlistCardOufEntity>;
 ```
 
 ## Constructor Pattern

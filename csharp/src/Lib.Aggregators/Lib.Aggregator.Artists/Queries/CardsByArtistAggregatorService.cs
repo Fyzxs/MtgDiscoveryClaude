@@ -16,25 +16,25 @@ namespace Lib.Aggregator.Artists.Queries;
 internal sealed class CardsByArtistAggregatorService : ICardsByArtistAggregatorService
 {
     private readonly IArtistAdapterService _artistAdapterService;
-    private readonly IArtistIdItrToXfrMapper _aristIdToXfrMapper;
-    private readonly ICollectionArtistCardExtToItrMapper _artistCardCollectionMapper;
+    private readonly IArtistIdItrToXfrMapper _artistIdToXfrMapper;
+    private readonly ICollectionArtistCardExtToOufMapper _artistCardCollectionMapper;
     private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
 
     public CardsByArtistAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
         new ArtistIdItrToXfrMapper(),
-        new CollectionArtistCardExtToItrMapper(),
+        new CollectionArtistCardExtToOufMapper(),
         new CollectionCardItemItrToOufMapper())
     { }
 
     private CardsByArtistAggregatorService(
         IArtistAdapterService artistAdapterService,
-        IArtistIdItrToXfrMapper aristIdToXfrMapper,
-        ICollectionArtistCardExtToItrMapper artistCardCollectionMapper,
+        IArtistIdItrToXfrMapper artistIdToXfrMapper,
+        ICollectionArtistCardExtToOufMapper artistCardCollectionMapper,
         ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
     {
         _artistAdapterService = artistAdapterService;
-        _aristIdToXfrMapper = aristIdToXfrMapper;
+        _artistIdToXfrMapper = artistIdToXfrMapper;
         _artistCardCollectionMapper = artistCardCollectionMapper;
         _cardItemItrToOufMapper = cardItemItrToOufMapper;
     }
@@ -43,7 +43,7 @@ internal sealed class CardsByArtistAggregatorService : ICardsByArtistAggregatorS
         IArtistIdItrEntity input,
         CancellationToken cancellationToken)
     {
-        IArtistIdXfrEntity xfrEntity = await _aristIdToXfrMapper.Map(input).ConfigureAwait(false);
+        IArtistIdXfrEntity xfrEntity = await _artistIdToXfrMapper.Map(input).ConfigureAwait(false);
         IOperationResponse<IEnumerable<ScryfallArtistCardExtEntity>> adapterResponse = await _artistAdapterService.CardsByArtistIdAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (adapterResponse.IsFailure)

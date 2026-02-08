@@ -1,26 +1,11 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
+using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
 
 namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
 
-internal sealed class CollectionUserSetCardExtToOufMapper : ICollectionUserSetCardExtToOufMapper
+internal sealed class CollectionUserSetCardExtToOufMapper : CollectionCreateMapper<UserSetCardExtEntity, IUserSetCardOufEntity>, ICollectionUserSetCardExtToOufMapper
 {
-    private readonly IUserSetCardExtToItrMapper _mapper;
-
-    public CollectionUserSetCardExtToOufMapper() : this(new UserSetCardExtToItrMapper())
-    {
-    }
-
-    private CollectionUserSetCardExtToOufMapper(IUserSetCardExtToItrMapper mapper) => _mapper = mapper;
-
-    public async Task<IEnumerable<IUserSetCardOufEntity>> Map([NotNull] IEnumerable<UserSetCardExtEntity> source)
-    {
-        List<Task<IUserSetCardOufEntity>> tasks = [.. source.Select(item => _mapper.Map(item))];
-        IUserSetCardOufEntity[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
-        return results;
-    }
+    public CollectionUserSetCardExtToOufMapper() : base(new UserSetCardExtToOufMapper())
+    { }
 }

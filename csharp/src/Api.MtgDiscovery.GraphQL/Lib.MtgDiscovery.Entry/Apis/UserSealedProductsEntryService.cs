@@ -7,7 +7,7 @@ using Lib.MtgDiscovery.Entry.Entities.Outs.SealedProducts;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 using Lib.MtgDiscovery.Entry.Queries.UserSealedProducts;
-using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -41,7 +41,7 @@ internal sealed class UserSealedProductsEntryService : IUserSealedProductsEntryS
     public async Task<IOperationResponse<List<UserSealedProductOutEntity>>> GetUserSealedProductsByUserIdAsync(
         string userId, CancellationToken cancellationToken)
     {
-        IOperationResponse<IEnumerable<IUserSealedProductItrEntity>> response = await _userSealedProductsByUserIdEntryService.Execute(userId, cancellationToken).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<IUserSealedProductOufEntity>> response = await _userSealedProductsByUserIdEntryService.Execute(userId, cancellationToken).ConfigureAwait(false);
         if (response.IsFailure)
         { return new FailureOperationResponse<List<UserSealedProductOutEntity>>(response.OuterException); }
 

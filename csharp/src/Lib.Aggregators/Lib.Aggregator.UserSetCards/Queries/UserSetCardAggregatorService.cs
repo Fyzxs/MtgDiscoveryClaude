@@ -15,18 +15,18 @@ internal sealed class UserSetCardAggregatorService : IUserSetCardAggregatorServi
 {
     private readonly IUserSetCardsAdapterService _userSetCardsAdapterService;
     private readonly IUserSetCardItrToXfrMapper _itrToXfrMapper;
-    private readonly IUserSetCardExtToItrMapper _extToItrMapper;
+    private readonly IUserSetCardExtToOufMapper _extToItrMapper;
 
     public UserSetCardAggregatorService(ILogger logger) : this(
         new UserSetCardsAdapterService(logger),
         new UserSetCardItrToXfrMapper(),
-        new UserSetCardExtToItrMapper())
+        new UserSetCardExtToOufMapper())
     { }
 
     private UserSetCardAggregatorService(
         IUserSetCardsAdapterService userSetCardsAdapterService,
         IUserSetCardItrToXfrMapper itrToXfrMapper,
-        IUserSetCardExtToItrMapper extToItrMapper)
+        IUserSetCardExtToOufMapper extToItrMapper)
     {
         _userSetCardsAdapterService = userSetCardsAdapterService;
         _itrToXfrMapper = itrToXfrMapper;

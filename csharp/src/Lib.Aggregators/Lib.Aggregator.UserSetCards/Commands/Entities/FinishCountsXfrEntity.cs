@@ -4,9 +4,9 @@ namespace Lib.Aggregator.UserSetCards.Commands.Entities;
 
 internal sealed class FinishCountsXfrEntity : IFinishCountsXfrEntity
 {
-    public required int Total { get; init; }
-    public required int NonFoil { get; init; }
-    public required int Foil { get; init; }
-    public required int Etched { get; init; }
+    public int Total { get; init; }
+    public int NonFoil { get; init; }
+    public int Foil { get; init; }
+    public int Etched { get; init; }
     public string CacheKey => $"finish_counts:{Foil}:{NonFoil}:{Etched}";
 }

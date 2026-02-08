@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Lib.Universal.Extensions;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Validators.UserSealedProducts;
 
-internal sealed class HasValidUserIdItrValidator : OperationResponseValidator<IUserIdItrEntity, IEnumerable<IUserSealedProductItrEntity>>
+internal sealed class HasValidUserIdItrValidator : OperationResponseValidator<IUserIdItrEntity, IEnumerable<IUserSealedProductOufEntity>>
 {
     public HasValidUserIdItrValidator() : base(new Validator(), new Message())
     { }

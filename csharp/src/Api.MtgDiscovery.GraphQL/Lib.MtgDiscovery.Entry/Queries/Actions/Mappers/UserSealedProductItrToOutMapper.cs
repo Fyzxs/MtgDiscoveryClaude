@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserSealedProducts;
-using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
 internal sealed class UserSealedProductItrToOutMapper : IUserSealedProductItrToOutMapper
 {
-    public Task<UserSealedProductOutEntity> Map(IUserSealedProductItrEntity source)
+    public Task<UserSealedProductOutEntity> Map(IUserSealedProductOufEntity source)
     {
         UserSealedProductOutEntity result = new()
         {

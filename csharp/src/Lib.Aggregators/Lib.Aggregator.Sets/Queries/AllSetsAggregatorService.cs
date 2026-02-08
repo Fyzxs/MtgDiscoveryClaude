@@ -16,20 +16,20 @@ namespace Lib.Aggregator.Sets.Queries;
 internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
 {
     private readonly ISetAdapterService _setAdapterService;
-    private readonly ICollectionSetItemExtToItrMapper _setItemMapper;
+    private readonly ICollectionSetItemExtToOufMapper _setItemMapper;
     private readonly ICollectionSetItemItrToOufMapper _setItemItrToOufMapper;
     private readonly IAllSetsItrToXfrMapper _allSetsMapper;
 
     public AllSetsAggregatorService(ILogger logger) : this(
         new SetAdapterService(logger),
-        new CollectionSetItemExtToItrMapper(),
+        new CollectionSetItemExtToOufMapper(),
         new CollectionSetItemItrToOufMapper(),
         new AllSetsItrToXfrMapper())
     { }
 
     private AllSetsAggregatorService(
         ISetAdapterService setAdapterService,
-        ICollectionSetItemExtToItrMapper setItemMapper,
+        ICollectionSetItemExtToOufMapper setItemMapper,
         ICollectionSetItemItrToOufMapper setItemItrToOufMapper,
         IAllSetsItrToXfrMapper allSetsMapper)
     {

@@ -11,7 +11,7 @@ internal sealed class UserWishlistCardOufEntity : IUserWishlistCardOufEntity
     public string CardName { get; init; }
     public string SetName { get; init; }
     public string SetCode { get; init; }
-    public IEnumerable<string> ArtistIds { get; init; } = [];
+    public IEnumerable<string> ArtistIds { get; init; }
     public string CardNameGuid { get; init; }
     public string CreatedAt { get; init; }
     public string UpdatedAt { get; init; }

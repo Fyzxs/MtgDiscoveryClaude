@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserSealedProducts.Apis;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -18,5 +19,5 @@ internal sealed class UserSealedProductsByUserIdDomainService : IUserSealedProdu
 
     private UserSealedProductsByUserIdDomainService(IUserSealedProductsAggregatorService aggregator) => _aggregator = aggregator;
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(IUserIdItrEntity input, CancellationToken cancellationToken) => await _aggregator.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> Execute(IUserIdItrEntity input, CancellationToken cancellationToken) => await _aggregator.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
 }
