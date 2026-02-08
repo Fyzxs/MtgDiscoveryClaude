@@ -11,14 +11,14 @@ namespace Lib.Domain.UserSealedProducts.Queries;
 
 internal sealed class UserSealedProductsQueryDomainService : IUserSealedProductsQueryDomainService
 {
-    private readonly IUserSealedProductsByUserIdDomainService _userSealedProductsByUserIdOperations;
+    private readonly IUserSealedProductsByUserIdDomain _userSealedProductsByUserIdOperations;
 
     public UserSealedProductsQueryDomainService(ILogger logger) : this(
-        new UserSealedProductsByUserIdDomainService(logger))
+        new UserSealedProductsByUserIdDomain(logger))
     { }
 
     private UserSealedProductsQueryDomainService(
-        IUserSealedProductsByUserIdDomainService userSealedProductsByUserIdOperations) => _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
+        IUserSealedProductsByUserIdDomain userSealedProductsByUserIdOperations) => _userSealedProductsByUserIdOperations = userSealedProductsByUserIdOperations;
 
     public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _userSealedProductsByUserIdOperations.Execute(input, cancellationToken).ConfigureAwait(false);
 }

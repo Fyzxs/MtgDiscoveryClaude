@@ -13,8 +13,8 @@ namespace Lib.Domain.UserSealedProducts.Apis;
 
 public sealed class UserSealedProductsDomainService : IUserSealedProductsDomainService
 {
-    private readonly IUserSealedProductsQueryDomainService _queryOperations;
-    private readonly IUserSealedProductsCommandDomainService _commandOperations;
+    private readonly IUserSealedProductsQueryDomainService _queryService;
+    private readonly IUserSealedProductsCommandDomainService _commandService;
 
     public UserSealedProductsDomainService(ILogger logger) : this(
         new UserSealedProductsQueryDomainService(logger),
@@ -22,14 +22,14 @@ public sealed class UserSealedProductsDomainService : IUserSealedProductsDomainS
     { }
 
     private UserSealedProductsDomainService(
-        IUserSealedProductsQueryDomainService queryOperations,
-        IUserSealedProductsCommandDomainService commandOperations)
+        IUserSealedProductsQueryDomainService queryService,
+        IUserSealedProductsCommandDomainService commandService)
     {
-        _queryOperations = queryOperations;
-        _commandOperations = commandOperations;
+        _queryService = queryService;
+        _commandService = commandService;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken) => await _commandOperations.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken) => await _commandService.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _queryOperations.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _queryService.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
 }

@@ -6,4 +6,4 @@ using Lib.Shared.Invocation.Services;
 namespace Lib.Aggregator.UserSealedProducts.Commands;
 
 internal interface IAddUserSealedProductAggregatorService
-    : IOperationResponseService<IAddUserSealedProductItrEntity, List<ISealedProductOufEntity>>;
+    : IOperationResponseService<IAddUserSealedProductItrEntity, IEnumerable<ISealedProductOufEntity>>;

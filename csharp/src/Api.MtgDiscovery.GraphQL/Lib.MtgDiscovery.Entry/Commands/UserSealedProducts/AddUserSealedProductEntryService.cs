@@ -54,7 +54,7 @@ internal sealed class AddUserSealedProductEntryService : IAddUserSealedProductEn
             CountDelta = input.AddUserSealedProduct.UserSealedProductDetails.Count
         };
 
-        IOperationResponse<List<ISealedProductOufEntity>> domainResponse = await _domainService.AddUserSealedProductAsync(itrEntity, cancellationToken).ConfigureAwait(false);
+        IOperationResponse<IEnumerable<ISealedProductOufEntity>> domainResponse = await _domainService.AddUserSealedProductAsync(itrEntity, cancellationToken).ConfigureAwait(false);
         if (domainResponse.IsFailure)
         { return new FailureOperationResponse<List<SealedProductOutEntity>>(domainResponse.OuterException); }
 

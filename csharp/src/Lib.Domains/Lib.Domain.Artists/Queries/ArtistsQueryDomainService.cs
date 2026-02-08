@@ -11,20 +11,20 @@ namespace Lib.Domain.Artists.Queries;
 
 internal sealed class ArtistsQueryDomainService : IArtistsQueryDomainService
 {
-    private readonly IArtistSearchDomainService _artistSearchService;
-    private readonly ICardsByArtistDomainService _cardsByArtistService;
-    private readonly ICardsByArtistNameDomainService _cardsByArtistNameService;
+    private readonly IArtistSearchDomain _artistSearchService;
+    private readonly ICardsByArtistDomain _cardsByArtistService;
+    private readonly ICardsByArtistNameDomain _cardsByArtistNameService;
 
     public ArtistsQueryDomainService(ILogger logger) : this(
-        new ArtistSearchDomainService(logger),
-        new CardsByArtistDomainService(logger),
-        new CardsByArtistNameDomainService(logger))
+        new ArtistSearchDomain(logger),
+        new CardsByArtistDomain(logger),
+        new CardsByArtistNameDomain(logger))
     { }
 
     private ArtistsQueryDomainService(
-        IArtistSearchDomainService artistSearchService,
-        ICardsByArtistDomainService cardsByArtistService,
-        ICardsByArtistNameDomainService cardsByArtistNameService)
+        IArtistSearchDomain artistSearchService,
+        ICardsByArtistDomain cardsByArtistService,
+        ICardsByArtistNameDomain cardsByArtistNameService)
     {
         _artistSearchService = artistSearchService;
         _cardsByArtistService = cardsByArtistService;

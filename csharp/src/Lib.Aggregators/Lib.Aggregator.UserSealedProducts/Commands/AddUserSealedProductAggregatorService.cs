@@ -34,7 +34,7 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
         _oufMapper = oufMapper;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken)
     {
         IUserSealedProductXfrEntity xfrEntity = await _itrToXfrMapper.Map(input).ConfigureAwait(false);
 
@@ -42,10 +42,10 @@ internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProd
 
         if (extResponse.IsFailure)
         {
-            return new FailureOperationResponse<List<ISealedProductOufEntity>>(extResponse.OuterException);
+            return new FailureOperationResponse<IEnumerable<ISealedProductOufEntity>>(extResponse.OuterException);
         }
 
         ISealedProductOufEntity oufEntity = await _oufMapper.Map(extResponse.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<List<ISealedProductOufEntity>>([oufEntity]);
+        return new SuccessOperationResponse<IEnumerable<ISealedProductOufEntity>>([oufEntity]);
     }
 }

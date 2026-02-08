@@ -9,5 +9,5 @@ namespace Lib.Domain.UserSealedProducts.Apis;
 
 public interface IUserSealedProductsCommandDomainService
 {
-    Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken);
+    Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken);
 }

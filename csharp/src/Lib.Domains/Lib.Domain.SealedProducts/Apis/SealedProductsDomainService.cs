@@ -11,14 +11,14 @@ namespace Lib.Domain.SealedProducts.Apis;
 
 public sealed class SealedProductsDomainService : ISealedProductsDomainService
 {
-    private readonly ISealedProductsBySetCodeDomainService _sealedProductsBySetCodeDomainService;
+    private readonly ISealedProductsQueryDomainService _sealedProductsDomainOperations;
 
-    public SealedProductsDomainService(ILogger logger) : this(new SealedProductsBySetCodeDomainService(logger))
+    public SealedProductsDomainService(ILogger logger) : this(new SealedProductsQueryDomainService(logger))
     { }
 
-    private SealedProductsDomainService(ISealedProductsBySetCodeDomainService sealedProductsBySetCodeDomainService) => _sealedProductsBySetCodeDomainService = sealedProductsBySetCodeDomainService;
+    private SealedProductsDomainService(ISealedProductsQueryDomainService sealedProductsDomainOperations) => _sealedProductsDomainOperations = sealedProductsDomainOperations;
 
-    public Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> SealedProductsBySetCodeAsync(
+    public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> SealedProductsBySetCodeAsync(
         ISealedProductsBySetCodeItrEntity setCode,
-        CancellationToken cancellationToken) => _sealedProductsBySetCodeDomainService.Execute(setCode, cancellationToken);
+        CancellationToken cancellationToken) => await _sealedProductsDomainOperations.SealedProductsBySetCodeAsync(setCode, cancellationToken).ConfigureAwait(false);
 }

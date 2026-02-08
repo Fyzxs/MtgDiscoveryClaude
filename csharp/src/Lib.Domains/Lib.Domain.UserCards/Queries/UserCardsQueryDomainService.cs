@@ -16,29 +16,29 @@ namespace Lib.Domain.UserCards.Queries;
 /// </summary>
 internal sealed class UserCardsQueryDomainService : IUserCardsQueryDomainService
 {
-    private readonly IUserCardDomainService _userCardService;
-    private readonly IUserCardsBySetDomainService _userCardsBySetService;
-    private readonly IUserCardsByIdsDomainService _userCardsByIdsService;
-    private readonly IUserCardsByArtistDomainService _userCardsByArtistService;
-    private readonly IUserCardsByNameDomainService _userCardsByNameService;
-    private readonly IUserCardsForSigningDomainService _userCardsForSigningService;
+    private readonly IUserCardDomain _userCardService;
+    private readonly IUserCardsBySetDomain _userCardsBySetService;
+    private readonly IUserCardsByIdsDomain _userCardsByIdsService;
+    private readonly IUserCardsByArtistDomain _userCardsByArtistService;
+    private readonly IUserCardsByNameDomain _userCardsByNameService;
+    private readonly IUserCardsForSigningDomain _userCardsForSigningService;
 
     public UserCardsQueryDomainService(ILogger logger) : this(
-        new UserCardDomainService(logger),
-        new UserCardsBySetDomainService(logger),
-        new UserCardsByIdsDomainService(logger),
-        new UserCardsByArtistDomainService(logger),
-        new UserCardsByNameDomainService(logger),
-        new UserCardsForSigningDomainService(logger))
+        new UserCardDomain(logger),
+        new UserCardsBySetDomain(logger),
+        new UserCardsByIdsDomain(logger),
+        new UserCardsByArtistDomain(logger),
+        new UserCardsByNameDomain(logger),
+        new UserCardsForSigningDomain(logger))
     { }
 
     private UserCardsQueryDomainService(
-        IUserCardDomainService userCardService,
-        IUserCardsBySetDomainService userCardsBySetService,
-        IUserCardsByIdsDomainService userCardsByIdsService,
-        IUserCardsByArtistDomainService userCardsByArtistService,
-        IUserCardsByNameDomainService userCardsByNameService,
-        IUserCardsForSigningDomainService userCardsForSigningService)
+        IUserCardDomain userCardService,
+        IUserCardsBySetDomain userCardsBySetService,
+        IUserCardsByIdsDomain userCardsByIdsService,
+        IUserCardsByArtistDomain userCardsByArtistService,
+        IUserCardsByNameDomain userCardsByNameService,
+        IUserCardsForSigningDomain userCardsForSigningService)
     {
         _userCardService = userCardService;
         _userCardsBySetService = userCardsBySetService;

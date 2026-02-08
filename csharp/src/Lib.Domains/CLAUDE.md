@@ -5,12 +5,32 @@ Pure orchestration layer that delegates business operations to Aggregators. Doma
 
 ## Architecture Pattern
 
-**Composite Service → Passthrough Service → Specialized Operations → (Aggregators)**
+**Passthrough Facade → Router → (Specialized Operations) → Aggregators**
 
-Example: `Lib.Domain.Artists/Apis/`
-- Interface: `IArtistDomainService.cs` (composite, inherits all specialized services)
-- Service: `ArtistsQueryDomainService.cs` (passthrough pattern)
-- Operations: `ArtistSearchDomainService.cs`, `CardsByArtistDomainService.cs`
+```
+Apis/{Domain}DomainService                (public passthrough facade)
+  ├── Commands/{Domain}CommandDomainService    (router)
+  │     ├── {Behavior}Domain                   (specialized operation, optional)
+  │     └── {Behavior}Domain
+  └── Queries/{Domain}QueryDomainService       (router)
+        ├── {Behavior}Domain                   (specialized operation, optional)
+        └── {Behavior}Domain
+```
+
+### Passthrough Facade
+
+The `{Domain}DomainService` in `Apis/` delegates every call to a command or query router. It contains NO logic — pure passthrough with `await ... .ConfigureAwait(false)`.
+
+See: `.claude/rules/csharp/layers/domain/apis.md` for full documentation.
+
+### Router Classes
+
+`{Domain}CommandDomainService` and `{Domain}QueryDomainService` implement the CQRS interfaces from `Apis/`. They use one of two delegation patterns:
+
+- **Direct passthrough**: Router calls aggregator service directly (e.g., Collections)
+- **Specialized operations**: Router delegates to single-`Execute()` services (e.g., Artists)
+
+See: `cqrs-commands.md` and `cqrs-queries.md` for full documentation.
 
 ## Entity Flow
 
@@ -18,40 +38,51 @@ Example: `Lib.Domain.Artists/Apis/`
 ItrEntity (from Entry)  →  [Call aggregator]  →  IOperationResponse<OufEntity>  →  Entry
 ```
 
-Domain services are **pure pass-through**: Take ItrEntity, call aggregator, return response. No transformation, filtering, or enrichment.
-
-## Key Pattern
-
-**Specialized Operation Service**: Single Execute method calling aggregator directly
-- Constructor chain: Public logger → private aggregator
-- Invoke pattern: `ItrEntity in → aggregator call → IOperationResponse<OufEntity> out`
-
-See: `ArtistSearchDomainService.cs:14-24` (complete example)
-
-## Key Rules
-
-1. **Constructor Chain**: Public logger → private aggregator service
-2. **Pure Delegation**: ONLY call aggregator methods, no business logic
-3. **ItrEntity → Aggregator → IOperationResponse**: No intermediate transforms
-4. **Single Responsibility**: Each operation service has exactly one Execute method
-5. **Composite Pattern**: Main service inherits from all specialized interfaces
-6. **ConfigureAwait(false)**: All async calls
-7. **No Exceptions**: Return `IOperationResponse<T>`, never throw
+Domain services are **pure pass-through**: Take ItrEntity, call aggregator, return response. No transformation, filtering, or enrichment. The domain layer owns NO entity types — ItrEntities come from Entry/Shared, OufEntities come from Aggregator.
 
 ## Naming Conventions
 
-| Item | Pattern | Example |
-|------|---------|---------|
-| Composite Interface | `I{Domain}DomainService` | `IArtistDomainService` |
-| Passthrough Service | `{Operation}QueryDomainService` or `{Operation}CommandDomainService` | `ArtistsQueryDomainService` |
-| Specialized Interface | `I{Operation}{Domain}DomainService` | `IArtistSearchDomainService` |
-| Specialized Implementation | `{Operation}{Domain}DomainService` | `ArtistSearchDomainService` |
+| Item | Scope | Pattern | Example |
+|------|-------|---------|---------|
+| Composite Interface | public | `I{Domain}DomainService` | `ICollectionsDomainService` |
+| Composite Implementation | public | `{Domain}DomainService` | `CollectionsDomainService` |
+| Command Router | public | `{Domain}CommandDomainService` | `CollectionCommandDomainService` |
+| Query Router | public | `{Domain}QueryDomainService` | `ArtistsQueryDomainService` |
+| Specialized Interface | internal | `I{Behavior}Domain` | `IArtistSearchDomain` |
+| Specialized Implementation | internal | `{Behavior}Domain` | `ArtistSearchDomain` |
+
+Scope-based suffix distinction: `DomainService` = public scope, `Domain` = internal scope. Specialized interfaces inherit `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually.
+
+## Key Rules
+
+1. **Constructor Chain**: Public logger → private dependencies (aggregator or specialized services)
+2. **Pure Delegation**: ONLY call aggregator methods or specialized operation `Execute()` — no business logic
+3. **ItrEntity → Aggregator → IOperationResponse**: No intermediate transforms
+4. **Single Responsibility**: Each specialized operation has exactly one `Execute` method (inherited from `IOperationResponseService`)
+5. **Composite Pattern**: Main service inherits from all CQRS interfaces
+6. **ConfigureAwait(false)**: All async calls
+7. **No Exceptions**: Return `IOperationResponse<T>`, never throw
+8. **No Entities, Mappers, or Exceptions**: Domain projects contain only `Apis/`, `Commands/`, and `Queries/` folders
+
+## Key Patterns
+
+**Direct Passthrough (Collections)**:
+- Router: `CollectionCommandDomainService.cs` — single aggregator dependency, delegates all methods directly
+- Simplest pattern, used when all operations go to the same aggregator
+
+**Specialized Operations (Artists)**:
+- Router: `ArtistsQueryDomainService.cs` — constructs specialized operations, delegates via `Execute()`
+- Specialized: `ArtistSearchDomain.cs` — inherits `IOperationResponseService`, single `Execute()` calling aggregator
+- Used when operations need individual service isolation
 
 ## When Adding a New Domain Service
 
-1. Create composite interface in `Apis/`
-2. Create passthrough service in `Queries/` or `Commands/`
-3. Create specialized operation service (single Execute method calling aggregator)
-4. Register in composite interface
+1. Create composite interface in `Apis/` (inherits CQRS interfaces)
+2. Create passthrough facade in `Apis/`
+3. Create router class in `Commands/` and/or `Queries/`
+4. Choose delegation pattern:
+   - **Direct passthrough**: If all operations go to a single aggregator
+   - **Specialized operations**: If operations need isolation — create `I{Behavior}Domain` (inheriting `IOperationResponseService`) + `{Behavior}Domain` per operation
+5. Register in facade
 
-See: `Lib.Domain.Artists/` for complete example
+See: `Lib.Domain.Collections/` for direct passthrough, `Lib.Domain.Artists/` for specialized operations.

@@ -1,0 +1,27 @@
+using System.Threading;
+using System.Threading.Tasks;
+using Lib.Aggregator.UserCards.Apis;
+using Lib.Shared.DataModels.Entities.Itrs.UserCards;
+using Lib.Shared.DataModels.Entities.Oufs.UserCards;
+using Lib.Shared.Invocation.Operations;
+using Microsoft.Extensions.Logging;
+
+namespace Lib.Domain.UserCards.Commands;
+
+/// <summary>
+/// Single-method service for adding a user card to the collection.
+/// Delegates to aggregator layer for data persistence.
+/// </summary>
+internal sealed class AddUserCardDomain : IAddUserCardDomain
+{
+    private readonly IUserCardsCommandAggregatorService _userCardsAggregatorService;
+
+    public AddUserCardDomain(ILogger logger) : this(new UserCardsAggregatorService(logger))
+    { }
+
+    private AddUserCardDomain(IUserCardsCommandAggregatorService userCardsAggregatorService) => _userCardsAggregatorService = userCardsAggregatorService;
+
+    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(
+        IUserCardItrEntity input,
+        CancellationToken cancellationToken) => await _userCardsAggregatorService.AddUserCardAsync(input, cancellationToken).ConfigureAwait(false);
+}
