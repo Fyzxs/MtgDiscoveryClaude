@@ -3,10 +3,10 @@ using Cli.MtgDiscovery.DataMigration.OldSystem.AzureSql.Entities;
 using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.Abstractions.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 
 namespace Cli.MtgDiscovery.DataMigration.Mapping;
 
-internal interface IOldToNewCardMapper : ICreateMapper<(CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId, bool replaceMode), IEnumerable<IAddCardToCollectionArgsEntity>>
+internal interface IOldToNewCardMapper : ICreateMapper<(CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemOufEntity newSystemCard, string targetUserId, bool replaceMode), IEnumerable<IAddCardToCollectionArgsEntity>>
 {
 }

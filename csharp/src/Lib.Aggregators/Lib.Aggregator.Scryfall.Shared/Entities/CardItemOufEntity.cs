@@ -2,15 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregator.Scryfall.Shared.Internals;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Aggregator.Scryfall.Shared.Entities;
 
-public sealed class CardItemItrEntity : ICardItemItrEntity
+public sealed class CardItemOufEntity : ICardItemOufEntity
 {
     private readonly dynamic _data;
 
-    public CardItemItrEntity(dynamic data) => _data = data;
+    public CardItemOufEntity(dynamic data) => _data = data;
 
     public string Id => _data?.id;
     public string OracleId => _data?.oracle_id;

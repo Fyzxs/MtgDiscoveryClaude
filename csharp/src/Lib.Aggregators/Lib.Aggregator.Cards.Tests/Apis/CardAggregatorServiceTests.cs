@@ -40,7 +40,7 @@ public sealed class CardAggregatorServiceTests
             CardIds = ["id1", "id2"]
         };
 
-        CardItemCollectionItrEntityFake expectedCollection = new();
+        CardItemCollectionOufEntityFake expectedCollection = new();
         OperationResponseFake<ICardItemCollectionOufEntity> expectedResponse = new()
         {
             IsSuccess = true,

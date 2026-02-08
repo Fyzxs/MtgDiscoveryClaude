@@ -1,7 +1,7 @@
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.Abstractions.Actions.Mappers;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
-internal interface ICardItemOufToOutMapper : ICreateMapper<ICardItemItrEntity, CardItemOutEntity>;
+internal interface ICardItemOufToOutMapper : ICreateMapper<ICardItemOufEntity, CardItemOutEntity>;

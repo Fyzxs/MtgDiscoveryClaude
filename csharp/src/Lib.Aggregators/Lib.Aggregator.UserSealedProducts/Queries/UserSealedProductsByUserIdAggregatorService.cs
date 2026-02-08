@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSealedProducts;
@@ -15,19 +14,19 @@ namespace Lib.Aggregator.UserSealedProducts.Queries;
 internal sealed class UserSealedProductsByUserIdAggregatorService : IUserSealedProductsByUserIdAggregatorService
 {
     private readonly IUserSealedProductsQueryAdapter _adapter;
-    private readonly IUserSealedProductExtToOufMapper _extToOufMapper;
+    private readonly ICollectionUserSealedProductExtToOufMapper _collectionMapper;
 
     public UserSealedProductsByUserIdAggregatorService(ILogger logger) : this(
         new UserSealedProductsAdapterService(logger),
-        new UserSealedProductExtToOufMapper())
+        new CollectionUserSealedProductExtToOufMapper())
     { }
 
     private UserSealedProductsByUserIdAggregatorService(
         IUserSealedProductsQueryAdapter adapter,
-        IUserSealedProductExtToOufMapper extToOufMapper)
+        ICollectionUserSealedProductExtToOufMapper collectionMapper)
     {
         _adapter = adapter;
-        _extToOufMapper = extToOufMapper;
+        _collectionMapper = collectionMapper;
     }
 
     public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> Execute(IUserIdItrEntity input, CancellationToken cancellationToken)
@@ -39,8 +38,7 @@ internal sealed class UserSealedProductsByUserIdAggregatorService : IUserSealedP
             return new FailureOperationResponse<IEnumerable<IUserSealedProductOufEntity>>(extResponse.OuterException);
         }
 
-        IEnumerable<IUserSealedProductOufEntity> oufEntities = await Task.WhenAll(
-            extResponse.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+        IEnumerable<IUserSealedProductOufEntity> oufEntities = await _collectionMapper.Map(extResponse.ResponseData).ConfigureAwait(false);
 
         return new SuccessOperationResponse<IEnumerable<IUserSealedProductOufEntity>>(oufEntities);
     }

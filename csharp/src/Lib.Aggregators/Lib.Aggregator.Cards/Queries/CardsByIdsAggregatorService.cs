@@ -16,27 +16,23 @@ namespace Lib.Aggregator.Cards.Queries;
 internal sealed class CardsByIdsAggregatorService : ICardsByIdsAggregatorService
 {
     private readonly ICardAdapterService _cardAdapterService;
-    private readonly ICollectionCardItemExtToOufMapper _cardItemMapper;
     private readonly ICardIdsItrToXfrMapper _cardIdsItrToXfrMapper;
-    private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
+    private readonly ICardItemCollectionExtToOufMapper _collectionMapper;
 
     public CardsByIdsAggregatorService(ILogger logger) : this(
         new CardAdapterService(logger),
-        new CollectionCardItemExtToOufMapper(),
         new CardIdsItrToXfrMapper(),
-        new CollectionCardItemItrToOufMapper())
+        new CardItemCollectionExtToOufMapper())
     { }
 
     private CardsByIdsAggregatorService(
         ICardAdapterService cardAdapterService,
-        ICollectionCardItemExtToOufMapper cardItemMapper,
         ICardIdsItrToXfrMapper cardIdsItrToXfrMapper,
-        ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
+        ICardItemCollectionExtToOufMapper collectionMapper)
     {
         _cardAdapterService = cardAdapterService;
-        _cardItemMapper = cardItemMapper;
         _cardIdsItrToXfrMapper = cardIdsItrToXfrMapper;
-        _cardItemItrToOufMapper = cardItemItrToOufMapper;
+        _collectionMapper = collectionMapper;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
@@ -51,9 +47,7 @@ internal sealed class CardsByIdsAggregatorService : ICardsByIdsAggregatorService
             return new FailureOperationResponse<ICardItemCollectionOufEntity>(new CardAggregatorOperationException("Failed to retrieve cards by IDs", response.OuterException));
         }
 
-        //TODO: These mappers shouldn't follow each other. They should get combined. Applies to many aggregators
-        IEnumerable<ICardItemItrEntity> mappedCards = await _cardItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ICardItemCollectionOufEntity oufEntity = await _cardItemItrToOufMapper.Map(mappedCards).ConfigureAwait(false);
+        ICardItemCollectionOufEntity oufEntity = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<ICardItemCollectionOufEntity>(oufEntity);
     }
 }

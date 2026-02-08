@@ -3,12 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
 internal sealed class CardItemOufToOutMapper : ICardItemOufToOutMapper
 {
-    public Task<CardItemOutEntity> Map(ICardItemItrEntity source)
+    public Task<CardItemOutEntity> Map(ICardItemOufEntity source)
     {
         CardItemOutEntity result = new()
         {

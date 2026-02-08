@@ -16,27 +16,23 @@ namespace Lib.Aggregator.Sets.Queries;
 internal sealed class SetsByCodeAggregatorService : ISetsByCodeAggregatorService
 {
     private readonly ISetAdapterService _setAdapterService;
-    private readonly ICollectionSetItemExtToOufMapper _setItemMapper;
     private readonly ISetCodesItrToXfrMapper _setCodesItrToXfrMapper;
-    private readonly ICollectionSetItemItrToOufMapper _setItemItrToOufMapper;
+    private readonly ISetItemCollectionExtToOufMapper _collectionMapper;
 
     public SetsByCodeAggregatorService(ILogger logger) : this(
         new SetAdapterService(logger),
-        new CollectionSetItemExtToOufMapper(),
         new SetCodesItrToXfrMapper(),
-        new CollectionSetItemItrToOufMapper())
+        new SetItemCollectionExtToOufMapper())
     { }
 
     private SetsByCodeAggregatorService(
         ISetAdapterService setAdapterService,
-        ICollectionSetItemExtToOufMapper setItemMapper,
         ISetCodesItrToXfrMapper setCodesItrToXfrMapper,
-        ICollectionSetItemItrToOufMapper setItemItrToOufMapper)
+        ISetItemCollectionExtToOufMapper collectionMapper)
     {
         _setAdapterService = setAdapterService;
-        _setItemMapper = setItemMapper;
         _setCodesItrToXfrMapper = setCodesItrToXfrMapper;
-        _setItemItrToOufMapper = setItemItrToOufMapper;
+        _collectionMapper = collectionMapper;
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> Execute(
@@ -51,8 +47,7 @@ internal sealed class SetsByCodeAggregatorService : ISetsByCodeAggregatorService
             return new FailureOperationResponse<ISetItemCollectionOufEntity>(new SetsAggregatorOperationException("Failed to retrieve sets by codes", response.OuterException));
         }
 
-        IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ISetItemCollectionOufEntity oufEntity = await _setItemItrToOufMapper.Map(mappedSets).ConfigureAwait(false);
+        ISetItemCollectionOufEntity oufEntity = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<ISetItemCollectionOufEntity>(oufEntity);
     }
 }

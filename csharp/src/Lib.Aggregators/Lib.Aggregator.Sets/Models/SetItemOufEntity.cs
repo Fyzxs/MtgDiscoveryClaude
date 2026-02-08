@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
 
 namespace Lib.Aggregator.Sets.Models;
 
-internal sealed class SetItemItrEntity : ISetItemItrEntity
+internal sealed class SetItemOufEntity : ISetItemOufEntity
 {
     public string Id { get; init; }
     public string Code { get; init; }

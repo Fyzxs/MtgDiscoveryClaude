@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Itrs.Sets;
 
-namespace Lib.Shared.DataModels.Entities.Itrs.Sets;
+namespace Lib.Shared.DataModels.Entities.Oufs.Sets;
 
-public interface ISetItemItrEntity
+public interface ISetItemOufEntity
 {
     string Id { get; }
     string Code { get; }

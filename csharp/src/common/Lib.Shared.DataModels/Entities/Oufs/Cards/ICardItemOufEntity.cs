@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Lib.Shared.DataModels.Entities.Itrs.Cards;
 
-namespace Lib.Shared.DataModels.Entities.Itrs.Cards;
+namespace Lib.Shared.DataModels.Entities.Oufs.Cards;
 
-public interface ICardItemItrEntity
+public interface ICardItemOufEntity
 {
     string Id { get; }
     string OracleId { get; }

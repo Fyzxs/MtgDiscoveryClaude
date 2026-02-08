@@ -4,17 +4,18 @@ using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
 using Lib.Aggregator.Sets.Models;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
 using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
 
 namespace Lib.Aggregator.Sets.Queries.Mappers;
 
 /// <summary>
-/// Maps ScryfallSetItemExtEntity to ISetItemItrEntity using the existing mapper.
+/// Maps ScryfallSetItemExtEntity to ISetItemOufEntity using the existing mapper.
 /// </summary>
 internal sealed class SetItemExtToOufMapper : ISetItemExtToOufMapper
 {
-    public Task<ISetItemItrEntity> Map(ScryfallSetItemExtEntity scryfallSetItem)
+    public Task<ISetItemOufEntity> Map(ScryfallSetItemExtEntity scryfallSetItem)
     {
         if (scryfallSetItem.Data is null)
         {
@@ -23,7 +24,7 @@ internal sealed class SetItemExtToOufMapper : ISetItemExtToOufMapper
 
         dynamic data = scryfallSetItem.Data;
 
-        return Task.FromResult<ISetItemItrEntity>(new SetItemItrEntity
+        return Task.FromResult<ISetItemOufEntity>(new SetItemOufEntity
         {
             Id = data.id,
             Code = data.code,

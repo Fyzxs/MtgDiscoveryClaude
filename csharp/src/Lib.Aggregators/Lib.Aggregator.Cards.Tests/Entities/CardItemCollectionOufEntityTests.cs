@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
 
 namespace Lib.Aggregator.Cards.Tests.Entities;
@@ -13,9 +12,9 @@ public sealed class CardItemCollectionOufEntityTests
     public void Data_WhenSet_ReturnsCorrectValue()
     {
         // Arrange
-        List<ICardItemItrEntity> expected = [
-            new CardItemItrEntityFake { Id = "card1", Name = "Card One" },
-            new CardItemItrEntityFake { Id = "card2", Name = "Card Two" }
+        List<ICardItemOufEntity> expected = [
+            new CardItemOufEntityFake { Id = "card1", Name = "Card One" },
+            new CardItemOufEntityFake { Id = "card2", Name = "Card Two" }
         ];
 
         // Act

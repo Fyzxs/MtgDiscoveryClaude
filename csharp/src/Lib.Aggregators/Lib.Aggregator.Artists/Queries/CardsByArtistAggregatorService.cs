@@ -6,7 +6,6 @@ using Lib.Adapter.Artists.Apis.Entities;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistCards;
 using Lib.Aggregator.Artists.Queries.Mappers;
 using Lib.Shared.DataModels.Entities.Itrs.Artists;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
@@ -17,26 +16,22 @@ internal sealed class CardsByArtistAggregatorService : ICardsByArtistAggregatorS
 {
     private readonly IArtistAdapterService _artistAdapterService;
     private readonly IArtistIdItrToXfrMapper _artistIdToXfrMapper;
-    private readonly ICollectionArtistCardExtToOufMapper _artistCardCollectionMapper;
-    private readonly ICollectionCardItemItrToOufMapper _cardItemItrToOufMapper;
+    private readonly IArtistCardCollectionExtToOufMapper _collectionMapper;
 
     public CardsByArtistAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
         new ArtistIdItrToXfrMapper(),
-        new CollectionArtistCardExtToOufMapper(),
-        new CollectionCardItemItrToOufMapper())
+        new ArtistCardCollectionExtToOufMapper())
     { }
 
     private CardsByArtistAggregatorService(
         IArtistAdapterService artistAdapterService,
         IArtistIdItrToXfrMapper artistIdToXfrMapper,
-        ICollectionArtistCardExtToOufMapper artistCardCollectionMapper,
-        ICollectionCardItemItrToOufMapper cardItemItrToOufMapper)
+        IArtistCardCollectionExtToOufMapper collectionMapper)
     {
         _artistAdapterService = artistAdapterService;
         _artistIdToXfrMapper = artistIdToXfrMapper;
-        _artistCardCollectionMapper = artistCardCollectionMapper;
-        _cardItemItrToOufMapper = cardItemItrToOufMapper;
+        _collectionMapper = collectionMapper;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> Execute(
@@ -51,8 +46,7 @@ internal sealed class CardsByArtistAggregatorService : ICardsByArtistAggregatorS
             return new FailureOperationResponse<ICardItemCollectionOufEntity>(adapterResponse.OuterException);
         }
 
-        IEnumerable<ICardItemItrEntity> mappedCards = await _artistCardCollectionMapper.Map(adapterResponse.ResponseData).ConfigureAwait(false);
-        ICardItemCollectionOufEntity collection = await _cardItemItrToOufMapper.Map(mappedCards).ConfigureAwait(false);
+        ICardItemCollectionOufEntity collection = await _collectionMapper.Map(adapterResponse.ResponseData).ConfigureAwait(false);
 
         return new SuccessOperationResponse<ICardItemCollectionOufEntity>(collection);
     }

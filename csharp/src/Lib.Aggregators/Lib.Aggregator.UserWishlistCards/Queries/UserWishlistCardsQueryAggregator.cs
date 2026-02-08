@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserWishlistCards.Apis;
+using Lib.Aggregator.UserWishlistCards.Queries.Entities;
 using Lib.Aggregator.UserWishlistCards.Queries.UserWishlistCardsByIds;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserWishlistCards;
@@ -43,7 +44,6 @@ internal sealed class UserWishlistCardsQueryAggregator : IUserWishlistCardsQuery
             return response;
         }
 
-        // Only filter by setId if it's provided (not null or empty)
         if (string.IsNullOrEmpty(userWishlistCardsSet.SetId))
         {
             return response;
@@ -51,10 +51,5 @@ internal sealed class UserWishlistCardsQueryAggregator : IUserWishlistCardsQuery
 
         IEnumerable<IUserWishlistCardOufEntity> filteredBySet = response.ResponseData.Where(card => card.SetId == userWishlistCardsSet.SetId);
         return new SuccessOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>(filteredBySet);
-    }
-
-    private sealed class UserWishlistCardsQueryItrEntity : IUserWishlistCardsQueryItrEntity
-    {
-        public required string UserId { get; init; }
     }
 }

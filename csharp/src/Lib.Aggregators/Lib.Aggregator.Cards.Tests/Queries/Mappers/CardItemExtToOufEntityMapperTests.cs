@@ -3,7 +3,7 @@ using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.CardItems;
 using Lib.Aggregator.Cards.Queries.Mappers;
 using Lib.Aggregator.Cards.Tests.Fakes;
 using Lib.Aggregator.Scryfall.Shared.Entities;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Newtonsoft.Json.Linq;
 
 namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
@@ -12,7 +12,7 @@ namespace Lib.Aggregator.Cards.Tests.Queries.Mappers;
 public sealed class CardItemExtToOufMapperTests
 {
     [TestMethod, TestCategory("unit")]
-    public async Task Map_WithValidScryfallCard_ReturnsCardItemItrEntity()
+    public async Task Map_WithValidScryfallCard_ReturnsCardItemOufEntity()
     {
         // Arrange
         dynamic testData = new JObject
@@ -57,11 +57,11 @@ public sealed class CardItemExtToOufMapperTests
         CardItemExtToOufMapper subject = new();
 
         // Act
-        ICardItemItrEntity actual = await subject.Map(scryfallCard).ConfigureAwait(false);
+        ICardItemOufEntity actual = await subject.Map(scryfallCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
-        actual.Should().BeOfType<CardItemItrEntity>();
+        actual.Should().BeOfType<CardItemOufEntity>();
         actual.Id.Should().Be("test-id");
         actual.Name.Should().Be("Test Card");
         actual.OracleId.Should().Be("oracle-123");
@@ -84,7 +84,7 @@ public sealed class CardItemExtToOufMapperTests
         CardItemExtToOufMapper subject = new();
 
         // Act
-        ICardItemItrEntity actual = await subject.Map(scryfallCard).ConfigureAwait(false);
+        ICardItemOufEntity actual = await subject.Map(scryfallCard).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -106,8 +106,8 @@ public sealed class CardItemExtToOufMapperTests
         CardItemExtToOufMapper subject = new();
 
         // Act
-        ICardItemItrEntity first = await subject.Map(scryfallCard).ConfigureAwait(false);
-        ICardItemItrEntity second = await subject.Map(scryfallCard).ConfigureAwait(false);
+        ICardItemOufEntity first = await subject.Map(scryfallCard).ConfigureAwait(false);
+        ICardItemOufEntity second = await subject.Map(scryfallCard).ConfigureAwait(false);
 
         // Assert
         first.Should().NotBeSameAs(second);

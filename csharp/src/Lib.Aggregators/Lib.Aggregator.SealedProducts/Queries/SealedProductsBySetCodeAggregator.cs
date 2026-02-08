@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SealedProducts;
@@ -18,22 +17,22 @@ internal sealed class SealedProductsBySetCodeAggregator : ISealedProductsBySetCo
 {
     private readonly ISealedProductsAdapterService _adapterService;
     private readonly ISealedProductsBySetCodeItrToXfrMapper _itrToXfrMapper;
-    private readonly ISealedProductExtToOufMapper _extToOufMapper;
+    private readonly ICollectionSealedProductExtToOufMapper _collectionMapper;
 
     public SealedProductsBySetCodeAggregator(ILogger logger) : this(
         new SealedProductsAdapterService(logger),
         new SealedProductsBySetCodeItrToXfrMapper(),
-        new SealedProductExtToOufMapper())
+        new CollectionSealedProductExtToOufMapper())
     { }
 
     private SealedProductsBySetCodeAggregator(
         ISealedProductsAdapterService adapterService,
         ISealedProductsBySetCodeItrToXfrMapper itrToXfrMapper,
-        ISealedProductExtToOufMapper extToOufMapper)
+        ICollectionSealedProductExtToOufMapper collectionMapper)
     {
         _adapterService = adapterService;
         _itrToXfrMapper = itrToXfrMapper;
-        _extToOufMapper = extToOufMapper;
+        _collectionMapper = collectionMapper;
     }
 
     public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(
@@ -51,8 +50,7 @@ internal sealed class SealedProductsBySetCodeAggregator : ISealedProductsBySetCo
                 new SealedProductsAggregatorException($"Failed to retrieve sealed products for set '{input.SetCode}'", response.OuterException));
         }
 
-        IEnumerable<ISealedProductOufEntity> oufEntities = await Task.WhenAll(
-            response.ResponseData.Select(ext => _extToOufMapper.Map(ext))).ConfigureAwait(false);
+        IEnumerable<ISealedProductOufEntity> oufEntities = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
 
         return new SuccessOperationResponse<IEnumerable<ISealedProductOufEntity>>(oufEntities);
     }

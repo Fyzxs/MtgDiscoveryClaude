@@ -16,26 +16,22 @@ namespace Lib.Aggregator.Sets.Queries;
 internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
 {
     private readonly ISetAdapterService _setAdapterService;
-    private readonly ICollectionSetItemExtToOufMapper _setItemMapper;
-    private readonly ICollectionSetItemItrToOufMapper _setItemItrToOufMapper;
+    private readonly ISetItemCollectionExtToOufMapper _collectionMapper;
     private readonly IAllSetsItrToXfrMapper _allSetsMapper;
 
     public AllSetsAggregatorService(ILogger logger) : this(
         new SetAdapterService(logger),
-        new CollectionSetItemExtToOufMapper(),
-        new CollectionSetItemItrToOufMapper(),
+        new SetItemCollectionExtToOufMapper(),
         new AllSetsItrToXfrMapper())
     { }
 
     private AllSetsAggregatorService(
         ISetAdapterService setAdapterService,
-        ICollectionSetItemExtToOufMapper setItemMapper,
-        ICollectionSetItemItrToOufMapper setItemItrToOufMapper,
+        ISetItemCollectionExtToOufMapper collectionMapper,
         IAllSetsItrToXfrMapper allSetsMapper)
     {
         _setAdapterService = setAdapterService;
-        _setItemMapper = setItemMapper;
-        _setItemItrToOufMapper = setItemItrToOufMapper;
+        _collectionMapper = collectionMapper;
         _allSetsMapper = allSetsMapper;
     }
 
@@ -51,8 +47,7 @@ internal sealed class AllSetsAggregatorService : IAllSetsAggregatorService
             return new FailureOperationResponse<ISetItemCollectionOufEntity>(new SetsAggregatorOperationException("Failed to retrieve all sets", response.OuterException));
         }
 
-        IEnumerable<ISetItemItrEntity> mappedSets = await _setItemMapper.Map(response.ResponseData).ConfigureAwait(false);
-        ISetItemCollectionOufEntity oufEntity = await _setItemItrToOufMapper.Map(mappedSets).ConfigureAwait(false);
+        ISetItemCollectionOufEntity oufEntity = await _collectionMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<ISetItemCollectionOufEntity>(oufEntity);
     }
 }

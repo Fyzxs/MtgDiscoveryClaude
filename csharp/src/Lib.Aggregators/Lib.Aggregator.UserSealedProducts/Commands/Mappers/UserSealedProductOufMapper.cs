@@ -10,15 +10,15 @@ internal sealed class UserSealedProductOufMapper : IUserSealedProductOufMapper
     {
         IUserSealedProductOufEntity ouf = new UserSealedProductOufEntity
         {
+            UserId = input.UserId,
             ProductUuid = input.ProductUuid,
-            Count = input.Count
+            ProductName = input.ProductName,
+            SetCode = input.SetCode,
+            Category = input.Category,
+            ImageUrl = input.ImageUrl,
+            Count = input.Count,
+            UpdatedAt = input.UpdatedAt
         };
         return Task.FromResult(ouf);
-    }
-
-    private sealed class UserSealedProductOufEntity : IUserSealedProductOufEntity
-    {
-        public required string ProductUuid { get; init; }
-        public required int Count { get; init; }
     }
 }
