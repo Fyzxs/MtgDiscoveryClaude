@@ -6,6 +6,8 @@
 ## CUSTOM HERE
 # Don't track the dmt
 **/.dmt
+_bmad/**
+.claude/commands/bmad*
 
 # GraphQL Schema
 **/schema.graphql
