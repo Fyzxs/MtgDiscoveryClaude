@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Sets;
-using Lib.Shared.DataModels.Entities.Itrs.Sets;
+using Lib.Shared.DataModels.Entities.Oufs.Sets;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
 internal sealed class SetItemOufToOutMapper : ISetItemOufToOutMapper
 {
-    public Task<SetItemOutEntity> Map(ISetItemItrEntity setItem)
+    public Task<SetItemOutEntity> Map(ISetItemOufEntity setItem)
     {
         SetItemOutEntity result = new()
         {
@@ -36,7 +36,7 @@ internal sealed class SetItemOufToOutMapper : ISetItemOufToOutMapper
         return Task.FromResult(result);
     }
 
-    private static ICollection<SetGroupingOutEntity> SetGroupingOutEntities(ISetItemItrEntity setItem)
+    private static ICollection<SetGroupingOutEntity> SetGroupingOutEntities(ISetItemOufEntity setItem)
     {
         ICollection<SetGroupingOutEntity> groupings = null;
 

@@ -6,7 +6,7 @@ using Cli.MtgDiscovery.DataMigration.OldSystem.Cosmos.Entities;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.Shared.DataModels.Entities.Args.User;
 using Lib.Shared.DataModels.Entities.Args.UserCards;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Microsoft.Extensions.Logging;
 
 namespace Cli.MtgDiscovery.DataMigration.Mapping;
@@ -27,7 +27,7 @@ internal sealed class OldToNewCardMapper : IOldToNewCardMapper
         _specialMapper = specialMapper;
     }
 
-    public async Task<IEnumerable<IAddCardToCollectionArgsEntity>> Map((CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemItrEntity newSystemCard, string targetUserId, bool replaceMode) source)
+    public async Task<IEnumerable<IAddCardToCollectionArgsEntity>> Map((CollectorDataRecord sqlRecord, OldDiscoveryCardExtEntity oldCosmosCard, ICardItemOufEntity newSystemCard, string targetUserId, bool replaceMode) source)
     {
         string finish = await _finishMapper
             .Map((source.oldCosmosCard.Body.Foil, source.oldCosmosCard.Body.Nonfoil, source.oldCosmosCard.Body.Etched))

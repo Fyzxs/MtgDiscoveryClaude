@@ -24,7 +24,7 @@ internal sealed class HasMinimumLengthArtistNameArgEntityValidator : OperationRe
                 .ToLowerInvariant()
                 .Where(char.IsLetter)]);
 
-            return Task.FromResult(normalized.Length >= 3);
+            return Task.FromResult(3 <= normalized.Length);
         }
     }
 

@@ -43,7 +43,6 @@ internal sealed class UserWishlistCardsQueryAggregator : IUserWishlistCardsQuery
             return response;
         }
 
-        // Only filter by setId if it's provided (not null or empty)
         if (string.IsNullOrEmpty(userWishlistCardsSet.SetId))
         {
             return response;
@@ -51,10 +50,5 @@ internal sealed class UserWishlistCardsQueryAggregator : IUserWishlistCardsQuery
 
         IEnumerable<IUserWishlistCardOufEntity> filteredBySet = response.ResponseData.Where(card => card.SetId == userWishlistCardsSet.SetId);
         return new SuccessOperationResponse<IEnumerable<IUserWishlistCardOufEntity>>(filteredBySet);
-    }
-
-    private sealed class UserWishlistCardsQueryItrEntity : IUserWishlistCardsQueryItrEntity
-    {
-        public required string UserId { get; init; }
     }
 }

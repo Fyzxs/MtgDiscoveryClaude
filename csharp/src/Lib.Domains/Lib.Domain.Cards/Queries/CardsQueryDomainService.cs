@@ -11,47 +11,47 @@ namespace Lib.Domain.Cards.Queries;
 
 internal sealed class CardsQueryDomainService : ICardsQueryDomainService
 {
-    private readonly ICardsByIdsDomainService _cardsByIdsService;
-    private readonly ICardsBySetCodeDomainService _cardsBySetCodeService;
-    private readonly ICardsByNameDomainService _cardsByNameService;
-    private readonly ICardNameSearchDomainService _cardNameSearchService;
+    private readonly ICardsByIdsDomain _cardsByIds;
+    private readonly ICardsBySetCodeDomain _cardsBySetCode;
+    private readonly ICardsByNameDomain _cardsByName;
+    private readonly ICardNameSearchDomain _cardNameSearch;
 
     public CardsQueryDomainService(ILogger logger) : this(
-        new CardsByIdsDomainService(logger),
-        new CardsBySetCodeDomainService(logger),
-        new CardsByNameDomainService(logger),
-        new CardNameSearchDomainService(logger))
+        new CardsByIdsDomain(logger),
+        new CardsBySetCodeDomain(logger),
+        new CardsByNameDomain(logger),
+        new CardNameSearchDomain(logger))
     { }
 
     private CardsQueryDomainService(
-        ICardsByIdsDomainService cardsByIdsService,
-        ICardsBySetCodeDomainService cardsBySetCodeService,
-        ICardsByNameDomainService cardsByNameService,
-        ICardNameSearchDomainService cardNameSearchService)
+        ICardsByIdsDomain cardsByIds,
+        ICardsBySetCodeDomain cardsBySetCode,
+        ICardsByNameDomain cardsByName,
+        ICardNameSearchDomain cardNameSearch)
     {
-        _cardsByIdsService = cardsByIdsService;
-        _cardsBySetCodeService = cardsBySetCodeService;
-        _cardsByNameService = cardsByNameService;
-        _cardNameSearchService = cardNameSearchService;
+        _cardsByIds = cardsByIds;
+        _cardsBySetCode = cardsBySetCode;
+        _cardsByName = cardsByName;
+        _cardNameSearch = cardNameSearch;
     }
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(
         ICardIdsItrEntity args,
         CancellationToken cancellationToken)
-        => await _cardsByIdsService.Execute(args, cancellationToken).ConfigureAwait(false);
+        => await _cardsByIds.Execute(args, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(
         ISetCodeItrEntity setCode,
         CancellationToken cancellationToken)
-        => await _cardsBySetCodeService.Execute(setCode, cancellationToken).ConfigureAwait(false);
+        => await _cardsBySetCode.Execute(setCode, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(
         ICardNameItrEntity cardName,
         CancellationToken cancellationToken)
-        => await _cardsByNameService.Execute(cardName, cancellationToken).ConfigureAwait(false);
+        => await _cardsByName.Execute(cardName, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<ICardNameSearchCollectionOufEntity>> CardNameSearchAsync(
         ICardSearchTermItrEntity searchTerm,
         CancellationToken cancellationToken)
-        => await _cardNameSearchService.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
+        => await _cardNameSearch.Execute(searchTerm, cancellationToken).ConfigureAwait(false);
 }

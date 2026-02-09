@@ -1,0 +1,18 @@
+using System.Threading.Tasks;
+using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserSetCards;
+using Lib.Aggregator.UserSetCards.Queries.Entities;
+using Lib.Shared.DataModels.Entities.Oufs.UserSetCards;
+
+namespace Lib.Aggregator.UserSetCards.Queries.Mappers;
+
+internal sealed class UserSetCardFinishGroupExtToOufMapper : IUserSetCardFinishGroupExtToOufMapper
+{
+    public Task<IUserSetCardFinishGroupOufEntity> Map(UserSetCardFinishGroupExtEntity finishExt)
+    {
+        IUserSetCardFinishGroupOufEntity result = new UserSetCardFinishGroupOufEntity
+        {
+            Cards = [.. finishExt.Cards]
+        };
+        return Task.FromResult(result);
+    }
+}

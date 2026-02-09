@@ -27,7 +27,6 @@ public sealed class DeleteCollectionArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsValid().Should().BeTrue();
     }
 
@@ -42,7 +41,6 @@ public sealed class DeleteCollectionArgEntityValidatorContainerTests
             await subject.Validate(null!).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -61,7 +59,6 @@ public sealed class DeleteCollectionArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 
@@ -80,7 +77,6 @@ public sealed class DeleteCollectionArgEntityValidatorContainerTests
             await subject.Validate(args).ConfigureAwait(false);
 
         // Assert
-        actual.Should().NotBeNull();
         actual.IsNotValid().Should().BeTrue();
     }
 

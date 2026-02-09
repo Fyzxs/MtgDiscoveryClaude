@@ -10,38 +10,38 @@ namespace Lib.Domain.Sets.Queries;
 
 internal sealed class SetsQueryDomainService : ISetsQueryDomainService
 {
-    private readonly ISetsDomainService _setsService;
-    private readonly ISetsByCodeDomainService _setsByCodeService;
-    private readonly IAllSetsDomainService _allSetsService;
+    private readonly ISetsDomain _setsDomain;
+    private readonly ISetsByCodeDomain _setsByCodeDomain;
+    private readonly IAllSetsDomain _allSetsDomain;
 
     public SetsQueryDomainService(ILogger logger) : this(
-        new SetsDomainService(logger),
-        new SetsByCodeDomainService(logger),
-        new AllSetsDomainService(logger))
+        new SetsDomain(logger),
+        new SetsByCodeDomain(logger),
+        new AllSetsDomain(logger))
     { }
 
     private SetsQueryDomainService(
-        ISetsDomainService setsService,
-        ISetsByCodeDomainService setsByCodeService,
-        IAllSetsDomainService allSetsService)
+        ISetsDomain setsDomain,
+        ISetsByCodeDomain setsByCodeDomain,
+        IAllSetsDomain allSetsDomain)
     {
-        _setsService = setsService;
-        _setsByCodeService = setsByCodeService;
-        _allSetsService = allSetsService;
+        _setsDomain = setsDomain;
+        _setsByCodeDomain = setsByCodeDomain;
+        _allSetsDomain = allSetsDomain;
     }
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsAsync(
         ISetIdsItrEntity setIds,
         CancellationToken cancellationToken)
-        => await _setsService.Execute(setIds, cancellationToken).ConfigureAwait(false);
+        => await _setsDomain.Execute(setIds, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> SetsByCodeAsync(
         ISetCodesItrEntity setCodes,
         CancellationToken cancellationToken)
-        => await _setsByCodeService.Execute(setCodes, cancellationToken).ConfigureAwait(false);
+        => await _setsByCodeDomain.Execute(setCodes, cancellationToken).ConfigureAwait(false);
 
     public async Task<IOperationResponse<ISetItemCollectionOufEntity>> AllSetsAsync(
         IAllSetsItrEntity allSets,
         CancellationToken cancellationToken)
-        => await _allSetsService.Execute(allSets, cancellationToken).ConfigureAwait(false);
+        => await _allSetsDomain.Execute(allSets, cancellationToken).ConfigureAwait(false);
 }

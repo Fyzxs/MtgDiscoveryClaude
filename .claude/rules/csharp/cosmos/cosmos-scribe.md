@@ -1,3 +1,8 @@
+---
+paths:
+  - "csharp/src/**/*Scribe.cs"
+---
+
 # Cosmos Scribe Pattern
 
 ## Purpose

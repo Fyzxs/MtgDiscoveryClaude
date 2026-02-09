@@ -1,15 +1,9 @@
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserCards;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Aggregator.UserCards.Queries;
 
 internal interface IUserCardAggregatorService
-{
-    Task<IOperationResponse<IEnumerable<IUserCardOufEntity>>> Execute(
-        IUserCardItrEntity input,
-        CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IUserCardItrEntity, IEnumerable<IUserCardOufEntity>>;

@@ -1,10 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Lib.Domain.Collections.Tests" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
     <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
     <ProjectReference Include="..\..\Lib.Aggregators\Lib.Aggregator.Collections\Lib.Aggregator.Collections.csproj" />

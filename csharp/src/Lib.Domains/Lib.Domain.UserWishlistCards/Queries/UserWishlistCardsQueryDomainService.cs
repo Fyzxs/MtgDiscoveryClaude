@@ -11,20 +11,20 @@ namespace Lib.Domain.UserWishlistCards.Queries;
 
 internal sealed class UserWishlistCardsQueryDomainService : IUserWishlistCardsQueryDomainService
 {
-    private readonly IGetUserWishlistCardsDomainService _getUserWishlistCardsService;
-    private readonly IUserWishlistCardsBySetDomainService _userWishlistCardsBySetService;
-    private readonly IUserWishlistCardsByIdsDomainService _userWishlistCardsByIdsService;
+    private readonly IGetUserWishlistCardsDomain _getUserWishlistCardsService;
+    private readonly IUserWishlistCardsBySetDomain _userWishlistCardsBySetService;
+    private readonly IUserWishlistCardsByIdsDomain _userWishlistCardsByIdsService;
 
     public UserWishlistCardsQueryDomainService(ILogger logger) : this(
-        new GetUserWishlistCardsDomainService(logger),
-        new UserWishlistCardsBySetDomainService(logger),
-        new UserWishlistCardsByIdsDomainService(logger))
+        new GetUserWishlistCardsDomain(logger),
+        new UserWishlistCardsBySetDomain(logger),
+        new UserWishlistCardsByIdsDomain(logger))
     { }
 
     private UserWishlistCardsQueryDomainService(
-        IGetUserWishlistCardsDomainService getUserWishlistCardsService,
-        IUserWishlistCardsBySetDomainService userWishlistCardsBySetService,
-        IUserWishlistCardsByIdsDomainService userWishlistCardsByIdsService)
+        IGetUserWishlistCardsDomain getUserWishlistCardsService,
+        IUserWishlistCardsBySetDomain userWishlistCardsBySetService,
+        IUserWishlistCardsByIdsDomain userWishlistCardsByIdsService)
     {
         _getUserWishlistCardsService = getUserWishlistCardsService;
         _userWishlistCardsBySetService = userWishlistCardsBySetService;

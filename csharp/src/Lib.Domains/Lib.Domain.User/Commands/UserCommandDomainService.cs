@@ -10,12 +10,12 @@ namespace Lib.Domain.User.Commands;
 
 internal sealed class UserCommandDomainService : IUserCommandDomainService
 {
-    private readonly IRegisterUserDomainService _registerUserService;
+    private readonly IRegisterUserDomain _registerUserService;
 
-    public UserCommandDomainService(ILogger logger) : this(new RegisterUserDomainService(logger))
+    public UserCommandDomainService(ILogger logger) : this(new RegisterUserDomain(logger))
     { }
 
-    private UserCommandDomainService(IRegisterUserDomainService registerUserService) => _registerUserService = registerUserService;
+    private UserCommandDomainService(IRegisterUserDomain registerUserService) => _registerUserService = registerUserService;
 
     public async Task<IOperationResponse<IUserSyncOufEntity>> RegisterUserAsync(IUserInfoItrEntity userInfo, CancellationToken cancellationToken) => await _registerUserService.Execute(userInfo, cancellationToken).ConfigureAwait(false);
 }

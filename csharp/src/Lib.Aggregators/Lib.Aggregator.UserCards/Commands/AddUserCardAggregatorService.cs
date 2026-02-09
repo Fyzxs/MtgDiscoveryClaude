@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.UserCards;
@@ -19,30 +18,34 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
 {
     private readonly IUserCardsAdapterService _userCardsAdapterService;
     private readonly IUserSetCardsAdapterService _userSetCardsAdapterService;
-    private readonly IUserCardExtToItrEntityMapper _userCardMapper;
+    private readonly IUserCardExtToOufEntityMapper _userCardMapper;
     private readonly IAddUserCardItrToXfrMapper _addUserCardItrToXfrMapper;
     private readonly IAddUserCardXfrToAddCardToSetXfrMapper _addCardToSetMapper;
+    private readonly IAddUserCardRollbackXfrMapper _rollbackMapper;
 
     public AddUserCardAggregatorService(ILogger logger) : this(
         new UserCardsAdapterService(logger),
         new UserSetCardsAdapterService(logger),
-        new UserCardExtToItrEntityMapper(),
+        new UserCardExtToOufEntityMapper(),
         new AddUserCardItrToXfrMapper(),
-        new AddUserCardXfrToAddCardToSetXfrMapper())
+        new AddUserCardXfrToAddCardToSetXfrMapper(),
+        new AddUserCardRollbackXfrMapper())
     { }
 
     private AddUserCardAggregatorService(
         IUserCardsAdapterService userCardsAdapterService,
         IUserSetCardsAdapterService userSetCardsAdapterService,
-        IUserCardExtToItrEntityMapper userCardMapper,
+        IUserCardExtToOufEntityMapper userCardMapper,
         IAddUserCardItrToXfrMapper addUserCardItrToXfrMapper,
-        IAddUserCardXfrToAddCardToSetXfrMapper addCardToSetMapper)
+        IAddUserCardXfrToAddCardToSetXfrMapper addCardToSetMapper,
+        IAddUserCardRollbackXfrMapper rollbackMapper)
     {
         _userCardsAdapterService = userCardsAdapterService;
         _userSetCardsAdapterService = userSetCardsAdapterService;
         _userCardMapper = userCardMapper;
         _addUserCardItrToXfrMapper = addUserCardItrToXfrMapper;
         _addCardToSetMapper = addCardToSetMapper;
+        _rollbackMapper = rollbackMapper;
     }
 
     public async Task<IOperationResponse<IUserCardOufEntity>> Execute(
@@ -62,7 +65,7 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
 
         if (setCardResponse.IsFailure)
         {
-            IAddUserCardXfrEntity rollbackEntity = CreateRollbackEntity(xfrEntity);
+            IAddUserCardXfrEntity rollbackEntity = await _rollbackMapper.Map(xfrEntity).ConfigureAwait(false);
             await _userCardsAdapterService.AddUserCardAsync(rollbackEntity, cancellationToken).ConfigureAwait(false);
 
             return new FailureOperationResponse<IUserCardOufEntity>(setCardResponse.OuterException);
@@ -70,57 +73,5 @@ internal sealed class AddUserCardAggregatorService : IAddUserCardAggregatorServi
 
         IUserCardOufEntity mappedUserCard = await _userCardMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IUserCardOufEntity>(mappedUserCard);
-    }
-
-    private static IAddUserCardXfrEntity CreateRollbackEntity(IAddUserCardXfrEntity original)
-    {
-        UserCardDetailsXfrEntity negatedDetails = new()
-        {
-            Finish = original.Details.Finish,
-            Special = original.Details.Special,
-            Count = -original.Details.Count,
-            SetGroupId = original.Details.SetGroupId
-        };
-
-        return new AddUserCardXfrEntity
-        {
-            UserId = original.UserId,
-            CardId = original.CardId,
-            SetId = original.SetId,
-            CardName = original.CardName,
-            SetName = original.SetName,
-            SetCode = original.SetCode,
-            ReleasedAt = original.ReleasedAt,
-            Artist = original.Artist,
-            ArtistIds = original.ArtistIds,
-            CardNameGuid = original.CardNameGuid,
-            Details = negatedDetails
-        };
-    }
-
-    private sealed class AddUserCardXfrEntity : IAddUserCardXfrEntity
-    {
-        public required string UserId { get; init; }
-        public required string CardId { get; init; }
-        public required string SetId { get; init; }
-        public required string CardName { get; init; }
-        public required string SetName { get; init; }
-        public required string SetCode { get; init; }
-        public required string ReleasedAt { get; init; }
-        public required string Artist { get; init; }
-        public required IEnumerable<string> ArtistIds { get; init; }
-        public required string CardNameGuid { get; init; }
-        public required IUserCardDetailsXfrEntity Details { get; init; }
-        public bool ReplaceMode { get; init; }
-        public string CacheKey => $"add_user_card:{UserId}:{CardId}";
-    }
-
-    private sealed class UserCardDetailsXfrEntity : IUserCardDetailsXfrEntity
-    {
-        public required string Finish { get; init; }
-        public required string Special { get; init; }
-        public required int Count { get; init; }
-        public required string SetGroupId { get; init; }
-        public string CacheKey => $"user_card_details:{Finish}:{Special}";
     }
 }

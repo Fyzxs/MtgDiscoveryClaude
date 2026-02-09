@@ -27,11 +27,11 @@ internal sealed class CollectionXfrToExtMapper : ICollectionXfrToExtMapper
     }
 
     private static List<AuthorizedUserExtEntity> MapAuthorizedUsers(IEnumerable<IAuthorizedUserXfrEntity> users)
-        => users.Select(user => new AuthorizedUserExtEntity
+        => [.. users.Select(user => new AuthorizedUserExtEntity
         {
             UserId = user.UserId,
             Role = user.Role,
             GrantedAt = user.GrantedAt,
             GrantedBy = user.GrantedBy
-        }).ToList();
+        })];
 }

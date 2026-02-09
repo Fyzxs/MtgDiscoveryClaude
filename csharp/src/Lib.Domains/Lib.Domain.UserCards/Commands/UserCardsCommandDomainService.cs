@@ -14,17 +14,17 @@ namespace Lib.Domain.UserCards.Commands;
 /// </summary>
 internal sealed class UserCardsCommandDomainService : IUserCardsCommandDomainService
 {
-    private readonly IAddUserCardDomainService _addUserCardService;
-    private readonly IAddUserCardOnlyDomainService _addUserCardOnlyService;
+    private readonly IAddUserCardDomain _addUserCardService;
+    private readonly IAddUserCardOnlyDomain _addUserCardOnlyService;
 
     public UserCardsCommandDomainService(ILogger logger) : this(
-        new AddUserCardDomainService(logger),
-        new AddUserCardOnlyDomainService(logger))
+        new AddUserCardDomain(logger),
+        new AddUserCardOnlyDomain(logger))
     { }
 
     private UserCardsCommandDomainService(
-        IAddUserCardDomainService addUserCardService,
-        IAddUserCardOnlyDomainService addUserCardOnlyService)
+        IAddUserCardDomain addUserCardService,
+        IAddUserCardOnlyDomain addUserCardOnlyService)
     {
         _addUserCardService = addUserCardService;
         _addUserCardOnlyService = addUserCardOnlyService;

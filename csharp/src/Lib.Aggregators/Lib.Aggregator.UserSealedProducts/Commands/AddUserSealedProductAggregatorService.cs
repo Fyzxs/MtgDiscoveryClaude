@@ -15,48 +15,37 @@ namespace Lib.Aggregator.UserSealedProducts.Commands;
 internal sealed class AddUserSealedProductAggregatorService : IAddUserSealedProductAggregatorService
 {
     private readonly IUserSealedProductsCommandAdapter _adapter;
-    private readonly IUserSealedProductExtToSealedProductOufMapper _oufMapper;
+    private readonly IAddUserSealedProductItrToXfrMapper _itrToXfrMapper;
+    private readonly IUserSealedProductExtToOufMapper _oufMapper;
 
     public AddUserSealedProductAggregatorService(ILogger logger) : this(
         new UserSealedProductsAdapterService(logger),
-        new UserSealedProductExtToSealedProductOufMapper())
+        new AddUserSealedProductItrToXfrMapper(),
+        new UserSealedProductExtToOufMapper())
     { }
 
     private AddUserSealedProductAggregatorService(
         IUserSealedProductsCommandAdapter adapter,
-        IUserSealedProductExtToSealedProductOufMapper oufMapper)
+        IAddUserSealedProductItrToXfrMapper itrToXfrMapper,
+        IUserSealedProductExtToOufMapper oufMapper)
     {
         _adapter = adapter;
+        _itrToXfrMapper = itrToXfrMapper;
         _oufMapper = oufMapper;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken)
+    public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> Execute(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken)
     {
-        IUserSealedProductXfrEntity xfrEntity = new UserSealedProductXfrEntity
-        {
-            UserId = input.UserId,
-            ProductUuid = input.ProductUuid,
-            SetId = input.SetId,
-            CountDelta = input.CountDelta
-        };
+        IUserSealedProductXfrEntity xfrEntity = await _itrToXfrMapper.Map(input).ConfigureAwait(false);
 
         IOperationResponse<UserSealedProductExtEntity> extResponse = await _adapter.AddUserSealedProductAsync(xfrEntity, cancellationToken).ConfigureAwait(false);
 
         if (extResponse.IsFailure)
         {
-            return new FailureOperationResponse<List<ISealedProductOufEntity>>(extResponse.OuterException);
+            return new FailureOperationResponse<IEnumerable<ISealedProductOufEntity>>(extResponse.OuterException);
         }
 
         ISealedProductOufEntity oufEntity = await _oufMapper.Map(extResponse.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<List<ISealedProductOufEntity>>([oufEntity]);
-    }
-
-    private sealed class UserSealedProductXfrEntity : IUserSealedProductXfrEntity
-    {
-        public required string UserId { get; init; }
-        public required string ProductUuid { get; init; }
-        public required string SetId { get; init; }
-        public required int CountDelta { get; init; }
-        public string CacheKey => $"user_sealed_product:{UserId}:{ProductUuid}";
+        return new SuccessOperationResponse<IEnumerable<ISealedProductOufEntity>>([oufEntity]);
     }
 }

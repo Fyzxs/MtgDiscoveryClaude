@@ -10,17 +10,17 @@ namespace Lib.Domain.UserWishlistCards.Commands;
 
 internal sealed class UserWishlistCardsCommandDomainService : IUserWishlistCardsCommandDomainService
 {
-    private readonly IAddUserWishlistCardDomainService _addUserWishlistCardService;
-    private readonly IRemoveUserWishlistCardDomainService _removeUserWishlistCardService;
+    private readonly IAddUserWishlistCardDomain _addUserWishlistCardService;
+    private readonly IRemoveUserWishlistCardDomain _removeUserWishlistCardService;
 
     public UserWishlistCardsCommandDomainService(ILogger logger) : this(
-        new AddUserWishlistCardDomainService(logger),
-        new RemoveUserWishlistCardDomainService(logger))
+        new AddUserWishlistCardDomain(logger),
+        new RemoveUserWishlistCardDomain(logger))
     { }
 
     private UserWishlistCardsCommandDomainService(
-        IAddUserWishlistCardDomainService addUserWishlistCardService,
-        IRemoveUserWishlistCardDomainService removeUserWishlistCardService)
+        IAddUserWishlistCardDomain addUserWishlistCardService,
+        IRemoveUserWishlistCardDomain removeUserWishlistCardService)
     {
         _addUserWishlistCardService = addUserWishlistCardService;
         _removeUserWishlistCardService = removeUserWishlistCardService;

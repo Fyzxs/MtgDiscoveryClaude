@@ -14,7 +14,7 @@ internal sealed class CardIdsNotEmptyUserCardsByIdsArgEntityValidator : Operatio
 
     public sealed class Validator : IValidator<IUserCardsByIdsArgEntity>
     {
-        public Task<bool> IsValid(IUserCardsByIdsArgEntity arg) => Task.FromResult(arg.CardIds.Count > 0);
+        public Task<bool> IsValid(IUserCardsByIdsArgEntity arg) => Task.FromResult(0 < arg.CardIds.Count);
     }
 
     public sealed class Message : OperationResponseMessage

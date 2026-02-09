@@ -125,7 +125,44 @@ These are rare and typically used internally by Integrators. If you find yoursel
 
 Note: `ExtEntity → OufEntity` mappers belong in the **Aggregator layer**, not Adapters.
 
+## Collection Mapper Base Classes
+
+For mappers that transform collections of items, two abstract base classes eliminate boilerplate:
+
+### `CollectionCreateMapper<TSource, TResult>`
+
+Implements `ICreateMapper<IEnumerable<TSource>, IEnumerable<TResult>>`. Wraps a single-item mapper and applies it to each element via `Task.WhenAll`.
+
+```csharp
+internal sealed class CollectionUserCardExtToOufMapper
+    : CollectionCreateMapper<UserCardExtEntity, IUserCardOufEntity>,
+      ICollectionUserCardExtToOufMapper
+{
+    public CollectionUserCardExtToOufMapper() : base(new UserCardExtToOufMapper()) { }
+}
+```
+
+### `ChildCollectionMapper<TChildSource, TChildResult>`
+
+Protected helper for mappers that need to map a child collection as part of a larger mapping. Exposes `MapChildren()` for use in the parent mapper's `Map()` method.
+
+```csharp
+internal sealed class ArtistSearchExtToOufMapper
+    : ChildCollectionMapper<ArtistNameTrigramDataExtEntity, IArtistSearchResultOufEntity>,
+      IArtistSearchExtToOufMapper
+{
+    public ArtistSearchExtToOufMapper() : base(new ArtistNameTrigramDataExtToOufEntityMapper()) { }
+
+    public async Task<IArtistSearchResultCollectionOufEntity> Map(IEnumerable<ArtistNameTrigramDataExtEntity> source)
+    {
+        IArtistSearchResultOufEntity[] mappedArtists = await MapChildren(source).ConfigureAwait(false);
+        return new ArtistSearchResultCollectionOufEntity { Artists = mappedArtists };
+    }
+}
+```
+
+**Location**: `Lib.Shared.Abstractions/Actions/Mappers/`
+
 ## Related Patterns
 
 - **Integrator**: Uses mappers for merge operations — see `integrators.md`
-- **ReadPointItem**: Common mapper target — see `../cosmos/cosmos-read-point.md`

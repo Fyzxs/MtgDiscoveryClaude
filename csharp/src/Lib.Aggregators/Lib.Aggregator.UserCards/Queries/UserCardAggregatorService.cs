@@ -15,18 +15,18 @@ namespace Lib.Aggregator.UserCards.Queries;
 internal sealed class UserCardAggregatorService : IUserCardAggregatorService
 {
     private readonly IUserCardsAdapterService _userCardsAdapterService;
-    private readonly ICollectionUserCardExtToItrMapper _collectionMapper;
+    private readonly ICollectionUserCardExtToOufMapper _collectionMapper;
     private readonly IUserCardItrToXfrMapper _userCardItrToXfrMapper;
 
     public UserCardAggregatorService(ILogger logger) : this(
         new UserCardsAdapterService(logger),
-        new CollectionUserCardExtToItrMapper(),
+        new CollectionUserCardExtToOufMapper(),
         new UserCardItrToXfrMapper())
     { }
 
     private UserCardAggregatorService(
         IUserCardsAdapterService userCardsAdapterService,
-        ICollectionUserCardExtToItrMapper collectionMapper,
+        ICollectionUserCardExtToOufMapper collectionMapper,
         IUserCardItrToXfrMapper userCardItrToXfrMapper)
     {
         _userCardsAdapterService = userCardsAdapterService;

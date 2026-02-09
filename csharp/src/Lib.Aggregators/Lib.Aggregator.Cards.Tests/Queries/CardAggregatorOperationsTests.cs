@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Lib.Aggregator.Cards.Exceptions;
 using Lib.Aggregator.Cards.Queries;
 using Lib.Aggregator.Cards.Tests.Fakes;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
 using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Lib.Shared.Invocation.Operations;
 using TestConvenience.Core.Fakes;
@@ -73,8 +72,8 @@ public sealed class CardAggregatorOperationsTests
         // Arrange
         const string cardId = "test-card-id";
 
-        CardItemItrEntityFake expectedCard = new() { Id = cardId };
-        List<ICardItemItrEntity> cardResults = [expectedCard];
+        CardItemOufEntityFake expectedCard = new() { Id = cardId };
+        List<ICardItemOufEntity> cardResults = [expectedCard];
 
         CardIdsItrEntityFake args = new() { CardIds = [cardId] };
         CardsByIdsAggregatorServiceFake fakeCardsByIdsService = new()

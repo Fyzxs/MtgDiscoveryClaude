@@ -78,7 +78,7 @@ public sealed class MonoStateArtistAggregatorTests
         subject.Track(card3);
 
         // Act
-        List<IArtistAggregate> dirty = subject.GetDirtyArtists().ToList();
+        List<IArtistAggregate> dirty = [.. subject.GetDirtyArtists()];
 
         // Assert
         dirty.Should().ContainSingle();

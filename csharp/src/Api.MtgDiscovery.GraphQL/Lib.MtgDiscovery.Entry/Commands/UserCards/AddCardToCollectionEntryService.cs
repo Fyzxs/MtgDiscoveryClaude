@@ -5,7 +5,7 @@ using Lib.Domain.Cards.Apis;
 using Lib.Domain.UserCards.Apis;
 using Lib.MtgDiscovery.Entry.Commands.Actions.Mappers;
 using Lib.MtgDiscovery.Entry.Commands.Actions.Validators;
-using Lib.MtgDiscovery.Entry.Commands.Entities;
+using Lib.MtgDiscovery.Entry.Commands.UserCards.Mappers;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.MtgDiscovery.Entry.Entities.Outs.UserCards;
@@ -31,6 +31,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
     private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
     private readonly IUserCardOufToOutMapper _userCardOufToOutMapper;
     private readonly ICardNameGuidGenerator _cardNameGuidGenerator;
+    private readonly IUserCardItrToEnrichedItrMapper _enrichedItrMapper;
 
     public AddCardToCollectionEntryService(ILogger logger) : this(
         new UserCardsDomainService(logger),
@@ -39,7 +40,8 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         new AddUserCardArgToItrMapper(),
         new CollectionCardItemOufToOutMapper(),
         new UserCardOufToOutMapper(),
-        new CardNameGuidGenerator())
+        new CardNameGuidGenerator(),
+        new UserCardItrToEnrichedItrMapper())
     { }
 
     private AddCardToCollectionEntryService(
@@ -49,7 +51,8 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         IAddUserCardArgToItrMapper addUserCardArgToItrMapper,
         ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
         IUserCardOufToOutMapper userCardOufToOutMapper,
-        ICardNameGuidGenerator cardNameGuidGenerator)
+        ICardNameGuidGenerator cardNameGuidGenerator,
+        IUserCardItrToEnrichedItrMapper enrichedItrMapper)
     {
         _userCardsDomainService = userCardsDomainService;
         _cardDomainService = cardDomainService;
@@ -58,6 +61,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         _cardItemOufToOutMapper = cardItemOufToOutMapper;
         _userCardOufToOutMapper = userCardOufToOutMapper;
         _cardNameGuidGenerator = cardNameGuidGenerator;
+        _enrichedItrMapper = enrichedItrMapper;
     }
 
     public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(IAddCardToCollectionArgsEntity input, CancellationToken cancellationToken)
@@ -77,33 +81,14 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
         if (cards.Count == 0)
             return new FailureOperationResponse<List<CardItemOutEntity>>(new Shared.Invocation.Exceptions.BadRequestOperationException("Card not found"));
 
-        // Extract card metadata
         CardItemOutEntity cardItem = cards[0];
-        IEnumerable<string> artistIds = cardItem.ArtistIds ?? [];
 
-        // Generate deterministic GUID from card name (matches CardsByName collection)
         CardNameGuid nameGuid = _cardNameGuidGenerator.GenerateGuid(cardItem.Name);
         string cardNameGuid = nameGuid.AsSystemType().ToString();
 
-        // Map user card args to ITR entity with card metadata
         IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);
 
-        // Create updated entity with artist metadata, card name GUID, and denormalized display data
-        UserCardCollectionItrEntity enrichedEntity = new()
-        {
-            UserId = itrEntity.UserId,
-            CardId = itrEntity.CardId,
-            SetId = itrEntity.SetId,
-            CardName = cardItem.Name,
-            SetName = cardItem.SetName,
-            SetCode = cardItem.SetCode,
-            ReleasedAt = cardItem.ReleasedAt,
-            Artist = cardItem.Artist,
-            ArtistIds = artistIds,
-            CardNameGuid = cardNameGuid,
-            Details = itrEntity.Details,
-            ReplaceMode = itrEntity.ReplaceMode
-        };
+        IUserCardItrEntity enrichedEntity = await _enrichedItrMapper.Map(itrEntity, cardItem, cardNameGuid).ConfigureAwait(false);
 
         IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardAsync(enrichedEntity, cancellationToken).ConfigureAwait(false);
         if (addResponse.IsFailure)

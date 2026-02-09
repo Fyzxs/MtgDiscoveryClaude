@@ -38,16 +38,16 @@ public sealed class CardDomainServiceTests
     {
         // Arrange
         CardIdsItrEntityFake args = new() { CardIds = ["id1", "id2"] };
-        CardItemCollectionItrEntityFake expectedResponse = new();
+        CardItemCollectionOufEntityFake expectedResponse = new();
         CardDomainServiceFake fakeOperations = new()
         {
-            CardsByIdsAsyncResult = new SuccessOperationResponse<ICardItemCollectionItrEntity>(expectedResponse)
+            CardsByIdsAsyncResult = new SuccessOperationResponse<ICardItemCollectionOufEntity>(expectedResponse)
         };
 
         CardDomainService subject = new TestableCardDomainService(fakeOperations);
 
         // Act
-        IOperationResponse<ICardItemCollectionItrEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
+        IOperationResponse<ICardItemCollectionOufEntity> actual = await subject.CardsByIdsAsync(args).ConfigureAwait(false);
 
         // Assert
         actual.Should().NotBeNull();
@@ -60,15 +60,15 @@ public sealed class CardDomainServiceTests
 
     private sealed class CardDomainServiceFake : ICardDomainService
     {
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsByIdsAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
+        public IOperationResponse<ICardItemCollectionOufEntity> CardsByIdsAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntityFake());
         public int CardsByIdsAsyncInvokeCount { get; private set; }
         public ICardIdsItrEntity CardsByIdsAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
+        public IOperationResponse<ICardItemCollectionOufEntity> CardsBySetCodeAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntityFake());
         public int CardsBySetCodeAsyncInvokeCount { get; private set; }
         public ISetCodeItrEntity CardsBySetCodeAsyncInput { get; private set; } = default!;
 
-        public IOperationResponse<ICardItemCollectionItrEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionItrEntity>(new CardItemCollectionItrEntityFake());
+        public IOperationResponse<ICardItemCollectionOufEntity> CardsByNameAsyncResult { get; init; } = new SuccessOperationResponse<ICardItemCollectionOufEntity>(new CardItemCollectionOufEntityFake());
         public int CardsByNameAsyncInvokeCount { get; private set; }
         public ICardNameItrEntity CardsByNameAsyncInput { get; private set; } = default!;
 
@@ -76,21 +76,21 @@ public sealed class CardDomainServiceTests
         public int CardNameSearchAsyncInvokeCount { get; private set; }
         public ICardSearchTermItrEntity CardNameSearchAsyncInput { get; private set; } = default!;
 
-        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
+        public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByIdsAsync(ICardIdsItrEntity args)
         {
             CardsByIdsAsyncInvokeCount++;
             CardsByIdsAsyncInput = args;
             return Task.FromResult(CardsByIdsAsyncResult);
         }
 
-        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
+        public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsBySetCodeAsync(ISetCodeItrEntity setCode)
         {
             CardsBySetCodeAsyncInvokeCount++;
             CardsBySetCodeAsyncInput = setCode;
             return Task.FromResult(CardsBySetCodeAsyncResult);
         }
 
-        public Task<IOperationResponse<ICardItemCollectionItrEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
+        public Task<IOperationResponse<ICardItemCollectionOufEntity>> CardsByNameAsync(ICardNameItrEntity cardName)
         {
             CardsByNameAsyncInvokeCount++;
             CardsByNameAsyncInput = cardName;
@@ -110,9 +110,9 @@ public sealed class CardDomainServiceTests
         public ICollection<string> CardIds { get; init; } = [];
     }
 
-    private sealed class CardItemCollectionItrEntityFake : ICardItemCollectionItrEntity
+    private sealed class CardItemCollectionOufEntityFake : ICardItemCollectionOufEntity
     {
-        public ICollection<ICardItemItrEntity> Data { get; init; } = [];
+        public ICollection<ICardItemOufEntity> Data { get; init; } = [];
     }
 
     private sealed class CardNameSearchResultCollectionItrEntityFake : ICardNameSearchResultCollectionItrEntity

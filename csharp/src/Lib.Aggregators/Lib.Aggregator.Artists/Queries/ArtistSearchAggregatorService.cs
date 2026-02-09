@@ -16,18 +16,18 @@ internal sealed class ArtistSearchAggregatorService : IArtistSearchAggregatorSer
 {
     private readonly IArtistAdapterService _artistAdapterService;
     private readonly IArtistSearchTermItrToXfrMapper _artistSearchItrToXfrMapper;
-    private readonly IArtistSearchExtToItrMapper _artistSearchResultCollectionMapper;
+    private readonly IArtistSearchExtToOufMapper _artistSearchResultCollectionMapper;
 
     public ArtistSearchAggregatorService(ILogger logger) : this(
         new ArtistAdapterService(logger),
         new ArtistSearchTermItrToXfrMapper(),
-        new ArtistSearchExtToItrMapper())
+        new ArtistSearchExtToOufMapper())
     { }
 
     private ArtistSearchAggregatorService(
         IArtistAdapterService artistAdapterService,
         IArtistSearchTermItrToXfrMapper artistSearchItrToXfrMapper,
-        IArtistSearchExtToItrMapper artistSearchResultCollectionMapper)
+        IArtistSearchExtToOufMapper artistSearchResultCollectionMapper)
     {
         _artistAdapterService = artistAdapterService;
         _artistSearchItrToXfrMapper = artistSearchItrToXfrMapper;

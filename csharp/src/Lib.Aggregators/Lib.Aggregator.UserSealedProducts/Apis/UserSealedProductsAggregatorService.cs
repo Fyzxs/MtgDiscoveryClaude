@@ -5,6 +5,7 @@ using Lib.Aggregator.UserSealedProducts.Commands;
 using Lib.Aggregator.UserSealedProducts.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ public sealed class UserSealedProductsAggregatorService : IUserSealedProductsAgg
         _queryOperations = queryOperations;
     }
 
-    public async Task<IOperationResponse<List<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken) => await _commandOperations.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<ISealedProductOufEntity>>> AddUserSealedProductAsync(IAddUserSealedProductItrEntity input, CancellationToken cancellationToken) => await _commandOperations.AddUserSealedProductAsync(input, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _queryOperations.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> UserSealedProductsByUserIdAsync(IUserIdItrEntity input, CancellationToken cancellationToken) => await _queryOperations.UserSealedProductsByUserIdAsync(input, cancellationToken).ConfigureAwait(false);
 }

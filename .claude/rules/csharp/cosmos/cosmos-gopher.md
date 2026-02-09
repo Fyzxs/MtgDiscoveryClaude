@@ -1,3 +1,8 @@
+---
+paths:
+  - "csharp/src/**/*Gopher.cs"
+---
+
 # Cosmos Gopher Pattern
 
 ## Purpose
@@ -68,6 +73,5 @@ See: `Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Gophers/` for full list.
 
 ## Related Patterns
 
-- **ReadPointItem**: Type-safe carrier for point-read parameters — see `cosmos-read-point.md`
 - **Scribe**: Write operations — see `cosmos-scribe.md`
 - **Inquisition**: Query operations — see `cosmos-inquisition.md`

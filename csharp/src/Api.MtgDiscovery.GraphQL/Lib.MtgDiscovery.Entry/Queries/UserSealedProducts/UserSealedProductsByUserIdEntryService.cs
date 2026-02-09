@@ -5,6 +5,7 @@ using Lib.Domain.UserSealedProducts.Apis;
 using Lib.MtgDiscovery.Entry.Queries.Actions.Validators.UserSealedProducts;
 using Lib.Shared.Abstractions.Actions.Validators;
 using Lib.Shared.DataModels.Entities.Itrs.UserSealedProducts;
+using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -30,12 +31,12 @@ internal sealed class UserSealedProductsByUserIdEntryService : IUserSealedProduc
         _validator = validator;
     }
 
-    public async Task<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> Execute(
+    public async Task<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> Execute(
         string userId, CancellationToken cancellationToken)
     {
         IUserIdItrEntity userIdItr = new UserIdItrEntity { UserId = userId };
 
-        IValidatorActionResult<IOperationResponse<IEnumerable<IUserSealedProductItrEntity>>> validatorResult = await _validator.Validate(userIdItr).ConfigureAwait(false);
+        IValidatorActionResult<IOperationResponse<IEnumerable<IUserSealedProductOufEntity>>> validatorResult = await _validator.Validate(userIdItr).ConfigureAwait(false);
         if (validatorResult.IsNotValid())
         { return validatorResult.FailureStatus(); }
 

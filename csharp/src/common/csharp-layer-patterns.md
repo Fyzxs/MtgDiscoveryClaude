@@ -19,7 +19,7 @@ internal sealed class SomeMapper : ISomeMapper
 
 **Examples**:
 - Adapter: `Lib.Adapter.Cards/Queries/Mappers/CollectionCardIdToReadPointItemMapper.cs:7-18`
-- Aggregator: `Lib.Aggregator.Artists/Queries/Mappers/ArtistSearchExtToItrMapper.cs:11-32`
+- Aggregator: `Lib.Aggregator.Artists/Queries/Mappers/ArtistSearchExtToOufMapper.cs:11-32`
 
 ---
 

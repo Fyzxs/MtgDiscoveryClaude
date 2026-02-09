@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Lib.Aggregator.SealedProducts.Apis.Queries;
+using Lib.Aggregator.SealedProducts.Queries;
 using Lib.Shared.DataModels.Entities.Itrs.SealedProducts;
 using Lib.Shared.DataModels.Entities.Oufs.SealedProducts;
 using Lib.Shared.Invocation.Operations;

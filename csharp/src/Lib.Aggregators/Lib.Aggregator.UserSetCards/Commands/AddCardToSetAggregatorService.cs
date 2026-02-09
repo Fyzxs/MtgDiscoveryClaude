@@ -20,22 +20,22 @@ internal sealed class AddCardToSetAggregatorService : IAddCardToSetAggregatorSer
 {
     private readonly IUserSetCardsAdapterService _userSetCardsAdapterService;
     private readonly IAddCardToSetItrToXfrMapper _itrToXfrMapper;
-    private readonly IUserSetCardExtToItrMapper _extToItrMapper;
+    private readonly IUserSetCardExtToOufMapper _extToOufMapper;
 
     public AddCardToSetAggregatorService(ILogger logger) : this(
         new UserSetCardsAdapterService(logger),
         new AddCardToSetItrToXfrMapper(),
-        new UserSetCardExtToItrMapper())
+        new UserSetCardExtToOufMapper())
     { }
 
     private AddCardToSetAggregatorService(
         IUserSetCardsAdapterService userSetCardsAdapterService,
         IAddCardToSetItrToXfrMapper itrToXfrMapper,
-        IUserSetCardExtToItrMapper extToItrMapper)
+        IUserSetCardExtToOufMapper extToOufMapper)
     {
         _userSetCardsAdapterService = userSetCardsAdapterService;
         _itrToXfrMapper = itrToXfrMapper;
-        _extToItrMapper = extToItrMapper;
+        _extToOufMapper = extToOufMapper;
     }
 
     public async Task<IOperationResponse<IUserSetCardOufEntity>> Execute(
@@ -50,7 +50,7 @@ internal sealed class AddCardToSetAggregatorService : IAddCardToSetAggregatorSer
             return new FailureOperationResponse<IUserSetCardOufEntity>(response.OuterException);
         }
 
-        IUserSetCardOufEntity mappedUserSetCard = await _extToItrMapper.Map(response.ResponseData).ConfigureAwait(false);
+        IUserSetCardOufEntity mappedUserSetCard = await _extToOufMapper.Map(response.ResponseData).ConfigureAwait(false);
         return new SuccessOperationResponse<IUserSetCardOufEntity>(mappedUserSetCard);
     }
 }

@@ -7,9 +7,9 @@ namespace Lib.Aggregator.User.Commands.Entities;
 /// </summary>
 internal sealed class UserInfoXfrEntity : IUserInfoXfrEntity
 {
-    public required string UserId { get; init; }
-    public required string UserSourceId { get; init; }
-    public required string UserNickname { get; init; }
-    public required string Email { get; init; }
+    public string UserId { get; init; }
+    public string UserSourceId { get; init; }
+    public string UserNickname { get; init; }
+    public string Email { get; init; }
     public string CacheKey => $"user:{UserId}";
 }

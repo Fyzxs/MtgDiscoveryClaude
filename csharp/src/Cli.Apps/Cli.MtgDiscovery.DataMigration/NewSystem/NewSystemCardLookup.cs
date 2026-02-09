@@ -22,7 +22,7 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
         _cardDomainService = cardDomainService;
     }
 
-    public async Task<IOperationResponse<ICardItemItrEntity>> LookupCardByScryfallIdAsync(string scryfallId)
+    public async Task<IOperationResponse<ICardItemOufEntity>> LookupCardByScryfallIdAsync(string scryfallId)
     {
         // TODO: Propagate CancellationToken when CLI apps support cancellation
         ICardIdsItrEntity cardIdsArg = new CardIdsItrEntity([scryfallId]);
@@ -33,18 +33,18 @@ internal sealed class NewSystemCardLookup : INewSystemCardLookup
 
         if (response.IsFailure)
         {
-            return new FailureOperationResponse<ICardItemItrEntity>(response.OuterException);
+            return new FailureOperationResponse<ICardItemOufEntity>(response.OuterException);
         }
 
-        ICardItemItrEntity card = response.ResponseData.Data.FirstOrDefault();
+        ICardItemOufEntity card = response.ResponseData.Data.FirstOrDefault();
 
         if (card is null)
         {
             BadRequestOperationException notFoundException = new($"Card with Scryfall ID {scryfallId} not found");
-            return new FailureOperationResponse<ICardItemItrEntity>(notFoundException);
+            return new FailureOperationResponse<ICardItemOufEntity>(notFoundException);
         }
 
-        return new SuccessOperationResponse<ICardItemItrEntity>(card);
+        return new SuccessOperationResponse<ICardItemOufEntity>(card);
     }
 
     private sealed class CardIdsItrEntity : ICardIdsItrEntity

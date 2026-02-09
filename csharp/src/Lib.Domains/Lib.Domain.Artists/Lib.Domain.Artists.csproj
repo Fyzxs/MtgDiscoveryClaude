@@ -3,7 +3,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\Lib.Shared.DataModels\Lib.Shared.DataModels.csproj" />
     <ProjectReference Include="..\..\common\Lib.Shared.Invocation\Lib.Shared.Invocation.csproj" />
-    <ProjectReference Include="..\..\core\Lib.Universal\Lib.Universal.csproj" />
     <ProjectReference Include="..\..\Lib.Aggregators\Lib.Aggregator.Artists\Lib.Aggregator.Artists.csproj" />
   </ItemGroup>
 

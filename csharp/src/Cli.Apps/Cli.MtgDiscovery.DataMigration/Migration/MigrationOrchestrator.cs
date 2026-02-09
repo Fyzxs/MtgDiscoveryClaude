@@ -15,7 +15,7 @@ using Cli.MtgDiscovery.DataMigration.SuccessTracking;
 using Lib.Cosmos.Apis.Operators;
 using Lib.MtgDiscovery.Entry.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
-using Lib.Shared.DataModels.Entities.Itrs.Cards;
+using Lib.Shared.DataModels.Entities.Oufs.Cards;
 using Lib.Shared.Invocation.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -164,7 +164,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
 
         OldDiscoveryCardExtEntity cosmosCard = cosmosResponse.Value;
 
-        IOperationResponse<ICardItemItrEntity> lookupResponse = await _cardLookup
+        IOperationResponse<ICardItemOufEntity> lookupResponse = await _cardLookup
             .LookupCardByScryfallIdAsync(cosmosCard.Body.ScryfallId)
             .ConfigureAwait(false);
 
@@ -182,7 +182,7 @@ internal sealed class MigrationOrchestrator : IMigrationOrchestrator
             return false;
         }
 
-        ICardItemItrEntity newSystemCard = lookupResponse.ResponseData;
+        ICardItemOufEntity newSystemCard = lookupResponse.ResponseData;
 
         // Skip if test set code is configured and doesn't match
         if (string.IsNullOrWhiteSpace(_configuration.TestSetCode) is false &&

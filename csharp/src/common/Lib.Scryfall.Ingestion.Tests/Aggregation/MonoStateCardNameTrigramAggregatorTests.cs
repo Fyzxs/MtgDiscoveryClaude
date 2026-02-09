@@ -24,7 +24,7 @@ public sealed class MonoStateCardNameTrigramAggregatorTests
         subject.Track(card);
 
         // Assert
-        List<ICardNameTrigramAggregate> trigrams = subject.GetTrigrams().ToList();
+        List<ICardNameTrigramAggregate> trigrams = [.. subject.GetTrigrams()];
         trigrams.Should().HaveCount(2);
         trigrams.Select(t => t.Trigram()).Should().Contain("bol");
         trigrams.Select(t => t.Trigram()).Should().Contain("olt");
@@ -42,7 +42,7 @@ public sealed class MonoStateCardNameTrigramAggregatorTests
         subject.Track(card);
 
         // Assert
-        List<ICardNameTrigramAggregate> trigrams = subject.GetTrigrams().ToList();
+        List<ICardNameTrigramAggregate> trigrams = [.. subject.GetTrigrams()];
         trigrams.Select(t => t.Trigram()).Should().Contain("bol");
         trigrams.Select(t => t.Trigram()).Should().Contain("olt");
     }
@@ -74,7 +74,7 @@ public sealed class MonoStateCardNameTrigramAggregatorTests
         subject.Track(card);
 
         // Assert
-        List<ICardNameTrigramAggregate> trigrams = subject.GetTrigrams().ToList();
+        List<ICardNameTrigramAggregate> trigrams = [.. subject.GetTrigrams()];
         trigrams.Should().HaveCount(2);
         trigrams.Select(t => t.Trigram()).Should().Contain("abc");
         trigrams.Select(t => t.Trigram()).Should().Contain("bcd");

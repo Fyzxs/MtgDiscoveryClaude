@@ -5,7 +5,7 @@ namespace Lib.Aggregator.Artists.Queries.Entities;
 
 internal sealed class ArtistSearchTermXfrEntity : IArtistSearchTermXfrEntity
 {
-    public ICollection<string> SearchTerms { get; set; }
-    public string Normalized { get; set; }
+    public ICollection<string> SearchTerms { get; init; }
+    public string Normalized { get; init; }
     public string CacheKey => $"artist:search:{Normalized}";
 }

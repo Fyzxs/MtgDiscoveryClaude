@@ -1,12 +1,8 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserWishlistCards;
-using Lib.Shared.Invocation.Operations;
+using Lib.Shared.Invocation.Services;
 
 namespace Lib.Aggregator.UserWishlistCards.Commands;
 
 internal interface IAddUserWishlistCardAggregator
-{
-    Task<IOperationResponse<IUserWishlistCardOufEntity>> Execute(IUserWishlistCardItrEntity input, CancellationToken cancellationToken);
-}
+    : IOperationResponseService<IUserWishlistCardItrEntity, IUserWishlistCardOufEntity>;

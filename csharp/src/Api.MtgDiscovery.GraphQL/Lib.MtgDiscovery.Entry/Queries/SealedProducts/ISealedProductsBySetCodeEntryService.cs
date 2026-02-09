@@ -5,4 +5,4 @@ using Lib.Shared.Invocation.Services;
 
 namespace Lib.MtgDiscovery.Entry.Queries.SealedProducts;
 
-public interface ISealedProductsBySetCodeEntryService : IOperationResponseService<ISealedProductsBySetCodeArgEntity, List<SealedProductOutEntity>>;
+internal interface ISealedProductsBySetCodeEntryService : IOperationResponseService<ISealedProductsBySetCodeArgEntity, List<SealedProductOutEntity>>;
