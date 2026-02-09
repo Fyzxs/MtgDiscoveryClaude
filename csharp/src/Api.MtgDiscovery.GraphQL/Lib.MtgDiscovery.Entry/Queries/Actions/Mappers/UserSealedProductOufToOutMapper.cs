@@ -4,7 +4,7 @@ using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
-internal sealed class UserSealedProductItrToOutMapper : IUserSealedProductItrToOutMapper
+internal sealed class UserSealedProductOufToOutMapper : IUserSealedProductOufToOutMapper
 {
     public Task<UserSealedProductOutEntity> Map(IUserSealedProductOufEntity source)
     {

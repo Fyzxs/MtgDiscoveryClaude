@@ -1,6 +1,6 @@
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
 
-namespace Lib.Aggregator.Artists.Queries.Entities;
+namespace Lib.Aggregator.Artists.Entities;
 
 internal sealed class ArtistSearchResultOufEntity : IArtistSearchResultOufEntity
 {

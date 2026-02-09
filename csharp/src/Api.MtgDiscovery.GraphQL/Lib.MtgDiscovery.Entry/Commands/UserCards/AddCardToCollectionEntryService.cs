@@ -88,7 +88,7 @@ internal sealed class AddCardToCollectionEntryService : IAddCardToCollectionEntr
 
         IUserCardItrEntity itrEntity = await _addUserCardArgToItrMapper.Map(input).ConfigureAwait(false);
 
-        IUserCardItrEntity enrichedEntity = _enrichedItrMapper.Map(itrEntity, cardItem, cardNameGuid);
+        IUserCardItrEntity enrichedEntity = await _enrichedItrMapper.Map(itrEntity, cardItem, cardNameGuid).ConfigureAwait(false);
 
         IOperationResponse<IUserCardOufEntity> addResponse = await _userCardsDomainService.AddUserCardAsync(enrichedEntity, cancellationToken).ConfigureAwait(false);
         if (addResponse.IsFailure)

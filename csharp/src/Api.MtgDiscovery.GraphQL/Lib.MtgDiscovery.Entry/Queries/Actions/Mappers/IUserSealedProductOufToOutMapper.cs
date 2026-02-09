@@ -4,4 +4,4 @@ using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
-internal interface IUserSealedProductItrToOutMapper : ICreateMapper<IUserSealedProductOufEntity, UserSealedProductOutEntity>;
+internal interface IUserSealedProductOufToOutMapper : ICreateMapper<IUserSealedProductOufEntity, UserSealedProductOutEntity>;

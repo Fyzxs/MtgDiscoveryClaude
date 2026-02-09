@@ -6,13 +6,13 @@ using Lib.Shared.DataModels.Entities.Oufs.UserSealedProducts;
 
 namespace Lib.MtgDiscovery.Entry.Queries.Actions.Mappers;
 
-internal sealed class CollectionUserSealedProductItrToOutMapper : ICollectionUserSealedProductItrToOutMapper
+internal sealed class CollectionUserSealedProductOufToOutMapper : ICollectionUserSealedProductOufToOutMapper
 {
-    private readonly IUserSealedProductItrToOutMapper _mapper;
+    private readonly IUserSealedProductOufToOutMapper _mapper;
 
-    public CollectionUserSealedProductItrToOutMapper() : this(new UserSealedProductItrToOutMapper()) { }
+    public CollectionUserSealedProductOufToOutMapper() : this(new UserSealedProductOufToOutMapper()) { }
 
-    internal CollectionUserSealedProductItrToOutMapper(IUserSealedProductItrToOutMapper mapper) => _mapper = mapper;
+    internal CollectionUserSealedProductOufToOutMapper(IUserSealedProductOufToOutMapper mapper) => _mapper = mapper;
 
     public async Task<List<UserSealedProductOutEntity>> Map(IEnumerable<IUserSealedProductOufEntity> source)
     {

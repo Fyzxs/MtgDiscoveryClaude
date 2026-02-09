@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lib.Aggregator.UserWishlistCards.Apis;
-using Lib.Aggregator.UserWishlistCards.Queries.Entities;
 using Lib.Aggregator.UserWishlistCards.Queries.UserWishlistCardsByIds;
 using Lib.Shared.DataModels.Entities.Itrs.UserWishlistCards;
 using Lib.Shared.DataModels.Entities.Oufs.UserWishlistCards;

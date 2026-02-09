@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.ArtistNameTrigrams;
-using Lib.Aggregator.Artists.Queries.Entities;
+using Lib.Aggregator.Artists.Entities;
 using Lib.Shared.Abstractions.Actions.Mappers;
 using Lib.Shared.DataModels.Entities.Oufs.Artists;
 

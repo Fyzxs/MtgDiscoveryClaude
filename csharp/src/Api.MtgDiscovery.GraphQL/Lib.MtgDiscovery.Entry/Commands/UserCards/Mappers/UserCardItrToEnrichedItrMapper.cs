@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lib.MtgDiscovery.Entry.Commands.Entities;
 using Lib.MtgDiscovery.Entry.Entities.Outs.Cards;
 using Lib.Shared.DataModels.Entities.Itrs.UserCards;
@@ -7,11 +8,11 @@ namespace Lib.MtgDiscovery.Entry.Commands.UserCards.Mappers;
 
 internal sealed class UserCardItrToEnrichedItrMapper : IUserCardItrToEnrichedItrMapper
 {
-    public IUserCardItrEntity Map(IUserCardItrEntity itrEntity, CardItemOutEntity cardItem, string cardNameGuid)
+    public Task<IUserCardItrEntity> Map(IUserCardItrEntity itrEntity, CardItemOutEntity cardItem, string cardNameGuid)
     {
         IEnumerable<string> artistIds = cardItem.ArtistIds ?? [];
 
-        return new UserCardCollectionItrEntity
+        IUserCardItrEntity result = new UserCardCollectionItrEntity
         {
             UserId = itrEntity.UserId,
             CardId = itrEntity.CardId,
@@ -26,5 +27,7 @@ internal sealed class UserCardItrToEnrichedItrMapper : IUserCardItrToEnrichedItr
             Details = itrEntity.Details,
             ReplaceMode = itrEntity.ReplaceMode
         };
+
+        return Task.FromResult(result);
     }
 }

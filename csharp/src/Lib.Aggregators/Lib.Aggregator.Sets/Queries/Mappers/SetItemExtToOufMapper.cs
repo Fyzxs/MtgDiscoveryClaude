@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Adapter.Scryfall.Cosmos.Apis.CosmosItems.SetItems;
+using Lib.Aggregator.Sets.Entities;
 using Lib.Aggregator.Sets.Models;
 using Lib.Shared.DataModels.Entities.Itrs.Sets;
 using Lib.Shared.DataModels.Entities.Oufs.Sets;

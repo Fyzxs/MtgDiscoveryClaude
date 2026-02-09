@@ -17,18 +17,18 @@ internal sealed class UserSealedProductsEntryService : IUserSealedProductsEntryS
 {
     private readonly IAddUserSealedProductEntryService _addUserSealedProductEntryService;
     private readonly IUserSealedProductsByUserIdEntryService _userSealedProductsByUserIdEntryService;
-    private readonly ICollectionUserSealedProductItrToOutMapper _collectionMapper;
+    private readonly ICollectionUserSealedProductOufToOutMapper _collectionMapper;
 
     public UserSealedProductsEntryService(ILogger logger) : this(
         new AddUserSealedProductEntryService(logger),
         new UserSealedProductsByUserIdEntryService(logger),
-        new CollectionUserSealedProductItrToOutMapper())
+        new CollectionUserSealedProductOufToOutMapper())
     { }
 
     private UserSealedProductsEntryService(
         IAddUserSealedProductEntryService addUserSealedProductEntryService,
         IUserSealedProductsByUserIdEntryService userSealedProductsByUserIdEntryService,
-        ICollectionUserSealedProductItrToOutMapper collectionMapper)
+        ICollectionUserSealedProductOufToOutMapper collectionMapper)
     {
         _addUserSealedProductEntryService = addUserSealedProductEntryService;
         _userSealedProductsByUserIdEntryService = userSealedProductsByUserIdEntryService;

@@ -5,7 +5,7 @@ using Lib.Shared.DataModels.Entities.Oufs.UserCards;
 namespace Lib.Aggregator.UserCards.Commands.Mappers;
 
 /// <summary>
-/// Maps UserCardExtEntity to IUserCardItrEntity.
+/// Maps UserCardExtEntity to IUserCardOufEntity.
 /// </summary>
 internal interface IUserCardExtToOufEntityMapper : ICreateMapper<UserCardExtEntity, IUserCardOufEntity>
 {
