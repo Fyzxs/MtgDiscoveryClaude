@@ -20,14 +20,7 @@ XfrEntities MUST live in `Commands/Entities/` or `Queries/Entities/` — never a
 
 Every XfrEntity must include a computed `CacheKey` string property. This enables caching at the adapter layer.
 
-```csharp
-internal sealed class ArtistSearchTermXfrEntity : IArtistSearchTermXfrEntity
-{
-    public ICollection<string> SearchTerms { get; init; }
-    public string Normalized { get; init; }
-    public string CacheKey => $"artist:search:{Normalized}";
-}
-```
+> **See:** `csharp/src/Lib.Aggregators/Lib.Aggregator.Artists/Queries/Entities/ArtistSearchTermXfrEntity.cs`
 
 ### Property Rules
 
@@ -47,13 +40,7 @@ ALL OufEntities MUST live at the project root `Entities/` folder. OufEntities MU
 
 When returning collections of OufEntities, always use a **typed wrapper OufEntity** rather than raw `IEnumerable<>`:
 
-```csharp
-// Canonical — typed wrapper OufEntity
-IOperationResponse<ICardItemCollectionOufEntity>
-
-// NOT canonical — raw IEnumerable is tech debt
-IOperationResponse<IEnumerable<ICardItemOufEntity>>
-```
+> **See:** `csharp/src/Lib.Aggregators/Lib.Aggregator.Cards/Entities/` (canonical OufEntity examples)
 
 The wrapper OufEntity (e.g., `ICardItemCollectionOufEntity`) encapsulates the collection and lives at root `Entities/` alongside other OufEntities. Using `List<>` as a return type (e.g., `IOperationResponse<List<IOufEntity>>`) is also non-canonical.
 

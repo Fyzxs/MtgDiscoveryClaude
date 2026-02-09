@@ -21,38 +21,7 @@ Schema extensions centralize HotChocolate type registration using `IRequestExecu
 
 ## Implementation Pattern
 
-```csharp
-internal static class ApiQueryExtensions
-{
-    public static IRequestExecutorBuilder AddApiQuery(this IRequestExecutorBuilder builder)
-    {
-        return builder
-            // 1. Root type
-            .AddQueryType<ApiQuery>()
-
-            // 2. Type extensions (method classes)
-            .AddTypeExtension<CardQueryMethods>()
-            .AddTypeExtension<SetQueryMethods>()
-
-            // 3. Input types (ArgEntity descriptors)
-            .AddType<CardIdsArgEntityInputType>()
-            .AddType<CardNameArgEntityInputType>()
-
-            // 4. Response union types
-            .AddType<CardResponseModelUnionType>()
-            .AddType<CardsSuccessDataResponseModelType>()
-            .AddType<FailureResponseModelType>()
-
-            // 5. Output entity types
-            .AddType<ScryfallCardOutEntityType>()
-            .AddType<StatusDataModelType>()
-            .AddType<MetaDataModelType>()
-
-            // 6. Runtime options
-            .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Schemas/ApiQueryExtensions.cs`
 
 ## Registration Order
 
@@ -69,36 +38,13 @@ Within a schema extension method, register in this order:
 
 All schema extensions are chained in `Startup.ConfigureServices()`:
 
-```csharp
-_ = services
-    .AddGraphQLServer()
-    .AddApiQuery()              // Queries + query types
-    .AddApiMutation()           // Mutations + mutation types
-    .AddSetSchemaExtensions()   // Set output types
-    .AddArtistSchemaExtensions()
-    .AddSealedProductsSchemaExtensions()
-    .AddAuthorization()
-    .AddErrorFilter<HttpStatusCodeErrorFilter>()
-    // ... more configuration
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Startup.cs`
 
 ## Domain-Specific Extensions
 
 Domain extensions (`SetSchemaExtensions`, `ArtistSchemaExtensions`, etc.) register **output types only** that are specific to that domain. They do NOT register input types or type extensions -- those belong in `ApiQueryExtensions` or `ApiMutationExtensions`.
 
-```csharp
-internal static class SetSchemaExtensions
-{
-    public static IRequestExecutorBuilder AddSetSchemaExtensions(this IRequestExecutorBuilder builder)
-    {
-        return builder
-            .AddTypeExtension<SetQueryMethods>()
-            .AddType<ScryfallSetOutEntityType>()
-            .AddType<SetGroupingOutEntityType>()
-            .AddType<SetGroupingFinishCountsType>();
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Schemas/SetSchemaExtensions.cs`
 
 ## Key Rules
 

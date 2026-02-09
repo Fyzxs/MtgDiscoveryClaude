@@ -11,12 +11,7 @@ Integrators **merge changes from a delta object into a state object**, returning
 
 ## Base Interface
 
-```csharp
-public interface IIntegrator<TState, in TDelta>
-{
-    Task<TState> Integrate(TState current, TDelta change);
-}
-```
+**See:** `csharp/src/common/Lib.Shared.Abstractions/Actions/Integrators/IIntegrator.cs`
 
 **Location**: `common/Lib.Shared.Abstractions/Actions/Integrators/IIntegrator.cs`
 
@@ -26,48 +21,7 @@ public interface IIntegrator<TState, in TDelta>
 
 ## Implementation Pattern
 
-```csharp
-// Interface
-internal interface IUserCardIntegrator
-    : IIntegrator<UserCardExtEntity, IAddUserCardXfrEntity>;
-
-// Implementation
-internal sealed class UserCardIntegrator : IUserCardIntegrator
-{
-    private readonly ICollectedItemsMergeMapper _mergeMapper;
-    private readonly ICollectedItemsReplaceMapper _replaceMapper;
-    private readonly IUserCardMetadataMapper _metadataMapper;
-
-    public UserCardIntegrator()
-        : this(new CollectedItemsMergeMapper(),
-               new CollectedItemsReplaceMapper(),
-               new UserCardMetadataMapper())
-    { }
-
-    private UserCardIntegrator(
-        ICollectedItemsMergeMapper mergeMapper,
-        ICollectedItemsReplaceMapper replaceMapper,
-        IUserCardMetadataMapper metadataMapper)
-    {
-        _mergeMapper = mergeMapper;
-        _replaceMapper = replaceMapper;
-        _metadataMapper = metadataMapper;
-    }
-
-    public Task<UserCardExtEntity> Integrate(
-        UserCardExtEntity current,
-        IAddUserCardXfrEntity change)
-    {
-        ICollection<UserCardDetailsExtEntity> updatedCollectedList = change.ReplaceMode
-            ? _replaceMapper.Map([.. current.CollectedList], change.Details)
-            : _mergeMapper.Map([.. current.CollectedList], change.Details);
-
-        UserCardExtEntity result = _metadataMapper.Map(current, change, updatedCollectedList);
-
-        return Task.FromResult(result);
-    }
-}
-```
+**See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/Integrators/UserCardIntegrator.cs`
 
 **Key points:**
 - Extend `IIntegrator<TState, TDelta>` in the interface
@@ -84,19 +38,7 @@ internal sealed class UserCardIntegrator : IUserCardIntegrator
 
 Integrators are used in read-modify-write command flows:
 
-```csharp
-// 1. Read current state
-OpResponse<UserCardExtEntity> readResponse = await _gopher.ReadAsync<UserCardExtEntity>(readPoint, ct);
-
-// 2. Resolve to concrete entity (creates new if not found)
-UserCardExtEntity current = _resolver.Resolve(readResponse, input);
-
-// 3. Integrate changes
-UserCardExtEntity updated = await _integrator.Integrate(current, input);
-
-// 4. Write back
-return await _scribe.UpsertAsync(updated, ct);
-```
+**See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/AddUserCardAdapter.cs`
 
 ## Existing Implementations
 

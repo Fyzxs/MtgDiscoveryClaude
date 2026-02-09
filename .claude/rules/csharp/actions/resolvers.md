@@ -13,24 +13,13 @@ Resolvers **create or retrieve entities based on context**, typically implementi
 
 ### IResolver (Generic Base)
 
-```csharp
-public interface IResolver<in TInput, out TResolved, in TContext>
-{
-    TResolved Resolve(TInput input, TContext context);
-}
-```
+> **See:** `csharp/src/common/Lib.Shared.Abstractions/Actions/Resolvers/IResolver.cs`
 
 **Location**: `common/Lib.Shared.Abstractions/Actions/Resolvers/IResolver.cs`
 
 ### ICosmosResolver (Cosmos-Specific)
 
-```csharp
-public interface ICosmosResolver<TResolved, in TContext>
-    : IResolver<OpResponse<TResolved>, TResolved, TContext>
-{
-    // Inherits: TResolved Resolve(OpResponse<TResolved> input, TContext context);
-}
-```
+> **See:** `csharp/src/core/Lib.Cosmos/Resolvers/ICosmosResolver.cs`
 
 **Location**: `core/Lib.Cosmos/Resolvers/ICosmosResolver.cs`
 
@@ -44,32 +33,7 @@ public interface ICosmosResolver<TResolved, in TContext>
 
 Most resolvers handle Cosmos read responses and create Null Object entities when the read returns not-found:
 
-```csharp
-// Interface (use ICosmosResolver)
-internal interface IUserCardResolver
-    : ICosmosResolver<UserCardExtEntity, IAddUserCardXfrEntity>;
-
-// Implementation
-internal sealed class UserCardResolver : IUserCardResolver
-{
-    public UserCardExtEntity Resolve(
-        OpResponse<UserCardExtEntity> input,
-        IAddUserCardXfrEntity context)
-    {
-        if (input.IsSuccessful())
-            return input.Value;
-
-        // Create new entity from context (Null Object pattern)
-        return new UserCardExtEntity
-        {
-            UserId = context.UserId,
-            CardId = context.CardId,
-            // ... populate from context
-            CollectedList = []
-        };
-    }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/Resolvers/UserCardResolver.cs`
 
 **Key points:**
 - Use `ICosmosResolver<TResolved, TContext>` for consistency
@@ -81,31 +45,7 @@ internal sealed class UserCardResolver : IUserCardResolver
 
 Some resolvers extract or resolve sub-data from an already-resolved entity:
 
-```csharp
-// Interface (use base IResolver with different type parameters)
-internal interface IUserSetCardGroupResolver
-    : IResolver<UserSetCardExtEntity, Dictionary<string, FinishGroupExtEntity>, IAddCardToSetXfrEntity>;
-
-// Implementation
-internal sealed class UserSetCardGroupResolver : IUserSetCardGroupResolver
-{
-    public Dictionary<string, FinishGroupExtEntity> Resolve(
-        UserSetCardExtEntity input,  // Already resolved entity, not OpResponse
-        IAddCardToSetXfrEntity context)
-    {
-        // Find or create the group within the entity
-        var group = input.Groups.GetValueOrDefault(context.SetGroupId)
-                    ?? new UserSetCardGroupExtEntity();
-
-        return new Dictionary<string, FinishGroupExtEntity>
-        {
-            {"foil", group.Foil},
-            {"nonfoil", group.NonFoil},
-            {"etched", group.Etched}
-        };
-    }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserSetCards/Commands/Resolvers/UserSetCardGroupResolver.cs`
 
 **Use this pattern when:**
 - Input is an already-resolved entity (not `OpResponse`)
@@ -118,17 +58,7 @@ internal sealed class UserSetCardGroupResolver : IUserSetCardGroupResolver
 
 ## Usage in Command Adapters
 
-```csharp
-// 1. Attempt to read existing entity
-OpResponse<UserCardExtEntity> readResponse = await _gopher.ReadAsync<UserCardExtEntity>(readPoint, ct);
-
-// 2. Resolve: returns existing or creates new
-UserCardExtEntity entity = _resolver.Resolve(readResponse, input);
-
-// 3. Integrate changes and save
-UserCardExtEntity updated = await _integrator.Integrate(entity, input);
-return await _scribe.UpsertAsync(updated, ct);
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/AddUserCardAdapter.cs`
 
 ## Existing Implementations
 

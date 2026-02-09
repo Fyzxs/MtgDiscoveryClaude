@@ -27,44 +27,7 @@ ICombinedArgsEntity { AuthUser + OperationArgs }
 
 Extracts user information from the JWT `ClaimsPrincipal` on demand:
 
-```csharp
-internal sealed class AuthUserArgEntity : IAuthUserArgEntity
-{
-    private static readonly Guid s_userSubjectNamespace =
-        new("4d746755-7365-7253-7562-6a6563744775");
-
-    private readonly ClaimsPrincipal _claimsPrincipal;
-
-    public AuthUserArgEntity(ClaimsPrincipal claimsPrincipal)
-        => _claimsPrincipal = claimsPrincipal;
-
-    public string UserId
-    {
-        get
-        {
-            Guid guid = GuidUtility.Create(s_userSubjectNamespace, SourceId);
-            return guid.ToString();
-        }
-    }
-
-    public string SourceId =>
-        _claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value
-        ?? _claimsPrincipal.FindFirst("sub")?.Value
-        ?? throw new InvalidOperationException("No subject claim found in token");
-
-    public string DisplayName =>
-        _claimsPrincipal.FindFirst("https://mtg-discovery-api/nickname")?.Value
-        ?? _claimsPrincipal.FindFirst("nickname")?.Value
-        ?? _claimsPrincipal.FindFirst("name")?.Value
-        ?? throw new InvalidOperationException("No display name claim found in token");
-
-    public string Email =>
-        _claimsPrincipal.FindFirst("https://mtg-discovery-api/email")?.Value
-        ?? _claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value
-        ?? _claimsPrincipal.FindFirst("email")?.Value
-        ?? throw new InvalidOperationException("No email claim found in token");
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Authentication/AuthUserArgEntity.cs`
 
 **Key points:**
 - `UserId` is a **deterministic GUID** derived from the Auth0 subject claim
@@ -78,48 +41,15 @@ All mutations that require user identity follow this pattern:
 
 ### 1. Mark with `[Authorize]`
 
-```csharp
-[Authorize]
-[GraphQLType(typeof(AddCardToCollectionResponseModelUnionType))]
-public async Task<ResponseModel> AddCardToCollectionAsync(
-    ClaimsPrincipal claimsPrincipal,
-    AddUserCardArgEntity args,
-    CancellationToken cancellationToken)
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Mutations/` (mutation classes with `[Authorize]` decorator)
 
 ### 2. Combine Auth + Input via Mapper
 
-```csharp
-{
-    IAddCardToCollectionArgsEntity combinedArgs =
-        await _argsMapper.Map(claimsPrincipal, args).ConfigureAwait(false);
-    IOperationResponse<List<CardItemOutEntity>> response =
-        await _entryService.AddCardToCollectionAsync(combinedArgs, cancellationToken)
-            .ConfigureAwait(false);
-    return await _responseMapper.Map(response).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Mutations/` (mutation method implementation pattern)
 
 ### 3. ArgsMapper Implementation
 
-```csharp
-internal interface IAddCardToCollectionArgsMapper
-    : ICreateMapper<ClaimsPrincipal, AddUserCardArgEntity, IAddCardToCollectionArgsEntity>;
-
-internal sealed class AddCardToCollectionArgsMapper : IAddCardToCollectionArgsMapper
-{
-    public Task<IAddCardToCollectionArgsEntity> Map(
-        ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
-    {
-        IAddCardToCollectionArgsEntity result = new AddCardToCollectionArgsEntity
-        {
-            AuthUser = new AuthUserArgEntity(claimsPrincipal),
-            AddUserCard = args
-        };
-        return Task.FromResult(result);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Actions/Mappers/AddCardToCollectionArgsMapper.cs`
 
 **Key points:**
 - Uses `ICreateMapper<TSource1, TSource2, TResult>` (dual-source mapper)
@@ -140,22 +70,11 @@ internal sealed class AddCardToCollectionArgsMapper : IAddCardToCollectionArgsMa
 
 Some queries accept an optional `UserId` to enrich results with user-specific data (e.g., collection status on cards). These queries do NOT require `[Authorize]`:
 
-```csharp
-// No [Authorize] decorator — userId is optional
-[GraphQLType(typeof(CardResponseModelUnionType))]
-public async Task<ResponseModel> CardsById(
-    CardIdsArgEntity ids, CancellationToken cancellationToken)
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Queries/CardQueryMethods.cs`
 
 The ArgEntity includes an optional `UserId` field:
 
-```csharp
-internal sealed class CardIdsArgEntity : ICardIdsArgEntity
-{
-    public ICollection<string> CardIds { get; set; }
-    public string UserId { get; set; }  // Optional — empty string if anonymous
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Args/CardIdsArgEntity.cs` (if exists, otherwise reference `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/ICardIdsArgEntity.cs`)
 
 When `UserId` is provided, the Entry layer enriches the response with user collection data. When empty, the query still succeeds but without personalized enrichment.
 
@@ -175,28 +94,7 @@ These are distinct from Entry/Domain/Aggregator mappers -- they exist only to br
 
 When the GraphQL method accepts a primitive parameter (e.g., `string collectionId`) instead of an `ArgEntity`, the ArgsMapper uses the scalar type directly:
 
-```csharp
-// Interface — second generic parameter is string, not an ArgEntity
-internal interface ICollectionIdArgsMapper
-    : ICreateMapper<ClaimsPrincipal, string, ICollectionIdArgEntity>;
-
-// Implementation
-internal sealed class CollectionIdArgsMapper : ICollectionIdArgsMapper
-{
-    public Task<ICollectionIdArgEntity> Map(ClaimsPrincipal claimsPrincipal, string collectionId)
-    {
-        AuthUserArgEntity authUser = new(claimsPrincipal);
-
-        ICollectionIdArgEntity entity = new CollectionIdArgEntity
-        {
-            UserId = authUser.UserId,
-            CollectionId = collectionId
-        };
-
-        return Task.FromResult(entity);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Actions/Mappers/` (ArgsMapper implementations for scalar parameters)
 
 **When to use scalar parameters:**
 - The operation needs only one simple input (e.g., an ID) plus the authenticated user
@@ -208,12 +106,7 @@ The mapper still constructs `AuthUserArgEntity` internally and produces a combin
 
 Mutation and query classes that handle many operations for a single domain will have one ArgsMapper per operation:
 
-```csharp
-private readonly ICreateCollectionArgsMapper _createCollectionArgsMapper;
-private readonly IRenameCollectionArgsMapper _renameCollectionArgsMapper;
-private readonly IDeleteCollectionArgsMapper _deleteCollectionArgsMapper;
-// ... one per mutation operation
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Mutations/` (mutation classes showing multiple ArgsMapper fields)
 
 All are constructed in the public constructor chain and injected via the private constructor. When a class reaches 7+ ArgsMappers, this is expected — it reflects the domain's command surface, not a violation of single responsibility. The class itself remains a thin translation layer with no logic.
 

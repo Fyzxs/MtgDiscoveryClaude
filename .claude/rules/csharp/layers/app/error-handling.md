@@ -43,48 +43,7 @@ GraphQL returns error response with extensions
 
 **Location**: `ErrorHandling/HttpStatusCodeErrorFilter.cs`
 
-```csharp
-internal sealed class HttpStatusCodeErrorFilter : IErrorFilter
-{
-    private readonly IHostEnvironment _environment;
-
-    public HttpStatusCodeErrorFilter(IHostEnvironment environment)
-    {
-        _environment = environment;
-    }
-
-    public IError OnError([NotNull] IError error)
-    {
-        Dictionary<string, object> extensions = new()
-        {
-            ["timestamp"] = DateTime.UtcNow.ToString("O")
-        };
-
-        if (error.Code == "AUTH_NOT_AUTHENTICATED" || error.Code == "AUTH_NOT_AUTHORIZED")
-        {
-            extensions["statusCode"] = 401;
-        }
-
-        if (_environment.IsDevelopment())
-        {
-            extensions["path"] = error.Path?.ToList();
-            extensions["locations"] = error.Locations?.ToList();
-            if (error.Exception != null)
-            {
-                extensions["exceptionType"] = error.Exception.GetType().Name;
-                extensions["exceptionMessage"] = error.Exception.Message;
-                if (error.Exception.InnerException != null)
-                {
-                    extensions["innerException"] = error.Exception.InnerException.Message;
-                    extensions["innerExceptionType"] = error.Exception.InnerException.GetType().Name;
-                }
-            }
-        }
-
-        return error.WithExtensions(extensions);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/ErrorHandling/HttpStatusCodeErrorFilter.cs`
 
 **Key behaviors:**
 - All errors get a UTC timestamp
@@ -96,35 +55,13 @@ internal sealed class HttpStatusCodeErrorFilter : IErrorFilter
 
 In `Startup.ConfigureServices()`:
 
-```csharp
-_ = services
-    .AddGraphQLServer()
-    .AddErrorFilter<HttpStatusCodeErrorFilter>()
-    .ModifyRequestOptions(opt =>
-    {
-        opt.IncludeExceptionDetails = _environment.IsDevelopment();
-    })
-    .DisableIntrospection(_environment.IsDevelopment() is false);
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Startup.cs`
 
 ## ResponseModel Union Pattern
 
 Every endpoint returns a union of success or failure:
 
-```csharp
-// Success path
-new SuccessDataResponseModel<TData> { Data = response.ResponseData }
-
-// Failure path
-new FailureResponseModel
-{
-    Status = new StatusDataModel
-    {
-        Message = response.OuterException.StatusMessage,
-        StatusCode = response.OuterException.StatusCode
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Actions/Mappers/OperationResponseToResponseModelMapper.cs`
 
 See: `layers/app/response-models.md` for full ResponseModel documentation.
 

@@ -11,25 +11,7 @@ InputType descriptors map C# `ArgEntity` classes to GraphQL input types using Ho
 
 ## Implementation Pattern
 
-```csharp
-internal sealed class CardIdsArgEntityInputType : InputObjectType<CardIdsArgEntity>
-{
-    protected override void Configure([NotNull] IInputObjectTypeDescriptor<CardIdsArgEntity> descriptor)
-    {
-        _ = descriptor.Name("CardIdsInput")
-            .Description("Input for querying cards by card IDs");
-
-        _ = descriptor.Field(x => x.CardIds)
-            .Name("cardIds")
-            .Type<NonNullType<ListType<NonNullType<StringType>>>>()
-            .Description("The collection of card IDs to query");
-        _ = descriptor.Field(x => x.UserId)
-            .Name("userId")
-            .Type<StringType>()
-            .Description("Optional user identifier to enrich cards with collection data");
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Types/Args/CardIdsArgEntityInputType.cs`
 
 ## Structure
 
@@ -62,31 +44,11 @@ Every InputType follows this structure:
 
 When an ArgEntity contains another ArgEntity, reference the nested InputType directly:
 
-```csharp
-// Parent InputType references child InputType
-_ = descriptor.Field(x => x.Counts)
-    .Name("counts")
-    .Type<NonNullType<FinishCountsInputType>>()
-    .Description("The card counts by finish type");
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Types/Args/` (InputType files showing nested type references)
 
 The nested InputType follows the same pattern:
 
-```csharp
-internal sealed class FinishCountsInputType : InputObjectType<FinishCountsArgEntity>
-{
-    protected override void Configure([NotNull] IInputObjectTypeDescriptor<FinishCountsArgEntity> descriptor)
-    {
-        _ = descriptor.Name("FinishCountsInput")
-            .Description("Card finish counts by type");
-
-        _ = descriptor.Field(x => x.Total)
-            .Name("total")
-            .Type<NonNullType<IntType>>()
-            .Description("Total count across all finishes");
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Types/Args/` (nested InputType implementations)
 
 ## File Location
 
@@ -106,13 +68,7 @@ Entities/Types/Args/UserCards/AddCardToCollectionArgEntityInputType.cs
 
 All InputTypes must be registered in the appropriate schema extension:
 
-```csharp
-// In ApiQueryExtensions.cs
-.AddType<CardIdsArgEntityInputType>()
-
-// In ApiMutationExtensions.cs
-.AddType<AddCardToCollectionArgEntityInputType>()
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Schemas/ApiQueryExtensions.cs` and `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Schemas/ApiMutationExtensions.cs`
 
 See: `layers/app/schema-extensions.md` for full registration pattern.
 

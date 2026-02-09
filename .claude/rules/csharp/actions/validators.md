@@ -33,29 +33,7 @@ All validators derive from types in `Lib.Shared.Abstractions.Actions.Validators`
 
 The container composes multiple validators and fails-fast on the first invalid result:
 
-```csharp
-// Interface — extends IValidatorAction
-internal interface IAddCardToCollectionArgEntityValidator
-    : IValidatorAction<IAddCardToCollectionArgsEntity, IOperationResponse<IUserCardOufEntity>>;
-
-// Implementation — composes validators in evaluation order
-internal sealed class AddCardToCollectionArgEntityValidatorContainer
-    : ValidatorActionContainer<IAddCardToCollectionArgsEntity, IOperationResponse<IUserCardOufEntity>>,
-      IAddCardToCollectionArgEntityValidator
-{
-    public AddCardToCollectionArgEntityValidatorContainer() : base([
-        new HasValidCardIdAddCardToCollectionArgEntityValidator(),
-        new HasValidSetIdAddCardToCollectionArgEntityValidator(),
-        new HasValidUserIdAddCardToCollectionArgEntityValidator(),
-        new AuthUserMatchesUserIdValidator(),
-        new CollectedItemNotNullValidator(),
-        new CollectedItemCountValidator(),
-        new CollectedItemFinishValidator(),
-        new CollectedItemSpecialValidator(),
-    ])
-    { }
-}
-```
+**See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Actions/Validators/AddCardToCollectionArgEntityValidatorContainer.cs`
 
 **Key points:**
 - Container class extends `ValidatorActionContainer<TItem, TFailureStatus>` AND implements the container interface
@@ -66,25 +44,7 @@ internal sealed class AddCardToCollectionArgEntityValidatorContainer
 
 Each validator is a self-contained class with nested `Validator` and `Message` classes:
 
-```csharp
-internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator
-    : OperationResponseValidator<IAddCardToCollectionArgsEntity, IUserCardOufEntity>
-{
-    public HasValidCardIdAddCardToCollectionArgEntityValidator()
-        : base(new Validator(), new Message()) { }
-
-    public sealed class Validator : IValidator<IAddCardToCollectionArgsEntity>
-    {
-        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg)
-            => Task.FromResult(arg.AddUserCard.CardId.IzNotNullOrWhiteSpace());
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType() => "Card ID cannot be empty";
-    }
-}
-```
+**See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Actions/Validators/HasValidCardIdAddCardToCollectionArgEntityValidator.cs`
 
 **Key points:**
 - Extends `OperationResponseValidator<TValidationType, TReturnType>`
@@ -97,38 +57,7 @@ internal sealed class HasValidCardIdAddCardToCollectionArgEntityValidator
 
 For validators that check against a fixed set of valid values:
 
-```csharp
-internal sealed class CollectedItemFinishValidator
-    : OperationResponseValidator<IAddCardToCollectionArgsEntity, IUserCardOufEntity>
-{
-    private static readonly HashSet<string> s_validFinishes =
-        new(StringComparer.OrdinalIgnoreCase)
-        {
-            "nonfoil",
-            "foil",
-            "etched"
-        };
-
-    public CollectedItemFinishValidator() : base(new Validator(), new Message()) { }
-
-    public sealed class Validator : IValidator<IAddCardToCollectionArgsEntity>
-    {
-        public Task<bool> IsValid(IAddCardToCollectionArgsEntity arg)
-        {
-            if (arg.AddUserCard.UserCardDetails is null)
-                return Task.FromResult(true);
-
-            return Task.FromResult(s_validFinishes.Contains(arg.AddUserCard.UserCardDetails.Finish));
-        }
-    }
-
-    public sealed class Message : OperationResponseMessage
-    {
-        public override string AsSystemType()
-            => $"Finish must be one of: {string.Join(", ", s_validFinishes)}";
-    }
-}
-```
+**See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Actions/Validators/CollectedItemFinishValidator.cs`
 
 **Key points:**
 - Static readonly collections for valid value sets are acceptable
@@ -139,13 +68,7 @@ internal sealed class CollectedItemFinishValidator
 
 For validators that need to call external services (e.g., uniqueness checks against a domain service):
 
-```csharp
-internal interface ICreateCollectionNameUniquenessValidator
-{
-    Task<IValidatorActionResult<IOperationResponse<ICollectionOufEntity>>> Validate(
-        ICreateCollectionArgsEntity args, CancellationToken cancellationToken);
-}
-```
+**See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Collections/Validators/Uniqueness/ICreateCollectionNameUniquenessValidator.cs`
 
 **Key differences from standard validators:**
 - Accept `CancellationToken` — they perform async operations (domain service calls, database lookups)
@@ -157,14 +80,7 @@ internal interface ICreateCollectionNameUniquenessValidator
 
 **Usage in service:**
 
-```csharp
-// After container validation passes, run async validator separately
-IValidatorActionResult<IOperationResponse<ICollectionOufEntity>> uniquenessResult =
-    await _uniquenessValidator.Validate(argsEntity, cancellationToken).ConfigureAwait(false);
-if (uniquenessResult.IsNotValid())
-    return new FailureOperationResponse<CollectionOutEntity>(
-        uniquenessResult.FailureStatus().OuterException);
-```
+**See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Collections/CollectionEntryCommandService.cs`
 
 ## Location
 
@@ -177,13 +93,7 @@ if (uniquenessResult.IsNotValid())
 
 ## Usage in Entry Services
 
-```csharp
-// In operation service Execute():
-IValidatorActionResult<IOperationResponse<TReturnType>> validatorResult =
-    await _validator.Validate(input).ConfigureAwait(false);
-if (validatorResult.IsNotValid())
-    return new FailureOperationResponse<TOutEntity>(validatorResult.FailureStatus().OuterException);
-```
+**See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Collections/CollectionEntryCommandService.cs`
 
 Validation always happens first, before any mapping or domain calls.
 

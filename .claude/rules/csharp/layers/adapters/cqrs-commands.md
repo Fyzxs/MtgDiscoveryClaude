@@ -35,7 +35,4 @@ See: `../cosmos/cosmos-gopher.md`, `../../actions/resolvers.md`, `../../actions/
 
 ## Example
 
-```csharp
-internal interface IAddUserCardAdapter
-    : IOperationResponseService<IAddUserCardXfrEntity, UserCardExtEntity>;
-```
+**See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/IAddUserCardAdapter.cs`

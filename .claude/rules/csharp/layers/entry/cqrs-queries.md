@@ -11,40 +11,7 @@ The router implements the domain-specific query interface from `Apis/` and deleg
 
 ### Pattern
 
-```csharp
-internal sealed class CardEntryService : ICardEntryService
-{
-    private readonly ICardsByIdsEntryService _cardsByIds;
-    private readonly ICardsBySetCodeEntryService _cardsBySetCode;
-    private readonly ICardsByNameEntryService _cardsByName;
-    private readonly ICardNameSearchEntryService _cardNameSearch;
-
-    public CardEntryService(ILogger logger) : this(
-        new CardsByIdsEntryService(logger),
-        new CardsBySetCodeEntryService(logger),
-        new CardsByNameEntryService(logger),
-        new CardNameSearchEntryService(logger))
-    { }
-
-    private CardEntryService(
-        ICardsByIdsEntryService cardsByIds,
-        ICardsBySetCodeEntryService cardsBySetCode,
-        ICardsByNameEntryService cardsByName,
-        ICardNameSearchEntryService cardNameSearch)
-    {
-        _cardsByIds = cardsByIds;
-        _cardsBySetCode = cardsBySetCode;
-        _cardsByName = cardsByName;
-        _cardNameSearch = cardNameSearch;
-    }
-
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(
-        ICardIdsArgEntity args, CancellationToken cancellationToken)
-        => await _cardsByIds.Execute(args, cancellationToken).ConfigureAwait(false);
-
-    // Each method delegates to the corresponding operation's Execute()
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/CardEntryService.cs`
 
 Each method delegates to the corresponding operation's `Execute(input, cancellationToken)` — no logic in the router.
 
@@ -56,10 +23,7 @@ These are targeted classes following single responsibility — each implements a
 
 All operation interfaces MUST inherit from `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually.
 
-```csharp
-internal interface ICardsByIdsEntryService
-    : IOperationResponseService<ICardIdsArgEntity, List<CardItemOutEntity>>;
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/Cards/` (operation service interfaces)
 
 ### Standard Execute Flow
 
@@ -75,67 +39,7 @@ All query operation services follow this sequence:
 
 ### Implementation
 
-```csharp
-internal sealed class CardsByIdsEntryService : ICardsByIdsEntryService
-{
-    private readonly ICardDomainService _cardDomainService;
-    private readonly ICardIdsArgEntityValidator _cardIdsArgEntityValidator;
-    private readonly ICardIdsArgToItrMapper _cardIdsArgToItrMapper;
-    private readonly ICollectionCardItemOufToOutMapper _cardItemOufToOutMapper;
-    private readonly IUserCardEnrichment _userCardEnrichment;
-    private readonly IUserWishlistCardByIdsEnrichment _userWishlistCardEnrichment;
-
-    public CardsByIdsEntryService(ILogger logger) : this(
-        new CardDomainService(logger),
-        new CardIdsArgEntityValidatorContainer(),
-        new CardIdsArgToItrMapper(),
-        new CollectionCardItemOufToOutMapper(),
-        new UserCardEnrichment(logger),
-        new UserWishlistCardByIdsEnrichment(logger))
-    { }
-
-    private CardsByIdsEntryService(
-        ICardDomainService cardDomainService,
-        ICardIdsArgEntityValidator cardIdsArgEntityValidator,
-        ICardIdsArgToItrMapper cardIdsArgToItrMapper,
-        ICollectionCardItemOufToOutMapper cardItemOufToOutMapper,
-        IUserCardEnrichment userCardEnrichment,
-        IUserWishlistCardByIdsEnrichment userWishlistCardEnrichment)
-    {
-        _cardDomainService = cardDomainService;
-        _cardIdsArgEntityValidator = cardIdsArgEntityValidator;
-        _cardIdsArgToItrMapper = cardIdsArgToItrMapper;
-        _cardItemOufToOutMapper = cardItemOufToOutMapper;
-        _userCardEnrichment = userCardEnrichment;
-        _userWishlistCardEnrichment = userWishlistCardEnrichment;
-    }
-
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> Execute(
-        ICardIdsArgEntity args, CancellationToken cancellationToken)
-    {
-        IValidatorActionResult<IOperationResponse<ICardItemCollectionOufEntity>> validatorResult =
-            await _cardIdsArgEntityValidator.Validate(args).ConfigureAwait(false);
-        if (validatorResult.IsNotValid())
-            return new FailureOperationResponse<List<CardItemOutEntity>>(
-                validatorResult.FailureStatus().OuterException);
-
-        ICardIdsItrEntity itrEntity = await _cardIdsArgToItrMapper.Map(args).ConfigureAwait(false);
-
-        IOperationResponse<ICardItemCollectionOufEntity> opResponse =
-            await _cardDomainService.CardsByIdsAsync(itrEntity, cancellationToken).ConfigureAwait(false);
-        if (opResponse.IsFailure)
-            return new FailureOperationResponse<List<CardItemOutEntity>>(opResponse.OuterException);
-
-        List<CardItemOutEntity> outEntities =
-            await _cardItemOufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
-
-        await _userCardEnrichment.Enrich(outEntities, args, cancellationToken).ConfigureAwait(false);
-        await _userWishlistCardEnrichment.Enrich(outEntities, args, cancellationToken).ConfigureAwait(false);
-
-        return new SuccessOperationResponse<List<CardItemOutEntity>>(outEntities);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/Cards/CardsByIdsEntryService.cs`
 
 ### Standard Dependencies
 

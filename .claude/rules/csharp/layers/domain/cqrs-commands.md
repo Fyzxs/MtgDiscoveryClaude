@@ -24,32 +24,7 @@ The router injects a **single aggregator service** and delegates every method ca
 
 **Use when**: Each command is a simple 1:1 delegation to an aggregator method.
 
-```csharp
-internal sealed class CollectionCommandDomainService : ICollectionCommandDomainService
-{
-    private readonly ICollectionsAggregatorService _aggregatorService;
-
-    public CollectionCommandDomainService(ILogger logger)
-        : this(new CollectionsAggregatorService(logger))
-    { }
-
-    private CollectionCommandDomainService(
-        ICollectionsAggregatorService aggregatorService)
-        => _aggregatorService = aggregatorService;
-
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(
-        ICollectionItrEntity entity, CancellationToken cancellationToken)
-        => await _aggregatorService.CreateCollectionAsync(entity, cancellationToken)
-            .ConfigureAwait(false);
-
-    public async Task<IOperationResponse<ICollectionOufEntity>> DeleteCollectionAsync(
-        IDeleteCollectionItrEntity entity, CancellationToken cancellationToken)
-        => await _aggregatorService.DeleteCollectionAsync(entity, cancellationToken)
-            .ConfigureAwait(false);
-
-    // ... all methods follow same direct delegation
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.Collections/Commands/CollectionCommandDomainService.cs`
 
 **Key characteristics:**
 - Single dependency: the aggregator service
@@ -64,59 +39,11 @@ The router injects **multiple specialized single-method services** and delegates
 
 **Router:**
 
-```csharp
-internal sealed class UserCardsCommandDomainService : IUserCardsCommandDomainService
-{
-    private readonly IAddUserCardDomain _addUserCard;
-    private readonly IAddUserCardOnlyDomain _addUserCardOnly;
-
-    public UserCardsCommandDomainService(ILogger logger) : this(
-        new AddUserCardDomain(logger),
-        new AddUserCardOnlyDomain(logger))
-    { }
-
-    private UserCardsCommandDomainService(
-        IAddUserCardDomain addUserCard,
-        IAddUserCardOnlyDomain addUserCardOnly)
-    {
-        _addUserCard = addUserCard;
-        _addUserCardOnly = addUserCardOnly;
-    }
-
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardAsync(
-        IUserCardItrEntity entity, CancellationToken cancellationToken)
-        => await _addUserCard.Execute(entity, cancellationToken).ConfigureAwait(false);
-
-    public async Task<IOperationResponse<IUserCardOufEntity>> AddUserCardOnlyAsync(
-        IUserCardItrEntity entity, CancellationToken cancellationToken)
-        => await _addUserCardOnly.Execute(entity, cancellationToken).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.UserCards/Commands/UserCardsCommandDomainService.cs`
 
 **Specialized operation:**
 
-```csharp
-internal interface IAddUserCardDomain
-    : IOperationResponseService<IUserCardItrEntity, IUserCardOufEntity>;
-
-internal sealed class AddUserCardDomain : IAddUserCardDomain
-{
-    private readonly IUserCardsAggregatorService _aggregatorService;
-
-    public AddUserCardDomain(ILogger logger)
-        : this(new UserCardsAggregatorService(logger))
-    { }
-
-    private AddUserCardDomain(
-        IUserCardsAggregatorService aggregatorService)
-        => _aggregatorService = aggregatorService;
-
-    public async Task<IOperationResponse<IUserCardOufEntity>> Execute(
-        IUserCardItrEntity input, CancellationToken cancellationToken)
-        => await _aggregatorService.AddUserCardAsync(input, cancellationToken)
-            .ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.UserCards/Commands/AddUserCardDomain.cs`
 
 **Key characteristics:**
 - Router depends on multiple specialized operations (1 per behavior)

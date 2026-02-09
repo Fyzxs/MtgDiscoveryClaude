@@ -17,13 +17,7 @@ Inquisitions provide **parameterized query operations** for Cosmos DB. They exec
 
 ## Method Signatures
 
-```csharp
-// Non-parameterized
-Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(CancellationToken cancellationToken = default);
-
-// Parameterized
-Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(TParameters parameters, CancellationToken cancellationToken = default);
-```
+> **See:** `csharp/src/core/Lib.Cosmos/Apis/Operators/ICosmosInquisition.cs`
 
 ## Naming Conventions
 
@@ -36,37 +30,7 @@ Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(TParameters parameters, Cancellat
 
 ## Implementation Pattern
 
-```csharp
-public sealed class UserCardItemsBySetInquisition : ICosmosInquisition<UserCardItemsBySetExtEntity>
-{
-    private readonly ICosmosInquisitor _inquisitor;
-    private readonly InquiryDefinition _inquiry;
-
-    public UserCardItemsBySetInquisition(ILogger logger)
-        : this(new UserCardsInquisitor(logger), new UserCardItemsBySetQueryDefinition())
-    { }
-
-    private UserCardItemsBySetInquisition(ICosmosInquisitor inquisitor, InquiryDefinition inquiry)
-    {
-        _inquisitor = inquisitor;
-        _inquiry = inquiry;
-    }
-
-    public async Task<OpResponse<IEnumerable<T>>> QueryAsync<T>(
-        UserCardItemsBySetExtEntity args,
-        CancellationToken cancellationToken = default)
-    {
-        QueryDefinition query = _inquiry.AsSystemType()
-            .WithParameter("@userId", args.UserId)
-            .WithParameter("@setId", args.SetId);
-
-        PartitionKey partitionKey = new(args.UserId);
-
-        return await _inquisitor.QueryAsync<T>(query, partitionKey, cancellationToken)
-            .ConfigureAwait(false);
-    }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitions/UserCardItemsBySetInquisition.cs`
 
 **Key points:**
 - Implement `ICosmosInquisition<TParameters>`
@@ -84,12 +48,7 @@ public sealed class UserCardItemsBySetInquisition : ICosmosInquisition<UserCardI
 
 ## Parameter Entity Pattern
 
-```csharp
-public sealed class CardsBySetIdInquisitionArgs
-{
-    public string SetId { get; init; }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Inquisitions/Entities/CardsBySetIdInquisitionArgs.cs`
 
 **Key points:**
 - Use `init` for immutable properties

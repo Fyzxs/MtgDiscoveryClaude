@@ -36,33 +36,7 @@ The `{Domain}AggregatorService` in `Apis/` is a **pure passthrough facade**. It 
 
 ### Implementation
 
-```csharp
-public sealed class CollectionsAggregatorService : ICollectionsAggregatorService
-{
-    private readonly ICollectionCommandAggregatorService _commandAggregator;
-    private readonly ICollectionQueryAggregatorService _queryAggregator;
-
-    public CollectionsAggregatorService(ILogger logger) : this(
-        new CollectionCommandAggregator(logger),
-        new CollectionQueryAggregator(logger))
-    { }
-
-    private CollectionsAggregatorService(
-        ICollectionCommandAggregatorService commandAggregator,
-        ICollectionQueryAggregatorService queryAggregator)
-    {
-        _commandAggregator = commandAggregator;
-        _queryAggregator = queryAggregator;
-    }
-
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(
-        ICollectionItrEntity entity, CancellationToken cancellationToken)
-        => await _commandAggregator.CreateCollectionAsync(entity, cancellationToken)
-            .ConfigureAwait(false);
-
-    // Every method follows this exact delegation pattern — no logic, no branching.
-}
-```
+> **See:** `csharp/src/Lib.Aggregators/Lib.Aggregator.Collections/Apis/CollectionsAggregatorService.cs`
 
 ### Key Rules
 

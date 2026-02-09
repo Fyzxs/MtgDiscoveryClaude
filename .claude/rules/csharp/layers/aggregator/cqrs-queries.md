@@ -16,34 +16,7 @@ The `{Domain}QueryAggregator` implements the `I{Domain}QueryAggregatorService` i
 
 ### Pattern
 
-```csharp
-internal sealed class CollectionQueryAggregator : ICollectionQueryAggregatorService
-{
-    private readonly IGetDefaultCollectionAggregator _getDefault;
-    private readonly IGetCollectionsByUserAggregator _getByUser;
-
-    public CollectionQueryAggregator(ILogger logger) : this(
-        new GetDefaultCollectionAggregator(logger),
-        new GetCollectionsByUserAggregator(logger))
-    { }
-
-    private CollectionQueryAggregator(
-        IGetDefaultCollectionAggregator getDefault,
-        IGetCollectionsByUserAggregator getByUser)
-    {
-        _getDefault = getDefault;
-        _getByUser = getByUser;
-    }
-
-    public async Task<IOperationResponse<ICollectionOufEntity>> GetDefaultCollectionAsync(
-        IOwnerIdItrEntity args, CancellationToken cancellationToken)
-        => await _getDefault.Execute(args, cancellationToken).ConfigureAwait(false);
-
-    public async Task<IOperationResponse<IEnumerable<ICollectionOufEntity>>> GetCollectionsByUserAsync(
-        IUserIdItrEntity args, CancellationToken cancellationToken)
-        => await _getByUser.Execute(args, cancellationToken).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Lib.Aggregators/Lib.Aggregator.Collections/Queries/CollectionQueryAggregator.cs`
 
 Each method delegates to the corresponding behavior's `Execute(input, cancellationToken)` — no logic in the router.
 
@@ -59,10 +32,7 @@ The class and interfaces use `{Behavior}Aggregator` with the `I` prefix for inte
 
 All interfaces must inherit from `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually.
 
-```csharp
-internal interface IArtistSearchAggregator
-    : IOperationResponseService<IArtistSearchTermItrEntity, IArtistSearchResultCollectionOufEntity>;
-```
+> **See:** `csharp/src/Lib.Aggregators/Lib.Aggregator.Artists/Queries/` (contains ArtistSearchAggregator interface and implementation)
 
 ### Entity Type Conventions
 

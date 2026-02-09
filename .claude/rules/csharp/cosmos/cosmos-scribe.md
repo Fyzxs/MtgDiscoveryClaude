@@ -17,9 +17,7 @@ Scribes provide **upsert operations** for Cosmos DB. They create or update a doc
 
 ## Method Signature
 
-```csharp
-Task<OpResponse<T>> UpsertAsync<T>(T item, CancellationToken cancellationToken = default);
-```
+> **See:** `csharp/src/core/Lib.Cosmos/Apis/Operators/CosmosScribe.cs`
 
 ## Naming Convention
 
@@ -27,14 +25,7 @@ Task<OpResponse<T>> UpsertAsync<T>(T item, CancellationToken cancellationToken =
 
 ## Implementation Pattern
 
-```csharp
-public sealed class UserCardsScribe : CosmosScribe
-{
-    public UserCardsScribe(ILogger logger)
-        : base(new UserCardsCosmosContainer(logger))
-    { }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Scribes/UserCardsScribe.cs`
 
 **Key points:**
 - Inherit from `CosmosScribe`
@@ -48,15 +39,7 @@ All Scribe implementations live in:
 
 ## Usage Example
 
-```csharp
-// In an adapter
-private readonly ICosmosScribe _scribe;
-
-public async Task<OpResponse<UserCardExtEntity>> SaveUserCardAsync(UserCardExtEntity entity, CancellationToken ct)
-{
-    return await _scribe.UpsertAsync(entity, ct).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/AddUserCardAdapter.cs` (Scribe usage pattern)
 
 ## Existing Implementations
 

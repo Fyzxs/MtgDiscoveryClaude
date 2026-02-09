@@ -10,21 +10,7 @@ paths:
 
 `AppMtgDiscoveryGraphQlProgram.cs` configures the host:
 
-```csharp
-internal static class AppMtgDiscoveryGraphQlProgram
-{
-    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
-
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(...)
-            .ConfigureLogging(...)
-            .ConfigureServices(...)
-            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/AppMtgDiscoveryGraphQlProgram.cs`
 
 ### Configuration Precedence
 
@@ -44,26 +30,7 @@ These are no-ops in DEBUG builds, allowing local development without Azure depen
 
 #### ConfigureAppConfiguration Detail
 
-```csharp
-[Conditional("RELEASE")]
-private static void ConfigureAppConfiguration(HostBuilderContext hostingContext, IConfigurationBuilder config)
-{
-    if (hostingContext.HostingEnvironment.IsEnvironment("Local"))
-        return;
-
-    IConfigurationRoot tempConfig = config.Build();
-    string appConfigEndpoint = tempConfig["AppConfiguration:Endpoint"];
-
-    if (string.IsNullOrEmpty(appConfigEndpoint))
-        return;
-
-    _ = config.AddAzureAppConfiguration(options =>
-    {
-        _ = options.Connect(new Uri(appConfigEndpoint), new DefaultAzureCredential())
-            .Select("Auth0:*");
-    });
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/AppMtgDiscoveryGraphQlProgram.cs`
 
 **Key behaviors:**
 - `[Conditional("RELEASE")]` makes this a no-op in DEBUG builds — local dev never hits Azure
@@ -73,27 +40,13 @@ private static void ConfigureAppConfiguration(HostBuilderContext hostingContext,
 
 #### EntraAuth Detail
 
-```csharp
-[Conditional("RELEASE")]
-private static void EntraAuth()
-{
-    DefaultAzureCredential defaultAzureCredential = new();
-    ServiceLocator.ServiceRegister<TokenCredential>(() => defaultAzureCredential);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/AppMtgDiscoveryGraphQlProgram.cs`
 
 Registers a `DefaultAzureCredential` in the `ServiceLocator` for infrastructure components that need Azure authentication (e.g., Cosmos DB). This is only active in RELEASE builds — local development uses connection strings or emulators instead.
 
 ### Logging
 
-```csharp
-.ConfigureLogging(loggingBuilder =>
-{
-    _ = loggingBuilder.ClearProviders();
-    _ = loggingBuilder.AddConsole();
-    _ = loggingBuilder.AddApplicationInsights();
-})
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/AppMtgDiscoveryGraphQlProgram.cs`
 
 ## Startup Class
 
@@ -103,68 +56,13 @@ Registers a `DefaultAzureCredential` in the `ServiceLocator` for infrastructure 
 
 Registration order:
 
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    // 1. Core services
-    _ = services.AddSingleton(_configuration);
-    _ = services.AddApplicationInsightsTelemetry();
-
-    // 2. CORS
-    _ = services.AddCors(options => { ... });
-
-    // 3. Logging (ILogger singleton for GraphQL layer)
-    _ = services.AddLogging();
-    _ = services.AddSingleton(sp =>
-        sp.GetRequiredService<ILoggerFactory>().CreateLogger("GraphQL"));
-
-    // 4. Authentication (Auth0 JWT)
-    _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options => { ... });
-    _ = services.AddAuthorization();
-
-    // 5. Health checks
-    _ = services.AddHealthChecks();
-
-    // 6. HotChocolate GraphQL
-    _ = services
-        .AddGraphQLServer()
-        .AddApiQuery()
-        .AddApiMutation()
-        .AddSetSchemaExtensions()
-        .AddArtistSchemaExtensions()
-        .AddSealedProductsSchemaExtensions()
-        .AddAuthorization()
-        .AddErrorFilter<HttpStatusCodeErrorFilter>()
-        .ModifyRequestOptions(opt =>
-        {
-            opt.IncludeExceptionDetails = _environment.IsDevelopment();
-        })
-        .DisableIntrospection(_environment.IsDevelopment() is false)
-        .UseDefaultPipeline()
-        .AddDefaultTransactionScopeHandler()
-        .ModifyOptions(o => o.EnableDefer = true);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Startup.cs`
 
 ### Middleware Pipeline
 
 Order matters -- this is the exact sequence:
 
-```csharp
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    if (env.IsDevelopment())
-        _ = app.UseDeveloperExceptionPage();
-
-    _ = app.UseHttpsRedirection();
-    _ = app.UseRouting();
-    _ = app.UseCors();
-    _ = app.UseAuthentication();
-    _ = app.UseAuthorization();
-    _ = app.UseEndpoints(endpoints => { ... });
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Startup.cs`
 
 ### Health Check Endpoints
 
@@ -178,29 +76,11 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ### GraphQL Endpoint
 
-```csharp
-_ = endpoints.MapGraphQL()
-    .WithOptions(new GraphQLServerOptions
-    {
-        Tool = { Enable = true }  // Banana Cake Pop UI enabled
-    });
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Startup.cs`
 
 ## Auth0 JWT Configuration
 
-```csharp
-options.Authority = $"https://{_configuration["Auth0:Domain"]}/";
-options.Audience = _configuration["Auth0:Audience"];
-options.TokenValidationParameters = new TokenValidationParameters
-{
-    NameClaimType = "sub",
-    ValidateIssuer = true,
-    ValidateAudience = true,
-    ValidateLifetime = true,
-    ValidateIssuerSigningKey = true,
-    ValidAudiences = [_configuration["Auth0:Audience"] ?? "api://mtg-discovery"]
-};
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Startup.cs`
 
 ## CORS Configuration
 

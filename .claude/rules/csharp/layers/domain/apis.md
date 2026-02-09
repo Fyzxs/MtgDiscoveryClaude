@@ -22,20 +22,11 @@ For single-CQRS projects (query-only or command-only), the composite interface i
 
 The composite interface inherits from the CQRS-specific interfaces and defines NO methods itself — pure composition.
 
-```csharp
-public interface ICollectionsDomainService
-    : ICollectionCommandDomainService, ICollectionQueryDomainService
-{
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.Collections/Apis/ICollectionsDomainService.cs`
 
 For query-only projects:
 
-```csharp
-public interface IArtistDomainService : IArtistsQueryDomainService
-{
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.Artists/Apis/ArtistDomainService.cs` (interface in same directory)
 
 ## Passthrough Facade Pattern
 
@@ -48,53 +39,11 @@ The `{Domain}DomainService` in `Apis/` is a **pure passthrough facade**. It cons
 
 ### Implementation (Both CQRS)
 
-```csharp
-public sealed class CollectionsDomainService : ICollectionsDomainService
-{
-    private readonly ICollectionCommandDomainService _commandService;
-    private readonly ICollectionQueryDomainService _queryService;
-
-    public CollectionsDomainService(ILogger logger) : this(
-        new CollectionCommandDomainService(logger),
-        new CollectionQueryDomainService(logger))
-    { }
-
-    private CollectionsDomainService(
-        ICollectionCommandDomainService commandService,
-        ICollectionQueryDomainService queryService)
-    {
-        _commandService = commandService;
-        _queryService = queryService;
-    }
-
-    public async Task<IOperationResponse<ICollectionOufEntity>> CreateCollectionAsync(
-        ICollectionItrEntity entity, CancellationToken cancellationToken)
-        => await _commandService.CreateCollectionAsync(entity, cancellationToken)
-            .ConfigureAwait(false);
-
-    // Every method follows this exact delegation pattern — no logic, no branching.
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.Collections/Apis/CollectionsDomainService.cs`
 
 ### Implementation (Single CQRS)
 
-```csharp
-public sealed class ArtistDomainService : IArtistDomainService
-{
-    private readonly IArtistsQueryDomainService _queryService;
-
-    public ArtistDomainService(ILogger logger) : this(new ArtistsQueryDomainService(logger))
-    { }
-
-    private ArtistDomainService(IArtistsQueryDomainService queryService)
-        => _queryService = queryService;
-
-    public async Task<IOperationResponse<IArtistSearchResultCollectionOufEntity>> ArtistSearchAsync(
-        IArtistSearchTermItrEntity searchTerm, CancellationToken cancellationToken)
-        => await _queryService.ArtistSearchAsync(searchTerm, cancellationToken)
-            .ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Lib.Domains/Lib.Domain.Artists/Apis/ArtistDomainService.cs`
 
 ### Key Rules
 

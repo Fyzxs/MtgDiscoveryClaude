@@ -29,7 +29,4 @@ Queries can have an `Entities` folder with concrete implementation of an `XfrEnt
 
 ## Example
 
-```csharp
-internal interface IUserCardsBySetAdapter
-    : IOperationResponseService<IUserCardsSetXfrEntity, IEnumerable<UserCardExtEntity>>;
-```
+**See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Queries/IUserCardsBySetAdapter.cs`

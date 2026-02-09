@@ -32,13 +32,7 @@ Each specialized enrichment handles a single data fetch strategy:
 
 ### Interface
 
-```csharp
-internal interface IUserCardByIdsEnrichment
-{
-    Task Enrich(List<CardItemOutEntity> target, IUserIdArgEntity context,
-        CancellationToken cancellationToken);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/Actions/Enrichments/UserCardByIdsEnrichment.cs`
 
 **Key points:**
 - Return type is `Task` (void) — enrichment modifies `target` in-place
@@ -46,48 +40,7 @@ internal interface IUserCardByIdsEnrichment
 
 ### Implementation
 
-```csharp
-internal sealed class UserCardByIdsEnrichment : IUserCardByIdsEnrichment
-{
-    private readonly IUserCardsDomainService _userCardsDomainService;
-    private readonly ICollectionCardItemToByIdsItrMapper _collectionCardItemToByIdsItrMapper;
-    private readonly IUserCardCollectionIntegrator _integrator;
-
-    public UserCardByIdsEnrichment(ILogger logger) : this(
-        new UserCardsDomainService(logger),
-        new CollectionCardItemToByIdsItrMapper(),
-        new UserCardCollectionIntegrator())
-    { }
-
-    private UserCardByIdsEnrichment(
-        IUserCardsDomainService userCardsDomainService,
-        ICollectionCardItemToByIdsItrMapper collectionCardItemToByIdsItrMapper,
-        IUserCardCollectionIntegrator integrator)
-    {
-        _userCardsDomainService = userCardsDomainService;
-        _collectionCardItemToByIdsItrMapper = collectionCardItemToByIdsItrMapper;
-        _integrator = integrator;
-    }
-
-    public async Task Enrich(List<CardItemOutEntity> target, IUserIdArgEntity args,
-        CancellationToken cancellationToken)
-    {
-        if (args.DoesNotHaveUserId)
-            return;
-
-        IUserCardsByIdsItrEntity itrEntity =
-            await _collectionCardItemToByIdsItrMapper.Map(target, args).ConfigureAwait(false);
-
-        IOperationResponse<IEnumerable<IUserCardOufEntity>> response =
-            await _userCardsDomainService.UserCardsByIdsAsync(itrEntity, cancellationToken)
-                .ConfigureAwait(false);
-        if (response.IsFailure)
-            return;
-
-        _ = await _integrator.Integrate(target, response.ResponseData).ConfigureAwait(false);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/Actions/Enrichments/UserCardByIdsEnrichment.cs`
 
 ### Execute Flow
 
@@ -107,40 +60,7 @@ internal sealed class UserCardByIdsEnrichment : IUserCardByIdsEnrichment
 
 When a concern has multiple strategies, a composite delegates to specialized enrichments:
 
-```csharp
-internal interface IUserCardEnrichment
-{
-    Task Enrich(List<CardItemOutEntity> outEntities, IUserIdArgEntity args,
-        CancellationToken cancellationToken);
-    Task EnrichBySet(List<CardItemOutEntity> outEntities, IUserCardsSetItrEntity context,
-        CancellationToken cancellationToken);
-    Task EnrichByArtist(List<CardItemOutEntity> outEntities, IUserCardsArtistItrEntity context,
-        CancellationToken cancellationToken);
-    Task EnrichByName(List<CardItemOutEntity> outEntities, IUserCardsNameItrEntity context,
-        CancellationToken cancellationToken);
-}
-
-internal sealed class UserCardEnrichment : IUserCardEnrichment
-{
-    private readonly IUserCardByIdsEnrichment _byIdsEnrichment;
-    private readonly IUserCardBySetEnrichment _bySetEnrichment;
-    private readonly IUserCardByArtistEnrichment _byArtistEnrichment;
-    private readonly IUserCardByNameEnrichment _byNameEnrichment;
-
-    public UserCardEnrichment(ILogger logger) : this(
-        new UserCardByIdsEnrichment(logger),
-        new UserCardBySetEnrichment(logger),
-        new UserCardByArtistEnrichment(logger),
-        new UserCardByNameEnrichment(logger))
-    { }
-
-    // Each method delegates to the corresponding specialized enrichment
-    public async Task Enrich(List<CardItemOutEntity> outEntities, IUserIdArgEntity args,
-        CancellationToken cancellationToken)
-        => await _byIdsEnrichment.Enrich(outEntities, args, cancellationToken)
-            .ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/Actions/Enrichments/UserCardEnrichment.cs`
 
 ## Entry-Layer Integrator
 
@@ -153,41 +73,7 @@ Enrichments use **Entry-layer Integrators** to merge data. These are distinct fr
 | Output | Modified `List<OutEntity>` | Modified `ExtEntity` |
 | Location | `Queries/Actions/Integrators/` | `{Adapter}/Commands/Integrators/` |
 
-```csharp
-internal interface IUserCardCollectionIntegrator
-    : IIntegrator<List<CardItemOutEntity>, IEnumerable<IUserCardOufEntity>>;
-
-internal sealed class UserCardCollectionIntegrator : IUserCardCollectionIntegrator
-{
-    private readonly ICollectionUserCardDetailsOufToOutMapper _cardDetailsOufToOutMapper;
-
-    public UserCardCollectionIntegrator()
-        : this(new CollectionUserCardDetailsOufToOutMapper()) { }
-
-    private UserCardCollectionIntegrator(
-        ICollectionUserCardDetailsOufToOutMapper cardDetailsOufToOutMapper)
-        => _cardDetailsOufToOutMapper = cardDetailsOufToOutMapper;
-
-    public async Task<List<CardItemOutEntity>> Integrate(
-        List<CardItemOutEntity> current, IEnumerable<IUserCardOufEntity> change)
-    {
-        Dictionary<string, Task<ICollection<CollectedItemOutEntity>>> dictionary =
-            change.ToDictionary(
-                uc => uc.CardId,
-                uc => _cardDetailsOufToOutMapper.Map(uc.CollectedList));
-
-        foreach (CardItemOutEntity card in current)
-        {
-            if (dictionary.TryGetValue(card.Id,
-                out Task<ICollection<CollectedItemOutEntity>> collectedItems) is false)
-                continue;
-            card.UserCollection = await collectedItems.ConfigureAwait(false);
-        }
-
-        return current;
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Queries/Actions/Integrators/UserCardCollectionIntegrator.cs`
 
 ## Location
 

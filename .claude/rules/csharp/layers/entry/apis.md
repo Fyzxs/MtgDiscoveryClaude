@@ -21,22 +21,7 @@ The `Apis/` folder is the **public contract** for the Entry layer. Everything he
 
 The composite interface inherits from all domain-specific sub-service interfaces and defines NO methods itself — pure composition.
 
-```csharp
-public interface IEntryService :
-    ICardEntryService,
-    ISetEntryService,
-    IArtistEntryService,
-    IUserEntryService,
-    IUserCardsEntryService,
-    IUserCardsQueryEntryService,
-    IUserSetCardsQueryEntryService,
-    IUserSetCardsCommandEntryService,
-    IUserWishlistCardsEntryService,
-    ISealedProductsEntryService,
-    IUserSealedProductsEntryService,
-    ICollectionEntryCommandService,
-    ICollectionEntryQueryService;
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/IEntryService.cs`
 
 ## Passthrough Facade Pattern
 
@@ -46,38 +31,7 @@ public interface IEntryService :
 
 The facade constructs all sub-services via constructor chaining:
 
-```csharp
-public sealed class EntryService : IEntryService
-{
-    private readonly ICardEntryService _cardEntryService;
-    private readonly ISetEntryService _setEntryService;
-    // ... all sub-services
-
-    public EntryService(ILogger logger) : this(
-        new CardEntryService(logger),
-        new SetEntryService(logger),
-        // ... all sub-service constructors
-    ) { }
-
-    private EntryService(
-        ICardEntryService cardEntryService,
-        ISetEntryService setEntryService,
-        // ... all parameters
-    )
-    {
-        _cardEntryService = cardEntryService;
-        _setEntryService = setEntryService;
-        // ... all assignments
-    }
-
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(
-        ICardIdsArgEntity args, CancellationToken cancellationToken)
-        => await _cardEntryService.CardsByIdsAsync(args, cancellationToken)
-            .ConfigureAwait(false);
-
-    // Every method follows this exact delegation pattern
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/EntryService.cs`
 
 ### Key Rules
 
@@ -90,46 +44,17 @@ public sealed class EntryService : IEntryService
 
 Each domain has a dedicated interface defining its operations:
 
-```csharp
-public interface ICardEntryService
-{
-    Task<IOperationResponse<List<CardItemOutEntity>>> CardsByIdsAsync(
-        ICardIdsArgEntity args, CancellationToken cancellationToken);
-    Task<IOperationResponse<List<CardItemOutEntity>>> CardsBySetCodeAsync(
-        ISetCodeArgEntity setCode, CancellationToken cancellationToken);
-    // ...
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/` (domain-specific sub-service interfaces)
 
 For domains with CQRS split, separate command and query interfaces exist:
 
-```csharp
-public interface ICollectionEntryCommandService { /* command methods */ }
-public interface ICollectionEntryQueryService { /* query methods */ }
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/` (command/query split interfaces)
 
 ## Simple Sub-Services
 
 When a domain needs no CQRS split and has few operations, the sub-service can live directly in `Apis/`:
 
-```csharp
-internal sealed class SealedProductsEntryService : ISealedProductsEntryService
-{
-    private readonly ISealedProductsBySetCodeEntryService _sealedProductsBySetCode;
-
-    public SealedProductsEntryService(ILogger logger)
-        : this(new SealedProductsBySetCodeEntryService(logger)) { }
-
-    private SealedProductsEntryService(
-        ISealedProductsBySetCodeEntryService sealedProductsBySetCode)
-        => _sealedProductsBySetCode = sealedProductsBySetCode;
-
-    public async Task<IOperationResponse<List<SealedProductOutEntity>>> SealedProductsBySetCodeAsync(
-        ISealedProductsBySetCodeArgEntity args, CancellationToken cancellationToken)
-        => await _sealedProductsBySetCode.Execute(args, cancellationToken)
-            .ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/SealedProductsEntryService.cs`
 
 ## Method Contracts
 

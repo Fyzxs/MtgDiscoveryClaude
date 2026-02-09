@@ -29,13 +29,7 @@ Arg entity interfaces define the contract between the App layer and Entry layer.
 | `Lib.Shared.DataModels/Entities/Args/` | Used across multiple Entry projects or shared with Domain/Aggregator layers | `ICollectionIdArgEntity`, `IAuthUserArgEntity` |
 | `Commands/{Domain}/Entities/` or `Queries/{Domain}/Entities/` | Domain-specific and only used by a single operation service | `AddSetGroupToUserSetCardArgEntity` |
 
-```csharp
-public interface ICardIdsArgEntity
-{
-    ICollection<string> CardIds { get; }
-    string UserId { get; }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Apis/ICardIdsArgEntity.cs`
 
 ArgEntity interfaces are `public` — they are consumed by the App layer.
 
@@ -43,13 +37,7 @@ ArgEntity interfaces are `public` — they are consumed by the App layer.
 
 For authenticated mutations, a combined ArgsEntity wraps both auth user data and operation input:
 
-```csharp
-public interface IAddCardToCollectionArgsEntity
-{
-    IAuthUserArgEntity AuthUser { get; }
-    IAddUserCardArgEntity AddUserCard { get; }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Entities/IAddCardToCollectionArgsEntity.cs`
 
 Combined ArgsEntities and their concrete implementations live at:
 - `Entities/` root — for general-purpose combined entities
@@ -64,15 +52,7 @@ ItrEntities are the internal representation after validation and mapping. They l
 - `Entities/Itrs/{Domain}/` — domain-organized ItrEntities
 - `Commands/{Domain}/Entities/` — domain-specific command ItrEntities
 
-```csharp
-internal sealed class UserCardCollectionItrEntity : IUserCardItrEntity
-{
-    public string UserId { get; init; }
-    public string CardId { get; init; }
-    public string SetId { get; init; }
-    // ...
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Entities/UserCardCollectionItrEntity.cs`
 
 ### Property Rules
 
@@ -100,16 +80,7 @@ Entities/Outs/
 
 OutEntities MUST NOT be placed inside `Commands/` or `Queries/` subfolders.
 
-```csharp
-public sealed class CardItemOutEntity : ICardItemOutEntity
-{
-    public string Id { get; init; }
-    public string Name { get; init; }
-    public string SetCode { get; init; }
-    // ... all card properties
-    public ICollection<CollectedItemOutEntity> UserCollection { get; set; }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Entities/Outs/Cards/CardItemOutEntity.cs`
 
 ### OutEntity Property Rules
 

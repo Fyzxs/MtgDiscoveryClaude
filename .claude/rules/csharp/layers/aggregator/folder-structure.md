@@ -71,16 +71,7 @@ Exception classes live in `Exceptions/` at the project root. Not all projects ne
 - Extends `OperationException` with `HttpStatusCode.InternalServerError`
 - Requires `#pragma warning disable CA1032`
 
-```csharp
-#pragma warning disable CA1032
-internal sealed class CardAggregatorOperationException : OperationException
-#pragma warning restore CA1032
-{
-    public CardAggregatorOperationException(string message, Exception innerException = null)
-        : base(HttpStatusCode.InternalServerError, message, innerException)
-    { }
-}
-```
+> **See:** `csharp/src/Lib.Aggregators/Lib.Aggregator.Cards/Exceptions/CardAggregatorOperationException.cs`
 
 ### Structure Flexibility
 

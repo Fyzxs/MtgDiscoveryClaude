@@ -17,9 +17,7 @@ Gophers provide **point-read operations** for Cosmos DB. They retrieve a single 
 
 ## Method Signature
 
-```csharp
-Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item, CancellationToken cancellationToken = default);
-```
+> **See:** `csharp/src/core/Lib.Cosmos/Apis/Operators/CosmosGopher.cs`
 
 ## Naming Convention
 
@@ -27,14 +25,7 @@ Task<OpResponse<T>> ReadAsync<T>(ReadPointItem item, CancellationToken cancellat
 
 ## Implementation Pattern
 
-```csharp
-public sealed class UserCardsGopher : CosmosGopher
-{
-    public UserCardsGopher(ILogger logger)
-        : base(new UserCardsCosmosContainer(logger))
-    { }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.Scryfall.Cosmos/Apis/Operators/Gophers/UserCardsGopher.cs`
 
 **Key points:**
 - Inherit from `CosmosGopher`
@@ -48,15 +39,7 @@ All Gopher implementations live in:
 
 ## Usage Example
 
-```csharp
-// In an adapter
-private readonly ICosmosGopher _gopher;
-
-public async Task<OpResponse<UserCardExtEntity>> ReadUserCardAsync(ReadPointItem item, CancellationToken ct)
-{
-    return await _gopher.ReadAsync<UserCardExtEntity>(item, ct).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/AddUserCardAdapter.cs` (Gopher usage pattern)
 
 ## Existing Implementations
 

@@ -23,36 +23,7 @@ ResponseModel (abstract base)
 
 A single generic mapper converts `IOperationResponse<T>` from the Entry layer into `ResponseModel` for GraphQL:
 
-```csharp
-// Interface
-internal interface IOperationResponseToResponseModelMapper<TData>
-    : ICreateMapper<IOperationResponse<TData>, ResponseModel>;
-
-// Implementation
-internal sealed class OperationResponseToResponseModelMapper<TData>
-    : IOperationResponseToResponseModelMapper<TData>
-{
-    public Task<ResponseModel> Map(IOperationResponse<TData> source)
-    {
-        if (source.IsSuccess)
-            return Task.FromResult(
-                (ResponseModel)new SuccessDataResponseModel<TData>
-                {
-                    Data = source.ResponseData
-                });
-
-        return Task.FromResult(
-            (ResponseModel)new FailureResponseModel
-            {
-                Status = new StatusDataModel
-                {
-                    Message = source.OuterException.StatusMessage,
-                    StatusCode = source.OuterException.StatusCode
-                }
-            });
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Actions/Mappers/OperationResponseToResponseModelMapper.cs`
 
 **Key points:**
 - Generic — one mapper handles all data types
@@ -65,71 +36,17 @@ Each response union requires three HotChocolate types registered in the schema:
 
 ### 1. UnionType
 
-```csharp
-internal class CardResponseModelUnionType : UnionType
-{
-    protected override void Configure([NotNull] IUnionTypeDescriptor descriptor)
-    {
-        descriptor.Name("CardResponse")
-            .Description("Union type for card query response")
-            .Type<CardsSuccessDataResponseModelType>()
-            .Type<FailureResponseModelType>();
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Types/ResponseModels/CardResponseModelUnionType.cs`
 
 ### 2. SuccessDataResponseModelType
 
-```csharp
-internal class CardsSuccessDataResponseModelType
-    : ObjectType<SuccessDataResponseModel<List<CardItemOutEntity>>>
-{
-    protected override void Configure(
-        [NotNull] IObjectTypeDescriptor<SuccessDataResponseModel<List<CardItemOutEntity>>> descriptor)
-    {
-        descriptor.Name("CardsSuccessResponse")
-            .Description("Response returned when cards are successfully retrieved");
-
-        descriptor.Field(f => f.Data)
-            .Name("data")
-            .Type<ListType<ScryfallCardOutEntityType>>()
-            .Description("The list of cards retrieved");
-        descriptor.Field(f => f.Status)
-            .Name("status")
-            .Type<StatusDataModelType>()
-            .Description("Status information about the success");
-        descriptor.Field(f => f.MetaData)
-            .Name("metaData")
-            .Type<MetaDataModelType>()
-            .Description("Metadata about the response");
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Types/ResponseModels/CardsSuccessDataResponseModelType.cs`
 
 ### 3. FailureResponseModelType (shared)
 
 A single `FailureResponseModelType` is shared across all union types:
 
-```csharp
-internal class FailureResponseModelType : ObjectType<FailureResponseModel>
-{
-    protected override void Configure(
-        [NotNull] IObjectTypeDescriptor<FailureResponseModel> descriptor)
-    {
-        descriptor.Name("FailureResponse")
-            .Description("Response returned when the query fails");
-
-        descriptor.Field(f => f.Status)
-            .Name("status")
-            .Type<StatusDataModelType>()
-            .Description("Status information about the failure");
-        descriptor.Field(f => f.MetaData)
-            .Name("metaData")
-            .Type<MetaDataModelType>()
-            .Description("Metadata about the response");
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Entities/Types/ResponseModels/FailureResponseModelType.cs`
 
 ## Naming Conventions
 
@@ -154,27 +71,11 @@ internal class FailureResponseModelType : ObjectType<FailureResponseModel>
 
 All response types must be registered in either `ApiQueryExtensions.cs` or `ApiMutationExtensions.cs`:
 
-```csharp
-// In ApiQueryExtensions.AddApiQuery():
-.AddType<CardResponseModelUnionType>()
-.AddType<CardsSuccessDataResponseModelType>()
-.AddType<FailureResponseModelType>()
-.AddType<StatusDataModelType>()
-.AddType<MetaDataModelType>()
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Schemas/ApiQueryExtensions.cs`
 
 ## Usage in Query/Mutation Methods
 
-```csharp
-[GraphQLType(typeof(CardResponseModelUnionType))]
-public async Task<ResponseModel> CardsById(
-    CardIdsArgEntity ids, CancellationToken cancellationToken)
-{
-    IOperationResponse<List<CardItemOutEntity>> response =
-        await _entryService.CardsByIdsAsync(ids, cancellationToken).ConfigureAwait(false);
-    return await _cardResponseMapper.Map(response).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Queries/CardQueryMethods.cs`
 
 The `[GraphQLType]` decorator tells HotChocolate which union type resolves this method's return.
 
@@ -182,11 +83,7 @@ The `[GraphQLType]` decorator tells HotChocolate which union type resolves this 
 
 Query and mutation classes that handle multiple response shapes require multiple `IOperationResponseToResponseModelMapper<T>` instances, each parameterized by the specific response type:
 
-```csharp
-private readonly IOperationResponseToResponseModelMapper<List<CollectionOutEntity>> _listResponseMapper;
-private readonly IOperationResponseToResponseModelMapper<CollectionOutEntity> _singleResponseMapper;
-private readonly IOperationResponseToResponseModelMapper<IEnumerable<AuthorizedUserOutEntity>> _authorizedUsersResponseMapper;
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Mutations/` (mutation classes with multiple response mappers)
 
 **When multiple mappers are needed:**
 - Different endpoints return different data types (e.g., list vs. single entity)
@@ -199,17 +96,7 @@ Each mapper is constructed in the public constructor and assigned in the private
 
 When a mutation returns a single entity but the GraphQL response type expects a list (e.g., to share a `UnionType` across create/list endpoints), use a private conversion helper:
 
-```csharp
-private Task<ResponseModel> MapSingleToList(IOperationResponse<CollectionOutEntity> response)
-{
-    if (response.IsSuccess)
-    {
-        return _responseMapper.Map(new SuccessOperationResponse<List<CollectionOutEntity>>([response.ResponseData]));
-    }
-
-    return _responseMapper.Map(new FailureOperationResponse<List<CollectionOutEntity>>(response.OuterException));
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Mutations/` (mutation classes with `MapSingleToList` pattern)
 
 **When to use:**
 - A mutation returns `IOperationResponse<TEntity>` (single) but the `UnionType` is configured for `List<TEntity>`

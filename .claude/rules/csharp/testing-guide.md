@@ -38,31 +38,14 @@ Fakes track call counts and arguments so tests can verify behavior: `fake.Invoke
 **Fake tracking property conventions**
 Each method on a fake has three tracking properties following this naming pattern:
 
-```csharp
-// Configurable result — set during Arrange via init
-public IOperationResponse<ICollectionOufEntity> CreateCollectionAsyncResult { get; init; }
-
-// Invocation count — incremented each call
-public int CreateCollectionAsyncInvokeCount { get; private set; }
-
-// Last argument capture — stores last input for assertion
-public ICollectionItrEntity CreateCollectionAsyncLastEntity { get; private set; }
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry.Tests/Fakes/CollectionsDomainServiceFake.cs`
 
 **Property naming:** `{MethodName}Result`, `{MethodName}InvokeCount`, `{MethodName}Last{ParameterName}`
 **Access modifiers:** `{ get; init; }` for results (configured at construction), `{ get; private set; }` for tracking (mutated during calls)
 
 **Generic fakes** for common types like `IOperationResponse<T>`:
 
-```csharp
-internal sealed class OperationResponseFake<T> : IOperationResponse<T>
-{
-    public bool IsSuccess { get; init; }
-    public bool IsFailure => IsSuccess is false;
-    public T ResponseData { get; init; } = default!;
-    public OperationException OuterException { get; init; } = default!;
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry.Tests/Fakes/OperationResponseFake.cs`
 
 **Avoiding null checks**
 Tests don't assert `.Should().NotBeNull()` before other assertions—let assertions fail if the value is null.
@@ -110,28 +93,7 @@ Tests follow the codebase structure:
 
 Validator containers and their individual validators are tested in a single file named `{Container}Tests.cs`. The file contains multiple `[TestClass]` definitions — one for the container and one for each individual validator:
 
-```csharp
-// File: CreateCollectionArgEntityValidatorContainerTests.cs
-
-[TestClass]
-public sealed class CreateCollectionArgEntityValidatorContainerTests
-{
-    // Tests for the container (valid/invalid scenarios with full pipeline)
-}
-
-[TestClass]
-public sealed class IsNotNullCreateCollectionArgEntityValidatorTests
-{
-    // Tests for the Validator nested class (IsValid true/false)
-    // Tests for the Message nested class (AsSystemType returns expected string)
-}
-
-[TestClass]
-public sealed class HasValidNameCreateCollectionArgEntityValidatorTests
-{
-    // Same pattern: Validator + Message tests
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry.Tests/Commands/Collections/Validators/CreateCollectionArgEntityValidatorContainerTests.cs`
 
 **Individual validator test structure:**
 1. Test `{Validator}.Validator.IsValid()` — valid input returns `true`, invalid returns `false`
@@ -144,27 +106,10 @@ This multi-class-per-file pattern is specific to validators because they are tig
 
 Classes with private constructors (constructor chain DI) require `TypeWrapper<T>` for testing:
 
-```csharp
-// In the test class
-private sealed class InstanceWrapper : TypeWrapper<DefaultCollectionCreator>
-{
-    public InstanceWrapper(
-        ICollectionsDomainService domainService,
-        IDefaultCollectionArgToItrMapper mapper)
-        : base(domainService, mapper) { }
-}
-```
+> **See:** `csharp/src/testShared/TestConvenience.Core/Reflection/TypeWrapper.cs`
 
 Usage in tests:
-```csharp
-[TestMethod]
-public void Constructor_ImplementsInterface()
-{
-    CollectionsDomainServiceFake domainFake = new() { ... };
-    DefaultCollectionCreator subject = new InstanceWrapper(domainFake, new DefaultCollectionArgToItrMapper());
-    subject.Should().BeAssignableTo<IDefaultCollectionCreator>();
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry.Tests/Commands/Collections/DefaultCollectionCreatorTests.cs`
 
 **How it works:**
 - `TypeWrapper<T>` uses `PrivateCtor<T>` (reflection) to invoke the private constructor

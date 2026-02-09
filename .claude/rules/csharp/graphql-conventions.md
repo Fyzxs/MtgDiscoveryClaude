@@ -41,35 +41,7 @@ Implementation Checklist
 
 Query and mutation methods use marker classes extended via `[ExtendObjectType]`:
 
-```csharp
-// Marker class (empty root type)
-[ObjectType]
-public sealed class ApiQuery { }
-
-// Extension class (methods become GraphQL fields)
-[ExtendObjectType(typeof(ApiQuery))]
-internal sealed class CardQueryMethods
-{
-    public CardQueryMethods(ILogger logger) : this(
-        new EntryService(logger),
-        new OperationResponseToResponseModelMapper<List<CardItemOutEntity>>())
-    { }
-
-    private CardQueryMethods(
-        IEntryService entryService,
-        IOperationResponseToResponseModelMapper<List<CardItemOutEntity>> cardResponseMapper)
-    { ... }
-
-    [GraphQLType(typeof(CardResponseModelUnionType))]
-    public async Task<ResponseModel> CardsById(
-        CardIdsArgEntity ids, CancellationToken cancellationToken)
-    {
-        IOperationResponse<List<CardItemOutEntity>> response =
-            await _entryService.CardsByIdsAsync(ids, cancellationToken).ConfigureAwait(false);
-        return await _cardResponseMapper.Map(response).ConfigureAwait(false);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Queries/CardQueryMethods.cs`
 
 **Key elements:**
 - `[ObjectType]` on empty marker class (`ApiQuery`, `ApiMutation`)

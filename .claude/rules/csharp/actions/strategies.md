@@ -11,12 +11,7 @@ Strategies **wrap operations with cross-cutting concerns** such as retry logic, 
 
 ## Base Interface
 
-```csharp
-internal interface ICosmosRetryStrategy
-{
-    Task<IOperationResponse<T>> ExecuteWithRetry<T>(Func<Task<IOperationResponse<T>>> operation);
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/Strategies/ICosmosRetryStrategy.cs`
 
 **Location**: `Lib.Adapter.UserCards/Commands/Strategies/ICosmosRetryStrategy.cs`
 
@@ -26,51 +21,7 @@ internal interface ICosmosRetryStrategy
 
 ## Implementation Pattern
 
-```csharp
-internal sealed class CosmosRetryStrategy : ICosmosRetryStrategy
-{
-    private readonly int _maxRetries;
-    private readonly int _baseDelayMs;
-
-    public CosmosRetryStrategy() : this(5, 50)
-    { }
-
-    private CosmosRetryStrategy(int maxRetries, int baseDelayMs)
-    {
-        _maxRetries = maxRetries;
-        _baseDelayMs = baseDelayMs;
-    }
-
-    public async Task<IOperationResponse<T>> ExecuteWithRetry<T>(
-        Func<Task<IOperationResponse<T>>> operation)
-    {
-        int retryCount = 0;
-
-        while (retryCount < _maxRetries)
-        {
-            try
-            {
-                return await operation().ConfigureAwait(false);
-            }
-            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.PreconditionFailed)
-            {
-                retryCount++;
-                if (retryCount >= _maxRetries)
-                {
-                    return new FailureOperationResponse<T>(
-                        new AdapterException($"Failed after {_maxRetries} retries", ex));
-                }
-
-                // Exponential backoff: 50ms, 100ms, 200ms, 400ms, 800ms
-                int delayMs = _baseDelayMs * (1 << (retryCount - 1));
-                await Task.Delay(delayMs).ConfigureAwait(false);
-            }
-        }
-
-        return new FailureOperationResponse<T>(new AdapterException("Max retries exceeded"));
-    }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/Strategies/CosmosRetryStrategy.cs`
 
 **Key points:**
 - Constructor chain pattern for defaults
@@ -80,36 +31,7 @@ internal sealed class CosmosRetryStrategy : ICosmosRetryStrategy
 
 ## Usage in Command Adapters
 
-```csharp
-internal sealed class AddUserCardAdapter : IAddUserCardAdapter
-{
-    private readonly ICosmosRetryStrategy _retryStrategy;
-    // ... other dependencies
-
-    public AddUserCardAdapter(ILogger logger)
-        : this(..., new CosmosRetryStrategy())
-    { }
-
-    public async Task<IOperationResponse<UserCardExtEntity>> Execute(
-        IAddUserCardXfrEntity input,
-        CancellationToken cancellationToken)
-    {
-        return await _retryStrategy.ExecuteWithRetry<UserCardExtEntity>(async () =>
-        {
-            // Read-modify-write cycle
-            ReadPointItem readPoint = await _readPointMapper.Map(input);
-            OpResponse<UserCardExtEntity> readResponse = await _gopher.ReadAsync<UserCardExtEntity>(readPoint);
-            UserCardExtEntity existing = _resolver.Resolve(readResponse, input);
-            UserCardExtEntity updated = await _integrator.Integrate(existing, input);
-            OpResponse<UserCardExtEntity> upsertResponse = await _scribe.UpsertAsync(updated);
-
-            return upsertResponse.IsSuccessful()
-                ? new SuccessOperationResponse<UserCardExtEntity>(upsertResponse.Value)
-                : new FailureOperationResponse<UserCardExtEntity>(...);
-        }).ConfigureAwait(false);
-    }
-}
-```
+> **See:** `csharp/src/Lib.Adapters/Lib.Adapter.UserCards/Commands/AddUserCardAdapter.cs`
 
 ## When to Use Strategies
 

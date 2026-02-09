@@ -11,34 +11,7 @@ The router implements the domain-specific command interface from `Apis/` and del
 
 ### Pattern
 
-```csharp
-internal sealed class UserCardsEntryService : IUserCardsEntryService
-{
-    private readonly IAddCardToCollectionEntryService _addCardToCollection;
-    private readonly IAddUserCardOnlyEntryService _addUserCardOnly;
-
-    public UserCardsEntryService(ILogger logger) : this(
-        new AddCardToCollectionEntryService(logger),
-        new AddUserCardOnlyEntryService(logger))
-    { }
-
-    private UserCardsEntryService(
-        IAddCardToCollectionEntryService addCardToCollection,
-        IAddUserCardOnlyEntryService addUserCardOnly)
-    {
-        _addCardToCollection = addCardToCollection;
-        _addUserCardOnly = addUserCardOnly;
-    }
-
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddCardToCollectionAsync(
-        IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken)
-        => await _addCardToCollection.Execute(args, cancellationToken).ConfigureAwait(false);
-
-    public async Task<IOperationResponse<List<CardItemOutEntity>>> AddUserCardOnlyAsync(
-        IAddCardToCollectionArgsEntity args, CancellationToken cancellationToken)
-        => await _addUserCardOnly.Execute(args, cancellationToken).ConfigureAwait(false);
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/UserCardsEntryService.cs`
 
 Each method delegates to the corresponding operation's `Execute(input, cancellationToken)` — no logic in the router.
 
@@ -50,10 +23,7 @@ These are targeted classes following single responsibility — each implements a
 
 All operation interfaces MUST inherit from `IOperationResponseService<TInput, TOutput>` — never define `Execute` manually.
 
-```csharp
-internal interface IAddCardToCollectionEntryService
-    : IOperationResponseService<IAddCardToCollectionArgsEntity, List<CardItemOutEntity>>;
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/UserCards/` (operation service interfaces)
 
 ### Standard Execute Flow
 
@@ -79,44 +49,15 @@ Command operation services typically inject:
 
 Mutations that require authenticated user context combine `ClaimsPrincipal`-derived auth data with the GraphQL input into a single combined `IArgsEntity`:
 
-```csharp
-// Combined args interface — wraps auth user + operation-specific input
-public interface IAddCardToCollectionArgsEntity
-{
-    IAuthUserArgEntity AuthUser { get; }
-    IAddUserCardArgEntity AddUserCard { get; }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Entities/IAddCardToCollectionArgsEntity.cs`
 
 The GraphQL layer creates the combined entity via a dedicated mapper:
 
-```csharp
-internal sealed class AddCardToCollectionArgsMapper : IAddCardToCollectionArgsMapper
-{
-    public Task<IAddCardToCollectionArgsEntity> Map(
-        ClaimsPrincipal claimsPrincipal, AddUserCardArgEntity args)
-    {
-        IAddCardToCollectionArgsEntity result = new AddCardToCollectionArgsEntity
-        {
-            AuthUser = new AuthUserArgEntity(claimsPrincipal),
-            AddUserCard = args
-        };
-        return Task.FromResult(result);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/App.MtgDiscovery.GraphQL/Actions/Mappers/AddCardToCollectionArgsMapper.cs`
 
 The command operation service then validates the combined args and extracts what it needs:
 
-```csharp
-// In operation service Execute():
-IValidatorActionResult<...> validatorResult =
-    await _validator.Validate(input).ConfigureAwait(false);
-// Validator checks both AuthUser and AddUserCard properties
-
-string userId = input.AuthUser.UserId;
-IItrEntity itrEntity = await _mapper.Map(input).ConfigureAwait(false);
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Collections/CollectionEntryCommandService.cs`
 
 ## Cross-Domain Coordination
 
@@ -133,39 +74,7 @@ All mapping to ItrEntities MUST go through dedicated mapper classes — no inlin
 
 For domains with many command operations, a dedicated command service class handles all operations with their validators and mappers:
 
-```csharp
-internal sealed class CollectionEntryCommandService : ICollectionEntryCommandService
-{
-    private readonly ICollectionsDomainService _domainService;
-    private readonly ICreateCollectionArgEntityValidator _createValidator;
-    private readonly ICreateCollectionArgToItrMapper _createArgToItrMapper;
-    private readonly ICollectionOufToOutMapper _oufToOutMapper;
-    // ... validators and mappers for each operation
-
-    // Each method follows: validate → map → domain call → map → return
-    public async Task<IOperationResponse<CollectionOutEntity>> CreateCollectionAsync(
-        ICreateCollectionArgsEntity argsEntity, CancellationToken cancellationToken)
-    {
-        IValidatorActionResult<...> validatorResult =
-            await _createValidator.Validate(argsEntity.CreateCollection).ConfigureAwait(false);
-        if (validatorResult.IsNotValid())
-            return new FailureOperationResponse<CollectionOutEntity>(
-                validatorResult.FailureStatus().OuterException);
-
-        ICollectionItrEntity itrEntity =
-            await _createArgToItrMapper.Map(argsEntity.CreateCollection, userId).ConfigureAwait(false);
-
-        IOperationResponse<ICollectionOufEntity> opResponse =
-            await _domainService.CreateCollectionAsync(itrEntity, cancellationToken).ConfigureAwait(false);
-        if (opResponse.IsFailure)
-            return new FailureOperationResponse<CollectionOutEntity>(opResponse.OuterException);
-
-        CollectionOutEntity outEntity =
-            await _oufToOutMapper.Map(opResponse.ResponseData).ConfigureAwait(false);
-        return new SuccessOperationResponse<CollectionOutEntity>(outEntity);
-    }
-}
-```
+> **See:** `csharp/src/Api.MtgDiscovery.GraphQL/Lib.MtgDiscovery.Entry/Commands/Collections/CollectionEntryCommandService.cs`
 
 ## Common Rules
 
